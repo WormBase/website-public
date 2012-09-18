@@ -243,18 +243,16 @@ sub related_phenotypes {
     my $result;
     if ( $phenotype->Related_phenotypes(0) ) {
         foreach my $tag (qw/Specialisation_of Generalisation_of/) {
-            ( my $type = $tag ) =~ s/_/ /g;
-            my @entries;
-            foreach my $ph ( $phenotype->$tag ) {
-		push @entries,$self->_pack_obj($ph,$self->best_phenotype_name($ph));	       
-            }
-	    # Americanize. Sorry.
-	    $type =~ s/isation/ization/g;
-            $result->{$type} = \@entries;
+          ( my $type = $tag ) =~ s/_/ /g;
+          my @entries;
+          foreach my $ph ( $phenotype->$tag ) {
+            push @entries,$self->_pack_obj($ph,$self->best_phenotype_name($ph));	       
+          }
+          $result->{$type} = \@entries if (scalar @entries > 0);
         }
     }
     return { description => 'The generalized and specialized terms in the ontology for this phenotype.',
-	     data        => $result,
+	     data        => (scalar keys %{$result} > 0) ? $result : undef,
     };
 }
 
