@@ -197,6 +197,68 @@ sub also_refers_to {
 }
 
 
+=head3 named_by
+
+This method will return a data structure containing
+the WB person who named the gene
+
+=over
+
+=item PERL API
+
+ $data = $model->named_by();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/named_by
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub named_by {
+    my $self   = shift;
+    my $object = $self->object;
+    my $name = $self->_get_evidence($object->CGC_name);
+    return {
+        description => 'the person who named this gene',
+        data        => $name ? @{$name->{Person_evidence}}[0] : undef,
+    };
+}
+
+
 =head3 classification
 
 This method will return a data structure containing
