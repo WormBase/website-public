@@ -51,7 +51,7 @@
     # Paralogs
     WRAPPER $field_block title="Paralogs" key="paralogs";
     build_data_table(order=['ortholog','method'],
-		     columns={ortholog => 'Ortholog',
+		     columns={ortholog => 'Paralog',
 		              method   => 'Method',
 		              },
 	             key='paralogs');
