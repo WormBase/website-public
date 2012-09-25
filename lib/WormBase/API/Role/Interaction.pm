@@ -84,10 +84,21 @@ sub interactions  {
     my $self   = shift;
     my @edges = values %{$self->_interactions->{edgeVals}};
 
+    my $results = $self->_get_interactions($self->_interactions, 1, 1);
+    my @edges_all = values %{$results->{edgeVals}};
+
     return {
         description => 'genetic and predicted interactions',
-        data        => { edges => \@edges},
+        data        => $results->{showall} ? {    
+                            edges => \@edges,
+                            types => $results->{types},
+                            ntypes => $results->{ntypes},
+                            nodes => $results->{nodes},
+                            showall => $results->{showall},
+                            edges_all => \@edges_all
+                       } : { edges => \@edges },
     };
+
 }
 
 =head3 interaction_details
@@ -162,24 +173,29 @@ sub interaction_details {
 ############################################################
 
 sub _get_interactions {
-    my ($self, $data, $nearby) = @_;
+    my ($self, $data, $nearby, $from_table) = @_;
     my $object = $self->object;
     my @objects;
 
     #determine object type and extract interactions accordingly
     if ($nearby){ @objects = map {$_->Interaction} grep {$_->class =~ /gene/i} values %{$data->{nodes_obj}} }
 
+    if($nearby && $from_table && (scalar @objects > 100)){
+        $data->{showall} = 0;
+        return $data;
+    } 
+
     elsif ($object->class =~ /gene/i) { @objects = $object->Interaction }
     elsif ($object->class =~ /interaction/i ) { @objects = ($object) }
 
-#     $self->log->debug("nearby: $nearby, size: ", scalar @objects);
+    $self->log->debug("nearby: $nearby, size: ", scalar @objects);
     foreach my $interaction ( @objects ) {
       next if($data->{ids}{"$interaction"});
       if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
       my $edgeList = $self->_get_interaction_info($interaction, $nearby);
       foreach my $key (keys %{$edgeList}) {
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
-#           $self->log->debug("     effector: $effector, effected: $effected");
+          $self->log->debug("     effector: $effector, effected: $effected");
           next unless($effector);
           my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
           my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
