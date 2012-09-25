@@ -178,15 +178,18 @@ sub _get_interactions {
     my @objects;
 
     #determine object type and extract interactions accordingly
-    if ($nearby){ @objects = map {$_->Interaction} grep {$_->class =~ /gene/i} values %{$data->{nodes_obj}} }
+    if ($nearby){ 
+      @objects = map {$_->Interaction} grep {$_->class =~ /gene/i} values %{$data->{nodes_obj}} 
+    } elsif ($object->class =~ /gene/i) { 
+      @objects = $object->Interaction 
+    } elsif ($object->class =~ /interaction/i ) { 
+      @objects = ($object) 
+    }
 
-    if($nearby && $from_table && (scalar @objects > 100)){
+    if($nearby && $from_table && (scalar @objects > 3000)){
         $data->{showall} = 0;
         return $data;
     } 
-
-    elsif ($object->class =~ /gene/i) { @objects = $object->Interaction }
-    elsif ($object->class =~ /interaction/i ) { @objects = ($object) }
 
     $self->log->debug("nearby: $nearby, size: ", scalar @objects);
     foreach my $interaction ( @objects ) {
