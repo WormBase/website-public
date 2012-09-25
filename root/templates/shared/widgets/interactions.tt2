@@ -21,18 +21,18 @@
 
 
 [% IF fields.interactions.data.edges.size> 0 %]
-  [% NO_NEARBY = fields.interaction_details.data.edges.size > 450 %]
-  [% IF fields.interaction_details.data.showall || NO_NEARBY %]
-      [% TYPES = fields.interaction_details.data.types %]
-      [% NTYPES = fields.interaction_details.data.ntypes %]
-      [% NODES = fields.interaction_details.data.nodes %]
-      [% EDGES = fields.interaction_details.data.edges %]
+  [% NO_NEARBY = fields.interactions.data.edges_all.size > 450 %]
+  [% IF fields.interactions.data.showall || NO_NEARBY %]
+      [% TYPES = fields.interactions.data.types %]
+      [% NTYPES = fields.interactions.data.ntypes %]
+      [% NODES = fields.interactions.data.nodes %]
+      [% EDGES = fields.interactions.data.edges_all %]
       [% WRAPPER shared/fields/interaction_details.tt2; 
            #this is in a wrapper so the js will execute at the bottom of the widget and prevent blocking
            interaction_table;
          END %]
   [% ELSE %]
-    [% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field','gene',object.name.data.id,'interaction_details').path id="interactions_toggle"%][% END %]
+    [% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field',object.name.data.class,object.name.data.id,'interaction_details').path id="interactions_toggle"%][% END %]
     [% interaction_table %]
   [% END %]
 [% ELSE %]

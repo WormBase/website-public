@@ -1,7 +1,7 @@
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
 [% NTYPES = NTYPES || interaction_details.data.ntypes %]
-[% EDGES = EDGES || interaction_details.data.edgeVals.values %]
+[% EDGES = EDGES || interaction_details.data.edges %]
 
 <div id="cytoscapeweb_panel">
     Interaction Type <select class="cyto_panel" id="cyto_panel_type">
