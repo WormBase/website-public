@@ -340,7 +340,7 @@ sub classification {
 
     # Confirmed?
     $data->{confirmed} = @cds ? $cds[0]->Prediction_status->name : 0;
-    my $matching_cdna = @cds ? $cds[0]->Matching_cDNA : '';
+    my @matching_cdna = @cds ? $cds[0]->Matching_cDNA : '';
 
     # Create a prose description; possibly better in a template.
     my @prose;
@@ -370,7 +370,7 @@ sub classification {
     if ( $data->{confirmed} eq 'Confirmed' ) {
         push @prose, "Gene structures have been confirmed by a curator.";
     }
-    elsif ($matching_cdna) {
+    elsif (@matching_cdna) {
         push @prose,
             "Gene structures have been partially confirmed by matching cDNA.";
     }
@@ -1216,7 +1216,8 @@ sub anatomic_expression_patterns {
         $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
 
-        my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
+        my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
+#         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
 #         $pattern    =~ s/(.{384}).+/$1.../;
 		foreach($ep->Picture) {
 			 next unless($_->class eq 'Picture');
@@ -1225,7 +1226,6 @@ sub anatomic_expression_patterns {
         			$data_pack{"expr"}{"$ep"}{curated_images} = 1;
 					last;
 			 }	
-			
 		}
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
@@ -2083,19 +2083,20 @@ sub gene_ontology {
     my %data;
     foreach my $go_term ( $object->GO_term ) {
         foreach my $code ( $go_term->col ) {
-            my ( $evidence_code, $method, $detail ) = $code->row;
-            my $display_method = $self->_go_method_detail( $method, $detail );
+            my $method = join(", ", map {"$_"} (my @methods = $code->col));
+            my $display_method = $self->_go_method_detail( $method, join(", ", map { $_->col } @methods) );
 
             my $facet = $go_term->Type;
             $facet =~ s/_/ /g if $facet;
-          
-            $display_method =~ m/.*_(.*)/;    # Strip off the spam-dexer.
-            my $evidence = $self->_get_evidence($evidence_code);
-            $evidence->{'Description'}{$evidence_code->Description}{label} =$evidence_code->Description;
 
-            push @{ $data{$facet} }, {
+            $display_method =~ m/.*_(.*)/;    # Strip off the spam-dexer.
+            push @{ $data{"$facet"} }, {
                 method        => $1,
-                evidence_code => {text=>"$evidence_code",evidence=>$evidence},
+                evidence_code => {  text=>"$code",
+                                    evidence=> map {
+                                                $_->{'Description'} = $code->Description; 
+                                                $_ } ($self->_get_evidence($code))
+                                  },
                 term          => $self->_pack_obj($go_term),
             };
         }
@@ -3646,17 +3647,12 @@ sub other_sequences {
 # This should probably be an attribute or view configuration.
 sub _go_method_detail {
     my ($self,$method,$detail) = @_;
-    if ($method =~ m/Paper/){
-        return 'a_Curated';
-    } elsif ($detail =~ m/phenotype/i) {
-        return 'b_Phenotype to GO Mapping';
-    } elsif ($detail =~ m/interpro/i) {
-        return 'c_Interpro to GO Mapping';
-    } elsif ($detail =~ m/tmhmm/i) {
-        return 'd_TMHMM to GO Mapping';
-    } else {
-        return 'z_No Method';
-    }
+    return 'a_Curated' if $method =~ m/Paper/;
+    return 'z_No Method' unless $detail;
+    return 'b_Phenotype to GO Mapping' if ($detail =~ m/phenotype/i);
+    return 'c_Interpro to GO Mapping' if ($detail =~ m/interpro/i);
+    return 'd_TMHMM to GO Mapping' if ($detail =~ m/tmhmm/i);
+    return 'z_No Method';
 }
 
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
