@@ -1681,11 +1681,11 @@ sub alleles {
     my $self   = shift;
     my $object = $self->object;
     my @alleles = $object->Allele;
-    
+
     my @data;
     foreach my $allele (@alleles) {
-	next if ($allele->Variation_type =~ /SNP/ || $allele->Variation_type =~ /RFLP/);
-	push @data,$self->_process_variation($allele);       
+      next if grep {/SNP|RFLP/} $allele->Variation_type;
+      push @data,$self->_process_variation($allele);       
     }
     
     return { description => 'alleles found within this gene',
@@ -1751,8 +1751,8 @@ sub polymorphisms {
     
     my @data;
     foreach my $allele (@alleles) {
-	next unless ($allele->Variation_type =~ /SNP/ || $allele->Variation_type =~ /RFLP/);
-	push @data,$self->_process_variation($allele);
+      next unless grep {/SNP|RFLP/} $allele->Variation_type;
+      push @data,$self->_process_variation($allele);
     }
     
     return { description => 'polymorphisms and natural variations found within this gene',
