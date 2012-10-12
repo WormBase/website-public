@@ -1763,7 +1763,7 @@ sub polymorphisms {
 sub _process_variation {
     my ( $self, $variation ) = @_;
 
-    my $type = lc( $variation->Variation_type ) || 'unknown';
+    my $type = lc( join ', ', $variation->Variation_type ) || 'unknown';
 
     my $molecular_change = lc( $variation->Type_of_mutation || "other" );
     my $sequence_known = $variation->Flanking_sequences ? 'yes' : 'no';
