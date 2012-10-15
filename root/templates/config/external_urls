@@ -408,6 +408,16 @@
 		email		= 'help@wormbase.org'
 		search		= 'http://www.wormbase.org/db/seq/protein?name=%s'
 	}
+
+    MODEncodeTissueL2_A_class_neuron = {
+        description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_A_class_neuron'
+        base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_A_class_neuron'
+    }
+
+    MODEncodeTissueEMB_ACLASS = {
+        description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_ACLASS'
+        base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_ACLASS'
+    }
 }
 
 -%]
