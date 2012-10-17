@@ -134,15 +134,14 @@ sub assembly {
     my $object = $self->object;
 
     my @data = map {
-      my $ref = $_->Evidence->right if  $_->Evidence;
-      my @sequences = map { $self->_pack_obj($_) } $_->Sequences;
-      { name => $_->Name || "$_",
-        sequenced_strain => $_->Strain || "",
+      my $ref = $_->Evidence ? $_->Evidence->right : $_->Laboratory;
+      my $label = $_->Name || "$_";
+      { name => $self->_pack_obj($_->Name, "$label", coord => { start => 1 }),
+        sequenced_strain => $self->_pack_obj($_->Strain),
         first_wb_release => "WS" . $_->First_WS_release,
-        sequences => @sequences ? \@sequences : "",
         reference => $self->_pack_obj($ref)
       }
-    } $object->Assembly;
+    } grep {$_->Status eq 'Live'} $object->Assembly;
 
     return {
       description => "genomic assemblies",
