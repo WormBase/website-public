@@ -56,33 +56,6 @@ sub species_index :Path('/species') :Args(1)   {
 
     $self->_setup_page($c);
 
-    if ($species) {
-	# Awful portability breaking hack. Need actual species names.
-        my ($g,$s) = split('_',$species);
-	my $api = $c->model('WormBaseAPI');    
-	my $dsn = $api->_services->{'acedb'}->dbh || return 0; # OMG I am so sorry for this.
-	$g = uc($g);
-	my ($string) = $dsn->fetch(
-	    -query => "find Species $g*$s");
-	my ($object) = $dsn->fetch(-class=>'Species',-name=>"$string",-filled=>1);
-
-	if ($object) {	    
-	    my ($assembly) = $object->Assembly;
-	    if ($assembly) {
-		$c->log->warn($assembly);
-		# Pull out various information about the assmebly.
-		my $name = $assembly->Name;
-		my $strain = $assembly->Strain;
-		my $taxid  = $assembly->NCBITaxonomyID;
-		my $first_release = $assembly->First_WS_release;
-		$c->stash->{assembly_name}    = $name ? "$name" : undef;
-		$c->stash->{sequenced_strain} = $strain ? $self->_pack_obj($strain) : undef;
-		$c->stash->{ncbi_taxonomy_id} = $taxid  ? "$taxid" : undef;
-		$c->stash->{first_wormbase_release} = $first_release ? "$first_release" : undef;
-	    }
-	}
-    }
-
     $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
     $c->stash->{class}      = 'all';
     $c->stash->{is_class_index} = 1;   
@@ -129,12 +102,16 @@ sub class_index :Path("/species") Args(2) {
 
 sub object_report :Path("/species") Args(3) {
     my ($self,$c,$species,$class,$name) = @_;
-
     $c->stash->{section}  = 'species';
     $c->stash->{species}  = $species,
     $c->stash->{class}    = $class;
     $c->stash->{is_class_index} = 0;  
     $c->stash->{template} = 'species/report.tt2';
+
+    if($class eq 'species'){
+      $c->res->redirect($c->uri_for('/species',"$species")->path."?redirect=1", 307);
+      return;
+    }
 
     $c->detach unless $self->_is_class($c, $class);
 
@@ -163,6 +140,7 @@ sub object_report :Path("/species") Args(3) {
         $c->res->redirect($c->uri_for("/species", $taxonomy, $class, $name)->path, 307);
       }
     }
+
 
     if ($c->req->param('left') || $c->req->param('right')) {
         $c->log->debug("print the page as pdf");
