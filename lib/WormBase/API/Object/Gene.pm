@@ -2573,40 +2573,25 @@ B<Response example>
 
 =cut
 
-{ # closure for human_diseases
-    my $built_hashes;
-    my $gene2omim;
-    my $omim2disease_desc;
-    my $omim2disease_name;
 
-    # THIS SERIOUSLY NEEDS TO BE FIXED.
+sub human_diseases {
+  my $self = shift;
+  my $object = $self->object;
+  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col; 
+  my $search = $self->_api->xapian;
 
-    # the above is a temporary fix; at least the files will be loaded
-    #   in once only... a more permanent solution would be a database, even if
-    #   a simple one based on BDB or SQLite. -AD
-    sub human_diseases {
-        my $self = shift;
-
-        unless ($built_hashes) {
-            my $orthology_datadir = catdir($self->pre_compile->{base}, $self->ace_dsn->version, 'orthology');
-            $gene2omim         ||= _build_hash(catfile($orthology_datadir, 'gene_id2omim_ids.txt'));
-            $omim2disease_desc ||= _build_hash(catfile($orthology_datadir, 'omim_id2disease_desc.txt'));
-            $omim2disease_name ||= _build_hash(catfile($orthology_datadir, 'omim_id2disease_name.txt'));
-            $built_hashes = 1;
-        }
-
-        my @data_pack = map {
-            omim_id 	=> $_,
-            disease 	=> $omim2disease_name->{$_},
-            description => $omim2disease_desc->{$_},
-        }, split /%/, ($gene2omim->{$self->object} || ''); # note the comma for map!
-
-        return {
-            data        => @data_pack ? \@data_pack : undef,
-            description => 'Diseases related to the gene',
-        };
+  my %data;
+  foreach my $type ($data[0]->col) {
+    $data{$type} = ();
+    foreach my $disease ($type->col){
+      push (@{$data{$type}}, $search->_get_tag_info($self->_api, $disease, 'disease') || $disease)
     }
+  }
 
+  return {
+      description => 'Diseases related to the gene',
+      data        => %data ? \%data : undef,
+  };
 }
 
 =head3 protein_domains

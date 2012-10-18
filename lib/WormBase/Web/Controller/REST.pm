@@ -751,7 +751,7 @@ sub widget_GET {
 
     # references widget - no need for an object
     # only html
-    if ( $widget =~ m/references|disease/i ) {
+    if ( $widget =~ m/references/i ) {
           $c->req->params->{widget} = $widget;
           $c->req->params->{class} = $class;
           $c->go('search', 'search');
