@@ -1766,7 +1766,6 @@ sub _process_variation {
     my $type = lc( join ', ', $variation->Variation_type ) || 'unknown';
 
     my $molecular_change = lc( $variation->Type_of_mutation || "other" );
-    my $sequence_known = $variation->Flanking_sequences ? 'yes' : 'no';
 
     my %effects;
     my %locations;
@@ -1802,7 +1801,6 @@ sub _process_variation {
         type             => $type && "$type",
         molecular_change => $molecular_change && "$molecular_change",
 	aa_change        => $aa_change ? $aa_change : undef,
-        sequence_known   => $sequence_known,
         effects          => @effect ? \@effect : undef,
 	locations	 => @location ? \@location : undef,
     );
