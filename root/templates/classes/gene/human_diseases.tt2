@@ -16,14 +16,14 @@ Automatically inferred from human protein orthology:
 </h3></p><p>
 
 [% IF fields.human_diseases.data.disease; %]
-<h4>[% pluralize('Disease', fields.human_diseases.data.disease.size) %]:</h4>
+<h4>[% pluralize('Disease', fields.human_diseases.data.disease.size) %]</h4>
 [% FOREACH disease IN fields.human_diseases.data.disease; 
     tag2link(disease, disease.label _ ' (OMIM:' _ disease.id _ ')');
     '<br />';
    END;%]
 [% END %]
 [% IF fields.human_diseases.data.gene; %]
-<h4>[% pluralize('Gene', fields.human_diseases.data.gene.size) %]:</h4>
+<h4>[% pluralize('Gene', fields.human_diseases.data.gene.size) %]</h4>
 [% FOREACH disease IN fields.human_diseases.data.gene; 
     tag2link(disease, disease.label _ ' (OMIM:' _ disease.id _ ')');
     '<br />';
