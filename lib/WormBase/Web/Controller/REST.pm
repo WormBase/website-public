@@ -987,7 +987,18 @@ sub widget_class_index_GET {
     # No boiler since this is an XHR request.
     $c->stash->{noboiler} = 1;
 
-    if($widget=~m/browse|basic_search|summary|downloads|data_unavailable/){
+    if($widget eq "assemblies") {
+      if ($species) {
+        my $api = $c->model('WormBaseAPI');
+        my $species_info = $c->config->{sections}->{species_list}->{$species};
+        my $object = $api->fetch({class=>'Species',name=>$species_info->{genus} . " " . $species_info->{species}});
+        $c->stash->{fields}->{assembly} = $object->assembly() if $object;
+        $c->stash->{fields}->{name} = $object->name() if $object;
+        $c->stash->{fields}->{ncbi_id} = $object->ncbi_id() if $object;
+      }
+    }
+
+    if($widget=~m/browse|basic_search|summary|downloads|assemblies|data_unavailable/){
       $c->stash->{template}="shared/widgets/$widget.tt2";
     }elsif($class eq 'all'){
       $c->stash->{template} = "species/$species/$widget.tt2";
@@ -996,7 +1007,6 @@ sub widget_class_index_GET {
     }
     $c->detach('WormBase::Web::View::TT'); 
 }
-
 
 sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
 

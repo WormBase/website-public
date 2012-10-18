@@ -1,0 +1,17 @@
+[%
+'<p><span class="species">' _ fields.name.data.label _ '</span>';
+IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; END;
+
+      build_data_table(order=['name','sequenced_strain','first_wb_release', 'reference'],
+                        columns={ name         => 'Name',
+                          sequenced_strain  => 'Sequenced strain',
+                      first_wb_release           => 'First WB release',
+                      reference           => 'Origin',
+                               },
+                         key='assembly');
+
+
+UNLESS fields.assembly.data;
+  '<p class="caveat-emptor">No assemblies curated for this species</p>';
+END;
+%]
