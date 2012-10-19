@@ -36,7 +36,7 @@ END;
 
 # Life Stage
 WRAPPER $field_block title="Life Stage" key="life_stage";
-     fields.life_stage.data;
+     tag2link(fields.life_stage.data);
 END;
 
 
