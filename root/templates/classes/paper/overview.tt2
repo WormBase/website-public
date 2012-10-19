@@ -19,15 +19,16 @@
 	   title = fields.title.data
     %]
 	[% IF fields.pmid.data %]
-	   [% WRAPPER $field_block title="PMID"-%]
+	   [% WRAPPER $field_block title="PMID" key="pmid"-%]
 	   	  [% external_link('ncbi_pubmed', fields.pmid.data, fields.pmid.data) %]
 	   [% END %]
 	[% END %]
 	[% IF fields.doi.data %]
-	   [% WRAPPER $field_block title="DOI"-%]
+	   [% WRAPPER $field_block title="DOI" key="doi"-%]
 	   	  [% external_link($DOI _ fields.doi.data, fields.doi.data, fields.doi.data) %]
 	   [% END %]
 	[% END %]
+
 	[% WRAPPER $field_block title="CiteULike"-%]
 	   [% external_link('http://www.citeulike.org/posturl?url=' _ url,
 	   	  				'<img src="/img/buttons/cul.gif" alt="CiteULike"> Bookmark') %]
@@ -37,7 +38,9 @@
 	   [% external_link('http://www.delicious.com/save?v=5&url=' _ url _ '&title=' _ title,
 	   	  				'<img src="/img/buttons/delicious.gif" alt="De.licio.us"> Bookmark') %]
 	[% END %]
-
+    [% WRAPPER $field_block title="Status" key="status" -%]
+      [% fields.status.data %]
+    [% END %]
 [% END %]
 
 
@@ -123,7 +126,9 @@
 	[% END %]
 
 
-
+[% IF fields.merged_into.data %]
+   <p><b>Note:</b> This paper has been merged into [% tag2link(fields.merged_into.data) %]</p>
+[% END %]
 
 
 [% remarks %]
