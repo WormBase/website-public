@@ -3,13 +3,13 @@
 # Movies
 WRAPPER $field_block title="Movies" key="movies";
     FOREACH item IN fields.movies.data;
-    WRAPPER toggle title='<a href="/movies/' _ item.id _ '">' _ item.label _ '</a>';
+    WRAPPER toggle title='<a href="/img-static/movies/' _ item.id _ '">' _ item.label _ '</a>';
       '<OBJECT  WIDTH="320"HEIGHT="180"
       CODEBASE="http://www.apple.com/qtactivex/qtplugin.cab">
-      <PARAM name="SRC" VALUE="/movies/' _ item.id _ '">
+      <PARAM name="SRC" VALUE="/img-static/movies/' _ item.id _ '">
       <PARAM name="AUTOPLAY" VALUE="true">
       <PARAM name="CONTROLLER" VALUE="true">
-      <EMBED SRC="/movies/' _ item.id _ ' " WIDTH="300" HEIGHT="250" AUTOPLAY="true" CONTROLLER="true" PLUGINSPAGE="http://www.apple.com/quicktime/download/">
+      <EMBED SRC="/img-static/movies/' _ item.id _ ' " WIDTH="300" HEIGHT="250" AUTOPLAY="true" CONTROLLER="true" PLUGINSPAGE="http://www.apple.com/quicktime/download/">
       </EMBED>
       </OBJECT>';
     END;
