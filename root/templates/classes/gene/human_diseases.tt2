@@ -1,7 +1,7 @@
 
 [%
 IF (fields.human_disease_relevance.data.defined);
-'<p><h3>Curated Human disease associations:</h3></p><p>';
+'<p><h3>Curated Human disease associations</h3></p><p>';
     FOREACH obj IN fields.human_disease_relevance.data;
         '<div class="text-width">';
             evidence(obj.evidence,sd, obj.text);
@@ -10,23 +10,22 @@ IF (fields.human_disease_relevance.data.defined);
 '</p>';
 END;
 %]
-[% IF fields.human_diseases.data; %]
-<p><h3>
-Automatically inferred from human protein orthology:
-</h3></p><p>
 
-[% IF fields.human_diseases.data.disease; %]
-<h4>[% pluralize('Disease', fields.human_diseases.data.disease.size) %]</h4>
-[% FOREACH disease IN fields.human_diseases.data.disease; 
-    tag2link(disease, disease.label _ ' (OMIM:' _ disease.id _ ')');
-    '<br />';
-   END;%]
-[% END %]
-[% IF fields.human_diseases.data.gene; %]
-<h4>[% pluralize('Gene', fields.human_diseases.data.gene.size) %]</h4>
-[% FOREACH disease IN fields.human_diseases.data.gene; 
-    tag2link(disease, disease.label _ ' (OMIM:' _ disease.id _ ')');
-    '<br />';
-   END;%]
-[% END %]
+[% IF fields.human_diseases.data.defined; %]
+  <p>
+    <h3>Automatically inferred from human protein orthology</h3>
+  </p>
+
+  <p>
+  [% FOREACH type IN ['disease', 'gene'] %]
+    [% IF fields.human_diseases.data.$type; %]
+      [% t = type FILTER ucfirst %]
+      <h4>[% pluralize(t, fields.human_diseases.data.$type.size) %]</h4>
+      [% FOREACH item IN fields.human_diseases.data.$type; 
+          tag2link(item, item.label _ ' (OMIM:' _ item.id _ ')');
+          '<br />';
+        END;%]
+    [% END %]
+  [% END %]
+  </p>
 [% END %]

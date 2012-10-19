@@ -2579,10 +2579,12 @@ sub human_diseases {
   my $search = $self->_api->xapian;
 
   my %data;
-  foreach my $type ($data[0]->col) {
-    $data{$type} = ();
-    foreach my $disease ($type->col){
-      push (@{$data{$type}}, $search->_get_tag_info($self->_api, $disease, 'disease') || $disease)
+  if($data[0]){
+    foreach my $type ($data[0]->col) {
+      $data{$type} = ();
+      foreach my $disease ($type->col){
+        push (@{$data{$type}}, $search->_get_tag_info($self->_api, $disease, 'disease') || $disease)
+      }
     }
   }
 
