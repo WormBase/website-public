@@ -14,7 +14,7 @@
 	  	                  molecular_change  => 'Molecular<br /> change',
 			          effects           => 'Protein<br /> effects',
 				  locations         => 'Locations',
-                  phen_count         => '# of Phenotypes',
+                  phen_count         => '# of<br /> Phenotypes',
 				   aa_change         => 'Protein<br /> change',
                                },
                          key='alleles');
@@ -28,7 +28,7 @@
 		                   molecular_change  => 'Molecular<br /> change',
 			           effects           => 'Protein<br /> effects',
 			           locations         => 'Locations',
-                  phen_count         => '# of Phenotypes',
+                  phen_count         => '# of<br /> Phenotypes',
 				   aa_change         => 'Protein<br /> change',
                                  },
                          key='polymorphisms');
