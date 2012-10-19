@@ -1767,6 +1767,7 @@ sub _process_variation {
 
     my $molecular_change = lc( $variation->Type_of_mutation || "other" );
 
+    my @phens = $variation->Phenotype;
     my %effects;
     my %locations;
     my ($aa_change,$aa_position);
@@ -1802,6 +1803,7 @@ sub _process_variation {
         molecular_change => $molecular_change && "$molecular_change",
 	aa_change        => $aa_change ? $aa_change : undef,
         effects          => @effect ? \@effect : undef,
+        phen_count       => scalar @phens || 0,
 	locations	 => @location ? \@location : undef,
     );
     return \%data;
