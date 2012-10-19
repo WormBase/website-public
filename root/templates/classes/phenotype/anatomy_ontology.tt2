@@ -1,6 +1,6 @@
 [% 
 
-  WRAPPER $field_block title="Anatomy Ontology";
+  WRAPPER $field_block title="Anatomy Ontology" key="anatomy_ontology";
         FOREACH data IN fields.anatomy_ontology.data;
             tag2link(data) _ '<br>';
         END;            
