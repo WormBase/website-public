@@ -312,13 +312,18 @@ sub display_results {
     my $search_type = $cgi->{"search_type"};
     my $blast_app   = $cgi->{"blast_app"} || '';
 
+    my $database   = $cgi->{"database"};
+    my @path_parts = split('_',$database);
+    my $species    = $path_parts[1] . '_' . $path_parts[2];
+
     # Generate (i)Alignment Image URL and (ii)Karyotype Viewer URL
 #     my ($alignment_image,  $kviewer_adds_ref, $genome_links_ref,
 #         $expand_links_ref, $image_map_pieces_ref
 #       )
     my $data = $self->process_result_file(
         $query_file,  $query_type, $result_file,
-        $search_type, $blast_app
+        $search_type, $blast_app,
+	$species,
       );
 
     
@@ -326,7 +331,7 @@ sub display_results {
     my @result_file_array;
 #    warn "$address done slurping" if DEBUG;
     my $stream = slurp($result_file);
-#note!!!!!!! this will not work currately if the format of the out put change.
+#note!!!!!!! this will not work currently if the format of the output change.
     $blast_app=uc($blast_app);
     foreach my $file (split /$blast_app/, $stream) {
         next unless($file);
@@ -659,7 +664,7 @@ sub make_links {
  
 
 sub process_result_file {
-    my ($self,$query_file, $query_type, $result_file, $search_type, $blast_app) =
+    my ($self,$query_file, $query_type, $result_file, $search_type, $blast_app, $species) =
 	@_;
     my @data;
 
@@ -814,7 +819,7 @@ sub process_result_file {
 		    # my $end = $hit->end;
 
 		    my ($piece_refs_ref, $hit_genome_link, $hit_expand_link) =
-		      $self->extract_hit_info($hit, $query_name, $query_type);
+		      $self->extract_hit_info($hit, $query_name, $query_type,$species);
 		    push @piece_refs, @{$piece_refs_ref} if @{$piece_refs_ref};
 
 		    $genome_links{$hit->name} = $hit_genome_link;
@@ -973,7 +978,7 @@ sub process_result_file {
 }
 
 sub extract_hit_info {
-    my ($self,$hit, $query_name, $query_type) = @_;
+    my ($self,$hit, $query_name, $query_type, $species) = @_;
 
     #my $piece_ref;
     my @piece_refs;
@@ -996,7 +1001,11 @@ sub extract_hit_info {
 
     elsif ($hit_name =~ /^(CHROMOSOME_|)([IVX]+|MtDNA)/) {
         $gbrowse_root_id = 'c_elegans';
+    } else {
+	# Just use the species ID
+	$gbrowse_root_id = $species;
     }
+
 
     my $gbrowse_root = "$gbrowse_root_id/"
       if $gbrowse_root_id;
