@@ -1112,6 +1112,140 @@ sub pmid {
     };
 }
 
+
+=head3 history
+
+This method will return a data structure containing
+the history of the paper
+
+=over
+
+=item PERL API
+
+ $data = $model->history();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/history
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub history {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $action ('Merged_into', 'Acquires_merge') {
+      (my $a = $action) =~ s/_/ /;
+      push @data, map {
+        { action  => $a,
+        remark    => $self->_pack_obj($_)}
+      } $object->$action;
+    }
+
+    return {
+        description => 'the curatorial history of the gene',
+        data        => @data ? \@data : undef
+    };
+}
+
+
+=head3 merged_into
+
+This method will return the paper this paper has been merged into
+if the paper has been merged
+
+=over
+
+=item PERL API
+
+ $data = $model->merged_into();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/merged_into
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub merged_into {
+    my $self   = shift;
+    my $paper = $self->object->Merged_into;
+
+    return {
+        description => 'the curatorial history of the gene',
+        data        => $paper ? $self->_pack_obj($paper) : undef
+    };
+}
+
+
 =head3 intext_citation
 
 This method will return a data structure containing

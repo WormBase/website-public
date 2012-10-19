@@ -1766,8 +1766,8 @@ sub _build_status {
 	: (eval{$object->Status} ? $object->Status : 'unverified');
 
     return {
-        description => "current status of the $class:$object if not Live",
-        data        => $status && (($status eq 'Live') ? undef : "$status"),
+        description => "current status of the $class:$object if not Live or Valid",
+        data        => $status && (($status eq 'Live' || $status eq 'Valid') ? undef : "$status"),
     };
 }
 
