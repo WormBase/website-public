@@ -137,7 +137,7 @@ cache_root = /usr/local/wormbase/databases/%s/cache
 #     image_base_classic = /usr/local/wormbase/website-shared-files/html/images-website-classic
       gene_expr          = $image_base/virtualworm/Gene_Expr_Renders
       expr_object        = $image_base/virtualworm/Expr_Object_Renders
-      picture            = $image_base/picture_object
+      picture            = $image_base/pictures
       
     </pre_compile>
 

@@ -8,7 +8,7 @@ label        = sub {
 	}
 description = sub {
 	    my $f = shift;
-	    my (@alias) = $f->attributes('Alias');
+	    my @alias = $f->attributes('Alias');
 	    my @values;
 	    if (@alias) {
 	        my @orthologs;
