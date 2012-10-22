@@ -321,10 +321,11 @@ B<Response example>
 
 sub lengths {
     my ($self) = @_;
-    my %data = map { $_ => $self ~~ "$_" } qw(Seq_length Gel_length);
+    my %data;
+    map { if(my $len = $self ~~ "$_") { $data{$_} = $len; } } qw(Seq_length Gel_length);
     return {
-	description => 'lengths relevant to this clone',
-	data   	    => %data ? \%data : undef,
+      description => 'lengths relevant to this clone',
+      data   	    => %data ? \%data : undef,
     };
 }
 
@@ -780,6 +781,19 @@ sub gridded_on {
 
 
 
+sub pcr_product {
+    my ($self) = @_;
+    my $object = $self->object;
+    my $PCR_product = $object->PCR_product;
+    my $pcr = $self->_api->fetch({class=>'Pcr_oligo',name=>"$PCR_product"}) if $PCR_product;
+    return {
+      description => 'PCR product associated with this clone',
+      data        => $PCR_product ? 
+        { pcr_product => $self->_pack_obj($PCR_product),
+          oligos      => $pcr->oligos() }: undef,
+    };
+}
+
 #######################################
 #
 # The External Links widget
@@ -861,9 +875,9 @@ sub _build__segments {
 sub _build_remarks {
     my ($self) = @_;
 
-    my @remarks = map { "$_" } (@{$self ~~ '@General_remark'},
-                                @{$self ~~ '@Y_remark'},
-                                @{$self ~~ '@PCR_remark'});
+    my @remarks = map { {text => "$_"} } ($self ~~ 'General_remark',
+                                $self ~~ 'Y_remark',
+                                $self ~~ 'PCR_remark');
 
     return {
         description => 'Remarks',
