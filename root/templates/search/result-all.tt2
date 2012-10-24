@@ -28,14 +28,15 @@
         <li>
           <span class="ui-icon ui-icon-triangle-1-s" style="float:right;margin-top:0.2em"></span>
           <span class="current-search" style="float:right">for anything</span>
-          <ul>
-
-          [% FOREACH cls IN cls_list.sort  %]
-              [% IF cls == 'title'; NEXT; END; %]
-              <li value="[% cls %]" onClick='WB.search_change("[% cls %]");'><a>[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title%]</a></li>
+          [% c_list = cls_list.sort.grep('[^title]') %]
+          [% FOREACH amt IN [0..2] %]
+            <ul style="float:right;margin-right:[% (amt * 7.5) %]em;">
+            [% FOREACH cls IN c_list.splice( ((2-amt) * 13) ,  13)  %]
+                [% IF cls == 'title'; NEXT; END; %]
+                <li value="[% cls %]" onClick='WB.search_change("[% cls %]");'><a>[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title%]</a></li>
+            [% END %]
+            </ul>
           [% END %]
-
-          </ul>
         </li>
       </ul>
 
@@ -53,7 +54,6 @@
       </h2>
       </div>
     <div style="height:25em; max-width:50em">
-
 <br /><br />
 <h3>Classes</h3>
           [% FOREACH cls IN cls_list.sort  %]
