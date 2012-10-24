@@ -3,7 +3,7 @@
 
 WRAPPER highlight_box;
 
-   WRAPPER $field_block title="Email";
+   WRAPPER $field_block key="email" title="Email";
         fields.email.data.join("<br>");
    END;
 
@@ -39,7 +39,7 @@ extended_social_links(fields.name.data.id);
 WRAPPER $field_block title="Institution" key="institution";
     fields.institution.data;
 END;
-      
+
 WRAPPER $field_block title="Web Page" key="web_page";
     FOREACH url IN fields.web_page.data;
        '<a href="' _ url _ '">' _ url _ '</a><br>';
