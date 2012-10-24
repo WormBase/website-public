@@ -3455,11 +3455,11 @@ sub _build_sequence_strings {
         # plus strand?
 
         # Insertions will have no sequence and I should not be able to
-        # extract any either (We use logical or here to check for the
+        # extract any either (We use logical "or" here to check for the
         # $strand flag. Sometimes insertions or deletions will have no
         # sequence.
 
-        if ($wt eq $extracted_wt && $strand ne '-') {
+        if (($wt eq $extracted_wt && $strand ne '-') || ($type =~ /insertion/i)) {
             # Yes, it has.  Do nothing.
         }
         else {
