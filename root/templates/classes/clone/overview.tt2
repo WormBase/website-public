@@ -80,6 +80,26 @@ WRAPPER $field_block title='Gridded on' key='gridded_on';
    tags2link(fields.gridded_on.data);
 END;
 
+
+WRAPPER $field_block title='PCR product' key='pcr_product';
+   tag2link(fields.pcr_product.data.pcr_product);
+
+END;
+
+IF fields.pcr_product.data.oligos.data;
+      left  = fields.pcr_product.data.oligos.data.0; 
+      right = fields.pcr_product.data.oligos.data.1;
+      IF left.obj.id.match('_b$'); tmp = left; left = right; right = tmp; END; # SWAP
+
+      WRAPPER $field_block title='Left Oligo' key='';
+         tag2link(left.obj) _ ': ' _ left.sequence;
+      END;
+   
+      WRAPPER $field_block title='Right Oligo' key='';
+          tag2link(right.obj) _ ': ' _ right.sequence;
+      END;
+END;
+
 remarks();
 '</div>';
 %]

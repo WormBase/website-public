@@ -31,6 +31,15 @@ has '_doccount' => (
     },
 );
 
+has 'modelmap' => (
+    is => 'ro',
+    lazy => 1,
+    required => 1,
+    default => sub {
+        return WormBase::API::ModelMap->new; # just a blessed scalar ref
+    },
+);
+
 
 sub search {
     my ( $class, $c, $q, $page, $type, $species, $page_size) = @_;
@@ -39,7 +48,7 @@ sub search {
     $page_size  ||=  10;
 
     if($type){
-      $q .= " $type..$type";
+      $q = $class->_add_type_range($c, $q, $type);
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
         $q .= " ptype:$s..$s" if defined $s;
@@ -71,10 +80,8 @@ sub search {
 
 sub search_autocomplete {
     my ( $class, $c, $q, $type) = @_;
+    $q = $class->_add_type_range($c, $q . "*", $type);
 
-    if($type){
-      $q .= "* $type..$type";
-    }
 
     my $query=$class->syn_qp->parse_query( $q, 64|16 );
     my $enq       = $class->syn_db->enquire ( $query );
@@ -101,7 +108,8 @@ sub search_exact {
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
     }elsif(!($q =~ m/\s.*\s/)){
-      $q .= " $type..$type" if $type;
+      $q = $class->_add_type_range($c, $q, $type);
+
       $query=$class->syn_qp->parse_query( $q, 1|2 );
       $enq       = $class->syn_db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
@@ -109,7 +117,8 @@ sub search_exact {
 
     my $mset      = $enq->get_mset( 0,2 ) if $enq;
     if(!$mset || $mset->empty()){
-      $q .= " $type..$type" if $type;
+      $q = $class->_add_type_range($c, $q, $type);
+
       $query=$class->qp->parse_query( $q, 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
@@ -129,7 +138,8 @@ sub search_count {
  my ( $class, $c, $q, $type, $species) = @_;
 
     if($type){
-      $q .= " $type..$type";
+      $q = $class->_add_type_range($c, $q, $type);
+
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
         $q .= " ptype:$s..$s" if defined $s;
@@ -216,10 +226,9 @@ sub _split_fields {
 sub _get_tag_info {
   my ($self, $c, $id, $class, $fill, $footer, $aceclass) = @_;
 
-  my $api = (exists $c->{modelmap}) ? $c : $c->model('WormBaseAPI');
   if ($class) { # WB class was provided
-      $aceclass = $api->modelmap->WB2ACE_MAP->{class}->{ucfirst($class)}
-                || $api->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($class)};
+      $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($class)}
+                || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($class)};
       $aceclass = $class unless $aceclass;
   }
 
@@ -257,14 +266,29 @@ sub _get_tag_info {
 sub _pack_search_obj {
   my ($self, $c, $doc, $label) = @_;
   my $id = $doc->get_value(1);
+  my $class = $doc->get_value(2);
+  $class = $self->modelmap->ACE2WB_MAP->{class}->{$class} || $self->modelmap->ACE2WB_MAP->{fullclass}->{$class};
   return {  id => $id,
             label => $label || $doc->get_value(6) || $id,
-            class => $doc->get_value(2),
+            class => lc($class),
             taxonomy => $doc->get_value(5),
             coord => { start => $doc->get_value(9),
                        end => $doc->get_value(10),
                        strand => $doc->get_value(11)}
   }
+}
+
+sub _add_type_range {
+  my ($self, $c, $q, $type) = @_;
+  if( $type ){
+      my $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($type)}
+                || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($type)};
+      my @classes = ref($aceclass) eq 'ARRAY' ? map {lc($_)} @{$aceclass} : ($type);
+      foreach my $t (@classes){
+        $q .= " $t..$t";
+      }
+  }
+  return $q;
 }
 
 
