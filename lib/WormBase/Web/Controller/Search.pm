@@ -71,7 +71,8 @@ sub search :Path('/search') Args {
         my $it = $api->xapian->search_exact($c, $tmp_query, $search);
         if($it->{mset}->size() == 1){
           my $o = @{$it->{struct}}[0];
-          my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5), $o->get_document->get_value(9));
+          my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
+          my $url = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
           unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
           $c->res->redirect($url, 307);
           return;
@@ -114,15 +115,8 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
-    my $class = $o->get_document->get_value(2);
-    my $id = $o->get_document->get_value(1);
-    my $url = $self->_get_url($c, $class, $id, $o->get_document->get_value(5), $o->get_document->get_value(9));
-    my $label = $o->get_document->get_value(6) || $id;
-    my $objs = {    class   =>  $class,
-                    id      =>  $id,
-                    label   =>  $label,
-                    url     =>  $url,
-                };
+    my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
+    $objs->{url} = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
     push(@ret, $objs);
   }
 
