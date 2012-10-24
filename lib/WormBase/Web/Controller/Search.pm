@@ -71,7 +71,8 @@ sub search :Path('/search') Args {
         my $it = $api->xapian->search_exact($c, $tmp_query, $search);
         if($it->{mset}->size() == 1){
           my $o = @{$it->{struct}}[0];
-          my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5), $o->get_document->get_value(9));
+          my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
+          my $url = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
           unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
           $c->res->redirect($url, 307);
           return;
