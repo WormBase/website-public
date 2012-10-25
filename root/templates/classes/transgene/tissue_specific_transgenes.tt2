@@ -1,0 +1,16 @@
+[%
+
+'<p><div class="caveat-emptor">The following table lists known tissue-specific transgenes.</div></p>';
+
+WRAPPER $field_block title="" key="tissue_specific_transgenes";
+
+   build_data_table(order=['transgene','marker_for','summary','reference' ],
+                    columns={ transgene   => 'Transgene',
+		    	      marker_for  => 'Marker For',
+		              summary     => 'Summary',
+			      reference   => 'Reference',
+			      },
+                    key='tissue_specific_transgenes'); 
+END;
+
+%]
