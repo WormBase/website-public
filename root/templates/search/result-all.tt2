@@ -6,7 +6,7 @@
    <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">
     <div id="searchBody" class="ui-corner-all">
 
-    [% cls_list = c.config.sections.species.keys.merge(c.config.sections.resources.keys) %]
+    [% cls_list = c.config.sections.species.keys.merge(c.config.sections.resources.keys).sort.grep('[^title]') %]
 
       <ul id="searchSelect">
         <li>
@@ -28,10 +28,11 @@
         <li>
           <span class="ui-icon ui-icon-triangle-1-s" style="float:right;margin-top:0.2em"></span>
           <span class="current-search" style="float:right">for anything</span>
-          [% c_list = cls_list.sort.grep('[^title]') %]
+          [% row_size = (cls_list.size div 3) + ( ((cls_list.size mod 3) > 1) ? 1 : 0) %]
           [% FOREACH amt IN [0..2] %]
             <ul style="float:right;margin-right:[% (amt * 7.5) %]em;">
-            [% FOREACH cls IN c_list.splice( ((2-amt) * 13) ,  13)  %]
+            [% i = ((2-amt) * row_size) %]
+            [% FOREACH cls IN cls_list.slice( i ,  i + row_size - 1)  %]
                 [% IF cls == 'title'; NEXT; END; %]
                 <li value="[% cls %]" onClick='WB.search_change("[% cls %]");'><a>[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title%]</a></li>
             [% END %]
@@ -56,8 +57,7 @@
     <div style="height:25em; max-width:50em">
 <br /><br />
 <h3>Classes</h3>
-          [% FOREACH cls IN cls_list.sort  %]
-              [% IF cls == 'title'; NEXT; END; %]
+          [% FOREACH cls IN cls_list  %]
               <a href="javascript:void(0)" onClick='WB.search_change("[% cls %]");' style="white-space:nowrap;">[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title || cls %]</a>&nbsp; &bull; &nbsp;
           [% END %]
 <br /> <br />
