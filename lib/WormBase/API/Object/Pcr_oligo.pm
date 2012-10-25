@@ -905,6 +905,128 @@ sub assay_conditions {
 	};
 }
 
+=head3 rnai
+
+Returns a list of all associated rnai experiemnts
+
+=over
+
+=item PERL API
+
+ $data = $model->rnai();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+PCR_product, Oligo_set, or Oligo ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/rnai
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+sub rnai {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @rnai = map { $self->_pack_obj($_); } eval {$object->RNAi};
+
+    return {
+        description => 'associated RNAi experiments',
+        data        => @rnai ? \@rnai : undef,
+    };
+}
+
+
+=head3 source
+
+Returns text for linking to MRC_geneservice
+
+=over
+
+=item PERL API
+
+ $data = $model->source();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+PCR_product, Oligo_set, or Oligo ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/source
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub source {
+    my ($self) = @_;
+    my $object = $self->object;
+    my $gene_service_id = eval { $object->Clone->Database(3); };
+
+    return {
+        description => 'MRC geneservice reagent',
+        data        => $gene_service_id ? "$gene_service_id" : undef,
+    };
+}
+
 ########################################
 ## Methods pertaining to Oligo_set
 ########################################
