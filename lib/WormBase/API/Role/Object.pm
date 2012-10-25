@@ -1167,9 +1167,10 @@ sub _build_phenotypes_data {
     return [ map {
         my $desc = $_->Description;
         my $remark = $_->Remark;
+        my $ev = $self->_get_evidence($_);
         {
             phenotype   => $self->_pack_obj($_),
-            evidence => { evidence => $self->_get_evidence($_)},
+            evidence => $ev ? {evidence => $ev} : undef,
             description => $desc    && "$desc",
             remarks     => $remark && "$remark",
         };
