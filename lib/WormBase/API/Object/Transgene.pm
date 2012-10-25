@@ -30,6 +30,103 @@ http://wormbase.org/species/*/transgene
 
 =cut
 
+{ # temporary fix. this should actually be cached for the entire class.
+  # better yet, this should be designated as a class method, signaled at the
+  # controller level for caching
+    my $transgenes;
+    
+    sub tissue_specific_transgenes {
+        my $self   = shift;
+	
+        return $transgenes ||= {
+            description => 'tissue-specific transgenes',
+            data        => [
+                map {
+		    my $marker_for = $_->Marker_for;
+		    my $summary    = $_->Summary;
+		    my $ref        = $marker_for->right(2);
+		    
+		    {
+			transgene          => $self->_pack_obj($_),
+			marker_for         => $self->_pack_obj($_),
+			summary            => "$summary",
+			reference          => $self->_pack_obj($ref),
+		    };
+		} grep { $_->Marker_for }                
+		$self->ace_dsn->dbh->fetch(-query => "find Transgene")
+		], 
+	};
+    }
+}
+
+
+
+
+{ # temporary fix. this should actually be cached for the entire class.
+  # better yet, this should be designated as a class method, signaled at the
+  # controller level for caching
+    my $transgenes;
+    
+    sub mapped_transgenes {
+        my $self   = shift;
+	
+        return $transgenes ||= {
+            description => 'mapped transgenes',
+            data        => [
+                map {
+		    my $summary      = $_->Summary;
+		    my $reporter     = $_->Reporter; 
+		    my $map_position = $_->Map;
+		    my @expr         = map { $self->_pack_obj($_) } $_->Expr_pattern;
+		    my @strains      = map { $self->_pack_obj($_) } $_->Strain;
+		    my $gene         = $_->Driven_by_gene;
+
+		    my (%unique_ao,@ao);
+		    my (%unique_life_stage,@life_stage);
+		    foreach my $exp ($_->Expr_pattern) {			    
+			my @anatomy_terms = $exp->Anatomy_term;
+			foreach (@anatomy_terms) {
+			    $unique_ao{$_} = $_;
+			}
+
+			my @life_stage = $exp->Life_stage;
+			foreach (@life_stage) {
+			    $unique_life_stage{$_} = $_;
+			}
+		    }
+		    foreach (keys %unique_ao) {
+			push @ao,$self->_pack_obj($unique_ao{$_});
+		    }		    
+
+		    foreach (keys %unique_life_stage) {
+			push @life_stage,$self->_pack_obj($unique_life_stage{$_});
+		    }		    
+
+		    my $marker_for   = $_->Marker_for;
+		    my $ref          = $marker_for->right(2) if $marker_for;
+		    
+		    {
+			transgene          => $self->_pack_obj($_),
+			summary            => "$summary",
+			map_position       => "$map_position",			
+			reporter           => "$reporter",
+			expression_patterns => \@expr,
+			strains            => \@strains,
+		        driven_by          => $self->_pack_obj($gene),
+			ao                 => \@ao,
+			life_stage         => \@life_stage,
+			reference          => $self->_pack_obj($ref),
+		    };
+		} grep { $_->Map }                
+		$self->ace_dsn->dbh->fetch(-query => "find Transgene")
+		], 
+	};
+    }
+}
+
+
+
+
 
 #######################################
 #

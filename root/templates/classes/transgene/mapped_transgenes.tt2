@@ -1,0 +1,22 @@
+[%
+
+'<p><div class="caveat-emptor">The following table lists transgenes integrated and mapped to the genome.</div></p>';
+
+WRAPPER $field_block title="" key="mapped_transgenes";
+
+   build_data_table(order=['transgene','summary','reporter','strains','map_position','expression_patterns','driven_by','ao','life_stage','reference' ],
+                    columns={ transgene   => 'Transgene',
+		              summary     => 'Summary',
+		    	      reporter    => 'Reporter',
+			      strains     => 'Strains',
+			      map_position=> 'Map position',
+			      expr        => 'Expression patterns',
+			      driven_by   => 'Driven by',
+			      ao          => 'Anatomy terms',
+			      life_stage  => 'Life stage',			      
+			      reference   => 'Reference',
+			      },
+                    key='mapped_transgenes'); 
+END;
+
+%]
