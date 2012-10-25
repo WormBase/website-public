@@ -84,6 +84,10 @@ IF class == 'PCR_product';
     WRAPPER $field_block title='Assay conditions' key='assay_conditions';
          fields.assay_conditions.data;
     END;
+
+    WRAPPER $field_block title="RNAi experiments" key="rnai";
+        tags2link(fields.rnai.data);
+    END;
 END;
 
 # TODO: logic for product on ORFeome project;
@@ -98,5 +102,9 @@ IF class == 'Oligo';
        tags2link(fields.pcr_products.data, '<br />', 'PCR Products');
     END;
 END;
+
+    WRAPPER $field_block title='Reagent' key='source';
+          external_link('MRC_geneservice','Source BioScience: ' _ fields.source.data,fields.source.data);
+    END;
 
 %]
