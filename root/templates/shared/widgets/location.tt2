@@ -3,7 +3,7 @@
     class = object.name.data.class FILTER lower;
     # Transcripts lone class not placed on genetic map
     UNLESS class.match('transcript');
-     WRAPPER $field_block title="Genetic position";
+     WRAPPER $field_block title="Genetic position" key="genetic_position";
       IF fields.genetic_position.data.chromosome;
             fields.genetic_position.data.formatted;
              IF fields.genetic_position.data.method;
@@ -15,7 +15,7 @@
      END;
     END;
 
-    WRAPPER $field_block title="Genomic position";
+    WRAPPER $field_block title="Genomic position" key="genomic_position";
            IF fields.genomic_position.data;
              # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
 
