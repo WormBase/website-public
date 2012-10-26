@@ -48,7 +48,7 @@ http://wormbase.org/species/*/transgene
 		    
 		    {
 			transgene          => $self->_pack_obj($_),
-			marker_for         => $self->_pack_obj($_),
+			marker_for         => $self->_pack_obj($marker_for),
 			summary            => "$summary",
 			reference          => $self->_pack_obj($ref),
 		    };
@@ -75,7 +75,15 @@ http://wormbase.org/species/*/transgene
             data        => [
                 map {
 		    my $summary      = $_->Summary;
-		    my $reporter     = $_->Reporter; 
+		    my $reporter_tag = $_->Reporter;
+		    my $reporter;
+		    if ($reporter_tag eq 'Gene') {
+			$reporter = $self->_pack_obj($reporter_tag->Public_name);
+		    } elsif ($reporter_tag) {
+			$reporter = $reporter_tag->col;
+		    } else {
+			$reporter = 'unknown';
+		    }
 		    my $map_position = $_->Map;
 		    my @expr         = map { $self->_pack_obj($_) } $_->Expr_pattern;
 		    my @strains      = map { $self->_pack_obj($_) } $_->Strain;
