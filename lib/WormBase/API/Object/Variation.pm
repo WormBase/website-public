@@ -1857,10 +1857,30 @@ sub cgh_deleted_probes {
         description => 'probes used for CGH of deletion alleles',
         data        => ($left_flank || $right_flank) ? {
             left_flank  => $left_flank && "$left_flank",
-            right_flank => $left_flank && "$right_flank",
+            right_flank => $right_flank && "$right_flank",
         } : undef,
     };
 }
+
+
+sub cgh_flanking_probes {
+    my ($self) = @_;
+    my $object = $self->object;
+    
+    my $left_flank  = $object->CGH_flanking_probes(1);
+    my $right_flank = $object->CGH_flanking_probes(2);
+    
+$self->log->debug("LEFT FLANK: $left_flank");
+$self->log->debug("RIGHT FLANK: $right_flank");
+    return {
+        description => 'probes used for CGH of deletion alleles',
+        data        => ($left_flank || $right_flank) ? {
+            left_flank  => $left_flank && "$left_flank",
+            right_flank => $right_flank && "$right_flank",
+        } : undef,
+    };
+}
+
 
 =head3 context
 
