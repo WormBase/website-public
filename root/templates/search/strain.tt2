@@ -1,6 +1,6 @@
       [% tag2link(item.name) %]
     </li>
-    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
+    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
 
-       [% item.genotype.join() %]    
+       [% markup(item.genotype.join()) %]    
 
