@@ -2,6 +2,12 @@
       wildtype_length = 0;
       mutant_length = 0;
 
+MACRO markup_deleted(sequence, probe) BLOCK;
+  probe = probe FILTER lower;
+  probe = probe.chunk(1).join('\s?');
+  sequence.replace('(' _ probe _ ')', '<span style="background:#80FFFF">$1</span>');
+END;
+
 WRAPPER $field_block title="Variation Type" key='variation_type';
       fields.variation_type.data.general_class.join('; ');
       IF fields.variation_type.data.physical_class; ': '; END;
@@ -131,12 +137,22 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
       '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.<br />';
 
       '<span class="sequence-container" style="background-color:#FF8080">red</span> = mutation <br />';
-      '<span class="sequence-container" style="background-color:yellow">yellow</span> = flanking sequence <br /></p>';
+      '<span class="sequence-container" style="background-color:yellow">yellow</span> = flanking sequence <br />';
+      wildtype.sequence = fields.context.data.wildtype_full;
+
+      IF fields.cgh_deleted_probes.data;
+      '<span class="sequence-container" style="background-color:#80FFFF">blue</span> = CGH deleted probe <br />';
+        wildtype.sequence = markup_deleted(wildtype.sequence, fields.cgh_deleted_probes.data.left_flank);
+        wildtype.sequence = markup_deleted(wildtype.sequence, fields.cgh_deleted_probes.data.right_flank);
+      END;
+
+      '</p>';
+
 
       wildtype_length = (wildtype_length > 4000) ? 0 : 1;
       mutant_length = (mutant_length > 4000) ? 0 : 1;
 
-      wildtype.sequence = fields.context.data.wildtype_full;
+
       wildtype.header = "wild type, with 250 bp flanks";
       sequence(wildtype, '', wildtype_length);
       mutant.sequence = fields.context.data.mutant_full;
