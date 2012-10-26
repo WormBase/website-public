@@ -1,8 +1,23 @@
 package WormBase::API::Object::Feature;
 use Moose;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with    'WormBase::API::Role::Object';
+with    'WormBase::API::Role::Position';
+with 'WormBase::API::Role::Sequence';
+
+
+has 'tracks' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        return {
+            description => 'tracks displayed in GBrowse',
+            data        => [qw/TRANSCRIPTION_FACTOR_BINDING_SITE/],
+        };
+    }
+);
+
 
 # Some good examples: WBsf000001, WBsf027925
 
@@ -598,6 +613,12 @@ sub transcription_factor {
 	     data        => $self->_pack_obj($object->Transcription_factor) };
 }
 
+sub _build__segments {
+    my ($self) = @_;
+    my $object = $self->object;
+    return [] unless $self->gff;
+    return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object)];
+}
 
 
 __PACKAGE__->meta->make_immutable;
