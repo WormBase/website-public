@@ -3344,7 +3344,6 @@ sub _do_markup {
         $markup->add_style('flank' => 'background-color:yellow');
     }
     # The extra space is required here when used in non-pre-formatted text!
-    $markup->add_style('newline',"<br> ");
 
     my $var_stop = length($variation) + $var_start;
 
@@ -3360,12 +3359,12 @@ sub _do_markup {
     # Add spacing for peptides
     if ($is_peptide) {
         for (my $i=0; $i < length $seq; $i += 10) {
-            push @markup,[$i % 80 ? 'space' : 'newline',$i];
+            push @markup,[$i % 80 ? 'space' : 'space',$i];
         }
     }
     else {
         for (my $i=80; $i < length $seq; $i += 80) {
-            push @markup,['newline',$i];
+            push @markup,['space',$i];
         }
         #       push @markup,map {['newline',80*$_]} (1..length($seq)/80);
     }
