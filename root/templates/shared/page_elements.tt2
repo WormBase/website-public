@@ -972,7 +972,7 @@ END;
           '<div class="seq-toggle">';
           sequences.$obj.download;
           IF sequences.$obj.seq;
-            op = open_toggle || (sequences.$obj.seq.length > 2000) ? 0 : 1;
+            op = open_toggle.defined ? open_toggle : (sequences.$obj.seq.length > 2000) ? 0 : 1;
             WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container" open=op;
               sequences.$obj.seq;
             END;
