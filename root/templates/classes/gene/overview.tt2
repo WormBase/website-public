@@ -1,4 +1,8 @@
-<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;"> ([% fields.gene_class.data.description %])</span></h2> 
+<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;"> 
+[% IF fields.gene_class.data %] 
+  ([% fields.gene_class.data.description %])
+[% END %]
+</span></h2> 
 
 [%
 
