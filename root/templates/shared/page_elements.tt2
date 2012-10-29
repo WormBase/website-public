@@ -945,6 +945,7 @@ END;
     END;
     sequences = {};
 
+
     FOREACH obj IN sequence_list;
       IF obj.defined('sequence');
         seq = obj.sequence;  
@@ -971,7 +972,8 @@ END;
           '<div class="seq-toggle">';
           sequences.$obj.download;
           IF sequences.$obj.seq;
-            WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container" open=open_toggle;
+            op = open_toggle || (sequences.$obj.seq.length > 2000) ? 0 : 1;
+            WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container" open=op;
               sequences.$obj.seq;
             END;
           END;
