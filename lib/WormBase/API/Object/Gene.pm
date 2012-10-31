@@ -2577,7 +2577,7 @@ B<Response example>
 sub human_diseases {
   my $self = shift;
   my $object = $self->object;
-  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col; 
+  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col if $object->DB_info; 
   my $search = $self->_api->xapian;
 
   my %data;
