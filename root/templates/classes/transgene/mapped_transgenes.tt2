@@ -10,7 +10,7 @@ WRAPPER $field_block title="" key="mapped_transgenes";
 		    	      reporter    => 'Reporter',
 			      strains     => 'Strains',
 			      map_position=> 'Map position',
-			      expr        => 'Expression patterns',
+			      expression_patterns     => 'Expression patterns',
 			      driven_by   => 'Driven by',
 			      ao          => 'Anatomy terms',
 			      life_stage  => 'Life stage',			      
