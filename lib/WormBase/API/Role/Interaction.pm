@@ -185,7 +185,7 @@ sub _get_interactions {
     } elsif ($object->class =~ /interaction/i ) { 
       @objects = ($object) 
     }
-
+# $self->log->debug('INTERACTIONS: ' . join(',', @objects));
     if($nearby && $from_table && (scalar @objects > 3000)){
         $data->{showall} = 0;
         return $data;
@@ -195,11 +195,15 @@ sub _get_interactions {
     foreach my $interaction ( @objects ) {
       next if($data->{ids}{"$interaction"});
       if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
-      my $edgeList = $self->_get_interaction_info($interaction, $nearby);
+#      $self->log->debug("made it");
+     my $edgeList = $self->_get_interaction_info($interaction, $nearby);
+#      $self->log->debug("made it a");
       foreach my $key (keys %{$edgeList}) {
+#      $self->log->debug("edges");
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
-          $self->log->debug("     effector: $effector, effected: $effected");
+#           $self->log->debug("     effector: $effector, effected: $effected");
           next unless($effector);
+#      $self->log->debug("made it b");
           my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
           my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
           $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
@@ -235,6 +239,7 @@ sub _get_interactions {
             push @{$data->{edgeVals}{$key2}{citations}}, @papers;
           } else {
             my @interacArr = ($packInteraction);
+# $self->log->debug("KEY: $key");
             $data->{edgeVals}{$key} = {
                 interactions=> @interacArr ? \@interacArr : undef,
                 citations	=> @papers ? \@papers : undef,
@@ -272,50 +277,54 @@ sub _get_interaction_info {
 
     my $phenotype = $interaction->Interaction_phenotype;
     my ( @effectors, @effected, @others );
-
     my %elements;
     foreach my $intertype ($interaction->Interactor) {
-	my $count = 0;
-	foreach my $interactor ($intertype->col) {
-	    my @tags = eval { $intertype->right->down($count++)->col };
-	    my %info;
-	    $info{obj} = $interactor;
-	    if ( @tags ) {
-		map { $info{"$_"} = $_->at; } @tags;
+      my $count = 0;
+      foreach my $interactor ($intertype->col) {
+          my @interactors = $intertype->col;
+          my @tags = eval { $interactors[$count++]->col };
 
-		if ("$intertype" eq 'Interactor_overlapping_gene') {
-		    my $role = $info{Interactor_type};
-		    if ($role && $role =~ /Effector|.*regulator/) { push @effectors, $interactor }
-		    elsif ($role && $role =~ /Effected|.*regulated/)  { push @effected, $interactor }
-		    else { push @others, $interactor }
-		} else {
-		    my $corresponding_gene = $self->_get_gene($interactor, "$intertype");
-		    if ($corresponding_gene) { @{$results{"$interactor $corresponding_gene"}} = ('Associated Product', $interactor, $corresponding_gene, 'Other') } 
-		    else { push @others, $interactor }
-		}
-	    } else { push @others, $interactor }
-	}
+          my %info;
+          $info{obj} = $interactor;
+          if ( @tags ) {
+            map { $info{"$_"} = $_->at; } @tags;
+            if ("$intertype" eq 'Interactor_overlapping_gene') {
+                my $role = $info{Interactor_type};
+                if ($role && $role =~ /Effector|.*regulator/) {   $self->log->debug("\t\teffector/regulator" );push @effectors, $interactor }
+                elsif ($role && $role =~ /Effected|.*regulated/)  { $self->log->debug("\t\teffected/regulated" );push @effected, $interactor }
+                else { push @others, $interactor }
+            } else {
+                my $corresponding_gene = $self->_get_gene($interactor, "$intertype");
+                if ($corresponding_gene) { @{$results{"$interactor $corresponding_gene"}} = ('Associated Product', $interactor, $corresponding_gene, 'Other') } 
+                else { push @others, $interactor }
+            }
+          } else { push @others, $interactor }
+      }
     }
-
     if (@effectors || @effected) {
-	foreach my $obj (@effectors, @others) {
-	    foreach my $obj2 (@effected) {
-		next if $obj == $obj2;
-		if (!$nearby && $object->class ne 'Interaction') { next unless ($obj == $object || $obj2 == $object)};
-		@{$results{"$obj $obj2"}} = ($type, $obj, $obj2, 'Effector->Effected', $phenotype);
-	    }
-	}
+      foreach my $obj (@effectors, @others) {
+          foreach my $obj2 (@effected) {
+            next if "$obj" eq "$obj2";
+            if (!$nearby && $object->class ne 'Interaction') { 
+              next unless ("$obj" eq "$object" || "$obj2" eq "$object")
+            };
+            @{$results{"$obj $obj2"}} = ($type, $obj, $obj2, 'Effector->Effected', $phenotype);
+          }
+      }
     } else {
-	foreach my $obj (@others) {
-	    foreach my $obj2 (@others) {
-		next if $obj == $obj2;
-		if (!$nearby && $object->class ne 'Interaction') { next unless ($obj == $object || $obj2 == $object)};
-		my @objs = ("$obj", "$obj2");
-		my $str = join(' ', sort @objs); 
-		@{$results{"$str"}} = ($type, $obj, $obj2, 'non-directional', $phenotype);
-	    }
-	}
+      foreach my $obj (@others) {
+          foreach my $obj2 (@others) {
+            next if "$obj" eq "$obj2";
+            if (!$nearby && $object->class ne 'Interaction') { 
+              next unless ("$obj" eq "$object" || "$obj2" eq "$object")
+            };
+            my @objs = ("$obj", "$obj2");
+            my $str = join(' ', sort @objs); 
+            @{$results{"$str"}} = ($type, $obj, $obj2, 'non-directional', $phenotype);
+          }
+      }
     }
+
     return \%results;
 }
 
