@@ -531,7 +531,7 @@ END; %]
 [% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink" wname="[% id %]" title="pop out"></div>
 [% END %]              
                     <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
-        [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
+        [% IF c.config.installation_type == 'development' %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide ui-helper-hidden" title="move"></span>
                     </h3>
                 </div>
