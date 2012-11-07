@@ -1773,23 +1773,23 @@ sub _process_variation {
     my ($aa_change,$aa_position);
     foreach my $type_affected ( $variation->Affects ) {
         foreach my $item_affected ( $type_affected->col ) {    # is a subtree
-	    foreach my $val ($item_affected->col){
-		if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
-		else { 
-		    $effects{$val}++;
-		    if ($val =~ /missense/i) {
-			# Not specified for every allele.
-			my ($aa_position,$aa_change_string) = eval { $val->right->row };
-			if ($aa_change_string) {
-			    $aa_change_string =~ /(.*)\sto\s(.*)/;
-			    $aa_change = "$1$aa_position$2";
-			}
-		    }  elsif ($val =~ /nonsense/i) {
-			# "Position" here really one of Amber, Ochre, etc.
-			($aa_position,$aa_change) = eval { $val->right->row; };
-		    }
-		}
-	    }
+    	    foreach my $val ($item_affected->col){
+              if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
+              else { 
+                $effects{$val}++;
+                if ($val =~ /missense/i) {
+                  # Not specified for every allele.
+                  my ($aa_position,$aa_change_string) = eval { $val->right->row };
+                  if ($aa_change_string) {
+                      $aa_change_string =~ /(.*)\sto\s(.*)/;
+                      $aa_change = "$1$aa_position$2";
+                  }
+                }  elsif ($val =~ /nonsense/i) {
+                  # "Position" here really one of Amber, Ochre, etc.
+                  ($aa_position,$aa_change) = eval { $val->right->row; };
+                }
+              }
+    	    }
         }
     }
 
@@ -1801,10 +1801,10 @@ sub _process_variation {
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
         molecular_change => $molecular_change && "$molecular_change",
-	aa_change        => $aa_change ? $aa_change : undef,
+        aa_change        => $aa_change ? $aa_change : undef,
         effects          => @effect ? \@effect : undef,
         phen_count       => scalar @phens || 0,
-	locations	 => @location ? \@location : undef,
+        locations	 => @location ? \@location : undef,
     );
     return \%data;
 }
@@ -2577,7 +2577,7 @@ B<Response example>
 sub human_diseases {
   my $self = shift;
   my $object = $self->object;
-  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col if $object->DB_info; 
+  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col; 
   my $search = $self->_api->xapian;
 
   my %data;
@@ -3182,7 +3182,7 @@ sub sage_tags {
     my $self   = shift;
     my $object = $self->object;
     
-    my @sage_tags = map {$self->_pack_obj($_)} $object->Sage_tag;
+    my @sage_tags = map {$self->_pack_obj($_)} $object->SAGE_tag;
     
     return {  description =>  "SAGE tags identified",
 	      data        =>  @sage_tags ? \@sage_tags : undef
