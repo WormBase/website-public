@@ -1215,6 +1215,10 @@ sub anatomic_expression_patterns {
 	my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$ep.jpg");
         $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
+# <<<<<<< HEAD
+#         my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
+#         $pattern    =~ s/(.{384}).+/$1.../;
+# =======
 
         my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
 #         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
@@ -1227,6 +1231,7 @@ sub anatomic_expression_patterns {
 					last;
 			 }	
 		}
+# >>>>>>> master
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
@@ -2577,7 +2582,7 @@ B<Response example>
 sub human_diseases {
   my $self = shift;
   my $object = $self->object;
-  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col; 
+  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col if $object->DB_info; 
   my $search = $self->_api->xapian;
 
   my %data;
@@ -2727,6 +2732,7 @@ sub treefam {
 	     data        => @data ? \@data : undef,
     };
 }
+
 
 #######################################
 #
@@ -2979,8 +2985,7 @@ sub microarray_probes {
 
     my @oligos = grep { !$seen{$_}++ }
         grep { $_->Type and $_->Type =~ /microarray_probe/ }
-        map { $_->Corresponding_oligo_set } $object->Corresponding_CDS
-            if ( $object->Corresponding_CDS );
+        map { $_->Corresponding_oligo_set } $object->Corresponding_CDS;
     my @stash;
     foreach (@oligos) {
         my $comment
@@ -3051,7 +3056,11 @@ sub orfeome_primers {
     my $self   = shift;
     my $object = $self->object;
     my @segments = $self->_segments ? @{$self->_segments} : undef ;
-    my @ost = map { $self->_pack_obj($_)} map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
+    my @ost = map { $self->_pack_obj($_)}
+              map {$_->info}
+              map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') }
+              @segments
+        if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
     
     return { description =>  "ORFeome Project primers and sequences",
 	     data        =>  @ost ? \@ost : undef };
