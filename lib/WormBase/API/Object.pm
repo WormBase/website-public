@@ -142,6 +142,7 @@ sub id2species {
   return 'Drosophila pseudoobscura'  if ($id =~ /fly.*\:GA/i);
   return 'Saccharomyces cerevisiae'  if ($id =~ /^SGD/i || $id =~ /yeast/);
   return 'Schizosaccharomyces pombe' if ($id =~ /pombe/);
+  return 'Pristionchus pacificus'    if ($id =~ /^PP\:PP/);
   return 'Homo sapiens'              if ($id =~ /ensembl/ || $id =~ /ensp\d+/);
   return 'Rattus norvegicus'         if ($id =~ /rgd/i);
   return 'Anopheles gambiae'         if ($id =~ /ensang/i);
