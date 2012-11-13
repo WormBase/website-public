@@ -34,20 +34,6 @@
 	             key='other_orthologs');
     END;
 
-	## Diseases 
-
-	WRAPPER $field_block title="Human Diseases" key="human_diseases";
-    build_data_table(order=['disease','description','omim_id',],
-   	             columns={
-   	             	
-		        	disease  => 'Disease',
-		            description   => 'Description',
-		            omim_id => 'OMIM id',
- 		       	},
-	             key='human_diseases');
-    END;
-
-
     # Paralogs
     WRAPPER $field_block title="Paralogs" key="paralogs";
     build_data_table(order=['ortholog','method'],
