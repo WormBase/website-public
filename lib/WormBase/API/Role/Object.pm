@@ -334,15 +334,14 @@ sub _build_best_blastp_matches {
     # Only for genes or proteins.
     if ($class eq 'Gene') {
         $proteins = $self->_all_proteins;
-    }
-    elsif ($class eq 'Protein') {
+    } elsif ($class eq 'Protein') {
         # current_object might already be a protein.
         $proteins = [$self->object] unless $proteins;
-    } else { }
+    }
     
     if (@$proteins == 0) {
-      return { description => 'no proteins found, no best blastp hits to display',
-          data        => undef,
+      return {  description => 'no proteins found, no best blastp hits to display',
+                data        => undef,
       };
     }
     
@@ -431,51 +430,7 @@ sub _build_best_blastp_matches {
             my $accession = $2;
             $id    = $accession unless $class;
             $class = $prefix    unless $class;
-
-            # Try fetching accessions directly from the protein object
-            #       my @dbs = $hit->Database;
-            #       foreach my $db (@dbs) {
-            # 	if ($db eq 'FLYBASE') {
-            # 	  foreach my $col ($db->col) {
-            # 	    if ($col eq 'FlyBase_gn') {
-            # 	      $accession = $col->right;
-            # 	      last;
-            # 	    }
-            # 	  }
-            # 	}
-            #       }
-
-	    # NOT HANDLED YET!
-#      my $link_rule = $links->{$prefix};
-#       my $link_rule = '%s';
-#       my $url       = sprintf($link_rule,$accession);
-	    # TH: 1/2006 - remanei not yet in the database but blast hits available
-	    # Generate links to the remanei browser
-	    # This will not work for mirror sites, of course...
-#       if ($species =~ /remanei/) {
-# 	$accession =~ s/^RP://;
-# 	$hit = qq{<a href="http://dev.wormbase.org/db/seq/gbrowse/remanei/?name=$accession"</a>$accession</a>};
-# 	$hit .= qq{<br><i>Note: <b>C. remanei</b> predictions are based on an early assembly of the genome. Predictions subject to possibly dramatic revision pending final assembly. Sequences available on the <a href="ftp://ftp.wormbase.org/pub/wormbase/genomes/remanei">WormBase FTP site</a>.};
-#       } else {
-# 	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
-#       }
-	}
-
-#       $hits{$hit}{species}=$species;
-#       $hits{$hit}{hit}=$hit;
-#       $hits{$hit}{description}=$description;
-#       $hits{$hit}{evalue}=sprintf("%7.3g",10**-$best{$_}{score});
-#       $hits{$hit}{plength}=sprintf("%2.1f",100*($best{$_}{covered})/$length);
-=pod
-	    $hits{species}{$id}=$species;
-        $hits{hit}{$id}={label=>$hit,id=>$hit,class=>'protein'};
-        $hits{description}{$id}=$description;
-        $hits{evalue}{$id}=sprintf("%7.3g",10**-$best{$_}{score});
-        $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
-	$id++;
-
-=cut
-
+        }
         push @hits, {
             taxonomy => $taxonomy,
             hit      => $self->_pack_obj($hit),
@@ -483,10 +438,6 @@ sub _build_best_blastp_matches {
             evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
             percent     => $length == 0 ? '0' : sprintf("%2.1f%%", 100 * ($best{$_}{covered}) / $length),
         };
-
-#[$taxonomy,{label=>"$hit",id=>($id ? "$id" : "$hit"),class=>$class},"$description",
-#  		sprintf("%7.3g",10**-$best{$_}{score}),
-# 		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
     }
 
     return {
