@@ -566,12 +566,16 @@ sub _anatomy_function {
 	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
                else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
 			  } $_->Not_involved;
-    
-    my @assay = map { my $as = $_->right; my @geno = $as->Genotype; 
-                                     {evidence => { genotype => join('<br /> ', @geno) },
-                        text => "$_",}
-              } $_->Assay;
-    my $pev;
+
+	# Genotype removed from the evidence hash in WS234?
+	my @assay = map { my $as = $_->right;
+			  if ($as) {
+			      my @geno = $as->Genotype; 			      
+			      {evidence => { genotype => join('<br /> ', @geno) },
+			       text => "$_",}
+			  }
+	} $_->Assay;
+	my $pev;
 	push @data_pack, {
             af_data   => $_ && "$_",
             phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
