@@ -39,9 +39,13 @@
 [% END %]
 
 <a href="http://genemania.org/link?o=6239&g=[%
-FOREACH node IN fields.interactions.data.nodes.keys.sort;
-    IF fields.interactions.data.nodes.$node.class == 'Gene';
-	name = FILTER upper; fields.interactions.data.nodes.$node.label; END;
-	"$name|";
+FOREACH edge IN fields.interactions.data.edges.sort;
+    IF edge.effector.class == 'Gene';
+    name = edge.effector.label FILTER upper;
+    "$name|";
+    END;
+    IF edge.effected.class == 'Gene';
+    name = edge.effected.label FILTER upper;
+    "$name|";
     END;
 END; %]" target="_blank">View Interaction Network in GeneMANIA</a>
