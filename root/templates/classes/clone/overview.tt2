@@ -8,14 +8,23 @@ WRAPPER highlight_box;
       fields.type.data;
    END;
 
-
+   WRAPPER $field_block title='In strain' key='in_strain';
+      tag2link(fields.in_strain.data);
+   END;
 END;
 
 '<div class="description">';
+no_toggle = 1; remarks();
+'</div>';
+   WRAPPER $field_block title='Website' key='url';
+      url = fields.url.data;
+      external_link(url, url);
+   END;
+
 WRAPPER $field_block title=pluralize('Corresponding sequence', fields.sequences.data.size) key='sequences';
    tags2link(fields.sequences.data);
 END;
-
+fields.genomic_positions.data.1.keys.label;
 # this looks suspiciously like Genomic position in the Location widget...
 WRAPPER $field_block title=pluralize('Genomic position', fields.sequences.data.size) key='genomic_positions';
   tags2link(fields.genomic_positions.data);
@@ -100,7 +109,7 @@ IF fields.pcr_product.data.oligos.data;
       END;
 END;
 
-remarks();
-'</div>';
+
+
 %]
 

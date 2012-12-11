@@ -118,6 +118,22 @@ sub type {
 	     data		=> $type && "$type" };
 }
 
+sub url {
+    my ($self) = @_;
+    
+    my $url = $self ~~ 'Url';
+    return { description => 'The website for this clone',
+         data       => $url && "$url" };
+}
+
+sub in_strain {
+    my ($self) = @_;
+    
+    my $strain = $self ~~ 'In_strain';
+    return { description => 'The current clone is found in this strain',
+         data       => $self->_pack_obj($strain) };
+}
+
 =head3 sequences
 
 This method will return a data structure containing
@@ -244,7 +260,7 @@ sub genomic_positions {
         }
         my $label    = $self->_format_coordinates(ref => $ref, start => $start, stop => $end);
         my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $end, pad_for_gbrowse => 1);
-
+        next unless $position;
         push(@positions, {
             label      => $position,
             id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
@@ -255,7 +271,7 @@ sub genomic_positions {
     
     return {
         description => 'genomic positions of the sequences associated with this clone',
-        data        => @positions ? \@positions : undef,
+        data        => (@positions > 0) ? \@positions : undef,
     }
 }
 
@@ -874,10 +890,15 @@ sub _build__segments {
 # override default remarks from Role::Object
 sub _build_remarks {
     my ($self) = @_;
+    my $object = $self->object;
 
-    my @remarks = map { {text => "$_"} } ($self ~~ 'General_remark',
-                                $self ~~ 'Y_remark',
-                                $self ~~ 'PCR_remark');
+    my @remarks = $object->General_remark;
+    @remarks = push(@remarks, $object->Y_remark) if $object->Y_remark;
+    @remarks = push(@remarks, $object->PCR_remark) if $object->PCR_remark;
+
+#     @remarks = map { {text => "$_"} } ($self ~~ 'Y_remark',
+#                                 $self ~~ 'PCR_remark');
+    @remarks = map { {text => "$_"} } @remarks;
 
     return {
         description => 'Remarks',
