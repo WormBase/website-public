@@ -919,14 +919,14 @@ sub _variation {
     foreach my $tag_object (@tag_objects) {
         my $tag_info       = $self->_pack_obj($tag_object);
         my $variation_type = $tag_object->Variation_type;
-        #my $gene_info      = $self->_pack_obj( $tag_object->Possibly_affects )
-	    #if $tag_object->Possibly_affects;
+        my @gene_info      = map { $self->_pack_obj($_) } $tag_object->Gene
+	    if $tag_object->Gene;
         my $species_info = $self->_pack_obj( $tag_object->Species )
 	    if $tag_object->Species;
         push @data_pack,
 	{
             variation => $tag_info,
-            #gene      => $gene_info,
+            gene      => \@gene_info,
             type      => $variation_type && "$variation_type",
             species   => $species_info
 	};
