@@ -61,7 +61,7 @@
       <div class="footer-column">
         <div class="footer-title">Developer</div>
         <ul>
-          <li>[% external_link("", 'Amazon EC2 AMI') %]</li>
+<!--           <li>[% external_link("", 'Amazon EC2 AMI') %]</li> -->
           <li><a href="[% c.uri_for('/about','userguide','for_developers').path  %]">Developer Documentation</a></li>
           <li><a href="[% c.uri_for('/about','userguide','for_developers','api-rest').path  %]">RESTful API</a></li>
           <li>[% external_link("http://github.com/WormBase", 'Code Repositories (Github)') %]</li>
