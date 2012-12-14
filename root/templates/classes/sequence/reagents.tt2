@@ -20,4 +20,13 @@ WRAPPER $field_block title="Matching cDNAs" key="matching_cdnas";
     tags2link(fields.matching_cdnas.data, '<br />', 'Results');
 END;
 
+WRAPPER $field_block title="Library" key='library';
+     fields.library.data.name _ '<br />';
+     '<div class="description">' _ fields.library.data.description _ '</div>';
+      IF fields.library.data.vector;
+        '<b>Vector</b>: ' _ 
+          tag2link(fields.library.data.vector);
+      END;
+END;
+
 %]

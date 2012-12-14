@@ -107,6 +107,36 @@ sub sequence_type {
     };
 }
 
+sub library {
+    my ($self) = @_;
+    my $library = $self ~~ 'Library';
+    return {
+    description => 'Library for the sequence',
+    data        => $library ? { name => "$library",
+                               description => $library->Description, 
+                                vector => $self->_pack_obj($library->Vector)  } : undef,
+    };
+}
+
+sub subsequence {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @subsequence = map { $self->_pack_obj($_) } $object->Subsequence;
+    return {
+    description => 'end sequence reads used for initially placing the Fosmid on the genome ',
+    data        => (@subsequence > 0) ? \@subsequence : undef,
+    };
+}
+
+sub paired_read {
+    my ($self) = @_;
+    my $pr = $self ~~ 'Paired_read';
+    return {
+    description => 'paired read of the sequence',
+    data        => $pr ? $self->_pack_obj($pr) : undef,
+    };
+}
+
 =head3 identity
 
 This method will return a data structure containing
