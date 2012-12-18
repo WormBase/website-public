@@ -2095,11 +2095,19 @@ sub gene_ontology {
             $facet =~ s/_/ /g if $facet;
 
             $display_method =~ m/.*_(.*)/;    # Strip off the spam-dexer.
+	    my $description = $code->Description;
+
+#                evidence_code => {  text=>"$code",
+#                                    evidence=> map {					     
+#					$_->{'Description'} = "$description";
+#                                                $_ } ($self->_get_evidence($code))
+#                                  },
+
             push @{ $data{"$facet"} }, {
                 method        => $1,
                 evidence_code => {  text=>"$code",
-                                    evidence=> map {
-                                                $_->{'Description'} = $code->Description; 
+                                    evidence=> map {					     
+					$_->{'Description'} = "$description";
                                                 $_ } ($self->_get_evidence($code))
                                   },
                 term          => $self->_pack_obj($go_term),
