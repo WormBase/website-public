@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>vbgamer45:globalhf</id>
+<version>1.1</version>
+<file name="$languagedir/Modifications.english.php">
+	<operation>
+		<search position="after"><![CDATA[
+?>]]></search>
+		<add><![CDATA[
+//Begin Global Headers and Footers Text Strings
+$txt['globalhf_title'] = 'Global Headers and Footers';
+//END Global Headers and Footers Text Strings			
+]]></add>
+	</operation>
+</file>
+<file name="$boarddir/index.php">
+	<operation>
+		<search position="before"><![CDATA[
+		'help' => array('Help.php', 'ShowHelp'),]]></search>
+		<add><![CDATA[		'globalhf' => array('globalhf.php', 'globalhf'),]]></add>
+	</operation>
+</file>
+<file name="$sourcedir/Subs.php">
+	<operation>
+		<search position="before"><![CDATA[global $context, $settings, $modSettings, $time_start, $db_count;]]></search>
+		<add><![CDATA[
+		global $boarddir;
+		]]></add>
+	</operation>
+	<operation>
+		<search position="after"><![CDATA[	foreach (array_reverse($context['template_layers']) as $layer)
+		loadSubTemplate($layer . '_below', true);]]></search>
+		<add><![CDATA[
+		//Global Footers
+		$footercontents = '';
+		if(!isset($_REQUEST['xml']))
+			if(file_exists($boarddir . '/smffooter.php'))
+			{
+				$footercontents = file_get_contents($boarddir . '/smffooter.php');
+				echo '<!--Footers-->';
+				echo $footercontents;
+				echo '<!--End Footers-->';
+			
+			}
+		]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[if (isset($settings['use_default_images']) && $settings['use_default_images'] == 'defaults' && isset($settings['default_template']))
+	{
+		$settings['theme_url'] = $settings['default_theme_url'];
+		$settings['images_url'] = $settings['default_images_url'];
+		$settings['theme_dir'] = $settings['default_theme_dir'];
+	}]]></search>
+		<add><![CDATA[
+		//Global Headers
+		$headercontents = '';
+		if(!isset($_REQUEST['xml']))
+			if(file_exists($boarddir . '/smfheader.php'))
+			{
+				$headercontents = file_get_contents($boarddir . '/smfheader.php');
+				echo '<!--Headers-->';
+				echo $headercontents;
+				echo '<!--End Headers-->';
+			
+			}
+		]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA['manage_themes' => '<a href="' . $scripturl . '?action=theme;sa=admin;sesc=' . $sc . '">' . $txt['theme_admin'] . '</a>',]]></search>
+		<add><![CDATA[
+				'globalhf' => '<a href="' . $scripturl . '?action=globalhf;sesc=' . $sc . '">' . $txt['globalhf_title'] . '</a>',
+		]]></add>
+	</operation>
+</file>
+
+</modification>

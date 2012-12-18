@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>snoopy_virtual:httpBL</id>
+	<name>httpBL</name>
+	<version>2.5.1</version>
+
+	<file name="$sourcedir/ManagePermissions.php">
+		<!-- Add the new permission to the permissions list -->
+		<operation>
+			<search position="after"><![CDATA[
+			'view_stats' => array(false, 'general', 'view_basic_info'),]]></search>
+			<add><![CDATA[
+			'httpBL_free_pass' => array(false, 'general', 'view_basic_info'),]]></add>
+		</operation>
+		
+		<!-- Add it to the array of permissions guests... cannot have -->
+		<operation>
+			<search position="before"><![CDATA[$context['non_guest_permissions'] = array(]]></search>
+			<add><![CDATA[
+		'httpBL_free_pass',]]></add>
+		</operation>
+	</file>
+
+	<file name="$sourcedir/Admin.php">
+		<operation>
+			<search position="before"><![CDATA[
+				'ban' => array(
+					'label' => $txt['ban_title'],
+					'file' => 'ManageBans.php',
+					'function' => 'Ban',
+					'icon' => 'ban.gif',
+					'permission' => 'manage_bans',
+					'subsections' => array(
+						'list' => array($txt['ban_edit_list']),
+						'add' => array($txt['ban_add_new']),
+						'browse' => array($txt['ban_trigger_browse']),
+						'log' => array($txt['ban_log']),
+					),
+				),]]></search>
+			<add><![CDATA[
+				'httpBL' => array(
+					'label' => $txt['httpBL_title'],
+					'file' => 'httpBL_2_Config.php',
+					'function' => 'httpBL_Admin',
+					'icon' => 'modifications.gif',
+					'permission' => 'admin_forum',
+					'subsections' => array(
+						'config' => array($txt['httpBL_config']),
+						'viewlog' => array($txt['httpBL_viewlog']),
+						'viewlogpass' => array($txt['httpBL_viewlogpass']),
+						'viewlogerror' => array($txt['httpBL_viewlogerror']),
+						'helping' => array($txt['httpBL_helping']),
+					),
+				),]]></add>
+		</operation>
+	</file>
+
+	<file name="$boarddir/index.php">
+		<operation>
+			<search position="before"><![CDATA[
+	// Load the current user's permissions.
+	loadPermissions();
+]]></search>
+			<add><![CDATA[
+	// Before we do anything else with this user we check projecthoneypot to see if it's a spammer. MOD httpBL
+	// But do it only if we are not coming from the file warning.php
+	global $boardurl, $httpBL_warning;
+	if ($modSettings['httpBL_enable'] && !isset($httpBL_warning))
+	{
+		require_once($sourcedir . '/httpBL_Subs.php');
+		$response = httpBL_dnslookup($user_info['ip'], $modSettings['httpBL_honeyPot_key']);
+		if ($response)
+		{
+			$_SESSION['response'] = $response;
+			header('Location: '. $boardurl .'/warning.php');
+			exit();
+		}
+	}
+]]></add>
+		</operation>
+
+		<operation>
+			<search position="before"><![CDATA[
+		'helpadmin' => array('Help.php', 'ShowAdminHelp'),]]></search>
+			<add><![CDATA[
+		'httpBL' => array('httpBL_2_Config.php', 'httpBL_Admin'),]]></add>
+		</operation>
+	</file>
+
+	<file name="$boarddir/SSI.php">
+		<operation>
+			<search position="before"><![CDATA[
+// Load the current user's permissions....
+loadPermissions();
+]]></search>
+			<add><![CDATA[
+	// Before we do anything else with this user we check projecthoneypot to see if it's a spammer. MOD httpBL
+	// But do it only if we are not coming from the file warning.php
+	global $boardurl, $httpBL_warning;
+	if ($modSettings['httpBL_enable'] && !isset($httpBL_warning))
+	{
+		require_once($sourcedir . '/httpBL_Subs.php');
+		$response = httpBL_dnslookup($user_info['ip'], $modSettings['httpBL_honeyPot_key']);
+		if ($response)
+		{
+			$_SESSION['response'] = $response;
+			header('Location: '. $boardurl .'/warning.php');
+			exit();
+		}
+	}
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/index.template.php">
+		<operation>
+			<search position="after"><![CDATA[
+</body>]]></search>
+			<add><![CDATA[';
+
+	/*****************
+	** httpBL START **
+	*****************/
+	global $sourcedir, $modSettings;
+	if ($modSettings['httpBL_enable']) {
+		require_once($sourcedir . '/httpBL_Subs.php');
+		$honeyLink = httpBL_honeylink($modSettings['httpBL_honeyPot_link'], $modSettings['httpBL_honeyPot_word']);
+		echo $honeyLink;
+	}
+	/*****************
+	**  httpBL END  **
+	*****************/
+
+	echo ']]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/Who.template.php">
+		<!-- Include os_browser_detection. -->
+		<operation>
+			<search position="after"><![CDATA[
+	// Display the table header and linktree.]]></search>
+
+			<add><![CDATA[
+	// Include OS & Browser Detection if it's installed and enabled
+	global $sourcedir, $modSettings;
+	$os_browser_exists = FALSE;
+	if (file_exists($sourcedir.'/os_browser_detection.php') && $modSettings['httpBL_view_os_whosonline'])
+	{
+		require_once($sourcedir . '/os_browser_detection.php');
+		$os_browser_exists = TRUE;
+	}
+]]></add>
+		</operation>
+		
+		<!-- Parse the user agent and display detected info. -->
+		<operation>
+			<search position="after"><![CDATA[
+		echo '
+							</td>
+							<td nowrap="nowrap">', $member['time'], '</td>]]></search>
+
+			<add><![CDATA[
+			// OS & Browser Detection
+			// Parse the user agent only if OS & Browser Detection is installed and enabled
+			if ($os_browser_exists)
+				$os_browser_detected = parse_user_agent($member['query']['USER_AGENT']);
+			// Display only if allowed
+			if (allowedTo('view_os_browser') && $os_browser_exists){
+				if ($os_browser_detected['system'] || $os_browser_detected['browser']){ //Do not display if both are unknown
+					echo '<br />';
+					if ($os_browser_detected['system']) {
+						echo '
+									<strong>', $txt['OS_Browser_OS'], ':</strong>
+									<br /><img src="', $settings['default_images_url'], '/os_browser_detection/icon_', $os_browser_detected['system_icon'], '.png" align="top" alt="', $os_browser_detected['system'], '" /> ', $os_browser_detected['system'], '<br />';
+					} else {
+						echo '
+									<strong>', $txt['OS_Browser_OS'], ':</strong>
+									<br /><img src="', $settings['default_images_url'], '/os_browser_detection/icon_unknown.png" align="top" alt="', $txt['OS_Browser_Unknown'], '" /> ', $txt['OS_Browser_Unknown'], '<br />';
+					}
+					
+					if ($os_browser_detected['browser']) {
+						echo '
+									<strong>', $txt['OS_Browser_Browser'], ':</strong>
+									<br /><img src="', $settings['default_images_url'], '/os_browser_detection/icon_', $os_browser_detected['browser_icon'], '.png" align="top" alt="', $os_browser_detected['browser'], '" /> ', $os_browser_detected['browser'];
+					} else {
+						echo '
+									<strong>', $txt['OS_Browser_Browser'], ':</strong>
+									<br /><img src="', $settings['default_images_url'], '/os_browser_detection/icon_unknown.png" align="top" alt="', $txt['OS_Browser_Unknown'], '" /> ', $txt['OS_Browser_Unknown'];
+					}
+				
+				}
+			}
+]]></add>
+		</operation>
+	</file>
+
+</modification>
