@@ -52,14 +52,16 @@
       rows.push( { strain  = tag2link(strain),
                   genotype        = strain.genotype,
                   cgc        = cgc ? external_link('cgc', 'yes', strain.id) : 'no',
+		  transgenes = tag2link(strain.transgenes),
                 } );
       END;
     END;
 
-       build_data_table(order=['strain','genotype','cgc'],
+       build_data_table(order=['strain','genotype','cgc','transgenes'],
                          columns={ strain    => 'Strain',
-	        	              cgc       => 'Available<br /> from CGC?',
-		                  genotype  => 'Genotype',
+	        	              cgc    => 'Available<br /> from CGC?',
+		                  genotype   => 'Genotype',
+				  transgenes => 'Carries Transgene',
                                  },
                          passed_data=rows, key='strains');
    END;
