@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>snoopy_virtual:httpBL</id>
+	<name>httpBL</name>
+	<version>2.5.1</version>
+	<type>modification</type>
+
+	<install for="1.1.1 - 1.99.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification format="xml" type="file">install_1.xml</modification>
+		<modification format="xml" type="file">languages.xml</modification>
+		<modification format="xml" type="file">languages_utf8.xml</modification>
+		<require-file name="httpBL_Subs.php" destination="$sourcedir" />
+		<require-file name="httpBL_Config.php" destination="$sourcedir" />
+		<require-file name="httpBL.template.php" destination="$themedir" />
+		<require-file name="httpBL_css.css" destination="$themedir" />
+		<require-file name="warning.php" destination="$boarddir" />
+		<require-file name="warning_css.css" destination="$boarddir" />
+		<code type="file">install_1.php</code>
+		<redirect url="$boardurl/index.php?action=httpBL" type="inline">Please stand by while you are being redirected to this modification's configuration settings.</redirect>
+	</install>
+
+	<uninstall for="1.1.1 - 1.99.99">
+		<modification format="xml" type="file" reverse="true">install_1.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages_utf8.xml</modification>
+		<remove-file name="$sourcedir/httpBL_Subs.php" />
+		<remove-file name="$sourcedir/httpBL_Config.php" />
+		<remove-file name="$themedir/httpBL.template.php" />
+		<remove-file name="$themedir/httpBL_css.css" />
+		<remove-file name="$boarddir/warning.php" />
+		<remove-file name="$boarddir/warning_css.css" />
+	</uninstall>
+
+	<install for="2.0 - 2.99.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification format="xml" type="file">install_2.xml</modification>
+		<modification format="xml" type="file">languages.xml</modification>
+		<modification format="xml" type="file">languages_utf8.xml</modification>
+		<require-file name="httpBL_Subs.php" destination="$sourcedir" />
+		<require-file name="httpBL_2_Config.php" destination="$sourcedir" />
+		<require-file name="httpBL.template.php" destination="$themedir" />
+		<require-file name="httpBL_css.css" destination="$themedir/css" />
+		<require-file name="warning.php" destination="$boarddir" />
+		<require-file name="warning_css.css" destination="$boarddir" />
+		<database type="file">install_2.php</database>
+		<redirect url="$boardurl/index.php?action=admin;area=httpBL" type="inline">Please stand by while you are being redirected to this modification's configuration settings.</redirect>
+	</install>
+
+	<uninstall for="2.0 - 2.99.99">
+		<modification format="xml" type="file" reverse="true">install_2.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages_utf8.xml</modification>
+		<remove-file name="$sourcedir/httpBL_Subs.php" />
+		<remove-file name="$sourcedir/httpBL_2_Config.php" />
+		<remove-file name="$themedir/httpBL.template.php" />
+		<remove-file name="$themedir/css/httpBL_css.css" />
+		<remove-file name="$boarddir/warning.php" />
+		<remove-file name="$boarddir/warning_css.css" />
+	</uninstall>
+
+</package-info>

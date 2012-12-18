@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>vbgamer45:globalhf</id>
+	<name>Global Headers Footers</name>
+	<type>modification</type>
+	<version>1.3</version>
+
+	<install for="1.1.1,1.1,1.1 RC3,1.1 RC2">
+		<readme>ReadMe.txt</readme>
+		<modification type="file">globalhf.xml</modification>
+		<require-file name="globalhf.php" destination="$sourcedir" />
+		<require-file name="globalhf.template.php" destination="$themedir" />
+		<require-file name="smfheader.php" destination="$boarddir" />
+		<require-file name="smffooter.php" destination="$boarddir" />
+
+	</install>
+
+	<uninstall for="1.1.1,1.1,1.1 RC3,1.1 RC2">
+		<modification type="file" reverse="true">globalhf.xml</modification>
+	</uninstall>
+</package-info>

@@ -1,0 +1,7 @@
+The following files will need to be edited manually
+in the event of an upgrade.
+
+Header files are located in the Themes/ dir.
+News.php
+SSI.php
+preserve entire lib dir

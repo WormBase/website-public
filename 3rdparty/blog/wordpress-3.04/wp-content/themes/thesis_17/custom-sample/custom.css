@@ -1,0 +1,26 @@
+/*
+File:			custom.css
+Description:	Custom styles for Thesis
+
+BASIC USAGE:
+
+If you have enabled the custom stylesheet in the Thesis options panel, the <body> tag 
+will be appended with the "custom" class, like so: <body class="custom">. You can use 
+the "custom" class to override *any* CSS declarations contained in the style.css file.
+
+For example, if you wish to change the default link color to green, you would add the 
+following declarations to this file:
+
+	.custom a, .custom a:visited { color: #090; }	<--- This makes links green
+	.custom a:hover { color: #00f; }	<--- This makes links blue when you mouse over them
+
+WHY THIS WORKS:
+
+By using the "custom" class, you are creating more specific CSS declarations for HTML
+elements. CSS styling is applied through rules of specificity, and because declarations
+prepended with .custom are more specific, they get applied when the page is rendered!
+
+More information about styling your Thesis installation using this file can be found
+in the User's Guide:
+	http://diythemes.com/thesis/rtfm/customizing-thesis-with-customcss/
+*/
