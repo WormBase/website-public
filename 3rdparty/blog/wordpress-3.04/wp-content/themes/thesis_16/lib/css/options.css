@@ -1,0 +1,140 @@
+/*
+File Name:		options.css
+Description:	Custom options panel styles for the Thesis Theme
+Author:			Chris Pearson
+Website:		http://www.pearsonified.com
+Theme Site:		http://diythemes.com
+*/
+
+#thesis_options * { margin: 0; padding: 0; }
+#thesis_options p, #thesis_options ul, #thesis_options ol, #thesis_options blockquote, #thesis_options code { font-size: 1em; line-height: 1em; }
+#thesis_options h3 { display: normal; font-size: 1em; }
+#thesis_options label { cursor: default; } /* Grr. Only labels for friggin checkboxes and radio buttons should utilize this convention. */
+#thesis_options { font: normal 0.769em Georgia, "Times New Roman", Times, serif; }
+	#thesis_options #thesis_version { display: block; font-size: 1.3em; line-height: 1em; margin-top: 2em; font-style: italic; color: #666; float: right; }
+	#thesis_options h2 { font-size: 3em; font-style: normal; margin-top: 1em; padding-bottom: 0.4em; color: #111; border-bottom: 3px double #ddd; }
+		#thesis_options h2 a { font: normal 0.467em/1.429em "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif; display: inline-block; width: 1.857em; margin-left: 0.714em; padding-top: 0.071em; padding-bottom: 0.143em; text-align: center; color: #666; background: #dcd7bc; text-decoration: none; }
+		#thesis_options h2 a.active { background: #ec902d; }
+		#thesis_options h2 a:hover { color: #fff; background: #ec902d; }
+			#thesis_options h2 a .neg { color: #fff; }
+	#thesis_options ul#thesis_links { width: 99%; font-size: 1.1em; line-height: 1.818em; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.818em; border-bottom: 1px dotted #ccc; }
+		#thesis_options ul#thesis_links li { float: left; }
+			#thesis_options ul#thesis_links a { display: block; padding: 0.818em 0.909em; color: #666; text-decoration: none; }
+			#thesis_options ul#thesis_links a:hover { color: #111; background: #e2e2e2; }
+	/*---:[ structural layout elements ]:---*/
+	#thesis_options .options_column { width: 30em; margin-right: 2em; float: left; }
+		#thesis_options .options_column .options_module { width: 28em; margin-bottom: 2em; padding: 1em; background: #f4f0db; }
+			#thesis_options .options_module .module_subsection, #thesis_options .mini_module { width: 100%; margin-top: 1em; padding-top: 1em; border-top: 1px dotted #b6ac80; }
+	/*---:[ end structural styles ]:---*/
+#thesis_options .options_module h3 { font-size: 1.6em; line-height: 1.25em; margin-bottom: 0.625em; letter-spacing: normal; }
+	#thesis_options .options_module acronym { font-size: 0.813em; line-height: 1.538em; text-transform: uppercase; letter-spacing: 1px; border-bottom: none; }
+#thesis_options .options_module h4, #thesis_options .options_module h5 { font-weight: bold; font-size: 1.3em; line-height: 1.538em; letter-spacing: normal; margin-bottom: 0.769em; color: #6c6750; }
+	#thesis_options .options_module h4 a { font: normal 0.846em/1.455em "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif; display: inline-block; width: 1.818em; margin-left: 0.364em; padding-top: 0.091em; padding-bottom: 0.182em; text-align: center; color: #666; background: #dcd7bc; text-decoration: none; float: right; }
+	#thesis_options .options_module h4 a.active { background: #ec902d; }
+	#thesis_options .options_module h4 a:hover { color: #fff; background: #ec902d; }
+		#thesis_options .options_module h4 a .neg { color: #fff; }
+	#thesis_options .options_module h4 code { margin-left: 0.615em; color: #111; }
+#thesis_options .options_module p { font-size: 1.3em; line-height: 1.538em; margin-bottom: 0.769em; }
+	#thesis_options .options_module p a, #thesis_options p a:visited { color: #162ccc; }
+	#thesis_options .options_module p a:hover { color: #162ccc; text-decoration: none; }
+	#thesis_options .options_module p acronym { font-size: 0.846em; line-height: 1em; letter-spacing: 1px; border-bottom: none; }
+#thesis_options .options_module p.form_input { margin-bottom: 0; }
+#thesis_options .options_module p.add_margin { margin-bottom: 0.769em !important; }
+#thesis_options .options_module p.tip { margin-bottom: 0; padding: 0.462em 0.769em; background: #f4efa4; border: 0.077em solid #e0c64c; }
+	#thesis_options .options_module p.form_input input, #thesis_options .options_module p.form_input textarea { font: normal 0.923em/1.667em Consolas, "Andale Mono", "Courier New", Courier; width: 22.5em; padding: 0.333em; color: #6f7718; background: #fff; border: 0.083em solid #e0d8b5; border-top-color: #c5bc96; border-left-color: #c5bc96; }
+	#thesis_options .options_module p.form_input input:focus, #thesis_options .options_module p.form_input textarea:focus { background: #f7f392; }
+	#thesis_options .options_module p.form_input input.short { width: 5em; }
+	#thesis_options .options_module p.form_input textarea.scripts { height: 6.667em; }
+	#thesis_options .options_module p.form_input select { font: normal 1em/1.538em "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif; width: 16.154em; padding: 0.308em; }
+	#thesis_options .options_module p.form_input select.select_multiple { height: 7.692em; }
+	#thesis_options .options_module p.form_input label { display: block; font: 0.846em/1.818em "Helvetica Neue", Helvetica, Arial, sans-serif; color: #887c47; }
+	#thesis_options .options_module p.form_input label.inline { display: inline; }
+		#thesis_options .options_module p.form_input label acronym { font-size: 0.909em; }
+		#thesis_options .options_module p.form_input label a, #thesis_options .options_module p.form_input label a:visited { text-decoration: none; }
+		#thesis_options .options_module p.form_input label a:hover { text-decoration: underline; }
+#thesis_options .options_module p.label_note { font: normal 1.1em/1.818em "Helvetica Neue", Helvetica, Arial, sans-serif; margin-bottom: 0; color: #887c47; }
+	#thesis_options .options_module p.label_note a, #thesis_options .options_module p.label_note a:visited { font-family: "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif; color: #666; text-decoration: none; }
+	#thesis_options .options_module p.label_note a:hover { color: #162ccc; }
+#thesis_options .options_module p.indented { margin-left: 0.154em; padding-left: 0.769em; border-left: 0.077em solid #d1c9a9; }
+	#thesis_options .options_module p.form_input.indented input { width: 21.417em; }
+#thesis_options .options_module p .new { font-size: 0.846em; line-height: 1.818em; text-transform: uppercase; letter-spacing: 1px; color: #c00; }
+#thesis_options .options_module ul { list-style: none; }
+#thesis_options .options_module ul.add_margin { margin-bottom: 0.769em; }
+#thesis_options .options_module ul.no_margin { margin-bottom: 0 !important; }
+#thesis_options .options_module ul.dependent { margin: 0.385em 0 0.385em 0.538em; padding-left: 0.769em; border-left: 0.154em solid #d1c9a9; }
+	#thesis_options .options_module ul li { font-size: 1.3em; line-height: 1.538em; }
+		#thesis_options .options_module ul li label { padding-left: 0.462em; }
+			#thesis_options .options_module ul li label a { text-decoration: none; color: #666; }
+			#thesis_options .options_module ul li label a:hover { text-decoration: none; color: #162ccc; }
+			#thesis_options .options_module ul li label span { font: 0.846em/1.818em "Helvetica Neue", Helvetica, Arial, sans-serif; color: #887c47; }
+			#thesis_options .options_module ul li label input.date_entry { font: normal 0.923em/1.667em Consolas, "Andale Mono", "Courier New", Courier; width: 6.667em; padding: 0.25em; color: #6f7718; background: #fff; border: 0.083em solid #e0d8b5; border-top-color: #c5bc96; border-left-color: #c5bc96; }
+			#thesis_options .options_module ul li label input.date_entry:focus { background: #f7f392; }
+#thesis_options .options_module .thesis_new { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #b00; }
+
+/*---:[ column configuration examples ]:---*/
+#thesis_options .options_module ul.column_structure { }
+	#thesis_options .options_module ul.column_structure li { margin-bottom: 0.769em; clear: both; }
+		#thesis_options .options_module ul.column_structure p { font-size: 1em; line-height: 1.538em; }
+			#thesis_options .options_module ul.column_structure p span { display: block; height: 4.615em; line-height: 4.615em; text-align: center; margin-right: 0.308em; background: #dbf0f4; border: 0.077em solid #a5d6df; float: left; }
+			#thesis_options .options_module ul.column_structure .col_content { width: 10.154em; }
+			#thesis_options .options_module ul.column_structure .col_sidebar { width: 5.077em; }
+			#thesis_options .options_module ul.column_structure .no_margin { margin-right: 0 !important; }
+#thesis_options .options_column .button_module { background: #497016 !important; }
+	#thesis_options .options_column .button_module input.save_button { font: normal 2em/1em "Helvetica Neue", Helvetica, Arial, sans-serif; width: 100%; padding: 0.8em 0; color: #bce587; background: #699e25; border: none; text-align: center; cursor: pointer; }
+	#thesis_options .options_column .button_module input.save_button:hover { color: #fff; }
+#thesis_options .options_column #save_button_control .module_subsection { margin-top: 0; padding-top: 0; border: none; }
+
+/*---:[ sortables ]:---*/
+#thesis_options ul.sortable { width: 27.2em; padding: 0.4em 0.4em 0.1em 0.4em; background: #e5e0c8; }
+	#thesis_options ul.sortable li { width: 20.154em; margin-bottom: 0.231em; padding: 0.308em; background: #faf5db; border: 0.077em solid #d9d2af; cursor: move; }
+	#thesis_options ul.sortable li:hover { background: #fff; }
+		#thesis_options ul.sortable li input { font: normal 1em/1em Georgia, "Times New Roman", Times, serif; width: 17.846em; padding: 0.077em 0; background: none; border: none; cursor: text; }
+		#thesis_options ul.sortable li input.checkbox { width: auto; margin-right: 0.462em; float: left; cursor: default; }
+
+/*---:[ full-width options styles ]:---*/
+#thesis_options .one_col { width: 90%; }
+	#thesis_options .one_col h3 { font-size: 1.6em; line-height: 1.25em; margin-bottom: 0.625em; letter-spacing: normal; }
+	#thesis_options .one_col p { font-size: 1.3em; line-height: 1.538em; margin-bottom: 0.769em; }
+	#thesis_options .one_col .syntax { display: block; font: normal 1.1em/1em "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif; padding: 0.636em 0.364em; color: #fbd9d9; background: #ea0a0a; border: 1px solid #ac1111; text-decoration: none; float: right; }
+	#thesis_options .one_col .syntax:hover { color: #fff; background: #c71616; border-color: #900e0e; }
+	#thesis_options .one_col p.alert { padding: 0.615em 0.769em; background: #f4efa4; border: 0.077em solid #e0c64c; }
+	#thesis_options .one_col #custom_file_jump { font-size: 0.846em; line-height: 1em; padding: 0.273em 0.182em; background: #c3f0ba; border-color: #a0d596; width: auto; overflow: visible; }
+	#thesis_options .one_col #custom_file_jump:hover { background: #a0d596; border-color: #83bb78; cursor: pointer; }
+	#thesis_options .one_col textarea { font-family: Consolas, "Andale Mono", Courier; }
+	#thesis_options .one_col .file_editor iframe { width: 100% !important; }
+	#thesis_options .one_col select { font: normal 1em/1.538em "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif; width: 16.154em; padding: 0.308em; }
+	#thesis_options .one_col .save_button { font: normal 1.538em/1em "Helvetica Neue", Helvetica, Arial, sans-serif; width: 14em; padding: 0.8em 0; color: #bce587; background: #699e25; border: 0.5em solid #497016; text-align: center; cursor: pointer; }
+	#thesis_options .one_col .save_button:hover { color: #fff; }
+
+/*---:[ alert boxes ]:---*/
+#thesis_options .updated, #thesis_options .warning { margin-bottom: 2em; padding: 1.2em 0.9em; border-width: 0.1em; }
+#thesis_options .updated { width: 28em; }
+#thesis_options .warning { width: 60em; background: #f4efa4; border-style: solid; border-color: #e0c64c; }
+	#thesis_options .updated p { font-size: 1.4em; line-height: 1.429em; }
+	#thesis_options .warning p { font-size: 1.4em; line-height: 1.571em; }
+		#thesis_options .warning p strong { font: bold 0.786em/1.273em "Corbel", "Lucida Grande", "Lucida Sans Unicode", Arial, sans-serif; text-transform: uppercase; letter-spacing: 1px; color: #c00; }
+#thesis_options #upgrade_needed { width: 62em; }
+	#thesis_options #upgrade_needed h3 { font-weight: bold; font-size: 2.0em; line-height: 1.1em; margin-bottom: 0.55em; letter-spacing: normal; }
+	#thesis_options #upgrade_needed p { font-size: 1.4em; line-height: 1.571em; margin-bottom: 1.571em; }
+	#thesis_options #upgrade_needed input.upgrade_button { font: normal 2em/1em "Helvetica Neue", Helvetica, Arial, sans-serif; width: 21.429em; padding: 0.714em 0; color: #bce587; background: #699e25; border: 0.357em solid #497016; text-align: center; cursor: pointer; }
+	#thesis_options #upgrade_needed input.upgrade_button:hover { color: #fff; }
+
+/*---:[ meta box styles on the posting screen ]:---*/
+#thesis_image_meta p, #thesis_seo_meta p, #thesis_multimedia_meta p { font-size: 13px !important; padding-top: 6px; font-style: normal; }
+	#thesis_image_meta p a.switch, #thesis_seo_meta p a.switch, #thesis_multimedia_meta p a.switch { font-size: 11px; margin-left: 10px; color: #666; text-decoration: none; }
+	#thesis_image_meta p a.switch:hover, #thesis_seo_meta p a.switch:hover, #thesis_multimedia_meta p a.switch:hover { color: #21759B; }
+#thesis_image_meta p.add_margin, #thesis_seo_meta p.add_margin, #thesis_multimedia_meta p.add_margin, #thesis_image_meta ul.add_margin { padding-bottom: 12px; border-bottom: 1px dotted #ccc; }
+#thesis_image_meta ul { margin: 0 0 6px 6px; }
+#thesis_image_meta input.text_input, #thesis_seo_meta input.text_input, #thesis_multimedia_meta input.text_input { display: block; }
+#thesis_image_meta input.full, #thesis_seo_meta input.full, #thesis_multimedia_meta input.full { width: 99%; }
+#thesis_image_meta input.short, #thesis_seo_meta input.short, #thesis_multimedia_meta input.short { width: 160px; }
+#thesis_image_meta input.tiny, #thesis_seo_meta input.tiny, #thesis_multimedia_meta input.tiny { width: 50px; }
+#thesis_image_meta textarea, #thesis_seo_meta textarea, #thesis_multimedia_meta textarea { display: block; width: 99%; }
+#thesis_image_meta label, #thesis_seo_meta label, #thesis_multimedia_meta label { font-size: 11px; color: #999; }
+	#thesis_image_meta label code, #thesis_seo_meta label code, #thesis_multimedia_meta label code { color: #666; }
+#thesis_meta_post_image_horizontal, #thesis_meta_thumb_horizontal, #thesis_meta_thumb_vertical { margin-right: 40px; float: left; }
+#thesis_meta_post_image_vertical { float: left; }
+#thesis_meta_thumb, #thesis_meta_thumb_width { clear: both; }
+
+/*---:[ clear, dammit! ]:---*/
+#thesis_options ul#thesis_links:after, #thesis_options .options_module ul.column_structure li:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }

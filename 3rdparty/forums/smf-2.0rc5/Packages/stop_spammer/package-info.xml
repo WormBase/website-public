@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>M-DVD:StopSpammer</id>
+	<name>Stop Spammer</name>
+	<version>2.3.9</version>
+	<type>modification</type>
+
+	<install for="1.1.1 - 1.99.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification format="xml" type="file">install_1.xml</modification>
+		<modification format="xml" type="file">languages.xml</modification>
+		<modification format="xml" type="file">languages_utf8.xml</modification>
+		<require-file name="StopSpammer.php" destination="$sourcedir" />
+		<require-file name="spammer.gif" destination="$imagesdir/icons" />
+		<require-file name="suspect.gif" destination="$imagesdir/icons" />
+		<require-file name="moreinfo.gif" destination="$imagesdir/icons" />
+		<code type="file">install_1.php</code>
+		<redirect url="$boardurl/index.php?action=regcenter;sa=settings#stopspammer" type="inline">Please stand by while you are being redirected to this modification's configuration settings.</redirect>
+	</install>
+
+	<uninstall for="1.1.1 - 1.99.99">
+		<modification format="xml" type="file" reverse="true">install_1.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages_utf8.xml</modification>
+		<remove-file name="$sourcedir/StopSpammer.php" />
+		<remove-file name="$imagesdir/icons/spammer.gif" />
+		<remove-file name="$imagesdir/icons/suspect.gif" />
+		<remove-file name="$imagesdir/icons/moreinfo.gif" />
+	</uninstall>
+
+	<install for="2.0 - 2.99.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<modification format="xml" type="file">install_2.xml</modification>
+		<modification format="xml" type="file">languages.xml</modification>
+		<modification format="xml" type="file">languages_utf8.xml</modification>
+		<require-file name="StopSpammer.php" destination="$sourcedir" />
+		<require-file name="spammer.gif" destination="$imagesdir/icons" />
+		<require-file name="suspect.gif" destination="$imagesdir/icons" />
+		<require-file name="moreinfo.gif" destination="$imagesdir/icons" />
+		<database type="file">install_2.php</database>
+		<redirect url="$boardurl/index.php?action=admin;area=regcenter;sa=settings" type="inline">Please stand by while you are being redirected to this modification's configuration settings.</redirect>
+	</install>
+
+	<uninstall for="2.0 - 2.99.99">
+		<modification format="xml" type="file" reverse="true">install_2.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages.xml</modification>
+		<modification format="xml" type="file" reverse="true">languages_utf8.xml</modification>
+		<remove-file name="$sourcedir/StopSpammer.php" />
+		<remove-file name="$imagesdir/icons/spammer.gif" />
+		<remove-file name="$imagesdir/icons/suspect.gif" />
+		<remove-file name="$imagesdir/icons/moreinfo.gif" />
+	</uninstall>
+	
+</package-info>

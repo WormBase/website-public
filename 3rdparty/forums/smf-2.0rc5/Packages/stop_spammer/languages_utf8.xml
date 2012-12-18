@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>M-DVD:StopSpammer</id>
+	<name>Stop Spammer</name>
+	<version>2.3.9</version>
+
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//	MOD Stop Spammer - START
+$txt['stopspammer_error'] = 'Error with Anti SPAM DB. Connection Failed.<br />
+Please try again later, or Contact with the WebMaster';
+$txt['stopspammer_count'] = 'Spammers blocked up until today';
+$txt['stopspammer_title'] = 'Search more info in `Stop Forum Spam`';
+
+$txt['stopspammer_enable'] = 'Enable/Disable MOD Stop Spammer';
+$txt['stopspammer_show01'] = 'Show Link "More Info" for All Members';
+$txt['stopspammer_show01_sub'] = 'You can check any member at any time with one simple click';
+
+$txt['stopspammer_faildb'] = 'If the Connection Fail with Anti SPAM DB...';
+$txt['stopspammer_fail01'] = 'Show Error and Stop Registration';
+$txt['stopspammer_fail02'] = 'Allow Immediate Registration';
+$txt['stopspammer_fail03'] = 'Member Approval and show yellow icon to check later';
+$txt['stopspammer_faildb1_sub'] = 'Your host can make remote connection with the DB';
+$txt['stopspammer_faildb2_sub'] = 'Your host couldn\'t make connection with the DB. Try again later.<br />
+If this error continues see Support Topic and search ';
+$txt['stopspammer_not_translate'] = '<a href="http://www.simplemachines.org/community/index.php?topic=283309.msg1920848#post_issues"><span class="error"><b>Known Issues</b></span></a>';
+
+$txt['stopspammer_leyd01'] = 'Not Spammer: This data wasn\'t in a DB. But you can check';
+$txt['stopspammer_leyd02'] = 'Suspect: This member couldn\'t be checked. Check now';
+$txt['stopspammer_leyd03'] = 'Spammer: See more info of activity of this spammer';
+
+$txt['stopspammer_profilecheck'] = 'Check this member';
+$txt['stopspammer_limitexceded'] = 'You have exceded the check limit (5000 API queries per day).<br />You should wait until tomorrow to check again.';
+
+$txt['in_stop_forum_spam'] = 'In Stop Forum Spam Web:';
+$txt['spammers_checks'] = 'Check these Members';
+$txt['spammers_report'] = 'Report these Members';
+$txt['confirm_spammers_checks'] = 'Are you sure you want to check the selected members?';
+$txt['confirm_spammers_report'] = 'Are you sure you want to report the selected members?\n\nThink that when you report a member to SFS they are marked as spammer all over the world\nand they won\\\'t be able to use any of the forums connected to SFS around the world.\n\nDo it only if you are completely sure they are spammers and if by any chance you make a mistake\ntell as soon as possible the mod\\\'s creator to correct the mistake inside the SFS database.';
+
+$txt['stopspammer_api_key'] = 'Your API key';
+
+$txt['stopspammer_check_name'] = 'Check their username';
+$txt['stopspammer_check_mail'] = 'Check their email';
+$txt['stopspammer_check_ip'] = 'Check their IP';
+$txt['stopspammer_check_sub2'] = 'By default, every time you check a member with MOD Stop Spammer it will check their username, email and IP. If you are getting too many false positives because of their usernames you can turn that option off. We wouldn\'t recomend you to turn off the another 2 options (to check their email and IP) unless you know what you are doing.';
+
+// Changed from 2.3.8 to 2.3.9
+$txt['stopspammer_check_sub1'] = 'If MOD Stop Spammer is enabled, every time we check a member:';
+$txt['stopspammer_api_key_sub'] = 'If you want to use your own API key you must go first to <a href="http://www.stopforumspam.com/signup" target="_blank">www.stopforumspam.com</a> to sign up for one and write it here. If you haven\'t got one you cannot report spammers with this mod.<br /><br />If you need help with this configuration or with anything else about Mod Stop Spammer, apart from the support forums, you can also ask for online help. If you have already installed Mod httpBL you can see how to ask for online help going to Admin => MOD httpBL => Help. If you haven\'t got it you can <a href="http://www.snoopyvirtualstudio.com/contact.php?language=english" target="_blank">see more info here</a>.';
+
+// New in version 2.3.9
+$txt['stopspammer_settings'] = 'MOD Stop Spammer settings';
+$txt['stopspammer_enable_sub'] = 'With this check-box checked the mod is ON. With the check-box unchecked the mod is OFF.';
+$txt['stopspammer_error_no_api_key'] = 'You cannot report a spammer without an API key from www.stopforumspam.com<br /><br />You need to register on their site first, ask them for an API key and then navigate inside your forum to:<br />Admin => Members => Registration => Settings<br />Scroll down to Stop Spammer settings, write your API key there and save your settings.';
+$txt['stopspammer_no_connect_1'] = 'Mod Stop Spammer is ON but there is no connection just now with Stop Forum Spam. Please try later.';
+$txt['stopspammer_no_connect_2'] = 'If the problem persists ask for help in the <a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">official support forum</a>.';
+$txt['stopspammer_new_version_1'] = 'Mod Stop Spammer is ON but it is not up-to-date.';
+$txt['stopspammer_new_version_2'] = 'There is a new version of this mod. The version you have is: ';
+$txt['stopspammer_new_version_3'] = '<a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">Please update it here whenever you can</a> to the new version: ';
+$txt['stopspammer_all_ok'] = 'Mod Stop Spammer is ON, it is up-to-date and the connection with Stop Forum Spam is perfect.';
+$txt['stopspammer_is_off'] = 'Mod Stop Spammer is OFF.';
+//	MOD Stop Spammer - END
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.english_british-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//	MOD Stop Spammer - START
+$txt['stopspammer_error'] = 'Error with Anti SPAM DB. Connection Failed.<br />
+Please try again later, or Contact with the WebMaster';
+$txt['stopspammer_count'] = 'Spammers blocked up until today';
+$txt['stopspammer_title'] = 'Search more info in `Stop Forum Spam`';
+
+$txt['stopspammer_enable'] = 'Enable/Disable MOD Stop Spammer';
+$txt['stopspammer_show01'] = 'Show Link "More Info" for All Members';
+$txt['stopspammer_show01_sub'] = 'You can check any member at any time with one simple click';
+
+$txt['stopspammer_faildb'] = 'If the Connection Fail with Anti SPAM DB...';
+$txt['stopspammer_fail01'] = 'Show Error and Stop Registration';
+$txt['stopspammer_fail02'] = 'Allow Immediate Registration';
+$txt['stopspammer_fail03'] = 'Member Approval and show yellow icon to check later';
+$txt['stopspammer_faildb1_sub'] = 'Your host can make remote connection with the DB';
+$txt['stopspammer_faildb2_sub'] = 'Your host couldn\'t make connection with the DB. Try again later.<br />
+If this error continues see Support Topic and search ';
+$txt['stopspammer_not_translate'] = '<a href="http://www.simplemachines.org/community/index.php?topic=283309.msg1920848#post_issues"><span class="error"><b>Known Issues</b></span></a>';
+
+$txt['stopspammer_leyd01'] = 'Not Spammer: This data wasn\'t in a DB. But you can check';
+$txt['stopspammer_leyd02'] = 'Suspect: This member couldn\'t be checked. Check now';
+$txt['stopspammer_leyd03'] = 'Spammer: See more info of activity of this spammer';
+
+$txt['stopspammer_profilecheck'] = 'Check this member';
+$txt['stopspammer_limitexceded'] = 'You have exceded the check limit (5000 API queries per day).<br />You should wait until tomorrow to check again.';
+
+$txt['in_stop_forum_spam'] = 'In Stop Forum Spam Web:';
+$txt['spammers_checks'] = 'Check these Members';
+$txt['spammers_report'] = 'Report these Members';
+$txt['confirm_spammers_checks'] = 'Are you sure you want to check the selected members?';
+$txt['confirm_spammers_report'] = 'Are you sure you want to report the selected members?\n\nThink that when you report a member to SFS they are marked as spammer all over the world\nand they won\\\'t be able to use any of the forums connected to SFS around the world.\n\nDo it only if you are completely sure they are spammers and if by any chance you make a mistake\ntell as soon as possible the mod\\\'s creator to correct the mistake inside the SFS database.';
+
+$txt['stopspammer_api_key'] = 'Your API key';
+
+$txt['stopspammer_check_name'] = 'Check their username';
+$txt['stopspammer_check_mail'] = 'Check their email';
+$txt['stopspammer_check_ip'] = 'Check their IP';
+$txt['stopspammer_check_sub2'] = 'By default, every time you check a member with MOD Stop Spammer it will check their username, email and IP. If you are getting too many false positives because of their usernames you can turn that option off. We wouldn\'t recomend you to turn off the another 2 options (to check their email and IP) unless you know what you are doing.';
+
+// Changed from 2.3.8 to 2.3.9
+$txt['stopspammer_check_sub1'] = 'If MOD Stop Spammer is enabled, every time we check a member:';
+$txt['stopspammer_api_key_sub'] = 'If you want to use your own API key you must go first to <a href="http://www.stopforumspam.com/signup" target="_blank">www.stopforumspam.com</a> to sign up for one and write it here. If you haven\'t got one you cannot report spammers with this mod.<br /><br />If you need help with this configuration or with anything else about Mod Stop Spammer, apart from the support forums, you can also ask for online help. If you have already installed Mod httpBL you can see how to ask for online help going to Admin => MOD httpBL => Help. If you haven\'t got it you can <a href="http://www.snoopyvirtualstudio.com/contact.php?language=english" target="_blank">see more info here</a>.';
+
+// New in version 2.3.9
+$txt['stopspammer_settings'] = 'MOD Stop Spammer settings';
+$txt['stopspammer_enable_sub'] = 'With this check-box checked the mod is ON. With the check-box unchecked the mod is OFF.';
+$txt['stopspammer_error_no_api_key'] = 'You cannot report a spammer without an API key from www.stopforumspam.com<br /><br />You need to register on their site first, ask them for an API key and then navigate inside your forum to:<br />Admin => Members => Registration => Settings<br />Scroll down to Stop Spammer settings, write your API key there and save your settings.';
+$txt['stopspammer_no_connect_1'] = 'Mod Stop Spammer is ON but there is no connection just now with Stop Forum Spam. Please try later.';
+$txt['stopspammer_no_connect_2'] = 'If the problem persists ask for help in the <a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">official support forum</a>.';
+$txt['stopspammer_new_version_1'] = 'Mod Stop Spammer is ON but it is not up-to-date.';
+$txt['stopspammer_new_version_2'] = 'There is a new version of this mod. The version you have is: ';
+$txt['stopspammer_new_version_3'] = '<a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">Please update it here whenever you can</a> to the new version: ';
+$txt['stopspammer_all_ok'] = 'Mod Stop Spammer is ON, it is up-to-date and the connection with Stop Forum Spam is perfect.';
+$txt['stopspammer_is_off'] = 'Mod Stop Spammer is OFF.';
+//	MOD Stop Spammer - END
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.spanish-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//	MOD Stop Spammer - START
+$txt['stopspammer_error'] = 'Error con DB Anti SPAM. Conexión Fallida.<br />
+Por favor, intente más tarde o Contacte con el Web-Master';
+$txt['stopspammer_count'] = 'Spammers bloqueados hasta la fecha';
+$txt['stopspammer_title'] = 'Buscar más info en `Stop Forum Spam`';
+
+$txt['stopspammer_enable'] = 'Activar/Desactivar MOD Stop Spammer';
+$txt['stopspammer_show01'] = 'Mostrar Link "More Info" para todos los Usuarios';
+$txt['stopspammer_show01_sub'] = 'Podrás revisar cualquier usuario en cualquier momento con un click';
+
+$txt['stopspammer_faildb'] = 'Si falla la  conexión con la DB Anti SPAM...';
+$txt['stopspammer_fail01'] = 'Mostrar Error y Abortar el Registro';
+$txt['stopspammer_fail02'] = 'Permitir Registro Inmediatamente';
+$txt['stopspammer_fail03'] = 'Poner Bajo Aprobación con alerta amarilla';
+$txt['stopspammer_faildb1_sub'] = 'Tu host puede hacer conexión remota con la DB';
+$txt['stopspammer_faildb2_sub'] = 'Tu host no pudo hacer conexión, intentalo más tarde.<br />Si continúa el error revisa el tema de soporte y busca ';
+$txt['stopspammer_not_translate'] = '<a href="http://www.simplemachines.org/community/index.php?topic=283309.msg1920848#post_issues"><span class="error"><b>Known Issues</b></span></a>';
+
+$txt['stopspammer_leyd01'] = 'No Spammer: Este dato no estaba en la DB. Pero puedes revisar';
+$txt['stopspammer_leyd02'] = 'Sospechoso: Este usuario no pudo ser revisado. Revisa ahora';
+$txt['stopspammer_leyd03'] = 'Spammer: Ver más info de la actividad de este spammer';
+
+$txt['stopspammer_profilecheck'] = 'Revisar este usuario';
+$txt['stopspammer_limitexceded'] = 'Has excedido el límite de consultas (5000 consultas por día).<br />Debes esperar hasta mañana para continuar.';
+
+$txt['in_stop_forum_spam'] = 'En la Web Stop Forum Spam:';
+$txt['spammers_checks'] = 'Revisar Usuarios';
+$txt['spammers_report'] = 'Reportar Usuarios';
+$txt['confirm_spammers_checks'] = '¿Estás seguro que deseas revisar estos usuarios?';
+$txt['confirm_spammers_report'] = '¿Estás seguro de que quieres reportar a los usuarios seleccionados?\n\nTen en cuenta que al reportar a estos usuarios a SFS quedarán marcados como spammers en todo el mundo y no podrán utilizar ninguno de los foros del mundo entero que usan esta base de datos.\n\nHazlo solo si estás completamente seguro de que son spammers y si por casualidad alguna vez cometes un error avisa cuanto antes al creador del mod para poder corregir el error en la base de datos de SFS.';
+
+$txt['stopspammer_api_key'] = 'Tu API key';
+
+$txt['stopspammer_check_name'] = 'Comprobar su nombre de usuario';
+$txt['stopspammer_check_mail'] = 'Comprobar su email';
+$txt['stopspammer_check_ip'] = 'Comprobar su IP';
+$txt['stopspammer_check_sub2'] = 'Por defecto, cada vez que chequeas un usuario con el MOD Stop Spammer, comprobarás su nombre de usuario, su email y su IP. Si estás teniendo demasiados falsos positivos debido a los nombres de usuario, puedes desactivar esa opción. Las otras 2 opciones (para comprobar el email y la IP) no te recomendaríamos que las desactivaras a no ser que sepas lo que estás haciendo.';
+
+// Changed from 2.3.8 to 2.3.9
+$txt['stopspammer_check_sub1'] = 'Si el MOD Stop Spammer está activado, cada vez que chequeemos un usuario:';
+$txt['stopspammer_api_key_sub'] = 'Si quieres usar tu propia API key debes entrar primero en <a href="http://www.stopforumspam.com/signup" target="_blank">www.stopforumspam.com</a> para que te den una y escribirla aquí. Si no tienes una no podrás reportar spammers con este mod.<br /><br />Si necesitas ayuda con esta configuración o con cualquier otra cosa relativa al Mod Stop Spammer, además de los foros de soporte habituales, también puedes pedir ayuda en línea. Si tienes instalado el Mod httpBL puedes ver cómo puedes pedir ayuda en línea yendo a Administración => MOD httpBL => Ayuda. Si no lo tienes instalado <a href="http://www.snoopyvirtualstudio.com/contact.php" target="_blank">puedes ver más información aquí</a>.';
+
+// New in version 2.3.9
+$txt['stopspammer_settings'] = 'Configuración del MOD Stop Spammer';
+$txt['stopspammer_enable_sub'] = 'Con esta casilla marcada el mod está activo. Con la casilla desmarcada el mod está apagado.';
+$txt['stopspammer_error_no_api_key'] = 'No puedes reportar un spammer sin una API key de www.stopforumspam.com<br /><br />Tienes que registrate en su página primero, pídeles una API key y luego navega dentro de tu foro a:<br />Administración => Usuarios => Registro de Usuarios => Configuración<br />Baja hasta la configuración de Stop Spammer, escribe tu API key ahí y guarda tu configuración.';
+$txt['stopspammer_no_connect_1'] = 'El Mod Stop Spammer está activado, pero no hay conexión ahora mismo con Stop Forum Spam. Intentalo mas tarde.';
+$txt['stopspammer_no_connect_2'] = 'Si el problema persiste pide ayuda en el <a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">foro oficial de soporte</a>.';
+$txt['stopspammer_new_version_1'] = 'El Mod Stop Spammer está activado, pero no está actualizado.';
+$txt['stopspammer_new_version_2'] = 'Hay una nueva versión de este mod. La versión que tienes tú es: ';
+$txt['stopspammer_new_version_3'] = '<a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">Actualizala aquí cuando puedas</a> a la nueva versión: ';
+$txt['stopspammer_all_ok'] = 'El Mod Stop Spammer está activado, está actualizado y la conexión con Stop Forum Spam es perfecta.';
+$txt['stopspammer_is_off'] = 'El Mod Stop Spammer está apagado.';
+//	MOD Stop Spammer - END
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.spanish_es-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//	MOD Stop Spammer - START
+$txt['stopspammer_error'] = 'Error con DB Anti SPAM. Conexión Fallida.<br />
+Por favor, intente más tarde o Contacte con el Web-Master';
+$txt['stopspammer_count'] = 'Spammers bloqueados hasta la fecha';
+$txt['stopspammer_title'] = 'Buscar más info en `Stop Forum Spam`';
+
+$txt['stopspammer_enable'] = 'Activar/Desactivar MOD Stop Spammer';
+$txt['stopspammer_show01'] = 'Mostrar Link "More Info" para todos los Usuarios';
+$txt['stopspammer_show01_sub'] = 'Podrás revisar cualquier usuario en cualquier momento con un click';
+
+$txt['stopspammer_faildb'] = 'Si falla la  conexión con la DB Anti SPAM...';
+$txt['stopspammer_fail01'] = 'Mostrar Error y Abortar el Registro';
+$txt['stopspammer_fail02'] = 'Permitir Registro Inmediatamente';
+$txt['stopspammer_fail03'] = 'Poner Bajo Aprobación con alerta amarilla';
+$txt['stopspammer_faildb1_sub'] = 'Tu host puede hacer conexión remota con la DB';
+$txt['stopspammer_faildb2_sub'] = 'Tu host no pudo hacer conexión, intentalo más tarde.<br />Si continúa el error revisa el tema de soporte y busca ';
+$txt['stopspammer_not_translate'] = '<a href="http://www.simplemachines.org/community/index.php?topic=283309.msg1920848#post_issues"><span class="error"><b>Known Issues</b></span></a>';
+
+$txt['stopspammer_leyd01'] = 'No Spammer: Este dato no estaba en la DB. Pero puedes revisar';
+$txt['stopspammer_leyd02'] = 'Sospechoso: Este usuario no pudo ser revisado. Revisa ahora';
+$txt['stopspammer_leyd03'] = 'Spammer: Ver más info de la actividad de este spammer';
+
+$txt['stopspammer_profilecheck'] = 'Revisar este usuario';
+$txt['stopspammer_limitexceded'] = 'Has excedido el límite de consultas (5000 consultas por día).<br />Debes esperar hasta mañana para continuar.';
+
+$txt['in_stop_forum_spam'] = 'En la Web Stop Forum Spam:';
+$txt['spammers_checks'] = 'Revisar Usuarios';
+$txt['spammers_report'] = 'Reportar Usuarios';
+$txt['confirm_spammers_checks'] = '¿Estás seguro que deseas revisar estos usuarios?';
+$txt['confirm_spammers_report'] = '¿Estás seguro de que quieres reportar a los usuarios seleccionados?\n\nTen en cuenta que al reportar a estos usuarios a SFS quedarán marcados como spammers en todo el mundo y no podrán utilizar ninguno de los foros del mundo entero que usan esta base de datos.\n\nHazlo solo si estás completamente seguro de que son spammers y si por casualidad alguna vez cometes un error avisa cuanto antes al creador del mod para poder corregir el error en la base de datos de SFS.';
+
+$txt['stopspammer_api_key'] = 'Tu API key';
+
+$txt['stopspammer_check_name'] = 'Comprobar su nombre de usuario';
+$txt['stopspammer_check_mail'] = 'Comprobar su email';
+$txt['stopspammer_check_ip'] = 'Comprobar su IP';
+$txt['stopspammer_check_sub2'] = 'Por defecto, cada vez que chequeas un usuario con el MOD Stop Spammer, comprobarás su nombre de usuario, su email y su IP. Si estás teniendo demasiados falsos positivos debido a los nombres de usuario, puedes desactivar esa opción. Las otras 2 opciones (para comprobar el email y la IP) no te recomendaríamos que las desactivaras a no ser que sepas lo que estás haciendo.';
+
+// Changed from 2.3.8 to 2.3.9
+$txt['stopspammer_check_sub1'] = 'Si el MOD Stop Spammer está activado, cada vez que chequeemos un usuario:';
+$txt['stopspammer_api_key_sub'] = 'Si quieres usar tu propia API key debes entrar primero en <a href="http://www.stopforumspam.com/signup" target="_blank">www.stopforumspam.com</a> para que te den una y escribirla aquí. Si no tienes una no podrás reportar spammers con este mod.<br /><br />Si necesitas ayuda con esta configuración o con cualquier otra cosa relativa al Mod Stop Spammer, además de los foros de soporte habituales, también puedes pedir ayuda en línea. Si tienes instalado el Mod httpBL puedes ver cómo puedes pedir ayuda en línea yendo a Administración => MOD httpBL => Ayuda. Si no lo tienes instalado <a href="http://www.snoopyvirtualstudio.com/contact.php" target="_blank">puedes ver más información aquí</a>.';
+
+// New in version 2.3.9
+$txt['stopspammer_settings'] = 'Configuración del MOD Stop Spammer';
+$txt['stopspammer_enable_sub'] = 'Con esta casilla marcada el mod está activo. Con la casilla desmarcada el mod está apagado.';
+$txt['stopspammer_error_no_api_key'] = 'No puedes reportar un spammer sin una API key de www.stopforumspam.com<br /><br />Tienes que registrate en su página primero, pídeles una API key y luego navega dentro de tu foro a:<br />Administración => Usuarios => Registro de Usuarios => Configuración<br />Baja hasta la configuración de Stop Spammer, escribe tu API key ahí y guarda tu configuración.';
+$txt['stopspammer_no_connect_1'] = 'El Mod Stop Spammer está activado, pero no hay conexión ahora mismo con Stop Forum Spam. Intentalo mas tarde.';
+$txt['stopspammer_no_connect_2'] = 'Si el problema persiste pide ayuda en el <a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">foro oficial de soporte</a>.';
+$txt['stopspammer_new_version_1'] = 'El Mod Stop Spammer está activado, pero no está actualizado.';
+$txt['stopspammer_new_version_2'] = 'Hay una nueva versión de este mod. La versión que tienes tú es: ';
+$txt['stopspammer_new_version_3'] = '<a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">Actualizala aquí cuando puedas</a> a la nueva versión: ';
+$txt['stopspammer_all_ok'] = 'El Mod Stop Spammer está activado, está actualizado y la conexión con Stop Forum Spam es perfecta.';
+$txt['stopspammer_is_off'] = 'El Mod Stop Spammer está apagado.';
+//	MOD Stop Spammer - END
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/Modifications.spanish_latin-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//	MOD Stop Spammer - START
+$txt['stopspammer_error'] = 'Error con DB Anti SPAM. Conexión Fallida.<br />
+Por favor, intente más tarde o Contacte con el Web-Master';
+$txt['stopspammer_count'] = 'Spammers bloqueados hasta la fecha';
+$txt['stopspammer_title'] = 'Buscar más info en `Stop Forum Spam`';
+
+$txt['stopspammer_enable'] = 'Activar/Desactivar MOD Stop Spammer';
+$txt['stopspammer_show01'] = 'Mostrar Link "More Info" para todos los Usuarios';
+$txt['stopspammer_show01_sub'] = 'Podrás revisar cualquier usuario en cualquier momento con un click';
+
+$txt['stopspammer_faildb'] = 'Si falla la  conexión con la DB Anti SPAM...';
+$txt['stopspammer_fail01'] = 'Mostrar Error y Abortar el Registro';
+$txt['stopspammer_fail02'] = 'Permitir Registro Inmediatamente';
+$txt['stopspammer_fail03'] = 'Poner Bajo Aprobación con alerta amarilla';
+$txt['stopspammer_faildb1_sub'] = 'Tu host puede hacer conexión remota con la DB';
+$txt['stopspammer_faildb2_sub'] = 'Tu host no pudo hacer conexión, intentalo más tarde.<br />Si continúa el error revisa el tema de soporte y busca ';
+$txt['stopspammer_not_translate'] = '<a href="http://www.simplemachines.org/community/index.php?topic=283309.msg1920848#post_issues"><span class="error"><b>Known Issues</b></span></a>';
+
+$txt['stopspammer_leyd01'] = 'No Spammer: Este dato no estaba en la DB. Pero puedes revisar';
+$txt['stopspammer_leyd02'] = 'Sospechoso: Este usuario no pudo ser revisado. Revisa ahora';
+$txt['stopspammer_leyd03'] = 'Spammer: Ver más info de la actividad de este spammer';
+
+$txt['stopspammer_profilecheck'] = 'Revisar este usuario';
+$txt['stopspammer_limitexceded'] = 'Has excedido el límite de consultas (5000 consultas por día).<br />Debes esperar hasta mañana para continuar.';
+
+$txt['in_stop_forum_spam'] = 'En la Web Stop Forum Spam:';
+$txt['spammers_checks'] = 'Revisar Usuarios';
+$txt['spammers_report'] = 'Reportar Usuarios';
+$txt['confirm_spammers_checks'] = '¿Estás seguro que deseas revisar estos usuarios?';
+$txt['confirm_spammers_report'] = '¿Estás seguro de que quieres reportar a los usuarios seleccionados?\n\nTen en cuenta que al reportar a estos usuarios a SFS quedarán marcados como spammers en todo el mundo y no podrán utilizar ninguno de los foros del mundo entero que usan esta base de datos.\n\nHazlo solo si estás completamente seguro de que son spammers y si por casualidad alguna vez cometes un error avisa cuanto antes al creador del mod para poder corregir el error en la base de datos de SFS.';
+
+$txt['stopspammer_api_key'] = 'Tu API key';
+
+$txt['stopspammer_check_name'] = 'Comprobar su nombre de usuario';
+$txt['stopspammer_check_mail'] = 'Comprobar su email';
+$txt['stopspammer_check_ip'] = 'Comprobar su IP';
+$txt['stopspammer_check_sub2'] = 'Por defecto, cada vez que chequeas un usuario con el MOD Stop Spammer, comprobarás su nombre de usuario, su email y su IP. Si estás teniendo demasiados falsos positivos debido a los nombres de usuario, puedes desactivar esa opción. Las otras 2 opciones (para comprobar el email y la IP) no te recomendaríamos que las desactivaras a no ser que sepas lo que estás haciendo.';
+
+// Changed from 2.3.8 to 2.3.9
+$txt['stopspammer_check_sub1'] = 'Si el MOD Stop Spammer está activado, cada vez que chequeemos un usuario:';
+$txt['stopspammer_api_key_sub'] = 'Si quieres usar tu propia API key debes entrar primero en <a href="http://www.stopforumspam.com/signup" target="_blank">www.stopforumspam.com</a> para que te den una y escribirla aquí. Si no tienes una no podrás reportar spammers con este mod.<br /><br />Si necesitas ayuda con esta configuración o con cualquier otra cosa relativa al Mod Stop Spammer, además de los foros de soporte habituales, también puedes pedir ayuda en línea. Si tienes instalado el Mod httpBL puedes ver cómo puedes pedir ayuda en línea yendo a Administración => MOD httpBL => Ayuda. Si no lo tienes instalado <a href="http://www.snoopyvirtualstudio.com/contact.php" target="_blank">puedes ver más información aquí</a>.';
+
+// New in version 2.3.9
+$txt['stopspammer_settings'] = 'Configuración del MOD Stop Spammer';
+$txt['stopspammer_enable_sub'] = 'Con esta casilla marcada el mod está activo. Con la casilla desmarcada el mod está apagado.';
+$txt['stopspammer_error_no_api_key'] = 'No puedes reportar un spammer sin una API key de www.stopforumspam.com<br /><br />Tienes que registrate en su página primero, pídeles una API key y luego navega dentro de tu foro a:<br />Administración => Usuarios => Registro de Usuarios => Configuración<br />Baja hasta la configuración de Stop Spammer, escribe tu API key ahí y guarda tu configuración.';
+$txt['stopspammer_no_connect_1'] = 'El Mod Stop Spammer está activado, pero no hay conexión ahora mismo con Stop Forum Spam. Intentalo mas tarde.';
+$txt['stopspammer_no_connect_2'] = 'Si el problema persiste pide ayuda en el <a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">foro oficial de soporte</a>.';
+$txt['stopspammer_new_version_1'] = 'El Mod Stop Spammer está activado, pero no está actualizado.';
+$txt['stopspammer_new_version_2'] = 'Hay una nueva versión de este mod. La versión que tienes tú es: ';
+$txt['stopspammer_new_version_3'] = '<a href="http://www.snoopyvirtualstudio.com/foro/index.php?board=31.0" target="_blank">Actualizala aquí cuando puedas</a> a la nueva versión: ';
+$txt['stopspammer_all_ok'] = 'El Mod Stop Spammer está activado, está actualizado y la conexión con Stop Forum Spam es perfecta.';
+$txt['stopspammer_is_off'] = 'El Mod Stop Spammer está apagado.';
+//	MOD Stop Spammer - END
+]]></add>
+		</operation>
+	</file>
+
+</modification>
