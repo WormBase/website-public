@@ -1,0 +1,10 @@
+<div id="footer">
+<p class="smallprint">
+<strong>Feed2JS v1.7</strong><br>
+http://<?php echo $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF']?><br><br>
+Feed2JS code is Copyright (C) 2004-<?php echo date("Y")?> <a href="http://jade.mcli.dist.maricopa.edu/alan/">Alan Levine</a> (Maricopa Community Colleges). It is available as both a free service and open source code from:<br>
+<a href="http://jade.mcli.dist.maricopa.edu/feed/">http://jade.mcli.dist.maricopa.edu/feed/</a><br><br>
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.<br><br>
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details <a href="http://www.gnu.org/licenses/gpl.html">http://www.gnu.org/licenses/gpl.html</a></p>
+</div>
