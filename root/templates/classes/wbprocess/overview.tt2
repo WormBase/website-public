@@ -1,0 +1,56 @@
+<h2>[% fields.name.data.label %]</h2>
+
+
+[% 
+  WRAPPER highlight_box;
+  	WRAPPER $field_block title="Related processes" key="related_process";
+		tags2link( fields.related_process.data );
+	END;
+  END;
+
+  
+ %]
+<div class="description">
+	[% fields.summary.data %]
+</div>
+
+[%## 
+  
+  WRAPPER highlight_box;
+   other_names;
+  END;
+
+
+
+  '<div class="description">';
+   WRAPPER $field_block title="Genotype";
+       show_genotype(fields.genotype.data);
+    END;
+
+   WRAPPER $field_block title="Reference strain" key="reference_strain";
+        tag2link(fields.reference_strain.data);
+   END;
+
+  # WRAPPER $field_block title="Properties";
+         WRAPPER $field_block title="Mutagen" key="mutagen";
+             fields.mutagen.data;
+         END;
+
+         WRAPPER $field_block title="Outcrossed" key="outcrossed";
+              fields.outcrossed.data;
+         END;
+
+         WRAPPER $field_block title="Males?" key="throws_males";
+             fields.throws_males.data;
+         END;
+
+  # END;
+
+  '</div>';
+   phenotypes;
+
+   phenotypes_not_observed;
+
+   remarks;
+
+%]
