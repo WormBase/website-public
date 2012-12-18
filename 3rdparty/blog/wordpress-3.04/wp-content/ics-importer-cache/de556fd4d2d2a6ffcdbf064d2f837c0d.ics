@@ -1,0 +1,225 @@
+BEGIN:VCALENDAR
+PRODID:-//Google Inc//Google Calendar 70.9054//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:WormBase Public Events
+X-WR-TIMEZONE:America/New_York
+X-WR-CALDESC:Public events of interest to the C. elegans research community
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20130626
+DTEND;VALUE=DATE:20130701
+DTSTAMP:20121202T173134Z
+UID:101D1402-8FFD-44B0-B327-D2428E3F6571
+CREATED:20121126T123103Z
+DESCRIPTION:
+LAST-MODIFIED:20121126T123104Z
+LOCATION:UCLA
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:IWM
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20120607
+DTEND;VALUE=DATE:20120611
+DTSTAMP:20121202T173134Z
+UID:9iiftuu28ngqiu4h7c3k5vgba0@google.com
+CREATED:20111228T160728Z
+DESCRIPTION:http://www.union.wisc.edu/celegans/index2012.html
+LAST-MODIFIED:20120320T030950Z
+LOCATION:University of Wisconsic - Madison
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:C. elegans Development\, Cell Biology\, and Gene Expression Topic M
+ eeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20120627
+DTEND;VALUE=DATE:20120701
+DTSTAMP:20121202T173134Z
+UID:friidpct8vu9tb8a7ha0g3hs8c@google.com
+CREATED:20120109T004128Z
+DESCRIPTION:Organizers:\nYi-Chun Wu (Taiwan): National Taiwan University\nA
+ katsuki Kimura (Japan): National Institute of Genetics\nSeung-Jae Lee (Kore
+ a): Pohang University of Science and Technology\nChonglin Yang (China): Chi
+ nese Academy of Sciences\nMassimo Hilliard (Australia): University of Queen
+ sland\nKing L. Chow (Hong Kong): Hong Kong University of Science and Techno
+ logy\nChang-Shi Chen (Taiwan): National Cheng Kung University
+LAST-MODIFIED:20120109T004148Z
+LOCATION:Taipei\, Taiwan
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:5th East Asia C. elegans Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20120712
+DTEND;VALUE=DATE:20120716
+DTSTAMP:20121202T173134Z
+UID:bhmkom1hs0310p0gii1tc0o4sg@google.com
+CREATED:20120109T002518Z
+DESCRIPTION:Malene Hansen and Emily Troemel\, Organizers
+LAST-MODIFIED:20120109T002558Z
+LOCATION:Madison\, WI USA
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:C. elegans Aging\, Metabolism\, Stress\, Pathogenesis\, and Small R
+ NAs Topic Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20120614
+DTEND;VALUE=DATE:20120618
+DTSTAMP:20121202T173134Z
+UID:uibnjn6dm1am6da7d1qlfd73k4@google.com
+CREATED:20120109T000040Z
+DESCRIPTION:
+LAST-MODIFIED:20120109T000102Z
+LOCATION:
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:C. elegans Neurobiology Topic Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20110622T160000Z
+DTEND:20110626T110000Z
+DTSTAMP:20121202T173134Z
+UID:hih8ihsut2qok59bfs9fcufhg8@google.com
+CREATED:20100706T024416Z
+DESCRIPTION:
+LAST-MODIFIED:20100728T050537Z
+LOCATION:UCLA\, Los Angeles\, CA\, USA
+SEQUENCE:2
+STATUS:CONFIRMED
+SUMMARY:18th International C. elegans Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20100801
+DTEND;VALUE=DATE:20100805
+DTSTAMP:20121202T173134Z
+UID:9m18jrlur9c1me5i7499b9tl30@google.com
+CREATED:20100512T135643Z
+DESCRIPTION:Registration and abstract submission website for the 2010 C. el
+ egans Meeting on Aging\, Metabolism\, Pathogenesis\, Stress\, and Small RNA
+ s is now open.\n\n<a href="http://www.union.wisc.edu/ceaging/">http://www.u
+ nion.wisc.edu/ceaging/</a>\n\nAbstract submission deadline is May 24th.\n
+LAST-MODIFIED:20100615T062602Z
+LOCATION:UW\, Madison\, WI
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Topics Meeting: Aging\, Metabolism\, Pathogenesis\, Stress\, and Sm
+ all RNAs at UW Madison
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20100627
+DTEND;VALUE=DATE:20100701
+DTSTAMP:20121202T173134Z
+UID:640bspfa23sn1eoonii5507gu8@google.com
+CREATED:20100512T140226Z
+DESCRIPTION:27-30 June\, Madison\, Wisconsin\, USA\nBruce Bamber and Brian 
+ Ackley\, Organizers\n2010 Workshop on the Biology of the C. elegans Male\nJ
+ une 29-July 1\, Madison\, WI\nSatellite meeting to the Neurobiology Meeting
+ .\nOrganizers: Scott Emmons\, Rene Garcia\, David Fitch\n\n<a href="http://
+ www.union.wisc.edu/ceneuro/index.html">http://www.union.wisc.edu/ceneuro/in
+ dex.html</a>
+LAST-MODIFIED:20100615T062602Z
+LOCATION:UW\, Madison\, WI
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Topic Meeting: Neuroscience
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20100605
+DTEND;VALUE=DATE:20100609
+DTSTAMP:20121202T173134Z
+UID:k2po5bqauoupn6g72fpephd7hk@google.com
+CREATED:20100512T140015Z
+DESCRIPTION:5-8 June\, 2010\, Wellcome Trust Conference Centre\, Hinxton\, 
+ Cambridge\nOrganizers:\nAvril Coghlan\, University College Cork\, Ireland\n
+ Eric Haag\, University of Maryland\, USA\nRalf Sommer\, Max-Planck-Institut
+ e\, Germany\n\n<a href="https://registration.hinxton.wellcome.ac.uk/display
+ _info.asp?id=171">Meeting registration website</a>
+LAST-MODIFIED:20100615T062602Z
+LOCATION:Wellcome Trust Conference Centre\, Hinxton\, Cambridge
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Topic Meeting: Evolutionary Biology of Caenorhabditis and Other Nem
+ atodes
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20100617
+DTEND;VALUE=DATE:20100621
+DTSTAMP:20121202T173134Z
+UID:75tgorln5k69klohh1ojvq901o@google.com
+CREATED:20100403T145438Z
+DESCRIPTION:17-20 June\, EMBL ATC conference center\, Heidelberg\, Germany\
+ nOrganizers:\nJulie Ahringer\, University of Cambridge (ja219@cam.ac.uk)\nM
+ ichel Labouesse\, IGBMC (lmichel@igbmc.fr)\nIain Mattaj\, EMBL (mattaj@embl
+ .de)\n\n<a href="http://www.embl.de/training/courses_conferences/conference
+ /2010/ECE10-01/index.html">http://www.embl.de/training/courses_conferences/
+ conference/2010/ECE10-01/index.html</a>
+LAST-MODIFIED:20100615T062601Z
+LOCATION:Heidelberg\, Germany
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Topic Meeeting: C. elegans Development and Gene Expression Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20101009
+DTEND;VALUE=DATE:20101013
+DTSTAMP:20121202T173134Z
+UID:oao1t0tqgekkrh3hvbu3cactag@google.com
+CREATED:20100512T140337Z
+DESCRIPTION:9-11 October\, 2010\, Fodele Beach Resort\, Crete\nNektarios Ta
+ vernarakis\, Organizer\n\n<a href="http://www.ewnm2010.gr/">http://www.ewnm
+ 2010.gr/</a>
+LAST-MODIFIED:20100615T062601Z
+LOCATION:Fodele Beach Resort\, Crete
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:European C. elegans Neurobiology Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20100630
+DTEND;VALUE=DATE:20100704
+DTSTAMP:20121202T173134Z
+UID:2lgmjqfdpcpajld4c5383pgcn4@google.com
+CREATED:20100403T145248Z
+DESCRIPTION:The 2010 Santa Cruz Developmental Biology Meeting will be held 
+ June 30-July 3rd on the UC\, Santa Cruz campus. Registration and abstract d
+ eadlines are May 1st. The meeting features an exciting line-up of invited s
+ peakers\, and 21 more talks will be chosen from abstracts. Organizers: Domi
+ nique Bergmann\, Ken Cho\, and Susan Strome. Please visit the <a href="http
+ ://www.scdb2010.com/">meeting website</a> for additional information. 
+LAST-MODIFIED:20100509T073330Z
+LOCATION:Santa Cruz\, CA
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:2010 Santa Cruz Developmental Biology Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20100711
+DTEND;VALUE=DATE:20100715
+DTSTAMP:20121202T173134Z
+UID:melha57j0gllbv4drbtq27a53g@google.com
+CREATED:20100402T221512Z
+DESCRIPTION:<a href="http://www.wormjp.umin.jp/2010EAWM/Home.html">Meeting 
+ website</a>
+LAST-MODIFIED:20100509T073329Z
+LOCATION:Tokyo\, Japan
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:4th East Asia C. elegans Meeting
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
