@@ -1,0 +1,53 @@
+/*************************************
+**  css file for mod httpBL v2.5.1  **
+*************************************/
+
+/**********************************
+**  Legend for the logs section  **
+**********************************/
+.httpBL_threat_low
+{
+	background-color:#fc9;
+	font-weight: bold;
+	color:#000;
+}
+
+.httpBL_threat_medium
+{
+	background-color:#f96;
+	font-weight: bold;
+	color:#fff;
+}
+
+.httpBL_threat_high
+{
+	background-color:#f30;
+	font-weight: bold;
+	color:#fff;
+}
+
+.httpBL_threat_very_high
+{
+	background-color:#c30;
+	font-weight: bold;
+	color:#fff;
+}
+
+
+/*********************************
+**  Colors to see if mod is OK  **
+*********************************/
+.httpBL_mod_ok
+{
+	background-color:green;
+	font-weight: bold;
+	color:#fff;
+}
+
+.httpBL_mod_no_ok
+{
+	background-color:red;
+	font-weight: bold;
+	color:#fff;
+}
+

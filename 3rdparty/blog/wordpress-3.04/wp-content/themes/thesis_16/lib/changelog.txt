@@ -1,0 +1,66 @@
+VERSION 1.6
+	* [changeset 1] http://diythemes.com/dev/thesis-16/
+	* [changeset 2] http://diythemes.com/dev/version-16-beta-2/
+	* [changeset 3] http://diythemes.com/dev/thesis-16-final/
+
+VERSION 1.5.1
+	* [feature] "Read More" text can be specified on a per-post basis.
+	* [feature] Custom files can now be edited via the admin panel.
+	* [feature] New filterable item:
+		* thesis_search_form_value
+	* [fix] Frame settings on post image thumbnails work as expected again.
+
+VERSION 1.5
+	* [feature] Increased customization, including quick & simple text replacement, via filters
+		New filterable items in this version include:
+			* thesis_allowed_tags
+			* thesis_avatar
+			* thesis_comments_intro
+			* thesis_comments_link
+			* thesis_comments_navigation
+			* thesis_trackback_link
+			* thesis_trackback_datetime
+			* thesis_content_classes
+	* [feature] Ability to replace certain theme files through filters
+			* thesis_get_footer
+				This filter should return a simple slug, such as "mine," which will cause WP to load
+				footer-mine.php rather than the default footer.php.
+			* thesis_get_header
+				This filter should return a simple slug, such as "mine," which will cause WP to load
+				header-mine.php rather than the default header.php.
+	* [feature] New hooks!
+		New hooks in this version include:
+			* thesis_hook_after_comments
+	* [feature] Links to various Thesis resources included on Thesis options pages
+	* [fix] Invalid CSS caused by empty "float: " declaration when 1-column styling in use [HT: maniac]
+
+VERSION 1.4.2
+	* [feature] Support for WordPress' comments features introduced in 2.7
+		* Threaded comments w/ replying
+		* Paginated comments
+		* Reverse order comments
+	* [feature] Classes applied to BODY are now filterable
+	* [feature] Option to disable "allowed tags" on comment form
+	* [feature] Canonical LINK on posts/pages to prevent duplicate content
+	* [feature] New hooks
+		* thesis_hook_before_content_area
+		* thesis_hook_after_content_area
+	* [feature] BODY tag classes are filterable via thesis_body_classes
+	* [feature] I18n files (PO/MO formats) now included
+	* [feature] Styling for WordPress' image captioning
+	* [feature] Column widths can now be arbitrarily defined
+	* [feature] Big ass toggle switch
+	* [fix] IE8 compatibility by way of forcing it to render as IE7
+	* [fix] Image rotator will now use images with uppercase file extensions
+	* [fix] Fix style issue when pages are listed in search results while full-width framework is in use [HT: kristarella]
+	* [fix] PHP4 compatibility
+	* [fix] "Comments are closed" message now shown even if the post doesn't have any comments [HT: quirkyblogger]
+	* [fix] Custom home pages can now have custom title tags
+	* [fix] Account for yearly archives in H1 and introduction generation [HT: sagesmart]
+	* [improved] Inline documentation comments throughout Thesis' code
+	* [improved] A few image files were optimized to be slightly smaller
+	* [improved] General usability
+	* [improved] Stylesheet generation is now done once, upon saving the design options
+	* [improved] All of the former lib/css/ files are now served via layout.css
+	* [improved] Post images can now be hosted remotely (note that automatic thumbnails still require local images)
+	* [improved] Appearance & organization of the Thesis panels

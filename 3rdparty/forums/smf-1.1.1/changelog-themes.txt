@@ -1,0 +1,261 @@
+Changes go downward.  Please scroll to the bottom for language changes.
+Changelog started with SMF 1.0 RC1; Currently at $Revision: 1.1.2.66 $.
+
+SMF 1.0.4
+================================================================================
+Template changes:
+--------------------------------------------------------------------------------
+ * Admin: medium importance.
+    - for displaying a notice when a new update becomes available, lines 80-90 and 213-260
+
+
+Language file changes:
+--------------------------------------------------------------------------------
+ * Admin
+    - Added two language strings 'update_available' and 'update_message' for the new
+      update warning window.
+
+
+SMF 1.0.1
+================================================================================
+Template changes:
+--------------------------------------------------------------------------------
+ * BoardIndex: low importance.
+    - for internationalization, stopped using $txt[94], lines 320 and 326.
+ * Profile: low importance.
+    - fixed a minor layout error in showing a person's posts, line 333.
+ * Recent: low importance.
+    - fixed a minor layout error in showing a person's posts, line 29.
+ * Wireless: low importance.
+    - changed category ids to start with a letter, lines 28 and 39.
+
+
+Language file changes:
+--------------------------------------------------------------------------------
+ * index
+    - Updated copyright to reflect 2005.
+ * Packages
+    - Made $txt['package45'] more descriptive.
+
+
+SMF 1.0
+================================================================================
+Template changes:
+--------------------------------------------------------------------------------
+ * Admin: low importance.
+    - fixed a minor possibility for URL rewriting on line 167.
+    - added ?version=', $context['forum_version'], ' to the current-version.js
+      link, just to help with book keeping.
+ * BoardIndex: very low importance.
+    - fixed a long-standing typo on line 16 - extra :.
+    - changed $txt[94], ' ', $txt[64] to $txt[490] on line 320 for translations.
+ * Display: low importance.
+    - named the form on line 220 - it was causing javascript errors if you had
+      buttons as images off.
+ * InstantMessage: low importance.
+    - replaced findmember;input=to;sesc= with findmember;input=to;quote=1;sesc=
+      on line 348.
+ * MessageIndex: low importance.
+    - Added last_post.gif icon to go to last post, line 187.
+ * Packages: medium importance.
+    - Added forum version number to version information, line 323.
+    - Fixed a typo near lines 120 and 580.
+    - Changed
+         if ($package['is_installed'])
+      to:
+         if ($package['is_installed'] && !$package['is_newer'])
+      on lines 529, 730, 389, 443, and 486.
+    - Changed $package['is_installed'] and added && $package['is_current'] on
+      line 409.
+ * Post: low importance.
+    - On line 650, Clicking the list BBC button now shows tags on many lines.
+    - Fixed a possible minor JavaScript error on line 515.
+ * Profile: low importance
+    - On lines 187 - 200, used $context['member']['email_public'] to determine
+      whether the email is to be shown publicly or hidden.
+ * Recent: low importance.
+    - Added last_post.gif icon to go to last post, lines 123 and 238.
+ * Search: low importance.
+    - Fixed a mistake on line 36 that only affected simple search.
+ * Wireless: low importance.
+    - Replaced the page_index with a longer, shorter page index designed for
+      wireless devices.
+
+
+Language file changes:
+--------------------------------------------------------------------------------
+ * Admin
+    - Changed $txt['smf92'].
+ * Errors
+    - Changed $txt['smf125'].
+ * Help
+    - Updated $helptxt['removeNestedQuotes'] slightly.
+    - Corrected $helptxt['attachmentEnable'], which was way off.
+    - Corrected $helptxt['m_queryless_urls'].
+    - Added to $helptxt['fixLongWords'].
+ * index
+    - The forum copyright now opens 'Lewis Media' in a new window (not mandatory.)
+    - Added $txt['mail_send_unable'].
+ * Install
+    - Updated $txt['error_user_settings_taken'].
+ * ManageBoards
+    - Updated $txt['mboards_moderators_desc'] to reduce confusion.
+ * ManageSmileys
+    - Updated $txt['smiley_editsets_explain'] to reduce confusion.
+ * ModSettings
+    - Changed $txt['queryless_urls'].
+    - Changed $txt['send_validation_onChange'].
+ * Packages
+    - Renamed $txt['package_ftp_neccessary'] to $txt['package_ftp_necessary'].
+    - Added $txt['package_no_zlib'].
+ * Profile
+    - Changed $txt[479] slightly.
+ * Settings
+    - Changed $txt['theme_description'].
+
+
+SMF 1.0 RC2
+================================================================================
+Template changes:
+--------------------------------------------------------------------------------
+ * index: low importance.
+    - Modified the code size fixing code so that it fixed the same bug in the
+      Safari and Mac IE browsers.  Approximately lines 330 to 350.
+    - Added a comment on line 260.
+    - Added action=; onto the <link /> tags so they would retain their query
+      strings for Firefox, lines 95 - 100.
+ * Admin: medium importance.
+    - fixed a typo that was causing version checking to fail with the default
+      theme. (line 579)
+    - Admin now checks that this isn't the last row of quick tasks on line 138
+      when showing another row for tasks.
+    - Tweaked padding in the admin sub template slightly, various lines.
+ * Display: low importance.
+    - The "hide emails from guests" option was not working if "allow members to
+      hide their emails" was off.  The backend was changed, so on display the
+      sub templates no longer need to check $context['allow_hide_email'], 331.
+    - Added number of hidden members viewing topic to "who's viewing this" on
+      line 28.
+    - Added "mark unread" feature.  Lines 178 - 198, 497 - 517, and 649.
+    - Made Quick Reply take $context['is_marked_notify'] into account, line 622.
+ * InstantMessage: low importance.
+    - The "hide emails from guests" option was not working if "allow members to
+      hide their emails" was off.  The backend was changed, so on display the
+      sub templates no longer need to check $context['allow_hide_email'], 156.
+ * ManageBoards: medium importance.
+    - The notify_announcements was removed because the feature has been changed
+      to work more obivously.  It is no longer a setting on the board itself.
+      (approximately lines 345 - 352.)
+    - Was not checking permissions correctly to show the "permissions" links.
+      Line 67.
+    - Changed 'name' to 'editable_name' on line 131.
+    - Tweaked the category modify link into two links on line 43.
+ * ManageMembers: medium importance.
+    - The text "Post groups" was not translatable, line 157.
+    - Added the 'announce' and 'announce_send' sub templates, which can be found
+      at the end of the new template.
+    - Permissions were not being checked properly for deleting members.  Lines
+      400 - 415, 445 - 455.
+    - Added sorting and more information to viewing members of groups.
+      Lines 224-250.
+    - Changed $context['group']['name'] to $context['group']['editable_name'] on
+      line 152.
+ * ManagePermissions: low importance.
+    - Added option to copy permissions from one board to another. Lines 75 - 95.
+ * ManageSmileys: low importance.
+    - Added some javascript variables on lines 148-150.
+    - Changed help=18 to help=smileys, lines 12, 85, 197, 297, 404, 527, 669.
+ * MessageIndex: low importance.
+    - Added number of hidden members viewing topic to "who's viewing this" on
+      line 19.
+    - Added lines mark unread feature, lines 344-347.
+ * Packages: low importance.
+    - Fixed some paths to the /icons/package_*.gif images - search for the
+      string '/package_ and replace with '/icons/package_. (many lines.)
+    - Modified the usage of $txt['package43'] on line 76.
+ * Post: medium importance.
+    - The javascript code for the smiley popup was changed to allow quotes in
+      the description, about 750 - 800.
+    - Disabling some bbc tags was not working because of a few typographical
+      errors, which can be fixed by copying the new bbc section in the postbox
+      sub template, about lines 650 - 725.
+    - There was a small type on line 864. (onSubmit not onsubmit.)
+    - Added option to send announcements on posting, around line 425.
+    - Added a check for document.postmodify.attachmentPreview in the javascript
+      to prevent errors; line 38.
+    - Made the smiley popup resizable.  Line 785.
+    - Made it so the smiley popup didn't popup twice, lines 785 - 810.
+    - Posting in the calendar now always shows a board selection, line 288.
+ * Profile: medium importance.
+    - The "hide emails from guests" option was not working if "allow members to
+      hide their emails" was off.  The backend was changed, so on display the
+      sub templates no longer need to check $context['allow_hide_email'].
+    - Fixed a lot of permissions issues on various lines in various parts of the
+      file.  Use a file comparison tool to see the line numbers.
+    - Removed \r from the signature length check, lines 963 and 964.
+    - Added page index to notification list, lines 1346 - 1350.
+ * Register: low importance.
+    - Updated to show "reject" and "delete" as separate options, lines 145 - 150
+      and lines 245-250.
+ * Themes: medium importance.
+    - The links to "Edit Main Template" and "Edit Style Sheet" now use id= in
+      the URL and not theme=. Lines 317-318.
+    - The sub templates edit_style and edit_template should have the action
+      lines on the form changed from theme='... to id=... on lines 246 and 276.
+    - Added a note when a theme file is not writable to both edit_style and
+      edit_template. (260 - 267)
+ * images/language/markunread.gif: low importance.
+    - This image was added as a button to mark topics and board unread.
+
+
+Language file changes:
+--------------------------------------------------------------------------------
+ * index
+    - Added $txt['mark_unread'].
+    - Added $txt['ssi_not_direct'].
+    - Updated $txt[497].
+ * Errors
+    - Removed $txt['cannot_edit_forum'].
+    - Added $txt['no_membergroup_selected'], $txt['cannot_manage_attachments'], $txt['cannot_manage_bans'], $txt['cannot_manage_boards'], $txt['cannot_manage_membergroups'], $txt['cannot_manage_permissions'], and $txt['cannot_manage_smileys'].
+    - Added $txt['unable_to_create_temporary'].
+ * Help
+    - Removed $helptxt['search_max_cached_results'].
+    - Added $helptxt['disableTemporaryTables'].
+    - Updated $helptxt['karmaMode'], $helptxt['enableStickyTopics'], $helptxt['cal_enabled'], $helptxt['avatar_allow_external_url'], and $helptxt['pollMode'].
+    - Added $helptxt['smileys'].
+ * Install
+    - Added $txt['user_refresh_install'] and $txt['user_refresh_install_desc'].
+    - Added $txt['error_mysql_missing'].
+ * Login
+    - Added $txt['admin_browse_w_reject'], $txt['admin_approve_delete'], and $txt['admin_approve_delete_desc'].
+    - Removed $txt['admin_approve_reject_desc2'].
+    - Updated $txt['admin_approve_rejct_desc'].
+ * Post
+    - Added $txt['announce_this_topic'], $txt['announce_title'], $txt['announce_desc'], $txt['announce_sending'], $txt['announce_done'], $txt['announce_continue'], and $txt['announce_topic'].
+ * ManageBoards
+    - Removed $txt['mboards_notify_announce'] and $txt['mboards_notify_announce_desc'].
+ * ManageMembers
+    - Removed $txt['membergroupss_min_posts'].
+    - Added $txt['membergroups_postgroups'].
+ * ManagePermissions
+    - Added $txt['permissionname_manage_boards'], $txt['permissionhelp_manage_boards'], $txt['permissionname_manage_attachments'], $txt['permissionhelp_manage_attachments'], $txt['permissionname_manage_smileys'], and $txt['permissionhelp_manage_smileys'].
+    - Added $txt['permissiongroup_member_admin'], $txt['permissionname_manage_membergroups'], $txt['permissionhelp_manage_membergroups'], $txt['permissionname_manage_permissions'], $txt['permissionhelp_manage_permissions'], $txt['permissionhelp_manage_bans'], $txt['permissionname_announce_topic'], and $txt['permissionhelp_announce_topic'].
+    - Added $txt['permissions_copy_from_board'] and $txt['permissions_select_board'].
+    - Updated $txt['permissionhelp_who_view'].
+    - Updated $txt['permissionname_move'].
+ * ModSettings
+    - Removed $txt['search_max_cached_results'].
+    - Added $txt['disableTemporaryTables'].
+ * Packages
+    - Added $txt['package_modification_malformed'] and $txt['package_modification_missing'].
+    - Updated $txt['package45'] and $txt['package43'].
+ * Profile
+    - Updated $txt['notifyXOnce1'].
+    - Updated $txt['statPanel_noPosts'].
+    - Updated $txt['pswd4'].
+ * Themes
+    - Added $txt['theme_edit_no_save'].
+    - Updated $txt['number_recent_posts'].
+    - Updated $txt['theme_options_reset'].
+ * Who
+    - Removed $txt['whoadmin_ban2'].
