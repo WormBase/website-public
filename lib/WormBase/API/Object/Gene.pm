@@ -1945,6 +1945,11 @@ sub strains {
         else {
           $cgc ? push @{$count{available_from_cgc}},$packed : push @{$count{others}},$packed;
         }
+
+	if (my $transgene = $_->Transgene) {
+	    my $label = $transgene->Public_name;
+	    $packed->{transgenes} = $self->_pack_obj($transgene,"$label");
+	}
     }
 
     return {
