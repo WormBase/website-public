@@ -141,7 +141,8 @@ sub assembly {
         first_wb_release => "WS" . $_->First_WS_release,
         reference => $self->_pack_obj($ref)
       }
-    } grep {$_->Status eq 'Live'} $object->Assembly;
+#     } $object->Assembly;
+    } grep {$_->Status ne 'Dead' && $_->Status ne 'Suppressed'} $object->Assembly;
 
     return {
       description => "genomic assemblies",
