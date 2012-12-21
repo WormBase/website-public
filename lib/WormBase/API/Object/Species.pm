@@ -140,28 +140,14 @@ sub assembly {
     my @assemblies = $object->Assembly;
     my @data;
     foreach (@assemblies) {
+	next if $_->Status eq 'Dead' || $_->Status eq 'Suppressed';
 	push @data,$self->_process_assembly($_);
 
 	# Starting from live and working backwards.
 	if ($_->Supercedes) {
-	    push @data,$self->_process_assembly($_->Supercedes);
+	    push @assemblies,$_->Supercedes;
 	}
     }
-    
-#    my @data = map {
-#      my $ref = $_->Evidence ? $_->Evidence->right : $_->Laboratory;
-#      my $label = $_->Name || "$_";
-#      { name => $self->_pack_obj($_->Name, "$label", coord => { start => 1 }),
-#        sequenced_strain  => $self->_pack_obj($_->Strain),
-#        first_wb_release  => "WS" . $_->First_WS_release,
-#	latest_wb_release => "WS" . $_->Latest_WS_release,
-#	superceded_by     => $self->_pack_obj($_->Superceded_by),
-#        reference         => $self->_pack_obj($ref),
-#	status            => "live",
-#	    
-#      }
-#     } grep {$_->Status ne 'Dead' && $_->Status ne 'Suppressed'} $object->Assembly;
-    
 
     return {
       description => "genomic assemblies",
@@ -172,9 +158,6 @@ sub assembly {
 
 sub _process_assembly {    
     my ($self,$assembly) = @_;
-#	if ($assembly->Superceded_by) {
-#	    my $data = $self->$process($assembly->Superceded_by);
-#	}
 
     my $ref    = $assembly->Evidence ? $assembly->Evidence->right : $assembly->Laboratory;
     my $label  = $assembly->Name || "$assembly";
