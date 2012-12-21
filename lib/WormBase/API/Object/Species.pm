@@ -133,15 +133,35 @@ sub assembly {
     my $self   = shift;
     my $object = $self->object;
 
-    my @data = map {
-      my $ref = $_->Evidence ? $_->Evidence->right : $_->Laboratory;
-      my $label = $_->Name || "$_";
-      { name => $self->_pack_obj($_->Name, "$label", coord => { start => 1 }),
-        sequenced_strain => $self->_pack_obj($_->Strain),
-        first_wb_release => "WS" . $_->First_WS_release,
-        reference => $self->_pack_obj($ref)
-      }
-    } grep {$_->Status eq 'Live'} $object->Assembly;
+    # Multiple assemblies for a given species are 
+    # represented by linking from the live Sequence_collection
+    # to others.
+
+    my @assemblies = $object->Assembly;
+    my @data;
+    foreach (@assemblies) {
+	push @data,$self->_process_assembly($_);
+
+	# Starting from live and working backwards.
+	if ($_->Supercedes) {
+	    push @data,$self->_process_assembly($_->Supercedes);
+	}
+    }
+    
+#    my @data = map {
+#      my $ref = $_->Evidence ? $_->Evidence->right : $_->Laboratory;
+#      my $label = $_->Name || "$_";
+#      { name => $self->_pack_obj($_->Name, "$label", coord => { start => 1 }),
+#        sequenced_strain  => $self->_pack_obj($_->Strain),
+#        first_wb_release  => "WS" . $_->First_WS_release,
+#	latest_wb_release => "WS" . $_->Latest_WS_release,
+#	superceded_by     => $self->_pack_obj($_->Superceded_by),
+#        reference         => $self->_pack_obj($ref),
+#	status            => "live",
+#	    
+#      }
+#     } grep {$_->Status ne 'Dead' && $_->Status ne 'Suppressed'} $object->Assembly;
+    
 
     return {
       description => "genomic assemblies",
@@ -149,6 +169,34 @@ sub assembly {
     }
 }
 
+
+sub _process_assembly {    
+    my ($self,$assembly) = @_;
+#	if ($assembly->Superceded_by) {
+#	    my $data = $self->$process($assembly->Superceded_by);
+#	}
+
+    my $ref    = $assembly->Evidence ? $assembly->Evidence->right : $assembly->Laboratory;
+    my $label  = $assembly->Name || "$assembly";
+
+    my $superceded_by = $assembly->Superceded_by ? $assembly->Superceded_by : '-';
+    my $status        = $superceded_by ? 'superceded' : 'current';
+
+    my $wb_range      = 
+	"WS" . $assembly->First_WS_release . ' - '
+	. ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
+	
+
+    my $data = { name => $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 }),
+		 sequenced_strain  => $self->_pack_obj($assembly->Strain),
+		 first_wb_release  => "WS" . $assembly->First_WS_release,
+		 latest_wb_release => "WS" . $assembly->Latest_WS_release,
+		 wb_release_range  => $wb_range,
+		 reference         => $self->_pack_obj($ref),
+		 status            => $status,
+    };
+    return $data;
+}
 
 
 =head3 ncbi_id
