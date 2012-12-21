@@ -145,7 +145,7 @@ sub _get_report {
     my $api = $c->model('WormBaseAPI');
     my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
 
-    $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1")  if( !($object->{label}) || $object->{id} ne $name || $object->{class} ne lc($class));
+   $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1")  if( !($object->{label}) || $object->{id} ne $name || $object->{class} ne lc($class));
 
     $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
 }
