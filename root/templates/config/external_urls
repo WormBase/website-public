@@ -238,6 +238,13 @@
 		search		= 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
 	}
 
+
+	ncbi_genome_assembly = {
+	       description     = 'Genome assembly archive at NCBI',
+	       base            = 'http://www.ncbi.nlm.nih.gov/assembly/',
+	       search          = 'http://www.ncbi.nlm.nih.gov/assembly/%s',
+        }
+
 	ncbi_protein = {
 		description	= 'The Protein database is a collection of sequences from several sources, including translations from annotated coding regions in GenBank, RefSeq and TPA, as well as records from SwissProt, PIR, PRF, and PDB. Protein sequences are the fundamental determinants of biological structure and function.'
 		base		= 'http://www.ncbi.nlm.nih.gov/protein'
@@ -380,6 +387,12 @@
 		base		= 'http://expasy.org/sprot'
 		email		= 'swiss-prot@expasy.org'
 		search		= 'http://www.expasy.org/uniprot/%s'
+	}
+
+	ucsc_genome_browser = {
+	      description = 'The UCSC Genome Browser',
+	      base        = 'http://genome.ucsc.edu/cgi-bin/hgGateway',
+	      search      = 'http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=%s',
 	}
 
 	UniProt = {

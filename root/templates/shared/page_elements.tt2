@@ -443,6 +443,45 @@ END;
     '</table>';
 END; %]
 
+
+
+[% MACRO concatenated_links_cell(cell) BLOCK;
+
+  xrefs = cell.xrefs;
+
+  links = "";
+
+  # Set to "xrefs" for WS236.
+  FOREACH db IN xrefs_offline;
+     FOREACH xref IN db.keys; 
+     dbname = db.$xref.name;
+
+     # Override database names in Acedb.
+      IF !site.external_urls.$dbname.defined;
+	  dbname = FILTER lower; xref.name; END;  #e.g. OMIM(ACeDB) -> omim(external_urls)
+      ELSE;
+	  dbname = db.$xref.name;
+      END;
+       
+      id    = db.$xref.accession;
+      label = db.$xref.label;
+
+      # This information is pulled from config which we might want to use in preference over ?Database;
+      # Create a tooltip with information from information culled from both the database and our config.
+      description = site.external_urls.$dname.description;
+      
+      href= FILTER format(site.external_urls.$dbname.search); id; END;
+ 
+      # We'll use description info from the website and not the DB.
+      # Should be a table of resource, ID linked to page description, maintainer.
+      links = links _ external_link(href,id,label);
+     END;
+     links.join("<br>");
+      END;
+END; %]
+
+
+
 [% MACRO show_genotype(obj) BLOCK;
 	genstr = obj.str;
 	FOREACH key IN obj.data.keys.sort;
@@ -466,6 +505,8 @@ END; %]
           evidence(cell.evidence,table_name _ index, cell.text, 'details');
       ELSIF cell.defined('interaction');
           interaction_cell(cell);
+      ELSIF cell.defined('xrefs');
+          concatenated_links_cell(cell);
       ELSIF cell.defined('genotype');
           show_genotype(cell.genotype);
       ELSE;
