@@ -13,7 +13,7 @@ source_map =      Cele     c_elegans_synteny     "C. elegans"
                   Ppac     p_pacificus_synteny   "P. pacificus"
 
 buttons     = /gbrowse2/images/buttons
-tmpimages   = /gbrowse_syn/tmp
+tmpimages   = /synteny/images
 imagewidth    = 800
 stylesheet    = /stylesheets/wormbase.css
 cache time    = 1
