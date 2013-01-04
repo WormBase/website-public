@@ -11,7 +11,7 @@ source_map =      Cele      c_elegans_synteny     "C. elegans"
 	          Cbre      c_brenneri_synteny    "C. brenneri"
                   Cjap      c_japonica_synteny    "C. japonica"
 
-tmpimages   = /gbrowse_syn/tmp
+tmpimages   = /synteny/images
 
 buttons       = /gbrowse2/images/buttons
 imagewidth    = 800

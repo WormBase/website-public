@@ -13,7 +13,7 @@ source_map =      Cele     c_elegans_synteny     "C. elegans"
 	          Ppac     p_pacificus_synteny   "P. pacificus"
 
 buttons     = /gbrowse2/images/buttons
-tmpimages   = /gbrowse_syn/tmp
+tmpimages   = /synteny/images
 
 header = sub {
     my $header = `cat /usr/local/wormbase/services/gbrowse2/website-gbrowse2-support/conf/synteny/header.html`;
