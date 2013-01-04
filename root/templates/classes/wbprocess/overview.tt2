@@ -1,5 +1,10 @@
 <h2>[% fields.name.data.label %]</h2>
 
+<br/>
+<br/>
+object->process_term: [% fields.process_term.data %]
+<br/>
+<br/>
 
 [% 
   WRAPPER highlight_box;
@@ -10,9 +15,15 @@
 
   
  %]
+ 
+<h3>[% fields.other_name.data %]</h3>
+ 
 <div class="description">
 	[% fields.summary.data %]
 </div>
+
+<h3>Remark: [% fields.remark.data %]<h3>
+
 
 [%## 
   
