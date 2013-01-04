@@ -25,12 +25,66 @@ examples = Cele X:1050001..1150000
 
 initial landmark = Cele X:1050001..1150000
 
-header = sub {
-    my $header = `cat /usr/local/wormbase/services/gbrowse2/website-gbrowse2-support/conf/synteny/header.html`;
-    return $header;
- }
 
 zoom levels = 5000 10000 25000 50000 100000 200000 500000 1000000
+
+
+# At the top of the HTML...
+# URL *must* be absolute.
+# The (hard-coded) WormBase header.
+header = sub {
+      use LWP::UserAgent;
+
+      my $ua = new LWP::UserAgent;
+      $ua->timeout(120);
+
+      my $url='http://www.wormbase.org/header';
+      my $request = new HTTP::Request('GET', $url);
+      my $response = $ua->request($request);
+      my $content = $response->content();
+
+      $content .= 
+         qq{<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+         <link type="text/css" href="/css/main.min.css" rel="stylesheet" /> };
+
+      return $content;
+      } 
+
+# The GBrowse footer
+footer = sub {
+      use LWP::UserAgent;
+      my $ua = new LWP::UserAgent;
+      $ua->timeout(120);	
+
+      my $url='http://www.wormbase.org/footer';
+
+      my $request = new HTTP::Request('GET', $url);
+      my $response = $ua->request($request);
+      my $content = $response->content();
+
+      $content .= '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>' 
+              . '<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>  ' 
+              . '<script>'
+                . 'var se = document.createElement(\'script\');'
+                . 'se.src = "/js/wormbase.min.js";'
+                . 'var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(se, s);'
+                . 'var _gaq = _gaq || [];'
+                . '_gaq.push([\'_setAccount\', \'UA-16257183-1\']);'
+                . '_gaq.push([\'_setDomainName\', \'.wormbase.org\']);'
+                . '_gaq.push([\'_trackPageview\']);'
+                . '(function() {'
+                  . 'var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'
+                  . 'ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'
+                  . 'var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'
+                . '})();'
+              . '</script>'
+              . '<script> $.noConflict(); </script>';
+
+      return $content;
+      } 
+
+# Web site configuration info
+stylesheet  = /css/wormbase-gbrowse.css
 
 
 # species-specific databases
