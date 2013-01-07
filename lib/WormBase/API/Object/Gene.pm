@@ -10,8 +10,6 @@ with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
 with    'WormBase::API::Role::Interaction';
 
-#####################
-
 =pod 
 
 =head1 NAME
@@ -124,61 +122,11 @@ sub _build__phenotypes {
 #
 #######################################
 
-=head2 Overview
-
-=cut
-
-=head3 also_refers_to
-
-This method will return a data structure containing
-other names that have also been used to refer to the
-gene.
-
-=over
-
-=item PERL API
-
- $data = $model->also_refers_to();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/also_refers_to
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# also_refers_to { }
+# This method will return a data structure containing
+# other names that have also been used to refer to the
+# gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/also_refers_to
 
 sub also_refers_to {
     my $self   = shift;
@@ -197,56 +145,10 @@ sub also_refers_to {
 }
 
 
-=head3 named_by
-
-This method will return a data structure containing
-the WB person who named the gene
-
-=over
-
-=item PERL API
-
- $data = $model->named_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/named_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# named_by { }
+# This method will return a data structure containing
+# the WB person who named the gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/named_by
 
 sub named_by {
     my $self   = shift;
@@ -258,57 +160,10 @@ sub named_by {
     };
 }
 
-
-=head3 classification
-
-This method will return a data structure containing
-the general classification of the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->classification();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/classification
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# classification { }
+# This method will return a data structure containing
+# the general classification of the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/classification
 
 sub classification {
     my $self   = shift;
@@ -387,56 +242,10 @@ sub classification {
 }
 
 
-=head3 cloned_by
-
-This method will return a data structure containing
-the person or laboratory who cloned the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->cloned_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/cloned_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# cloned_by { }
+# This method will return a data structure containing
+# the person or laboratory who cloned the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/cloned_by
 
 sub cloned_by {
     my $self      = shift;
@@ -459,56 +268,10 @@ sub cloned_by {
     return $datapack;
 }
 
-=head3 cloned_by
-
-This method will return a data structure containing
-the parent clone of the gene
-
-=over
-
-=item PERL API
-
- $data = $model->clone();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/clone
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# clone { }
+# This method will return a data structure containing
+# the parent clone of the gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/clone
 
 sub clone {
     my $self      = shift;
@@ -520,56 +283,10 @@ sub clone {
 }
 
 
-=head3 concise_desciption
-
-This method will return a data structure containing
-the prose concise description of the gene, if one exists.
-
-=over
-
-=item PERL API
-
- $data = $model->concise_description();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/concise_description
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# concise_desciption { }
+# This method will return a data structure containing
+# the prose concise description of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/concise_description
 
 sub concise_description {
     my $self   = shift;
@@ -591,57 +308,10 @@ sub concise_description {
 }
 
 
-
-=head3 gene_class
-
-This method will return a data structure containing
-the gene class packed tag of the gene, if one exists.
-
-=over
-
-=item PERL API
-
- $data = $model->gene_class();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_class
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# gene_class { }
+# This method will return a data structure containing
+# the gene class packed tag of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_class
 
 sub gene_class {
     my $self   = shift;
@@ -656,56 +326,10 @@ sub gene_class {
 
 
 
-=head3 operon
-
-This method will return a data structure containing
-the operon packed tag of the gene, if one exists.
-
-=over
-
-=item PERL API
-
- $data = $model->operon();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/operon
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# operon { }
+# This method will return a data structure containing
+# the operon packed tag of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/operon
 
 sub operon {
     my $self   = shift;
@@ -717,57 +341,11 @@ sub operon {
 }
 
 
-=head3 legacy_information
-
-This method will return a data structure containing
-legacy information from the original Cold Spring Harbor
-C. elegans I & II texts.
-
-=over
-
-=item PERL API
-
- $data = $model->legacy_information();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/legacy_information
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# legacy_information { }
+# This method will return a data structure containing
+# legacy information from the original Cold Spring Harbor
+# C. elegans I & II texts.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/legacy_information
 
 sub legacy_information {
   my $self   = shift;
@@ -777,56 +355,10 @@ sub legacy_information {
 	   data        => @description ? \@description : undef };
 }
 
-=head3 locus_name
-
-This method will return a data structure containing
-the name of the genetic locus.
-
-=over
-
-=item PERL API
-
- $data = $model->locus_name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/locus_name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# locus_name { }
+# This method will return a data structure containing
+# the name of the genetic locus.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/locus_name
 
 sub locus_name {
     my $self   = shift;
@@ -838,65 +370,16 @@ sub locus_name {
 }
 
 
-# sub name {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# name {}
+# Supplied by Role
 
-# sub other_names {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include other_names >>
+# other_names {}
+# Supplied by Role
 
-
-=head3 sequence_name
-
-This method will return a data structure containing
-the primary sequence name of the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->sequence_name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/sequence_name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# sequence_name { }
+# This method will return a data structure containing
+# the primary sequence name of the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/sequence_name
 
 sub sequence_name {
     my $self     = shift;
@@ -908,60 +391,13 @@ sub sequence_name {
 }
 
 
-# sub status {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include status >>
+# status {}
+# Supplied by Role
 
-=head3 version
-
-This method will return a data structure containing
-various structured descriptions of gene's function.
-
-=over
-
-=item PERL API
-
- $data = $model->structured_description();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/structured_description
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# structured_description { }
+# This method will return a data structure containing
+# various structured descriptions of gene's function.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/structured_description
 
 sub structured_description {
    my $self = shift;
@@ -986,6 +422,9 @@ sub structured_description {
 	    data        =>  %ret ? \%ret : undef };
 }
 
+# human_disease_relevance { }
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/human_disease_relevance
+
 sub human_disease_relevance {
     my $self = shift;
     my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Human_disease_relevance;
@@ -994,61 +433,13 @@ sub human_disease_relevance {
               data        =>  @objs ? \@objs : undef };
 }
 
-# sub taxonomy {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include taxonomy >>
+# taxonomy {}
+# Supplied by Role
 
-
-=head3 version
-
-This method will return a data structure containing
-the current WormBase version of the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->version();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/version
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# version { }
+# This method will return a data structure containing
+# the current WormBase version of the gene.
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/version
 
 sub version {
     return {
@@ -1064,65 +455,12 @@ sub version {
 # The Expression Widget
 #   template: classes/gene/expression.tt2
 #
-#   TH: Several of the methods in this widget
-#       need to be rewritten and clarified.
-#
 #######################################
 
-=head2 Expression
-
-=cut
-
-=head3 fourd_expression_movies
-
-This method will return a data structure containing
-links to four-dimensional expression movies.
-
-=over
-
-=item PERL API
-
- $data = $model->fourd_expression_movies();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# fourd_expression_movies { }
+# This method will return a data structure containing
+# links to four-dimensional expression movies.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
 
 sub fourd_expression_movies {
     my $self   = shift;
@@ -1147,57 +485,11 @@ sub fourd_expression_movies {
 }
 
 
-=head3 anatomic_expression_patterns
-
-This method will return a complex data structure 
-containing expression patterns described at the
-anatomic level. Includes links to images.
-
-=over
-
-=item PERL API
-
- $data = $model->anatomic_expression_patterns();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomic_expression_patterns
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# anatomic_expression_patterns { }
+# This method will return a complex data structure 
+# containing expression patterns described at the
+# anatomic level. Includes links to images.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomic_expression_patterns
 
 sub anatomic_expression_patterns {
     my $self   = shift;
@@ -1244,57 +536,11 @@ sub anatomic_expression_patterns {
 
 
 
-=head3 anatomy_terms
-
-This method will return a hash 
-containing unique anatomy terms described from the
-expression patterns associated with this gene
-
-=over
-
-=item PERL API
-
- $data = $model->anatomy_terms();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_terms
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# anatomy_terms { }
+# This method will return a hash 
+# containing unique anatomy terms described from the
+# expression patterns associated with this gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_terms
 
 sub anatomy_terms {
     my $self   = shift;
@@ -1314,57 +560,10 @@ sub anatomy_terms {
     };
 }
 
-=head3 microarray_expression_data
-    
-This method will return a data structure containing
-microarray expression data.
-    
-=over
-
-=item PERL API
-
- $data = $model->microarray_expression_data();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_expression_data
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
+# microarray_expression_data { }
+# This method will return a data structure containing
+# microarray expression data.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_expression_data
 
 sub microarray_expression_data {
     my $self   = shift;
@@ -1375,56 +574,10 @@ sub microarray_expression_data {
 	     description => 'gene expression determined via microarray analysis'};
 }
 
-=head3 microrarray_topology_map_position
-
-This method will return a data structure containing
-the microarray "topology" map position.
-
-=over
-
-=item PERL API
-
- $data = $model->microarray_topology_map_position();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_topology_map_position
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# microrarray_topology_map_position { }
+# This method will return a data structure containing
+# the microarray "topology" map position.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_topology_map_position
 
 sub microarray_topology_map_position {
     my $self   = shift;
@@ -1448,56 +601,10 @@ sub microarray_topology_map_position {
     return $datapack;
 }
 
-=head3 expression_cluster
-
-This method will return a data structure containing
-microarray expression clusters.
-
-=over
-
-=item PERL API
-
- $data = $model->expression_cluster();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/expression_cluster
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# expression_cluster { }
+# This method will return a data structure containing
+# microarray expression clusters.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/expression_cluster
 
 sub expression_cluster {
     my $self   = shift;
@@ -1508,56 +615,10 @@ sub expression_cluster {
 }
 
 
-=head3 anatomy_function
-
-This method will return a data structure containing
-the anatomy function of the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->anatomy_function();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_function
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# anatomy_function { }
+# This method will return a data structure containing
+# the anatomy function of the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_function
 
 sub anatomy_function {
     my ($self) = @_;
@@ -1600,14 +661,8 @@ sub anatomy_function {
 #
 #######################################
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
+# xrefs {}
+# Supplied by Role
 
 #######################################
 #
@@ -1616,61 +671,11 @@ sub anatomy_function {
 #
 #######################################
 
-=head2 Genetics
-
-=cut
-
-=head3 alleles
-
-This method will return a complex data structure 
-containing alleles of the gene (but not including
-polymorphisms or other natural variations.
-
-=over
-
-=item PERL API
-
- $data = $model->alleles();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# alleles { }
+# This method will return a complex data structure 
+# containing alleles of the gene (but not including
+# polymorphisms or other natural variations.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
 
 sub alleles {
     my $self   = shift;
@@ -1687,57 +692,11 @@ sub alleles {
 	     data        => @data ? \@data : undef };
 }
 
-=head3 polymorphisms
-
-This method will return a complex data structure 
-containing polymorphisms and natural variations
-but not alleles.
-
-=over
-
-=item PERL API
-
- $data = $model->polymorphisms();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/polymorphisms
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# polymorphisms { }
+# This method will return a complex data structure 
+# containing polymorphisms and natural variations
+# but not alleles.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/polymorphisms
 
 sub polymorphisms {
     my $self    = shift;
@@ -1804,57 +763,11 @@ sub _process_variation {
     return \%data;
 }
 
-=head3 reference_allele
-
-This method will return a complex data structure 
-containing the reference allele of the gene, if
-one exists.
-
-=over
-
-=item PERL API
-
- $data = $model->reference_allele();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/reference_allele
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# reference_allele { }
+# This method will return a complex data structure 
+# containing the reference allele of the gene, if
+# one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/reference_allele
 
 sub reference_allele {
     my $self = shift;
@@ -1865,56 +778,10 @@ sub reference_allele {
 	     data        => @array ? \@array : undef };
 }
 
-=head3 strains
-
-This method will return a complex data structure 
-containing strains carrying the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->strains();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/strains
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# strains { }
+# This method will return a complex data structure 
+# containing strains carrying the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/strains
 
 sub strains {
     my $self   = shift;
@@ -1948,56 +815,10 @@ sub strains {
     };
 }
 
-=head3 rearrangements
-    
-This method will return a data structure 
-containing rearrangements affecting the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->rearrangements();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/rearrangements
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# rearrangements { }    
+# This method will return a data structure 
+# containing rearrangements affecting the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/rearrangements
 
 sub rearrangements {
     my $self    = shift;     
@@ -2020,61 +841,11 @@ sub rearrangements {
 #
 #######################################
 
-=head2 Gene Ontology
-
-=cut
-
-=head3 gene ontology
-
-This method will return a data structure containing
-curated and electronically assigned gene ontology
-associations.
-
-=over
-
-=item PERL API
-
- $data = $model->gene_ontology();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_ontology
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# gene ontology { }
+# This method will return a data structure containing
+# curated and electronically assigned gene ontology
+# associations.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_ontology
 
 sub gene_ontology {
     my $self   = shift;
@@ -2125,56 +896,10 @@ sub gene_ontology {
 #
 #######################################
 
-=head2 History
-
-=cut
-
-=head3 history
-
-This method returns a data structure containing the 
-curatorial history of the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->history();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/history
-
-B<Response example>
-
-=cut
+# history { }
+# This method returns a data structure containing the 
+# curatorial history of the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/history
 
 sub history {
     my $self   = shift;
@@ -2240,61 +965,14 @@ sub history {
 #
 #######################################
 
-=head2 Homology
+# best_blastp_matches {}
+# Supplied by Role
 
-=cut
-
-# sub best_blastp_matches {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include best_blastp_matches >>
-
-=head3 nematode_orthologs
-
-This method returns a data structure containing the 
-orthologs of this gene to other nematodes housed
-at WormBase.
-
-=over
-
-=item PERL API
-
- $data = $model->nematode_orthologs();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/nematode_orthologs
-
-B<Response example>
-
-=cut
+# nematode_orthologs { }
+# This method returns a data structure containing the 
+# orthologs of this gene to other nematodes housed
+# at WormBase.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/nematode_orthologs
 
 sub nematode_orthologs {
     my $self   = shift;
@@ -2313,52 +991,10 @@ sub nematode_orthologs {
 
 }
 
-=head3 human_orthologs
-
-This method returns a data structure containing the 
-human orthologs of this gene.
-
-=over
-
-=item PERL API
-
- $data = $model->human_orthologs();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/human_orthologs
-
-B<Response example>
-
-=cut
+# human_orthologs { }
+# This method returns a data structure containing the 
+# human orthologs of this gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/human_orthologs
 
 has '_other_orthologs' => (
     is      => 'ro',
@@ -2389,54 +1025,12 @@ sub human_orthologs {
 }
 
 
-=head3 other_orthologs
-
-This method returns a data structure containing the 
-orthologs of this gene to species outside of the core
-nematodes housed at WormBase. See also nematode_orthologs()
-and human_orthologs();
-
-=over
-
-=item PERL API
-
- $data = $model->other_orthologs();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/other_orthologs
-
-B<Response example>
-
-=cut
+# other_orthologs { }
+# This method returns a data structure containing the 
+# orthologs of this gene to species outside of the core
+# nematodes housed at WormBase. See also nematode_orthologs()
+# and human_orthologs();
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/other_orthologs
 
 sub other_orthologs {
     my ($self) = @_;
@@ -2448,52 +1042,10 @@ sub other_orthologs {
     };
 }
 
-=head3 paralogs
-
-This method returns a data structure containing the 
-paralogs of this gene.
-
-=over
-
-=item PERL API
-
- $data = $model->paralogs();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/paralogs
-
-B<Response example>
-
-=cut
+# paralogs { }
+# This method returns a data structure containing the 
+# paralogs of this gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/paralogs
 
 sub paralogs {
     my $self   = shift;
@@ -2533,54 +1085,11 @@ sub _parse_homologs {
     return \@parsed;
 }
 
-=head3 human_diseases
-
-This method returns a data structure containing disease
-processes that human orthologs of this gene are thought
-to participate in.
-
-=over
-
-=item PERL API
-
- $data = $model->human_diseases();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/human_diseases
-
-B<Response example>
-
-=cut
-
+# human_diseases { }
+# This method returns a data structure containing disease
+# processes that human orthologs of this gene are thought
+# to participate in.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/human_diseases
 
 sub human_diseases {
   my $self = shift;
@@ -2604,52 +1113,10 @@ sub human_diseases {
   };
 }
 
-=head3 protein_domains
-
-This method returns a data structure containing the 
-protein domains contained in this gene.
-
-=over
-
-=item PERL API
-
- $data = $model->protein_domains();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/protein_domains
-
-B<Response example>
-
-=cut
+# protein_domains { }
+# This method returns a data structure containing the 
+# protein domains contained in this gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/protein_domains
 
 sub protein_domains {
     my $self = shift;
@@ -2672,52 +1139,10 @@ sub protein_domains {
 }
 
 
-=head3 treefam
-
-This method returns a data structure containing the 
-link outs to the Treefam resource.
-
-=over
-
-=item PERL API
-
- $data = $model->treefam();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/treefam
-
-B<Response example>
-
-=cut
+# treefam { }
+# This method returns a data structure containing the 
+# link outs to the Treefam resource.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/treefam
 
 sub treefam {
     my $self   = shift;
@@ -2743,13 +1168,8 @@ sub treefam {
 #
 #######################################
 
-=head2 Location
-
-=cut
-
-# sub genomic_position { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_position >>
+# genomic_position { }
+# Supplied by Role
 
 sub _build_genomic_position {
     my ($self) = @_;
@@ -2760,14 +1180,11 @@ sub _build_genomic_position {
     };
 }
 
-# sub genetic_position { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genetic_position >>
+# genetic_position { }
+# Supplied by Role
 
 # sub genomic_image { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_image >>
-
+# Supplied by Role
 
 #######################################
 #
@@ -2775,9 +1192,9 @@ sub _build_genomic_position {
 #
 #######################################
 
-=head2 Phenotype
-
-=cut
+# phenotype { }
+# returns the phenotype(s) associated with the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/phenotype
 
 sub phenotype {
     my $self = shift;
@@ -2794,60 +1211,10 @@ sub phenotype {
 #
 #######################################
 
-=head2 Reagents
-
-=cut
-
-=head3 antibodies
-
-This method will return a data structure containing
-antibodies generated against products of the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->antibodies();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/antibodies
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# antibodies { }
+# This method will return a data structure containing
+# antibodies generated against products of the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/antibodies
 
 sub antibodies {
   my $self   = shift;
@@ -2867,56 +1234,10 @@ sub antibodies {
 
 
 
-=head3 matching_cdnas
-
-This method will return a data structure containing
-a list of cDNAs mapped to the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->matching_cdnas();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/matching_cdnas
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# matching_cdnas { }
+# This method will return a data structure containing
+# a list of cDNAs mapped to the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/matching_cdnas
 
 sub matching_cdnas {
     my $self     = shift;
@@ -2929,56 +1250,10 @@ sub matching_cdnas {
 
 
 
-=head3 microarray_probes
-
-This method will return a data structure containing
-microarray probes that map to the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->microarray_probes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_probes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# microarray_probes { }
+# This method will return a data structure containing
+# microarray probes that map to the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_probes
 
 sub microarray_probes {
     my $self   = shift;
@@ -3004,56 +1279,10 @@ sub microarray_probes {
     };
 }
 
-=head3 orfeome_primers
-
-This method will return a data structure containing
-ORFeome primers flanking the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->orfeome_primers();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/orfeome_primers
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# orfeome_primers { }
+# This method will return a data structure containing
+# ORFeome primers flanking the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/orfeome_primers
 
 sub orfeome_primers {
     my $self   = shift;
@@ -3070,57 +1299,11 @@ sub orfeome_primers {
 }
 
 
-=head3 primer_pairs
-
-This method will return a data structure containing
-other names that have also been used to refer to the
-gene.
-
-=over
-
-=item PERL API
-
- $data = $model->primer_pairs();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/primer_pairs
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# primer_pairs { }
+# This method will return a data structure containing
+# other names that have also been used to refer to the
+# gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/primer_pairs
 
 sub primer_pairs {
     my $self   = shift;
@@ -3138,57 +1321,11 @@ sub primer_pairs {
 	     data        =>  @primer_pairs ? \@primer_pairs : undef };
 }
 
-=head3 sage_tags
-
-This method will return a data structure containing
-Serial Analysis of Gene Expresion (SAGE) tags
-that map to the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->sage_tags();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/sage_tags
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# sage_tags { }
+# This method will return a data structure containing
+# Serial Analysis of Gene Expresion (SAGE) tags
+# that map to the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/sage_tags
 
 sub sage_tags {
     my $self   = shift;
@@ -3202,56 +1339,10 @@ sub sage_tags {
 }
 
 
-=head3 transgenes
-
-This method will return a data structure containing
-trasngenes driven by the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->transgenes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/transgenes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# transgenes { }
+# This method will return a data structure containing
+# trasngenes driven by the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/transgenes
 
 sub transgenes {
     my $self   = shift;
@@ -3271,56 +1362,10 @@ sub transgenes {
 	data        => @data ? \@data : undef };    
 }
 
-=head3 transgene_products
-
-This method will return a data structure containing
-trasngenes that express this gene.
-
-=over
-
-=item PERL API
-
- $data = $model->transgene_products();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID (eg WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/transgene_products
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# transgene_products { }
+# This method will return a data structure containing
+# trasngenes that express this gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/transgene_products
 
 sub transgene_products {
     my $self   = shift;
@@ -3347,57 +1392,11 @@ sub transgene_products {
 #
 #######################################
 
-=head2 Regulation
-
-=cut
-
-=head3 regulation_on_expression_level
-
-This method returns a data structure containing the 
-a data table describing the regulation on expression
-level.
-
-=over
-
-=item PERL API
-
- $data = $model->regulation_on_expression_level();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/regulation_on_expression_level
-
-B<Response example>
-
-=cut
+# regulation_on_expression_level { }
+# This method returns a data structure containing the 
+# a data table describing the regulation on expression
+# level.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/regulation_on_expression_level
 
 sub regulation_on_expression_level {
     my $self   = shift;
@@ -3468,13 +1467,8 @@ sub regulation_on_expression_level {
 #
 #######################################
 
-=head2 References
-
-=cut
-
-# sub references {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include references >>
+# references {}
+# Supplied by Role
 
 #######################################
 #
@@ -3482,60 +1476,10 @@ sub regulation_on_expression_level {
 #
 #######################################
 
-=head2 Sequences
-
-=cut
-
-=head3 gene_models
-
-This method will return an extensive data structure containing
-gene models for the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->gene_models();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a WBGene ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_models
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# gene_models { }
+# This method will return an extensive data structure containing
+# gene models for the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_models
 
 sub gene_models {
     my $self   = shift;

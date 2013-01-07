@@ -36,7 +36,6 @@ http://wormbase.org/species/disease
 
 
 
-### methods
 
 ##############################
 #
@@ -44,118 +43,20 @@ http://wormbase.org/species/disease
 #
 ###############################
 
-=head2 Overview
-
-=cut
-
-=head3 id
-
-This method returns a data structure containing the 
-omim_id of the disease
-
-=over
-
-=item PERL API
-
- $data = $model->id();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-OMIM ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/id
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
+# id { }
+# This method returns a data structure containing the 
+# omim_id of the disease
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/id
 
 sub id {
 	my $self = shift;
 	return $self->omim_id;
 }
 
-=head3 name
-
-This method returns a data structure containing the 
-name of the disease
-
-=over
-
-=item PERL API
-
- $data = $model->name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-OMIM ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
+# name { }
+# This method returns a data structure containing the 
+# name of the disease
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/name
 
 sub _build_name {
 	my $self = shift;
