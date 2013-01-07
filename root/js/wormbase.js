@@ -827,11 +827,11 @@
     if(!widget){
       Scrolling.sidebarInit();
       search_change(type);
+      ajaxGet(allSearch, url, undefined, function(){
+        checkSearch(allSearch);
+      });
     }
     if(species) { url = url + "&species=" + species;} 
-    ajaxGet(allSearch, url, undefined, function(){
-      checkSearch(allSearch);
-    });
 
     $jq("#search-count-summary").find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
