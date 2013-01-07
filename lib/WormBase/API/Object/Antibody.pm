@@ -27,21 +27,11 @@ http://wormbase.org/species/*/antibody
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -49,68 +39,16 @@ http://wormbase.org/species/*/antibody
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# other_names { }
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub other_names { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include other_names >>
-
-=head3 summary
-
-This method will return a data structure 
-containing a summary of the requested antibody.
-
-=over
-
-=item PERL API
-
- $data = $model->summary();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Antibody ID (eg [cgc2018]:mec-7)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/summary
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# summary { }
+# This method will return a data structure 
+# containing a summary of the requested antibody.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/summary
 
 sub summary {
     my $self   = shift;
@@ -120,57 +58,10 @@ sub summary {
 	     data        => "$summary" || undef };
 }
 
-
-=head3 corresponding_gene
-
-This method will return a data structure containing
-the corresponding gene for this antibody.
-
-=over
-
-=item PERL API
-
- $data = $model->corresponding_gene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Antibody ID (eg [cgc2018]:mec-7)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/corresponding_gene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# corresponding_gene { }
+# This method will return a data structure containing
+# the corresponding gene for this antibody.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/corresponding_gene
 
 sub corresponding_gene {
     my $self   = shift;
@@ -180,57 +71,11 @@ sub corresponding_gene {
 	     data        => $self->_pack_obj($gene)};
 }
 
-=head3 antigen
-
-This method will return a data structure 
-containing the antigen that this antibody
-was generated against.
-
-=over
-
-=item PERL API
-
- $data = $model->antigen();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Antibody ID (eg [cgc2018]:mec-7)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/antigen
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# antigen { }
+# This method will return a data structure 
+# containing the antigen that this antibody
+# was generated against.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/antigen
 
 sub antigen {
     my $self   = shift;
@@ -243,56 +88,10 @@ sub antigen {
     };
 }
 
-=head3 animal
-
-This method will return a data structure containing
-the animal the antibody was generated.
-
-=over
-
-=item PERL API
-
- $data = $model->animal();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Antibody ID (eg [cgc2018]:mec-7)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/animal
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# animal { }
+# This method will return a data structure containing
+# the animal the antibody was generated.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/animal
 
 sub animal {
     my $self = shift;
@@ -308,56 +107,10 @@ sub animal {
     };
 }
 
-=head3 clonality
-
-This method will return a data structure containing
-the clonality of this antibody.
-
-=over
-
-=item PERL API
-
- $data = $model->clonality();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Antibody ID (eg [cgc2018]:mec-7)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/clonality
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# clonality { }
+# This method will return a data structure containing
+# the clonality of this antibody.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/clonality
 
 sub clonality {
     my $self      = shift;
@@ -367,61 +120,13 @@ sub clonality {
 	     data        => "$clonality" || undef };
 }
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
+# laboratory { }
+# Supplied by Role
 
-
-=head3 constructed_by
-
-This method will return a data structure containing
-the person who isolated the antibody.
-
-=over
-
-=item PERL API
-
- $data = $model->constructed_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Antibody ID (eg [cgc2018]:mec-7)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/constructed_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# constructed_by { }
+# This method will return a data structure containing
+# the person who isolated the antibody.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/constructed_by
 
 sub constructed_by {
     my $self      = shift;
@@ -432,11 +137,8 @@ sub constructed_by {
 	     data        => $self->_pack_obj($person, $name && "$name")};
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-
+# remarks {}
+# Supplied by Role
 
 #######################################
 #
@@ -444,9 +146,8 @@ sub constructed_by {
 #
 #######################################
 
-# sub expression_patterns {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include expression_patterns >>
+# expression_patterns {}
+# Supplied by Role
 
 
 __PACKAGE__->meta->make_immutable;
