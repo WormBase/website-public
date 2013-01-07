@@ -1560,40 +1560,37 @@ B<Response example>
 =cut 
 
 sub anatomy_function {
-    my $self   = shift;
+    my ($self) = @_;
     my $object = $self->object;
+    my @data_pack;
+    foreach ($object->Anatomy_function){
+      my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+                else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
+                } $_->Involved;
 
-    my @data;
-    my @anatomy_fns = $object->Anatomy_function;
-    foreach my $anatomy_fn (@anatomy_fns){
-      my %anatomy_fn_data;
-      my $afn_bodypart_set = $anatomy_fn->Body_part;
-      if($afn_bodypart_set =~ m/Not_involved/){
-          next;
-      }
-      else{
-          my $afn_phenotype = $anatomy_fn->Phenotype;
-          $anatomy_fn_data{'anatomy_fn'} = $self->_pack_obj($anatomy_fn);
-          $anatomy_fn_data{'phenotype'} = $self->_pack_obj($afn_phenotype); #$phenotype_prime_name;
-          my @afn_bodyparts = $afn_bodypart_set->col if $afn_bodypart_set;
-          my @ao_terms;
-          foreach my $afn_bodypart (@afn_bodyparts){
-            my @afn_bp_row = $afn_bodypart->row;
-            my ($ao_id,$sufficiency,$description) = @afn_bp_row;
-            next if($sufficiency=~ m/Insufficient/);
-            push @ao_terms,$self->_pack_obj($ao_id);
-          }
-          $anatomy_fn_data{'terms'} = \@ao_terms;
-      }
-      push @data, \%anatomy_fn_data;
-    }
+      my @assay = map { my $as = $_->right;
+                  if ($as) {
+                      my @geno = $as->Genotype;                   
+                      {evidence => { genotype => join('<br /> ', @geno) },
+                      text => "$_",}
+                  }
+                } $_->Assay;
+      my $pev;
+      push @data_pack, {
+          phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+                            { evidence => $pev,
+                            text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
+          assay    => @assay ? \@assay : undef,
+          bp_inv    => @bp_inv ? \@bp_inv : undef,
+          reference => $self->_pack_obj(scalar $_->Reference),
+      };
+    } 
 
-    return { description =>  "anatomy function",
-         data        =>  @data ? \@data : undef };
-
+    return {
+        data        => @data_pack ? \@data_pack : undef,
+        description => 'anatomy functions associatated with this gene',
+    };
 }
-
-
 
 
 #######################################
