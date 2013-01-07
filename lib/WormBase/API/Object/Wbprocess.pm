@@ -83,40 +83,27 @@ sub related_process{
 	};
 }
 
-sub process_term{
-	my ($self) = @_;
-	my $object = $self->object;
-	
-	my $process_term = 
-		$object->Process_term; 
-		
-	return {
-		description => "Term describing process",
-		data => $process_term
-	};
-}
-
 sub other_name{
 	my ($self) = @_;
 	my $object = $self->object;
 	
 	my $other_name = $object->Other_name;
 		
-	return {
+	return {  
 		description => "Term alias",
 		data => $other_name
 	};
 }
 
-sub remark{
+sub public_name{  
 	my ($self) = @_;
 	my $object = $self->object;
 	
-	my $remark = $object->Remark;
+	my $public_name = $object->Public_name;
 		
 	return {
-		description => "remark",
-		data => $remark
+		description => "public_name",
+		data => $public_name 
 	};
 }
 
