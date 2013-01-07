@@ -27,21 +27,11 @@ http://wormbase.org/species/*/anatomy_term
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -49,13 +39,11 @@ http://wormbase.org/species/*/anatomy_term
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# term { }
+# Return a term in the Anatomy Ontology
 
 sub term {
     my ($self) = @_;
@@ -67,56 +55,10 @@ sub term {
 }
 
 
-=head3 definition
-
-This method will return a data structure containing a prose
-definition of this term.
-
-=over
-
-=item PERL API
-
- $data = $model->definition();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term ID (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/definition
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# definition { }
+# This method will return a data structure containing a prose
+# definition of this term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/definition
 
 sub definition {
     my $self   = shift;
@@ -128,56 +70,10 @@ sub definition {
     };
 }
 
-=head3 synonyms
-
-This method will return a data structure containing the 
-synonyms of this anatomy term object.
-
-=over
-
-=item PERL API
-
- $data = $model->synonyms();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term ID (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/synonyms
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# synonyms { }
+# This method will return a data structure containing the 
+# synonyms of this anatomy term object.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/synonyms
 
 sub synonyms {
     my $self = shift;
@@ -189,9 +85,8 @@ sub synonyms {
     };
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# remarks {}
+# Supplied by Role
 
 #######################################
 #
@@ -199,60 +94,10 @@ sub synonyms {
 #
 #######################################
 
-=head2 Association
-
-=cut
-
-=head3 transgenes
-
-This method will return a data structure of 
-transgenes annotated with this anatomy term.
-
-=over
-
-=item PERL API
-
- $data = $model->transgenes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Anatomy_term ID WBbt:0005175
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/transgenes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# transgenes { }
+# This method will return a data structure of 
+# transgenes annotated with this anatomy term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/transgenes
 
 sub transgenes {
     my $self   = shift;
@@ -270,57 +115,9 @@ sub transgenes {
     };
 }
 
-=head3 expression_clusters
-
-This method will return a data structure expression_clusters associated with this anatomy_term.
-
-=over
-
-=item PERL API
-
- $data = $model->expression_clusters();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term id (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/expression_clusters
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# expression_clusters { }
+# This method will return a data structure expression_clusters associated with this anatomy_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/expression_clusters
 
 sub expression_clusters {
     my $self   = shift;
@@ -341,57 +138,12 @@ sub expression_clusters {
     };
 }
 
-# sub expression_patterns {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include expression_patterns >>
+# expression_patterns {}
+# Supplied by Role
 
-=head3 gene_ontology
-
-This method will return a data structure containing go terms for this anatomy_term.
-
-=over
-
-=item PERL API
-
- $data = $model->gene_ontology();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term id (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/gene_ontology
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# gene_ontology { }
+# This method will return a data structure containing go terms for this anatomy_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/gene_ontology
 
 sub gene_ontology {
     my $self = shift;
@@ -407,56 +159,9 @@ sub gene_ontology {
     };
 }
 
-=head3 anatomy_functions
-
-This method will return a data structure anatomy_functions associated with this anatomy_term.
-
-=over
-
-=item PERL API
-
- $data = $model->anatomy_functions();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term id (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_functions
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# anatomy_functions { }
+# This method will return a data structure anatomy_functions associated with this anatomy_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_functions
 
 sub anatomy_functions {
     my ($self) = @_;
@@ -468,57 +173,9 @@ sub anatomy_functions {
     };
 }
 
-=head3 anatomy_function_nots
-
-This method will return a data structure ... of this anatomy_term.
-
-=over
-
-=item PERL API
-
- $data = $model->anatomy_function_nots();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term id (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_function_nots
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# anatomy_function_nots { }
+# This method will return a data structure ... of this anatomy_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_function_nots
 
 sub anatomy_function_nots {
     my $self      = shift;
@@ -537,17 +194,10 @@ sub anatomy_function_nots {
 #
 #######################################
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xreffs >>
+# xrefs {}
+# Supplied by Role
 
 ## sub anatomy {}  figure out image displaying functions
-
-## sub worm_atlas {} put under external resources
 
 #######################################
 #
