@@ -473,12 +473,12 @@
       button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").closest(".widget-container").toggleClass("minimized");
       if(hover)
         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s");
-      (button.attr("title") != "maximize") ? button.attr("title", "maximize").addClass("show") : button.attr("title", "minimize").removeClass("show");
+      (!button.hasClass("show")) ? button.attr("title", "maximize").addClass("show") : button.attr("title", "minimize").removeClass("show");
       
       module.find(".cyto_panel").each(function(index, domEle){
 		  domEle.selectedIndex = 0;
 	    });
-      
+      Layout.updateLayout();
     }
     
 
@@ -882,6 +882,10 @@
         return false;
     }
     
+    function minWidget(widget_name){
+      moduleMin($jq("#" + widget_name).find(".module-min"), false, "minimize");
+    }
+    
     function reloadWidget(widget_name, noLoad, url){
         var con = $jq("#" + widget_name + "-content");
         if(con.text().length > 4)
@@ -1007,10 +1011,11 @@ var Layout = (function(){
       return false;
     }
     
-    function updateURLHash (left, right, leftWidth) {
+    function updateURLHash (left, right, leftWidth, minimized) {
       var l = $jq.map(left, function(i) { return getWidgetID(i);}),
           r = $jq.map(right, function(i) { return getWidgetID(i);}),
-          ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
+          m = $jq.map(minimized, function(i) { return getWidgetID(i);}),
+          ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10) + (m.length > 0 ? "-" + m.join('') : "");
       if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] != ret){
         reloadLayout++;
       }
@@ -1027,11 +1032,13 @@ var Layout = (function(){
         
         var l = h[0],
             r = h[1],
-            w = (h[2] * 10);
+            w = (h[2] * 10),
+            m = h[3];
         
         if(l){ l = $jq.map(l.split(''), function(i) { return getWidgetName(i);}); }
         if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
-        resetLayout(l,r,w,hash);
+        if(m){ m = $jq.map(m.split(''), function(i) { return getWidgetName(i);}); }
+        resetLayout(l,r,w,hash,m);
       }else{
         reloadLayout--;
       }
@@ -1077,8 +1084,11 @@ var Layout = (function(){
           right = holder.children(".right").children(".visible")
                       .map(function() { return this.id;})
                       .get(),
-          leftWidth = getLeftWidth(holder);
-      return updateURLHash(left, right, leftWidth);
+          leftWidth = getLeftWidth(holder),
+          minimized = holder.find(".visible .widget-container.minimized").parent()
+                                .map(function() { return this.id;})
+                      .get();
+      return updateURLHash(left, right, leftWidth, minimized);
     }
 
     function getLeftWidth(holder){
@@ -1086,7 +1096,7 @@ var Layout = (function(){
       return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
     }
 
-    function resetLayout(leftList, rightList, leftWidth, hash){
+    function resetLayout(leftList, rightList, leftWidth, hash, minimized){
       $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
@@ -1105,6 +1115,12 @@ var Layout = (function(){
           var nav = $jq("#nav-" + widget_name),
               content = $jq("#" + widget_name + "-content");
           openWidget(widget_name, nav, content, ".right");
+        }
+      }
+      for(var widget = 0, l = minimized ? minimized.length : 0; widget < l; widget++){
+        var widget_name = $jq.trim(minimized[widget]);
+        if(widget_name.length > 0){
+          minWidget(widget_name);
         }
       }
       if(location.hash.length > 0){
