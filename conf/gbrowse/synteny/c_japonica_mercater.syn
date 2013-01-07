@@ -11,7 +11,7 @@ aggregators = gene{coding_exon}
 
 # Web site configuration info
 buttons     = /gbrowse2/images/buttons
-tmpimages   = /gbrowse_syn/tmp
+tmpimages   = /synteny/images
 
 
 

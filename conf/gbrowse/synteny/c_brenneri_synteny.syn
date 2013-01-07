@@ -9,7 +9,8 @@ aggregators = gene{coding_exon}
 suppress_menu = 1
 
 buttons     = /gbrowse2/images/buttons
-tmpimages   = /gbrowse_syn/tmp
+tmpimages   = /synteny/images
+
 
 
 # max and default segment sizes for detailed view
