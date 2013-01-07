@@ -628,7 +628,7 @@ sub anatomy_function {
       my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
                 else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
                 } $_->Involved;
-
+      next unless @bp_inv;
       my @assay = map { my $as = $_->right;
                   if ($as) {
                       my @geno = $as->Genotype;                   
