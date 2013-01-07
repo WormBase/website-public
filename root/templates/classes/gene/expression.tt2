@@ -70,23 +70,13 @@ WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_to
 END;
 
 WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) _ " of Action" key="anatomy_function";
-
-    '<table border=1 class="anatomy_function">';
-        '<tr><th>Anatomical ' _ pluralize("Site", fields.anatomy_function.data.size) _ '</th><th>Phenotype</th><th>via Anatomy Function</th></tr>';
-        FOREACH i IN fields.anatomy_function.data;
-             '<tr>';
-                '<td>';
-                  FOREACH term IN i.terms;
-                     tags2link(term);
-                  END;
-                '</td>';
-                '<td>' _ tag2link(i.phenotype) _ '</td>';
-                '<td>' _ tag2link(i.anatomy_fn) _ '</td>';
-            '</tr>';
-        END;
-    '</table>';
-END;
-
+      build_data_table( order = ['bp_inv', 'assay', 'phenotype', 'reference'],
+              columns = { 'bp_inv'   => 'Anatomical Sites',
+                          'assay' => 'Assay',
+                      'phenotype'   => 'Phenotype',
+                      'reference' => 'Reference'},
+              key = 'anatomy_function');
+    END;
 %]
 <script type="text/javascript" >
 WB.getPlugin("colorbox", function(){
