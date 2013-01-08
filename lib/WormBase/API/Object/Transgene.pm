@@ -345,7 +345,6 @@ sub integrated_at {
 # information about phenotypes the transgene may rescue.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/rescues
 
-=cut 
 # This tag does not exists in the current ACeDB schema -AC
 # sub rescues {    
 #     my $self = shift;
