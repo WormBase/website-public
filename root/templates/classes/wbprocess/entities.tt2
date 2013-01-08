@@ -1,0 +1,15 @@
+[%
+
+#Genes
+WRAPPER $field_block title="Genes" key="genes";
+	build_data_table(
+		order = ['name','type'],
+		columns={ 
+			name	=> "Gene",
+			type	=> "Type"
+		},
+		key = 'genes'
+	);
+END;
+
+%]

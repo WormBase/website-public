@@ -1,6 +1,7 @@
 package WormBase::API::Object::Wbprocess;
 
 use Moose;
+use WormBase::API::Object::Gene;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -71,6 +72,13 @@ http://wormbase.org/species/*
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+#######################################
+#
+# The Overview widget
+#
+#######################################
+
+
 sub related_process{
 	my ($self) = @_;
 	my $object = $self->object;
@@ -83,7 +91,7 @@ sub related_process{
 	};
 }
 
-sub other_name{
+sub other_name{ 
 	my ($self) = @_;
 	my $object = $self->object;
 	
@@ -108,7 +116,50 @@ sub public_name{
 }
 
 
-<<'SAMPLE_FUNC';
+#######################################
+#
+# The Entities widget
+#
+#######################################
+
+sub genes{ 
+    my $self   = shift;
+    my $object = $self->object;
+    my @genes = $object->Gene;
+
+    my @data;
+    foreach my $gene (@genes) {
+		push @data, $self->_process_gene($gene);
+    }
+    
+    return { 
+		description => 'alleles found within this gene',
+	    data        => @data ? \@data : undef 
+	};
+}
+
+# Processes a single gene record to be displayed with the build_data_table
+# macro.  Returns name and type
+sub _process_gene {
+	my ($self, $gene) = @_;
+	my $name = $gene->Public_name; 
+	my $type = WormBase::API::Object::Gene->
+		classification($gene)->{data}->{type};
+
+
+	my %data = (
+		name 	=> $name,
+		type	=> $type
+	);
+
+	return \%data;
+}
+
+
+
+# Sample passthrough function to copy
+# replace the xxx's with stuff
+0 if <<'SAMPLE_FUNC';
 sub xxx{
 	my ($self) = @_;
 	my $object = $self->object;
