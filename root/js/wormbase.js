@@ -33,7 +33,7 @@
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results"),
           sysMessage = $jq("#top-system-message").children(".system-message-close"),
-          history_on = (pageInfo['history'] == 1) ? 1 : undefined;
+          history_on = (pageInfo['history'] === 1) ? 1 : undefined;
 
       if(history_on){
         $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
@@ -180,7 +180,7 @@
             clearTimeout(timer);
             timer = undefined;
           }
-          if(colDropdown.find("#layout-input:focus").size() == 0){
+          if(colDropdown.find("#layout-input:focus").size() === 0){
             timer = setTimeout(function() {
                   colDropdown.children("ul").hide();
                 }, 300)
@@ -199,10 +199,11 @@
             w = nav.width(),
             msg = "open sidebar",
             marginLeft = '-1em';
-        if(w == 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
-        nav.animate({width: w}).show().children("#title").children("div").toggle();
-        ptitle.animate({marginLeft: marginLeft}).show();
+        if(w === 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
+        nav.stop(false, true).animate({width: w}).show().children("#title").toggleClass("closed").children("div").toggle();
+        ptitle.stop(false, true).animate({marginLeft: marginLeft}).show();
         $jq(this).attr("title", msg).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
+        Layout.updateLayout();
       });
       
       // Should be a user supplied site-wide option for this.
@@ -223,7 +224,7 @@
                     dataType: 'json',
                     success: function(data){
                           var linkAccount = $jq("#link-account");
-                          if(linkAccount.size()==0){
+                          if(linkAccount.size()===0){
                             $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
                             var email = new String(data.email);
                             if(data.email && data.status_ok){
@@ -280,7 +281,7 @@
           widgets = $jq("#widgets"),
           listLayouts = $jq(".list-layouts"),
           layout;
-      if(widgetHolder.size()==0){
+      if(widgetHolder.size()===0){
         $jq("#content").addClass("bare-page");
         return;
       }
@@ -468,7 +469,7 @@
     function moduleMin(button, hover, direction, callback) {
       var module = $jq("#" + button.attr("wname") + "-content");
       
-      if (direction && (button.attr("title") != direction) ){ if(callback){ callback()} return; }
+      if (direction && (button.attr("title") !== direction) ){ if(callback){ callback()} return; }
       module.slideToggle("fast", function(){Scrolling.sidebarMove(); if(callback){ callback()}});
       button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").closest(".widget-container").toggleClass("minimized");
       if(hover)
@@ -508,7 +509,7 @@
    function systemMessage(action, messageId){
      var systemMessage = $jq(".system-message"),
          notifications = $jq("#notifications");
-      if(action == 'show'){
+      if(action === 'show'){
 //         systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
         notifications.css("top", "20px");
         Scrolling.set_system_message(20); 
@@ -587,7 +588,7 @@
   function hideTextOnFocus(selector){
     var area = $jq(selector);
       
-    if(area.attr("value") != ""){
+    if(area.attr("value") !== ""){
       area.siblings(".holder").fadeOut();
     }
     area.focus(function(){
@@ -595,7 +596,7 @@
     });
 
     area.blur(function(){
-      if($jq(this).attr("value") == ""){
+      if($jq(this).attr("value") === ""){
         $jq(this).siblings(".holder").fadeIn();
       }
     });
@@ -633,10 +634,10 @@
 
       //show/hide default text if needed
       searchBox.focus(function(){
-        if($jq(this).attr("value") == searchBoxDefault) $jq(this).attr("value", "");
+        if($jq(this).attr("value") === searchBoxDefault) $jq(this).attr("value", "");
       });
       searchBox.blur(function(){
-        if($jq(this).attr("value") == "") $jq(this).attr("value", searchBoxDefault);
+        if($jq(this).attr("value") === "") $jq(this).attr("value", searchBoxDefault);
       });
       
       searchBox.autocomplete({
@@ -661,7 +662,7 @@
     function search(box) {
         if(!box){ box = "Search"; }else{ cur_search_type = cur_search_type || 'all'; } 
         var f = $jq("#" + box).attr("value");
-        if(f == "search..." || !f){
+        if(f === "search..." || !f){
           f = "";
         }
 
@@ -675,7 +676,7 @@
     function search_change(new_search) {
       if(!new_search) { new_search = 'gene';}
       cur_search_type = new_search;
-      if(new_search == "all"){
+      if(new_search === "all"){
       new_search = "for anything";
       }else{
         var search_for = "for a";
@@ -691,7 +692,7 @@
     
     function search_species_change(new_search) {
       cur_search_species_type = new_search;
-      if(new_search == "all"){
+      if(new_search === "all"){
       new_search = "all species";
       }else{
         new_search = new_search.charAt(0).toUpperCase() + new_search.slice(1);
@@ -745,7 +746,7 @@
     function formatResults(div){
       formatExpand(div);
 
-      if(queryList.length == 0) { return; }
+      if(queryList.length === 0) { return; }
       Plugin.getPlugin("highlight", function(){
         for (var i=0; i<queryList.length; i++){
           if(queryList[i]) { div.highlight(queryList[i]); }
@@ -782,7 +783,7 @@
 
           formatResults(div);
 
-          if (status == "error") {
+          if (status === "error") {
             var msg = "Sorry but there was an error: ";
             $jq(this).html(msg + xhr.status + " " + xhr.statusText);
           }
@@ -835,7 +836,7 @@
 
     $jq("#search-count-summary").find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
-        if($jq(this).text() == '0'){
+        if($jq(this).text() === '0'){
           $jq(this).parent().remove();
         }else {
           $jq(this).parent().show().parent().prev(".title").show();
@@ -851,7 +852,7 @@
       return false;
     });
     
-    if (type == 'paper')
+    if (type === 'paper')
       Layout.resize();
     
   }
@@ -917,7 +918,7 @@ var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
       wHolder = $jq("#widget-holder"),
-      maxWidth = (location.pathname == '/' || location.pathname == '/me') ? 900 : 1300; //home page? allow narrower columns
+      maxWidth = (location.pathname === '/' || location.pathname === '/me') ? 900 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
       widgetList = this.wl || (function() {
@@ -931,7 +932,7 @@ var Layout = (function(){
         })();
       
     function resize(){
-      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth))){
+      if(sColumns !== (sColumns = (document.documentElement.clientWidth < maxWidth))){
         sColumns ? columns(100, 100) : readHash();
         if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
       }
@@ -940,7 +941,7 @@ var Layout = (function(){
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
         (wHolder.outerWidth() + 150)))
         columns(100, 100);
-      if(ref && (ref.hasClass("widget-narrow") != (ref.innerWidth() < 845)))
+      if(ref && (ref.hasClass("widget-narrow") !== (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
     }
     
@@ -973,7 +974,7 @@ var Layout = (function(){
               len = nodeList.length;
           for(i=0; i<len; i++){
             var node = nodeList.item(i);
-            if(node.nodeName == "data"){
+            if(node.nodeName === "data"){
               location.hash = node.attributes.getNamedItem('lstring').nodeValue;
             }
           }
@@ -995,7 +996,7 @@ var Layout = (function(){
     function newLayout(layout){
       updateLayout(layout, undefined, function() {
         $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"), function(response, status, xhr) {
-            if (status == "error") {
+            if (status === "error") {
                 var msg = "Sorry but there was an error: ";
                 $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
               }
@@ -1011,12 +1012,12 @@ var Layout = (function(){
       return false;
     }
     
-    function updateURLHash (left, right, leftWidth, minimized) {
+    function updateURLHash (left, right, leftWidth, minimized, sidebar) {
       var l = $jq.map(left, function(i) { return getWidgetID(i);}),
           r = $jq.map(right, function(i) { return getWidgetID(i);}),
           m = $jq.map(minimized, function(i) { return getWidgetID(i);}),
-          ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10) + (m.length > 0 ? "-" + m.join('') : "");
-      if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] != ret){
+          ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10) + (m.length > 0 ? "-" + m.join('') : "") + (sidebar ? "-" : "");
+      if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] !== ret){
         reloadLayout++;
       }
       location.hash = ret;
@@ -1024,7 +1025,7 @@ var Layout = (function(){
     }
     
     function readHash() {
-      if(reloadLayout == 0){
+      if(reloadLayout === 0){
         var hash = location.hash,
             arr,
             h = (arr = decodeURI(hash).match(/^[#](.*)$/)) ? arr[1].split('-') : undefined;
@@ -1033,12 +1034,13 @@ var Layout = (function(){
         var l = h[0],
             r = h[1],
             w = (h[2] * 10),
-            m = h[3];
-        
+            m = h[3],
+            s = (hash.charAt(hash.length-1) === '-');
+            
         if(l){ l = $jq.map(l.split(''), function(i) { return getWidgetName(i);}); }
         if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
         if(m){ m = $jq.map(m.split(''), function(i) { return getWidgetName(i);}); }
-        resetLayout(l,r,w,hash,m);
+        resetLayout(l,r,w,hash,m,s);
       }else{
         reloadLayout--;
       }
@@ -1054,7 +1056,7 @@ var Layout = (function(){
     function openAllWidgets(){
       var hash = "",
           wlen = $jq("#navigation").find("li.module-load:not(.tools,.me,.toggle)").size();
-      if(widgetList.list.length == 0){ return; }
+      if(widgetList.list.length === 0){ return; }
       for(i=0; i<wlen; i++){
         hash = hash + (i.toString(36));
       }
@@ -1070,7 +1072,7 @@ var Layout = (function(){
     function updateLayout(layout, hash, callback){
       var $class = wHolder.attr("wclass"),
           lstring = hash || readLayout(wHolder),
-          l = ((typeof layout) == 'string') ? escape(layout) : 'default';
+          l = ((typeof layout) === 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
       Layout.resize();
       if(callback){ callback(); }
@@ -1087,8 +1089,9 @@ var Layout = (function(){
           leftWidth = getLeftWidth(holder),
           minimized = holder.find(".visible .widget-container.minimized").parent()
                                 .map(function() { return this.id;})
-                      .get();
-      return updateURLHash(left, right, leftWidth, minimized);
+                      .get(),
+          sidebar = $jq("#navigation").find(".closed").size() > 0 ? true : false;
+      return updateURLHash(left, right, leftWidth, minimized, sidebar);
     }
 
     function getLeftWidth(holder){
@@ -1096,7 +1099,7 @@ var Layout = (function(){
       return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
     }
 
-    function resetLayout(leftList, rightList, leftWidth, hash, minimized){
+    function resetLayout(leftList, rightList, leftWidth, hash, minimized, sidebar){
       $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
@@ -1122,6 +1125,11 @@ var Layout = (function(){
         if(widget_name.length > 0){
           minWidget(widget_name);
         }
+      }
+      if(sidebar){
+        $jq(".navigation-min").add("#navigation").css({width: 0}).children("#title").addClass("closed").children("div").hide();
+        $jq("#page-title").css({marginLeft: '-1em'});
+        $jq("#nav-min").attr("title", "open sidebar").children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w ui-icon-triangle-1-e");
       }
       if(location.hash.length > 0){
         updateLayout(undefined, hash);
@@ -1207,14 +1215,14 @@ var Scrolling = (function(){
                  
   function resetSidebar(){
     static = 0;
-    sidebar.stop().css('position', 'relative').css('top', 0);
+    sidebar.stop(false, true).css('position', 'relative').css('top', 0);
   }
   
   function goToAnchor(anchor){
       var elem = document.getElementById(anchor),
           scroll = isScrolledIntoView(elem) ? undefined : $jq(elem).offset().top - system_message - 10;
       if(scroll){
-        body.stop().animate({
+        body.stop(false, true).animate({
           scrollTop: scroll
         }, 2000, function(){ Scrolling.sidebarMove(); scrollingDown = 0;});
         scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
@@ -1225,7 +1233,7 @@ var Scrolling = (function(){
     var elemBottom = $jq(elem).offset().top + $jq(elem).height(),
         docViewBottom = $window.scrollTop() + $window.height();
     if((elemBottom <= docViewBottom) ){ 
-      body.stop().animate({
+      body.stop(false, true).animate({
           scrollTop: $window.scrollTop() - elem.height() - 10
       }, "fast", function(){ Scrolling.sidebarMove(); });
     }
@@ -1243,7 +1251,7 @@ var Scrolling = (function(){
       if(!sidebar)
         return;
       if(sidebar.offset()){
-        var objSmallerThanWindow = sidebar.outerHeight() < ($window.height() - system_message),
+        var objSmallerThanWindow = (sidebar.outerHeight() < ($window.height() - system_message)) || (sidebar.find(".closed").size() > 0),
             scrollTop = $window.scrollTop(),
             maxScroll = $jq(document).height() - (sidebar.outerHeight() + footerHeight + system_message + 20); //the 20 is for padding before footer
 
@@ -1252,12 +1260,12 @@ var Scrolling = (function(){
             return;
         }
         if (objSmallerThanWindow){
-          if(static==0){
+          if(static===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
-                sidebar.stop().css('position', 'fixed').css('top', system_message);
+                sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
                 static = 1;
             }else if(scrollTop > maxScroll){
-                sidebar.stop().css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
+                sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
             }else{
                 resetSidebar();
             }
@@ -1265,12 +1273,12 @@ var Scrolling = (function(){
             if (scrollTop < offset) {
                 resetSidebar();
             }else if(scrollTop > maxScroll){
-                sidebar.stop().css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
+                sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
-                if(scrollingDown == 1){body.stop(); scrollingDown = 0; }
+                if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
             } 
           }
-        }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){ 
+        }else if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){ 
           count++; //Add counting semaphore to lock
           //close lowest section. delay for animation. 
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
@@ -1322,7 +1330,7 @@ var Scrolling = (function(){
     if(!Array.indexOf){
         Array.prototype.indexOf = function(obj){
             for(var i=0; i<this.length; i++){
-                if(this[i]==obj){
+                if(this[i]===obj){
                     return i;
                 }
             }
@@ -1339,17 +1347,17 @@ var Scrolling = (function(){
 
   
   function validate_fields(email,username, password, confirm_password, wbemail){
-      if( (email.val() =="") && (!wbemail || wbemail.val() == "")){
+      if( (email.val() ==="") && (!wbemail || wbemail.val() === "")){
                 email.focus().addClass("ui-state-error");return false;
-      } else if( email.val() && (validate_email(email.val(),"Not a valid email address!")==false)) {
+      } else if( email.val() && (validate_email(email.val(),"Not a valid email address!")===false)) {
                 email.focus().addClass("ui-state-error");return false;
       } else if(password) {
-          if( password.val() ==""){
+          if( password.val() ===""){
                 password.focus().addClass("ui-state-error");return false;
-          } else if( confirm_password && (password.val() != confirm_password.val())) {
+          } else if( confirm_password && (password.val() !== confirm_password.val())) {
               alert("The passwords do not match. Please enter again"); password.focus().addClass("ui-state-error");return false;
           }  
-      } else if( username && username.val() =="") {
+      } else if( username && username.val() ==="") {
                 username.focus().addClass("ui-state-error"); return false;
       }  else {
         return true;
@@ -1372,7 +1380,7 @@ var Scrolling = (function(){
     submit: function(cm){
         var feed = cm.closest('#comment-new'),
             content = feed.find(".comment-content").val();
-        if(content == "" || content == "write a comment..."){
+        if(content === "" || content === "write a comment..."){
             alert("Please provide your name & comment"); return false;
         }
         $jq.ajax({
@@ -1437,7 +1445,7 @@ var Scrolling = (function(){
                 email: email.val(),
                 url: url || issue.url},
           success: function(data){
-                if(data==0) {
+                if(data===0) {
                    alert("The email address has already been registered! Please sign in."); 
                 }else {
                   var content = $jq("#content");
@@ -1576,14 +1584,14 @@ var Scrolling = (function(){
   
   
   function historyOn(action, value, callback){
-    if(action == 'get'){
+    if(action === 'get'){
         Plugin.getPlugin("colorbox", function(){
             $jq(".history-logging").colorbox();
             if(callback) callback();
         });
     }else{
       $jq.post("/rest/history", { 'history_on': value }, function(){ if(callback) callback(); });
-      histUpdate(value == 1 ? 1 : undefined);
+      histUpdate(value === 1 ? 1 : undefined);
       if($jq.colorbox) $jq.colorbox.close();
     }
   }
@@ -1756,7 +1764,7 @@ function setupCytoscape(data, types){
             
             vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
             vis.ready(function() {
-        vis.filter("nodes", function(node) { return node.data.ntype == 'Gene' || node.data.ntype == 'Other' || node.data.ntype == 'Molecule'})
+        vis.filter("nodes", function(node) { return node.data.ntype === 'Gene' || node.data.ntype === 'Other' || node.data.ntype === 'Molecule'})
                 // add a listener for when nodes and edges are clicked
                 vis.addListener("click", "nodes", function(event) {
                 window.open(event.target.data.link);
@@ -1773,31 +1781,31 @@ function setupCytoscape(data, types){
                   var nearby = $jq("#cyto_panel_nearby option:selected").val();
           var nodetype = $jq("#cyto_panel_nodetype option:selected").val();
 
-          if(nodetype ==0){
+          if(nodetype ===0){
               vis.removeFilter("nodes", true);
           } else {
-              vis.filter("nodes", function(node) { return node.data.ntype == nodetype });
+              vis.filter("nodes", function(node) { return node.data.ntype === nodetype });
           }
 
-                  if(direction ==0 && inter_type==0 && nearby==0){
+                  if(direction ===0 && inter_type===0 && nearby===0){
                     //vis.removeFilter("edges",true);
-                    vis.filter("edges", function(edge){return edge.data.type != "No_interaction"}, true);
+                    vis.filter("edges", function(edge){return edge.data.type !== "No_interaction"}, true);
                   }else{
                   vis.filter("edges", function(edge) {
-                    if(direction !=0 && inter_type!=0 && nearby!=0) {
-                        return edge.data.type == inter_type && edge.data.direction == direction && edge.data.nearby == 0;
-                    }else if(direction !=0 && nearby!=0){
-                        return edge.data.direction == direction && edge.data.nearby == 0  && edge.data.type != "No_interaction";
-                    }else if(direction !=0 && inter_type!=0){
-                        return edge.data.type == inter_type;
-                    }else if(direction !=0){
-                        return edge.data.direction == direction && edge.data.type != "No_interaction";
-                    }else if(inter_type !=0 && nearby!=0){
-                        return  edge.data.type == inter_type && edge.data.nearby == 0;
-                    }else if(nearby != 0){
-                        return edge.data.nearby == 0 && edge.data.type != "No_interaction";
+                    if(direction !==0 && inter_type!==0 && nearby!==0) {
+                        return edge.data.type === inter_type && edge.data.direction == direction && edge.data.nearby == 0;
+                    }else if(direction !==0 && nearby!==0){
+                        return edge.data.direction == direction && edge.data.nearby == 0  && edge.data.type !== "No_interaction";
+                    }else if(direction !==0 && inter_type!==0){
+                        return edge.data.type === inter_type;
+                    }else if(direction !==0){
+                        return edge.data.direction === direction && edge.data.type !== "No_interaction";
+                    }else if(inter_type !==0 && nearby!==0){
+                        return  edge.data.type === inter_type && edge.data.nearby === 0;
+                    }else if(nearby !== 0){
+                        return edge.data.nearby === 0 && edge.data.type !== "No_interaction";
                     }else{
-                        return edge.data.type == inter_type;
+                        return edge.data.type === inter_type;
                     }
                     }, true);
                   }
