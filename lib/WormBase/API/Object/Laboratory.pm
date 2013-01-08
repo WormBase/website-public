@@ -27,62 +27,10 @@ http://wormbase.org/resources/laboratory
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=head2 Summary data
-
-=cut
-
-=head3 all_labs
-
-This method returns a data structure containing
-all laboratories registered with WormBase.
-
-=over
-
-=item PERL API
-
- $data = $model->all_labs();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-The keyword 'all'.
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/all/all_labs
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# all_labs { }
+# This method returns a data structure containing
+# all laboratories registered with WormBase.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/all/all_labs
 
 { # temporary fix. see Gene_class for comment on class methods
     my $all_labs;
@@ -124,76 +72,19 @@ B<Response example>
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # The Overview widget 
 #
 #######################################6
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-
-=head3 affiliation
-
-This method returns a data structure containing
-the affiliation of the lab.
-
-=over
-
-=item PERL API
-
- $data = $model->affiliation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/affiliation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# affiliation { }
+# This method returns a data structure containing
+# the affiliation of the lab.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/affiliation
 
 sub affiliation {
     my $self   = shift;
@@ -203,58 +94,10 @@ sub affiliation {
 	     data        => "$institute" || undef };
 }
 
-
-
-=head3 representatives
-
-This method returns a data structure containing
-the representatives of the lab.
-
-=over
-
-=item PERL API
-
- $data = $model->representatives();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/representatives
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# representatives { }
+# This method returns a data structure containing
+# the representatives of the lab.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/representatives
 
 sub representatives {
     my $self   = shift;
@@ -271,57 +114,10 @@ sub representatives {
 		 data    => @data ? \@data : undef };
 }
 
-=head3 phone
-
-This method returns a data structure containing
-the phone number of the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->phone();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/phone
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
+# phone { }
+# This method returns a data structure containing
+# the phone number of the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/phone
 
 sub phone {
     my $self   = shift;
@@ -331,56 +127,10 @@ sub phone {
 	     data        => "$phone" || undef };
 }
 
-=head3 fax
-
-This method returns a data structure containing
-the fax number of the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->fax();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/fax
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# fax { }
+# This method returns a data structure containing
+# the fax number of the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/fax
 
 sub fax {
     my $self   = shift;
@@ -390,56 +140,10 @@ sub fax {
 	     data        => "$fax" || undef };
 }
 
-=head3 email
-
-This method returns a data structure containing
-an email address for the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->email();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/email
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# email { }
+# This method returns a data structure containing
+# an email address for the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/email
 
 sub email {
     my $self   = shift;
@@ -449,56 +153,10 @@ sub email {
 	     data        => "$email" || undef };
 }
 
-=head3 website
-
-This method returns a data structure containing
-the website of the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->website();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/website
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# website { }
+# This method returns a data structure containing
+# the website of the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/website
 
 sub website {
     my ($self) = @_;
@@ -507,56 +165,10 @@ sub website {
 	     data        => $url };
 }
 
-=head3 strain_designation
-
-This method returns a data structure containing
-the strain designation of the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->strain_designation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/strain_designation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# strain_designation { }
+# This method returns a data structure containing
+# the strain designation of the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/strain_designation
 
 sub strain_designation {
     my $self   = shift;
@@ -568,56 +180,10 @@ sub strain_designation {
 }
 
 
-=head3 allele_designation
-    
-This method returns a data structure containing
-the allele designation of the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->allele_designation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/allele_designation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# allele_designation { }
+# This method returns a data structure containing
+# the allele designation of the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/allele_designation
 
 sub allele_designation {
     my $self   = shift;
@@ -635,60 +201,10 @@ sub allele_designation {
 #
 #######################################
 
-=head2 Laboratory Members
-
-=cut
-
-=head3 current_members
-
-This method returns a data structure containing
-the current members of the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->current_members();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/current_members
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# current_members { }
+# This method returns a data structure containing
+# the current members of the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/current_members
 
 sub current_members {
     my $self = shift;
@@ -700,56 +216,10 @@ sub current_members {
 }
  
 
-=head3 former_members
-
-This method returns a data structure containing
-the current members of the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->former_members();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/former_members
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# former_members { }
+# This method returns a data structure containing
+# the current members of the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/former_members
 
 sub former_members {
     my $self = shift;
@@ -813,59 +283,10 @@ sub _get_lineage_data {
 #
 #######################################
 
-=head2 Gene Classes
-
-=head3 gene_classes
-
-This method returns a data structure containing
-gene classes assigned to the laboratory.
-
-=over
-
-=item PERL API
-
- $data->gene_classes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/gene_classes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
+# gene_classes { }
+# This method returns a data structure containing
+# gene classes assigned to the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/gene_classes
 
 sub gene_classes {
     my $self   = shift;
@@ -888,58 +309,10 @@ sub gene_classes {
 #
 #######################################
 
-=head2 Alleles
-
-=head3 alleles
-
-This method returns a data structure containing
-alleles generated by the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->alleles();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/alleles
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# alleles { }
+# This method returns a data structure containing
+# alleles generated by the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/alleles
 
 sub alleles {
     my $self   = shift;
@@ -970,58 +343,10 @@ sub alleles {
 #
 #######################################
 
-=head2 Strains
-
-=head3 strains
-
-This method returns a data structure containing
-strains generated by the laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->strains();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/strains
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# strains { }
+# This method returns a data structure containing
+# strains generated by the laboratory.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/strains
 
 sub strains {
     my $self   = shift;
