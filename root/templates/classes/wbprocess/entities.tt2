@@ -12,4 +12,15 @@ WRAPPER $field_block title="Genes" key="genes";
 	);
 END;
 
+#Expression clusters
+WRAPPER $field_block title="Experssion clusters" key="expression_cluster";
+	build_data_table(
+		order = ['id','description'],
+		columns={
+			id			=> "WormBase ID",
+			description	=> "Description"
+		},
+		key = 'expression_cluster'
+	);
+END;
 %]

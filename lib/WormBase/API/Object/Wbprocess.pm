@@ -137,15 +137,14 @@ sub genes{
 	    data        => @data ? \@data : undef 
 	};
 }
-
-# Processes a single gene record to be displayed with the build_data_table
-# macro.  Returns name and type
+# Used above. Processes a single gene record to be displayed with the build_data_table
+# macro. Returns name and type
 sub _process_gene {
 	my ($self, $gene) = @_;
 	my $name = $gene->Public_name; 
 	my $type = WormBase::API::Object::Gene->
 		classification($gene)->{data}->{type};
-
+	
 
 	my %data = (
 		name 	=> $name,
@@ -155,7 +154,37 @@ sub _process_gene {
 	return \%data;
 }
 
+sub expression_cluster {
+	my ($self) = @_;
+	my $object = $self->object;
+	my @e_clusters = $object->Expression_cluster;
+	
+	my $log = $self->log; 
+	
+	my @data;
+	foreach my $e_cluster(@e_clusters){
+		push @data, $self->_process_e_cluster($e_cluster);
+		$log->debug( "JDJDJD".$#data);
+	}
+	
+	return {
+		description => "Expression cluster",
+		data        => @data ? \@data : undef 
+	};
 
+}
+sub _process_e_cluster{
+	my ($self, $e_cluster) = @_;
+	my $wbid = "$e_cluster";
+	my $desc = $e_cluster->Description;
+	
+	my %data = (
+		id				=> $wbid,
+		description 	=> $desc
+	);
+	
+	return \%data;
+}
 
 # Sample passthrough function to copy
 # replace the xxx's with stuff
