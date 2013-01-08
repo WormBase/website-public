@@ -85,21 +85,11 @@ has 'pm_datadir' => (
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -107,72 +97,19 @@ has 'pm_datadir' => (
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# description { }
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# remarks {}
+# Supplied by Role
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-=head3 type
-
-This method will return a data structure with the type
-of position matrix (frequency | weight).
-
-=over
-
-=item PERL API
-
- $data = $model->type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Postion_matrix ID (eg WBPmat00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# type { }
+# This method will return a data structure with the type
+# of position matrix (frequency | weight).
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/type
 
 sub type {
     my $self    = shift;
@@ -182,60 +119,11 @@ sub type {
 	     description => 'the type of position matrix', };
 }
 
+# associated_feature { }
+# This method will return a data structure with features
+# associated with the requested position matrix.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_feature
 
-
-=head3 associated_feature
-
-This method will return a data structure with features
-associated with the requested position matrix.
-
-=over
-
-=item PERL API
-
- $data = $model->associated_feature();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Postion_matrix ID WBPmat00000001
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_feature
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# Only a scalar?
 sub associated_feature {
     my $self    = shift;
     my $object  = $self->object;
@@ -244,56 +132,10 @@ sub associated_feature {
 	     description => 'feature associated with motif' };
 }
 
-=head3 associated_position_matrix
-
-This method will return a data structure with other matrices
-associated with the current matrix.
-
-=over
-
-=item PERL API
-
- $data = $model->associated_position_matrix();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Postion_matrix ID WBPmat00000001
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_position_matrix
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# associated_position_matrix { }
+# This method will return a data structure with other matrices
+# associated with the current matrix.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_position_matrix
 
 sub associated_position_matrix {
     my $self     = shift;
@@ -303,56 +145,10 @@ sub associated_position_matrix {
 	    description => 'other matrix associated with motif' };
 }
 
-=head3 consensus
-
-This method will return a data structure with the
-consensus sequence for the requested position matrix.
-
-=over
-
-=item PERL API
-
- $data = $model->consensus();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Postion_matrix ID WBPmat00000001
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/consensus
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# consensus { }
+# This method will return a data structure with the
+# consensus sequence for the requested position matrix.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/consensus
 
 sub consensus {
     my $self    = shift;
@@ -368,56 +164,10 @@ sub consensus {
  }
 
 
-=head3 bound_by_gene_product
-
-This method will return a data structure containing 
-a list of genes that to bind to the motif;
-
-=over
-
-=item PERL API
-
- $data = $model->bound_by_gene_product();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Postion_matrix ID (eg WBPmat00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/bound_by_gene_product
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# bound_by_gene_product { }
+# This method will return a data structure containing 
+# a list of genes that to bind to the motif;
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/bound_by_gene_product
 
 sub bound_by_gene_product {
     my $self   = shift;
@@ -428,57 +178,10 @@ sub bound_by_gene_product {
 }
 
 
-
-=head3 transcription_factors
-
-This method will return a data structure containing
-the transcription factors that associate with this motif.
-
-=over
-
-=item PERL API
-
- $data = $model->transcription_factors();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Postion_matrix ID (eg WBPmat00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001transcription_factors
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# transcription_factors { }
+# This method will return a data structure containing
+# the transcription factors that associate with this motif.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001transcription_factors
 
 sub transcription_factor {
     my $self   = shift;
@@ -498,54 +201,9 @@ sub transcription_factor {
 ## position data
 #############################
 
-=head3 position_data
-
-This method will return a data structure with the position data for the requested position matrix.
-
-=over
-
-=item PERL API
-
- $data = $model->position_data();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Postion_matrix ID (eg WBPmat00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/position_data
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# position_data { }
+# This method will return a data structure with the position data for the requested position matrix.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/position_data
 
 sub position_data {
     my $self   = shift;

@@ -46,10 +46,6 @@ has 'gff' => (
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -57,88 +53,27 @@ has 'gff' => (
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 #######################################
 #
 # The Overview Widget
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# description { }
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# remarks { }
+# Supplied by Role
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# method {}
+# Supplied by Role
 
-# sub remarks { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-# sub method {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include method >>
-
-
-
-
-=head3 species
-
-This method will return a data structure with species containing the operon.
-
-=over
-
-=item PERL API
-
- $data = $model->species();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Operon id (eg CEOP1140)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/species
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# species { }
+# This method will return a data structure with species containing the operon.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/species
 
 sub species {
     my $self       = shift;
@@ -150,56 +85,9 @@ sub species {
     };
 }
 
-=head3 structure
-
-This method will return a data structure with structure of the operon.
-
-=over
-
-=item PERL API
-
- $data = $model->structure();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Operon id (eg CEOP1140)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/structure
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
+# structure { }
+# This method will return a data structure with structure of the operon.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/structure
 sub structure {
     my $self   = shift;
     my $operon = $self->object;

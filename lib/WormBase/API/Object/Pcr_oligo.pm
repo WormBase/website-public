@@ -63,83 +63,25 @@ sub _build__segments {
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
-
 ################################################################################
 # Methods pertaining to all three classes
 ################################################################################
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# name { }
+# Supplied by Role
 
-# sub remarks { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# remarks { }
+# Supplied by Role
 
-=head3 canonical_parent
-
-Returns a datapack containing the parent of the product.
-
-=over
-
-=item PERL API
-
- $data = $model->canonical_parent();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/canonical_parent
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# canonical_parent { }
+# Returns a datapack containing the parent of the product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/canonical_parent
 
 sub canonical_parent {
 	my ($self) = @_;
@@ -150,55 +92,9 @@ sub canonical_parent {
 	};
 }
 
-=head3 oligos
-
-Returns a datapack containing the oligos of the product.
-
-=over
-
-=item PERL API
-
- $data = $model->oligos();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/oligos
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# oligos { }
+# Returns a datapack containing the oligos of the product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/oligos
 
 sub oligos {
 	my ($self) = @_;
@@ -218,55 +114,9 @@ sub oligos {
 	};
 }
 
-=head3 overlapping_genes
-
-Returns a datapack containing the genes overlapping the product.
-
-=over
-
-=item PERL API
-
- $data = $model->overlapping_genes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlapping_genes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# overlapping_genes { }
+# Returns a datapack containing the genes overlapping the product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlapping_genes
 
 sub overlapping_genes {
 	my ($self) = @_;
@@ -285,55 +135,9 @@ sub overlapping_genes {
 	};
 }
 
-=head3 overlaps_CDS
-
-Returns a datapack containing the CDS's that the product overlaps.
-
-=over
-
-=item PERL API
-
- $data = $model->overlaps_CDS();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_CDS
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# overlaps_CDS { }
+# Returns a datapack containing the CDS's that the product overlaps.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_CDS
 
 sub overlaps_CDS {
 	my ($self) = @_;
@@ -345,55 +149,9 @@ sub overlaps_CDS {
 	};
 }
 
-=head3 overlaps_transcript
-
-Returns a datapack containing the transcript(s) that the product overlaps.
-
-=over
-
-=item PERL API
-
- $data = $model->overlaps_transcript();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_transcript
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# overlaps_transcript { }
+# Returns a datapack containing the transcript(s) that the product overlaps.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_transcript
 
 sub overlaps_transcript {
 	my ($self) = @_;
@@ -405,55 +163,9 @@ sub overlaps_transcript {
 	};
 }
 
-=head3 overlaps_pseudogene
-
-Returns a datapack containing the pseudogene(s) that the product overlaps.
-
-=over
-
-=item PERL API
-
- $data = $model->overlaps_pseudogene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_pseudogene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# overlaps_pseudogene { }
+# Returns a datapack containing the pseudogene(s) that the product overlaps.
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_pseudogene
 
 sub overlaps_pseudogene {
 	my ($self) = @_;
@@ -465,55 +177,9 @@ sub overlaps_pseudogene {
 	};
 }
 
-=head3 overlaps_variation
-
-Returns a datapack containing the variation(s) that the product overlaps.
-
-=over
-
-=item PERL API
-
- $data = $model->overlaps_variation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_variation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# overlaps_variation { }
+# Returns a datapack containing the variation(s) that the product overlaps.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_variation
 
 sub overlaps_variation {
 	my ($self) = @_;
@@ -525,55 +191,9 @@ sub overlaps_variation {
 	};
 }
 
-=head3 on_orfeome_project
-
-Returns a datapack containing information to find the product on the ORFeome project.
-
-=over
-
-=item PERL API
-
- $data = $model->on_orfeome_project();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/on_orfeome_project
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# on_orfeome_project { }
+# Returns a datapack containing information to find the product on the ORFeome project.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/on_orfeome_project
 
 # classic site note: MRC Genesevice and Open Biosystems links are invalid now
 sub on_orfeome_project {
@@ -588,55 +208,9 @@ sub on_orfeome_project {
 	};
 }
 
-=head3 microarray_results
-
-Returns a datapack containing the microarray result(s) using/containing the product.
-
-=over
-
-=item PERL API
-
- $data = $model->microarray_results();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/microarray_results
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# microarray_results { }
+# Returns a datapack containing the microarray result(s) using/containing the product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/microarray_results
 
 sub microarray_results {
 	my ($self) = @_;
@@ -648,55 +222,9 @@ sub microarray_results {
 	};
 }
 
-=head3 segment
-
-Returns a datapack containing a packaged GFF segment corresponding to the product.
-
-=over
-
-=item PERL API
-
- $data = $model->segment();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/segment
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# segment { }
+# Returns a datapack containing a packaged GFF segment corresponding to the product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/segment
 
 sub segment {
 	my ($self) = @_;
@@ -718,57 +246,10 @@ sub segment {
 ## Methods pertaining to PCR_product
 ########################################
 
-
-=head3 amplified
-
-Returns a datapack containing the number of times amplification to product the
-PCR product.
-
-=over
-
-=item PERL API
-
- $data = $model->amplified();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/amplified
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# amplified { }
+# Returns a datapack containing the number of times amplification to product the
+# PCR product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/amplified
 
 sub amplified {
 	my ($self) = @_;
@@ -780,59 +261,12 @@ sub amplified {
 	};
 }
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
+# laboratory { }
+# Supplied by Role
 
-=head3 SNP_loci
-
-Returns a datapack containing SNP locus information of the PCR product.
-
-=over
-
-=item PERL API
-
- $data = $model->SNP_loci();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/SNP_loci
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# SNP_loci { }
+# Returns a datapack containing SNP locus information of the PCR product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/SNP_loci
 
 sub SNP_loci {
 	my ($self) = @_;
@@ -844,56 +278,10 @@ sub SNP_loci {
 	};
 }
 
-=head3 assay_conditions
-
-Returns a datapack containing details of the assay conditions of the experiment
-involving the PCR product.
-
-=over
-
-=item PERL API
-
- $data = $model->assay_conditions();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/assay_conditions
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# assay_conditions { }
+# Returns a datapack containing details of the assay conditions of the experiment
+# involving the PCR product.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/assay_conditions
 
 sub assay_conditions {
 	my ($self) = @_;
@@ -905,55 +293,10 @@ sub assay_conditions {
 	};
 }
 
-=head3 rnai
+# rnai { }
+# Returns a list of all associated rnai experiemnts
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/rnai
 
-Returns a list of all associated rnai experiemnts
-
-=over
-
-=item PERL API
-
- $data = $model->rnai();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/rnai
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
 sub rnai {
     my ($self) = @_;
     my $object = $self->object;
@@ -966,55 +309,9 @@ sub rnai {
 }
 
 
-=head3 source
-
-Returns text for linking to MRC_geneservice
-
-=over
-
-=item PERL API
-
- $data = $model->source();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-PCR_product, Oligo_set, or Oligo ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/source
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# source { }
+# Returns text for linking to MRC_geneservice
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/source
 
 sub source {
     my ($self) = @_;

@@ -26,75 +26,21 @@ http://wormbase.org/species/structure_data
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
+# name {}
+# Supplied by Role
 
-=cut
+# remarks {}
+# Supplied by Role
 
-# sub name {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-
-=head2 sequence
-
-This method will return a data structure the sequence of this structure_data.
-
-=head3 PERL API
-
- $data = $model->sequence();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Structure_data ID WBStructure000876
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/sequence
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
+# sequence { }
+# This method will return a data structure the sequence of this structure_data.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/sequence
 
 sub sequence {
 	my $self = shift;
@@ -106,51 +52,9 @@ sub sequence {
 	};
 }
 
-=head2 protein_homology
-
-This method will return a data structure re: protein homologs this structure_data.
-
-=head3 PERL API
-
- $data = $model->protein_homology();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Structure_data ID WBStructure000876
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/protein_homology
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
+# protein_homology { }
+# This method will return a data structure re: protein homologs this structure_data.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/protein_homology
 
 sub protein_homology {
 	my $self = shift;
@@ -164,51 +68,9 @@ sub protein_homology {
 	};
 }
 
-=head2 homology_data
-
-This method will return a data structure with the homology_data on this structure_data.
-
-=head3 PERL API
-
- $data = $model->homology_data();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Structure_data ID WBStructure000876
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/homology_data
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
+# homology_data { }
+# This method will return a data structure with the homology_data on this structure_data.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/homology_data
 
 sub homology_data {
 	my $self = shift;
@@ -222,51 +84,9 @@ sub homology_data {
 	return $data;
 }
 
-=head2 status
-
-This method will return a data structure with the status of this structure_data.
-
-=head3 PERL API
-
- $data = $model->status();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Structure_data ID WBStructure000876
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/status
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
+# status { }
+# This method will return a data structure with the status of this structure_data.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/structure_data/WBStructure000876/status
 
 sub status {
 	my $self = shift;
