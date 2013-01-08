@@ -26,21 +26,11 @@ http://wormbase.org/species/*/rnai
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -48,64 +38,13 @@ http://wormbase.org/species/*/rnai
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-=head3 historical_name
-
-This method will return a data structure containing
-the historical name of the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->historical_name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/historical_name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# historical_name { }
+# This method will return a data structure containing
+# the historical name of the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/historical_name
 
 sub historical_name {
     my $self = shift;
@@ -115,59 +54,12 @@ sub historical_name {
 	     data        => "$name" || undef };
 }
 
-# sub taxonomy { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include taxonomy >>
+# taxonomy { }
+# Supplied by Role
 
-=head3 targets
-
-This method will return a data structure with targets for the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->targets();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/targets
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# targets { }
+# This method will return a data structure with targets for the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/targets
 
 sub targets {
     my ($self) = @_;
@@ -194,57 +86,11 @@ sub targets {
 }
 
 
-=head3 movies
-
-This method will return a data structure with links to 
-movies demonstrating the phenotype observed in the RNAi
-experiment.
-
-=over
-
-=item PERL API
-
- $data = $model->movies();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/movies
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# movies { }
+# This method will return a data structure with links to 
+# movies demonstrating the phenotype observed in the RNAi
+# experiment.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/movies
 
 sub movies {
     my $self        = shift;
@@ -256,14 +102,11 @@ sub movies {
 }
 
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
+# laboratory { }
+# Supplied by Role;
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
+# remarks {}
+# Supplied by Role
 
 #######################################
 #
@@ -271,57 +114,9 @@ sub movies {
 #
 #######################################
 
-=head2 Overview
-
-=head3 reagent
-
-This method will return a data structure with reagents used with the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->reagent();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/reagent
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# reagent { }
+# This method will return a data structure with reagents used with the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/reagent
 
 sub reagent {
     my $self        = shift;
@@ -342,55 +137,9 @@ sub reagent {
     };
 }
 
-=head3 sequence
-
-This method will return a data structure with the sequence of the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->sequence();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/sequence
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# sequence { }
+# This method will return a data structure with the sequence of the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/sequence
 
 sub sequence {
     my $self        = shift;
@@ -405,55 +154,9 @@ sub sequence {
     };
 }
 
-=head3 assay
-
-This method will return a data structure with assay for the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->assay();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/assay
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# assay { }
+# This method will return a data structure with assay for the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/assay
 
 sub assay {
     my $self      = shift;
@@ -464,55 +167,9 @@ sub assay {
 }
 
 
-=head3 genotype
-
-This method will return a data structure with the genotype background of the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->genotype();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/genotype
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# genotype { }
+# This method will return a data structure with the genotype background of the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/genotype
 
 sub genotype {
     my $self   = shift;
@@ -522,55 +179,9 @@ sub genotype {
 	     data        => "$genotype" || undef };
 }
 
-=head3 strain
-
-This method will return a data structure with the strain containing the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->strain();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/strain
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# strain { }
+# This method will return a data structure with the strain containing the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/strain
 
 sub strain {
     my $self   = shift;
@@ -579,55 +190,9 @@ sub strain {
 	     data        => $self->_pack_obj( $object->Strain) };
 }
 
-=head3 interactions
-
-This method will return a data structure with interactions associated with the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->interactions();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/interactions
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# interactions { }
+# This method will return a data structure with interactions associated with the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/interactions
 
 sub interactions {
     my ($self) = @_;
@@ -638,55 +203,9 @@ sub interactions {
     };
 }
 
-=head3 treatment
-
-This method will return a data structure with treatments involving the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->treatment();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/treatment
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# treatment { }
+# This method will return a data structure with treatments involving the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/treatment
 
 sub treatment {
     my $self   = shift;
@@ -697,55 +216,9 @@ sub treatment {
         data        => "$treatment" || undef };
 }
 
-=head3 life_stage
-
-This method will return a data structure with the life_stage associated with the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->life_stage();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/life_stage
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# life_stage { }
+# This method will return a data structure with the life_stage associated with the RNAi.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/life_stage
 
 sub life_stage {
     my ($self) = @_;
@@ -756,56 +229,10 @@ sub life_stage {
     };
 }
 
-=head3 delivered_by
-
-This method will return a data structure desribing
-how the RNAi was delivered to the organism.
-
-=over
-
-=item PERL API
-
- $data = $model->delivered_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/delivered_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# delivered_by { }
+# This method will return a data structure desribing
+# how the RNAi was delivered to the organism.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/delivered_by
 
 sub delivered_by {
     my $self   = shift;
@@ -821,13 +248,11 @@ sub delivered_by {
 #
 ############################################################
 
-# sub phenotypes {}
-# Supplied by Role; POD will automatically be inserted here.
-# <<include phenotypes>>
+# phenotypes {}
+# Supplied by Role
 
-# sub phenotypes_not_observed {}
-# Supplied by Role; POD will automatically be inserted here.
-# <<include phenotypes_not_observed>>
+# phenotypes_not_observed {}
+# Supplied by Role
 
 ############################################################
 #
@@ -835,13 +260,8 @@ sub delivered_by {
 #
 ############################################################
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
+# xrefs {}
+# Supplied by Role
 
 
 __PACKAGE__->meta->make_immutable;

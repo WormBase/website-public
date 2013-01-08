@@ -27,21 +27,11 @@ http://wormbase.org/resources/rearrangement
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -49,64 +39,13 @@ http://wormbase.org/resources/rearrangement
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-=head3 type
-
-This method returns a data structure containing the 
-type of the rearrangement, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# type { }
+# This method returns a data structure containing the 
+# type of the rearrangement, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/type
 
 sub type {
     my $self = shift;
@@ -122,56 +61,10 @@ sub type {
     };
 }
 
-=head3 mapping_data
-
-This method returns a data structure containing the 
-mapping_data of the rearrangement, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->mapping_data();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/mapping_data
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# mapping_data { }
+# This method returns a data structure containing the 
+# mapping_data of the rearrangement, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/mapping_data
 
 sub mapping_data {
     my $self = shift;
@@ -213,56 +106,10 @@ sub mapping_data {
     };
 }
 
-=head3 positive
-
-This method returns a data structure containing the 
-genes/clones/rearrangements/loci inside the rearrangement.
-
-=over
-
-=item PERL API
-
- $data = $model->positive();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/positive
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# positive { }
+# This method returns a data structure containing the 
+# genes/clones/rearrangements/loci inside the rearrangement.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/positive
 
 sub positive {
     my $self = shift;
@@ -272,56 +119,10 @@ sub positive {
     };
 }
 
-=head3 negative
-
-This method returns a data structure containing the 
-genes/clones/rearrangements/loci outside the rearrangement.
-
-=over
-
-=item PERL API
-
- $data = $model->negative();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/negative
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# negative { }
+# This method returns a data structure containing the 
+# genes/clones/rearrangements/loci outside the rearrangement.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/negative
 
 sub negative {
     my $self = shift;
@@ -350,56 +151,10 @@ sub _inside_out {
 
 }
 
-=head3 display
-
-This method returns a data structure containing the 
-rearrangements hidden by this rearrangement.
-
-=over
-
-=item PERL API
-
- $data = $model->display();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/display
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# display { }
+# This method returns a data structure containing the 
+# rearrangements hidden by this rearrangement.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/display
 
 sub display {
     my $self = shift;
@@ -416,56 +171,10 @@ sub display {
     };
 }
 
-=head3 strains
-
-This method returns a data structure containing the 
-strains associated with the rearrangement.
-
-=over
-
-=item PERL API
-
- $data = $model->strains();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/strains
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# strains { }
+# This method returns a data structure containing the 
+# strains associated with the rearrangement.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/strains
 
 sub strains {
     my $self = shift;
@@ -484,56 +193,10 @@ sub strains {
     };
 }
 
-=head3 reference_strain
-
-This method returns a data structure containing the 
-reference strain associated with the rearrangement.
-
-=over
-
-=item PERL API
-
- $data = $model->reference_strain();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/reference_strain
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# reference_strain { }
+# This method returns a data structure containing the 
+# reference strain associated with the rearrangement.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/reference_strain
 
 sub reference_strain {
     my $self = shift;
@@ -546,56 +209,10 @@ sub reference_strain {
     };
 }
 
-=head3 chromosome
-
-This method returns a data structure containing the 
-chromosomal information of the rearrangement.
-
-=over
-
-=item PERL API
-
- $data = $model->chromosome();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/chromosome
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# chromosome { }
+# This method returns a data structure containing the 
+# chromosomal information of the rearrangement.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/chromosome
 
 sub chromosome {
     my $self = shift;
@@ -620,17 +237,11 @@ sub chromosome {
 #
 ####################################### 
 
-=head2 Phenotypes
+# phenotypes {}
+# Supplied by Role
 
-=cut
-
-# sub phenotypes {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include phenotypes >>
-
-# sub phenotypes_not_observed {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include phenotypes_not_observed >>
+# phenotypes_not_observed {}
+# Supplied by Role
 
 sub _build_phenotypes_data {
     my $self = shift;
@@ -653,13 +264,8 @@ sub _build_phenotypes_data {
 #
 #######################################
 
-=head2 References
-
-=cut
-
-# sub references {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include references >>
+# references {}
+# Supplied by Role
 
 #######################################
 #
@@ -667,58 +273,10 @@ sub _build_phenotypes_data {
 #
 #######################################
 
-=head2 Isolation
-
-=head3 author
-
-This method returns a data structure containing the 
-author associated with the rearrangement, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->author();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/author
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# author { }
+# This method returns a data structure containing the 
+# author associated with the rearrangement, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/author
 
 sub author {
     my $self = shift;
@@ -731,56 +289,10 @@ sub author {
     };
 }
 
-=head3 mutagen
-
-This method returns a data structure containing the 
-mutagen associated with the rearrangement, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->mutagen();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/mutagen
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# mutagen { }
+# This method returns a data structure containing the 
+# mutagen associated with the rearrangement, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/mutagen
 
 sub mutagen {
     my $self = shift;
@@ -793,56 +305,10 @@ sub mutagen {
     };
 }
 
-=head3 date
-
-This method returns a data structure containing the 
-date associated with the rearrangement, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->date();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/date
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# date { }
+# This method returns a data structure containing the 
+# date associated with the rearrangement, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/date
 
 sub date {
     my $self = shift;
@@ -855,56 +321,10 @@ sub date {
     };
 }
 
-=head3 source
-
-This method returns a data structure containing the 
-source rearrangement for the rearrangement, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->source();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/source
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# source { }
+# This method returns a data structure containing the 
+# source rearrangement for the rearrangement, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/source
 
 sub source {
     my $self = shift;
@@ -915,56 +335,10 @@ sub source {
     };
 }
 
-=head3 derived
-
-This method returns a data structure containing the 
-rearrangements derived from this rearrangement.
-
-=over
-
-=item PERL API
-
- $data = $model->derived();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Rearrangement (eg mnDp11)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/derived
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# derived { }
+# This method returns a data structure containing the 
+# rearrangements derived from this rearrangement.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/derived
 
 sub derived {
     my $self = shift;

@@ -27,21 +27,11 @@ http://wormbase.org/species/*/gene_cluster
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 
 ############################
@@ -50,63 +40,12 @@ http://wormbase.org/species/*/gene_cluster
 #
 ############################
 
-=head2 Overview
-
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# name { }
+# Supplied by Role
  
-=head3 title
-
-This method will return a data structure with title for the gene_cluster.
-
-=over
-
-=item PERL API
-
- $data = $model->title();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene_cluster id (eg HIS3_cluster)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cluster/HIS3_cluster/title
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# title { }
+# This method will return a data structure with title for the gene_cluster.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cluster/HIS3_cluster/title
 
 sub title {
     my $self      = shift;
@@ -118,60 +57,12 @@ sub title {
 }
 
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# description { }
+# Supplied by Role
 
-
-=head3 contains_genes
-
-This method will return a data structure with genes in the gene_cluster.
-
-=over
-
-=item PERL API
-
- $data = $model->contains_genes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene_cluster id (eg HIS3_cluster)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cluster/HIS3_cluster/contains_genes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# contains_genes { }
+# This method will return a data structure with genes in the gene_cluster.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cluster/HIS3_cluster/contains_genes
 
 sub contains_genes {
     my $self   = shift;

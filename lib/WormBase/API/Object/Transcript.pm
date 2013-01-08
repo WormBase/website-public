@@ -99,21 +99,11 @@ sub _build_type {
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 ############################################################
 #
@@ -121,49 +111,35 @@ sub _build_type {
 #
 ############################################################
 
-=head2
+# name {}
+# Supplied by Role
 
-=cut
+# taxonomy {}
+# Supplied by Role
 
-# sub name {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# description { }
+# Supplied by Role
 
-# sub taxonomy {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include taxonomy >>
+# sequence_type {}
+# Supplied by Role
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# identity {}
+# Supplied by Role
 
-# sub sequence_type {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include sequence_type >>
+# method {}
+# Supplied by Role
 
-# sub identity {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include identity >>
+# remarks {}
+# Supplied by Role
 
-# sub method {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include method >>
+# laboratory { }
+# Supplied by Role
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# available_from { }
+# Supplied by Role
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
-
-# sub available_from { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include available_from >>
-
-# sub corresponding_all { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include corresponding_all >>
+# corresponding_all { }
+# Supplied by Role
 
 ############################################################
 #
@@ -171,13 +147,8 @@ sub _build_type {
 #
 ############################################################ 
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
+# xrefs {}
+# Supplied by Role
 
 ############################################################
 #
@@ -185,17 +156,11 @@ sub _build_type {
 #
 ############################################################
 
-=head2 Location
+# genomic_position { }
+# Supplied by Role
 
-=cut
-
-# sub genomic_position { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_position >>
-
-# sub tracks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include tracks >>
+# tracks {}
+# Supplied by Role
 
 sub _build_tracks {
     my ($self) = @_;
@@ -206,9 +171,8 @@ sub _build_tracks {
     };
 }
 
-# sub genomic_image { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_image >>
+# genomic_image { }
+# Supplied by Role
 
 # note for AD:
 # this one needs some reworking. it currently fetches the first segment
@@ -259,9 +223,8 @@ sub _build_genomic_image {
     };
 }
 
-# sub genetic_position {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include genetic_position >>
+# genetic_position {}
+# Supplied by Role
 
 ############################################################
 #
@@ -269,29 +232,20 @@ sub _build_genomic_image {
 #
 ############################################################
 
-=head2 Reagents
+# orfeome_assays {}
+# Supplied by Role
 
-=cut
+# microarray_assays {}
+# Supplied by Role
 
-# sub orfeome_assays {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include orfeome_assays >>
+# pcr_products {}
+# Supplied by Role
 
-# sub microarray_assays {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include microarray_assays >>
+# matching_cdnas {}
+# Supplied by Role
 
-# sub pcr_products {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include pcr_products >>
-
-# sub matching_cdnas {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include matching_cdnas >>
-
-# sub source_clone {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include source_clone >>
+# source_clone {}
+# Supplied by Role
 
 ############################################################
 #
@@ -299,86 +253,31 @@ sub _build_genomic_image {
 #
 ############################################################
 
-=head2 Sequence
+# print_blast {}
+# Supplied by Role
 
-# sub print_blast {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include print_blast >>
+# print_sequence {}
+# Supplied by Role
 
-# sub print_sequence {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include print_sequence >>
+# print_homologies {}
+# Supplied by Role
 
-# sub print_homologies {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include print_homologies >>
+# print_feature {}
+# Supplied by Role
 
-# sub print_feature {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include print_feature >>
+# strand {}
+# Supplied by Role
 
-# sub strand {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include strand >>
+# transcripts {}
+# Supplied by Role
 
-# sub transcripts {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include transcripts >>
+# predicted_units {}
+# Supplied by Role
 
-# sub predicted_units {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include predicted_units >>
-
-=head3 predicted_exon_structure
-
-This method will return a data structure listing
-the exon structure contained within the sequence.
-
-=over
-
-=item PERL API
-
- $data = $model->predicted_exon_structure();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/predicted_exon_structure
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# predicted_exon_structure { }
+# This method will return a data structure listing
+# the exon structure contained within the sequence.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/predicted_exon_structure
 
 sub predicted_exon_structure {
     my ($self) = @_;

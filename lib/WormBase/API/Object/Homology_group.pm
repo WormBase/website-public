@@ -27,20 +27,11 @@ http://wormbase.org/species/*/homology_group
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 
 #######################################
@@ -49,67 +40,15 @@ http://wormbase.org/species/*/homology_group
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# remarks {}
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-=head3 title
-
-This method will return a data structure with the title for the homology_group.
-
-=over
-
-=item PERL API
-
- $data = $model->title();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Homology_group id (eg InP_Cae_000935)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/title
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# title { }
+# This method will return a data structure with the title for the homology_group.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/title
 
 sub title {
     my $self   = shift;
@@ -120,55 +59,9 @@ sub title {
     };
 }
 
-=head3 type
-
-This method will return a data structure with the type of the homology_group.
-
-=over
-
-=item PERL API
-
- $data = $model->type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Homology_group id (eg InP_Cae_000935)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# type { }
+# This method will return a data structure with the type of the homology_group.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/type
 
 sub type {
     my $self           = shift;
@@ -179,57 +72,10 @@ sub type {
 			     code       => $code && "$code" },
 	    description => 'type of homology group' };
 }
-
-=head3 gene_ontology_terms
-
-This method will return a data structure containing 
-the gene ontology terms associated with the homology group.
-
-=over
-
-=item PERL API
-
- $data = $model->gene_ontology_terms();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Homology_group id (eg InP_Cae_000935)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/gene_ontology_terms
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# gene_ontology_terms { }
+# This method will return a data structure containing 
+# the gene ontology terms associated with the homology group.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/gene_ontology_terms
 
 sub gene_ontology_terms {
     my $self      = shift;
@@ -247,56 +93,10 @@ sub gene_ontology_terms {
 	     description => 'gene ontology terms associated to this homology group' };
 }
 
-=head3 proteins
-
-This method will return a data structure containing
-the proteins listed in the homology_group.
-
-=over
-
-=item PERL API
-
- $data = $model->proteins();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Homology_group id (eg InP_Cae_000935)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/proteins
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# proteins { }
+# This method will return a data structure containing
+# the proteins listed in the homology_group.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/proteins
 
 sub proteins {
     my $self        = shift;
@@ -322,13 +122,8 @@ sub proteins {
 #
 #######################################
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
+# xrefs {}
+# Supplied by Role
 
 
 __PACKAGE__->meta->make_immutable;

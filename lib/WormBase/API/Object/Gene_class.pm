@@ -29,58 +29,11 @@ http://wormbase.org/species/gene_class
 #
 #######################################
 
-=head2 Summary Data
+# all_gene_classes { }
+# This method will return a data structure containing
+# all gene classes.
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/all/all_gene_classes
 
-=head3 all_gene_classes
-
-This method will return a data structure containing
-all gene classes.
-
-=over
-
-=item PERL API
-
- $data = $model->all_gene_classes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-The keyword 'all'.
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/all/all_gene_classes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
 
 { # temporary fix. this should actually be cached for the entire class.
   # better yet, this should be designated as a class method, signaled at the
@@ -111,84 +64,28 @@ B<Response example>
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 ########################################
 # The Overview widget 
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# other_names { }
+# Supplied by Role
 
-# sub other_names { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include other_names >>
+# description { }
+# Supplied by Role
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# laboratory { }
+# Supplied by Role
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
-
-=head3 phenotype
-
-This method will return a data structure containing
-a string describing the general phenotype of genes
-placed in this gene class.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotype();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/phenotype
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# phenotype { }
+# This method will return a data structure containing
+# a string describing the general phenotype of genes
+# placed in this gene class.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/phenotype
 
 sub phenotype {
     my $self = shift;
@@ -199,10 +96,8 @@ sub phenotype {
     return $data;
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
+# remarks {}
+# Supplied by Role
 
 
 #######################################
@@ -211,58 +106,10 @@ sub phenotype {
 #
 #######################################
 
-=head2 Current Genes
-
-=head3 current_genes
-
-This method will return a data structure containing
-all genes assigned to the class, organized by species.
-
-=over
-
-=item PERL API
-
- $data = $model->current_genes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/current_genes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# current_genes { }
+# This method will return a data structure containing
+# all genes assigned to the class, organized by species.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/current_genes
 
 sub current_genes {
     my $self   = shift;
@@ -295,61 +142,13 @@ sub current_genes {
 #
 #######################################
 
-=head2 Previous Genes
-
-=head3 former_genes
-
-This method will return a data structure containing
-genes that used to belong to the current gene class
-but have been reassigned to another class, or that
-have been reassigned a new gene name within the same
-class.
-
-=over
-
-=item PERL API
-
- $data = $model->former_genes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/former_genes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# former_genes { }
+# This method will return a data structure containing
+# genes that used to belong to the current gene class
+# but have been reassigned to another class, or that
+# have been reassigned a new gene name within the same
+# class.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/former_genes
 
 sub former_genes {
     my $self   = shift;
@@ -370,56 +169,10 @@ sub former_genes {
 }
 
 
-=head3 reassigned_genes
-
-This method will return a data structure containing
-genes that have been reassigned within the gene class.
-
-=over
-
-=item PERL API
-
- $data = $model->reassigned_genes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/reassigned_genes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# reassigned_genes { }
+# This method will return a data structure containing
+# genes that have been reassigned within the gene class.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/reassigned_genes
 
 sub reassigned_genes {
     my $self   = shift;

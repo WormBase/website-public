@@ -34,21 +34,11 @@ http://wormbase.org/species/*
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -56,78 +46,19 @@ http://wormbase.org/species/*
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# description {}
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# remarks {}
+# Supplied by Role
 
-
-# sub description {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
-
-
-
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-
-
-=head3 assembly
-
-This method will return data for a datatable containing details
-on the assemblies for this species
-
-=over
-
-=item PERL API
-
- $data = $model->assembly();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Species full name (eg Caenorhabditis elegans)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/assembly
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# current_assemblies { }
+# This method will return data for a datatable containing details
+# on the most current assemblies for this species
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/current_assemblies
 
 sub current_assemblies {
     my $self   = shift;
@@ -141,6 +72,11 @@ sub current_assemblies {
 	data => @$data ? $data : undef
     }
 }
+
+# previous_assemblies { }
+# This method will return data for a datatable containing details
+# on the previous or replaced assemblies for this species
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/previous_assemblies
 
 sub previous_assemblies {
     my $self   = shift;
@@ -225,57 +161,9 @@ sub _get_xrefs {
 }
 
 
-
-
-=head3 ncbi_id
-
-This method will return the NCBI taxonomy ID for this species
-
-=over
-
-=item PERL API
-
- $data = $model->ncbi_id();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Species full name (eg Caenorhabditis elegans)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/ncbi_id
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# ncbi_id { }
+# This method will return the NCBI taxonomy ID for this species
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/ncbi_id
 
 sub ncbi_id {
     my $self   = shift;
