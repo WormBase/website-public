@@ -27,20 +27,12 @@ http://wormbase.org/resources/analysis
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 
 #######################################
@@ -49,64 +41,13 @@ http://wormbase.org/resources/analysis
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-=head3 title
-
-This method returns a data structure containing the 
-the title of the analysis, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->title();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/title
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# title { }
+# This method returns a data structure containing the 
+# the title of the analysis, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/title
 
 sub title {
     my ($self) = @_;
@@ -118,61 +59,13 @@ sub title {
     };
 }
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# description { }
+# Supplied by Role
 
-
-=head3 based_on_wb_release
-
-This method returns a data structure containing 
-the WormBase release the analysis is based on.
-
-=over
-
-=item PERL API
-
- $data = $model->based_on_wb_release();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_wb_release
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# based_on_wb_release { }
+# This method returns a data structure containing 
+# the WormBase release the analysis is based on.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_wb_release
 
 sub based_on_wb_release {
     my ($self) = @_;
@@ -185,56 +78,10 @@ sub based_on_wb_release {
 }
 
 
-=head3 based_on_db_release
-
-This method returns a data structure containing 
-the database release the analysis is based on.
-
-=over
-
-=item PERL API
-
- $data = $model->based_on_db_release();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_db_release
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# based_on_db_release { }
+# This method returns a data structure containing 
+# the database release the analysis is based on.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_db_release
 
 sub based_on_db_release {
     my ($self) = @_;
@@ -246,56 +93,10 @@ sub based_on_db_release {
     };
 }
 
-=head3 project
-
-This method returns a data structure containing 
-the project that conducted the analysis.
-
-=over
-
-=item PERL API
-
- $data = $model->project();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/project
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# project { }
+# This method returns a data structure containing 
+# the project that conducted the analysis.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/project
 
 sub project {
     my $self = shift;
@@ -306,56 +107,10 @@ sub project {
 }
 
 
-=head3 subproject
-
-This method returns a data structure containing 
-the subproject of the analysis.
-
-=over
-
-=item PERL API
-
- $data = $model->subproject();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/subproject
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# subproject { }
+# This method returns a data structure containing 
+# the subproject of the analysis.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/subproject
 
 sub subproject {
     my $self = shift;
@@ -365,56 +120,10 @@ sub subproject {
     };
 }
 
-=head3 conducted_by
-
-This method returns a data structure containing 
-the person that conducted the analysis.
-
-=over
-
-=item PERL API
-
- $data = $model->conducted_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/conducted_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# conducted_by { }
+# This method returns a data structure containing 
+# the person that conducted the analysis.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/conducted_by
 
 sub conducted_by {
     my ($self) = @_;
@@ -432,13 +141,8 @@ sub conducted_by {
 #
 ############################################################ 
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
+# xrefs {}
+# Supplied by Role
 
 
 #######################################
@@ -447,14 +151,8 @@ sub conducted_by {
 #
 #######################################
 
-=head2 References
-
-=cut
-
-# sub references {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include references >>
-
+# references {}
+# Supplied by Role
 
 __PACKAGE__->meta->make_immutable;
 

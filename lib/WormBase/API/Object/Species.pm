@@ -34,21 +34,11 @@ http://wormbase.org/species/*
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -56,150 +46,124 @@ http://wormbase.org/species/*
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# description {}
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# remarks {}
+# Supplied by Role
 
+# current_assemblies { }
+# This method will return data for a datatable containing details
+# on the most current assemblies for this species
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/current_assemblies
 
-# sub description {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
-
-
-
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-
-
-=head3 assembly
-
-This method will return data for a datatable containing details
-on the assemblies for this species
-
-=over
-
-=item PERL API
-
- $data = $model->assembly();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Species full name (eg Caenorhabditis elegans)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/assembly
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub assembly {
+sub current_assemblies {
     my $self   = shift;
-    my $object = $self->object;
 
-    my @data = map {
-      my $ref = $_->Evidence ? $_->Evidence->right : $_->Laboratory;
-      my $label = $_->Name || "$_";
-      { name => $self->_pack_obj($_->Name, "$label", coord => { start => 1 }),
-        sequenced_strain => $self->_pack_obj($_->Strain),
-        first_wb_release => "WS" . $_->First_WS_release,
-        reference => $self->_pack_obj($ref)
-      }
-    } grep {$_->Status eq 'Live'} $object->Assembly;
-
+    # Multiple assemblies for a given species are 
+    # represented by linking from the live Sequence_collection
+    # to others.
+    my $data = $self->_get_assemblies('current');  
     return {
-      description => "genomic assemblies",
-      data => @data ? \@data : undef
+	description => "current genomic assemblies",
+	data => @$data ? $data : undef
     }
 }
 
+# previous_assemblies { }
+# This method will return data for a datatable containing details
+# on the previous or replaced assemblies for this species
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/previous_assemblies
+
+sub previous_assemblies {
+    my $self   = shift;
+
+    # Multiple assemblies for a given species are 
+    # represented by linking from the live Sequence_collection
+    # to others.
+    my $data = $self->_get_assemblies('previous');  
+    return {
+	description => "previous genomic assemblies",
+	data => @$data ? $data : undef
+    }
+}
+
+sub _get_assemblies {
+    my ($self,$type) = @_;
+    my $object = $self->object;    
+
+    my @assemblies = $object->Assembly;
+    my @data;
+    foreach (@assemblies) {
+	next if $_->Status eq 'Dead' || $_->Status eq 'Suppressed';
+
+	# Starting from live and working backwards.
+	if (($type eq 'previous') && ($_->Supercedes)) {
+	    push @assemblies,$_->Supercedes;
+	}
+
+	push @data,$self->_process_assembly($_)
+	   unless ($_->Status eq 'Live' && $type eq 'previous');
+
+    }
+    
+    return \@data;   
+}
 
 
-=head3 ncbi_id
+sub _process_assembly {    
+    my ($self,$assembly) = @_;
 
-This method will return the NCBI taxonomy ID for this species
+    my $ref    = $assembly->Evidence ? $assembly->Evidence->right : $assembly->Laboratory;
+    my $label  = $assembly->Name || "$assembly";
 
-=over
+    my $superceded_by = $assembly->Superceded_by ? $assembly->Superceded_by : '-';
+    my $status        = $superceded_by ? 'superceded' : 'current';
 
-=item PERL API
+    my $wb_range      = 
+	"WS" . $assembly->First_WS_release . ' - '
+	. ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
+	
+    my $data = { name => $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 }),
+		 sequenced_strain  => $self->_pack_obj($assembly->Strain),
+		 first_wb_release  => "WS" . $assembly->First_WS_release,
+		 latest_wb_release => "WS" . $assembly->Latest_WS_release,
+		 wb_release_range  => $wb_range,
+		 reference         => $self->_pack_obj($ref),
+		 status            => $status,
+		 xrefs             => $self->_get_xrefs($assembly),
+    };
+    return $data;
+}
 
- $data = $model->ncbi_id();
 
-=item REST API
+sub _get_xrefs {
+    my ($self,$object) = @_;
 
-B<Request Method>
+    my @databases = $object->Database;
+    my %dbs;
 
-GET
+    foreach my $db (@databases) {
+	$dbs{xrefs}{"$db"}{name} = "$db";
+	foreach my $key ($db->col) {
+	    my @types = $key->col;	    
+	    my %types;
+	    foreach my $val (@types) {
+		$types{$key} = "$val";
+		$dbs{xrefs}{"$db"}{"$key"} = "$val";
+	    }
+	}
+    }
+    return \%dbs;
+}
 
-B<Requires Authentication>
 
-No
-
-B<Parameters>
-
-A Species full name (eg Caenorhabditis elegans)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/ncbi_id
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# ncbi_id { }
+# This method will return the NCBI taxonomy ID for this species
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/species/Caenorhabditis elegans/ncbi_id
 
 sub ncbi_id {
     my $self   = shift;

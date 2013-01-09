@@ -28,20 +28,12 @@ http://wormbase.org/species/go_term
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 
 #######################################
@@ -50,65 +42,12 @@ http://wormbase.org/species/go_term
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-=head3 term
-
-This method will return a data structure with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->term();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/term
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# term { }
+# This method will return a data structure with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/term
 
 sub term {
     my $self       = shift;
@@ -120,57 +59,9 @@ sub term {
     };
 }
 
-=head3 definition
-
-This method will return a data structure with the definition of the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->definition();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/definition
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# definition { }
+# This method will return a data structure with the definition of the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/definition
 
 sub definition {
     my $self      = shift;
@@ -182,58 +73,9 @@ sub definition {
     };
 }
 
-=head3 type
-
-This method will return a data structure with the type of go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
-
+# type { }
+# This method will return a data structure with the type of go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/type
 sub type {
     my $self      = shift;
     my $object    = $self->object;
@@ -251,57 +93,9 @@ sub type {
 #
 #######################################
 
-=head3 genes
-
-This method will return a data structure with the genes annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->genes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/genes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# genes { }
+# This method will return a data structure with the genes annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/genes
 
 sub genes {
     my $self   = shift;
@@ -322,57 +116,9 @@ sub genes {
     };
 }
 
-=head3 cds
-
-This method will return a data structure with the cds annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->cds();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/cds
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# cds { }
+# This method will return a data structure with the cds annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/cds
 
 sub cds {
     my $self   = shift;
@@ -391,57 +137,9 @@ sub cds {
     };
 }
 
-=head3 phenotype
-
-This method will return a data structure with the phenotypes annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotype();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/phenotype
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# phenotype { }
+# This method will return a data structure with the phenotypes annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/phenotype
 
 sub phenotype {
     my $self = shift;
@@ -461,57 +159,9 @@ sub phenotype {
     };
 }
 
-=head3 motif
-
-This method will return a data structure with the motifs annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->motif();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/motif
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# motif { }
+# This method will return a data structure with the motifs annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/motif
 
 sub motif {
     my $self = shift;
@@ -525,57 +175,9 @@ sub motif {
     };
 }
 
-=head3 sequence
-
-This method will return a data structure with the sequences annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->sequence();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/sequence
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# sequence { }
+# This method will return a data structure with the sequences annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/sequence
 
 sub sequence {
     my $self      = shift;
@@ -586,57 +188,9 @@ sub sequence {
     };
 }
 
-=head3 transcript
-
-This method will return a data structure with the transcripts annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->transcript();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/transcript
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# transcript { }
+# This method will return a data structure with the transcripts annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/transcript
 
 sub transcript {
     my $self      = shift;
@@ -647,57 +201,9 @@ sub transcript {
     };
 }
 
-=head3 pseudogene
-
-This method will return a data structure with the pseudogenes annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->pseudogene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/pseudogene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# pseudogene { }
+# This method will return a data structure with the pseudogenes annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/pseudogene
 
 sub pseudogene {
     my $self      = shift;
@@ -708,57 +214,9 @@ sub pseudogene {
     };
 }
 
-=head3 anatomy_term
-
-This method will return a data structure with the anatomy_terms annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->anatomy_term();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/anatomy_term
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# anatomy_term { }
+# This method will return a data structure with the anatomy_terms annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/anatomy_term
 
 sub anatomy_term {
     my $self      = shift;
@@ -769,57 +227,9 @@ sub anatomy_term {
     };
 }
 
-=head3 homology_group
-
-This method will return a data structure with the homology_groups annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->homology_group();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/homology_group
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# homology_group { }
+# This method will return a data structure with the homology_groups annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/homology_group
 
 sub homology_group {
     my $self      = shift;
@@ -830,57 +240,9 @@ sub homology_group {
     };
 }
 
-=head3 expr_pattern
-
-This method will return a data structure with the expr_patterns annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->expr_pattern();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/expr_pattern
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# expr_pattern { }
+# This method will return a data structure with the expr_patterns annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/expr_pattern
 
 #sub expr_pattern {
 #    my $self      = shift;
@@ -891,57 +253,9 @@ B<Response example>
 #    };
 #}
 
-=head3 cell
-
-This method will return a data structure with the cells annotated with the go_term.
-
-=over
-
-=item PERL API
-
- $data = $model->cell();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A GO_Term id (eg GO:0032502)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/cell
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
+# cell { }
+# This method will return a data structure with the cells annotated with the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/cell
 
 sub cell {
     my $self      = shift;

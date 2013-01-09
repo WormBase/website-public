@@ -27,21 +27,11 @@ http://wormbase.org/species/*/expr_profile
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -49,21 +39,14 @@ http://wormbase.org/species/*/expr_profile
 #
 #######################################
 
-=head2 Overview
+# name {}
+# Supplied by Role
 
-=cut
+# remarks {}
+# Supplied by Role
 
-# sub name {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-# sub method {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include method >>
+# method {}
+# Supplied by Role
 
 #######################################
 #
@@ -71,60 +54,10 @@ http://wormbase.org/species/*/expr_profile
 #
 #######################################
 
-=head2 Details
-
-=cut
-
-=head3 pcr_data
-
-This method will return a data structure 
-with PCR data on the expression profile.
-
-=over
-
-=item PERL API
-
- $data = $model->pcr_data();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expr_profile id (eg R10E9.2)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_data
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# pcr_data { }
+# This method will return a data structure 
+# with PCR data on the expression profile.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_data
 
 sub pcr_data {
     my $self    = shift;
@@ -158,56 +91,10 @@ sub pcr_data {
     };
 }
 
-=head3 profiles
-
-This method will return a data structure 
-with specific profiles of the expression profile object.
-
-=over
-
-=item PERL API
-
- $data = $model->profiles();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No	
-
-B<Parameters>
-
-An Expr_profile id (eg R10E9.2)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/profiles
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# profiles { }
+# This method will return a data structure 
+# with specific profiles of the expression profile object.
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/profiles
 
 sub profiles {
     my $self    = shift;
@@ -239,56 +126,10 @@ sub profiles {
     };
 }
 
-=head3 pcr_products
-    
-This method will return a data structure with 
-PCR products generated from the expression profile.
-    
-=over
-
-=item PERL API
-
- $data = $model->pcr_products();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expr_profile id (eg R10E9.2)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_products
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# pcr_products { }
+# This method will return a data structure with 
+# PCR products generated from the expression profile.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_products
 
 sub pcr_products {
     my $self       = shift;
@@ -300,57 +141,11 @@ sub pcr_products {
     };
 }
 
-=head3 expression_map
-    
-This method will return a data structure 
-containing the expression map associated with the
-requested expression profile.
-    
-=over
-
-=item PERL API
-
- $data = $model->expression_map();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expr_profile id (eg R10E9.2)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/expression_map
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# expression_map { }
+# This method will return a data structure 
+# containing the expression map associated with the
+# requested expression profile.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/expression_map
 
 sub expression_map {
     my $self       = shift;
@@ -360,55 +155,9 @@ sub expression_map {
     };
 }
 
-=head3 rnai
-
-This method will return a data structure with rnais associated with the expr_profile.
-
-=over
-
-=item PERL API
-
- $data = $model->rnai();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expr_profile id (eg R10E9.2)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/rnai
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# rnai { }
+# This method will return a data structure with rnais associated with the expr_profile.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/rnai
 
 sub rnai {
     my $self        = shift;

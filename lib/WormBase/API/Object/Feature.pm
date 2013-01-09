@@ -45,20 +45,12 @@ http://wormbase.org/species/*/feature
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 
 #######################################
@@ -67,67 +59,15 @@ http://wormbase.org/species/*/feature
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# method { }
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub method { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include method >>
-
-=head3 flanking_sequences
-
-This method will return a data structure containing sequences adjacent to the feature.
-
-=over
-
-=item PERL API
-
- $data = $model->flanking_sequences();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/flanking_sequences
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# flanking_sequences { }
+# This method will return a data structure containing sequences adjacent to the feature.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/flanking_sequences
 
 sub flanking_sequences {
     my $self   = shift;
@@ -149,61 +89,13 @@ sub flanking_sequences {
     };
 }
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# description { }
+# Supplied by Role
 
-
-=head3 annotation
-
-This method will return a data structure
-containing annotation info on the feature.
-
-=over
-
-=item PERL API
-
- $data = $model->annotation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/annotation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# annotation { }
+# This method will return a data structure
+# containing annotation info on the feature.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/annotation
 
 sub annotation {
     my $self   = shift;
@@ -218,64 +110,16 @@ sub annotation {
 	     data        => $annotation && "$annotation", };
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# remarks {}
+# Supplied by Role
 
-# sub taxonomy {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include taxonomy >>
+# taxonomy {}
+# Supplied by Role
 
-=head3 sequence_ontology_terms
-
-This method will return a data structure
-containing sequence ontology terms on the feature.
-
-=over
-
-=item PERL API
-
- $data = $model->sequence_ontology_terms();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/sequence_ontology_terms
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# sequence_ontology_terms { }
+# This method will return a data structure
+# containing sequence ontology terms on the feature.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/sequence_ontology_terms
 
 sub sequence_ontology_terms {
     my $self   = shift;
@@ -286,55 +130,8 @@ sub sequence_ontology_terms {
 	     data        => @terms ? \@terms : undef, };
 }
 
-=head3 sequence
-
-# TODO
-
-=over
-
-=item PERL API
-
- $data = $model->sequence();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/sequence
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# sequence { }
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/sequence
 
 sub sequence {
     my ($self) = @_;
@@ -351,59 +148,10 @@ sub sequence {
 #
 #######################################
 
-=head2
-
-
-=head3 defined_by
-
-This method returns a data structure detailing 
-how the sequence feature was defined.
-
-=over
-
-=item PERL API
-
- $data = $model->defined_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/defined_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# defined_by { }
+# This method returns a data structure detailing 
+# how the sequence feature was defined.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/defined_by
 
 sub defined_by {
     my $self   = shift;
@@ -424,56 +172,10 @@ sub defined_by {
 	     data        => @data ? \@data : undef, };
 }
 
-=head3 associations
-
-This method will return a data structure listing
-sequences associated with this feature.
-
-=over
-
-=item PERL API
-
- $data = $model->associations();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/associations
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# associations { }
+# This method will return a data structure listing
+# sequences associated with this feature.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/associations
 
 sub associations {
     my $self   = shift;
@@ -494,56 +196,10 @@ sub associations {
 }
 
 
-=head3 binds_gene_product
-
-This method will return a data structure containing 
-the gene whose product binds the feature.
-
-=over
-
-=item PERL API
-
- $data = $model->binds_product_of_gene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/binds_gene_product
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# binds_gene_product { }
+# This method will return a data structure containing 
+# the gene whose product binds the feature.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/binds_gene_product
 
 sub binds_gene_product {
     my $self   = shift;
@@ -554,56 +210,10 @@ sub binds_gene_product {
 }
 
 
-=head3 transcription_factor
-
-This method will return a data structure containing
-the transcription factors that associate with this feature.
-
-=over
-
-=item PERL API
-
- $data = $model->transcription_factor();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A feature ID (eg WBsf000753)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/transcription_factor
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# transcription_factor { }
+# This method will return a data structure containing
+# the transcription factors that associate with this feature.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/transcription_factor
 
 sub transcription_factor {
     my $self   = shift;

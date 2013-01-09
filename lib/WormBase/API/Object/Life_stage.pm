@@ -26,21 +26,11 @@ http://wormbase.org/species/life_stage
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -48,64 +38,13 @@ http://wormbase.org/species/life_stage
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-=head3 substages
-
-This method will return a data structure containing
-substages of the requested life stage.
-
-=over
-
-=item PERL API
-
- $data = $model->substages();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-Life stage (eg embryo)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/substages
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# substages { }
+# This method will return a data structure containing
+# substages of the requested life stage.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/substages
 
 sub substages {
     my $self   = shift;
@@ -115,56 +54,10 @@ sub substages {
 	     description => 'life substage' };
 }
 
-=head3 definition
-
-This method will return a data structure containing
-a definition of the requested life stage.
-
-=over
-
-=item PERL API
-
- $data = $model->definition();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-Life stage (eg embryo)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/definition
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# definition { }
+# This method will return a data structure containing
+# a definition of the requested life stage.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/definition
 
 sub definition {
     my $self = shift;
@@ -174,66 +67,16 @@ sub definition {
 	     description => 'brief definition  of the life stage', };
 }
 
-# sub other_names { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include other_names >>
+# other_names { }
+# Supplied by Role
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# remarks {}
+# Supplied by Role
 
-# Timing. These used to be in their own widget.
-
-=head3 contained_in_life_stage
-
-This method will return a data structure containing
-the life stages that contain the requested life stage.
-
-=over
-
-=item PERL API
-
- $data = $model->contained_in_life_stage();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-Life stage (eg embryo)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/contained_in_life_stage
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# contained_in_life_stage { }
+# This method will return a data structure containing
+# the life stages that contain the requested life stage.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/contained_in_life_stage
 
 sub contained_in_life_stage {
     my $self   = shift;
@@ -243,57 +86,10 @@ sub contained_in_life_stage {
 	     data        => @stages ? \@stages : undef };
 }
 
-=head3 preceded_by_life_stage
-
-This method will return a data structure containing
-the life stages that precede the requested life stage.
-
-=over
-
-=item PERL API
-
- $data = $model->preceded_by_life_stage();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-Life stage (eg embryo)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/preceded_by_life_stage
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
+# preceded_by_life_stage { }
+# This method will return a data structure containing
+# the life stages that precede the requested life stage.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/preceded_by_life_stage
 
 sub preceded_by_life_stage {
     my $self   = shift;
@@ -303,56 +99,10 @@ sub preceded_by_life_stage {
 	     data        => @stages ? \@stages : undef };
 }
 
-=head3 followed_by_life_stage
-
-This method will return a data structure containing
-the life stages that follow the requested life stage.
-
-=over
-
-=item PERL API
-
- $data = $model->followed_by_life_stage();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-Life stage (eg embryo)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/followed_by_life_stage
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# followed_by_life_stage { }
+# This method will return a data structure containing
+# the life stages that follow the requested life stage.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/followed_by_life_stage
 
 sub followed_by_life_stage {
     my $self   = shift;
@@ -369,10 +119,8 @@ sub followed_by_life_stage {
 #
 #######################################
 
-# sub expression_patterns {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include expression_patterns >>
-
+# expression_patterns {}
+# Supplied by Role
 
 
 #######################################
@@ -383,56 +131,10 @@ sub followed_by_life_stage {
 #
 #######################################
 
-=head3 cells
-
-This method will return a data structure containing
-cells linked to the requested life stage.
-
-=over
-
-=item PERL API
-
- $data = $model->cells();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-Life stage (eg embryo)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/cells
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# cells { }
+# This method will return a data structure containing
+# cells linked to the requested life stage.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/cells
 
 sub cells {
     my $self = shift;
@@ -443,56 +145,10 @@ sub cells {
 	     data        => @cells ? \@cells : undef };
 }
 
-=head3 cell_group
-
-This method will return a data structure containing
-cell groups linked to the requested life stage.
-
-=over
-
-=item PERL API
-
- $data = $model->cell_group();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-Life stage (eg embryo)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/cell_group
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# cell_group { }
+# This method will return a data structure containing
+# cell groups linked to the requested life stage.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/cell_group
 
 sub cell_group {
     my $self   = shift;

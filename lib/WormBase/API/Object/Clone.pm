@@ -29,20 +29,11 @@ http://wormbase.org/species/*/clone
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 
 #######################################
@@ -51,64 +42,13 @@ http://wormbase.org/species/*/clone
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-=head3 type
-
-This method will return a data structure containing
-the general type of this clone.
-
-=over
-
-=item PERL API
-
- $data = $model->type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# type { }
+# This method will return a data structure containing
+# the general type of this clone.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/type
 
 sub type {
     my ($self) = @_;
@@ -134,56 +74,10 @@ sub in_strain {
          data       => $self->_pack_obj($strain) };
 }
 
-=head3 sequences
-
-This method will return a data structure containing
-sequences corresponding to the clone in FASTA format.
-
-=over
-
-=item PERL API
-
- $data = $model->sequences();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/sequences
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# sequences { }
+# This method will return a data structure containing
+# sequences corresponding to the clone in FASTA format.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/sequences
 
 sub sequences {
     my ($self) = @_;
@@ -195,56 +89,11 @@ sub sequences {
     }
 }
 
-=head3 genomic_positions
+# genomic_positions { }
+# This method will return a data structure containing
+# genomic positions for features on this clone.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/genomic_positions
 
-This method will return a data structure containing
-genomic positions for features on this clone.
-
-=over
-
-=item PERL API
-
- $data = $model->genomic_positions();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/genomic_positions
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
 sub genomic_positions {
     my ($self) = @_;
     
@@ -284,56 +133,10 @@ sub _seq2coords {
     @seqs;
 }
 
-=head3 lengths
-
-This method will return a data structure containing
-the lengths of clones as estimated by gel electrophoresis.
-
-=over
-
-=item PERL API
-
- $data = $model->lengths();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/lengths
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# lengths { }
+# This method will return a data structure containing
+# the lengths of clones as estimated by gel electrophoresis.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/lengths
 
 sub lengths {
     my ($self) = @_;
@@ -346,56 +149,10 @@ sub lengths {
 }
 
 
-=head3 maps
-
-This method will return a data structure containing
-maps relevant to the requested clone.
-
-=over
-
-=item PERL API
-
- $data = $model->maps();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/maps
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# maps { }
+# This method will return a data structure containing
+# maps relevant to the requested clone.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/maps
 
 sub maps {
     my ($self) = @_;
@@ -410,57 +167,10 @@ sub maps {
     };
 }
 
-
-=head3 sequence_status
-
-This method will return a data structure containing
-the sequencing status of this clone.
-
-=over
-
-=item PERL API
-
- $data = $model->sequence_status();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/sequence_status
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# sequence_status { }
+# This method will return a data structure containing
+# the sequencing status of this clone.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/sequence_status
 
 # Returns the sequence status of the clone. Each key represents a status
 # and a status => undef pair represents no ?DateType or Text data for the status,
@@ -476,57 +186,11 @@ sub sequence_status {
     };
 }
 
-=head3 canonical_for
-
-This method will return a data structure containing
-clones that the requested clone is a canonical
-representative of.
-
-=over
-
-=item PERL API
-
- $data = $model->canonical_for();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/canonical_for
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# canonical_for { }
+# This method will return a data structure containing
+# clones that the requested clone is a canonical
+# representative of.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/canonical_for
 
 sub canonical_for {
     my ($self) = @_;
@@ -538,56 +202,10 @@ sub canonical_for {
     };
 }
 
-=head3 canonical_parent
-
-This method will return a data structure containing
-the canonical parent of this clone, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->canonical_parent();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/canonical_parent
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# canonical_parent { }
+# This method will return a data structure containing
+# the canonical parent of this clone, if there is one.
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/canonical_parent
 
 sub canonical_parent {
     my ($self) = @_;
@@ -607,56 +225,10 @@ sub canonical_parent {
     }
 }
 
-=head3 screened_positive
-
-This method will return a data structure containing
-entities that were shown to be contained within the clone.
-
-=over
-
-=item PERL API
-
- $data = $model->screened_positive();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/screened_positive
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# screened_positive { }
+# This method will return a data structure containing
+# entities that were shown to be contained within the clone.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/screened_positive
 
 sub screened_positive {
     my ($self) = @_;
@@ -671,57 +243,11 @@ sub screened_positive {
     };
 }
 
-=head3 screened_negative
-
-This method will return a data structure containing
-entities shown NOT to be contained within the requested
-clone.
-
-=over
-
-=item PERL API
-
- $data = $model->screened_negative();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/screened_negative
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# screened_negative { }
+# This method will return a data structure containing
+# entities shown NOT to be contained within the requested
+# clone.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/screened_negative
 
 sub screened_negative {
     my ($self) = @_;
@@ -733,57 +259,10 @@ sub screened_negative {
     };
 }
 
-
-=head3 gridded_on
-
-This method will return a data structure containing
-gridding information of the clone during fingerprinting.
-
-=over
-
-=item PERL API
-
- $data = $model->gridded_on();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/gridded_on
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# gridded_on { }
+# This method will return a data structure containing
+# gridding information of the clone during fingerprinting.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/gridded_on
 
 sub gridded_on {
     my ($self) = @_;
@@ -794,7 +273,6 @@ sub gridded_on {
 	data	    => %$data ? $data : undef,
     };
 }
-
 
 
 sub pcr_product {
@@ -813,19 +291,11 @@ sub pcr_product {
 #######################################
 #
 # The External Links widget
-#   template: shared/widgets/xrefs.tt2
 #
 #######################################
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-
+# xrefs {}
+# Supplied by Role
 
 #######################################
 #
@@ -833,18 +303,11 @@ sub pcr_product {
 #
 #######################################
 
-=head2 Location
+# genomic_position { }
+# Supplied by Role
 
-=cut
-
-# sub genomic_position { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_position >>
-
-# sub genomic_image { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_image >>
-
+# genomic_image { }
+# Supplied by Role
 
 
 
@@ -854,13 +317,8 @@ sub pcr_product {
 #
 #######################################
 
-=head2 References
-
-=cut
-
-# sub references {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include references >>
+# references {}
+# Supplied by Role
 
 
 

@@ -28,20 +28,12 @@ http://wormbase.org/species/microarray_results
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 
 #######################################
@@ -50,14 +42,8 @@ http://wormbase.org/species/microarray_results
 #
 #######################################
 
-=head2 Overview
-
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
+# name { }
+# Supplied by Role
 
 sub gene {
     my $self = shift;

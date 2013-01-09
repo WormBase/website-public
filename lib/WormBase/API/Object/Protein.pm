@@ -61,20 +61,11 @@ has 'cds' => (
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 
 ############################################################
@@ -83,22 +74,14 @@ has 'cds' => (
 #
 ############################################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
+# taxonomy { }
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub taxonomy { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include taxonomy >>
-
-# sub central_dogma { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include central_dogma >>
-
+# central_dogma { }
+# Supplied by Role
 
 sub _build__common_name {
     my $self   = shift;
@@ -114,54 +97,10 @@ sub _build__common_name {
     }
 }
 
-=head3 corresponding_gene
-
-This method returns a data structure containing the 
-corresponding gene of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->corresponding_gene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_gene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# corresponding_gene { }
+# This method returns a data structure containing the 
+# corresponding gene of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_gene
 
 sub corresponding_gene {
     my $self   = shift;
@@ -173,54 +112,10 @@ sub corresponding_gene {
 	     data        => @genes ? \@genes : undef }; 
 }
 
-=head3 corresponding_transcripts
-
-This method returns a data structure containing
-the corresponding transcripts of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->corresponding_transcripts();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_transcripts
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# corresponding_transcripts { }
+# This method returns a data structure containing
+# the corresponding transcripts of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_transcripts
 
 sub corresponding_transcripts {
     my $self = shift;
@@ -231,54 +126,10 @@ sub corresponding_transcripts {
 }
 
 
-=head3 corresponding_cds
-
-This method returns a data structure containing
-the corresponding CDSs of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->corresponding_cds();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_cds
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# corresponding_cds { }
+# This method returns a data structure containing
+# the corresponding CDSs of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_cds
 
 sub corresponding_cds {
     my $self = shift;
@@ -287,8 +138,6 @@ sub corresponding_cds {
     return  { description => 'the corresponding CDSs of the protein',
 	      data        => @cds ? \@cds : undef };
 }
-
-
 
 
 
@@ -351,54 +200,10 @@ sub corresponding_all {
 }
 
 
-=head3 type (DEPRECATING!)
-
-This method returns a data structure containing the 
-the type of protein, if defined.
-
-=over
-
-=item PERL API
-
- $data = $model->type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# type (DEPRECATING!)
+# This method returns a data structure containing the 
+# the type of protein, if defined.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/type
 
 sub type {
     my $self = shift;
@@ -409,54 +214,10 @@ sub type {
 }
 
 
-=head3 best_human_match 
-
-This method returns a data structure containing the 
-best human blast hit for the protein
-
-=over
-
-=item PERL API
-
- $data = $model->best_human_match();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/best_human_match
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# best_human_match { }
+# This method returns a data structure containing the 
+# best human blast hit for the protein
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/best_human_match
 
 sub best_human_match {
     my ($self) = @_;
@@ -487,18 +248,14 @@ sub best_human_match {
     };
 }
 
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# description { }
+# Supplied by Role
 
-# sub status { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include status >>
+# status { }
+# Supplied by Role
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
+# remarks {}
+# Supplied by Role
 
 
 ############################################################
@@ -507,14 +264,8 @@ sub best_human_match {
 #
 ############################################################ 
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
+# xrefs {}
+# Supplied by Role
 
 ############################################################
 #
@@ -522,56 +273,10 @@ sub best_human_match {
 #
 ############################################################
 
-=head2 Molecular Details
-
-=head3 sequence
-
-This method returns a data structure containing the 
-the sequence of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->sequence();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/sequence
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# sequence { }
+# This method returns a data structure containing the 
+# the sequence of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/sequence
 
 sub sequence {
     my $self    = shift;
@@ -584,54 +289,10 @@ sub sequence {
     };
 }
 
-=head3 estimated_molecular_weight
-
-This method returns a data structure containing the 
-estimated molecular weight of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->estimated_molecular_weight();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/estimated_molecular_weight
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# estimated_molecular_weight { }
+# This method returns a data structure containing the 
+# estimated molecular weight of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/estimated_molecular_weight
 
 sub estimated_molecular_weight{
     my $self   = shift;
@@ -641,54 +302,10 @@ sub estimated_molecular_weight{
 	     data        =>  $mw ? "$mw" : undef };
 }
 
-=head3 estimated_isoelectric_point
-    
-This method returns a data structure containing the 
-estimated isoelectric point of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->estimated_isoelectric_point();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/estimated_isoelectric_point
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# estimated_isoelectric_point { }
+# This method returns a data structure containing the 
+# estimated isoelectric point of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/estimated_isoelectric_point
 
 sub estimated_isoelectric_point {
     my $self = shift;
@@ -701,54 +318,10 @@ sub estimated_isoelectric_point {
 	     data        =>  $iep }; 
 }
 
-=head3 amino_acid_composition
-
-This method returns a data structure containing the 
-amino acid makeup of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->amino_acid_composition();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/amino_acid_composition
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# amino_acid_composition { }
+# This method returns a data structure containing the 
+# amino acid makeup of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/amino_acid_composition
 
 sub amino_acid_composition {
     my $self = shift;
@@ -780,56 +353,10 @@ sub amino_acid_composition {
 #
 ############################################################
 
-=head2 Homology
-
-=head3 homology_groups
-
-This method returns a data structure containing "KOGs"
-or clusters of homology groups of this protein.
-
-=over
-
-=item PERL API
-
- $data = $model->homology_groups();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/homology_groups
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# homology_groups { }
+# This method returns a data structure containing "KOGs"
+# or clusters of homology groups of this protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/homology_groups
 
 sub homology_groups {
     my $self   = shift;
@@ -848,54 +375,10 @@ sub homology_groups {
     
 }
 
-=head3 orthologs
-
-This method returns a data structure containing 
-genes orthologs to the current protein.
-
-=over
-
-=item PERL API
-
- $data = $model->orthologs();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/orthologs
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# orthologs { }
+# This method returns a data structure containing 
+# genes orthologs to the current protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/orthologs
 
 sub orthologs {
     my $self   = shift;
@@ -911,56 +394,11 @@ sub orthologs {
 }
 
 
-
-=head3 homology_image
-
-This method returns a data structure containing 
-data for generating a schematic showing protein
-domains versus exons.
-
-=over
-
-=item PERL API
-
- $data = $model->homology_image();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/homology_image
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# homology_image { }
+# This method returns a data structure containing 
+# data for generating a schematic showing protein
+# domains versus exons.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/homology_image
 
 sub homology_image {
     my $self=shift;
@@ -1014,54 +452,11 @@ sub rest_homology_image {
     return $gd->png;
      
 }
-=head3 motifs
 
-This method returns a data structure containing
-motifs and motif homlogies identified in the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->motifss();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/motifs
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# motifs { }
+# This method returns a data structure containing
+# motifs and motif homlogies identified in the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/motifs
 
 sub motifs {
     my $self = shift;
@@ -1081,55 +476,10 @@ sub motifs {
 	     data        => @row ? \@row : undef };
 }	  
 
-
-=head3 pfam_graph
-
-This method returns a data structure containing the 
-coordinates for generating a PFAM domain cartoon.
-
-=over
-
-=item PERL API
-
- $data = $model->pfam_graph();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/pfam_graph
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# pfam_graph { }
+# This method returns a data structure containing the 
+# coordinates for generating a PFAM domain cartoon.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/pfam_graph
 
 { # block for pfam graph
 my @COLORS = map {"#$_"} qw(2dcf00 ff5353 e469fe ffa500 00ffff 86bcff ff7ff0 f2ff7f 7ff2ff);
@@ -1261,54 +611,10 @@ sub pfam_graph {
 }
 } # end of block for pfam_graph
 
-=head3 motif_details
-
-This method returns a data structure containing the 
-details on motifs identified in the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->motif_details();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/motif_details
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# motif_details { }
+# This method returns a data structure containing the 
+# details on motifs identified in the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/motif_details
     
 sub motif_details {
     my $self = shift;
@@ -1373,54 +679,10 @@ sub motif_details {
     
 }
 
-=head3 blast_details
-
-This method returns a data structure containing the 
-details of all precomputed blastp hits of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->blast_details();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/blast_details
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# blast_details { }
+# This method returns a data structure containing the 
+# details of all precomputed blastp hits of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/blast_details
 
 sub blast_details {
   my $self = shift;
@@ -1496,56 +758,10 @@ sub blast_details {
 #
 ############################################################
 
-=head2
-
-=head3 history
-
-This method returns a data structure containing the 
-curatorial history of the protein.
-
-=over
-
-=item PERL API
-
- $data = $model->history();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/history
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# history { }
+# This method returns a data structure containing the 
+# curatorial history of the protein.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/history
 
 sub history {
     my $self   = shift;

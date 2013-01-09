@@ -26,10 +26,6 @@ http://wormbase.org/species/*/transgene
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
 { # temporary fix. this should actually be cached for the entire class.
   # better yet, this should be designated as a class method, signaled at the
   # controller level for caching
@@ -142,74 +138,19 @@ http://wormbase.org/species/*/transgene
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # The Overview widget 
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-
-=head3 synonym
-
-This method will return a data structure containing
-a brief summary of the requested transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->synonym();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/synonym
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# synonym { }
+# This method will return a data structure containing
+# a brief summary of the requested transgene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/synonym
 
 sub synonym {
     my $self    = shift;
@@ -219,61 +160,13 @@ sub synonym {
 	     data        =>  "$synonym" || undef };
 }
 
-# sub summary { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include summary >>
+# summary { }
+# Supplied by Role
 
-
-=head3 driven_by_gene
-
-This method will return a data structure containing
-the gene that drives the gene.
-
-=over
-
-=item PERL API
-
- $data = $model->driven_by_gene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_gene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# driven_by_gene { }
+# This method will return a data structure containing
+# the gene that drives the gene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_gene
 
 sub driven_by_gene {
     my $self = shift;
@@ -284,57 +177,10 @@ sub driven_by_gene {
     };
 }
 
-
-=head3 driven_by_construct
-
-This method will return a data structure containing
-the construct driving the transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->driven_by_construct();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_construct
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# driven_by_construct { }
+# This method will return a data structure containing
+# the construct driving the transgene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_construct
 
 sub driven_by_construct {
     my $self = shift;
@@ -345,61 +191,13 @@ sub driven_by_construct {
 	     data        => "$construct" || undef };
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# remarks {}
+# Supplied by Role
 
-
-=head3 reporter_construct
-
-This method will return a data structure of the 
-reporter construct driven by the transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->reporter_construct();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# reporter_construct { }
+# This method will return a data structure of the 
+# reporter construct driven by the transgene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
 
 sub reporter_construct {
     my $self   = shift;
@@ -421,6 +219,10 @@ sub reporter_construct {
 }
 
 
+# strains { }
+# This method will return a data structure of all
+# strains carrying this transgene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/strains
 
 sub strains {
     my $self = shift;
@@ -440,58 +242,10 @@ sub strains {
 #
 #######################################
 
-=head2 Isolation
-
-=head3 author
-
-This method will return a data structure containing
-the author that constructed the transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->author();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/author
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# author { }
+# This method will return a data structure containing
+# the author that constructed the transgene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/author
 
 sub author {
     my $self   = shift;
@@ -509,60 +263,13 @@ sub author {
 	     data        => $self->_pack_obj($person, "$name") };
 }
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
+# laboratory { }
+# Supplied by Role
 
-=head3 clone
-
-This method will return a data structure containing
-information about the clone of this transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->clone();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/clone
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# clone { }
+# This method will return a data structure containing
+# information about the clone of this transgene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/clone
 
 sub clone {
     my $self = shift;
@@ -573,57 +280,11 @@ sub clone {
 }
 
 
-=head3 fragment
-
-This method will return a data structure containing
-information about the clone fragments contained
-in this transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->fragment();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/fragment
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# fragment { }
+# This method will return a data structure containing
+# information about the clone fragments contained
+# in this transgene.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/fragment
 
 sub fragment {
     my $self   = shift;
@@ -635,56 +296,10 @@ sub fragment {
 
 
 
-=head3 injected_into_strains
-
-This method will return a data structure containing
-strains that the transgene has been injected into.
-
-=over
-
-=item PERL API
-
- $data = $model->injected_into_strains();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/injected_into_strains
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# injected_into_strains { }
+# This method will return a data structure containing
+# strains that the transgene has been injected into.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/injected_into_strains
 
 # -not in the schema anymore? -AC
 # sub injected_into_strains {
@@ -697,56 +312,10 @@ B<Response example>
 # 	     data        => @data ? \@data : undef};
 # }
 
-=head3 integration_method
-
-This method will return a data structure containing
-how the transgene was integrated (if it was).
-
-=over
-
-=item PERL API
-
- $data = $model->integration_method();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# integration_method { }
+# This method will return a data structure containing
+# how the transgene was integrated (if it was).
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_by
 
 sub integration_method {    
     my $self   = shift;
@@ -756,57 +325,11 @@ sub integration_method {
 	     data        => $method ? "$method" : undef };
 }
 
-# 
-=head3 integrated_at
 
-This method will return a data structure containing
-the map position of the transgene if it has been integrated.
-
-=over
-
-=item PERL API
-
- $data = $model->integrated_at();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_at
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# integrated_at { }
+# This method will return a data structure containing
+# the map position of the transgene if it has been integrated.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_at
 
 sub integrated_at {    
     my $self   = shift;
@@ -817,56 +340,11 @@ sub integrated_at {
 	     data        => $position ? "$position" : undef};
 }
 
-=head3 rescues
+# rescues { }
+# This method will return a data structure containing
+# information about phenotypes the transgene may rescue.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/rescues
 
-This method will return a data structure containing
-information about phenotypes the transgene may rescue.
-
-=over
-
-=item PERL API
-
- $data = $model->rescues();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/rescues
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
 # This tag does not exists in the current ACeDB schema -AC
 # sub rescues {    
 #     my $self = shift;
@@ -885,14 +363,11 @@ B<Response example>
 #
 #######################################
 
-# sub phenotypes {}
-# Supplied by Role; POD will automatically be inserted here.
-# <<include phenotypes>>
+# phenotypes {}
+# Supplied by Role
 
-# sub phenotypes_not_observed {}
-# Supplied by Role; POD will automatically be inserted here.
-# <<include phenotypes_not_observed>>
-
+# phenotypes_not_observed {}
+# Supplied by Role
 
 #######################################
 #
@@ -900,60 +375,13 @@ B<Response example>
 #
 #######################################
 
-# sub expression_patterns { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include expression_patterns >>
+# expression_patterns { }
+# Supplied by Role
 
-=head3 marker_for
-
-This method will return a data structure of the 
-describing what the transgene is a marker for.
-
-=over
-
-=item PERL API
-
- $data = $model->marker_for();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marker_for
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# marker_for { }
+# This method will return a data structure of the 
+# describing what the transgene is a marker for.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marker_for
 
 sub marker_for {
     my $self   = shift;
@@ -964,56 +392,10 @@ sub marker_for {
 }
 
 
-=head3 marked_rearrangement
-
-This method will return a data structure of the
-rearrangmements that the transgene can be used for.
-
-=over
-
-=item PERL API
-
- $data = $model->marked_rearrangement();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marked_rearrangement
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# marked_rearrangement { }
+# This method will return a data structure of the
+# rearrangmements that the transgene can be used for.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marked_rearrangement
 
 sub marked_rearrangement {
     my $self   = shift;

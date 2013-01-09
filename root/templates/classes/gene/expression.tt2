@@ -17,13 +17,17 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
           '<li>';
             tag2link(ep.object, ep.object.id);
             IF ep.image;
-              '<a class="ui-icon ui-icon-image exprbox"  rel="expression_pattern_images" href="#' _ ep.object.id _ '" title="expression image for ' _ ep.object.id _ '"></a><small>view images</small>';
+              '<a class="ui-icon ui-icon-image exprbox"  rel="expression_pattern_images" href="#' _ ep.object.id _ '" title="expression image for ' _ ep.object.id _ '"></a>';
  
               hidden = hidden _ '<div id="' _ ep.object.id _ '"><a href="' _ ep.image _ '" target="_blank">'
               _ image(ep.image) _ '</a></div>';
+
             END;
             IF ep.curated_images;
-              '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ ep.object.id _ '/curated_images"  title="curated pictures for ' _ ep.object.id _ '"></a><small>view images</small>';      
+              '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ ep.object.id _ '/curated_images"  title="curated pictures for ' _ ep.object.id _ '"></a>';      
+            END;
+            IF ep.image || ep.curated_images;
+              '<small>view images</small>';
             END;
           '</li>';
           '<div class="text-width text-min">' _ markup(ep.details,0) _ '</div>';
@@ -69,24 +73,14 @@ WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_to
      tags2link(fields.microarray_topology_map_position.data);
 END;
 
-WRAPPER $field_block title="Site(s) of Action" key="anatomy_function"
-
-    '<table border=1 class="anatomy_function">';
-        '<tr><th>Anatomical Site(s)</th><th>Phenotype</th><th>via Anatomy Function</th></tr>';
-        FOREACH i IN fields.anatomy_function.data;
-             '<tr>';
-                '<td>';
-                  FOREACH term IN i.terms;
-                     tag2link(term);
-                  END;
-                '</td>';
-                '<td>' _ tag2link(i.phenotype) _ '</td>';
-                '<td>' _ tag2link(i.anatomy_fn) _ '</td>';
-            '</tr>';
-        END;
-    '</table>';
-END;
-
+WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) _ " of Action" key="anatomy_function";
+      build_data_table( order = ['bp_inv', 'assay', 'phenotype', 'reference'],
+              columns = { 'bp_inv'   => 'Anatomical Sites',
+                          'assay' => 'Assay',
+                      'phenotype'   => 'Phenotype',
+                      'reference' => 'Reference'},
+              key = 'anatomy_function');
+    END;
 %]
 <script type="text/javascript" >
 WB.getPlugin("colorbox", function(){
