@@ -23,4 +23,18 @@ WRAPPER $field_block title="Experssion clusters" key="expression_cluster";
 		key = 'expression_cluster'
 	);
 END;
+
+#Interactions
+WRAPPER $field_block title="Interactions" key="interaction";
+	build_data_table(
+		order = ['interactors','type','summary'],
+		columns={
+			interactors	=> "Interactors",
+			type		=> "Type",
+			summary		=> "Summary"
+		},
+		key = 'interaction'
+	);
+END;
+
 %]

@@ -2,6 +2,7 @@ package WormBase::API::Object::Wbprocess;
 
 use Moose;
 use WormBase::API::Object::Gene;
+use Switch;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -159,12 +160,11 @@ sub expression_cluster {
 	my $object = $self->object;
 	my @e_clusters = $object->Expression_cluster;
 	
-	my $log = $self->log; 
 	
 	my @data;
 	foreach my $e_cluster(@e_clusters){
 		push @data, $self->_process_e_cluster($e_cluster);
-		$log->debug( "JDJDJD".$#data);
+		#$log->debug( "JDJDJD".join(",",@data));
 	}
 	
 	return {
@@ -186,7 +186,61 @@ sub _process_e_cluster{
 	return \%data;
 }
 
-# Sample passthrough function to copy
+sub interaction {
+	my ($self) = @_;
+	my $object = $self->object;
+	my @interactions = $object->Interaction;
+	
+	
+	my @data;
+	foreach my $interaction (@interactions){
+		push @data, $self->_process_interaction($interaction);
+	}
+	
+	return {
+		description => "Interaction",
+		data        => @data ? \@data : undef 
+	};
+
+}
+sub _process_interaction{
+	my ($self, $interaction) = @_;
+	my $type = $interaction->Interaction_type;
+	my $summary = $interaction->Interaction_summary;
+	
+	my $log = $self->log;
+	
+	# Interactors
+	# Different case for each kind of interaction
+	my @interactors;
+	my $interactor_type = $interaction->Interactor;
+	switch ($interactor_type->name) {
+		case("Interactor_overlapping_gene"){
+		
+		
+		
+		
+			my @interacting_genes = $interaction->Interactor_overlapping_gene;
+			foreach my $gene_obj (@interacting_genes){
+				my $gene_name = $gene_obj->Public_name;
+				push (@interactors, $gene_name);
+			}
+			$log->debug("JDJDJD2:".join(",",@interactors));
+		}
+	}
+	
+	
+	my %data = (
+		type		=> $type,
+		summary		=> $summary,
+		interactors	=> join( ", ", @interactors)
+	);
+	
+	return \%data;
+}
+
+
+# Sample wrapper function to copy
 # replace the xxx's with stuff
 0 if <<'SAMPLE_FUNC';
 sub xxx{
