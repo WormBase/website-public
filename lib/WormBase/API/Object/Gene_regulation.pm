@@ -29,21 +29,11 @@ http://wormbase.org/species/*/gene_regulation
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 ################################################################################
 #
@@ -51,66 +41,17 @@ http://wormbase.org/species/*/gene_regulation
 #
 ################################################################################
 
-=head2 Overview
 
-=cut
+# name {}
+# Supplied by Role
 
-# sub name {}
-# Supplied by Role; POD will automatically be inserted here
-# << include name >>
+# summary {}
+# Supplied by Role
 
-# sub summary {}
-# Supplied by Role; POD will automatically be inserted here
-# << include summary >>
-
-=head3 methods
-
-Returns a datapack containing the experimental approach used to determine
-the gene regulation.
-
-=over
-
-=item PERL API
-
- $data = $model->methods();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene regulation ID (eg WBPaper00035152_bah-1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/methods
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# methods { }
+# Returns a datapack containing the experimental approach used to determine
+# the gene regulation.
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/methods
 
 sub methods {
     my $self   = shift;
@@ -133,54 +74,10 @@ sub methods {
     };
 }
 
-=head3 regulators
-    
-This method returns a data structure containing
-the regulator gene in the described regulation entity.
-
-=over
-
-=item PERL API
-
- $data = $model->regulators();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene regulation ID (eg WBPaper00035152_bah-1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulators
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# regulators { }
+# This method returns a data structure containing
+# the regulator gene in the described regulation entity.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulators
 
 sub regulators {
     my $self   = shift;
@@ -210,55 +107,11 @@ sub regulators {
     };
 }
 
-=head3 reference_expression_pattern
-    
-This method returns a data structure containing
-a reference expression pattern for where the gene
-regulation is thought to occur.
-
-=over
-
-=item PERL API
-
- $data = $model->reference_expression_pattern();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene regulation ID (eg WBPaper00035152_bah-1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/reference_expression_pattern
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# reference_expression_pattern { }
+# This method returns a data structure containing
+# a reference expression pattern for where the gene
+# regulation is thought to occur.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/reference_expression_pattern
 
 sub reference_expression_pattern {
     my $self   = shift;
@@ -270,54 +123,10 @@ sub reference_expression_pattern {
 	     data	 => %$linked ? $linked : undef };
 }
 
-=head3 regulates
-
-Returns a data structure detailing what the regulator regulates
-and how (positive, negative, or none) with supporting evidence.
-
-=over
-
-=item PERL API
-
- $data = $model->regulates();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene regulation ID (eg WBPaper00035152_bah-1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulates
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# regulates { }
+# Returns a data structure detailing what the regulator regulates
+# and how (positive, negative, or none) with supporting evidence.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulates
 
 sub regulates {
     my $self   = shift;
@@ -361,54 +170,10 @@ sub regulates {
     };
 }
 
-=head3 type_of_change
-
-This method returns a data structure containing the type 
-of change effected by the regulation.
-
-=over
-
-=item PERL API
-
- $data = $model->type_of_change();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene regulation ID (eg WBPaper00035152_bah-1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/type_of_change
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# type_of_change { }
+# This method returns a data structure containing the type 
+# of change effected by the regulation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/type_of_change
 
 sub type_of_change {
     my ($self) = @_;
@@ -419,54 +184,10 @@ sub type_of_change {
     };
 }
 
-=head3 molecule_regulators
-
-This method returns a data structure molecules
-that regulate the regulation (?).
-
-=over
-
-=item PERL API
-
- $data = $model->molecule_regulators();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene regulation ID (eg WBPaper00035152_bah-1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/molecule_regulators
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
+# molecule_regulators { }
+# This method returns a data structure molecules
+# that regulate the regulation (?).
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/molecule_regulators
 
 sub molecule_regulators {
     my $self   = shift;
@@ -485,14 +206,8 @@ sub molecule_regulators {
 #
 #######################################
 
-=head2 References
-
-=cut
-
-# sub references {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include references >>
-
+# references {}
+# Supplied by Role
 
 
 __PACKAGE__->meta->make_immutable;

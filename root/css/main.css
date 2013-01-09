@@ -2243,6 +2243,10 @@ div#google-map {
   overflow:hidden;
   z-index:-1;
 }
+
+.navigation #title.closed{
+  padding:0.7em 0 0;
+}
 .navigation #title:hover{
   background:#555;
 }
@@ -2321,9 +2325,8 @@ div#google-map {
   right:-9px;
   top:0;
   cursor:pointer;
-  background: #EFEFEF;
+  background: #CCC;
   z-index:5;
-  border-left:1px solid #CCC;
 }
 
 #nav-min-icon{
@@ -2337,13 +2340,12 @@ div#google-map {
 }
 
 #nav-min:hover {
-  background:#DDD;
+  background:#BBB;
 }
 
 #widget-holder {
   overflow:hidden;
   list-style: none;
-  position:relative;
   background:white;
   height:100%;
   max-width: 100%;

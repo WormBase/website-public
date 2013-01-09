@@ -33,10 +33,6 @@ has '_interactors' => (
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
 sub _build__interactors {
     my $self = shift;
     my $object = $self->object;
@@ -64,10 +60,6 @@ sub _build__interactors {
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
 
 #######################################
 #
@@ -75,13 +67,8 @@ sub _build__interactors {
 #
 #######################################
 
-=head2 Overview
-
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
+# name { }
+# Supplied by Role
 
 # Override Role to give a better label for name.
 sub _build_name { 
@@ -97,59 +84,13 @@ sub _build_name {
     };
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# remarks {}
+# Supplied by Role
 
-=head3 interaction_summary
+# interaction_summary { }
+# This method will return a data structure with the summary.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_summary
 
-This method will return a data structure with the summary.
-
-=over
-
-=item PERL API
-
- $data = $model->interaction_summary();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_summary
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
 sub interaction_summary {
     my $self   = shift;
     my $object = $self->object;
@@ -169,55 +110,10 @@ sub interaction_summary {
     };
 }
 
-=head3 regulation_level
+# regulation_level { }
+# This method will return a data structure with the regulation_level.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/regulation_level
 
-This method will return a data structure with the regulation_level.
-
-=over
-
-=item PERL API
-
- $data = $model->regulation_level();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/regulation_level
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
 sub regulation_level {
     my $self   = shift;
     my $object = $self->object;
@@ -229,55 +125,10 @@ sub regulation_level {
     };
 }
 
-=head3 regulation_result
+# regulation_result { }
+# This method will return a data structure with the regulation_result.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/regulation_result
 
-This method will return a data structure with the regulation_result.
-
-=over
-
-=item PERL API
-
- $data = $model->regulation_result();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/regulation_result
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
 sub regulation_result {
     my $self   = shift;
     my $object = $self->object;
@@ -302,55 +153,10 @@ sub regulation_result {
     };
 }
 
-=head3 interactor
+# interactor { }
+# This method will return a data structure with the interactors.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor
 
-This method will return a data structure with the interactors.
-
-=over
-
-=item PERL API
-
- $data = $model->interactor();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
 sub interactor {
     my $self   = shift;
     my $interactors = $self->_interactors;
@@ -375,55 +181,9 @@ sub interactor {
     };
 }
 
-=head3 interaction_type
-
-This method will return a string containing the Interaction_type.
-
-=over
-
-=item PERL API
-
- $data = $model->interaction_type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# interaction_type { }
+# This method will return a string containing the Interaction_type.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_type
 
 sub interaction_type {
     my $self = shift;
@@ -440,55 +200,9 @@ sub interaction_type {
     };
 }
 
-=head3 detection_method
-
-This method will return a string containing the Detection_method.
-
-=over
-
-=item PERL API
-
- $data = $model->detection_method();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/detection_method
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# detection_method { }
+# This method will return a string containing the Detection_method.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/detection_method
 
 sub detection_method {
     my $self = shift;
@@ -533,55 +247,9 @@ sub _build_laboratory {
     };
 }
 
-=head3 libraries_screened
-
-This method will return a data structure containing the libraries screened.
-
-=over
-
-=item PERL API
-
- $data = $model->libraries_screened();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/libraries_screened
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# libraries_screened { }
+# This method will return a data structure containing the libraries screened.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/libraries_screened
 
 sub libraries_screened {
     my $self = shift;
@@ -600,55 +268,9 @@ sub libraries_screened {
     };
 }
 
-=head3 confidence
-
-This method will return a data structure containing the confidence.
-
-=over
-
-=item PERL API
-
- $data = $model->confidence();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/confidence
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# confidence { }
+# This method will return a data structure containing the confidence.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/confidence
 
 sub confidence {
     my $self = shift;
@@ -665,55 +287,9 @@ sub confidence {
     };
 }
 
-=head3 phenotypes
-
-This method will return a data structure containing the phenotypes.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotypes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/phenotypes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# interaction_phenotype { }
+# This method will return a data structure containing the phenotypes.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/phenotypes
 
 sub interaction_phenotype {
     my $self = shift;
@@ -727,55 +303,9 @@ sub interaction_phenotype {
     };
 }
 
-=head3 rnai
-
-This method will return a data structure containing the rnai.
-
-=over
-
-=item PERL API
-
- $data = $model->rnai();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/rnai
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# rnai { }
+# This method will return a data structure containing the rnai.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/rnai
 
 sub rnai {
     my $self = shift;
@@ -789,55 +319,9 @@ sub rnai {
     };
 }
 
-=head3 process
-
-This method will return a data structure containing the WBProcess.
-
-=over
-
-=item PERL API
-
- $data = $model->process();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Interaction id (eg WBInteraction0000779)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/process
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# process { }
+# This method will return a data structure containing the WBProcess.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/process
 
 sub process {
     my $self = shift;
@@ -855,10 +339,6 @@ sub process {
 #
 ###########################
 
-=head2 Interactors
-
-=cut
-
 
 #######################################
 #
@@ -866,13 +346,8 @@ sub process {
 #
 #######################################
 
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
+# xrefs {}
+# Supplied by Role
 
 #######################################
 #
@@ -880,14 +355,8 @@ sub process {
 #
 #######################################
 
-=head2 References
-
-=cut
-
-# sub references {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include references >>
-
+# references {}
+# Supplied by Role
 
 
 #######################################

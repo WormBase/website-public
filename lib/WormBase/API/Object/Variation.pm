@@ -8,11 +8,6 @@ extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
 
-# TODO:
-# Mapping data
-# Marked_rearrangement
-
-
 =pod
 
 =head1 NAME
@@ -35,20 +30,11 @@ http://wormbase.org/species/*/variation
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
 
 #######################################
 #
@@ -56,18 +42,11 @@ http://wormbase.org/species/*/variation
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub other_names { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include other_names >>
-
+# other_names { }
+# Supplied by Role
 
 # THIS METHOD IS PROBABLY DEPRECATED
 sub cgc_name {
@@ -80,57 +59,11 @@ sub cgc_name {
 }
 
 
-=head3 variation_type
-
-This method returns a data structure containing
-the broad classification of the variation, eg SNP,
-Allele, etc.
-
-=over
-
-=item PERL API
-
- $data = $model->variation_type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/variation_type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# variation_type { }
+# This method returns a data structure containing
+# the broad classification of the variation, eg SNP,
+# Allele, etc.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/variation_type
 
 # A unified classification of the type of variation
 # general class: SNP, allele, etc
@@ -190,14 +123,11 @@ sub variation_type {
 }
 
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# remarks {}
+# Supplied by Role
 
-# sub status {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include status >>
-
+# status {}
+# Supplied by Role
 
 ############################################################
 #
@@ -205,64 +135,13 @@ sub variation_type {
 #
 ############################################################
 
-=head2 External Links
+# xrefs {}
+# Supplied by Role
 
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-=head3 source_database
-
-This method returns a data structure containing
-the source database of the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->source_database();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/source_database
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# source_database { }
+# This method returns a data structure containing
+# the source database of the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/source_database
 
 # Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
 # CAN BE REPLACED WITH << xrefs >>
@@ -306,59 +185,11 @@ sub source_database {
 #
 ############################################################
 
-=head2 Genetics
-
-=head3 gene_class
-
-This method returns a data structure containing
-the gene class that the gene has been assigned to, for
-example "unc", "vab", or "egl".
-
-=over
-
-=item PERL API
-
- $data = $model->gene_class();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/gene_class
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# gene_class { }
+# This method returns a data structure containing
+# the gene class that the gene has been assigned to, for
+# example "unc", "vab", or "egl".
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/gene_class
 
 sub gene_class {
     my ($self) = @_;
@@ -369,56 +200,10 @@ sub gene_class {
     };
 }
 
-=head3 corresponding_gene
-
-This method returns a data structure containing
-the gene that the variation is contained in, if any.
-
-=over
-
-=item PERL API
-
- $data = $model->corresponding_gene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/corresponding_gene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# corresponding_gene { }
+# This method returns a data structure containing
+# the gene that the variation is contained in, if any.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/corresponding_gene
 
 # This should return the CGC name, sequence name (if name), and WBGeneID...
 sub corresponding_gene {
@@ -430,57 +215,11 @@ sub corresponding_gene {
     };
 }
 
-=head3 reference_allele
-
-This method returns a data structure containing
-the reference allele for the corresponding gene
-of the current variation.
-
-=over
-
-=item PERL API
-
- $data = $model->reference_allele();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_allele
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# reference_allele { }
+# This method returns a data structure containing
+# the reference allele for the corresponding gene
+# of the current variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_allele
 
 sub reference_allele {
     my ($self) = @_;
@@ -492,57 +231,11 @@ sub reference_allele {
     };
 }
 
-=head3 other_alleles
-
-This method returns a data structure containing
-other alleles of the corresponding gene of the
-variation.
-
-=over
-
-=item PERL API
-
- $data = $model->other_alleles();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/other_alleles
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# other_alleles { }
+# This method returns a data structure containing
+# other alleles of the corresponding gene of the
+# variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/other_alleles
 
 sub other_alleles {
     my ($self) = @_;
@@ -571,56 +264,10 @@ sub other_alleles {
     };
 }
 
-=head3 strains
-
-This method returns a data structure containing
-strains carrying the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->strains();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/strains
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# strains { }
+# This method returns a data structure containing
+# strains carrying the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/strains
 
 sub strains {
     my $self   = shift;
@@ -649,57 +296,11 @@ sub strains {
 }
 
 
-=head3 rescued_by_transgene
-    
-This method returns a data structure containing
-transgenes (if any) that rescue the mutant phenotype
-of the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->rescued_by_transgene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/rescued_by_transgene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# rescued_by_transgene { }
+# This method returns a data structure containing
+# transgenes (if any) that rescue the mutant phenotype
+# of the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/rescued_by_transgene
 
 sub rescued_by_transgene {
     my ($self) = @_;
@@ -711,72 +312,19 @@ sub rescued_by_transgene {
 }
 
 
-
-
 ############################################################
 #
 # The Isolation Widget
 #
 ############################################################
 
-=head2 Isolation
+# laboratory { }
+# Supplied by Role
 
-=cut
-
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
-
-=head3 external_source
-
-This method returns a data structure containing
-the external source of the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->external_source();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/external_source
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# external_source { }
+# This method returns a data structure containing
+# the external source of the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/external_source
 
 sub external_source {
     my ($self) = @_;
@@ -806,56 +354,10 @@ sub external_source {
 
 
 
-=head3 isolated_by_author
-
-This method returns a data structure containing
-the author that isolated the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->isolated_by_author();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_by_author
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# isolated_by_author { }
+# This method returns a data structure containing
+# the author that isolated the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_by_author
 
 sub isolated_by_author {
     my ($self) = @_;
@@ -866,56 +368,10 @@ sub isolated_by_author {
     };
 }
 
-=head3 isolated_by
-
-This method returns a data structure containing
-the atuhor or person that isolated the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->isolated_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# isolated_by { }
+# This method returns a data structure containing
+# the atuhor or person that isolated the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_by
 
 sub isolated_by {
     my ($self) = @_;
@@ -926,56 +382,10 @@ sub isolated_by {
     };
 }
 
-=head3 date_isolated
-
-This method returns a data structure containing
-the date the variation was isolated, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->date_isolated();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/date_isolated
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# date_isolated { }
+# This method returns a data structure containing
+# the date the variation was isolated, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/date_isolated
 
 sub date_isolated {
     my ($self) = @_;
@@ -987,56 +397,10 @@ sub date_isolated {
     };
 }
 
-=head3 mutagen
-
-This method returns a data structure containing
-the mutagen used to generate the variation, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->mutagen();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/mutagen
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# mutagen { } 
+# This method returns a data structure containing
+# the mutagen used to generate the variation, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/mutagen
 
 sub mutagen {
     my ($self) = @_;
@@ -1049,56 +413,10 @@ sub mutagen {
     };
 }
 
-=head3 isolated_via_forward_genetics
-
-This method returns a data structure describing
-if the mutation was isolated via forward genetics.
-
-=over
-
-=item PERL API
-
- $data = $model->isolated_via_forward_genetics();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_via_forward_genetics
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# isolated_via_forward_genetics { }
+# This method returns a data structure describing
+# if the mutation was isolated via forward genetics.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_via_forward_genetics
 
 # Q: What are the contents of this tag?
 sub isolated_via_forward_genetics {
@@ -1111,56 +429,10 @@ sub isolated_via_forward_genetics {
     };
 }
 
-=head3 isolated_via_reverse_genetics
-
-This method returns a data structure describing
-if the variation was isolated by reverse genetics.
-
-=over
-
-=item PERL API
-
- $data = $model->isolated_via_reverse_genetics();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_via_reverse_genetics
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# isolated_via_reverse_genetics { }
+# This method returns a data structure describing
+# if the variation was isolated by reverse genetics.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_via_reverse_genetics
 
 # Q: what are the contents of this tag? Text and evidence
 sub isolated_via_reverse_genetics {
@@ -1173,56 +445,10 @@ sub isolated_via_reverse_genetics {
     };
 }
 
-=head3 transposon_excision
-
-This method returns a data structure describing
-if the variation was isolated by a transposon excision.
-
-=over
-
-=item PERL API
-
- $data = $model->transposon_excision();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/transposon_excision
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# transposon_excision { }
+# This method returns a data structure describing
+# if the variation was isolated by a transposon excision.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/transposon_excision
 
 sub transposon_excision {
     my ($self) = @_;
@@ -1234,56 +460,10 @@ sub transposon_excision {
     };
 }
 
-=head3 transposon_insertion
-
-This method returns a data structure describing
-if the variation was generated by a transposon insertion event.
-
-=over
-
-=item PERL API
-
- $data = $model->transposon_insertion();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/transposon_insertion
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# transposon_insertion
+# This method returns a data structure describing
+# if the variation was generated by a transposon insertion event.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/transposon_insertion
 
 sub transposon_insertion {
     my ($self) = @_;
@@ -1297,56 +477,10 @@ sub transposon_insertion {
 
 
 
-=head3 derived_from
-
-This method returns a data structure containing
-what variation the variation in question was derived from.
-
-=over
-
-=item PERL API
-
- $data = $model->derived_from();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/derived_from
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# derived_from { }
+# This method returns a data structure containing
+# what variation the variation in question was derived from.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/derived_from
 
 sub derived_from {
     my ($self) = @_;
@@ -1358,57 +492,10 @@ sub derived_from {
 }
 
 
-
-=head3 derivative
-
-This method returns a data structure containing
-variations derived from this variation.
-
-=over
-
-=item PERL API
-
- $data = $model->derivative();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/derivative
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# derivative { }
+# This method returns a data structure containing
+# variations derived from this variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/derivative
 
 sub derivative {
     my ($self) = @_;
@@ -1429,21 +516,14 @@ sub derivative {
 #
 ############################################################
 
-=head2 Location
+# genomic_position {}
+# Supplied by Role
 
-=cut
+# genetic_position {}
+# Supplied by Role
 
-# sub genomic_position {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_position >>
-
-# sub genetic_position {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include genetic_position >>
-
-# sub genomic_image {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_image >>
+# genomic_image {}
+# Supplied by Role
 
 sub _build_genomic_position {
     my ($self) = @_;
@@ -1530,56 +610,10 @@ sub _build__segments {
 #
 ############################################################
 
-=head3 sequencing_status
-
-This method returns a data structure containing
-the sequencing status of the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->sequencing_status();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/sequencing_status
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# sequencing_status { }
+# This method returns a data structure containing
+# the sequencing status of the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/sequencing_status
 
 sub sequencing_status {
     my ($self) = @_;
@@ -1593,57 +627,11 @@ sub sequencing_status {
 }
 
 
-=head3 nucleotide_change
-
-This method returns a data structure containing
-both the wild type and mutant variants of the 
-variation, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->nucleotide_change();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/nucleotide_change
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# nucleotide_change { }
+# This method returns a data structure containing
+# both the wild type and mutant variants of the 
+# variation, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/nucleotide_change
 
 # Returns a data structure containing
 # wild type sequence - the wild type (or reference) sequence
@@ -1663,57 +651,11 @@ sub nucleotide_change {
 }
 
 
-=head3 amino_change
-
-This method returns a data structure containing the amino
-acid change (and transcript IDs) for nonsense and missense
-alleles.
-
-=over
-
-=item PERL API
-
- $data = $model->amino_acid_change();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/amino_acid_change
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# amino_acid_change { }
+# This method returns a data structure containing the amino
+# acid change (and transcript IDs) for nonsense and missense
+# alleles.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/amino_acid_change
 
 sub amino_acid_change {
     my ($self) = @_;
@@ -1726,57 +668,11 @@ sub amino_acid_change {
     };
 }
 
-=head3 flanking_sequences
-
-This method returns a data structure containing
-sequences immediately 5' and 3' of the variation,
-if known.
-
-=over
-
-=item PERL API
-
- $data = $model->flanking_sequences();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/flanking_sequences
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# flanking_sequences { }
+# This method returns a data structure containing
+# sequences immediately 5' and 3' of the variation,
+# if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/flanking_sequences
 
 sub flanking_sequences {
     my ($self) = @_;
@@ -1794,57 +690,11 @@ sub flanking_sequences {
     };
 }
 
-=head3 cgh_deleted_probes
-
-This method returns a data structure containing
-deleted probes detected by comparative genome
-hybridization (CGH).
-
-=over
-
-=item PERL API
-
- $data = $model->cgh_deleted_probes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/cgh_deleted_probes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# cgh_deleted_probes { }
+# This method returns a data structure containing
+# deleted probes detected by comparative genome
+# hybridization (CGH).
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/cgh_deleted_probes
 
 sub cgh_deleted_probes {
     my ($self) = @_;
@@ -1862,6 +712,8 @@ sub cgh_deleted_probes {
     };
 }
 
+# cgh_flanking_probes { }
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/cgh_flanking_probes
 
 sub cgh_flanking_probes {
     my ($self) = @_;
@@ -1882,57 +734,11 @@ $self->log->debug("RIGHT FLANK: $right_flank");
 }
 
 
-=head3 context
-
-This method returns a data structure containing
-strings reconstructing the sequence of the variation
-in genomic context (if known).
-
-=over
-
-=item PERL API
-
- $data = $model->context();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/context
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# context { }
+# This method returns a data structure containing
+# strings reconstructing the sequence of the variation
+# in genomic context (if known).
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/context
 
 # Show the variation in context.
 sub context {
@@ -1956,56 +762,10 @@ sub context {
     };
 }
 
-=head3 deletion_verification
-
-This method returns a data structure containing
-whether or not a deletion allele has been verified.
-
-=over
-
-=item PERL API
-
- $data = $model->deletion_verification();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/deletion_verification
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# deletion_verification { }
+# This method returns a data structure containing
+# whether or not a deletion allele has been verified.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/deletion_verification
 
 sub deletion_verification {
     my ($self) = @_;
@@ -2017,56 +777,10 @@ sub deletion_verification {
     };
 }
 
-=head3 features_affected
-
-This method returns a data structure containing
-features affected by the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->features_affected();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/features_affected
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# features_affected { }
+# This method returns a data structure containing
+# features affected by the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/features_affected
 
 # Display the position of the variation within a number of features
 # Foreach item that the variation is known to affect, display a table
@@ -2151,57 +865,11 @@ $affects->{$type_affected} = \@rows;
     };
 }
 
-=head3 possibly_affects
-
-This method returns a data structure containing
-features that are possibly -- but haven't been 
-demonstrated to -- be affected by the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->possibly_affects();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/possibly_affects
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# possibly_affects { }
+# This method returns a data structure containing
+# features that are possibly -- but haven't been 
+# demonstrated to -- be affected by the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/possibly_affects
 
 sub possibly_affects {
     my ($self) = @_;
@@ -2212,56 +880,10 @@ sub possibly_affects {
     };
 }
 
-=head3 flanking_pcr_products
-
-This method returns a data structure containing
-pcr products that flank the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->flanking_pcr_products();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/flanking_pcr_products
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# flanking_pcr_products { }
+# This method returns a data structure containing
+# pcr products that flank the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/flanking_pcr_products
 
 sub flanking_pcr_products {
     my ($self) = @_;
@@ -2273,56 +895,10 @@ sub flanking_pcr_products {
     };
 }
 
-=head3 affects_splice_site
-
-This method returns a data structure containing
-description if the variation affects splice sites.
-
-=over
-
-=item PERL API
-
- $data = $model->affects_splice_site();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/affects_splice_site
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# affects_splice_site { }
+# This method returns a data structure containing
+# description if the variation affects splice sites.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/affects_splice_site
 
 # TODO: Needs evidence
 sub affects_splice_site {
@@ -2338,56 +914,10 @@ sub affects_splice_site {
     };
 }
 
-=head3 causes_frameshift
-
-This method returns a data structure containing
-describing if the variation causes a frameshift.
-
-=over
-
-=item PERL API
-
- $data = $model->causes_frameshift();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/causes_frameshift
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# causes_frameshift { }
+# This method returns a data structure containing
+# describing if the variation causes a frameshift.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/causes_frameshift
 
 sub causes_frameshift {
     my ($self) = @_;
@@ -2399,57 +929,11 @@ sub causes_frameshift {
     };
 }
 
-=head3 detection_method
-
-This method returns a data structure containing
-available detection methods for the variation --
-particularly for SNPs.
-
-=over
-
-=item PERL API
-
- $data = $model->detection_method();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/detection_method
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# detection_method { }
+# This method returns a data structure containing
+# available detection methods for the variation --
+# particularly for SNPs.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/detection_method
 
 sub detection_method {
     my ($self) = @_;
@@ -2464,61 +948,15 @@ sub detection_method {
 
 ############################################################
 #
-# POLYMORPHISM DETAILS (folder into Molecular Details widget)
+# POLYMORPHISM DETAILS (folded into Molecular Details widget)
 #
 ############################################################
 
-=head3 polymorphism_type
-
-This method returns a data structure containing
-the broad classification of the variation if it is
-a polymorphism, for example (SNP|RFLP).
-
-=over
-
-=item PERL API
-
- $data = $model->polymorphism_type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymoprhism_type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# polymorphism_type { }
+# This method returns a data structure containing
+# the broad classification of the variation if it is
+# a polymorphism, for example (SNP|RFLP).
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymoprhism_type
 
 sub polymorphism_type {
     my ($self) = @_;
@@ -2536,56 +974,10 @@ sub polymorphism_type {
     };
 }
 
-=head3 polymorphism_status
-
-If the variation is a polymorphism, this method
-will return a data structure containing it's status.
-
-=over
-
-=item PERL API
-
- $data = $model->polymorphism_status();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymorphism_status
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# polymorphism_status { }
+# If the variation is a polymorphism, this method
+# will return a data structure containing it's status.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymorphism_status
 
 sub polymorphism_status {
     my ($self) = @_;
@@ -2598,58 +990,11 @@ sub polymorphism_status {
     };
 }
 
-=head3 reference_strain
+# reference_strain  { }
+# If the variation is a polymorphism, this method
+# will return the reference strain.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_strain
 
-If the variation is a polymorphism, this method
-will return the reference strain.
-
-=over
-
-=item PERL API
-
- $data = $model->reference_strain();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_strain
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# For polymorphisms
 sub reference_strain {
     my ($self) = @_;
 
@@ -2659,56 +1004,10 @@ sub reference_strain {
     };
 }
 
-=head3 polymorphism_assays
-
-For variations that are polymorphisms, this method
-will return assays useful for its detection.
-
-=over
-
-=item PERL API
-
- $data = $model->polymorphism_assays();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymorphism_assays
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# polymorphism_assays { }
+# For variations that are polymorphisms, this method
+# will return assays useful for its detection.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymorphism_assays
 
 # Details related to assaying polymorphisms
 sub polymorphism_assays {
@@ -2802,56 +1101,10 @@ sub polymorphism_assays {
 #
 ############################################################
 
-=head3 nature_of_variation
-
-This method returns a data structure containing
-the nature of the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->nature_of_variation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/nature_of_variation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# nature_of_variation { }
+# This method returns a data structure containing
+# the nature of the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/nature_of_variation
 
 sub nature_of_variation {
     my ($self) = @_;
@@ -2887,55 +1140,9 @@ sub nature_of_variation {
 #    };
 }
 
-=head3 dominance
-
-Describes if the variation is dominant or not.
-
-=over
-
-=item PERL API
-
- $data = $model->dominance();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/dominance
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# dominance { }
+# Describes if the variation is dominant or not.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/dominance
 
 # Q: Model needs to be organized under a single Dominance tag
 # Q: is this one or many?
@@ -2956,56 +1163,10 @@ sub dominance {
     };
 }
 
-=head3 phenotype_remark
-
-This method returns a data structure containing
-a brief remark on the phenotype of the variation.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotype_remark();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/phenotype_remark
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# phenotype_remark { }
+# This method returns a data structure containing
+# a brief remark on the phenotype of the variation.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/phenotype_remark
 
 sub phenotype_remark {
     my ($self) = @_;
@@ -3017,56 +1178,10 @@ sub phenotype_remark {
     };
 }
 
-=head3 temperature_sensitivity
-
-This method returns a data structure containing
-the temperature sensitivity of the variation, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->temperature_sensitivity();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Variation public name or WBID (eg WBVar00143133)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/temperature_sensitivity
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
+# temperature_sensitivity { }
+# This method returns a data structure containing
+# the temperature sensitivity of the variation, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/temperature_sensitivity
 
 # TODO: needs evidence
 sub temperature_sensitivity {
@@ -3080,14 +1195,11 @@ sub temperature_sensitivity {
     };
 }
 
-# sub phenotypes {}
-# Supplied by Role; POD will automatically be inserted here.
-# <<include phenotypes>>
+# phenotypes {}
+# Supplied by Role
 
-# sub phenotypes_not_observed {}
-# Supplied by Role; POD will automatically be inserted here.
-# <<include phenotypes_not_observed>>
-
+# phenotypes_not_observed {}
+# Supplied by Role
 
 ############################################################
 #

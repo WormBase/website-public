@@ -1851,7 +1851,7 @@ B<Response example>
 # template [% xrefs %]
 
 has 'xrefs' => (
-    is       => 'ro',
+    is       => 'rw',
     required => 1,
     lazy     => 1,
     builder  => '_build_xrefs',
@@ -1859,8 +1859,8 @@ has 'xrefs' => (
 
 # XREFs are stored under the Database tag.
 sub _build_xrefs {
-    my ($self) = @_;
-    my $object = $self->object;
+    my ($self,$object) = @_;
+    $object = $self->object unless $object;
 
     my @databases = $object->Database;
     my %dbs;

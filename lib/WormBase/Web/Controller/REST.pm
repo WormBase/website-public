@@ -992,7 +992,8 @@ sub widget_class_index_GET {
         my $api = $c->model('WormBaseAPI');
         my $species_info = $c->config->{sections}->{species_list}->{$species};
         my $object = $api->fetch({class=>'Species',name=>$species_info->{genus} . " " . $species_info->{species}});
-        $c->stash->{fields}->{assembly} = $object->assembly() if $object;
+        $c->stash->{fields}->{current_assemblies}  = $object->current_assemblies()  if $object;
+        $c->stash->{fields}->{previous_assemblies} = $object->previous_assemblies() if $object;
         $c->stash->{fields}->{name} = $object->name() if $object;
         $c->stash->{fields}->{ncbi_id} = $object->ncbi_id() if $object;
       }

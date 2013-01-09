@@ -106,22 +106,11 @@ has 'publication_data' => (
 #
 #######################################
 
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
 #######################################
 #
 # INSTANCE METHODS
 #
 #######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
-
 
 #######################################
 #
@@ -129,64 +118,13 @@ has 'publication_data' => (
 #
 #######################################
 
-=head2 Overview
+# name { }
+# Supplied by Role
 
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-=head3 street_address
-
-This method returns a data structure containing the 
-street address of the person, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->street_address();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/street_address
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# street_address { }
+# This method returns a data structure containing the 
+# street address of the person, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/street_address
 
 sub street_address {
     my $self    = shift;
@@ -196,54 +134,10 @@ sub street_address {
 }
 
 
-=head3 country
-
-This method returns a data structure containing the 
-country that the person lives in, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->country();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/country
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# country { }
+# This method returns a data structure containing the 
+# country that the person lives in, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/country
 
 sub country {    
     my $self = shift;
@@ -253,56 +147,10 @@ sub country {
     return $data;
 }
 
-=head3 institution
-    
-This method returns a data structure containing the 
-institution of the person, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->institution();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/institution
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# institution { }
+# This method returns a data structure containing the 
+# institution of the person, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/institution
 
 sub institution {
     my $self    = shift;
@@ -312,56 +160,10 @@ sub institution {
     return $data;
 }
 
-=head3 email
-
-This method returns a data structure containing the 
-email addresses of the person, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->email();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/email
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# email { }
+# This method returns a data structure containing the 
+# email addresses of the person, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/email
 
 sub email {
     my $self    = shift;
@@ -371,57 +173,10 @@ sub email {
     return $data;
 }
 
-=head3 lab_phone
-    
-This method returns a data structure containing the 
-lab phone number of the person, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->lab_phone();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_phone
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
+# lab_phone { }  
+# This method returns a data structure containing the 
+# lab phone number of the person, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_phone
 sub lab_phone {
     my $self    = shift;
     my $address = $self->address_data;
@@ -430,56 +185,10 @@ sub lab_phone {
     return $data;
 }
 
-=head3 office_phone
-
-This method returns a data structure containing the 
-office phone of the person, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->office_phone();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/office_phone
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# office_phone { }
+# This method returns a data structure containing the 
+# office phone of the person, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/office_phone
 
 sub office_phone {
     my $self    = shift;
@@ -489,57 +198,10 @@ sub office_phone {
     return $data;
 }
 
-=head3 other_phone
-
-This method returns a data structure containing
-other phone numbers of the person.
-
-=over
-
-=item PERL API
-
- $data = $model->other_phone();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/other_phone
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-
-=cut
+# other_phone { }
+# This method returns a data structure containing
+# other phone numbers of the person.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/other_phone
 
 sub other_phone {
     my $self    = shift;
@@ -549,56 +211,10 @@ sub other_phone {
     return $data;
 }
 
-=head3 fax
-
-This method returns a data structure containing the 
-fax number of the person, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->fax();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request examplr>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/fax
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# fax { }
+# This method returns a data structure containing the 
+# fax number of the person, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/fax
 
 sub fax {
     my $self    = shift;
@@ -609,57 +225,10 @@ sub fax {
 }
 
 
-=head3 web_page
-
-This method returns a data structure containing the 
-web site of the person, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->web_page();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/web_page
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-
-=cut
+# web_page { }
+# This method returns a data structure containing the 
+# web site of the person, if known.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/web_page
 
 sub web_page {
     my $self    = shift;
@@ -671,60 +240,11 @@ sub web_page {
     return $data;   
 }
 
-
-
-
-=head3 previous_addresses
-
-This method returns a data structure containing the 
-previous addresses of the person, if known, with keys
-of street address, country, institution, email, and date_modified.
-
-=over
-
-=item PERL API
-
- $data = $model->previous_addresses();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_addresses
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# previous_addresses { }
+# This method returns a data structure containing the 
+# previous addresses of the person, if known, with keys
+# of street address, country, institution, email, and date_modified.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_addresses
 
 sub previous_addresses {
     my $self      = shift;
@@ -742,61 +262,14 @@ sub previous_addresses {
 #
 #######################################
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
+# laboratory { }
+# Supplied by Role
 
-=head3 previous_laboratories
-
-This method returns a data structure containing
-previous laboratories of the person, as well as
-the current representative of that lab.
-
-=over
-
-=item PERL API
-
- $data = $model->previous_laboratories();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_laboratories
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# previous_laboratories { }
+# This method returns a data structure containing
+# previous laboratories of the person, as well as
+# the current representative of that lab.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_laboratories
 
 sub previous_laboratories {
     my $self   = shift;
@@ -816,57 +289,11 @@ sub previous_laboratories {
 }
 
 
-=head3 strain_designation
-
-This method returns a data structure containing
-the strain designation of the current lab affiliation
-of the person.
-
-=over
-
-=item PERL API
-
- $data = $model->strain_designation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/strain_designation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# strain_designation { }
+# This method returns a data structure containing
+# the strain designation of the current lab affiliation
+# of the person.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/strain_designation
 
 sub strain_designation {
     my $self   = shift;
@@ -880,57 +307,11 @@ sub strain_designation {
     return $data;		     
 }
 
-=head3 allele_designation
-
-This method returns a data structure containing
-the allele designation of the current lab affiliation
-of the person.
-
-=over
-
-=item PERL API
-
- $data = $model->allele_designation();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# allele_designation { }
+# This method returns a data structure containing
+# the allele designation of the current lab affiliation
+# of the person.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
 
 sub allele_designation {
     my $self   = shift;
@@ -942,56 +323,10 @@ sub allele_designation {
     return $data;
 }
 
-=head3 lab_representative
-
-This method returns a data structure containing
-the current lab representative of the affiliated lab.
-
-=over
-
-=item PERL API
-
- $data = $model->lab_representative();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# lab_representative { }
+# This method returns a data structure containing
+# the current lab representative of the affiliated lab.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative
 
 sub lab_representative {
     my $self   = shift;
@@ -1010,57 +345,11 @@ sub lab_representative {
     return $data;
 }
 
-=head3 gene_classes
-
-This method returns a data structure containing
-gene classes assigned to the current lab affiliation
-of the person.
-
-=over
-
-=item PERL API
-
- $data->gene_classes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/gene_classes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# eg: gene_classes
+# This method returns a data structure containing
+# gene classes assigned to the current lab affiliation
+# of the person.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/gene_classes
 
 sub gene_classes {
     my $self   = shift;
@@ -1084,56 +373,10 @@ sub gene_classes {
 #
 #######################################
 
-=head3 possibly_publishes_as
-
-This method returns a data structure containing
-other names that the person might possibly publishh under.
-
-=over
-
-=item PERL API
-
- $data->possibly_publishes_as();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/possibly_publishes_as
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# possibly_publishes_as { }
+# This method returns a data structure containing
+# other names that the person might possibly publishh under.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/possibly_publishes_as
 
 sub possibly_publishes_as {
     my $self   = shift;
@@ -1146,61 +389,14 @@ sub possibly_publishes_as {
 }
 
 
-# sub status { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include status >>
+# status { }
+# Supplied by Role
 
-=head3 last_verified
-
-This method returns a data structure containing
-the date the information about this person was
-last verified.
-
-=over
-
-=item PERL API
-
- $data->last_verified();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/last_verified
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# last_verified { }
+# This method returns a data structure containing
+# the date the information about this person was
+# last verified.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/last_verified
 
 sub last_verified {
     my $self      = shift;
@@ -1222,56 +418,10 @@ sub last_verified {
 #
 #######################################
 
-=head3 supervised
-
-This method will return a data structure of people supervised 
-by the query person.
-
-=over
-
-=item PERL API
-
- $data = $model->supervised();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# supervised { }
+# This method will return a data structure of people supervised
+# by the query person.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised
 
 sub supervised {    
     my $self = shift;
@@ -1281,56 +431,10 @@ sub supervised {
     return $data;
 }
 
-=head3 supervised_by
-
-This method will return a data structure containing
-people that this person has been supervised by.
-
-=over
-
-=item PERL API
-
- $data = $model->supervised_by();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised_by
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# supervised_by { }
+# This method will return a data structure containing
+# people that this person has been supervised by.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised_by
 
 sub supervised_by {
     my $self    = shift;
@@ -1340,56 +444,10 @@ sub supervised_by {
     return $data;    
 }
 
-=head3 worked_with
-
-This method will return a data structure containing
-people that this person has worked or collaborated with.
-
-=over
-
-=item PERL API
-
- $data = $model->worked_with();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-WBPerson ID
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/worked_with
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# worked_with { }
+# This method will return a data structure containing
+# people that this person has worked or collaborated with.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/worked_with
 
 sub worked_with {
     my $self = shift;
