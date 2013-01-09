@@ -875,6 +875,7 @@
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){ 
             Scrolling.sidebarMove();checkSearch(content);
+            Layout.resize();
           });
         }
         moduleMin(content.prev().find(".module-min"), false, "maximize");
@@ -918,6 +919,8 @@ var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
       wHolder = $jq("#widget-holder"),
+      title = $jq("#page-title").find("h2"),
+      col_count = 1,
       maxWidth = (location.pathname === '/' || location.pathname === '/me') ? 900 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
@@ -936,11 +939,10 @@ var Layout = (function(){
         sColumns ? columns(100, 100) : readHash();
         if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
       }
-      if ((maxWidth > 1000) && 
-          wHolder.children(".sortable").hasClass("table-columns") && 
+      if ((col_count == 2) && 
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
-        (wHolder.outerWidth() + 150)))
-        columns(100, 100);
+        (title.width())))
+        columns(100, 100, 1);
       if(ref && (ref.hasClass("widget-narrow") !== (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
     }
@@ -952,8 +954,10 @@ var Layout = (function(){
       if(leftWidth>95){
         wHolder.removeClass('table-columns').addClass('one-column');
         rightWidth = leftWidth = 100;
+        col_count = 1;
       }else{
         wHolder.addClass('table-columns').removeClass('one-column');
+        col_count = 2;
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
@@ -1992,7 +1996,8 @@ function setupCytoscape(data, types){
       newLayout: Layout.newLayout,
       setupCytoscape: setupCytoscape,
       getPlugin: Plugin.getPlugin,
-      reloadWidget: reloadWidget
+      reloadWidget: reloadWidget,
+      resize: Layout.resize
     }
   })();
 

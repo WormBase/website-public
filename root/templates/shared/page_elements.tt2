@@ -409,8 +409,10 @@ END;
             "sPaginationType"  : "[% pagination_type %]",
             "bFilter"          : [% filter %],
             "bInfo"            : [% info %],
+            "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
             [% style %]
           });
+
         });
     </script>
    [% END %]
