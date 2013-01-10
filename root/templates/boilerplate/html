@@ -28,7 +28,7 @@
 
     <script>
       var se = document.createElement('script');
-      se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js";
+      se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v$Id$";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
       [% INCLUDE google_analytics %]
     </script>
