@@ -92,7 +92,7 @@
         <li id="nav-[% w.id %]" 
             class="module-load [% w.type %]"
             wname="[% w.id %]"
-            href="[% w.href %]">[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
+            href="[% w.href %]"><span class="tl ui-icon ui-icon-close module-close" wname="[% w.id %]"></span>[% w.title %]
         </li>
       [% END %]
     [% END %]
