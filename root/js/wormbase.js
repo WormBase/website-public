@@ -301,7 +301,7 @@
 //       if(listLayouts.children().size()==0){ajaxGet(listLayouts, "/rest/layout_list/"  + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"));}
       
       // used in sidebar view, to open and close widgets when selected
-      widgets.find(".module-load, .module-close").click(function() {
+      widgets.find(".module-load").click(function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
             content = $jq("#" + widget_name + "-content");
@@ -324,16 +324,28 @@
             nav.addClass("ui-selected");
             moduleMin(content.prev().find(".module-min"), false, "maximize");
           }
-          Scrolling.goToAnchor(widget_name);
-          Layout.updateLayout();
-        } else {
+        }
+        Scrolling.goToAnchor(widget_name);
+        Layout.updateLayout();
+        Scrolling.sidebarMove();
+        return false;
+      });
+      
+      
+      
+          // used in sidebar view, to open and close widgets when selected
+      widgets.find(".module-close").click(function() {
+        var widget_name = $jq(this).attr("wname"),
+            nav = $jq("#nav-" + widget_name),
+            content = $jq("#" + widget_name + "-content");
+
           Scrolling.scrollUp(content.parents("li"));
           moduleMin(content.prev().find(".module-min"), false, "minimize", function(){
             nav.removeClass("ui-selected");
             content.parents("li").removeClass("visible"); 
             Layout.updateLayout();
           });
-        }
+
         Scrolling.sidebarMove();
         return false;
       });

@@ -728,6 +728,7 @@ div#create-prompt {
   font-size:0.8em;
   width:4em;
   margin:0 auto;
+  padding-right:4em;
 }
 
 .ev-more-text span {
@@ -1878,7 +1879,16 @@ li div.widget-container {
   display:none;
   background-color:#FFFFFF; 
   position:relative;
-  border:1px solid #A0ACB8;
+  border:1px solid #97A1AD;
+}
+
+
+div.widget-container:hover{
+
+  -moz-box-shadow:    1px 2px 1px 1px #ccc;
+  -webkit-box-shadow: 1px 2px 1px 1px #ccc;
+  box-shadow:         1px 2px 1px 1px #ccc;
+
 }
 
 .content {
@@ -2294,13 +2304,6 @@ div#google-map {
   border-top:1px solid #CDCDCD;
 }
 
-.navigation ul li span.ui-icon{ 
-  visibility:hidden;
-  position:absolute;
-  right:0.5em;
-  top:0.5em;
-}
-
 .navigation ul li.title span.ui-icon{ 
   visibility:visible;
   position:absolute;
@@ -2308,7 +2311,23 @@ div#google-map {
   top:0.7em;
 }
 
-.navigation ul li.ui-selected span.ui-icon, .navigation ul li:hover span.ui-icon  { 
+.navigation ul li span.ui-icon-close{ 
+  visibility:hidden;
+  position:absolute;
+  left:0.2em;
+  top:0.4em;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+}
+
+.navigation ul li span.ui-icon-close:hover{ 
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
+
+.navigation ul li:hover.ui-selected span.ui-icon-close  { 
   visibility:visible;
 }
 
@@ -2354,6 +2373,8 @@ div#google-map {
   table-layout:fixed;
   display:table;
 }
+
+
 
 #widget-holder.one-column {
   display:block;
