@@ -1371,7 +1371,7 @@ ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a
   border-color:#C2D1DF;
 }
 #section-resources {
-  border-color:#D0DEC1;
+  border-color:#C2D1DF;
 }
 #section-tools {
   border-color:#CFC1DE;
@@ -1967,9 +1967,7 @@ li.visible div.widget-container {
 #widget-me {
     border-color: #BDB8A4;
 }
-#widget-resources {
-    border-color: #ACB8A0;
-}
+
 #widget-tools {
     border-color: #ABA0B8; 
 }
@@ -1978,7 +1976,7 @@ li.visible div.widget-container {
     background-color: #E3DDC5;
 }
 #widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg, #widget-resources .navigation .ui-selected {
-    background-color: #D0DEC1;
+    background-color: #C2D1DF;
 }
 #widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
     background-color: #CFC1DE; 
