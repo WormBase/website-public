@@ -951,7 +951,7 @@ var Layout = (function(){
         sColumns ? columns(100, 100) : readHash();
         if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
       }
-      if ((col_count == 2) && 
+      if ((col_count == 2) && title.size() > 0 &&
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
         (title.width())))
         columns(100, 100, 1);
