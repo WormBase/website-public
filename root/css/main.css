@@ -1059,6 +1059,7 @@ a#fade:hover {
 .ui-icon-circle-close.ui-icon-large { background-position: -100px 0px; }
 .ui-icon-circle-triangle-e.ui-icon-large { background-position: -20px 0px; }
 .ui-icon-circle-triangle-s.ui-icon-large { background-position: -60px 0px; }
+.ui-icon-gear.ui-icon-large { background-position: -200px -60px; }
 
 .ui-icon-column { width: 16px; height: 16px; background-image: url(../img/columns.png);}
 .ui-icon-pdf {width: 16px; height: 16px; margin-top:0.1em; cursor:pointer; float:right; background-image: url(../img/pdf-icon.png); }
@@ -1773,7 +1774,7 @@ div.columns {
 }
 
 div.columns ul {
-  width:6em;
+  width:8em;
   position:absolute;
   z-index:999;
   top:100%;
@@ -1794,8 +1795,29 @@ div.columns ul li{
   margin:0;
 }
 
-div.columns ul li:hover{
+div.columns #open-sidebar {
+  display:none;
+}
+
+.sidebar-hidden div.columns #open-sidebar {
+  display:block;
+}
+
+div.columns .ui-icon-triangle-1-s {
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+}
+
+div.columns ul li:not(.title):hover{
   background: #FFFFDF;
+}
+
+div.columns ul li.title {
+  border-top:1px solid #CDCDCD;
+  cursor:auto;
+  font-weight:bold;
+  font-size:0.9em;
 }
 
 div.columns div.ui-icon-close{
@@ -2378,10 +2400,6 @@ div#google-map {
   display:block;
 }
 
-#widget-holder.title-padding {
-  padding-top: 1.9em;
-}
-
 .sortable {
   width:100%;
   min-width:15em;
@@ -2810,19 +2828,18 @@ div.title {
 }
 
 #buttons-nav {
-  width:12em;
+  width:11.5em;
   float:left;
-  margin:0 0 0 -1em;
-  padding:0 0 0 1.4em;
-  background:white;
-  height:2.8em;
+  margin:0 0.5em 0 0;
+  height:3.5em;
   position:relative;
+  z-index:11;
 }
 
 #buttons-nav .button{
-  margin-right:0.5em;
-  padding:0.3em;
-  float:left;
+  margin:0.8em 0 0 0;
+  padding:0.3em 1.5em;
+  float:right;
 }
 
 .button span:not(.ui-icon){

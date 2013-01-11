@@ -26,6 +26,7 @@
         notifyTimer,
         cur_search_type = 'all',
         cur_search_species_type = '',
+        body = $jq("#wrap"),
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0;
     
@@ -195,13 +196,16 @@
 
       $jq("#nav-min").click(function() {
         var nav = $jq(".navigation-min").add("#navigation"),
+            ptitle = $jq("#page-title"),
             w = nav.width(),
             msg = "open sidebar",
             marginLeft = '-1em';
         if(w === 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
         nav.stop(false, true).animate({width: w}).show().children("#title").toggleClass("closed").children("div").toggle();
-        $jq(this).attr("title", msg).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
+        ptitle.stop(false, true).animate({marginLeft: marginLeft}).show();
+        $jq(this).attr("title", msg).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w ui-icon-triangle-1-e");
         Layout.updateLayout();
+        body.toggleClass("sidebar-hidden");
       });
       
       // Should be a user supplied site-wide option for this.
@@ -1141,8 +1145,7 @@ var Layout = (function(){
         }
       }
       if(sidebar){
-        $jq(".navigation-min").add("#navigation").css({width: 0}).children("#title").addClass("closed").children("div").hide();
-        $jq("#nav-min").attr("title", "open sidebar").children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w ui-icon-triangle-1-e");
+        $jq("#nav-min").click();
       }
       if(location.hash.length > 0){
         updateLayout(undefined, hash);
