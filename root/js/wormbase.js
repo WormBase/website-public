@@ -195,13 +195,11 @@
 
       $jq("#nav-min").click(function() {
         var nav = $jq(".navigation-min").add("#navigation"),
-            ptitle = $jq("#page-title"),
             w = nav.width(),
             msg = "open sidebar",
             marginLeft = '-1em';
         if(w === 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
         nav.stop(false, true).animate({width: w}).show().children("#title").toggleClass("closed").children("div").toggle();
-        ptitle.stop(false, true).animate({marginLeft: marginLeft}).show();
         $jq(this).attr("title", msg).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
         Layout.updateLayout();
       });
@@ -1144,7 +1142,6 @@ var Layout = (function(){
       }
       if(sidebar){
         $jq(".navigation-min").add("#navigation").css({width: 0}).children("#title").addClass("closed").children("div").hide();
-        $jq("#page-title").css({marginLeft: '-1em'});
         $jq("#nav-min").attr("title", "open sidebar").children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w ui-icon-triangle-1-e");
       }
       if(location.hash.length > 0){
