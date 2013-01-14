@@ -211,10 +211,12 @@
       // Should be a user supplied site-wide option for this.
       // which can be over-ridden on any widget.
       // Toggle should empty look of button
-      $jq("#hide-empty-fields").click(function() {       
-            $jq(".disabled" ).toggle();    
-            $jq(this).toggleClass('ui-state-highlight');
+      var toggleField = $jq("#hide-empty-fields");
+      toggleField.click(function() {
+            body.toggleClass("show-empty");
+            toggleField.children().toggle();
       });
+      
       if(personSearch.size()>0){
           ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
             personSearch.delegate(".results-person .result li a", 'click', function(){
@@ -955,7 +957,7 @@ var Layout = (function(){
       }
       if ((col_count == 2) && title.size() > 0 &&
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
-        (title.width())))
+        (title.outerWidth())))
         columns(100, 100, 1);
       if(ref && (ref.hasClass("widget-narrow") !== (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");

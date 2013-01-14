@@ -33,8 +33,9 @@
         <div class="columns" id="column-dropdown"><a class="button ui-corner-all"><span class="ui-icon-large ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
 
           <ul>
-        <li id="open-sidebar"><a href="javascript:void(0)" onClick='$jq("#nav-min").click();'><span id="fade">add widgets</span></a>
-        <li><a id="hide-empty-fields" href="javascript:void(0)"><span id="fade">show empty fields</span></a>
+        <li class="title">page settings</li>
+        <li id="open-sidebar"><span onClick='$jq("#nav-min").click();'>add widgets</span>
+        <li><span id="hide-empty-fields"><span>show</span><span hidden>hide</span> empty fields</span>
         </li>
         <li class="title">layout</li>
               <li onClick="WB.columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
@@ -93,7 +94,7 @@
         <li id="nav-[% w.id %]" 
             class="module-load [% w.type %]"
             wname="[% w.id %]"
-            href="[% w.href %]"><span class="tl ui-icon ui-icon-close module-close" wname="[% w.id %]"></span>[% w.title %]
+            href="[% w.href %]"><span class="ui-icon ui-icon-close module-close" wname="[% w.id %]"></span>[% w.title %]
         </li>
       [% END %]
     [% END %]
@@ -113,7 +114,7 @@
       <li class="title module-load tools" 
           id="nav-comment" 
           wname="comment" 
-          href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label).path _ '?url=' _ c.req.uri.path %]">Comments <a class="comment-count"></a>
+          href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label).path _ '?url=' _ c.req.uri.path %]"><span class="ui-icon ui-icon-close module-close" wname="comment"></span>Comments <a class="comment-count"></a>
       </li>
 [% END %]
     </ul>
