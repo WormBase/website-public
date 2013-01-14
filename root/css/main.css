@@ -1317,7 +1317,7 @@ div#header div#nav-bar {
   background:#EEE;
   height:2.1em;
   margin:0;
-  border-bottom:1px solid #DDD;
+  border-bottom:1px solid #AAA;
 }
 
 ul.nav-bar {
@@ -1365,7 +1365,7 @@ ul.nav-bar li span.ui-icon {
 
 ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{ 
   color:black;
-  border-bottom:5px solid #CDCDCD;
+  border-bottom:5px solid #AAA;
 }
 
 #section-species {
@@ -1393,7 +1393,7 @@ ul.nav-bar ul.wb-dropdown {
   top:2em;
   left:-1px;
   background:white;
-  border:1px solid #CDCDCD;
+  border:1px solid #AAA;
   z-index:598;
   padding:0;
   width:100%;
@@ -1771,10 +1771,11 @@ div.columns {
   float:left;
   position:relative;
   cursor:pointer;
+  margin:0 0.5em;
 }
 
 div.columns ul {
-  width:8em;
+  width:10em;
   position:absolute;
   z-index:999;
   top:100%;
@@ -1782,7 +1783,7 @@ div.columns ul {
   background:white;
   margin:0;
   padding:0;
-  border:1px solid #CDCDCD;
+  border:1px solid #AAA;
   display:none;
 }
 
@@ -1791,8 +1792,9 @@ div.columns ul li{
   position:relative;
   display:block;
   float:none;
-  padding:0.2em;
+  padding:0.4em;
   margin:0;
+  font-size:0.9em;
 }
 
 div.columns #open-sidebar {
@@ -1817,7 +1819,6 @@ div.columns ul li.title {
   border-top:1px solid #CDCDCD;
   cursor:auto;
   font-weight:bold;
-  font-size:0.9em;
 }
 
 div.columns div.ui-icon-close{
@@ -1828,7 +1829,7 @@ div.columns div.ui-icon-close{
 }
 
 div.columns ul div input#layout-input {
-  width:100%;
+  width:97%;
   color: #999999;
   margin:0;
   padding:0;
@@ -1867,7 +1868,7 @@ div#column-dropdown ul li.ui-state-disabled:hover {
 #page-title h2 {
   font-size:24px;
   color:#222;
-  padding:0.5em 0 0.5em 10px;
+  padding:0.5em 0 0.5em 1em;
   height:2em;
   white-space:nowrap;
   position:relative;
@@ -2262,7 +2263,7 @@ div#google-map {
 
 #navigation {
   width: 12em;
-  border-bottom:1px solid #CDCDCD;
+  border-bottom:1px solid #AAA;
 }
 
 .navigation #title{
@@ -2321,7 +2322,7 @@ div#google-map {
   font-weight: bold;
   padding-left: 1.5em;
   padding-top: 10px;
-  border-top:1px solid #CDCDCD;
+  border-top:1px solid #AAA;
 }
 
 .navigation ul li.title span.ui-icon{ 
@@ -2331,7 +2332,7 @@ div#google-map {
   top:0.7em;
 }
 
-.navigation ul li span.ui-icon-close{ 
+.navigation ul li span.ui-icon.ui-icon-close{ 
   visibility:hidden;
   position:absolute;
   left:0.2em;
@@ -2366,6 +2367,14 @@ div#google-map {
   cursor:pointer;
   background: #CCC;
   z-index:5;
+}
+
+#nav-min:hover{
+
+  -moz-box-shadow:    1px 2px 1px 1px #999;
+  -webkit-box-shadow: 1px 2px 1px 1px #999;
+  box-shadow:         1px 2px 1px 1px #999;
+
 }
 
 #nav-min-icon{
@@ -2463,7 +2472,7 @@ div#google-map {
 
 
 div.detail-box{
-  border:1px solid #CDCDCD;
+  border:1px solid #AAA;
   background:#E9EEF2;
   padding: 0.5em;
   float:right;
@@ -2519,6 +2528,10 @@ div.detail-box div.field div.field-content{
 /*  background:#EEE; */
   color:#AAA;
   display:none;
+}
+
+.show-empty .disabled {
+  display:block;
 }
 
 [tip]{
@@ -2798,7 +2811,7 @@ div.inline-columns img {
 
 .button{
   float:left;
-  border:1px solid #BBB;
+  border:1px solid #AAA;
   background:#EEE;
   cursor:pointer;
 }
@@ -2838,7 +2851,7 @@ div.title {
 
 #buttons-nav .button{
   margin:0.8em 0 0 0;
-  padding:0.3em 1.5em;
+  padding:0.3em 1.8em;
   float:right;
 }
 
