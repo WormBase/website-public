@@ -30,17 +30,24 @@
  * DataTables features
  */
 
-.dataTables_wrapper {
+.wb_table_wrapper {
 	position: relative;
 /*	min-height: 302px; */
-     border:1px solid #CDCDCD; 
+     border:1px solid #AAA; 
     margin:0 0 0.5em 0;
     background:#E9EEF2;
 	clear: both;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
+    padding:0;
 	zoom: 1; /* Feeling sorry for IE */
 }
+
+.wb_table_wrapper.table_paginate {
+    padding:0 0 2em 0;
+}
+
+/* .dataTables_wrapper { */
 
 .dataTables_processing {
 	position: absolute;
@@ -72,13 +79,13 @@
 }
 
 .dataTables_info {
-/* 	width: 60%; */
 	float: left;
+    padding:0.5em;
 }
 
 .dataTables_paginate {
-	width: 44px;
-	* width: 50px;
+/*	width: 44px;
+	* width: 50px;*/
 	float: right;
 	text-align: right;
 }
@@ -116,7 +123,7 @@ table.display {
 	margin: 0 auto;
 	clear: both;
 	width: 100%;
-	
+	border-bottom: 1px solid #AAA;
 	/* Note Firefox 3.5 and before have a bug with border-collapse
 	 * ( https://bugzilla.mozilla.org/show%5Fbug.cgi?id=155955 ) 
 	 * border-spacing: 0; is one possible option. Conditional-css.com is
@@ -133,7 +140,7 @@ table.display {
 
 table.display thead th {
 	padding: 3px 18px 3px 10px;
-	border-bottom: 1px solid black;
+	border-bottom: 1px solid #AAA;
 	font-weight: bold;
 	cursor: pointer;
     color: #666;
@@ -142,7 +149,7 @@ table.display thead th {
 
 table.display tfoot th {
 	padding: 3px 18px 3px 10px;
-	border-top: 1px solid black;
+	border-top: 1px solid #AAA;
 	font-weight: bold;
 }
 
@@ -292,32 +299,40 @@ td.details {
 }
 
 .paging_full_numbers {
-	width: 400px;
 	height: 22px;
 	line-height: 22px;
+    margin: 4px 0.5em 4px;
+    color:#666;
 }
 
 .paging_full_numbers span.paginate_button,
  	.paging_full_numbers span.paginate_active {
-	border: 1px solid #aaa;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	padding: 2px 5px;
-	margin: 0 3px;
+
+	padding: 3px 10px;
+	margin: 0;
 	cursor: pointer;
 	*cursor: hand;
+    font-weight:bold;
 }
 
 .paging_full_numbers span.paginate_button {
-	background-color: #ddd;
+
 }
 
-.paging_full_numbers span.paginate_button:hover {
-	background-color: #ccc;
+.paging_full_numbers span.paginate_button:hover:not(.paginate_button_disabled) {
+	background-color: #BBB;
 }
 
 .paging_full_numbers span.paginate_active {
-	background-color: #99B3FF;
+  color:#99B3FF;
+  cursor:auto;
+}
+
+.paging_full_numbers span.paginate_button_disabled {
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+  cursor:auto;
 }
 
 table.display tr.even.row_selected td {
@@ -327,6 +342,30 @@ table.display tr.even.row_selected td {
 table.display tr.odd.row_selected td {
 	background-color: #9FAFD1;
 }
+
+.paging_full_numbers span.first,.paging_full_numbers span.previous, .paging_full_numbers span.next, .paging_full_numbers span.last {
+  text-indent: -9999px;  
+  overflow: hidden; 
+  background-repeat: no-repeat;
+  width: 16px; 
+  background-image: url(/css/images/ui-icons_222222_256x240.png);
+  padding:0;
+  background-position: -80px -158px;
+  margin:0 5px;
+  text-align:left;
+  display: inline-block;
+}
+
+.paging_full_numbers span.last {
+  background-position: -64px -158px;
+}
+.paging_full_numbers span.previous {
+  background-position: -48px -158px;
+}
+.paging_full_numbers span.next {
+  background-position: -32px -158px;
+}
+/* .ui-icon {  } */
 
 
 /*
