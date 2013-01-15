@@ -1797,12 +1797,12 @@ div.columns ul li{
   font-size:0.9em;
 }
 
-div.columns #open-sidebar {
-  display:none;
+.sidebar-hidden #open-sidebar [hidden], .show-empty #hide-empty-fields [hidden]{
+  display:inline;
 }
 
-.sidebar-hidden div.columns #open-sidebar {
-  display:block;
+.sidebar-hidden #open-sidebar span:not([hidden]), .show-empty #hide-empty-fields span:not([hidden]){
+  display:none;
 }
 
 div.columns .ui-icon-triangle-1-s {
@@ -2397,7 +2397,7 @@ div#google-map {
   background:white;
   height:100%;
   max-width: 100%;
-  border-left:1px solid #CCC;
+  border-left:1px solid #AAA;
   padding:1em 1.5em 0.5em 0.7em;
   table-layout:fixed;
   display:table;

@@ -34,7 +34,7 @@
 
           <ul>
         <li class="title">page settings</li>
-        <li id="open-sidebar"><span onClick='$jq("#nav-min").click();'>add widgets</span>
+        <li id="open-sidebar" onClick='$jq("#nav-min").click();'><span hidden>show</span><span>hide</span> sidebar</li>
         <li><span id="hide-empty-fields"><span>show</span><span hidden>hide</span> empty fields</span>
         </li>
         <li class="title">layout</li>
@@ -75,10 +75,10 @@
   <div id="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]
-        <h2 onClick="WB.scrollToTop();return false;">WormBase</h2>
+        <h2 onClick="WB.scrollToTop();return false;" title="scroll to top">WormBase</h2>
       [% ELSE %]
         [% UNLESS c.req.action == 'me'; make_star(wbid); END %]
-        <h4 class="ellipsis" onClick="WB.scrollToTop();return false;">
+        <h4 class="ellipsis" onClick="WB.scrollToTop();return false;"  title="scroll to top">
           [% object.name.data.id ? tag2link(object.name.data) : title %]
         </h4>
       [% END %]
