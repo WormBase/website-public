@@ -211,10 +211,8 @@
       // Should be a user supplied site-wide option for this.
       // which can be over-ridden on any widget.
       // Toggle should empty look of button
-      var toggleField = $jq("#hide-empty-fields");
-      toggleField.click(function() {
+      $jq("#hide-empty-fields").click(function() {
             body.toggleClass("show-empty");
-            toggleField.children().toggle();
       });
       
       if(personSearch.size()>0){
@@ -1260,9 +1258,8 @@ var Scrolling = (function(){
   function isScrolledIntoView(elem){
       var docViewTop = $window.scrollTop(),
           docViewBottom = docViewTop + ($window.height()*0.75),
-          elemTop = $jq(elem).offset().top,
-          elemBottom = elemTop + $jq(elem).height();
-      return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
+          elemTop = $jq(elem).offset().top;
+      return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
   
   function sidebarMove() {
