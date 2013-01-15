@@ -410,6 +410,7 @@ END;
             "bFilter"          : [% filter %],
             "bInfo"            : [% info %],
             "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
+            "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"flrtip>' ; ELSE; '<"wb_table_wrapper"flrtip>'; END; %]',
             [% style %]
           });
 
