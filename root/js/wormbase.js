@@ -934,7 +934,6 @@ var Layout = (function(){
       ref = $jq("#references-content"),
       wHolder = $jq("#widget-holder"),
       title = $jq("#page-title").find("h2"),
-      col_count = 1,
       maxWidth = (location.pathname === '/' || location.pathname === '/me') ? 900 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
@@ -953,7 +952,7 @@ var Layout = (function(){
         sColumns ? columns(100, 100) : readHash();
         if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
       }
-      if ((col_count == 2) && title.size() > 0 &&
+      if ((body.hasClass('table-columns')) && title.size() > 0 &&
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
         (title.outerWidth())))
         columns(100, 100, 1);
@@ -966,12 +965,10 @@ var Layout = (function(){
           tWidth = wHolder.innerWidth(),
           leftWidth = sColumns ? 100 : leftWidth;
       if(leftWidth>95){
-        wHolder.removeClass('table-columns').addClass('one-column');
         rightWidth = leftWidth = 100;
-        col_count = 1;
+        body.removeClass('table-columns').addClass('one-column');
       }else{
-        wHolder.addClass('table-columns').removeClass('one-column');
-        col_count = 2;
+        body.addClass('table-columns').removeClass('one-column');
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");

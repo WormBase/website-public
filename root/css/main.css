@@ -1797,6 +1797,10 @@ div.columns ul li{
   font-size:0.9em;
 }
 
+div.columns:hover .button {
+  background:#BBB;
+}
+
 .sidebar-hidden #open-sidebar [hidden], .show-empty #hide-empty-fields [hidden]{
   display:inline;
 }
@@ -2033,6 +2037,14 @@ div.field-title {
 div.field-content {
   float: left;
   max-width:100%;
+}
+
+.one-column div.field-title, .one-column div.field-content {
+  display:table-cell;
+  float:none;
+  position:static;
+  vertical-align:top;
+  table-layout:fixed;
 }
 
 /* Curator specific fields */
@@ -2405,7 +2417,7 @@ div#google-map {
 
 
 
-#widget-holder.one-column {
+.one-column #widget-holder {
   display:block;
 }
 
@@ -2510,13 +2522,20 @@ div#all-search-results {
 }
 
 div.detail-box div.field div.field-title {
-  width: 8em;
+  width: 7em;
   padding-right: 0.5em;
 }
 
 div.detail-box div.field div.field-content{
-  float:left;
   margin-left:0;
+}
+
+div.detail-box div.field div.field-title, div.detail-box div.field div.field-content {
+  display:table-cell;
+  float:none;
+  position:static;
+  vertical-align:top;
+  table-layout:fixed;
 }
 
 .bench-update {
