@@ -1,0 +1,11 @@
+[%
+#Genes
+build_data_table(
+	order = ['name','type'],
+	columns={ 
+		name	=> "Gene",
+		type	=> "Type"
+	},
+	key = 'genes'
+);
+%]

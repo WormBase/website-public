@@ -1971,6 +1971,9 @@ sub _pack_objects {
     return {map {$_ => $self->_pack_obj($_)} @$objects};
 }
 
+## 	Parameters:
+#	object: the Ace::Object to be linked to
+#	(label): link text
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return undef unless $object; # this method shouldn't expect a list.
