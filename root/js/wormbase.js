@@ -838,7 +838,8 @@
   
   function allResults(type, species, query, widget){
     var url = "/search/" + type + "/" + query + "/?inline=1",
-        allSearch = $jq("#all-search-results");
+        allSearch = $jq("#all-search-results"),
+        searchSummary = $jq("#search-count-summary");
     if(!widget){
       Scrolling.sidebarInit();
       search_change(type);
@@ -848,7 +849,7 @@
     }
     if(species) { url = url + "&species=" + species;} 
 
-    $jq("#search-count-summary").find(".count").each(function() {
+    searchSummary.find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
         if($jq(this).text() === '0'){
           $jq(this).parent().remove();
@@ -858,14 +859,21 @@
       });
     });
     
-    $jq("#search-count-summary").find(".load-results").click(function(){
-      var button = $jq(this);
-      loadResults(button.attr("href"));
-      button.addClass("ui-selected").siblings().removeClass("ui-selected").parent().siblings().find(".ui-selected").removeClass("ui-selected");
-      $jq("#curr-ref-text").html(button.html());
+    searchSummary.find(".ui-icon-close").click(function(){
+      loadResults(url);
+      searchSummary.find(".ui-selected").removeClass("ui-selected");
       return false;
     });
     
+    searchSummary.find(".load-results").click(function(){
+      var button = $jq(this);
+      loadResults(button.attr("href"));
+      searchSummary.find(".ui-selected").removeClass("ui-selected");
+      button.addClass("ui-selected");
+      return false;
+    });
+    
+
     if (type === 'paper')
       Layout.resize();
     
