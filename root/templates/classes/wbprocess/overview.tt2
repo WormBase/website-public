@@ -6,8 +6,10 @@
 
 [% 
   WRAPPER highlight_box;
-  	WRAPPER $field_block title="Related processes" key="related_process";
-		tags2link( fields.related_process.data );
+	IF fields.related_process.data.size > 0;
+		WRAPPER $field_block title="Related processes" key="related_process";
+			tags2link( fields.related_process.data );
+		END;
 	END;
 	
   END;
@@ -18,7 +20,6 @@
 <div class="description">
 	[% fields.summary.data %]
 </div>
-
 
 
 [%## 

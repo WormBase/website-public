@@ -1,0 +1,12 @@
+[%
+#Expression clusters
+build_data_table(
+	order = ['id','description'],
+	columns={
+		id			=> "WormBase ID",
+		description	=> "Description"
+	},
+	key = 'expression_cluster'
+);
+
+%]

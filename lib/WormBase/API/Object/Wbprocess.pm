@@ -119,7 +119,7 @@ sub public_name{
 
 #######################################
 #
-# The Entities widget
+# Genes widget
 #
 #######################################
 
@@ -142,18 +142,23 @@ sub genes{
 # macro. Returns name and type
 sub _process_gene {
 	my ($self, $gene) = @_;
-	my $name = $gene->Public_name; 
 	my $type = WormBase::API::Object::Gene->
 		classification($gene)->{data}->{type};
 	
 
 	my %data = (
-		name 	=> $name,
+		name 	=> $self->_pack_obj($gene),
 		type	=> $type
 	);
 
 	return \%data;
 }
+
+#######################################
+#
+# Expression Clusters Widget
+#
+#######################################
 
 sub expression_cluster {
 	my ($self) = @_;
@@ -175,16 +180,21 @@ sub expression_cluster {
 }
 sub _process_e_cluster{
 	my ($self, $e_cluster) = @_;
-	my $wbid = "$e_cluster";
 	my $desc = $e_cluster->Description;
 	
 	my %data = (
-		id				=> $wbid,
+		id				=> $self->_pack_obj($e_cluster),
 		description 	=> $desc
 	);
 	
 	return \%data;
 }
+
+#######################################
+#
+# Interactions widget
+#
+#######################################
 
 sub interaction {
 	my ($self) = @_;
@@ -216,16 +226,11 @@ sub _process_interaction{
 	my $interactor_type = $interaction->Interactor;
 	switch ($interactor_type->name) {
 		case("Interactor_overlapping_gene"){
-		
-		
-		
-		
 			my @interacting_genes = $interaction->Interactor_overlapping_gene;
 			foreach my $gene_obj (@interacting_genes){
 				my $gene_name = $gene_obj->Public_name;
-				push (@interactors, $gene_name);
+				push (@interactors, $self->_pack_obj($gene_obj));
 			}
-			$log->debug("JDJDJD2:".join(",",@interactors));
 		}
 	}
 	
@@ -233,12 +238,87 @@ sub _process_interaction{
 	my %data = (
 		type		=> $type,
 		summary		=> $summary,
-		interactors	=> join( ", ", @interactors)
+		interactors	=> \@interactors
 	);
 	
 	return \%data;
 }
 
+
+#######################################
+#
+# GO widget
+#
+#######################################
+
+sub term {
+    my $self       = shift;
+    my $object     = $self->object;
+    my $tag_object = $object->Term;
+    return {
+        'data'        => $self->_pack_obj($object, $tag_object && "$tag_object"),
+        'description' => 'GO term'
+    };
+}
+
+# definition { }
+# This method will return a data structure with the definition of the go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/definition
+
+sub definition {
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $object->Definition;
+    return {
+        'data'        => $data_pack && "$data_pack",
+        'description' => 'term definition'
+    };
+}
+
+# type { }
+# This method will return a data structure with the type of go_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/type
+sub type {
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $object->Type;
+    $data_pack =~ s/\_/\ /;
+    return {
+        'data'        => $data_pack,
+        'description' => 'type for this term'
+    };
+}
+
+
+sub go_term{
+	my ($self) = @_;
+	my $object = $self->object;
+	my @go_objs = $object->GO_term;
+	
+	my @data;
+	
+	foreach my $go_obj ( @go_objs ){
+		my $name 	= $go_obj->Term;
+		my $type 	= $go_obj->Type;
+		my $def		= $go_obj->Definition;
+		
+		push @data, {
+			name	=> $self->_pack_obj($go_obj), 
+			type	=> "$type",
+			def		=> "$def"
+		};
+	}
+		
+#	use Data::Dumper;
+#	my $dump =  Dumper(\%data);
+#	die $dump;
+	
+	return {
+		description => "Gene Ontology Term",
+		data => \@data
+	};
+
+}
 
 # Sample wrapper function to copy
 # replace the xxx's with stuff
