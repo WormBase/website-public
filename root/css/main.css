@@ -2522,12 +2522,13 @@ div#all-search-results {
 }
 
 div.detail-box div.field div.field-title {
-  width: 7em;
+  width: 8em;
   padding-right: 0.5em;
 }
 
 div.detail-box div.field div.field-content{
   margin-left:0;
+  min-width:11em;
 }
 
 div.detail-box div.field div.field-title, div.detail-box div.field div.field-content {
