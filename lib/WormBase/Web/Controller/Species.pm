@@ -84,7 +84,7 @@ sub class_index :Path("/species") Args(2) {
     $c->stash->{template} = 'species/report.tt2';
     $c->stash->{section}     = 'species';
     $c->stash->{class}       = $class;
-    
+
     $c->stash->{species}     = $species;  # Provided for formatting, limit searches
     $c->stash->{is_class_index} = 1;       # used by report_page macro as a flag that this is an index page.
 }
@@ -165,8 +165,7 @@ sub object_report :Path("/species") Args(3) {
 # Is the argument a class?
 sub _is_class {
     my ($self,$c,$arg) = @_;
-    return 1 if (defined $c->config->{'sections'}->{'species'}->{$arg});
-    return 0;
+    return (defined $c->config->{'sections'}->{'species'}->{$arg});
 }
 
 
