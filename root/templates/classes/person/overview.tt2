@@ -42,7 +42,7 @@ END;
 
 WRAPPER $field_block title="Web Page" key="web_page";
     FOREACH url IN fields.web_page.data;
-       '<a href="' _ url _ '">' _ url _ '</a><br>';
+        external_link(url, url);
     END;
 END;
 
