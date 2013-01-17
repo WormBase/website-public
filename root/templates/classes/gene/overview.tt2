@@ -49,7 +49,9 @@ END;
 # The main concise description
 '<div class="description">';
     evidence(fields.concise_description.data.evidence, 'Provisional_description', fields.concise_description.data.text);
+
 '</div>';
+
 
 IF (fields.human_disease_relevance.data.defined);
 '<h4>Human disease relevance:</h4>';
@@ -106,6 +108,9 @@ END;
       '<a target="_blank" href="http://www.wormbase.org/db/gene/gene?name=' _ fields.name.data.id _ '">' _ fields.name.data.id _ '</a>';
    END;
 
-
+'<div class="description">';
+IF fields.status.data == 'Dead'; no_toggle = 1; END;
+remarks;
+'</div>';
 
 %]
