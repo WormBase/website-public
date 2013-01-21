@@ -7,15 +7,14 @@
 [% FOREACH item IN results %]
 
  <div class="result [% UNLESS nostar %]tip-simple star[% END %] result-[% type %]" tip="save">
- [% class = item.name.class %]
+ [% class = item.name.class || 'page' %]
  [% class = (ACE2WB_MAP.$class || class) FILTER lower; %]
  [% result_class = (c.config.sections.species.$class.title || c.config.sections.resources.$class.title || 'page') FILTER lower %]
   <li>
         [% UNLESS nostar %]
           [% wbid = get_star_id(item.name.id) %]
           [%  name = item.name.label | uri; 
-              class = item.name.class | lower; 
-              url = item.name.url || get_url(item.name.class, item.name.id, item.name.taxonomy) | uri; %]
+              url = (class == 'page') ? item.name.url || item.name.id : get_url(class, item.name.id, item.name.taxonomy) | uri; %]
           [% href = "/rest/workbench/star?wbid=" _ wbid _ "&name=" _ name _ "&class=" _ class _ "&url=" _ url _ "&is_obj=" _ (class == 'page' ? 0 : 1) %]
           [% make_star(wbid, href) %]
         [% END %]
