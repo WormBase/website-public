@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
 
     <title>
-      [% IF object.name.data.id %]  
-        [%- object.name.data.label -%] - [%- object.name.data.class -%]
-      [% ELSIF template.title %]
-         [% template.title %]
-      [% ELSE %]
-         WormBase : [% c.config.site_byline %]      
+      [% IF template_title %]
+         [% template_title %] -    
       [% END %]
+         WormBase : [% c.config.site_byline %]      
+
     </title>
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link type="text/css" href="/css/jquery-ui.min.css" rel="stylesheet" />
