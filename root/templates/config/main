@@ -210,6 +210,22 @@
     ELSE; class; END;
   END;
 
+  MACRO template_title BLOCK;
+    IF (species && species != 'all');
+      s = (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
+    END;
+    IF object.name.data.id;
+      object.name.data.label _ ' (' _  object.name.data.class _ ')';
+    ELSIF path_parts;
+      path_parts.last.replace('_', ' ') FILTER ucfirst;
+    ELSIF (class && class != 'all' && class != 'home');
+      c.config.sections.species.$class.title || c.config.sections.resources.$class.title _ ' ' _ s;
+    ELSIF s;
+      s;
+    ELSIF section;
+      section FILTER ucfirst;
+    END;
+  END;
 
 # Use to create outgoing links from the site
 # params: link          - the ID for the link found in root/templates/config/external_urls
