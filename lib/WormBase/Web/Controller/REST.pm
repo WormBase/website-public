@@ -1066,7 +1066,6 @@ sub widget_me_GET {
       return;
     }
 
-    if($widget eq 'my_library'){ $type = 'paper';} else { $type = 'all';}
 
     my $session = $self->_get_session($c);
     my @reports = $session->user_saved->search({save_to => ($widget eq 'my_library') ? $widget : 'reports'});
@@ -1075,7 +1074,7 @@ sub widget_me_GET {
 
     $c->stash->{'widget'} = $widget;
     $c->stash->{'results'} = \@ret;
-    $c->stash->{'type'} = $type; 
+    $c->stash->{'type'} = ($widget eq 'my_library') ? 'paper' : 'all'; 
     $c->stash->{template} = "workbench/widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
