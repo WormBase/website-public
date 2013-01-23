@@ -839,7 +839,8 @@
   function allResults(type, species, query, widget){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results"),
-        searchSummary = $jq("#search-count-summary");
+        searchSummary = $jq("#search-count-summary"),
+        curr = $jq("#curr-ref-text");
     if(!widget){
       Scrolling.sidebarInit();
       search_change(type);
@@ -868,8 +869,9 @@
     searchSummary.find(".load-results").click(function(){
       var button = $jq(this);
       loadResults(button.attr("href"));
-      searchSummary.find(".ui-selected").removeClass("ui-selected");
+      searchSummary.find(".ui-selected:not('#current-ref')").removeClass("ui-selected");
       button.addClass("ui-selected");
+      curr.html(button.html());
       return false;
     });
     
