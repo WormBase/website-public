@@ -466,10 +466,12 @@ sub contained_in {
 
 sub refers_to {
     my ($self) = @_;
-
     my %data;
-    foreach my $ref_type (@{$self ~~ '@Refers_to'}) {
-        $data{$ref_type} = $self->_pack_objects([$ref_type->col]);
+    foreach my $ref_type ($self->object->Refers_to) {
+      # modified to just get count - breaking on large amounts of xrefs - AC
+      $data{$ref_type} = $self->_get_count($ref_type);
+
+      $data{$ref_type} = $self->_pack_objects([$ref_type->col]) if $data{$ref_type} < 10000;
         # Or build some data tables for different object types
         #	foreach $ref_type ($ref_type->col) {
         #	    if ($ref_type eq '') {
@@ -483,6 +485,8 @@ sub refers_to {
         data		=> %data ? \%data : undef,
     };
 }
+
+
 
 ############################################################
 #
