@@ -110,7 +110,7 @@ sub search_exact {
     }elsif(!($q =~ m/\s.*\s/)){
       $q = $class->_add_type_range($c, $q, $type);
 
-      $query=$class->syn_qp->parse_query( $q, 1|2 );
+      $query=$class->syn_qp->parse_query( "\"$q\"", 1|2 );
       $enq       = $class->syn_db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
     }
