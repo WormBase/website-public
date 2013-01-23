@@ -952,7 +952,7 @@ END;
    class = (ACE2WB_MAP.$class || class) FILTER lower;
    IF downloadable(class);
    WRAPPER $field_block title="View Sequence";
-   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences').path _ '?colorbox=1" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
+   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences').path _ '?colorbox=1" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-dna ui-button"></span></a>';
    END;
   END;
 END;
