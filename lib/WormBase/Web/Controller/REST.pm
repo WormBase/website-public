@@ -1051,7 +1051,6 @@ sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
 sub widget_me_GET {
     my ($self,$c,$widget) = @_; 
     my $api = $c->model('WormBaseAPI');
-    my $type;
     $c->stash->{'bench'} = 1;
     $c->response->headers->expires(time);
     if($widget eq 'user_history'){
