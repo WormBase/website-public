@@ -3,11 +3,12 @@
   <head>    
     <meta charset="UTF-8">
 
-    <title>WormBase
-      [%- IF object.name.data.id -%]:  [%- object.name.data.class -%] Summary: [%- object.name.data.label -%]
-      [% ELSE %]    
-         : [% template.title or c.config.site_byline %]      
+    <title>
+      [% IF template_title %]
+         [% template_title %] -    
       [% END %]
+         WormBase : [% c.config.site_byline %]      
+
     </title>
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link type="text/css" href="/css/jquery-ui.min.css" rel="stylesheet" />
@@ -28,7 +29,7 @@
 
     <script>
       var se = document.createElement('script');
-      se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js";
+      se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v$Id$";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
       [% INCLUDE google_analytics %]
     </script>

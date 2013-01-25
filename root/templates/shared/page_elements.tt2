@@ -409,8 +409,11 @@ END;
             "sPaginationType"  : "[% pagination_type %]",
             "bFilter"          : [% filter %],
             "bInfo"            : [% info %],
+            "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
+            "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"flrtip>' ; ELSE; '<"wb_table_wrapper"flrtip>'; END; %]',
             [% style %]
           });
+
         });
     </script>
    [% END %]
@@ -880,17 +883,17 @@ END;
       contents = contents _ markup(fields.remarks.data.join('<br />'),0);
    END;
 
-   IF no_toggle == 1 && contents;  
-       #WRAPPER $field_block title="Remarks" key="remarks";
-        '<h4>Remarks:</h4>';
-          contents;
-       #END;
-   ELSE;
-      WRAPPER $field_block title="" key="remarks";
-        WRAPPER toggle title="Curatorial remarks";
-              contents;
-        END;
-      END;
+   IF contents != '';
+    IF no_toggle == 1 && contents;  
+        #WRAPPER $field_block title="Remarks" key="remarks";
+          '<h4>Remarks:</h4>';
+            contents;
+        #END;
+    ELSE;
+          WRAPPER toggle title="Curatorial remarks";
+                contents;
+          END;
+    END;
    END;
 END;
 %]
@@ -949,7 +952,7 @@ END;
    class = (ACE2WB_MAP.$class || class) FILTER lower;
    IF downloadable(class);
    WRAPPER $field_block title="View Sequence";
-   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences').path _ '?colorbox=1" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
+   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences').path _ '?colorbox=1" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-dna ui-button"></span></a>';
    END;
   END;
 END;

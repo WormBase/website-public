@@ -1,16 +1,16 @@
-<li><a id="fade" onClick="WB.openAllWidgets(); return false;">open all</a></li>
-<li onClick="location.hash = '/'"><div id="fade">close all</div></li>
+<li><a onClick="WB.openAllWidgets(); return false;">open all</a></li>
+<li onClick="location.hash = '/'"><div>close all</div></li>
 
 [% FOREACH l IN c.config.sections.$section.$page_class.layout.keys %]
     <li id="layout-[% l %]">
-    <div id="fade" onClick="location.hash ='[% c.config.sections.species.$page_class.layout.$l %]'">[% l %]</div></li>
+    <div onClick="location.hash ='[% c.config.sections.species.$page_class.layout.$l %]'">[% l %]</div></li>
 [% END %]
 
 [% FOREACH l IN c.stash.layouts.keys.nsort %]
   [% UNLESS l; NEXT; END; %]
     <li id="layout-[% l %]">
     <div class="ui-icon ui-icon-close" onClick="WB.deleteLayout('[% l %]')"></div>
-    <div id="fade" onClick="WB.setLayout(escape('[% l %]'))">[% c.stash.layouts.$l %]</div></li>
+    <div onClick="WB.setLayout(escape('[% l %]'))">[% c.stash.layouts.$l %]</div></li>
 [% END %]
 
 <form onsubmit="WB.newLayout(this.layout.value);return false;">
