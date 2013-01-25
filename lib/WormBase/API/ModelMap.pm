@@ -60,6 +60,7 @@ BEGIN {
             Motif        => 'Title',
 #            Protein      => 'Gene_name',
             Rnai         => 'History_name',
+            WBProcess	 => 'Public_name',
         },
         laboratory => {
             Gene_class  => 'Designating_laboratory',

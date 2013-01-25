@@ -1,24 +1,4 @@
-[% IF fields.go_term.data.size == 1;
-	SET data_hash = fields.go_term.data.first; 
-	%]	
-	<h2> [% data_hash.name %] </h2>
-	
-	[% 
-	WRAPPER highlight_box;
-		IF data_hash.type;
-			WRAPPER $field_block title="type" ;
-				data_hash.type;
-			END;
-		END;
-	END;
-	%]
-
-	<div class="description">
-		[% data_hash.def %]
-	</div>
-	
-[% ELSIF fields.go_term.data.size > 1;
-		
+[%
 	WRAPPER $field_block title="GO Terms" key="go_term";
 		build_data_table(
 			order = ['name','type','def'],
@@ -31,7 +11,7 @@
 		);
 	END;
 
-END; %]
+%]
 
 
 

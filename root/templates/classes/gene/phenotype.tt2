@@ -1,3 +1,5 @@
+
+
 [%# This phenotype processing diverges from the standard processing ... %]
 [%# See also Varation.pm for alternative data processing/structure... %]
 
@@ -7,6 +9,8 @@
 
     <i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
     <div>
+
+   
 [%
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',

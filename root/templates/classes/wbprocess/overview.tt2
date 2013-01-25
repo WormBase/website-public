@@ -1,4 +1,4 @@
-<h2>[% fields.public_name.data %]<span id="fade" style="font-size:0.7em;"> 
+<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;"> 
 [% IF fields.other_name.data %] 
   ([% fields.other_name.data %])
 [% END %]
@@ -6,11 +6,6 @@
 
 [% 
   WRAPPER highlight_box;
-	IF fields.related_process.data.size > 0;
-		WRAPPER $field_block title="Related processes" key="related_process";
-			tags2link( fields.related_process.data );
-		END;
-	END;
 	
   END;
 
@@ -21,6 +16,12 @@
 	[% fields.summary.data %]
 </div>
 
+[%
+	
+	WRAPPER $field_block title="Related processes" key="related_process";
+		tags2link( fields.related_process.data );
+	END;
+%]
 
 [%## 
   
