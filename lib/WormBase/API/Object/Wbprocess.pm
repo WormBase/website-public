@@ -1,7 +1,7 @@
 package WormBase::API::Object::Wbprocess;
 
 use Moose;
-use WormBase::API::Object::Gene;
+use WormBase::API::Object::Gene qw/classification/; 
 use Switch;
 
 with 'WormBase::API::Role::Object';
@@ -84,11 +84,13 @@ sub related_process{
 	my ($self) = @_;
 	my $object = $self->object;
 	
-	my @related_proc = map { $self->_pack_obj($_) } $object->Related_process;
+	my @related_proc = map { 
+		$self->_pack_obj($_)
+		} $object->Related_process;
 	
 	return {
 		description => "Processes related to this record",
-		data	=> \@related_proc
+		data	=> @related_proc ? \@related_proc : undef
 	};
 }
 
@@ -100,21 +102,10 @@ sub other_name{
 		
 	return {  
 		description => "Term alias",
-		data => $other_name
+		data => "$other_name"
 	};
 }
 
-sub public_name{  
-	my ($self) = @_;
-	my $object = $self->object;
-	
-	my $public_name = $object->Public_name;
-		
-	return {
-		description => "public_name",
-		data => $public_name 
-	};
-}
 
 
 #######################################
@@ -173,7 +164,7 @@ sub expression_cluster {
 	}
 	
 	return {
-		description => "Expression cluster",
+		description => "Expression cluster(s) related to this process",
 		data        => @data ? \@data : undef 
 	};
 
@@ -181,11 +172,16 @@ sub expression_cluster {
 sub _process_e_cluster{
 	my ($self, $e_cluster) = @_;
 	my $desc = $e_cluster->Description;
+	my $evidence = $self->_get_evidence($e_cluster);
 	
 	my %data = (
 		id				=> $self->_pack_obj($e_cluster),
-		description 	=> $desc
-	);
+		
+		evidence		=> {
+				evidence => $evidence,
+				text	 => $desc
+			}
+	); 
 	
 	return \%data;
 }
@@ -208,7 +204,7 @@ sub interaction {
 	}
 	
 	return {
-		description => "Interaction",
+		description => "Interactions relating to this process",
 		data        => @data ? \@data : undef 
 	};
 
@@ -228,7 +224,6 @@ sub _process_interaction{
 		case("Interactor_overlapping_gene"){
 			my @interacting_genes = $interaction->Interactor_overlapping_gene;
 			foreach my $gene_obj (@interacting_genes){
-				my $gene_name = $gene_obj->Public_name;
 				push (@interactors, $self->_pack_obj($gene_obj));
 			}
 		}
@@ -251,43 +246,6 @@ sub _process_interaction{
 #
 #######################################
 
-sub term {
-    my $self       = shift;
-    my $object     = $self->object;
-    my $tag_object = $object->Term;
-    return {
-        'data'        => $self->_pack_obj($object, $tag_object && "$tag_object"),
-        'description' => 'GO term'
-    };
-}
-
-# definition { }
-# This method will return a data structure with the definition of the go_term.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/definition
-
-sub definition {
-    my $self      = shift;
-    my $object    = $self->object;
-    my $data_pack = $object->Definition;
-    return {
-        'data'        => $data_pack && "$data_pack",
-        'description' => 'term definition'
-    };
-}
-
-# type { }
-# This method will return a data structure with the type of go_term.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/type
-sub type {
-    my $self      = shift;
-    my $object    = $self->object;
-    my $data_pack = $object->Type;
-    $data_pack =~ s/\_/\ /;
-    return {
-        'data'        => $data_pack,
-        'description' => 'type for this term'
-    };
-}
 
 
 sub go_term{
@@ -334,6 +292,7 @@ sub xxx{
 	};
 }
 SAMPLE_FUNC
+
 
 ############################################################
 #

@@ -1961,7 +1961,7 @@ sub tmp_acedata_dir {
 }
 
 # A simple array would probably suffice instead of a hash
-# (whcih is used in the view for sorting).
+# (which is used in the view for sorting).
 # We could sort objects in view according to name key 
 # supplied by _pack_obj but might be messy to change now.
 sub _pack_objects {
@@ -2016,7 +2016,7 @@ sub _split_genus_species {
 ############################################################
 
 
-# Description: checks data returned by extenral model for standards
+# Description: checks data returned by external model for standards
 #              compliance and fixes the data if necessary and possible.
 #              the fixing is very rudimentary and can be bypassed by intra-model
 #              invocations of methods. do not depend on it. fix your model code.
