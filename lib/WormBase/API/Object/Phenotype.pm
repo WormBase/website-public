@@ -91,7 +91,7 @@ sub related_phenotypes {
           ( my $type = $tag ) =~ s/_/ /g;
           my @entries;
           foreach my $ph ( $phenotype->$tag ) {
-            push @entries,$self->_pack_obj($ph,$self->best_phenotype_name($ph));	       
+            push @entries,$self->_pack_obj($ph);	       
           }
           $result->{$type} = \@entries if (scalar @entries > 0);
         }
