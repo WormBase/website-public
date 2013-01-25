@@ -17,6 +17,7 @@ sub support :Path('support') :Args(0) {
     my ($self, $c) = @_; 
     $c->stash->{section}  = "tools";
     $c->stash->{template} = "feed/issue.tt2";
+    $c->stash->{class} = "support";
     $c->stash->{url} = $c->req->params->{url} || "/";
     return;
 }
@@ -24,6 +25,7 @@ sub support :Path('support') :Args(0) {
 sub operator :Path("operator") :Args(0) {
     my ($self, $c) = @_; 
     $c->stash->{template} = "auth/operator.tt2";
+    $c->stash->{class} = "operator";
 }
 
 sub comment :Path("comments") :Args(0) {
@@ -32,6 +34,7 @@ sub comment :Path("comments") :Args(0) {
     my @comments = $c->model('Schema::Comment')->search(undef);
     $c->stash->{comments} = \@comments;
     $c->stash->{current_time}=time();
+    $c->stash->{class} = "comments";
 }
 
 sub tools :Path Args {
@@ -53,6 +56,7 @@ sub tools :Path Args {
 
 
     $c->stash->{section} = "tools";
+    $c->stash->{class} = $tool;
     $c->stash->{template}="tools/$tool/$action.tt2";
     $c->stash->{noboiler} = 1 if($c->req->params->{inline});
     my $api = $c->model('WormBaseAPI');

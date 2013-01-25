@@ -563,7 +563,7 @@ sub _get_lineage_data {
     my @data;
     foreach my $relation (@relationship) {	
 	my $name = $relation->Standard_name;
-	my ($level, $start, $end) = $relation->right->row;
+	my ($level, $start, $end) = $relation->right->row if $relation->right;
 	my @end_date;
 	
 	if (!($end =~ m/present/i)) {

@@ -30,12 +30,14 @@
 
     [% UNLESS no_layout %]
     <div id="buttons-nav">
-    [% UNLESS c.req.action == 'me' %]
-        <a tip="view comments" class="button section-button tl ui-corner-all" wname="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
-        <a tip="toggle empty fields" class="button tl ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
-    [% END %]
-        <div class="columns" id="column-dropdown"><a class="button ui-corner-all tl" tip="layout"><span class="ui-icon ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
+        <div class="columns" id="column-dropdown"><a class="button ui-corner-all"><span class="ui-icon-large ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
+
           <ul>
+        <li class="title">page settings</li>
+        <li id="open-sidebar" onClick='$jq("#nav-min").click();'><span hidden>show</span><span>hide</span> sidebar</li>
+        <li><span id="hide-empty-fields"><span>show</span><span hidden>hide</span> empty fields</span>
+        </li>
+        <li class="title">layout</li>
               <li onClick="WB.columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
               <li onClick="WB.columns(50, 50)" class="multCol"><div class="ui-icon ui-icon-column ui-icon-1-1"></div><div id="msg">(too narrow)</div></li>
               <li onClick="WB.columns(70, 30)" class="multCol"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
@@ -73,10 +75,10 @@
   <div id="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]
-        <h2 onClick="WB.scrollToTop();return false;">WormBase</h2>
+        <h2 onClick="WB.scrollToTop();return false;" title="scroll to top">WormBase</h2>
       [% ELSE %]
         [% UNLESS c.req.action == 'me'; make_star(wbid); END %]
-        <h4 class="ellipsis" onClick="WB.scrollToTop();return false;">
+        <h4 class="ellipsis" onClick="WB.scrollToTop();return false;"  title="scroll to top">
           [% object.name.data.id ? tag2link(object.name.data) : title %]
         </h4>
       [% END %]
@@ -92,7 +94,7 @@
         <li id="nav-[% w.id %]" 
             class="module-load [% w.type %]"
             wname="[% w.id %]"
-            href="[% w.href %]">[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
+            href="[% w.href %]"><span class="ui-icon ui-icon-close module-close" wname="[% w.id %]"></span>[% w.title %]
         </li>
       [% END %]
     [% END %]
@@ -112,14 +114,14 @@
       <li class="title module-load tools" 
           id="nav-comment" 
           wname="comment" 
-          href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label).path _ '?url=' _ c.req.uri.path %]">Comments <a class="comment-count"></a>
+          href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label).path _ '?url=' _ c.req.uri.path %]"><span class="ui-icon ui-icon-close module-close" wname="comment"></span>Comments <a class="comment-count"></a>
       </li>
 [% END %]
     </ul>
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon" class="ui-icon ui-icon-triangle-1-w"></div></div>
   </div>
   </div>
-  <div id="widget-holder" wclass="[% page_class %]" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]"
+  <div id="widget-holder" wclass="[% page_class %]" class="[% class %]"
 
 
       [% IF c.user_session.layout.$page_class.0.defined || layout %]

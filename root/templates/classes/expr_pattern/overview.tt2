@@ -14,7 +14,7 @@ WRAPPER highlight_box;
 END;
 
 
-WRAPPER $field_block title="" key='description';
+IF fields.description.data;
       # The main concise description
       '<div class="description">';
          markup(fields.description.data);

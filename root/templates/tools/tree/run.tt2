@@ -11,7 +11,11 @@ ELSE;
     name = data.object.name;
 END; %]
 [% UNLESS noboiler %]
-     <h1>WormBase [% title %] for [% data.object.class %]: [% name %]</h1>
+     [% tag = {
+          id = name
+          class = data.object.class
+      } %]
+     <h1>WormBase [% title %] for [% data.object.class %]: [% tag2link(tag, name) %]</h1>
      [% target = "_self" %]
 [% END %]
 

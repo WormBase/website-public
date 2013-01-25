@@ -26,6 +26,7 @@
         notifyTimer,
         cur_search_type = 'all',
         cur_search_species_type = '',
+        body = $jq("#wrap"),
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0;
     
@@ -202,17 +203,18 @@
         if(w === 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
         nav.stop(false, true).animate({width: w}).show().children("#title").toggleClass("closed").children("div").toggle();
         ptitle.stop(false, true).animate({marginLeft: marginLeft}).show();
-        $jq(this).attr("title", msg).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
+        $jq(this).attr("title", msg).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w ui-icon-triangle-1-e");
         Layout.updateLayout();
+        body.toggleClass("sidebar-hidden");
       });
       
       // Should be a user supplied site-wide option for this.
       // which can be over-ridden on any widget.
       // Toggle should empty look of button
-      $jq("#hide-empty-fields").click(function() {       
-            $jq(".disabled" ).toggle();    
-            $jq(this).toggleClass('ui-state-highlight');
+      $jq("#hide-empty-fields").click(function() {
+            body.toggleClass("show-empty");
       });
+      
       if(personSearch.size()>0){
           ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
             personSearch.delegate(".results-person .result li a", 'click', function(){
@@ -301,7 +303,7 @@
 //       if(listLayouts.children().size()==0){ajaxGet(listLayouts, "/rest/layout_list/"  + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"));}
       
       // used in sidebar view, to open and close widgets when selected
-      widgets.find(".module-load, .module-close").click(function() {
+      widgets.find(".module-load").click(function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
             content = $jq("#" + widget_name + "-content");
@@ -324,16 +326,28 @@
             nav.addClass("ui-selected");
             moduleMin(content.prev().find(".module-min"), false, "maximize");
           }
-          Scrolling.goToAnchor(widget_name);
-          Layout.updateLayout();
-        } else {
+        }
+        Scrolling.goToAnchor(widget_name);
+        Layout.updateLayout();
+        Scrolling.sidebarMove();
+        return false;
+      });
+      
+      
+      
+          // used in sidebar view, to open and close widgets when selected
+      widgets.find(".module-close").click(function() {
+        var widget_name = $jq(this).attr("wname"),
+            nav = $jq("#nav-" + widget_name),
+            content = $jq("#" + widget_name + "-content");
+
           Scrolling.scrollUp(content.parents("li"));
           moduleMin(content.prev().find(".module-min"), false, "minimize", function(){
             nav.removeClass("ui-selected");
             content.parents("li").removeClass("visible"); 
             Layout.updateLayout();
           });
-        }
+
         Scrolling.sidebarMove();
         return false;
       });
@@ -824,7 +838,9 @@
   
   function allResults(type, species, query, widget){
     var url = "/search/" + type + "/" + query + "/?inline=1",
-        allSearch = $jq("#all-search-results");
+        allSearch = $jq("#all-search-results"),
+        searchSummary = $jq("#search-count-summary"),
+        curr = $jq("#curr-ref-text");
     if(!widget){
       Scrolling.sidebarInit();
       search_change(type);
@@ -834,7 +850,7 @@
     }
     if(species) { url = url + "&species=" + species;} 
 
-    $jq("#search-count-summary").find(".count").each(function() {
+    searchSummary.find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
         if($jq(this).text() === '0'){
           $jq(this).parent().remove();
@@ -844,14 +860,22 @@
       });
     });
     
-    $jq("#search-count-summary").find(".load-results").click(function(){
-      var button = $jq(this);
-      loadResults(button.attr("href"));
-      button.addClass("ui-selected").siblings().removeClass("ui-selected").parent().siblings().find(".ui-selected").removeClass("ui-selected");
-      $jq("#curr-ref-text").html(button.html());
+    searchSummary.find(".ui-icon-close").click(function(){
+      loadResults(url);
+      searchSummary.find(".ui-selected").removeClass("ui-selected");
       return false;
     });
     
+    searchSummary.find(".load-results").click(function(){
+      var button = $jq(this);
+      loadResults(button.attr("href"));
+      searchSummary.find(".ui-selected:not('#current-ref')").removeClass("ui-selected");
+      button.addClass("ui-selected");
+      curr.html(button.html());
+      return false;
+    });
+    
+
     if (type === 'paper')
       Layout.resize();
     
@@ -875,6 +899,7 @@
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){ 
             Scrolling.sidebarMove();checkSearch(content);
+            Layout.resize();
           });
         }
         moduleMin(content.prev().find(".module-min"), false, "maximize");
@@ -918,6 +943,7 @@ var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
       wHolder = $jq("#widget-holder"),
+      title = $jq("#page-title").find("h2"),
       maxWidth = (location.pathname === '/' || location.pathname === '/me') ? 900 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
@@ -936,11 +962,10 @@ var Layout = (function(){
         sColumns ? columns(100, 100) : readHash();
         if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
       }
-      if ((maxWidth > 1000) && 
-          wHolder.children(".sortable").hasClass("table-columns") && 
+      if ((body.hasClass('table-columns')) && title.size() > 0 &&
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
-        (wHolder.outerWidth() + 150)))
-        columns(100, 100);
+        (title.outerWidth())))
+        columns(100, 100, 1);
       if(ref && (ref.hasClass("widget-narrow") !== (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
     }
@@ -950,10 +975,10 @@ var Layout = (function(){
           tWidth = wHolder.innerWidth(),
           leftWidth = sColumns ? 100 : leftWidth;
       if(leftWidth>95){
-        wHolder.removeClass('table-columns').addClass('one-column');
         rightWidth = leftWidth = 100;
+        body.removeClass('table-columns').addClass('one-column');
       }else{
-        wHolder.addClass('table-columns').removeClass('one-column');
+        body.addClass('table-columns').removeClass('one-column');
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
@@ -1127,9 +1152,7 @@ var Layout = (function(){
         }
       }
       if(sidebar){
-        $jq(".navigation-min").add("#navigation").css({width: 0}).children("#title").addClass("closed").children("div").hide();
-        $jq("#page-title").css({marginLeft: '-1em'});
-        $jq("#nav-min").attr("title", "open sidebar").children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w ui-icon-triangle-1-e");
+        $jq("#nav-min").click();
       }
       if(location.hash.length > 0){
         updateLayout(undefined, hash);
@@ -1242,9 +1265,8 @@ var Scrolling = (function(){
   function isScrolledIntoView(elem){
       var docViewTop = $window.scrollTop(),
           docViewBottom = docViewTop + ($window.height()*0.75),
-          elemTop = $jq(elem).offset().top,
-          elemBottom = elemTop + $jq(elem).height();
-      return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
+          elemTop = $jq(elem).offset().top;
+      return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
   
   function sidebarMove() {
@@ -1992,7 +2014,8 @@ function setupCytoscape(data, types){
       newLayout: Layout.newLayout,
       setupCytoscape: setupCytoscape,
       getPlugin: Plugin.getPlugin,
-      reloadWidget: reloadWidget
+      reloadWidget: reloadWidget,
+      resize: Layout.resize
     }
   })();
 
