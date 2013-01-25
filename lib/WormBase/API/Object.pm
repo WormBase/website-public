@@ -290,7 +290,7 @@ sub best_phenotype_name {
   my $name = ($phenotype =~ /WBPheno.*/) ? $phenotype->Primary_name : $phenotype;
   $name =~ s/_/ /g;
   $name =  $phenotype->Short_name . " ($name)" if $phenotype->Short_name;
-  return $name;
+  return "$name";
 }
 
 
