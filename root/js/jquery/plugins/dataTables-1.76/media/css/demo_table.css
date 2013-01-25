@@ -41,6 +41,7 @@
     -moz-border-radius: 5px;
     padding:0;
 	zoom: 1; /* Feeling sorry for IE */
+    min-width: 34em;
 }
 
 .wb_table_wrapper.table_paginate {
