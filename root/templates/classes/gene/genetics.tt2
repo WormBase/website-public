@@ -9,15 +9,16 @@
 
    # Alleles
    WRAPPER $field_block title="Alleles" key="alleles";
-       build_data_table(order=['variation','molecular_change','effects','aa_change','locations', 'phen_count'],
-                        columns={ variation         => 'Allele',
-	  	                  molecular_change  => 'Molecular<br /> change',
+       build_data_table(
+			order=['variation','molecular_change','effects','aa_change','locations', 'phen_count'],
+            columns={ variation         => 'Allele',
+	  	              molecular_change  => 'Molecular<br /> change',
 			          effects           => 'Protein<br /> effects',
-				  locations         => 'Locations',
-                  phen_count         => '# of<br /> Phenotypes',
-				   aa_change         => 'Protein<br /> change',
-                               },
-                         key='alleles');
+				      locations         => 'Locations',
+                      phen_count         => '# of<br /> Phenotypes',
+				      aa_change         => 'Protein<br /> change',
+                    },
+            key='alleles');
    END;
 
    # Polymorphisms
