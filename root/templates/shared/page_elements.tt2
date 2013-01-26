@@ -402,7 +402,8 @@ END;
   </table>
     [% END %]
     <script type="text/javascript" >
-        WB.getPlugin("dataTables", function(){
+WB.getPlugin("dataTables", function(){
+        WB.getPlugin("tabletools", function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
@@ -410,11 +411,15 @@ END;
             "bFilter"          : [% filter %],
             "bInfo"            : [% info %],
             "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
-            "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"flrtip>' ; ELSE; '<"wb_table_wrapper"flrtip>'; END; %]',
+            "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
+            "oTableTools": {
+            "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_cvs_xls_pdf.swf"
+        }
             [% style %]
           });
 
         });
+	});
     </script>
    [% END %]
 
