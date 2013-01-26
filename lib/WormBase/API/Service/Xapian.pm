@@ -82,7 +82,6 @@ sub search_autocomplete {
     my ( $class, $c, $q, $type) = @_;
     $q = $class->_add_type_range($c, $q . "*", $type);
 
-
     my $query=$class->syn_qp->parse_query( $q, 64|16 );
     my $enq       = $class->syn_db->enquire ( $query );
     $c->log->debug("query:" . $query->get_description());
@@ -100,7 +99,7 @@ sub search_autocomplete {
 }
 
 sub search_exact {
-    my ( $class, $c, $q, $type) = @_;
+    my ($class, $c, $q, $type) = @_;
   
     my ($query, $enq);
     if( $type && ( ($q =~ m/^WB/i) || $type eq 'disease' || $type eq 'gene_class') ){
@@ -109,8 +108,8 @@ sub search_exact {
       $c->log->debug("query:" . $query->get_description());
     }elsif(!($q =~ m/\s.*\s/)){
       $q = $class->_add_type_range($c, $q, $type);
-
-      $query=$class->syn_qp->parse_query( "\"$q\"", 1|2 );
+      $q = "\"$q\"" unless ($q =~ m/.*_.*/);
+      $query=$class->syn_qp->parse_query( $q, 1|2 );
       $enq       = $class->syn_db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
     }
