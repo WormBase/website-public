@@ -167,7 +167,10 @@ sub named_by {
 
 sub classification {
     my $self   = shift;
-    my $object = $self->object;
+    
+    #optional second parameter: source object
+    my $gene_obj = shift;
+    my $object = $gene_obj ? $gene_obj : $self->object;
 
     my $data;
 

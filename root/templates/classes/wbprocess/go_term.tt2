@@ -1,0 +1,22 @@
+[%
+	WRAPPER $field_block title="GO Terms" key="go_term";
+		build_data_table(
+			order = ['name','type','def'],
+			columns={ 
+				name	=> "Term",
+				type	=> "Type",
+				def		=> "Definition"
+			},
+			key = 'go_term'
+		);
+	END;
+
+%]
+
+
+
+
+
+
+
+

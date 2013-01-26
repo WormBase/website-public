@@ -1,0 +1,14 @@
+[%
+#Interactions
+WRAPPER $field_block title="Interactions" key="interaction";
+	build_data_table(
+		order = ['interactors','type','summary'],
+		columns={
+			interactors	=> "Interactors",
+			type		=> "Type",
+			summary		=> "Summary"
+		},
+		key = 'interaction'
+	);
+END;
+%]

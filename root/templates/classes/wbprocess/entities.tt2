@@ -1,0 +1,40 @@
+[%
+
+#Genes
+WRAPPER $field_block title="Genes" key="genes";
+	build_data_table(
+		order = ['name','type'],
+		columns={ 
+			name	=> "Gene",
+			type	=> "Type"
+		},
+		key = 'genes'
+	);
+END;
+
+#Expression clusters
+WRAPPER $field_block title="Experssion clusters" key="expression_cluster";
+	build_data_table(
+		order = ['id','description'],
+		columns={
+			id			=> "WormBase ID",
+			description	=> "Description"
+		},
+		key = 'expression_cluster'
+	);
+END;
+
+#Interactions
+WRAPPER $field_block title="Interactions" key="interaction";
+	build_data_table(
+		order = ['interactors','type','summary'],
+		columns={
+			interactors	=> "Interactors",
+			type		=> "Type",
+			summary		=> "Summary"
+		},
+		key = 'interaction'
+	);
+END;
+
+%]
