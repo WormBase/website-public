@@ -52,7 +52,10 @@ has 'previous_address_data' => (
 	my @entries;
 	foreach my $entry ($object->Old_address) {
 	    my %address;
-	    $address{date_modified} = "$entry";
+        $entry =~ m/^(.*)\s(\S*)$/g;
+	    $address{date_modified} = "$1";
+#       $address{date_modified} = "$entry";
+
 	    foreach my $tag ($entry->col) {
 		if ($tag =~ m/street|email|office/i) {		
 		    my @data = map { $_->name } $tag->col;
