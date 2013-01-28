@@ -186,7 +186,7 @@ sub _make_common_name {
             $name = $self->_api->wrap($object)->_common_name; 
         }
     }
-
+    $name //= eval { $self->ace_dsn->dbh->raw_fetch($object, "Public_name"); };
 	$name //= $object->name;
     return $name; # caution: $name should be a string!
 }
