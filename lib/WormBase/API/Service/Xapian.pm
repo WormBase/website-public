@@ -107,8 +107,8 @@ sub search_exact {
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
     }elsif(!($q =~ m/\s.*\s/)){
+      $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/.*_.*/));
       $q = $class->_add_type_range($c, $q, $type);
-      $q = "\"$q\"" unless ($q =~ m/.*_.*/);
       $query=$class->syn_qp->parse_query( $q, 1|2 );
       $enq       = $class->syn_db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
