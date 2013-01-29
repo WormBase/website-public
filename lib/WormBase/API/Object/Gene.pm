@@ -983,7 +983,7 @@ sub nematode_orthologs {
     my $data = $self->_parse_homologs(
         [ $self->object->Ortholog ],
         sub {
-            $_[0]->right(2) ? join('; ', map { "$_" } $_[0]->right(2)->col) : undef;
+            return $_[0]->right(2) ? [map { $self->_pack_obj($_) } $_->right(2)->col] : undef;
         }
     );
 
@@ -1010,7 +1010,7 @@ sub _build__other_orthologs {
     return $self->_parse_homologs(
         [ $self->object->Ortholog_other ],
         sub {
-            $_[0]->right ? join('; ', map { "$_" } $_[0]->right->col) : undef;
+            return $_[0]->right ? [map { $self->_pack_obj($_) } $_->right->col] : undef;
         }
     );
 }
@@ -1056,7 +1056,7 @@ sub paralogs {
     my $data = $self->_parse_homologs(
         [ $self->object->Paralog ],
         sub {
-            $_[0]->right(2) ? join('; ', map { "$_" } $_->right(2)->col) : undef;
+            return $_[0]->right(2) ? [map { $self->_pack_obj($_) } $_->right(2)->col] : undef;
         }
     );
 
@@ -1077,7 +1077,7 @@ sub _parse_homologs {
         my ($g, $spec) = split /_/, $species;
         push @parsed, {
             ortholog => $packed_homolog,
-            method   => scalar $method_sub->($_),
+            method   => $method_sub->($_),
             species  => {
                 genus   => ucfirst $g,
                 species => $spec,
