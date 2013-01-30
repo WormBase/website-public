@@ -33,5 +33,6 @@
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
       [% INCLUDE google_analytics %]
     </script>
+    [%# INCLUDE olark %]
   </body>
 </html>
