@@ -236,11 +236,9 @@ sub _get_tag_info {
       my ($it,$res)= $self->search_exact($c, $id, lc($ace));
       if($it->{pager}->{total_entries} > 0 ){
         my $doc = @{$it->{struct}}[0]->get_document();
-        my $ret;
-        if($fill){
-          $ret = $self->_get_obj($c, $doc, $footer);
-        }
-        $ret = $self->_pack_search_obj($c, $doc);
+        return $self->_get_obj($c, $doc, $footer) if $fill;
+
+        my $ret = $self->_pack_search_obj($c, $doc);
         $ret->{class} = $class;
         return $ret;
       }
