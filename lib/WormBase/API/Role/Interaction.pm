@@ -1,3 +1,4 @@
+
 package WormBase::API::Role::Interaction;
 
 use Moose::Role;

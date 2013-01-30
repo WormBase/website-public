@@ -1,5 +1,5 @@
 [GENERAL]
-description =  MERCATER alignments (WS204)
+description =  MERCATOR alignments (WS204)
 
 # The synteny database
 join        = dbi:mysql:database=gbrowse_syn_join_mercater;host=localhost;user=www-data
