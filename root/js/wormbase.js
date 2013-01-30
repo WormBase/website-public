@@ -1803,31 +1803,31 @@ function setupCytoscape(data, types){
                   var nearby = $jq("#cyto_panel_nearby option:selected").val();
           var nodetype = $jq("#cyto_panel_nodetype option:selected").val();
 
-          if(nodetype ===0){
+          if(nodetype ==0){
               vis.removeFilter("nodes", true);
           } else {
               vis.filter("nodes", function(node) { return node.data.ntype === nodetype });
           }
 
-                  if(direction ===0 && inter_type===0 && nearby===0){
+                  if(direction ==0 && inter_type==0 && nearby==0){
                     //vis.removeFilter("edges",true);
-                    vis.filter("edges", function(edge){return edge.data.type !== "No_interaction"}, true);
+                    vis.filter("edges", function(edge){return edge.data.type != "No_interaction"}, true);
                   }else{
                   vis.filter("edges", function(edge) {
-                    if(direction !==0 && inter_type!==0 && nearby!==0) {
-                        return edge.data.type === inter_type && edge.data.direction == direction && edge.data.nearby == 0;
-                    }else if(direction !==0 && nearby!==0){
-                        return edge.data.direction == direction && edge.data.nearby == 0  && edge.data.type !== "No_interaction";
-                    }else if(direction !==0 && inter_type!==0){
-                        return edge.data.type === inter_type;
-                    }else if(direction !==0){
-                        return edge.data.direction === direction && edge.data.type !== "No_interaction";
-                    }else if(inter_type !==0 && nearby!==0){
-                        return  edge.data.type === inter_type && edge.data.nearby === 0;
-                    }else if(nearby !== 0){
-                        return edge.data.nearby === 0 && edge.data.type !== "No_interaction";
+                    if(direction !=0 && inter_type!=0 && nearby!=0) {
+                        return edge.data.type == inter_type && edge.data.direction == direction && edge.data.nearby == 0;
+                    }else if(direction ==0 && nearby!=0){
+                        return edge.data.direction == direction && edge.data.nearby == 0  && edge.data.type != "No_interaction";
+                    }else if(direction !=0 && inter_type!=0){
+                        return edge.data.type == inter_type;
+                    }else if(direction !=0){
+                        return edge.data.direction == direction && edge.data.type != "No_interaction";
+                    }else if(inter_type !=0 && nearby!=0){
+                        return  edge.data.type == inter_type && edge.data.nearby == 0;
+                    }else if(nearby != 0){
+                        return edge.data.nearby == 0 && edge.data.type != "No_interaction";
                     }else{
-                        return edge.data.type === inter_type;
+                        return edge.data.type == inter_type;
                     }
                     }, true);
                   }
