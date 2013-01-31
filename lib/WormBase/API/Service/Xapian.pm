@@ -101,26 +101,28 @@ sub search_autocomplete {
 sub search_exact {
     my ($class, $c, $q, $type) = @_;
   
-    my ($query, $enq);
-    if( $type && ( ($q =~ m/^WB/i) || $type eq 'disease' || $type eq 'gene_class') ){
+    my ($query, $enq, $mset);
+    if( $type ){
       $query=$class->qp->parse_query( "\"$type$q\"", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exacta:" . $query->get_description());
-    }elsif(!($q =~ m/\s.*\s/)){
-      if($q =~ s/\.(.*)$/*/g){
-        $q = "$1 $q";
-      }
-      $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/.*_.*/));
-      $q = $class->_add_type_range($c, $q, $type);
-      $query=$class->syn_qp->parse_query( $q, 2|256 );
-      $enq       = $class->syn_db->enquire ( $query );
-      $c->log->debug("query exactb:" . $query->get_description());
+      $mset = $enq->get_mset( 0,2 ) if $enq;
+    }
+   
+    if((!$mset || $mset->empty() || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
+        my $qu = $q;
+        $qu = "$1 $qu" if ($qu =~ s/\.(.*)$/*/g);
+        $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/));
+        $qu = $class->_add_type_range($c, $qu, $type);
+        $query=$class->syn_qp->parse_query( $qu, 2|256 );
+        $enq       = $class->syn_db->enquire ( $query );
+        $c->log->debug("query exactb:" . $query->get_description());
+        $mset      = $enq->get_mset( 0,2 ) if $enq;
     }
 
-    my $mset      = $enq->get_mset( 0,2 ) if $enq;
     if(!$mset || $mset->empty()){
+      $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/_/));
       $q = $class->_add_type_range($c, $q, $type);
-
       $query=$class->qp->parse_query( $q, 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exactc:" . $query->get_description());
