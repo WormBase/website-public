@@ -237,6 +237,7 @@
 # returns: formatted html to link using url and description from config.  
 #          Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id) BLOCK;
+       IF link;
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
       #not sure why this has to be lower case since some external links are case sensitive eg. Phenobank2
       #link = link FILTER lower;
@@ -259,6 +260,7 @@
        "<a href=\"$url\" 
            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" title=\"$desc\">$text</a>";
+        END;
     END;
 
 
