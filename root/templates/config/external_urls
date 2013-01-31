@@ -422,6 +422,23 @@
 		search		= 'http://www.wormbase.org/db/seq/protein?name=%s'
 	}
 
+
+    WormQTL = {
+        description = 'WormQTL is an online scalable system for QTL exploration to service the worm community'
+        base        = 'http://www.wormqtl.org/molgenis.do?__target=main&select=Home'
+        email       = 'info@panaceaproject.eu'
+        search      = 'http://www.wormqtl.org/molgenis.do?__target=QtlFinderPublic2&select=QtlFinderPublic2&p=%s'
+    }
+
+    SignaLink = {
+        description = 'SignaLink 2.0: An integrated resource to analyze signaling pathway cross-talks, transcription factors, miRNAs and regulatory enzymes'
+        base        = 'http://www.signalink.org'
+        email       = 'korcsmaros@netbiol.elte.hu'
+        search      = 'http://www.signalink.org/search/%s'
+        protein     = 'http://www.signalink.org/protein/%s'
+        mirna       = 'http://www.signalink.org/mirna/%s'
+    }
+
     MODEncodeTissueL2_A_class_neuron = {
         description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_A_class_neuron'
         base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_A_class_neuron'
