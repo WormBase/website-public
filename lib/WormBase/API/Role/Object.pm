@@ -1866,15 +1866,9 @@ sub _build_xrefs {
     my %dbs;
     foreach my $db (@databases) {
         # Possibly multiple entries for a single DB
-	@{$dbs{$db}{ids}} = map {
-	    my @types = $_->col;
-	    map { 
-		my $val = $_;
-		if ($val =~ /OMIM:(.*)/) {"$1"}
-		elsif ($val =~ /GI:(.*)/){"$1"}
-		else { "$_" }
-	    } @types;
-	} $db->col;
+      foreach my $dbt ($db->col){
+        @{$dbs{$db}{$dbt}{ids}} = map {( $_ =~ /^(OMIM:|GI:)(.*)/ ) ? "$2" : $_;} $dbt->col;
+      }
     }
 
     return {

@@ -236,7 +236,7 @@
 #         id (optional) - the unique id needed in the url.  If not provided, base url is used.
 # returns: formatted html to link using url and description from config.  
 #          Has google analytics code to record clicks and opens new window
-    MACRO external_link(link, text, id) BLOCK;
+    MACRO external_link(link, text, id, dbt) BLOCK;
        IF (link||text||id);
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
       #not sure why this has to be lower case since some external links are case sensitive eg. Phenobank2
@@ -244,7 +244,12 @@
        IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
        desc = site.external_urls.$link.description;
        IF id;
-          USE String=format(site.external_urls.$link.search);
+          f = site.external_urls.$link.search;
+          IF dbt && site.external_urls.$link.defined(dbt);
+             f = site.external_urls.$link.$dbt;
+          END;
+          
+          USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt : site.external_urls.$link.search);
 	      IF (link == 'ensembl');
              UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
              array=id.split('&');
