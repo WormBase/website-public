@@ -418,7 +418,7 @@
 	wormpep = {
 		description	= 'WORMPEP is the C.elegans protein set'
 		base		= 'http://www.wormbase.org'
-		email		= 'help@wormbase.org'
+		maintainer		= 'help@wormbase.org'
 		search		= 'http://www.wormbase.org/db/seq/protein?name=%s'
 	}
 
@@ -426,14 +426,14 @@
     WormQTL = {
         description = 'WormQTL is an online scalable system for QTL exploration to service the worm community'
         base        = 'http://www.wormqtl.org/molgenis.do?__target=main&select=Home'
-        email       = 'info@panaceaproject.eu'
+        maintainer       = 'info@panaceaproject.eu'
         search      = 'http://www.wormqtl.org/molgenis.do?__target=QtlFinderPublic2&select=QtlFinderPublic2&p=%s'
     }
 
     SignaLink = {
         description = 'SignaLink 2.0: An integrated resource to analyze signaling pathway cross-talks, transcription factors, miRNAs and regulatory enzymes'
         base        = 'http://www.signalink.org'
-        email       = 'korcsmaros@netbiol.elte.hu'
+        maintainer       = 'korcsmaros@netbiol.elte.hu'
         search      = 'http://www.signalink.org/search/%s'
         protein     = 'http://www.signalink.org/protein/%s'
         mirna       = 'http://www.signalink.org/mirna/%s'
