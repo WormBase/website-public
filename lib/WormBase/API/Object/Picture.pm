@@ -132,9 +132,6 @@ sub image {
     my $filename = $self ~~ 'Name'
         or return $datapack;
 
-    my $file = File::Spec->catfile($self->pre_compile->{image_file_base},$self->pre_compile->{picture}, $reference, $filename);
-    return $datapack unless -e $file && !-z $file;
-
     $filename =~ /^(.+)\.(.+)$/ or return $datapack; # greedy . will match 'a.b.c.jpg' properly
     $datapack->{data} = {
         name   => $reference . '/' . $1 || $self->object->name,
