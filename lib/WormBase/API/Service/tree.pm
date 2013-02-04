@@ -79,7 +79,7 @@ sub generate_tree {
     if ($obj) {
 	my ($n,$c) = (CGI::escape($request_name),CGI::escape($obj->class));
 	#local(%PAPERS) = ();
-	my $myimage = ($request_class =~ /^Picture/ ? $obj->Pick_me_to_call->right->right : 'No_Image') ;
+	my $myimage = (($request_class =~ /^Picture/  && $obj->Pick_me_to_call)? $obj->Pick_me_to_call->right->right : 'No_Image') ;
         @data =  $obj->asHTML(\&to_href);
     } 
     return \@data;
