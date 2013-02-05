@@ -29,10 +29,10 @@
         [% IF TYPES.keys %]
 <div id="legend">
     Edge-colors:
-      [% edgeColors = ['#08298A','#B40431','#FF8000','#04B404','#8000FF','#191007','#73c6cd','#92d17b','#cC87AB4','#e4e870','#696D09'] %]
+      [% edgeColors = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E"] %]
       [% FOREACH obj IN TYPES.keys.sort %]
       [% ind = loop.index %]
-      <span style="color:[% edgeColors.$ind %]">[% obj %] </span>
+      <span style="color:[% obj == 'Predicted' ? '#999' : edgeColors.$ind %]">[% obj %] </span>
       [% END %]
 </div>
         [% END %]
@@ -72,6 +72,7 @@
         types = [ [% FOREACH obj IN TYPES.keys.sort %]
                           "[% obj %]",
                     [% END %] ]
+console.log(data);
       WB.setupCytoscape(data, types);
     })();
     </script>
