@@ -448,6 +448,16 @@
         description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_ACLASS'
         base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_ACLASS'
     }
+
+    MODEncodeTissueEMB_BAG = {
+        description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_BAG'
+        base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_BAG'
+    }
+
+    Spencer2011 = {
+        description = 'Spencer et al., 2011 (WBPaper00037950) Compendium Resource'
+        base        = 'http://www.vanderbilt.edu/wormdoc/wormmap/Expressed_genes.html'
+    }
 }
 
 -%]
