@@ -180,7 +180,7 @@ sub _get_interactions {
 
     #determine object type and extract interactions accordingly
     if ($nearby){ 
-      @objects = map {$_->Interaction} grep {$_->class =~ /gene/i} values %{$data->{nodes_obj}} 
+      @objects = map {$_->Interaction} grep {($_->class =~ /gene/i) && ($data->{nodes}{"$_"}{predicted} == 0)} values %{$data->{nodes_obj}} 
     } elsif ($object->class =~ /gene/i) { 
       @objects = $object->Interaction 
     } elsif ($object->class =~ /interaction/i ) { 
@@ -194,18 +194,19 @@ sub _get_interactions {
     $self->log->debug("nearby: $nearby, size: ", scalar @objects);
     foreach my $interaction ( @objects ) {
       next if($data->{ids}{"$interaction"});
-      if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
-     my $edgeList = $self->_get_interaction_info($interaction, $nearby);
+      if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_} || ($data->{nodes}{"$_"}{predicted} == 1)} map {$_->col} $interaction->Interactor; }
+      my $edgeList = $self->_get_interaction_info($interaction, $nearby);
       foreach my $key (keys %{$edgeList}) {
-#      $self->log->debug("edges");
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
-#           $self->log->debug("     effector: $effector, effected: $effected");
           next unless($effector);
           my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
           my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
           $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
           $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, "$effector_name" || undef);
           $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, "$effected_name" || undef);
+          $data->{nodes}{"$effector"}{predicted} = ($type eq 'Predicted') ? $data->{nodes}{"$effector"}{predicted} // 1 : 0;
+          $data->{nodes}{"$effected"}{predicted} = ($type eq 'Predicted') ? $data->{nodes}{"$effected"}{predicted} // 1 : 0;
+
           $data->{nodes_obj}{"$effector"} = $effector;
           $data->{nodes_obj}{"$effected"} = $effected;
           $data->{ids}{"$interaction"}=1;
@@ -260,7 +261,7 @@ sub _get_interaction_info {
     my $object = $self->object;
     my $type = $interaction->Interaction_type;
     $type = $type->right ? $type->right . '' : "$type";
-    return \%results if(($type eq 'No_interaction') || ($type eq 'Predicted' && !$nearby));
+    return \%results if(($type eq 'No_interaction'));
     $type =~ s/_/ /g;
     if ($type eq 'Regulatory') {
 	if ( my $reg_result = $interaction->Regulation_result ) {
@@ -269,8 +270,7 @@ sub _get_interaction_info {
 	}
     }
     # Filter low confidence predicted interactions.
-    # what happens when no data?
-    return undef if ($interaction->Log_likelihood_score || 1000) <= 1.5 && $object->class ne 'Interaction' && $type =~ m/predicted/i;
+    return \%results if ($interaction->Log_likelihood_score || 1000) <= 1.5 && $object->class ne 'Interaction' && $type =~ m/predicted/i;
 
     my $phenotype = $interaction->Interaction_phenotype;
     my ( @effectors, @effected, @others );
