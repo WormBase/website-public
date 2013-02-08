@@ -489,10 +489,7 @@
       if(hover)
         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s");
       (!button.hasClass("show")) ? button.attr("title", "maximize").addClass("show") : button.attr("title", "minimize").removeClass("show");
-      
-      module.find(".cyto_panel").each(function(index, domEle){
-		  domEle.selectedIndex = 0;
-	    });
+
       Layout.updateLayout();
     }
     
@@ -1726,6 +1723,7 @@ function setupCytoscape(data, types){
                       { name: "color", type: "string" },
                       { name: "ntype", type: "string" },
                       { name: "link", type: "string" },
+                      { name: "predicted", type: "int" },
                   ],
                       
                   edges: [ { name: "label", type: "string" },
@@ -1788,55 +1786,68 @@ function setupCytoscape(data, types){
           
               Plugin.getPlugin("cytoscape_web", function(){ 
                 // init and draw
-                var vis = new org.cytoscapeweb.Visualization("cytoscapeweb", options);
+                var vis = new org.cytoscapeweb.Visualization("cytoscapeweb", options),
+                    legend = $jq('#cyto_legend'),
+                    node_size = (legend.find('input[name=nodes]').size() > 0);
                 
                 vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
                 vis.ready(function() {
-                    vis.filter("nodes", function(node) { return node.data.ntype === 'Gene' || node.data.ntype === 'Other' || node.data.ntype === 'Molecule'})
-                    // add a listener for when nodes and edges are clicked
+                    vis.filter("nodes", function(node) { return node.data.ntype.match('Gene|Other|Molecule') && node.data.predicted != 1; })
+                    vis.filter("edges", function(edge) { return !edge.data.type.match('Predicted'); })
+// add a listener for when nodes and edges are clicked
                     vis.addListener("click", "nodes", function(event) {
                         window.open(event.target.data.link);
                     });
+                    
+                    resetChecked();
                   /* Should be disabled until interactions are merged
                     vis.addListener("click", "edges", function(event) {
                     window.open(event.target.data.link);
                     }); */ 
                 });
                 
-                $jq('.cyto_panel').change(function(){
-                      var direction = $jq("#cyto_panel_direction option:selected").val(), 
-                          inter_type = $jq("#cyto_panel_type option:selected").val(), 
-                          nearby = $jq("#cyto_panel_nearby option:selected").val(),
-                          nodetype = $jq("#cyto_panel_nodetype option:selected").val();
-                      if(nodetype ==0){
-                          vis.removeFilter("nodes", true);
-                      } else {
-                          vis.filter("nodes", function(node) { return node.data.ntype == nodetype });
-                      }
-
-                      if(direction == 0 && inter_type == 0 && nearby == 0){
-                        vis.removeFilter("edges",true);
-//                         vis.filter("edges", function(edge){return edge.data.type != "No_interaction"}, true);
-                      }else{
-                        vis.filter("edges", function(edge) {
-                            if(direction !=0 && inter_type!=0 && nearby!=0) {
-                                return edge.data.type == inter_type && edge.data.direction == direction && edge.data.nearby == 0;
-                            }else if(direction != 0 && nearby!=0){
-                                return edge.data.direction == direction && edge.data.nearby == 0;
-                            }else if(direction != 0 && inter_type!=0){
-                                return edge.data.type == inter_type;
-                            }else if(direction !=0){
-                                return edge.data.direction == direction;
-                            }else if(inter_type !=0 && nearby!=0){
-                                return  edge.data.type == inter_type && edge.data.nearby == 0;
-                            }else if(nearby != 0){
-                                return edge.data.nearby == 0;
-                            }else{
-                                return edge.data.type == inter_type;
-                            }
-                        }, true);
-                      }
+                function resetChecked(){
+                  legend.find('input:checkbox').map(function(){
+                    var t = $jq(this);
+                    if (t.attr('name') == 'type'){ t.prop('checked', (!t.val().match('Predicted')));}
+                    else if (t.attr('name') == 'nodes'){ t.prop('checked', (t.val().match('Gene|Other|Molecule')));}
+                    else { t.prop('checked', true);}
+                  });
+                }
+                
+                legend.find('input:checkbox').click(function(){
+                  if($jq(this).val().match('Predicted')){
+                    updateEdgeFilter();
+                    updateNodeFilter();
+                    return;
+                  }
+                  $jq(this).attr('name').match('nodes') ? updateNodeFilter() : updateEdgeFilter();
                 });
+                
+                function updateNodeFilter(){
+                  var nodes_regex = getRegexFilter('nodes'),
+                      predict = (legend.find('input.cyto_predict').is(':checked'));
+                  vis.filter("nodes", function(node) {
+                    return (nodes_regex || !node_size) ? (node.data.ntype.match(nodes_regex) && (predict ? true : node.data.predicted != 1)) : false;
+                  });
+                }
+                
+                function getRegexFilter(type){
+                    return legend.find('input[name=' + type + ']:checked').map(function(){ return this.getAttribute('value'); }).get().join('|');
+                }
+                
+                function updateEdgeFilter(){
+                  var types_regex = getRegexFilter('type'),
+                      direction_regex = getRegexFilter('direction'),
+                      nearby = (legend.find('input[name=nearby]').is(':checked'));
+                  
+                  vis.filter("edges", function(edge) {
+                            return (types_regex && direction_regex) ? 
+                                          (edge.data.type.match(types_regex) 
+                                       && edge.data.direction.match(direction_regex) 
+                                       && (nearby || edge.data.nearby == 0)) : false;
+                        }, true);
+                }
               });
               $jq( "#resizable" ).resizable();
     }
