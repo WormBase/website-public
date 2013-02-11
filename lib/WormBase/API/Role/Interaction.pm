@@ -95,6 +95,7 @@ sub interactions  {
                             types => $results->{types},
                             nodes => $results->{nodes},
                             showall => $results->{showall},
+                            ntypes => $results->{ntypes},
                             edges_all => \@edges_all
                        } : { edges => \@edges },
     };
@@ -160,6 +161,7 @@ sub interaction_details {
 		data		=> {    edges => \@edges,
                             types => $results->{types},
                             nodes => $results->{nodes},
+                            ntypes => $results->{ntypes},
                             showall => $results->{showall},
                        },
     };
@@ -197,12 +199,11 @@ sub _get_interactions {
       foreach my $key (keys %{$edgeList}) {
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
           next unless($effector);
-          next unless ($effector->class eq 'Gene' && $effected->class eq 'Gene');
-          my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
-          my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
-          $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
-          $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, "$effector_name" || undef);
-          $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, "$effected_name" || undef);
+          next unless ($effector->class =~ /Molecule|Gene|Rearrangement|Text/ && $effected->class =~ /Molecule|Gene|Rearrangement|Text/);
+
+          $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector);
+          $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected);
+
           $data->{nodes}{"$effector"}{predicted} = ($type eq 'Predicted') ? $data->{nodes}{"$effector"}{predicted} // 1 : 0;
           $data->{nodes}{"$effected"}{predicted} = ($type eq 'Predicted') ? $data->{nodes}{"$effected"}{predicted} // 1 : 0;
 
@@ -210,7 +211,12 @@ sub _get_interactions {
           $data->{nodes_obj}{"$effected"} = $effected;
           $data->{ids}{"$interaction"}=1;
           $data->{types}{"$type"}=1;
-          
+            
+          my $ntype1 = $data->{nodes}{"$effector"}->{class};
+          my $ntype2 = $data->{nodes}{"$effected"}->{class};
+          $data->{ntypes}{"$ntype1"}=1;
+          $data->{ntypes}{"$ntype2"}=1;
+
           my $phenObj = $self->_pack_obj($phenotype);
           my $key = "$effector $effected $type";
           my $key2 = "$effected $effector $type";
