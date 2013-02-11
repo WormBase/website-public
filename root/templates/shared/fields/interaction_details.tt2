@@ -1,6 +1,7 @@
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
 [% EDGES = EDGES || interaction_details.data.edges %]
+[% NTYPES = NTYPES || interaction_details.data.ntypes %]
 
       <div id="cyto_legend" style="width:15em;position:absolute;right:0;z-index:5" class="detail-box ui-corner-all">
         <p><center><h3>Legend</h3></center></p>
@@ -10,7 +11,7 @@
           <p>
             [% FOREACH obj IN TYPES.keys.sort %]
               [% ind = loop.index %]
-              <input type="checkbox" name="type" value="[% obj %]">
+              <input type="checkbox" name="type" value="[% obj %]" [% IF obj == 'Predicted'; 'class="cyto_predict"'; END; %]>
               <span style="color:[% obj == 'Predicted' ? '#888"><small><b>- -</b></small>' : edgeColors.$ind _ '"><b>&ndash;</b>' %] [% obj %] </span><br />
             [% END %]
           </p>
@@ -21,6 +22,16 @@
           <input type="checkbox" name="direction" value="Effector->Effected"> <b>&#8594;</b> Effector -> Effected<br />
           <input type="checkbox" name="direction" value="non-directional|Other"> <b>&ndash;</b> Non-directional<br />
         </p>
+
+        [% IF NTYPES.keys.size > 1 %]
+        <h4>Interactor types</h4>
+        <p>
+            [% FOREACH obj IN NTYPES.keys.sort %]
+            <input type="checkbox" name="nodes" value="[% obj %]"> [% val = obj.replace('_', ' '); IF val == 'Text'; val = 'Other'; END; val; %] <br />
+            [% END %]
+        </p>
+        [% END %]
+
 
         [% IF EDGES.sort('nearby').last.nearby == 1 %]
         <p>
@@ -44,13 +55,14 @@
       var data = {
             nodes: [  [% FOREACH node IN NODES.keys.sort %]
                           { id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]", number:[% loop.index %],
+                            ntype: "[%  NODES.$node.class.replace('_', ' ') %]",
                             link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
                             predicted: [% NODES.$node.predicted %],
                           },
                       [% END %]
                   ],
             edges:[ [% FOREACH obj IN EDGES %]
-                          { id: "e[% loop.count %]", label: "[% obj.interaction.label %]" ,
+                          { id: "e[% loop.count %]", label: "[% obj.interaction.id %]" ,
                             source: "[% obj.effector.label %]", target: "[% obj.effected.label %]",
                             type: "[% obj.type %]", direction:"[% obj.direction %]",
                             width: [% obj.interactions.size %],
@@ -63,7 +75,6 @@
         types = [ [% FOREACH obj IN TYPES.keys.sort %]
                           "[% obj %]",
                     [% END %] ]
-
       WB.setupCytoscape(data, types);
     })();
     </script>

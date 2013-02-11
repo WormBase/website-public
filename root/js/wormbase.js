@@ -1694,6 +1694,14 @@ function setupCytoscape(data, types){
                 attrName: "direction",
                 entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
               },
+            nodeShapeMapper = {
+                attrName: "ntype",
+                entries: [
+                  { attrValue: 'Rearrangement', value: "HEXAGON" },
+                  { attrValue: 'Gene', value: "OCTAGON" },
+                  { attrValue: 'Molecule', value: "TRIANGLE" },
+                  { attrValue: 'Other', value: "ELLIPSE" },]
+              },
               styleMapper = {
                   attrName: "type",
                   entries: [{ attrValue: "Predicted", value: "DOT" },]
@@ -1739,7 +1747,7 @@ function setupCytoscape(data, types){
                   size: 30,
                   tooltipText: "<b>${label} (${ntype})</b>",
                   tooltipBackgroundColor: "#fafafa",
-                  shape: "OCTAGON",
+                  shape: { defaultValue: "OCTAGON", discreteMapper: nodeShapeMapper },
                   color: { continuousMapper: nodeColorMapper },
                   hoverGlowColor: "#aae6ff",
                   labelGlowOpacity: 1,
@@ -1776,18 +1784,20 @@ function setupCytoscape(data, types){
               Plugin.getPlugin("cytoscape_web", function(){ 
                 // init and draw
                 var vis = new org.cytoscapeweb.Visualization("cytoscapeweb", options),
-                    legend = $jq('#cyto_legend');
+                    legend = $jq('#cyto_legend'),
+                    node_size = (legend.find('input[name=nodes]').size() > 0);
                 
                 vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
                 vis.ready(function() {
                     vis.filter("nodes", function(node) { return node.data.predicted != 1; })
-                    vis.filter("edges", function(edge) { return !edge.data.type.match('Predicted'); })
-// add a listener for when nodes and edges are clicked
+                    // add a listener for when nodes and edges are clicked
                     vis.addListener("click", "nodes", function(event) {
                         window.open(event.target.data.link);
                     });
                     
                     resetChecked();
+                    updateEdgeFilter();
+                    
                   /* Should be disabled until interactions are merged
                     vis.addListener("click", "edges", function(event) {
                     window.open(event.target.data.link);
@@ -1803,14 +1813,19 @@ function setupCytoscape(data, types){
                 }
                 
                 legend.find('input:checkbox').click(function(){
-                  if($jq(this).val().match('Predicted')) showPredicted(this);
-                  updateEdgeFilter();
+                  if($jq(this).val().match('Predicted')){
+                    updateEdgeFilter();
+                    updateNodeFilter();
+                    return;
+                  }
+                  $jq(this).attr('name').match('nodes') ? updateNodeFilter() : updateEdgeFilter();
                 });
-                
-                function showPredicted(box){
-                  var predict = $jq(box).is(':checked');
+
+                function updateNodeFilter(){
+                  var nodes_regex = getRegexFilter('nodes'),
+                      predict = (legend.find('input.cyto_predict').is(':checked'));
                   vis.filter("nodes", function(node) {
-                    return (predict ? true : node.data.predicted != 1);
+                    return (nodes_regex || !node_size) ? (node.data.ntype.match(nodes_regex) && (predict ? true : node.data.predicted != 1)) : false;
                   });
                 }
                 
