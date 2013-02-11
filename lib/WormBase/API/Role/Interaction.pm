@@ -93,7 +93,6 @@ sub interactions  {
         data        => $results->{showall} ? {    
                             edges => \@edges,
                             types => $results->{types},
-                            ntypes => $results->{ntypes},
                             nodes => $results->{nodes},
                             showall => $results->{showall},
                             edges_all => \@edges_all
@@ -160,7 +159,6 @@ sub interaction_details {
 		description	=> 'addtional nearby interactions',
 		data		=> {    edges => \@edges,
                             types => $results->{types},
-                            ntypes => $results->{ntypes},
                             nodes => $results->{nodes},
                             showall => $results->{showall},
                        },
@@ -199,6 +197,7 @@ sub _get_interactions {
       foreach my $key (keys %{$edgeList}) {
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
           next unless($effector);
+          next unless ($effector->class eq 'Gene' && $effected->class eq 'Gene');
           my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
           my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
           $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
@@ -211,10 +210,6 @@ sub _get_interactions {
           $data->{nodes_obj}{"$effected"} = $effected;
           $data->{ids}{"$interaction"}=1;
           $data->{types}{"$type"}=1;
-          my $ntype1 = $data->{nodes}{"$effector"}->{class};
-          my $ntype2 = $data->{nodes}{"$effected"}->{class};
-          $data->{ntypes}{"$ntype1"}=1;
-          $data->{ntypes}{"$ntype2"}=1;
           
           my $phenObj = $self->_pack_obj($phenotype);
           my $key = "$effector $effected $type";

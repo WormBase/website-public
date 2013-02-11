@@ -1694,17 +1694,6 @@ function setupCytoscape(data, types){
                 attrName: "direction",
                 entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
               },
-              nodeShapeMapper = {
-                attrName: "ntype",
-                entries: [
-                  { attrValue: 'Sequence', value: "TRIANGLE" },
-                  { attrValue: 'PCR product', value: "HEXAGON" },
-                  { attrValue: 'CDS', value: "DIAMOND" },
-                  { attrValue: 'Gene', value: "OCTAGON" },
-                  { attrValue: 'Protein', value: "RECTANGLE" },
-                  { attrValue: 'Molecule', value: "PARALLELOGRAM" },
-                  { attrValue: 'Other', value: "ELLIPSE" },]
-              },
               styleMapper = {
                   attrName: "type",
                   entries: [{ attrValue: "Predicted", value: "DOT" },]
@@ -1741,7 +1730,7 @@ function setupCytoscape(data, types){
               visual_style = {
                 global: {
                   backgroundColor: "#ffffff",
-                  tooltipDelay: 100
+                  tooltipDelay: 0
                 },
                 nodes: {
                   opacity: 0.7,
@@ -1750,7 +1739,7 @@ function setupCytoscape(data, types){
                   size: 30,
                   tooltipText: "<b>${label} (${ntype})</b>",
                   tooltipBackgroundColor: "#fafafa",
-                  shape: { defaultValue: "OCTAGON", discreteMapper: nodeShapeMapper },
+                  shape: "OCTAGON",
                   color: { continuousMapper: nodeColorMapper },
                   hoverGlowColor: "#aae6ff",
                   labelGlowOpacity: 1,
@@ -1787,12 +1776,11 @@ function setupCytoscape(data, types){
               Plugin.getPlugin("cytoscape_web", function(){ 
                 // init and draw
                 var vis = new org.cytoscapeweb.Visualization("cytoscapeweb", options),
-                    legend = $jq('#cyto_legend'),
-                    node_size = (legend.find('input[name=nodes]').size() > 0);
+                    legend = $jq('#cyto_legend');
                 
                 vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
                 vis.ready(function() {
-                    vis.filter("nodes", function(node) { return node.data.ntype.match('Gene|Other|Molecule') && node.data.predicted != 1; })
+                    vis.filter("nodes", function(node) { return node.data.predicted != 1; })
                     vis.filter("edges", function(edge) { return !edge.data.type.match('Predicted'); })
 // add a listener for when nodes and edges are clicked
                     vis.addListener("click", "nodes", function(event) {
@@ -1810,25 +1798,19 @@ function setupCytoscape(data, types){
                   legend.find('input:checkbox').map(function(){
                     var t = $jq(this);
                     if (t.attr('name') == 'type'){ t.prop('checked', (!t.val().match('Predicted')));}
-                    else if (t.attr('name') == 'nodes'){ t.prop('checked', (t.val().match('Gene|Other|Molecule')));}
                     else { t.prop('checked', true);}
                   });
                 }
                 
                 legend.find('input:checkbox').click(function(){
-                  if($jq(this).val().match('Predicted')){
-                    updateEdgeFilter();
-                    updateNodeFilter();
-                    return;
-                  }
-                  $jq(this).attr('name').match('nodes') ? updateNodeFilter() : updateEdgeFilter();
+                  if($jq(this).val().match('Predicted')) showPredicted(this);
+                  updateEdgeFilter();
                 });
                 
-                function updateNodeFilter(){
-                  var nodes_regex = getRegexFilter('nodes'),
-                      predict = (legend.find('input.cyto_predict').is(':checked'));
+                function showPredicted(box){
+                  var predict = $jq(box).is(':checked');
                   vis.filter("nodes", function(node) {
-                    return (nodes_regex || !node_size) ? (node.data.ntype.match(nodes_regex) && (predict ? true : node.data.predicted != 1)) : false;
+                    return (predict ? true : node.data.predicted != 1);
                   });
                 }
                 
