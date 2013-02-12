@@ -1187,7 +1187,7 @@ END;
 
   # Conditionally set up different types of pages.
   IF is_class_index && ((!class || class == 'all') || (species && species != 'all'));
-    SET this_object_id    = class; 
+    SET this_object_id    = 'all'; 
     SET this_object_label = species; 
     base = base _ '/index';
     arg1 = species;
@@ -1238,7 +1238,7 @@ END;
     displayed_widgets.push(widget_name);
     w = {  id    = widget_name
             title = widget.title
-            href  = c.uri_for(base, arg1, this_object_id, widget_name).path
+            href  = c.uri_for(base, arg1, class, widget_name).path
             type  = section == 'species' ? class : section
           };
 

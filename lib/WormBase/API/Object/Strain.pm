@@ -43,18 +43,18 @@ sub natural_isolates {
       my $place     = $_->Place;
       my $landscape = $_->Landscape;
       my $substrate = $_->Substrate;
-      $substrate =~ s/_/ /g;
-      $landscape =~ s/_/ /g;
+      $substrate =~ s/_/ /g if $substrate;
+      $landscape =~ s/_/ /g if $landscape;
       my $isolated  = $_->Isolated_by;
       my $species   = $_->Species;
-      push @data,{ species     => "$species" || undef,
-              place       => "$place" || undef,
+      push @data,{ species     => $species && "$species",
+              place       => $place && "$place",
               strain      => $self->_pack_obj($_),
-              latitude    => "$lat" || undef,
-              longitude   => "$lon" || undef,
-              isolated_by => $isolated ? $self->_pack_obj($isolated,$isolated->Standard_name) : undef,
-              landscape   => "$landscape" || undef,
-              substrate   => "$substrate" || undef,
+              latitude    => $lat && "$lat",
+              longitude   => $lon && "$lon",
+              isolated_by => $isolated ? $self->_pack_obj($isolated) : undef,
+              landscape   => $landscape && "$landscape",
+              substrate   => $substrate && "$substrate",
       };
     }
     
@@ -90,7 +90,6 @@ sub genotype {
     my $self     = shift;
 
     my $data = $self->_get_genotype($self->object);
-
     return { description => 'the genotype of the strain',
 	     data        => $data };
 }
@@ -106,10 +105,7 @@ sub genes {
     my @genes;
     if ($object eq 'CB4856') {  # hack. duh.
     } else {
-	@genes = map {
-	    my $name = $_->Public_name;
-	    $self->_pack_obj($_,"$name")
-	} $object->Gene;
+	@genes = map { $self->_pack_obj($_)} $object->Gene;
     }
     return { description => 'genes contained in the strain',
 	     data        => @genes ? \@genes : undef };
@@ -127,10 +123,7 @@ sub alleles {
     my @alleles;
     if ($object eq 'CB4856') {  # hack. duh.
     } else {
-	@alleles = map {
-	    my $name = $_->Public_name;
-	    $self->_pack_obj($_,"$name")
-	} $object->Variation;
+      @alleles = map { $self->_pack_obj($_) } $object->Variation;
     }
     return { description => 'alleles contained in the strain',
 	     data        => @alleles ? \@alleles : undef };
@@ -209,7 +202,7 @@ sub mutagen {
     my $mutagen = $object->Mutagen;
 
     return { description => 'the mutagen used to generate this stain',
-	     data        => "$mutagen" || undef };
+	     data        => $mutagen && "$mutagen"};
 
 }
 
@@ -223,7 +216,7 @@ sub outcrossed {
     my $object = $self->object;
     my $outcrossed = $object->Outcrossed;
     return { description => 'extent to which the strain has been outcrossed',
-	     data        => "$outcrossed" || undef };
+	     data        => $outcrossed && "$outcrossed" };
 
 }
 
@@ -240,7 +233,7 @@ sub throws_males {
     my $males = $object->Males;
     my @males = map { $self->_pack_obj($_) } $object->Males;
     return { description => 'does the strain throw males at a higher than expected frequency?',
-	     data        => "$males" || undef };
+	     data        => $males && "$males" };
 }
 
 
@@ -272,9 +265,8 @@ sub made_by {
     my $self   = shift;
     my $object = $self->object;
     my $made_by = $object->Made_by;
-    my $name = $made_by->Standard_name if $made_by;
     return { description => 'the person who built the strain',
-	     data        => $made_by ? $self->_pack_obj($made_by, "$name") : undef };
+	     data        => $made_by ? $self->_pack_obj($made_by) : undef };
 }
 
 # contact { }
@@ -286,9 +278,8 @@ sub contact {
     my $self   = shift;
     my $object = $self->object;
     my $made_by = $object->Contact;
-    my $name = $made_by->Standard_name if $made_by;
     return { description => 'the person who built the strain, or who to contact about it',
-	     data        => $made_by ? $self->_pack_obj($made_by, "$name") : undef };
+	     data        => $made_by ? $self->_pack_obj($made_by) : undef };
 }
 
 # date_received { }
@@ -317,8 +308,8 @@ sub gps_coordinates {
     my $object = $self->object;
     my ($lat,$lon) = $object->GPS->row if $object->GPS;
     return { description => 'GPS coordinates of where the strain was isolated',
-	     data        => { latitude    => "$lat" || undef,
-			      longitude   => "$lon" || undef,
+	     data        => { latitude    => $lat && "$lat",
+			      longitude   => $lon && "$lon",
 	     },
     };    
 }
@@ -334,7 +325,7 @@ sub place {
     my $object = $self->object;
     my $place  = $object->Place;
     return { description => 'the place where the strain was isolated',
-	     data        => "$place" || undef,
+	     data        => $place && "$place",
     };
 }
 
@@ -348,7 +339,7 @@ sub landscape {
     my $object = $self->object;
     my $landscape  = $object->Landscape;
     return { description => 'the general landscape where the strain was isolated',
-	     data        => "$landscape" || undef,
+	     data        => $landscape && "$landscape",
     };
 }
 
@@ -362,7 +353,7 @@ sub substrate {
     my $object = $self->object;
     my $substrate  = $object->Substrate;
     return { description => 'the substrate the strain was isolated on',
-	     data        => "$substrate" || undef,
+	     data        => $substrate && "$substrate",
     };
 }
 
@@ -403,7 +394,7 @@ sub log_size_of_population {
     my $object = $self->object;
     my $size   = $object->Log_size_of_population;
     return { description => 'the log size of the population when isolated',
-	     data        => "$size" || undef,
+	     data        => $size && "$size",
     };
 }
 
@@ -417,7 +408,7 @@ sub sampled_by {
     my $object   = $self->object;
     my $sampled  = $object->Sampled_by;
     return { description => 'the person who sampled the strain',
-	     data        => "$sampled" || undef,
+	     data        => $sampled && "$sampled",
     };
 }
 
@@ -430,9 +421,8 @@ sub isolated_by {
     my $self    = shift;
     my $object  = $self->object;
     my $person  = $object->Isolated_by;
-    my $name = $person->Standard_name if $person;
     return { description => 'the person who isolated the strain',
-	     data        => $person ? $self->_pack_obj($person, "$name") : undef };
+	     data        => $person ? $self->_pack_obj($person) : undef };
 }
 
 # date_isolated { }
@@ -444,9 +434,9 @@ sub date_isolated {
     my $self = shift;
     my $object = $self->object;
     my $date   = $object->Date;
-    $date =~ s/ \d\d:\d\d:\d\d//;
+    $date =~ s/ \d\d:\d\d:\d\d// if $date;
     return { description => 'the date the strain was isolated',
-	     data        => "$date" || undef,
+	     data        => $date && "$date",
     };
 }
 
