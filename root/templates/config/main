@@ -249,18 +249,18 @@
               IF (link == 'ensembl');
                 UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
                 array=id.split('&');
-                url = String(array.first array.last);
+                ext_url = String(array.first array.last);
               ELSE;
-                url = String(id);
+                ext_url = String(id);
               END;
           ELSE;
-              url = site.external_urls.$link.base;
+              ext_url = site.external_urls.$link.base;
           END;
         END;
-        url = url || link; 
+        ext_url = link UNLESS ext_url.defined; 
 
-        "<a href=\"$url\" 
-            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
+        "<a href=\"$ext_url\" 
+            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
             target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
        END;
     END;
