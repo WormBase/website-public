@@ -1994,7 +1994,8 @@ function setupCytoscape(data, types){
       }
       
       return {
-        getPlugin: getPlugin
+        getPlugin: getPlugin,
+        loadFile: loadFile
       };
     })();
     
@@ -2030,7 +2031,8 @@ function setupCytoscape(data, types){
       setupCytoscape: setupCytoscape,
       getPlugin: Plugin.getPlugin,
       reloadWidget: reloadWidget,
-      resize: Layout.resize
+      resize: Layout.resize,
+      loadFile: Plugin.loadFile,
     }
   })();
 
