@@ -1238,7 +1238,7 @@ END;
     displayed_widgets.push(widget_name);
     w = {  id    = widget_name
             title = widget.title
-            href  = c.uri_for(base, arg1, class, widget_name).path
+            href  = c.uri_for(base, arg1, is_class_index ? class : this_object_id , widget_name).path
             type  = section == 'species' ? class : section
           };
 
