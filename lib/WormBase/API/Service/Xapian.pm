@@ -100,19 +100,23 @@ sub search_autocomplete {
 
 sub search_exact {
     my ($class, $c, $q, $type) = @_;
-  
     my ($query, $enq, $mset);
     if( $type && ( ($q =~ m/^WB/i) || $type eq 'disease' || $type eq 'gene_class') ){
       $query=$class->qp->parse_query( "$type$q", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exacta:" . $query->get_description());
       $mset = $enq->get_mset( 0,2 ) if $enq;
-      $mset = undef if ($mset->size() > 1);
+      if ($mset->size() != 1){
+        $query=$class->qp->parse_query( $class->_uniquify($q, $type), 1|2 );
+        $enq       = $class->db->enquire ( $query );
+        $c->log->debug("query exactaa:" . $query->get_description());
+        $mset = $enq->get_mset( 0,2 ) if $enq;
+      }
+      $mset = undef if ($mset->size() != 1);
     }
-   
+
     if((!$mset || $mset->empty() || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
         my $qu = $q;
-        $qu = "$1 $qu" if ($qu =~ s/\.(.*)$/*/g);
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/));
         $qu = $class->_add_type_range($c, $qu, $type);
         $query=$class->syn_qp->parse_query( $qu, 2|256 );
@@ -131,6 +135,12 @@ sub search_exact {
       $mset      = $enq->get_mset( 0,2 );
     }
 
+    my $it = $mset->begin();
+    while($it != $mset->end()){
+      my $doc = $it->get_document();
+      $c->log->debug($doc->get_value(1) . ", " . $doc->get_value(6));
+      $it++;
+    }
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
         search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
 }
@@ -183,10 +193,10 @@ sub extract_data {
 
 sub _get_obj {
   my ($self, $c, $doc, $footer) = @_;
-  my $species = $self->_get_taxonomy($doc);
 
   my %ret;
   $ret{name} = $self->_pack_search_obj($c, $doc);
+  my $species = $ret{name}{taxonomy};
   if($species =~ m/^(.).*_([^_]*)$/){
     my $s = $c->config->{sections}{species_list}{$species};
     $ret{taxonomy}{genus} = $s->{genus} || uc($1) . '.';
@@ -306,5 +316,10 @@ sub _add_type_range {
   return $q;
 }
 
+sub _uniquify {
+  my ($self, $q, $type) = @_;
+  $q =~ s/\W/_/g;
+  return "$type$q";
+}
 
 1;
