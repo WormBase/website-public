@@ -107,6 +107,7 @@ sub search_exact {
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exacta:" . $query->get_description());
       $mset = $enq->get_mset( 0,2 ) if $enq;
+      $mset = undef if ($mset->size() > 1);
     }
    
     if((!$mset || $mset->empty() || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
@@ -181,11 +182,11 @@ sub extract_data {
 
 sub _get_obj {
   my ($self, $c, $doc, $footer) = @_;
-  my $species = $doc->get_value(5);
+  my $species = $self->_get_taxonomy($doc);
 
   my %ret;
   $ret{name} = $self->_pack_search_obj($c, $doc);
-  if($species =~ m/^(.)_(.*)$/){
+  if($species =~ m/^(.).*_([^_]*)$/){
     my $s = $c->config->{sections}{species_list}{$species};
     $ret{taxonomy}{genus} = $s->{genus} || uc($1) . '.';
     $ret{taxonomy}{species} = $s->{species} || $2;
@@ -265,6 +266,15 @@ sub _get_tag_info {
   return $tag;
 }
 
+# why is species sometimes getting stored weird in xapian? 
+# eg. c_caenorhabditis_elegans instead of c_elegans
+sub _get_taxonomy {
+  my ($self, $doc) = @_;
+  my $taxonomy = $doc->get_value(5);
+  $taxonomy =~ s/_([^_]*)_/\_/g;
+  return $taxonomy;
+}
+
 sub _pack_search_obj {
   my ($self, $c, $doc, $label) = @_;
   my $id = $doc->get_value(1);
@@ -273,7 +283,7 @@ sub _pack_search_obj {
   return {  id => $id,
             label => $label || $doc->get_value(6) || $id,
             class => lc($class),
-            taxonomy => $doc->get_value(5),
+            taxonomy => $self->_get_taxonomy($doc),
             coord => { start => $doc->get_value(9),
                        end => $doc->get_value(10),
                        strand => $doc->get_value(11)}
