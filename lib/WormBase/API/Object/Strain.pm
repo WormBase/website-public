@@ -322,8 +322,7 @@ sub gps_coordinates {
 
 sub place {
     my $self = shift;
-    my $object = $self->object;
-    my $place  = $object->Place;
+    my $place  = $self->object->Place;
     return { description => 'the place where the strain was isolated',
 	     data        => $place && "$place",
     };
@@ -336,8 +335,8 @@ sub place {
 
 sub landscape { 
     my $self   = shift;
-    my $object = $self->object;
-    my $landscape  = $object->Landscape;
+    my $landscape  = $self->object->Landscape;
+    $landscape =~ s/_/ /g;
     return { description => 'the general landscape where the strain was isolated',
 	     data        => $landscape && "$landscape",
     };
@@ -350,8 +349,8 @@ sub landscape {
 
 sub substrate { 
     my $self   = shift;
-    my $object = $self->object;
-    my $substrate  = $object->Substrate;
+    my $substrate  = $self->object->Substrate;
+    $substrate =~ s/_/ /g;
     return { description => 'the substrate the strain was isolated on',
 	     data        => $substrate && "$substrate",
     };
