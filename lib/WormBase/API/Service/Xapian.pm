@@ -46,9 +46,10 @@ sub search {
     my $t=[gettimeofday];
     $page       ||= 1;
     $page_size  ||=  10;
+    $q =~ s/\s/\* /g;
 
     if($type){
-      $q = $class->_add_type_range($c, $q, $type);
+      $q = $class->_add_type_range($c, "$q*", $type);
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
         $q .= " ptype:$s..$s" if defined $s;
@@ -106,8 +107,9 @@ sub search_exact {
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exacta:" . $query->get_description());
       $mset = $enq->get_mset( 0,2 ) if $enq;
+
       if ($mset->size() != 1){
-        $query=$class->qp->parse_query( $class->_uniquify($q, $type), 1|2 );
+        $query=$class->qp->parse_query( $class->_uniquify($q, $type) . "*", 1|2 );
         $enq       = $class->db->enquire ( $query );
         $c->log->debug("query exactaa:" . $query->get_description());
         $mset = $enq->get_mset( 0,2 ) if $enq;
@@ -116,10 +118,10 @@ sub search_exact {
     }
 
     if((!$mset || $mset->empty() || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
-        my $qu = $q;
+        my $qu = "$q";
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/));
-        $qu = $class->_add_type_range($c, $qu, $type);
-        $query=$class->syn_qp->parse_query( $qu, 2|256 );
+        $qu = $class->_add_type_range($c, "$qu", $type);
+        $query=$class->syn_qp->parse_query( $qu, 16|2|256 );
         $enq       = $class->syn_db->enquire ( $query );
         $c->log->debug("query exactb:" . $query->get_description());
         $mset      = $enq->get_mset( 0,2 ) if $enq;
@@ -127,19 +129,14 @@ sub search_exact {
 
     if(!$mset || $mset->empty()){
       $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/_/));
-      $q = $class->_add_type_range($c, $q, $type);
-      $query=$class->qp->parse_query( $q, 1|2 );
+      $q =~ s/\s/\* /g;
+      $q = $class->_add_type_range($c, "$q", $type);
+      $query=$class->qp->parse_query( $q, 2|16|256|512 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exactc:" . $query->get_description());
       $mset      = $enq->get_mset( 0,2 );
     }
 
-    my $it = $mset->begin();
-    while($it != $mset->end()){
-      my $doc = $it->get_document();
-      $c->log->debug($doc->get_value(1) . ", " . $doc->get_value(6));
-      $it++;
-    }
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
         search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
 }
