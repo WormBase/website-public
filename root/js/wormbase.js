@@ -834,7 +834,7 @@
   }
   
   function allResults(type, species, query, widget){
-    var url = "/search/" + type + "/" + query + "/?inline=1",
+    var url = "/search/" + type + "/" + query + "/?inline=1" + (species && "&species=" + species),
         allSearch = $jq("#all-search-results"),
         searchSummary = $jq("#search-count-summary"),
         curr = $jq("#curr-ref-text");
@@ -845,7 +845,6 @@
         checkSearch(allSearch);
       });
     }
-    if(species) { url = url + "&species=" + species;} 
 
     searchSummary.find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
@@ -1845,6 +1844,63 @@ function setupCytoscape(data, types){
                                        && (nearby || edge.data.nearby == 0)) : false;
                         }, true);
                 }
+                
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  //BEGIN OLD CODE FOR CACHED WIDGETS -- DELETE IN WS236
+              $jq('.cyto_panel').change(function(){
+                  var direction = $jq("#cyto_panel_direction option:selected").val();
+                  var inter_type = $jq("#cyto_panel_type option:selected").val();
+                  var nearby = $jq("#cyto_panel_nearby option:selected").val();
+          var nodetype = $jq("#cyto_panel_nodetype option:selected").val();
+
+          if(nodetype ===0){
+              vis.removeFilter("nodes", true);
+          } else {
+              vis.filter("nodes", function(node) { return node.data.ntype === nodetype });
+          }
+
+                  if(direction ===0 && inter_type===0 && nearby===0){
+                    //vis.removeFilter("edges",true);
+                    vis.filter("edges", function(edge){return edge.data.type !== "No_interaction"}, true);
+                  }else{
+                  vis.filter("edges", function(edge) {
+                    if(direction !==0 && inter_type!==0 && nearby!==0) {
+                        return edge.data.type === inter_type && edge.data.direction == direction && edge.data.nearby == 0;
+                    }else if(direction !==0 && nearby!==0){
+                        return edge.data.direction == direction && edge.data.nearby == 0  && edge.data.type !== "No_interaction";
+                    }else if(direction !==0 && inter_type!==0){
+                        return edge.data.type === inter_type;
+                    }else if(direction !==0){
+                        return edge.data.direction === direction && edge.data.type !== "No_interaction";
+                    }else if(inter_type !==0 && nearby!==0){
+                        return  edge.data.type === inter_type && edge.data.nearby === 0;
+                    }else if(nearby !== 0){
+                        return edge.data.nearby === 0 && edge.data.type !== "No_interaction";
+                    }else{
+                        return edge.data.type === inter_type;
+                    }
+                    }, true);
+                  }
+            });
+            //END OLD CODE FOR CACHED INTERACTION WIDGETS
+  
+  
+  
+  
+  
+  
+                
               });
               $jq( "#resizable" ).resizable();
     }
