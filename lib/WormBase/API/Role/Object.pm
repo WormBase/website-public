@@ -1866,15 +1866,10 @@ sub _build_xrefs {
     my %dbs;
     foreach my $db (@databases) {
         # Possibly multiple entries for a single DB
-	@{$dbs{$db}{ids}} = map {
-	    my @types = $_->col;
-	    map { 
-		my $val = $_;
-		if ($val =~ /OMIM:(.*)/) {"$1"}
-		elsif ($val =~ /GI:(.*)/){"$1"}
-		else { "$_" }
-	    } @types;
-	} $db->col;
+      $dbs{$db} = {};
+      foreach my $dbt ($db->col){
+        @{$dbs{$db}{$dbt}{ids}} = map {( $_ =~ /^(OMIM:|GI:)(.*)/ ) ? "$2" : $_;} $dbt->col;
+      }
     }
 
     return {
@@ -2248,17 +2243,18 @@ sub _get_genotype {
     my ($self, $object) = @_;
     my $genotype = $object->Genotype;
 
-    my @data;
-    my @matches;
     my %elements;
     foreach my $tag ($object->Contains) {
-	map {my $name = $self->_make_common_name($_); $elements{"$name"} = $self->_pack_obj($_)} $object->$tag;
+      map {
+        $_ = $self->_pack_obj($_);
+        $elements{$_->{label}} = $_;
+      } $object->$tag;
     }
 
-    return {
-	str => "$genotype" || undef,
-	data => %elements ? \%elements : undef,
-    };
+    return ($genotype || (keys %elements > 0) ) ? {
+      str => $genotype && "$genotype",
+      data => %elements ? \%elements : undef,
+    } : undef;
 }
 
 #########################################

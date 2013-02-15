@@ -418,9 +418,26 @@
 	wormpep = {
 		description	= 'WORMPEP is the C.elegans protein set'
 		base		= 'http://www.wormbase.org'
-		email		= 'help@wormbase.org'
+		maintainer		= 'help@wormbase.org'
 		search		= 'http://www.wormbase.org/db/seq/protein?name=%s'
 	}
+
+
+    WormQTL = {
+        description = 'WormQTL is an online scalable system for QTL exploration to service the worm community'
+        base        = 'http://www.wormqtl.org/molgenis.do?__target=main&select=Home'
+        maintainer       = 'info@panaceaproject.eu'
+        search      = 'http://www.wormqtl.org/molgenis.do?__target=QtlFinderPublic2&select=QtlFinderPublic2&p=%s'
+    }
+
+    SignaLink = {
+        description = 'SignaLink 2.0: An integrated resource to analyze signaling pathway cross-talks, transcription factors, miRNAs and regulatory enzymes'
+        base        = 'http://www.signalink.org'
+        maintainer       = 'korcsmaros@netbiol.elte.hu'
+        search      = 'http://www.signalink.org/search/%s'
+        protein     = 'http://www.signalink.org/protein/%s'
+        mirna       = 'http://www.signalink.org/mirna/%s'
+    }
 
     MODEncodeTissueL2_A_class_neuron = {
         description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_A_class_neuron'
@@ -430,6 +447,16 @@
     MODEncodeTissueEMB_ACLASS = {
         description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_ACLASS'
         base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_ACLASS'
+    }
+
+    MODEncodeTissueEMB_BAG = {
+        description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_BAG'
+        base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_BAG'
+    }
+
+    Spencer2011 = {
+        description = 'Spencer et al., 2011 (WBPaper00037950) Compendium Resource'
+        base        = 'http://www.vanderbilt.edu/wormdoc/wormmap/Expressed_genes.html'
     }
 }
 

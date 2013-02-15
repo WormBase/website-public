@@ -234,31 +234,43 @@
 # params: link          - the ID for the link found in root/templates/config/external_urls
 #         text          - text displayed in the link
 #         id (optional) - the unique id needed in the url.  If not provided, base url is used.
+#         dbt (optional)- entry type in the database
 # returns: formatted html to link using url and description from config.  
 #          Has google analytics code to record clicks and opens new window
-    MACRO external_link(link, text, id) BLOCK;
-       UNLESS text; text = id; UNLESS text; RETURN; END; END;
-      #not sure why this has to be lower case since some external links are case sensitive eg. Phenobank2
-      #link = link FILTER lower;
-       IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
-       desc = site.external_urls.$link.description;
-       IF id;
-          USE String=format(site.external_urls.$link.search);
-	      IF (link == 'ensembl');
-             UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
-             array=id.split('&');
-             url = String(array.first array.last);
-          ELSE;
-                url = String(id);
-          END;
-       ELSE;
-          url = site.external_urls.$link.base;
-       END;
+    MACRO external_link(link, text, id, dbt) BLOCK;
+       IF (link||text||id);
+        text = text || id || link;
+        link = match_link(link);
 
-       UNLESS url; url = link; END;
-       "<a href=\"$url\" 
-           onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
-           target=\"_blank\" title=\"$desc\">$text</a>";
+        IF(site.external_urls.defined(link));
+          desc = site.external_urls.$link.description;
+          IF id;
+              USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt : site.external_urls.$link.search);
+              IF (link == 'ensembl');
+                UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
+                array=id.split('&');
+                ext_url = String(array.first array.last);
+              ELSE;
+                ext_url = String(id);
+              END;
+          ELSE;
+              ext_url = site.external_urls.$link.base;
+          END;
+        END;
+        ext_url = link UNLESS ext_url.defined; 
+
+        "<a href=\"$ext_url\" 
+            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
+            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
+       END;
+    END;
+
+    MACRO match_link(link) BLOCK;
+      IF !site.external_urls.defined(link);;
+        link = link FILTER lower;
+        IF link.match('^(sw|sptrembl|tr)$'); link = 'uniprot'; END;
+      END;
+      link;
     END;
 
 

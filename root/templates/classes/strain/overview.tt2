@@ -10,7 +10,7 @@
 
   '<div class="description">';
    WRAPPER $field_block title="Genotype";
-       show_genotype(fields.genotype.data);
+        show_genotype(fields.genotype.data);
     END;
 
    WRAPPER $field_block title="Reference strain" key="reference_strain";
@@ -33,9 +33,9 @@
   # END;
 
   '</div>';
-   phenotypes;
+    phenotypes;
 
-   phenotypes_not_observed;
+    phenotypes_not_observed;
 
    remarks;
 
