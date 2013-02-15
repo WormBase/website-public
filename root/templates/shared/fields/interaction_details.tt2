@@ -1,47 +1,52 @@
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
-[% NTYPES = NTYPES || interaction_details.data.ntypes %]
 [% EDGES = EDGES || interaction_details.data.edges %]
+[% NTYPES = NTYPES || interaction_details.data.ntypes %]
 
-<div id="cytoscapeweb_panel">
-    Interaction Type <select class="cyto_panel" id="cyto_panel_type">
-    <option value=0 >All</option>
-      [% FOREACH obj IN TYPES.keys.sort %]
-    <option>[% obj %]</option>
-      [% END %]
-    </select>
-    Direction <select class="cyto_panel" id="cyto_panel_direction">
-    <option value=0 >All</option>
-    <option>Effector->Effected</option>
-    <option>non-directional</option>
-    </select>
-    Nearby Interactions <select class="cyto_panel" id="cyto_panel_nearby">
-    <option value=0 >Show</option>
-    <option>Hide</option>
-    </select>
-    Interactor Type <select class="cyto_panel" id="cyto_panel_nodetype">
-    <option value=0 >All</option>
-      [% FOREACH obj IN NTYPES.keys.sort %]
-    <option [% IF obj == 'Gene'; 'selected=1'; END; %]>[% val = obj.replace('_', ' '); IF val == 'Text'; val = 'Other'; END; val; %]</option>
-      [% END %]
-    </select>
-</div>
+      <div id="cyto_legend" style="width:15em;position:absolute;right:0;z-index:5" class="detail-box ui-corner-all">
+        <p><center><h3>Legend</h3></center></p>
         [% IF TYPES.keys %]
-<div id="legend">
-    Edge-colors:
-      [% edgeColors = ['#08298A','#B40431','#FF8000','#04B404','#8000FF','#191007','#73c6cd','#92d17b','#cC87AB4','#e4e870','#696D09'] %]
-      [% FOREACH obj IN TYPES.keys.sort %]
-      [% ind = loop.index %]
-      <span style="color:[% edgeColors.$ind %]">[% obj %] </span>
-      [% END %]
-</div>
+          <h4>Interaction types</h4>
+            [% edgeColors = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E"] %]
+          <p>
+            [% FOREACH obj IN TYPES.keys.sort %]
+              [% ind = loop.index %]
+              <input type="checkbox" name="type" value="[% obj %]" [% IF obj == 'Predicted'; 'class="cyto_predict"'; END; %]>
+              <span style="color:[% obj == 'Predicted' ? '#888"><small><b>- -</b></small>' : edgeColors.$ind _ '"><b>&ndash;</b>' %] [% obj %] </span><br />
+            [% END %]
+          </p>
         [% END %]
-<div id="resizable" class="ui-widget-content">
-    <div id="cytoscapeweb">
-        Unable to load the CytoscapeWeb image. Please try again in a few minutes.
-    </div>
-</div>
 
+        <h4>Directions</h4>
+        <p>
+          <input type="checkbox" name="direction" value="Effector->Effected"> <b>&#8594;</b> Effector -> Effected<br />
+          <input type="checkbox" name="direction" value="non-directional|Other"> <b>&ndash;</b> Non-directional<br />
+        </p>
+
+        [% IF NTYPES.keys.size > 1 %]
+        <h4>Interactor types</h4>
+        <p>
+            [% FOREACH obj IN NTYPES.keys.sort %]
+            <input type="checkbox" name="nodes" value="[% obj %]"> [% val = obj.replace('_', ' '); IF val == 'Text'; val = 'Other'; END; val; %] <br />
+            [% END %]
+        </p>
+        [% END %]
+
+
+        [% IF EDGES.sort('nearby').last.nearby == 1 %]
+        <p>
+          <h4><input type="checkbox" name="nearby" value="nearby"> Nearby interactions</h4>
+        </p>
+        [% END %]
+      </div>
+
+      <div id="resizable" class="ui-widget-content" style="float:left">
+          <div id="cytoscapeweb">
+              Unable to load the CytoscapeWeb image. Please try again in a few minutes.
+          </div>
+      </div>
+
+      <br style="clear:both"/>
 
 [%- content -%]
 
@@ -50,16 +55,14 @@
       var data = {
             nodes: [  [% FOREACH node IN NODES.keys.sort %]
                           { id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]", number:[% loop.index %],
-                            ntype: "[%
-				    class = NODES.$node.class.replace('_', ' ');
-				    IF class == 'Text'; class = 'Other'; END;
-				    class;
-			    %]", link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
+                            ntype: "[%  NODES.$node.class.replace('_', ' ') %]",
+                            link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
+                            predicted: [% NODES.$node.predicted %],
                           },
                       [% END %]
                   ],
             edges:[ [% FOREACH obj IN EDGES %]
-                          { id: "e[% loop.count %]", label: "[% obj.interaction.label %]" ,
+                          { id: "e[% loop.count %]", label: "[% obj.interaction.id %]" ,
                             source: "[% obj.effector.label %]", target: "[% obj.effected.label %]",
                             type: "[% obj.type %]", direction:"[% obj.direction %]",
                             width: [% obj.interactions.size %],

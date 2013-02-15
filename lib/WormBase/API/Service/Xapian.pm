@@ -65,7 +65,7 @@ sub search {
     my $query=$class->qp->parse_query( $q, 512|16 );
 
     my $enq       = $class->db->enquire ( $query );
-    $c->log->debug("query:" . $query->get_description());
+    $c->log->debug("query search:" . $query->get_description());
     if($type && $type =~ /paper/){
           $enq->set_sort_by_value(4);
     }
@@ -85,13 +85,13 @@ sub search_autocomplete {
 
     my $query=$class->syn_qp->parse_query( $q, 64|16 );
     my $enq       = $class->syn_db->enquire ( $query );
-    $c->log->debug("query:" . $query->get_description());
+    $c->log->debug("query auto:" . $query->get_description());
     my $mset      = $enq->get_mset( 0, 10 );
 
     if($mset->empty()){
       $query=$class->qp->parse_query( $q, 64|16 );
       $enq       = $class->db->enquire ( $query );
-      $c->log->debug("query2:" . $query->get_description());
+      $c->log->debug("query auto2:" . $query->get_description());
       $mset      = $enq->get_mset( 0, 10 );
     }
 
@@ -102,8 +102,8 @@ sub search_autocomplete {
 sub search_exact {
     my ($class, $c, $q, $type) = @_;
     my ($query, $enq, $mset);
-    if( $type && ( ($q =~ m/^WB/i) || $type eq 'disease' || $type eq 'gene_class') ){
-      $query=$class->qp->parse_query( "$type$q", 1|2 );
+    if( $type ){
+      $query=$class->qp->parse_query( "\"$type$q\"", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exacta:" . $query->get_description());
       $mset = $enq->get_mset( 0,2 ) if $enq;
@@ -127,14 +127,13 @@ sub search_exact {
         $mset      = $enq->get_mset( 0,2 ) if $enq;
     }
 
-    $mset      = $enq->get_mset( 0,2 ) if $enq;
     if(!$mset || $mset->empty()){
       $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/_/));
       $q =~ s/\s/\* /g;
       $q = $class->_add_type_range($c, "$q", $type);
       $query=$class->qp->parse_query( $q, 2|16|256|512 );
       $enq       = $class->db->enquire ( $query );
-      $c->log->debug("query:" . $query->get_description());
+      $c->log->debug("query exactc:" . $query->get_description());
       $mset      = $enq->get_mset( 0,2 );
     }
 
@@ -167,7 +166,7 @@ sub search_count {
 
     my $query=$class->qp->parse_query( $q, 512|16 );
     my $enq       = $class->db->enquire ( $query );
-    $c->log->debug("query:" . $query->get_description());
+    $c->log->debug("query count:" . $query->get_description());
 
     my $mset      = $enq->get_mset( 0, 500000 );
     return format_number($mset->get_matches_estimated());
@@ -250,11 +249,9 @@ sub _get_tag_info {
       my ($it,$res)= $self->search_exact($c, $id, lc($ace));
       if($it->{pager}->{total_entries} > 0 ){
         my $doc = @{$it->{struct}}[0]->get_document();
-        my $ret;
-        if($fill){
-          $ret = $self->_get_obj($c, $doc, $footer);
-        }
-        $ret = $self->_pack_search_obj($c, $doc);
+        return $self->_get_obj($c, $doc, $footer) if $fill;
+
+        my $ret = $self->_pack_search_obj($c, $doc);
         $ret->{class} = $class;
         return $ret;
       }
@@ -305,8 +302,8 @@ sub _add_type_range {
   if( $type ){
       my $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($type)}
                 || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($type)};
-      my @classes = ref($aceclass) eq 'ARRAY' ? map {lc($_)} @{$aceclass} : ($type);
-      foreach my $t (@classes){
+      my %classes = map { $_ => undef } ref($aceclass) eq 'ARRAY' ? map {lc($_)} @{$aceclass} : ($type);
+      foreach my $t (keys %classes){
         $q .= " $t..$t";
       }
   }

@@ -1,3 +1,4 @@
+
 package WormBase::API::Role::Interaction;
 
 use Moose::Role;
@@ -92,9 +93,9 @@ sub interactions  {
         data        => $results->{showall} ? {    
                             edges => \@edges,
                             types => $results->{types},
-                            ntypes => $results->{ntypes},
                             nodes => $results->{nodes},
                             showall => $results->{showall},
+                            ntypes => $results->{ntypes},
                             edges_all => \@edges_all
                        } : { edges => \@edges },
     };
@@ -159,8 +160,8 @@ sub interaction_details {
 		description	=> 'addtional nearby interactions',
 		data		=> {    edges => \@edges,
                             types => $results->{types},
-                            ntypes => $results->{ntypes},
                             nodes => $results->{nodes},
+                            ntypes => $results->{ntypes},
                             showall => $results->{showall},
                        },
     };
@@ -179,14 +180,13 @@ sub _get_interactions {
 
     #determine object type and extract interactions accordingly
     if ($nearby){ 
-      @objects = map {$_->Interaction} grep {$_->class =~ /gene/i} values %{$data->{nodes_obj}} 
+      @objects = map {$_->Interaction} grep {($_->class =~ /gene/i) && ($data->{nodes}{"$_"}{predicted} == 0)} values %{$data->{nodes_obj}} 
     } elsif ($object->class =~ /gene/i) { 
       @objects = $object->Interaction 
     } elsif ($object->class =~ /interaction/i ) { 
       @objects = ($object) 
     }
-# $self->log->debug('INTERACTIONS: ' . join(',', @objects));
-    if($nearby && $from_table && (scalar @objects > 3000)){
+    if($nearby && (scalar @objects > 3000)){
         $data->{showall} = 0;
         return $data;
     } 
@@ -194,30 +194,29 @@ sub _get_interactions {
     $self->log->debug("nearby: $nearby, size: ", scalar @objects);
     foreach my $interaction ( @objects ) {
       next if($data->{ids}{"$interaction"});
-      if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
-#      $self->log->debug("made it");
-     my $edgeList = $self->_get_interaction_info($interaction, $nearby);
-#      $self->log->debug("made it a");
+      if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_} || ($data->{nodes}{"$_"}{predicted} == 1)} map {$_->col} $interaction->Interactor; }
+      my $edgeList = $self->_get_interaction_info($interaction, $nearby);
       foreach my $key (keys %{$edgeList}) {
-#      $self->log->debug("edges");
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
-#           $self->log->debug("     effector: $effector, effected: $effected");
           next unless($effector);
-#      $self->log->debug("made it b");
-          my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
-          my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
-          $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
-          $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, "$effector_name" || undef);
-          $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, "$effected_name" || undef);
+          next unless ($effector->class =~ /Molecule|Gene|Rearrangement|Text/ && $effected->class =~ /Molecule|Gene|Rearrangement|Text/);
+
+          $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector);
+          $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected);
+
+          $data->{nodes}{"$effector"}{predicted} = ($type eq 'Predicted') ? $data->{nodes}{"$effector"}{predicted} // 1 : 0;
+          $data->{nodes}{"$effected"}{predicted} = ($type eq 'Predicted') ? $data->{nodes}{"$effected"}{predicted} // 1 : 0;
+
           $data->{nodes_obj}{"$effector"} = $effector;
           $data->{nodes_obj}{"$effected"} = $effected;
           $data->{ids}{"$interaction"}=1;
           $data->{types}{"$type"}=1;
+            
           my $ntype1 = $data->{nodes}{"$effector"}->{class};
           my $ntype2 = $data->{nodes}{"$effected"}->{class};
           $data->{ntypes}{"$ntype1"}=1;
           $data->{ntypes}{"$ntype2"}=1;
-          
+
           my $phenObj = $self->_pack_obj($phenotype);
           my $key = "$effector $effected $type";
           my $key2 = "$effected $effector $type";
@@ -239,7 +238,6 @@ sub _get_interactions {
             push @{$data->{edgeVals}{$key2}{citations}}, @papers;
           } else {
             my @interacArr = ($packInteraction);
-# $self->log->debug("KEY: $key");
             $data->{edgeVals}{$key} = {
                 interactions=> @interacArr ? \@interacArr : undef,
                 citations	=> @papers ? \@papers : undef,
@@ -264,6 +262,7 @@ sub _get_interaction_info {
     my $object = $self->object;
     my $type = $interaction->Interaction_type;
     $type = $type->right ? $type->right . '' : "$type";
+    return \%results if(($type eq 'No_interaction'));
     $type =~ s/_/ /g;
     if ($type eq 'Regulatory') {
 	if ( my $reg_result = $interaction->Regulation_result ) {
@@ -272,8 +271,7 @@ sub _get_interaction_info {
 	}
     }
     # Filter low confidence predicted interactions.
-    # what happens when no data?
-    return undef if ($interaction->Log_likelihood_score || 1000) <= 1.5 && $object->class ne 'Interaction' && $type =~ m/predicted/i;
+    return \%results if ($interaction->Log_likelihood_score || 1000) <= 1.5 && $object->class ne 'Interaction' && $type =~ m/predicted/i;
 
     my $phenotype = $interaction->Interaction_phenotype;
     my ( @effectors, @effected, @others );
@@ -290,8 +288,8 @@ sub _get_interaction_info {
             map { $info{"$_"} = $_->at; } @tags;
             if ("$intertype" eq 'Interactor_overlapping_gene') {
                 my $role = $info{Interactor_type};
-                if ($role && $role =~ /Effector|.*regulator/) {   $self->log->debug("\t\teffector/regulator" );push @effectors, $interactor }
-                elsif ($role && $role =~ /Effected|.*regulated/)  { $self->log->debug("\t\teffected/regulated" );push @effected, $interactor }
+                if ($role && $role =~ /Effector|.*regulator/) {   push @effectors, $interactor }
+                elsif ($role && $role =~ /Effected|.*regulated/)  { push @effected, $interactor }
                 else { push @others, $interactor }
             } else {
                 my $corresponding_gene = $self->_get_gene($interactor, "$intertype");

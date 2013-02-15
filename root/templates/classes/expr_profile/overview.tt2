@@ -27,7 +27,7 @@ WRAPPER $field_block title='PCR Products' key='pcr_products';
 END;
 	
 WRAPPER $field_block title='Expression Map' key='expression_map';
-	tag2link(fields.expression_map.data);
+	fields.expression_map.data;
 END;
 
 WRAPPER $field_block title='RNAi' key='rnai';
