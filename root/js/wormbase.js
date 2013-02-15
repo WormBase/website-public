@@ -743,7 +743,6 @@
     var query = decodeURI(q),
         page = 1.0,
         total = t,
-        countSpan = container.find("#count"),
         resultDiv = container.find((widget ? "." + widget + "-widget " : '') + ".load-results"),
         queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
 
@@ -803,8 +802,6 @@
           div.find(".load-star").each(function(){
             $jq(this).load($jq(this).attr("href"));
           });
-
-          countSpan.html(total);
         });
 
         div.appendTo($jq(this).parent().children("ul"));
@@ -828,7 +825,10 @@
   }
   
   function scrollToTop(){
-    $jq(window).scrollTop(0);
+    try{
+      $jq(window).scrollTop(0);
+    }catch(err){
+    }
     Scrolling.resetSidebar();
     return undefined;
   }
