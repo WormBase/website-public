@@ -47,9 +47,10 @@ sub search {
     $page       ||= 1;
     $page_size  ||=  10;
     $q =~ s/\s/\* /g;
+    $q = "$q*";
 
     if($type){
-      $q = $class->_add_type_range($c, "$q*", $type);
+      $q = $class->_add_type_range($c, $q, $type);
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
         $q .= " ptype:$s..$s" if defined $s;
@@ -63,9 +64,8 @@ sub search {
     }
 
     my $query=$class->qp->parse_query( $q, 512|16 );
-
     my $enq       = $class->db->enquire ( $query );
-    $c->log->debug("query search:" . $query->get_description());
+
     if($type && $type =~ /paper/){
           $enq->set_sort_by_value(4);
     }
@@ -148,6 +148,8 @@ sub random {
 
 sub search_count {
  my ( $class, $c, $q, $type, $species) = @_;
+    $q =~ s/\s/\* /g;
+    $q = "$q*";
 
     if($type){
       $q = $class->_add_type_range($c, $q, $type);
