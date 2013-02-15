@@ -46,6 +46,8 @@ sub search {
     my $t=[gettimeofday];
     $page       ||= 1;
     $page_size  ||=  10;
+    $q =~ s/\s/\* /g;
+    $q = "$q*";
 
     if($type){
       $q = $class->_add_type_range($c, $q, $type);
@@ -62,9 +64,8 @@ sub search {
     }
 
     my $query=$class->qp->parse_query( $q, 512|16 );
-
     my $enq       = $class->db->enquire ( $query );
-    $c->log->debug("query search:" . $query->get_description());
+
     if($type && $type =~ /paper/){
           $enq->set_sort_by_value(4);
     }
@@ -100,21 +101,27 @@ sub search_autocomplete {
 
 sub search_exact {
     my ($class, $c, $q, $type) = @_;
-  
     my ($query, $enq, $mset);
     if( $type ){
       $query=$class->qp->parse_query( "\"$type$q\"", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exacta:" . $query->get_description());
       $mset = $enq->get_mset( 0,2 ) if $enq;
+
+      if ($mset->size() != 1){
+        $query=$class->qp->parse_query( $class->_uniquify($q, $type) . "*", 1|2 );
+        $enq       = $class->db->enquire ( $query );
+        $c->log->debug("query exactaa:" . $query->get_description());
+        $mset = $enq->get_mset( 0,2 ) if $enq;
+      }
+      $mset = undef if ($mset->size() != 1);
     }
-   
+
     if((!$mset || $mset->empty() || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
-        my $qu = $q;
-        $qu = "$1 $qu" if ($qu =~ s/\.(.*)$/*/g);
+        my $qu = "$q";
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/));
-        $qu = $class->_add_type_range($c, $qu, $type);
-        $query=$class->syn_qp->parse_query( $qu, 2|256 );
+        $qu = $class->_add_type_range($c, "$qu", $type);
+        $query=$class->syn_qp->parse_query( $qu, 16|2|256 );
         $enq       = $class->syn_db->enquire ( $query );
         $c->log->debug("query exactb:" . $query->get_description());
         $mset      = $enq->get_mset( 0,2 ) if $enq;
@@ -122,8 +129,9 @@ sub search_exact {
 
     if(!$mset || $mset->empty()){
       $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/_/));
-      $q = $class->_add_type_range($c, $q, $type);
-      $query=$class->qp->parse_query( $q, 1|2 );
+      $q =~ s/\s/\* /g;
+      $q = $class->_add_type_range($c, "$q", $type);
+      $query=$class->qp->parse_query( $q, 2|16|256|512 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query exactc:" . $query->get_description());
       $mset      = $enq->get_mset( 0,2 );
@@ -140,6 +148,8 @@ sub random {
 
 sub search_count {
  my ( $class, $c, $q, $type, $species) = @_;
+    $q =~ s/\s/\* /g;
+    $q = "$q*";
 
     if($type){
       $q = $class->_add_type_range($c, $q, $type);
@@ -181,11 +191,11 @@ sub extract_data {
 
 sub _get_obj {
   my ($self, $c, $doc, $footer) = @_;
-  my $species = $doc->get_value(5);
 
   my %ret;
   $ret{name} = $self->_pack_search_obj($c, $doc);
-  if($species =~ m/^(.)_(.*)$/){
+  my $species = $ret{name}{taxonomy};
+  if($species =~ m/^(.).*_([^_]*)$/){
     my $s = $c->config->{sections}{species_list}{$species};
     $ret{taxonomy}{genus} = $s->{genus} || uc($1) . '.';
     $ret{taxonomy}{species} = $s->{species} || $2;
@@ -265,6 +275,15 @@ sub _get_tag_info {
   return $tag;
 }
 
+# why is species sometimes getting stored weird in xapian? 
+# eg. c_caenorhabditis_elegans instead of c_elegans
+sub _get_taxonomy {
+  my ($self, $doc) = @_;
+  my $taxonomy = $doc->get_value(5);
+  $taxonomy =~ s/_([^_]*)_/\_/g;
+  return $taxonomy;
+}
+
 sub _pack_search_obj {
   my ($self, $c, $doc, $label) = @_;
   my $id = $doc->get_value(1);
@@ -273,7 +292,7 @@ sub _pack_search_obj {
   return {  id => $id,
             label => $label || $doc->get_value(6) || $id,
             class => lc($class),
-            taxonomy => $doc->get_value(5),
+            taxonomy => $self->_get_taxonomy($doc),
             coord => { start => $doc->get_value(9),
                        end => $doc->get_value(10),
                        strand => $doc->get_value(11)}
@@ -293,5 +312,10 @@ sub _add_type_range {
   return $q;
 }
 
+sub _uniquify {
+  my ($self, $q, $type) = @_;
+  $q =~ s/\W/_/g;
+  return "$type$q";
+}
 
 1;
