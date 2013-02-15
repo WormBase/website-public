@@ -89,7 +89,7 @@
 	dbsnp_rs = {
 		description	= 'Single Nucleotide Polymorphism Database - Reference SNP'
 		base		= 'http://www.ncbi.nlm.nih.gov/SNP/'
-		search		= 'http://www.ncbi.nlm.nih.gov/SNP/snp_rs.cgi?rs=%s'
+		search		= 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=%s'
 	}
 
 	dbsnp_ss = {

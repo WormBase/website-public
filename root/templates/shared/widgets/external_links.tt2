@@ -14,6 +14,9 @@
             # Should be a table of resource, ID linked to page description, maintainer.
             links = links _ external_link(dbname,id,id,dbt) _ '<br />';
         END;
+        IF hash.$db.$dbt.ids.size == 0;
+            links = links _ external_link(dbname,dbt,dbt) _ '<br />';
+        END;
       END;
       rows.push( { maintainer  = site.external_urls.$dbname.maintainer,
                    name        = external_link(dbname, db),
