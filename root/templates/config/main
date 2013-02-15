@@ -241,6 +241,7 @@
        IF (link||text||id);
         text = text || id || link;
         link = match_link(link);
+        ext_url = "";
 
         IF(site.external_urls.defined(link));
           desc = site.external_urls.$link.description;
@@ -257,7 +258,7 @@
               ext_url = site.external_urls.$link.base;
           END;
         END;
-        ext_url = link UNLESS ext_url.defined; 
+        UNLESS (ext_url.defined); ext_url = link; END; 
 
         "<a href=\"$ext_url\" 
             onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
