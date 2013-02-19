@@ -1537,7 +1537,7 @@ sub gene_models {
 
         $data{length_spliced}   = $len_spliced if $coding;
 
-        my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
+        my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
         if ($protein) {
