@@ -85,6 +85,22 @@ sub synonyms {
     };
 }
 
+# wormatlas {}
+# This method will return a data structure containing the 
+# wormatlas link of this anatomy term object.
+
+sub wormatlas {
+	my $self = shift; 
+ 	my $url_tail =  shift @{ $self->xrefs->{data}->{WormAtlas}->{html}->{ids} };
+	my $wa_prefix = 'http://wormatlas.org/';
+	my $data = $wa_prefix.$url_tail;
+	
+	return {
+		description => 'link to WormAtlas record',
+		data => $data ? \$data : undef 
+	}
+}
+
 # remarks {}
 # Supplied by Role
 
@@ -196,6 +212,31 @@ sub anatomy_function_nots {
 
 # xrefs {}
 # Supplied by Role
+
+# Overridden here
+# XREFs are stored under the Database tag.
+sub _build_xrefs {
+    my ($self,$object) = @_;
+    $object = $self->object unless $object;
+
+    my @databases = $object->Database;
+    my %dbs;
+    foreach my $db (@databases) {
+    
+    # FILTER OUT WORMATLAS HERE, THEN APPLY IT TO OVERVIEW WIDGET
+    
+        # Possibly multiple entries for a single DB
+      $dbs{$db} = {};
+      foreach my $dbt ($db->col){
+        @{$dbs{$db}{$dbt}{ids}} = map {( $_ =~ /^(OMIM:|GI:)(.*)/ ) ? "$2" : $_;} $dbt->col;
+      }
+    }
+
+    return {
+        description => 'external databases and IDs containing additional information on the object',
+        data        => %dbs ? \%dbs : undef,
+    };
+}
 
 ## sub anatomy {}  figure out image displaying functions
 
