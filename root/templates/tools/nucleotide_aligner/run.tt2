@@ -41,5 +41,5 @@
       [% END %]
  
   <p>
-  [% content %]
+  <div style="min-width:73em;">[% content %]</div>
 [% END %]
