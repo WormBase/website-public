@@ -278,6 +278,33 @@ sub go_term{
 
 }
 
+#######################################
+#
+# Interaction widget
+#
+#######################################
+
+sub pathway{
+	my ($self) = @_;
+	my $object = $self->object;
+	
+	my @row = $object->Pathway->row;
+	my $pathway_id = $row[4];
+	my $link_base = 'http://www.wikipathways.org/index.php/Pathway:';
+	my $link = $link_base.$pathway_id;
+	
+	my $data = {
+		pathway_link => $link, 
+	};
+	
+	return {
+		description => "Related wikipathway link",
+#		data => $object
+		data => $data ? $data : undef
+};
+}
+
+
 # Sample wrapper function to copy
 # replace the xxx's with stuff
 0 if <<'SAMPLE_FUNC';
@@ -292,7 +319,6 @@ sub xxx{
 	};
 }
 SAMPLE_FUNC
-
 
 ############################################################
 #
