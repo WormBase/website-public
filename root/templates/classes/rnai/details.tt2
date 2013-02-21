@@ -1,6 +1,6 @@
 [%
 
-WRAPPER $field_block title="Genotype" key="Genotype";
+WRAPPER $field_block title="Genotype" key="genotype";
      tag2link(fields.genotype.data);
 END;
 

@@ -1,34 +1,29 @@
-[%
+[% 
 
   IF fields.xrefs.data;
 
-  rows = [];
-  hash = fields.xrefs.data;
-  FOREACH db IN hash.keys.sort;
-      IF !site.external_urls.$db.defined;
-	  dbname = FILTER lower; db; END;  #e.g. OMIM(ACeDB) -> omim(external_urls)
-      ELSE;
-	  dbname = db;
-      END;
-      # This information is pulled from config which we might want to use in preference over ?Database;
-      # Create a tooltip with information from information culled from both the database and our config.
-      maintainer = site.external_urls.$dbname.maintainer;
+    rows = [];
+    hash = fields.xrefs.data;
+    FOREACH db IN hash.keys.sort;
+      dbname = match_link(db);
+
       links = "";
-	  FOREACH id IN hash.$db.ids; 
-	      href= FILTER format(site.external_urls.$dbname.search); id; END;
-		  # We'll use description info from the website and not the DB.
-		  # Should be a table of resource, ID linked to page description, maintainer.
-	      links = links _ external_link(href,id,id);
-	      links = links _ '<br />';
-	  END;
-
-
-      rows.push( { maintainer  = maintainer,
-                  name        = external_link(site.external_urls.$dbname.base, db),
-                  link        = links,
-                  full_description = site.external_urls.$dbname.description,     # full description from the DB
+      FOREACH dbt IN hash.$db.keys;
+        FOREACH id IN hash.$db.$dbt.ids; 
+            # We'll use description info from the website and not the DB.
+            # Should be a table of resource, ID linked to page description, maintainer.
+            links = links _ external_link(dbname,id,id,dbt) _ '<br />';
+        END;
+        IF hash.$db.$dbt.ids.size == 0;
+            links = links _ external_link(dbname,dbt,dbt) _ '<br />';
+        END;
+      END;
+      rows.push( { maintainer  = site.external_urls.$dbname.maintainer,
+                   name        = external_link(dbname, db),
+                   link        = links,
+                   full_description = site.external_urls.$dbname.description,     # full description from the DB
                 } );
-     END;
+    END;
 
 
 
