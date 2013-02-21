@@ -9,11 +9,14 @@
 
 
    <div class="description">
-	[%# WRAPPER $field_block title="Definition" key="definition"-%] 
 		[%  fields.definition.data %]
-	[%# END %]
   </div>
 
+MAKE LINK AND FORCE ONE LINE
+[% WRAPPER $field_block title="WormAtlas" key="wormatlas" -%] 
+	[% fields.wormatlas.data %]
+[% END %]
+  
 
 
 
