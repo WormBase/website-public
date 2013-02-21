@@ -1,12 +1,4 @@
-<h3>This is the widget title or subtitle; need to standardize across site or drop altogether.</h3>
-
-[% WRAPPER highlight_box %]
-
-This is the call out box. It will contain pertinent information or maybe a description of the widget.
-
-[% END %]
-
-
+<script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>               
 
 [% WRAPPER $field_block title="" %]
 
@@ -14,40 +6,7 @@ This is the call out box. It will contain pertinent information or maybe a descr
                 Loading map ...
              </div>
 
-             <script type="text/javascript">
 
-                function mapsLoaded() {
-                    var map = new google.maps.Map2(document.getElementById("google-map-inline"));
-                    map.setCenter(new google.maps.LatLng(35,10), 1);
-
-                    // Controls
-                    map.addControl(new GSmallZoomControl());
-                    map.addControl(new GMapTypeControl());
-                    map.addControl(new GScaleControl());
-
-                    function addMarker(point, placeinfo) {
-                          var marker = new GMarker(point);
-                          map.addOverlay(marker); 
-                          if (placeinfo) {
-                               GEvent.addListener(marker, "click", function() {
-                                      marker.openInfoWindowHtml("<b>" + placeinfo + "</b>");
-                                 });
-			   }
- 
-                      }
-
-		      [% FOREACH strain IN fields.natural_isolates.data %]
-		           [% NEXT UNLESS strain.latitude AND strain.longitude %]
-    		           var point = new GLatLng([% strain.latitude %],
-			                           [% strain.longitude %]);
-                       addMarker(point,"[% strain.strain.label _ (strain.place ? ' (' _ strain.place _ ')' : 'place name unknown') %]");
-		       [% END %]
-                    }
-	       </script>
-	       
-               <script type="text/javascript">
-                   google.load("maps", "2", {"callback" : mapsLoaded});
-               </script>
 
 [% END %]
 
@@ -70,4 +29,41 @@ This is the call out box. It will contain pertinent information or maybe a descr
     END;
 %]
 
+           <script type="text/javascript">
+          </script>
 
+
+           <script type="text/javascript">
+            (function(){
+                function mapsLoaded() {
+                    var map = new google.maps.Map2(document.getElementById("google-map-inline"));
+                    map.setCenter(new google.maps.LatLng(35,10), 1);
+
+                    // Controls
+                    map.addControl(new GSmallZoomControl());
+                    map.addControl(new GMapTypeControl());
+                    map.addControl(new GScaleControl());
+
+                    function addMarker(point, placeinfo) {
+                          var marker = new GMarker(point);
+                          map.addOverlay(marker); 
+                          if (placeinfo) {
+                               GEvent.addListener(marker, "click", function() {
+                                      marker.openInfoWindowHtml("<b>" + placeinfo + "</b>");
+                                 });
+                          }
+ 
+                    }
+
+                      [% FOREACH strain IN fields.natural_isolates.data %]
+                          [% NEXT UNLESS strain.latitude AND strain.longitude %]
+                              var point = new GLatLng([% strain.latitude %],
+                                              [% strain.longitude %]);
+                              addMarker(point,"[% strain.strain.label _ (strain.place ? ' (' _ strain.place _ ')' : 'place name unknown') %]");
+                      [% END %]
+                  }
+                WB.loadFile("https://www.google.com/jsapi?key=[% c.config.google_api_key %]", true, function(){
+                  google.load("maps", "2", {"callback" : mapsLoaded});
+                });
+            })();
+           </script>

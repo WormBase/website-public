@@ -150,7 +150,8 @@ sub pcr_products {
 sub expression_map {
     my $self       = shift;
     my $object     = $self->object;
-    return { data        => $self->_pack_obj($object->Expr_map),
+    my $expr_map = $object->Expr_map;
+    return { data        => $expr_map && "$expr_map",
 	     description => 'expression map data for expr_profile'
     };
 }

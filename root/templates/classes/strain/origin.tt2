@@ -15,7 +15,11 @@
 
 
 [% 
-
+IF fields.sampled_by.data || fields.isolated_by.data || 
+   fields.date_isolated.data || fields.place.data || 
+   fields.landscape.data || fields.gps_coordinates.data.latitude ||
+   fields.substrate.data || fields.associated_organisms.data ||
+   fields.life_stage.data || fields.log_size_of_population.data;
    WRAPPER $field_block title="Isolation";
 
        WRAPPER $field_block title="Sampled by" key="sampled_by";
@@ -46,38 +50,7 @@
                [% fields.gps_coordinates.data.longitude %] ° longitude
         
                <div id="google-map" style="height: 250px; width: 400px"></div>
-
-               <script type="text/javascript">
-
-                function mapsLoaded() {
-                    var map = new google.maps.Map2(document.getElementById("google-map"));
-                    map.setCenter(new google.maps.LatLng(35,10), 1);
-
-                    // Controls
-                    map.addControl(new GSmallZoomControl());
-                    map.addControl(new GMapTypeControl());
-                    map.addControl(new GScaleControl());
-
-                    function addMarker(point, placeinfo) {
-                          var marker = new GMarker(point);
-                          map.addOverlay(marker); 
-                          if (placeinfo) {
-                               GEvent.addListener(marker, "click", function() {
-                                      marker.openInfoWindowHtml("<b>" + placeinfo + "</b>");
-                                 });
-			   }
- 
-                      }
-
-		       var point = new GLatLng([% fields.gps_coordinates.data.latitude %],
-                                               [% fields.gps_coordinates.data.longitude %]);
-                       addMarker(point,"[% fields.place.data ? fields.place.data : 'place name unknown' %]");
-                    }
-	       </script>
-	       
-               <script type="text/javascript">
-                   google.load("maps", "2", {"callback" : mapsLoaded});
-               </script>
+              
          [% END %]
     [% END %]
 
@@ -99,9 +72,38 @@
        END;
 
 END; 
-
+END;
 %]
+<script type="text/javascript">
 
+                function mapsLoaded() {
+                    var map = new google.maps.Map2(document.getElementById("google-map"));
+                    map.setCenter(new google.maps.LatLng(35,10), 1);
+
+                    // Controls
+                    map.addControl(new GSmallZoomControl());
+                    map.addControl(new GMapTypeControl());
+                    map.addControl(new GScaleControl());
+
+                    function addMarker(point, placeinfo) {
+                          var marker = new GMarker(point);
+                          map.addOverlay(marker); 
+                          if (placeinfo) {
+                               GEvent.addListener(marker, "click", function() {
+                                      marker.openInfoWindowHtml("<b>" + placeinfo + "</b>");
+                                 });
+               }
+ 
+                      }
+
+               var point = new GLatLng([% fields.gps_coordinates.data.latitude %],
+                                               [% fields.gps_coordinates.data.longitude %]);
+                       addMarker(point,"[% fields.place.data ? fields.place.data : 'place name unknown' %]");
+                    }
+                WB.loadFile("https://www.google.com/jsapi?key=[% c.config.google_api_key %]", true, function(){
+                  google.load("maps", "2", {"callback" : mapsLoaded});
+                });
+           </script>
 
 
 

@@ -134,7 +134,7 @@ sub display_object {
     my $image_path = $self->tmp_image_uri($image_file);
 
     # get the parameters for the image generation
-    my @clicks =  map { [ split('-',$_) ] } split(',',$click);
+    my @clicks =  map { [ split('-',$_) ] } split(',',$click) if $click;
 
     my $debug;
 
@@ -191,7 +191,7 @@ sub print_map {
     }
 
     my $user_agent =  http('User_Agent');
-    my $modern = $user_agent=~/Mozilla\/([\d.]+)/ && $1 >= 4;
+    my $modern = $user_agent ? $user_agent=~/Mozilla\/([\d.]+)/ && $1 >= 4 : 0;
 
     my $max = 100;
 
@@ -249,7 +249,7 @@ sub print_map {
     # Create default handling.  Bad use of javascript, but can't think of any other way.
     my $url = "/tools/$request_tool/run?name=$request_name;class=$request_class";
     my $simple_url = $url;
-    $url .= "&click=$old_clicks";
+    $url .= "&click=$old_clicks" if $old_clicks;
     $url .= "," if $old_clicks;
     push(@lines,qq(<AREA shape="default"
 		         alt=""

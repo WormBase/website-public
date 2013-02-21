@@ -1001,10 +1001,9 @@ sub widget_class_index_GET {
 
     if($widget=~m/browse|basic_search|summary|downloads|assemblies|data_unavailable/){
       $c->stash->{template}="shared/widgets/$widget.tt2";
-    }elsif($class eq 'all'){
-      $c->stash->{template} = "species/$species/$widget.tt2";
     }else{
-      $c->stash->{template} = "species/$species/$class/$widget.tt2";
+      $c->res->redirect($c->uri_for('widget', $class, 'all', $widget), 307);
+      return;
     }
     $c->detach('WormBase::Web::View::TT'); 
 }
