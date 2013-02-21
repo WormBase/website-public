@@ -36,13 +36,15 @@ sub run :Path('run') :Args(0) {
     my ($data, $error) = $params->{'query-type'} eq 'AQL'
              ? $qlserv->aql($c, $params->{'ql-query'})
              : $qlserv->wql($c, $params->{'ql-query'},
-                            $params->{'result-type'} ne 'HTML');
+                            1);#$params->{'result-type'} ne 'HTML');
     $stash->{error} = $error;
     if ($params->{'result-type'} eq 'HTML') {
         if ($params->{'query-type'} eq 'AQL') {
             my @titles = map {$_->class} @{$data->[0]};
             $stash->{titles} = \@titles;
             $qlserv->objs2pack($data);
+        }else{
+        $qlserv->objs2pack($data);
         }
         $stash->{template} = 'tools/queries/index.tt2';
         $stash->{data} = $data;
