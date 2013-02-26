@@ -12,9 +12,26 @@
 		[%  fields.definition.data %]
   </div>
 
-MAKE LINK AND FORCE ONE LINE
+
 [% WRAPPER $field_block title="WormAtlas" key="wormatlas" -%] 
-	[% fields.wormatlas.data %]
+	[%
+	links ="";
+	dbname="wormatlas";
+	hash = fields.wormatlas.data;
+	FOREACH dbt IN hash.keys;
+        FOREACH id IN hash.$dbt.ids; 
+            # We'll use description info from the website and not the DB.
+            # Should be a table of resource, ID linked to page description, maintainer.
+            links = links _ external_link(dbname,id,id,dbt) _ '<br />';
+        END;
+        IF hash.$dbt.ids.size == 0;
+            links = links _ external_link(dbname,dbt,dbt) _ '<br />';
+        END;
+    END;
+    %]
+    <div style="white-space:nowrap;">
+	[% links %]
+	</div>
 [% END %]
   
 
