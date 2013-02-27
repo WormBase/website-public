@@ -328,6 +328,11 @@ sub get_example_object {
 sub check_cache {
     my ($self, $key, $cache_name) = @_;
 
+    # Staging should only SET cache, not read from it. Not ideal
+    # from a QA/QC perspective which will need to be done 
+    # from a different site that can read from the staging cache.
+    return if ($self->config->{installation_type} eq 'staging');
+
     return unless $self->config->{cache}{enabled};
     $cache_name ||= 'default';
 
