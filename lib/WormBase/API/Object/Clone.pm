@@ -320,6 +320,46 @@ sub pcr_product {
 # references {}
 # Supplied by Role
 
+#######################################
+#
+# The Sequences Widget
+#
+#######################################
+#             fields print_sequence
+#             fields transcripts
+#             fields predicted_units
+#             fields strand
+
+has '_sequence' => (
+  is => 'rw',
+  isa => 'WormBase::API::Object::Sequence',
+  lazy_build => 1,
+);
+
+sub _build__sequence {
+  my $self = shift;
+  return $self->_api->wrap($self->object->Sequence);
+}
+
+sub transcripts {
+  my $self = shift;
+  return $self->_sequence->transcripts();
+}
+
+sub predicted_units {
+  my $self = shift;
+  return $self->_sequence->predicted_units();
+}
+
+sub strand {
+  my $self = shift;
+  return $self->_sequence->strand();
+}
+
+sub print_sequence {
+  my $self = shift;
+  return $self->_sequence->print_sequence();
+}
 
 
 ########################################
