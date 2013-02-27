@@ -1,5 +1,5 @@
 [%# IF fields.segment.data %]
-<div style="font-family:monospace;margin:1em;">
+<div class="sequence-container">
    [% segment = fields.segment.data %]
    >[% fields.name.data.label %] ([%fields.name.data.class %];
    [% segment.refseq %]:[% segment.abs_start %]..[% segment.abs_stop %];
