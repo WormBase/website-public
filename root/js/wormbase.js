@@ -1687,11 +1687,11 @@ function setupCytoscape(data, types){
               },
               edgeSourceArrowMapper = {
                 attrName: "direction",
-                entries: [ { attrValue: "Effector->Effected", value: "T" },]
+                entries: [ { attrValue: "Effector->Affected", value: "T" },]
               },
               edgeTargetArrowMapper = {
                 attrName: "direction",
-                entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
+                entries: [ { attrValue: "Effector->Affected", value: "ARROW" },]
               },
             nodeShapeMapper = {
                 attrName: "ntype",
