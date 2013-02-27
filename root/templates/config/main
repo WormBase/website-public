@@ -221,7 +221,7 @@
     ELSIF query;
       query _ ' - search';
     ELSIF (class && class != 'all' && class != 'home');
-      c.config.sections.species.$class.title || c.config.sections.resources.$class.title || c.user.username || 'My WormBase' _ ' ' _ s;
+      c.config.sections.species.$class.title || c.config.sections.resources.$class.title || c.user.username || (section == 'tools' && class) || 'My WormBase' _ ' ' _ s;
     ELSIF s;
       s;
     ELSIF section;
