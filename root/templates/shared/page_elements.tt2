@@ -427,13 +427,13 @@ WB.getPlugin("dataTables", function(){
 
 [% MACRO interaction_cell(cell) BLOCK;
     '<table id="interaction_cell_' _ loop.index _ '">';
-    IF cell.interaction.Effector || cell.interaction.Effected;
+    IF cell.interaction.Effector || cell.interaction.Affected;
       '<tr>';
 	  '<td>' _ tags2link(cell.interaction.Effector) _ '</td>';
 	  '<td style="font-size:25px">';
 	  IF cell.interaction.Effector.size > 1; '}'; END;
 	  '&rarr;</td>';
-	  '<td>' _ tags2link(cell.interaction.Effected) _ '</td>';
+	  '<td>' _ tags2link(cell.interaction.Affected) _ '</td>';
       '</tr>';
     END;
     IF cell.interaction.Non_directional;

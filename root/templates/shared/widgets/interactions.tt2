@@ -4,10 +4,10 @@
       'Found ';
       searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
 
-      build_data_table(order=['interactions','type','effector','effected','direction','phenotype','citations'],
+      build_data_table(order=['interactions','type','effector','affected','direction','phenotype','citations'],
                        columns={type  => 'Interaction Type',
                         effector => 'Effector',
-                        effected  => 'Effected',
+                        affected  => 'Affected',
                 direction => 'Direction',
                 phenotype => 'Phenotype',
                 interactions => 'Interactions',
@@ -44,8 +44,8 @@ FOREACH edge IN fields.interactions.data.edges.sort;
     name = edge.effector.label FILTER upper;
     "$name|";
     END;
-    IF edge.effected.class == 'Gene';
-    name = edge.effected.label FILTER upper;
+    IF edge.affected.class == 'Gene';
+    name = edge.affected.label FILTER upper;
     "$name|";
     END;
 END; %]" target="_blank">View Interaction Network in GeneMANIA</a>

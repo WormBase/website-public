@@ -19,7 +19,7 @@
 
         <h4>Directions</h4>
         <p>
-          <input type="checkbox" name="direction" value="Effector->Effected"> <b>&#8594;</b> Effector -> Effected<br />
+          <input type="checkbox" name="direction" value="Effector->Affected"> <b>&#8594;</b> Effector -> Affected<br />
           <input type="checkbox" name="direction" value="non-directional|Other"> <b>&ndash;</b> Non-directional<br />
         </p>
 
@@ -63,7 +63,7 @@
                   ],
             edges:[ [% FOREACH obj IN EDGES %]
                           { id: "e[% loop.count %]", label: "[% obj.interaction.id %]" ,
-                            source: "[% obj.effector.label %]", target: "[% obj.effected.label %]",
+                            source: "[% obj.effector.label %]", target: "[% obj.affected.label %]",
                             type: "[% obj.type %]", direction:"[% obj.direction %]",
                             width: [% obj.interactions.size %],
                             phenotype: "[% obj.phenotype.label %]",
