@@ -14,6 +14,7 @@
                 _ '</span>');
         ELSE;
           class_title = c.config.sections.species.$class.title || c.config.sections.resources.$class.title;
+          class_title = pluralize(class_title);
           IF species != 'all';
             breadcrumbs.push('<span class="species"><a href="' _ c.uri_for('/species',species).path _ '">'
                       _ species_name
@@ -31,6 +32,10 @@
 
       title = breadcrumbs.join(' &raquo; ');
       report_page(title);
+%]
+
+[% USE Dumper;
+Dumper.dump(c.uri_for('/species','all'));
 %]
 
 
