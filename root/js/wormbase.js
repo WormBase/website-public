@@ -547,7 +547,7 @@
           ajaxPanel.html(data);
         },
         error:function(xhr, textStatus, thrownError){
-          var error = $jq(xhr.responseText).find(".error-message-technical").html() || '';
+          var error = $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
           ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p><a href="/tools/support?url=' + location.pathname 
                   + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
