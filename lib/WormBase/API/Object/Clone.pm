@@ -332,33 +332,40 @@ sub pcr_product {
 
 has '_sequence' => (
   is => 'rw',
-  isa => 'WormBase::API::Object::Sequence',
+  isa => 'Maybe[WormBase::API::Object::Sequence]',
   lazy_build => 1,
 );
 
 sub _build__sequence {
   my $self = shift;
-  return $self->_api->wrap($self->object->Sequence);
+  return $self->_api->wrap($self->object->follow(-tag=>'Sequence',-filled=>1));
 }
 
 sub transcripts {
   my $self = shift;
-  return $self->_sequence->transcripts();
+  return $self->_sequence ? $self->_sequence->transcripts() 
+    : { description => 'Transcripts in this region of the sequence', data => undef };
+
 }
 
 sub predicted_units {
   my $self = shift;
-  return $self->_sequence->predicted_units();
+  return $self->_sequence ? $self->_sequence->predicted_units() 
+    : { description => 'features contained within the sequence', data => undef };
+
 }
 
 sub strand {
   my $self = shift;
-  return $self->_sequence->strand();
+  return $self->_sequence ? $self->_sequence->strand() 
+    : { description => 'strand orientation of the sequence', data => undef };
+
 }
 
 sub print_sequence {
   my $self = shift;
-  return $self->_sequence->print_sequence();
+  return $self->_sequence ? $self->_sequence->print_sequence() 
+    : { description => 'the sequence of the sequence', data => undef };
 }
 
 
