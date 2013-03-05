@@ -36,11 +36,6 @@
       report_page(title);
 %]
 
-[%# 
-# DELETE
-USE Dumper;
-Dumper.dump(c.config.sections.species.gene.title);
-pluralize(c.config.sections.species.gene.title);
-%]
+
 
 
