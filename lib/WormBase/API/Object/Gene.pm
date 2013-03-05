@@ -915,13 +915,19 @@ sub history {
 
         my @versions = $history->col;
         foreach my $version (@versions) {
+        
+			my @events = ();
+			if( $history eq 'Version_change' ) {
+				@events = $history->right(4)->col;
+			}
 
             #  next unless $history eq 'Version_change';    # View Logic
             my ($vers,   $date,   $curator, $event,
                 $action, $remark, $gene,    $person
             );
             if ( $history eq 'Version_change' ) {
-                ( $vers, $date, $curator, $event, $action, $remark )
+            
+                 ( $vers, $date, $curator, $event, $action, $remark )
                     = $version->row;
 
                 next if $action eq 'Imported';
@@ -939,16 +945,26 @@ sub history {
                 ($gene) = $version->row;
             }
 
-            push @data, {
-                history => $history && "$history",
-                version => $version && "$version",
-                type    => $type && "$type",
-                date    => $date && "$date",
-                action  => $action && "$action",
-                remark  => $remark && "$remark",
-                gene    => $self->_pack_obj($gene),
-                curator => $self->_pack_obj($curator),
-            };
+			# LOOP START
+			
+			if( (scalar @events) == 0 ) {
+				push @events, $action || $vers;
+			}
+			foreach my $version_action (@events){
+			
+				push @data, {
+					history => $history && "$history",
+					version => $version && "$version",
+					type    => $type && "$type",
+					date    => $date && "$date",
+					action  => $version_action && "$version_action",
+					remark  => $remark && "$remark",
+					gene    => $self->_pack_obj($gene),
+					curator => $self->_pack_obj($curator),
+				};
+				
+            }
+            # LOOP END
         }
     }
 
