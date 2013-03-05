@@ -234,9 +234,9 @@ sub segment {
 	if (my ($segment) = @{$self->_segments}) {
 		%data = map { $_ => $segment->$_ }
 		        qw(refseq ref abs_start abs_stop start stop length dna);
-	} else {
-        $data{length} = $self->object->Length;
-        $data{dna} = $self->object->Sequence;
+	} elsif(my $l = $self->object->get('Length')) {
+          $data{length} = $l;
+          $data{dna} = $self->object->get('Sequence');
     }
 
 	return {
