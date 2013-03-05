@@ -40,6 +40,7 @@ BEGIN {
             Rnai      => 'RNAi',
             Go_term   => 'GO_term',
             Wbprocess => 'WBProcess',
+            Model     => 'Model', #for schema display to work
         },
         # the following are the tags for extracting a "common" or "public" name
         # for objects automatically. when adding a new one, please consider

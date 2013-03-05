@@ -1,5 +1,5 @@
-[%# IF fields.segment.data %]
-<div style="font-family:monospace;margin:1em;">
+[% IF fields.segment.data %]
+<div class="sequence-container">
    [% segment = fields.segment.data %]
    >[% fields.name.data.label %] ([%fields.name.data.class %];
    [% segment.refseq %]:[% segment.abs_start %]..[% segment.abs_stop %];
@@ -51,5 +51,7 @@
 <a href="/tools/genome/gbrowse/[% genom_link_part %]">
 [% image("/tools/genome/gbrowse_img/" _ genom_img_part) %]</a>
 </div>
-[%# END %]
+[% ELSE %]
+      <div class="caveat-emptor">No sequence data available</div>
+[% END %]
 

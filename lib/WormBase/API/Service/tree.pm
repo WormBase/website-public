@@ -10,6 +10,8 @@ use CGI 2.42 qw/:standard :html3 escape/;
 #use Ace::Browser::AceSubs qw(:DEFAULT Style);
 #use Ace::Browser::TreeSubs qw(AceImageHackURL);
 
+has '_api' => ( is => 'rw');
+
 use constant MAXEXPAND   => 10;
 use constant CLOSEDCOLOR => "#909090";
 use constant OPENCOLOR   => "#FF0000";
@@ -49,18 +51,16 @@ sub run {
 	$request_class = 'Model';
     }
     $request_name =~ s/^#/?/ if $request_class eq 'Model';
-    
     $dsn  = $self->ace_dsn->dbh;
-    my ($object) = $dsn->fetch(-class => $request_class,
-			       -name  => $request_name,
-			       -fill  => 1) if $request_class && $request_name;
-    
+    my ($object) = $self->_api->fetch({ class => ucfirst $request_class, name => $request_name, nowrap => 1 });
+
     my ($tree,$msg);
     if ($object) {
-	$tree = $self->generate_tree($param,$object);
-	$msg    = "No additional information about $request_name available in the database" unless $tree;
+      $request_class = $object->class;
+      $tree = $self->generate_tree($param,$object);
+      $msg    = "No additional information about $request_name available in the database" unless $tree;
     } else {
-	$msg = "$request_class:$request_name could not be found in the database.";
+      $msg = "$request_class:$request_name could not be found in the database.";
     }
 
 

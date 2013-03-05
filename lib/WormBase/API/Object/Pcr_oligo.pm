@@ -41,12 +41,13 @@ has '_oligos' => (
 
 has '_object_class' => (
 	is => 'ro',
-	required => 1,
-	default => sub {
-		(my $class = shift ~~ 'class') =~ s/_/ /go;
-		return $class;
-	},
+    lazy_build => 1
 );
+
+sub _build__object_class {
+    (my $class = shift ~~ 'class') =~ s/_/ /go;
+    return $class;
+}
 
 # satisfy Role::Position requirements
 sub _build__segments {
@@ -233,7 +234,10 @@ sub segment {
 	if (my ($segment) = @{$self->_segments}) {
 		%data = map { $_ => $segment->$_ }
 		        qw(refseq ref abs_start abs_stop start stop length dna);
-	}
+	} elsif(my $l = $self->object->get('Length')) {
+          $data{length} = $l;
+          $data{dna} = $self->object->get('Sequence');
+    }
 
 	return {
 		description => 'Sequence/segment data about this ' . $self->_object_class,

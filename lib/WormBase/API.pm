@@ -212,7 +212,8 @@ sub fetch {
         # resolve classes to properly retrieve object
         if ($class) { # WB class was provided
             $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{$class}
-                     || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class};
+                     || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class}
+                     || (($self->modelmap->ACE2WB_MAP->{class}->{$class}) ? $class : undef); 
 
             unless ($aceclass) { # don't know which aceclass;
                 $self->log->warn("[API::fetch()]", " class $class, UNKNOWN ace class");

@@ -1307,11 +1307,11 @@ sub predicted_units {
     my ($self) = @_;
     my $s = $self->object;
     my @rows;
-
     # NB: This is not completely functional - it doesn't display cloned, named genes
     # (The pre-WS116 version didn't either).
     # That is, transcripts like JC8.10 are not listed under Transcripts in Ace WS116
     if (my @genes = $s->get('Transcript')) {
+
 #       print 'Predicted Genes & Transcriptional Units';
         my %data = map {$_=>$_} $s->follow(-tag=>'Transcript',-filled=>1);
 #         my @rows;

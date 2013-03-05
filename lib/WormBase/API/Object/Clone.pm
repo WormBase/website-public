@@ -320,6 +320,53 @@ sub pcr_product {
 # references {}
 # Supplied by Role
 
+#######################################
+#
+# The Sequences Widget
+#
+#######################################
+#             fields print_sequence
+#             fields transcripts
+#             fields predicted_units
+#             fields strand
+
+has '_sequence' => (
+  is => 'rw',
+  isa => 'Maybe[WormBase::API::Object::Sequence]',
+  lazy_build => 1,
+);
+
+sub _build__sequence {
+  my $self = shift;
+  return $self->_api->wrap($self->object->follow(-tag=>'Sequence',-filled=>1));
+}
+
+sub transcripts {
+  my $self = shift;
+  return $self->_sequence ? $self->_sequence->transcripts() 
+    : { description => 'Transcripts in this region of the sequence', data => undef };
+
+}
+
+sub predicted_units {
+  my $self = shift;
+  return $self->_sequence ? $self->_sequence->predicted_units() 
+    : { description => 'features contained within the sequence', data => undef };
+
+}
+
+sub strand {
+  my $self = shift;
+  return $self->_sequence ? $self->_sequence->strand() 
+    : { description => 'strand orientation of the sequence', data => undef };
+
+}
+
+sub print_sequence {
+  my $self = shift;
+  return $self->_sequence ? $self->_sequence->print_sequence() 
+    : { description => 'the sequence of the sequence', data => undef };
+}
 
 
 ########################################

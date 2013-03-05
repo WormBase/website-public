@@ -15,7 +15,7 @@ END;
 
 '<div class="description">';
 no_toggle = 1; remarks();
-'</div>';
+
    WRAPPER $field_block title='Website' key='url';
       url = fields.url.data;
       external_link(url, url);
@@ -109,7 +109,7 @@ IF fields.pcr_product.data.oligos.data;
       END;
 END;
 
-
+'</div>';
 
 %]
 
