@@ -672,7 +672,7 @@
     
     function search(box) {
         if(!box){ box = "Search"; }else{ cur_search_type = cur_search_type || 'all'; } 
-        var f = $jq("#" + box).attr("value");
+        var f = $jq("#" + box).val();
         if(f === "search..." || !f){
           f = "";
         }
@@ -1421,8 +1421,8 @@ var Scrolling = (function(){
         return false;
     },
     cmDelete: function(cm){
-       var $id=cm.attr("id");
-      var url= cm.attr("rel");
+       var $id=cm.attr("id"),
+           url= cm.attr("rel");
       
       $jq.ajax({
         type: "POST",
