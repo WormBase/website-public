@@ -163,7 +163,7 @@
           connectWith: '.sortable',
           opacity: 0.6,
           forcePlaceholderSize: true,
-          update: function(event, ui) { Layout.updateLayout(); },
+          update: function(event, ui) { Layout.updateLayout(); }
         });
       }
       
@@ -1731,7 +1731,7 @@ function setupCytoscape(data, types){
                       //{ name: "link", type: "string" },
                   ]
                 },
-                data: data,
+                data: data
               },
             // visual style we will use
               visual_style = {
@@ -1750,7 +1750,7 @@ function setupCytoscape(data, types){
                   color: { continuousMapper: nodeColorMapper },
                   hoverGlowColor: "#aae6ff",
                   labelGlowOpacity: 1,
-                  labelHorizontalAnchor: "center",
+                  labelHorizontalAnchor: "center"
                 },
                 edges: {
                   width: { defaultValue: 0.5, continuousMapper: edgeWidthMapper },
@@ -1763,7 +1763,7 @@ function setupCytoscape(data, types){
                   labelHorizontalAnchor: "center",
                   label: { passthroughMapper: { attrName: "type" } },
                   tooltipText: { defaultValue:"<b>${type}<br />${direction}<br />${source} --- ${target}<br />${phenotype}<br />${width} citation(s)</b>", discreteMapper: toolTipMapper },
-                  tooltipBackgroundColor: "#fafafa",
+                  tooltipBackgroundColor: "#fafafa"
                 }
               },
             
@@ -1786,7 +1786,7 @@ function setupCytoscape(data, types){
                     legend = $jq('#cyto_legend'),
                     node_size = (legend.find('input[name=nodes]').size() > 0);
                 
-                vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
+                vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true });
                 vis.ready(function() {
                     vis.filter("nodes", function(node) { return node.data.predicted != 1; })
                     // add a listener for when nodes and edges are clicked
@@ -1925,13 +1925,13 @@ function setupCytoscape(data, types){
                         markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         cytoscape_web: "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb_all.min.js",
-                        tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.all.min.js",
+                        tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.all.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
-                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css"
           };
           
 
@@ -2088,7 +2088,7 @@ function setupCytoscape(data, types){
       getPlugin: Plugin.getPlugin,
       reloadWidget: reloadWidget,
       resize: Layout.resize,
-      loadFile: Plugin.loadFile,
+      loadFile: Plugin.loadFile
     }
   })();
 

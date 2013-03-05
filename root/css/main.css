@@ -1628,26 +1628,22 @@ fieldset {
 /* =========================================
    FOOTER ================================== */
 
-div#footer{
+#footer{
     color:#CCC;
     background:black;
     margin:0;
     overflow:auto;
-    position:absolute;
+    position:relative;
     width:100%;
-    bottom:0;
+    clear:both;
+    padding-bottom: 5em;
+    min-height:30em;
 }
-div#footer a{
+#footer a{
   color:white;
 }
-div#footer a:hover{
+#footer a:hover{
   color:#6FA2D9;
-}
-
-#footer, #spacer {
-    clear:both;
-    padding: 0;
-    height:30em;
 }
 
 #footercredit {
@@ -1703,7 +1699,7 @@ div#footercredit a{
     padding-left:0;
 }
 
-#footer li>a, #footer li>span {
+#footer #footer-nav li a, #footer li>span {
     line-height:2em;
     font-size:0.9em;
     white-space:nowrap;
