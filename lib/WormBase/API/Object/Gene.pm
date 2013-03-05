@@ -945,8 +945,6 @@ sub history {
                 ($gene) = $version->row;
             }
 
-			# LOOP START
-			
 			if( (scalar @events) == 0 ) {
 				push @events, $action || $vers;
 			}
@@ -964,7 +962,6 @@ sub history {
 				};
 				
             }
-            # LOOP END
         }
     }
 
