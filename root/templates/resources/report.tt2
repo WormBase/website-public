@@ -9,7 +9,7 @@
     ELSE;
       breadcrumbs.push('<a href="'_ c.uri_for('/resources').path _ '">Resources</a>');
       UNLESS object.name.data.label;
-        breadcrumbs.push('<span>' _ c.config.sections.$section.$class.title _ '</span>');
+        breadcrumbs.push('<span>' _ pluralize(c.config.sections.$section.$class.title) _ '</span>');
       ELSE;
         breadcrumbs.push('<a href="'
             _ c.uri_for('/resources',class).path _ '">'
