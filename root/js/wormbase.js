@@ -1454,6 +1454,7 @@ var Scrolling = (function(){
             email = feed.find("#email");
         if (!validate_fields(email, name))
           return;
+
         $jq.ajax({
           type: 'POST',
           url: rel,
@@ -1461,7 +1462,8 @@ var Scrolling = (function(){
                 content: feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : ''), 
                 name: name.val(),
                 email: email.val(),
-                url: url || issue.url},
+                url: url || issue.url,
+                userAgent: window.navigator.userAgent},
           success: function(data){
                 if(data===0) {
                    alert("The email address has already been registered! Please sign in."); 
