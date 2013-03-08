@@ -615,13 +615,14 @@ sub feed_POST {
 	    my $email = $c->req->params->{email} || $c->user->primary_email->email;
 	    
 	    my $url = $c->req->params->{url};
+      my $userAgent = $c->req->params->{userAgent};
 	    my $page = $self->_get_page($c, $url);
 
 	    $content =~ s/\n/<br \/>/g;
 
 	    my ($issue_url,$issue_title,$issue_number) =
-		$self->_post_to_github($c,$content, $email, $name, $title, $page);
-
+		    $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent);
+      $c->stash->{userAgent} = $userAgent;
 	    $self->_issue_email({ c       => $c,
 				  page    => $page,
 				  new     => 1,
@@ -632,9 +633,8 @@ sub feed_POST {
 				  title   => $title,
 				  issue_url    => $issue_url,
 				  issue_title  => $issue_title,
-				  issue_number => $issue_number });
-	    
-	    $c->stash->{message} = $title 
+				  issue_number => $issue_number});
+	    $c->stash->{message} = $title
 		? qq|<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|
 		: qq|<h2>Your report has been submitted</h2> <p>Thank you for helping WormBase improve the site!</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|;
 	    $c->stash->{template} = "shared/generic/message.tt2"; 
@@ -1120,7 +1120,7 @@ sub _check_user_info {
 
 
 sub _post_to_github {
-  my ($self,$c,$content,$email, $name, $title, $page) = @_;
+  my ($self,$c,$content,$email, $name, $title, $page, $userAgent) = @_;
 
   my $url     = 'https://api.github.com/repos/wormbase/website/issues';
 
@@ -1163,6 +1163,8 @@ $content .= <<END;
 
 Reported by: $obscured_name ($obscured_email) (obscured for privacy)
 Submitted From: $ptitle ($purl)
+
+$userAgent
 
 END
 ;
