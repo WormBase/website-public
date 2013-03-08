@@ -146,6 +146,14 @@ sub sequence {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->Sequence || $object->DNA_text;
+
+    unless(@tag_objects){
+        if($object->PCR_product){
+            my $pcr = $self->_api->wrap($object->PCR_product);
+            @tag_objects = $pcr->segment->{data}->{dna};
+
+        }
+    }
     my @data   = map { {sequence=>"$_",
 			length=>length($_),
 		      } 
