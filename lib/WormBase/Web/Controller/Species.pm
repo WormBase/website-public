@@ -113,7 +113,10 @@ sub object_report :Path("/species") Args(3) {
     }
     $c->res->redirect($c->uri_for("/species", 'c_elegans', $class, $name)->path, 307) unless $species;
 
-    $c->detach unless $self->_is_class($c, $class);
+    unless ($self->_is_class($c, $class)) {
+        $c->res->redirect($c->uri_for('/search',"all","$class $name")->path."?redirect=1", 307);
+        $c->detach;
+    }
 
     $c->stash->{species}    = $species;
     $c->stash->{query_name} = $name;
