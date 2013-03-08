@@ -197,7 +197,7 @@ sub classification {
     $data->{associated_sequence} = @cds ? 1 : 0;
 
     # Confirmed?
-    $data->{confirmed} = @cds ? $cds[0]->Prediction_status->name : 0;
+    $data->{confirmed} = @cds ? $cds[0]->Prediction_status && $cds[0]->Prediction_status->name : 0;
     my @matching_cdna = @cds ? $cds[0]->Matching_cDNA : '';
 
     # Create a prose description; possibly better in a template.
