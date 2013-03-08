@@ -333,28 +333,6 @@ sub allele_designation {
     return $data;
 }
 
-# lab_representative { }
-# This method returns a data structure containing
-# the current lab representative of the affiliated lab.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative
-
-sub lab_representative {
-    my $self   = shift;
-    my $object = $self->object;
-    my $lab    = eval{$object->Laboratory};
-    
-    my $rep;
-    if ($lab) { 
-	my $representative = $lab->Representative;
-	my $name = $representative->Standard_name; 
-	$rep = $self->_pack_obj($representative, "$name");
-    }
-    
-    my $data = { description => 'official representative of the laboratory',
-		 data        => $rep || undef };
-    return $data;
-}
-
 # eg: gene_classes
 # This method returns a data structure containing
 # gene classes assigned to the current lab affiliation
