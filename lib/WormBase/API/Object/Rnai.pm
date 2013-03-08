@@ -1,8 +1,9 @@
 package WormBase::API::Object::Rnai;
 use Moose;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with 'WormBase::API::Role::Object';
+
 
 =pod 
 
@@ -144,7 +145,7 @@ sub reagent {
 sub sequence {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->Sequence_info->right if $object->Sequence_info;
+    my @tag_objects = $object->Sequence || $object->DNA_text;
     my @data   = map { {sequence=>"$_",
 			length=>length($_),
 		      } 
