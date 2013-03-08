@@ -4,11 +4,17 @@
        build_data_table (
 		order = [ 
 			'transgene',
-			'species'
+			'overexpressed_gene',
+			'other_reporter',
+			'caused_by',
+			'remark',
 			],
 		columns = {				 		
 			transgene => 'Transgene',
-			species => 'Species'
+			overexpressed_gene => 'Overexpressed gene',
+			other_reporter     => 'Other reporter',
+			caused_by          => 'Caused by',
+			remark             => 'Remark',
 			},
 		key = 'transgene');
    END;
@@ -16,12 +22,20 @@
    WRAPPER $field_block title="Transgenes NOT associated with this phenotype" key="transgene_not";
 	build_data_table (
 		order = [ 
-                         'transgene',
-			 'species'
+			'transgene',
+			'overexpressed_gene',
+			'other_reporter',			
+			'caused_by',
+			'remark',
+			'evidence',
 			],
 		columns = {				 		
 			transgene => 'Transgene',
-			species => 'Species'
+			overexpressed_gene => 'Overexpressed gene',
+			other_reporter     => 'Other reporter',
+			caused_by          => 'Caused by',
+			remark             => 'Remark',
+			evidence           => 'Evidence',
 			},
 		key = 'transgene_not');
     END;
