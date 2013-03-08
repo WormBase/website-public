@@ -176,21 +176,6 @@ sub transgenes {
 }
 
 
-# reference_strain { }
-# This method will return a data structure containing
-# the reference strain of the strain in question.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/reference_strain
-
-sub reference_strain {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    my ($strain) = map { $self->_pack_obj($_) } $object->Reference_strain;
-    return { description => 'reference strain for the current strain',
-	     data        => $strain || undef };   
-}
-
-
 # mutagen { }
 # This method will return a data structure containing
 # the reference strain of the strain in question.
@@ -218,22 +203,6 @@ sub outcrossed {
     return { description => 'extent to which the strain has been outcrossed',
 	     data        => $outcrossed && "$outcrossed" };
 
-}
-
-# throws_males { }
-# This method will return a data structure containing
-# information whether the strain throws males at a higher
-# than expected frequency.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/throws_males
-
-sub throws_males {
-    my $self   = shift;
-    my $object = $self->object;
-
-    my $males = $object->Males;
-    my @males = map { $self->_pack_obj($_) } $object->Males;
-    return { description => 'does the strain throw males at a higher than expected frequency?',
-	     data        => $males && "$males" };
 }
 
 
