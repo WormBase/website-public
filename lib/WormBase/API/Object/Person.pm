@@ -302,11 +302,15 @@ sub strain_designation {
     my $self   = shift;
     my $object = $self->object;
        
-    my $lab   = eval {$object->Laboratory};
-    $lab = $self->_pack_obj($lab) if $lab;
+    my @labs   = eval{ $object->Laboratory };
+    
+    foreach my $i (0..$#labs){
+		$labs[$i] = $self->_pack_obj($labs[$i]);
+    }
        
     my $data = { description => 'strain designation of the affiliated lab',
-		 data        => $lab || undef };
+#		 data        => $lab || undef };
+		 data        => \@labs || undef };
     return $data;		     
 }
 
@@ -319,10 +323,13 @@ sub strain_designation {
 sub allele_designation {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = eval{$object->Laboratory};
-    my $allele_designation = ($lab && $lab->Allele_designation) ? $lab->Allele_designation->name : undef;
+    my @labs   = eval{$object->Laboratory};
+    my @allele_designations = map {
+		my $lab=$_; 
+		($lab && $lab->Allele_designation) ? $lab->Allele_designation->name : undef
+	} @labs;
     my $data = { description => 'allele designation of the affiliated laboratory',
-		 data        => $allele_designation };
+		 data        => \@allele_designations };
     return $data;
 }
 
@@ -357,12 +364,18 @@ sub lab_representative {
 sub gene_classes {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = eval { $object->Laboratory };
-
-    my @gene_classes = map { $self->_pack_obj($_) } $lab->Gene_classes if $lab;
+    my @labs    = eval { $object->Laboratory };
     
-    my $data = { description => 'gene classes assigned to laboratory',
-		 data        => @gene_classes ? \@gene_classes : undef};
+    my @gene_classes;
+	foreach my $lab (@labs){
+		@gene_classes = 
+			map { $self->_pack_obj($_) } $lab->Gene_classes if $lab;
+    }
+    
+    my $data = { 
+		description => 'gene classes assigned to laboratory',
+		data        => @gene_classes ? \@gene_classes : undef
+	};
     return $data;
 }
 
