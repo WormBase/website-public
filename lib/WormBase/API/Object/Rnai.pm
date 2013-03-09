@@ -149,9 +149,7 @@ sub sequence {
 
     unless(@tag_objects){
         if($object->PCR_product){
-            my $pcr = $self->_api->wrap($object->PCR_product);
-            @tag_objects = $pcr->segment->{data}->{dna};
-
+            @tag_objects = map { $self->_api->wrap($_)->segment->{data}->{dna} } $object->PCR_product;
         }
     }
     my @data   = map { {sequence=>"$_",
