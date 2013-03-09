@@ -27,7 +27,6 @@
 			'other_reporter',			
 			'caused_by',
 			'remark',
-			'evidence',
 			],
 		columns = {				 		
 			transgene => 'Transgene',
@@ -35,7 +34,6 @@
 			other_reporter     => 'Other reporter',
 			caused_by          => 'Caused by',
 			remark             => 'Remark',
-			evidence           => 'Evidence',
 			},
 		key = 'transgene_not');
     END;
