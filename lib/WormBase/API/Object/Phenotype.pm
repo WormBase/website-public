@@ -279,12 +279,65 @@ sub anatomy_ontology {
 }
 
 
+# anatomy_functions { }
+# This method will return a data structure anatomy_functions associated with this anatomy_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_functions
+
+sub associated_anatomy {
+    my ($self) = @_;
+
+    my $data = $self->_anatomy_function('Anatomy_function');
+    return {
+        data        => @$data ? $data : undef,
+        description => 'anatomy_functions associatated with this anatomy_term',
+    };
+}
+
+
+
 
 ############################################################
 #
 # Private methods
 #
 ############################################################
+
+sub _anatomy_function {
+    my ($self, $tag) = @_;
+    my $object = $self->object;
+    my @data_pack;
+    foreach ($object->$tag){
+	my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+			   else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
+			  } $_->Involved;
+	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+               else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
+			  } $_->Not_involved;
+
+	# Genotype removed from the evidence hash in WS234?
+	my @assay = map { my $as = $_->right;
+			  if ($as) {
+			      my @geno = $as->Genotype; 			      
+			      {evidence => { genotype => join('<br /> ', @geno) },
+			       text => "$_",}
+			  }
+	} $_->Assay;
+	my $pev;
+	push @data_pack, {
+            af_data   => $_ && "$_",
+            phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+                          { evidence => $pev,
+                           text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
+            gene      => $self->_pack_obj(scalar $_->Gene),
+        assay    => @assay ? \@assay : undef,
+	    bp_inv    => @bp_inv ? \@bp_inv : undef,
+	    bp_not_inv=> @bp_not_inv ? \@bp_not_inv : undef,
+	    reference => $self->_pack_obj(scalar $_->Reference),
+	    };
+    } # array of hashes -- note the comma
+
+    return \@data_pack;
+}
 
 sub rnai_json {
     return {

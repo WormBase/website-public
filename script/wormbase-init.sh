@@ -7,7 +7,7 @@
 # production servers won't have it; staging servers do.
 # We keep our env file outside of the repository to
 # so it doesn't have to be maintained across branches.
-source /usr/local/wormbase/website/wormbase.env
+source /usr/local/wormbase/wormbase.env
 
 # If the APP environment variable isn't set, 
 # assume we are running in production.
@@ -53,7 +53,7 @@ elif [ $APP == 'staging' ]; then
     export CATALYST_CONFIG_LOCAL_SUFFIX="staging"
 
     # APP really just specifies directory on filesystem.
-    export APP=production
+    export APP=staging
     export APP_ROOT=/usr/local/wormbase/website
     export DAEMONIZE=true
     export PORT=5000
@@ -61,10 +61,10 @@ elif [ $APP == 'staging' ]; then
     export MAX_REQUESTS=500
 
     # Configure our GBrowse App
-    export GBROWSE_CONF=$ENV{APP_ROOT}/production/conf/gbrowse
-    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/production/root/gbrowse
+    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
+    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
 
-    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/production/lib:$PERL5LIB
+    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
     export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
     export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
     export PATH="/usr/local/wormbase/extlib/bin:$PATH"
