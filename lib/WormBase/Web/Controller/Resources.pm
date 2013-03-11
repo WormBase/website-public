@@ -131,6 +131,7 @@ sub _get_report {
 
     unless ($c->config->{sections}->{resources}->{$class}) { 
       # class doesn't exist in this section
+      $c->res->redirect($c->uri_for('/search',"all","$class $name")->path."?redirect=1", 307);
       $c->detach;
     }
 

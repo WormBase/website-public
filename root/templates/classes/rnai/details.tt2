@@ -16,6 +16,7 @@ WRAPPER $field_block title="Reagent" key="reagent";
        IF item.mrc_id;
           ' (' _ external_link('MRC_geneservice','Source BioScience: ' _ item.mrc_id,item.mrc_id) _ ')';
        END;
+      ', ';
     END;
 END;
 

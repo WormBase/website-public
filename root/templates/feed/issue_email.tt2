@@ -17,7 +17,10 @@ This issue has been assigned ticket number: #[% issue_number %]. Follow progress
 Reported by [% reporter_name %] ([% reporter_email %])
 <br />
 <span class="fade">[% date.format(timestamp, '%d %b %y %H:%M', 'en_GB') %]
-</span></p>
+</span><br /><br />
+<span class="fade">[% userAgent %]
+</span>
+</p>
 
 <p class="fade">
 This question was reported via the web interface at wormbase.org. You can also <a href="mailto:help@wormbase.org">email us</a> directly.

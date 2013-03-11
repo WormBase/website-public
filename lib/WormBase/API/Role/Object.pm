@@ -2245,10 +2245,11 @@ sub _get_genotype {
 
     my %elements;
     foreach my $tag ($object->Contains) {
-      map {
-        $_ = $self->_pack_obj($_);
-        $elements{$_->{label}} = $_;
-      } $object->$tag;
+        next if $tag eq 'Variation';
+          map {
+            $_ = $self->_pack_obj($_);
+            $elements{$_->{label}} = $_;
+          } $object->$tag;
     }
 
     return ($genotype || (keys %elements > 0) ) ? {
