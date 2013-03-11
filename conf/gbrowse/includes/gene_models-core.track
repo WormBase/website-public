@@ -4,6 +4,7 @@ bgcolor      = sub {
 	     my $f = shift;
 	     return 'gray'   if $f->method =~ /pseudogene/i;
              return 'gray'   if $f->source =~ /pseudogene/i;
+	     return 'gray'   if $f->source =~ /ncrna|non_coding/i;
 	     return 'violet' if $f->strand > 0;
 	     return 'turquoise';
 	     }
