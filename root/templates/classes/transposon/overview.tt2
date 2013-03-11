@@ -1,0 +1,19 @@
+<h2>[% fields.name.data.label %]</h2>
+
+[%
+
+WRAPPER highlight_box;
+
+   WRAPPER $field_block title="Old name" key="old_name";
+        fields.old_name.data;
+   END;
+
+  WRAPPER $field_block title="Type" key="member_of";
+    fields.member_of.data;
+  END;
+
+END;
+'<div class="description">';
+remarks(no_toggle=1);
+'</div>';
+%] 
