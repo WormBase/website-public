@@ -3,6 +3,7 @@ use Moose;
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
+with    'WormBase::API::Role::Position';
 
 =pod 
 
@@ -25,6 +26,18 @@ http://wormbase.org/resources/motif
 # CLASS METHODS
 #
 #######################################
+
+
+has 'tracks' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        return {
+            description => 'tracks displayed in GBrowse',
+            data        => [qw/TRANSPOSON_GENES TRANSPOSONS/],
+        };
+    }
+);
 
 #######################################
 #
@@ -73,7 +86,75 @@ sub copy_status {
     my $cs = $self ~~ 'Copy_status';
     return {
         description => 'Copy status of this transposon',
-        data        => $cs && "$cs",
+        data        => $cs ? {text => "$cs",
+                        evidence => $self->_get_evidence($cs)} : undef,
+    };
+}
+
+#######################################
+#
+# The Associations Widget
+#
+#######################################
+has 'sequences' => (
+    is  => 'ro',
+    lazy => 1,
+    builder => '_build_sequences',
+);
+
+sub _build_sequences {
+    my $self = shift;
+    my %seen;
+    my @seqs = map { grep { !$seen{$_}++} $_->col } $self->object->S_child;
+    return \@seqs if @seqs;
+}
+
+
+sub _build__segments {
+    my ($self) = @_;
+    my $sequences = $self->sequences;
+    my @segments;
+    my $dbh = $self->gff_dsn() || return \@segments;
+
+    my $object = $self->object;
+    my $species = $object->Species;
+
+    eval {$dbh->segment()}; return \@segments if $@;
+
+    # Yuck. Still have some species specific stuff here.
+
+    if (@$sequences and $species =~ /briggsae/) {
+        if (@segments = map {$dbh->segment(CDS => "$_")} @$sequences
+            or @segments = map {$dbh->segment(Pseudogene => "$_")} @$sequences) {
+            return \@segments;
+        }
+    }
+
+    if (@segments = $dbh->segment(Gene => $object)
+        or @segments = map {$dbh->segment(CDS => $_)} @$sequences
+        or @segments = map { $dbh->segment(Pseudogene => $_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
+    ) {
+        return \@segments;
+    }
+
+    return;
+}
+
+sub gene {
+    my ($self) = @_;
+    my @genes = map { $self->_pack_obj($_)} $self->object->Gene;
+    return {
+        description => 'Gene(s) associated with this transposon',
+        data        => @genes ? \@genes : undef,
+    };
+}
+
+sub sequence {
+    my ($self) = @_;
+    my @sequence = map {$self->_pack_obj($_)} @{$self->sequences};
+    return {
+        description => 'Gene(s) associated with this transposon',
+        data        => @sequence ? \@sequence : undef,
     };
 }
 
