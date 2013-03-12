@@ -314,7 +314,7 @@ sub strain_designation {
     }
        
     my $data = { description => 'strain designation of the affiliated lab',
-		 data        => \@table || undef };
+		 data        => (scalar @table) ? \@table : undef };
     return $data;		     
 }
 
@@ -340,7 +340,7 @@ sub allele_designation {
 	}
 	
     my $data = { description => 'allele designation of the affiliated laboratory',
-		 data        => \@table };
+		 data        => (scalar @table) ? \@table : undef };
     return $data;
 }
 
@@ -365,7 +365,7 @@ sub gene_classes {
     
     my $data = { 
 		description => 'gene classes assigned to laboratory',
-		data        => \@table
+		data        => (scalar @table) ? \@table : undef 
 	};
     return $data;
 }
