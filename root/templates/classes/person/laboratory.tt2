@@ -4,26 +4,36 @@
 laboratory(title="Laboratory affiliation");
 
 WRAPPER $field_block title="Strain designation" key="strain_designation";
-      FOREACH index IN [0..fields.strain_designation.data.max];
-          lab = fields.strain_designation.data.$index;
-		  tag2link(lab);
-		  IF index != fields.strain_designation.data.max;
-			'<br />';
-		  END;
-      END;
+	build_data_table(
+		order=['strain', 'lab'],
+		columns={
+			strain 	=> 'Strain',
+			lab		=> 'Laboratory'
+		},
+		key='strain_designation'
+	);
 END;
 
 WRAPPER $field_block title="Allele designation" key="allele_designation";
-      FOREACH index IN [0..fields.allele_designation.data.max];
-	    fields.allele_designation.data.$index;
-	    IF index != fields.allele_designation.data.max;
-			'<br />';
-	    END;
-      END;
+	build_data_table(
+		order=['allele','lab'],
+		columns={
+			allele	=> 'Allele',
+			lab		=> 'Laboratory'
+		},
+		key='allele_designation'
+	);
 END;
 
 WRAPPER $field_block title="Gene classes" key="gene_classes";
-      tags2link(fields.gene_classes.data, "<br />", "gene classes found");
+    build_data_table(
+		order=['gene_class','lab'],
+		columns={
+			gene_class	=> 'Gene class',
+			lab			=> 'Laboratory'
+		},
+		key='gene_classes'
+    );
 END;
 
 
