@@ -4,11 +4,22 @@
 laboratory(title="Laboratory affiliation");
 
 WRAPPER $field_block title="Strain designation" key="strain_designation";
-      tag2link(fields.strain_designation.data);
+      FOREACH index IN [0..fields.strain_designation.data.max];
+          lab = fields.strain_designation.data.$index;
+		  tag2link(lab);
+		  IF index != fields.strain_designation.data.max;
+			'<br />';
+		  END;
+      END;
 END;
 
 WRAPPER $field_block title="Allele designation" key="allele_designation";
-      fields.allele_designation.data;
+      FOREACH index IN [0..fields.allele_designation.data.max];
+	    fields.allele_designation.data.$index;
+	    IF index != fields.allele_designation.data.max;
+			'<br />';
+	    END;
+      END;
 END;
 
 WRAPPER $field_block title="Gene classes" key="gene_classes";
@@ -22,5 +33,6 @@ WRAPPER $field_block title="Previous affiliations" key="previous_laboratories";
 	 UNLESS loop.last; ', '; END;
       END;
 END;
+
 
 %]
