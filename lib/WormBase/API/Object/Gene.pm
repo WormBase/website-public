@@ -915,7 +915,6 @@ sub history {
 
         my @versions = $history->col;
         foreach my $version (@versions) {
-			print $version."\n";
         
 			my @events = ();
 			if( $history eq 'Version_change' &&
