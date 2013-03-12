@@ -303,14 +303,19 @@ sub strain_designation {
     my $object = $self->object;
        
     my @labs   = eval{ $object->Laboratory };
+    my @table  = (); # passed to data, table = array of hashes
+    
     
     foreach my $i (0..$#labs){
-		$labs[$i] = $self->_pack_obj($labs[$i]);
+		push( @table, { 
+			lab => "$labs[$i]",
+			strain => $self->_pack_obj($labs[$i]) 
+		});
     }
        
     my $data = { description => 'strain designation of the affiliated lab',
 #		 data        => $lab || undef };
-		 data        => \@labs || undef };
+		 data        => \@table || undef };
     return $data;		     
 }
 
