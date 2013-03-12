@@ -413,27 +413,36 @@ sub _transgene {
 	# Wow, this is really circular.
 	my @phenotypes = $tag_object->Phenotype;
 	my %tags_with_evidence;
-	foreach my $phenotype (@phenotypes) {
+	my @caused_by;
+	foreach my $phenotype (@phenotypes) {	    
 	    next unless $phenotype eq $object;
 	    my %hash = map { $_ => $_->right } eval { $phenotype->col };
 	    
 	    # Keys with evidence
-	    foreach my $tag (qw/Caused_by Remark/) {
+	    foreach my $tag (qw/Caused_by Caused_by_other Remark/) {
 		if (defined $hash{$tag}) {
 		    my $text     = $self->_pack_obj($hash{$tag});
 		    my $evidence = $self->_get_evidence($hash{$tag});
+		    # This is a string.
+		    if ($tag eq 'Caused_by_other') {
+			$text = "$hash{$tag}";
+		    } 
+
 		    $tags_with_evidence{$tag} = { text     => $text,
 						  evidence => $evidence };
 		}
 	    }
 	}
 	
+	push @caused_by,$tags_with_evidence{Caused_by};
+	push @caused_by,$tags_with_evidence{Caused_by_other};
         push @data_pack, {
 	    transgene => $tag_info,
 		overexpressed_gene => $oe_gene,
 		other_reporter     => $other_reporter,
 		remark             => $tags_with_evidence{Remark},
-		caused_by          => $tags_with_evidence{Caused_by},
+#		caused_by          => $tags_with_evidence{Caused_by},
+		caused_by          => \@caused_by,
         };
     }
     return \@data_pack;
