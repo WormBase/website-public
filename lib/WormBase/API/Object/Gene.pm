@@ -65,9 +65,10 @@ has 'tracks' => (
     is      => 'ro',
     lazy    => 1,
     default => sub {
+        my $self = shift;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => [qw/CG Allele/],
+            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/CG Allele/],
         };
     }
 );
@@ -184,6 +185,8 @@ sub classification {
     if (@cds) {
         $data->{type} = "protein coding";
     }
+
+    $data->{type} = 'Transposon in origin' if $object->Corresponding_transposon;
 
     unless($data->{type}){
       # Is this a non-coding RNA?
@@ -341,6 +344,22 @@ sub operon {
     return {
     description => "Operon the gene is contained in",
     data        => $self->_pack_obj($object->Contained_in_operon)};
+}
+
+# transposon { }
+# This method will return a data structure containing
+# the transposon packed tag of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/operon
+
+sub transposon {
+    my $self   = shift;
+    my $object = $self->object;  
+    my @transposons = map { $self->_pack_obj($_)} $object->Corresponding_transposon;
+    
+    return {
+        description => "Corresponding transposon for this gene",
+        data        => @transposons ? \@transposons : undef
+    }
 }
 
 
@@ -1513,7 +1532,7 @@ sub gene_models {
     # I still need to fetch some details from sequence
     # Fetch a variety of information about all transcripts / CDS prior to printing
     # These will be stored using the following keys (which correspond to column headers)
-
+ 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
         my $gff   = $self->_fetch_gff_gene($sequence) or next;

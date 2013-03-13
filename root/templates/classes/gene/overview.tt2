@@ -30,6 +30,10 @@ WRAPPER highlight_box;
            tag2link(fields.operon.data);
    END;
 
+   WRAPPER $field_block title="Transposon" key="transposon";
+           tags2link(fields.transposon.data);
+   END;
+
    status;
 
    WRAPPER $field_block title="Cloned By" key="cloned_by";
