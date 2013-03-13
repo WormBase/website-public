@@ -105,7 +105,7 @@ has 'sequences' => (
 sub _build_sequences {
     my $self = shift;
     my %seen;
-    my @seqs = map { grep { !$seen{$_}++} $_->col } $self->object->S_child;
+    my @seqs = $self->object->Corresponding_CDS;
     return \@seqs if @seqs;
 }
 
@@ -153,7 +153,7 @@ sub sequence {
     my ($self) = @_;
     my @sequence = map {$self->_pack_obj($_)} @{$self->sequences};
     return {
-        description => 'Gene(s) associated with this transposon',
+        description => 'Sequences associated with this transposon',
         data        => @sequence ? \@sequence : undef,
     };
 }
