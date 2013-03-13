@@ -67,7 +67,7 @@ has 'tracks' => (
     default => sub {
         return {
             description => 'tracks displayed in GBrowse',
-            data        => [qw/CG Allele/],
+            data        => [qw/CG CLASSICAL_ALLELES/],
         };
     }
 );
