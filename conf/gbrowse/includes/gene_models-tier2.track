@@ -8,7 +8,8 @@ label        = sub {
 	}
 description = sub {
 	    my $f = shift;
-	    my @alias = $f->attributes('Alias');
+	    my %attributes = $f->attributes();
+	    my @alias = $attributes{Alias} if defined $attributes{Alias};
 	    my @values;
 	    if (@alias) {
 	        my @orthologs;
@@ -18,19 +19,15 @@ description = sub {
 		    my $geneid   = shift @alias;
 		    push @orthologs,$symbol;
 		 }
-		 if (@orthologs > 1) {
-		    push @values,"C. elegans orthologs: " . join("; ",@orthologs);
-		 } else {
-		    push @values,"C. elegans ortholog: " . join("; ",@orthologs);
-                 }
+	         push @values,"C. elegans ortholog(s): " . join("; ",@orthologs) if @orthologs > 0;
             }
-	    my ($status) = $f->attributes('Status');	      
-	    unless ($alias) {
-         	    ($alias) = $f->attributes('Locus');
-            }
-	    $alias =~ s/^\w\w\w\w-//g;
+	    my ($status) = lc($attributes{Status});	      
+#	    unless ($alias) {
+#         	    ($alias) = $attributes{Locus};
+#            }
+#	    $alias =~ s/^\w\w\w\w-//g;
 	    push @values,$f->notes;
-	    push @values,$status if $status;
+	    push @values,"status: $status" if $status;
 	    return join("; ",@values); 
 	    }
 link = sub {
