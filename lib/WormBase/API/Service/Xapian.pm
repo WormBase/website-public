@@ -290,7 +290,9 @@ sub _pack_search_obj {
   my $class = $doc->get_value(2);
   $class = $self->modelmap->ACE2WB_MAP->{class}->{$class} || $self->modelmap->ACE2WB_MAP->{fullclass}->{$class};
   return {  id => $id,
-            label => $label || $doc->get_value(6) || $id,
+            #label => $label || $doc->get_value(6) || $id,
+            # Restore this after xapian is built for WS237
+            label => $label || ($class ne 'Transposon' && $doc->get_value(6)) || $id,
             class => lc($class),
             taxonomy => $self->_get_taxonomy($doc),
             coord => { start => $doc->get_value(9),
