@@ -1559,7 +1559,7 @@ sub _build_remarks {
     my $object = $self->object;
 
     #    my @remarks = grep defined, map { $object->$_} qw/Remark/;
-    my @remarks = eval { $object->get('Remark') };
+    my @remarks = $object->get('Remark') ||  $object->get('Comment');
     my $class   = $object->class;
 
     # Need to add in evidence handling.
@@ -1971,11 +1971,15 @@ sub _pack_objects {
 #	(label): link text
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
+    my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
+
+$self->log->debug("CLASS: $wbclass");
+
     return undef unless $object; # this method shouldn't expect a list.
     return {
         id       => "$object",
         label    => $label // $self->_make_common_name($object),
-        class    => $object->class,
+        class    => $wbclass || $object->class,
         taxonomy => $self->_parsed_species($object),
         %args,
     };

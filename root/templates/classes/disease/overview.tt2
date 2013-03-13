@@ -2,29 +2,40 @@
 
 [%
 
-WRAPPER highlight_box;
-   WRAPPER $field_block title="OMIM ID" key="name";
-           text2link('omim',fields.name.data.id,'OMIM:' _ fields.name.data.id);
-   END;
-END;
- '<div class="description">';
-           fields.notes.data.join('<br>');
-        text2link('omim',fields.name.data.id,' more...');
+  WRAPPER highlight_box;
+      WRAPPER $field_block title="OMIM ID" key="omim";
+        FOREACH dbt IN fields.omim.data.keys;
+            FOREACH id IN fields.omim.data.$dbt.ids; 
+                external_link('omim',"OMIM:" _ id,id,dbt) _ '<br />';
+            END;
+        END;
+      END;
+
+      status;
+
+      WRAPPER $field_block title="Synonym" key="synonym";
+        tags2link(fields.synonym.data);
+      END; 
+
+      WRAPPER $field_block title="Type" key="type";
+        tags2link(fields.type.data);
+      END; 
+  END;
+
+  '<div class="description">';
+    markup(fields.definition.data);
   '</div>';
   
 
-   WRAPPER $field_block title="related human genes" key="hs_genes";
-           fields.hs_genes.data.join('<br>');
+   WRAPPER $field_block title="Parent" key="parent";
+     tags2link(fields.parent.data);
    END; 
 
-   WRAPPER $field_block title="Synonym" key="synonym";
-           fields.synonym.data.join('<br>');
-   END;
+   WRAPPER $field_block title="Child" key="child";
+     tags2link(fields.child.data);
+   END; 
 
-   WRAPPER $field_block title="Orthologous worm genes" key="genes";
-          tags2link(fields.genes.data, '<br />');
-   END;
- 
+  remarks;
 
 
 %]
