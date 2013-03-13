@@ -406,8 +406,12 @@ sub _transgene {
 
     foreach my $tag_object (@tag_objects) {
         my $tag_info = $self->_pack_obj($tag_object);
-	my $oe_gene        = $tag_object->Gene ? $self->_pack_obj($tag_object->Gene) : '';
-	my $other_reporter = $tag_object->Reporter_type; 
+	my $oe_gene          = $tag_object->Gene ? $self->_pack_obj($tag_object->Gene) : '';
+	my $reporter_product = $tag_object->Reporter_product ? $self->_pack_obj($tag_object->Reporter_product) : '';
+
+	my @oe_genes;
+	push @oe_genes,$oe_gene          if $oe_gene;
+	push @oe_genes,$reporter_product if $reporter_product;
 	
 	# Deal with the Phenotype_info hash for the CURRENT phenotype only.
 	# Wow, this is really circular.
@@ -438,8 +442,7 @@ sub _transgene {
 	push @caused_by,$tags_with_evidence{Caused_by_other};
         push @data_pack, {
 	    transgene => $tag_info,
-		overexpressed_gene => $oe_gene,
-		other_reporter     => $other_reporter,
+		overexpressed_genes => \@oe_genes,
 		remark             => $tags_with_evidence{Remark},
 #		caused_by          => $tags_with_evidence{Caused_by},
 		caused_by          => \@caused_by,
