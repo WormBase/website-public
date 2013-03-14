@@ -7,7 +7,7 @@
    Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
 
 
-    <i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
+    <p><i>The following phenotypes have been observed in [% object.name.data.label %]</i>:</p>
     <div>
 [%
 	build_data_table(order=['object','evidence'],
@@ -17,6 +17,7 @@
 			passed_data=fields.phenotype.data.Phenotype.values);
 %]
     </div>
+
     <br />
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
       [% 
@@ -32,6 +33,7 @@
 
     <br />
 
+
 [% WRAPPER $field_block title="Overexpression" key="drives_overexpression";
    WRAPPER toggle title="<i>Overexpression from the " _  object.name.data.label _ " promoter results in the following phenotypes.</i>";
 
@@ -40,5 +42,5 @@
 				 evidence => 'Supporting Evidence',
 			}, key='phenotype',
 			passed_data=fields.drives_overexpression.data.Phenotype.values);
-    END;
+  END;
 END %]
