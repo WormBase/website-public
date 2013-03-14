@@ -9,8 +9,6 @@
 
     <i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
     <div>
-
-   
 [%
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
@@ -21,12 +19,26 @@
     </div>
     <br />
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
-[% 
+      [% 
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
 				 evidence => 'Supporting Evidence',
 			}, key='phenotype_not_observed',
 			passed_data=fields.phenotype.data.Phenotype_not_observed.values);
-%]
+      %]
    [% END %]
 [% END %]
+
+
+    <br />
+
+[% WRAPPER $field_block title="Overexpression" key="drives_overexpression";
+   WRAPPER toggle title="<i>Overexpression from the " _  object.name.data.label _ " promoter results in the following phenotypes.</i>";
+
+	build_data_table(order=['object','evidence'],
+			columns={object  => 'Phenotype',
+				 evidence => 'Supporting Evidence',
+			}, key='phenotype',
+			passed_data=fields.drives_overexpression.data.Phenotype.values);
+    END;
+END %]
