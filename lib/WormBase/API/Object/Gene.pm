@@ -98,7 +98,7 @@ sub _build__phenotypes {
 	    # These are displayed in the overexpression phenotypes table.
 	    if ($type eq 'Drives_Transgene') {
 		my $gene = $obj->Gene;
-		next unless $gene && "$gene" eq "$object";
+		next unless ($gene && "$gene" eq "$object");
 	    }
 
 	    my $seq_status = eval { $obj->SeqStatus };
@@ -115,8 +115,6 @@ sub _build__phenotypes {
 			my $genotype = $obj->Genotype;	
 			$evidence->{Genotype} = "$genotype" if $genotype;
 		    }
-			$evidence->{this_gene}   = $obj->Gene;
-			$evidence->{this_object} = "$object";
 		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
 		}
 	    }
@@ -1268,13 +1266,15 @@ sub drives_overexpression {
 	    next unless $transgene->Driven_by_gene eq $object;
 	    
 	    my $summary = $transgene->Summary;
-	    
+
+	    # Retain in case we also want to add not_observed...
 	    foreach my $obs ('Phenotype'){
 		foreach my $phene ($transgene->$obs){
 		    $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
 		    my $evidence = $self->_get_evidence($phene);
 		    $evidence->{Summary}   = "$summary" if $summary;
 		    $evidence->{Transgene} = $self->_pack_obj($transgene); 
+
 		    
 		    my ($key,$caused_by);
 		    if ($transgene->Gene) {
@@ -1285,15 +1285,18 @@ sub drives_overexpression {
 			$key       = "Reporter product: " . $caused_by;
 		    }
 
-		    push @{$phenotypes{$obs}{$phene}{evidence}{$key}}, { text => $self->_pack_obj($transgene,$transgene->Public_name ),
+		    push @{$phenotypes{$obs}{$phene}{evidence}{$key}}, { text     => $self->_pack_obj($transgene,$transgene->Public_name ),
 									 evidence => $evidence } if $evidence && %$evidence;		    
 		    
 		}
 	    }
 	}
     }   
-    return \%phenotypes;
+    return { data        => (defined $phenotypes{Phenotype}) ? \%phenotypes : undef ,
+	     description => 'phenotypes due to overexpression under the promoter of this gene', }; 
+#    return \%phenotypes;
 }
+
 
 
 
