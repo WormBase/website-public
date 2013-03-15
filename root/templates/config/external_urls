@@ -98,6 +98,12 @@
 		search		= 'http://www.ncbi.nlm.nih.gov/SNP/snp_ss.cgi?ss=%s'
 	}
 
+	do = {
+		description	= 'Disease Ontology'
+		base		= 'http://disease-ontology.org'
+		search		= 'http://disease-ontology.org/term/%s'
+	}
+
 	eggnog = {
 		description	= 'evolutionary genealogy of genes: Non-supervised Orthologous Groups'
 		base		= 'http://eggnog.embl.de/'
