@@ -344,6 +344,28 @@ sub allele_designation {
     return $data;
 }
 
+sub lab_info {
+    my $self   = shift;
+    my $object = $self->object;
+    my @labs   = eval{$object->Laboratory};
+    my @table  = (); # passed to data, table = array of hashes
+	
+	foreach my $lab (@labs){
+		push( @table, {
+			lab 	=> $self->_pack_obj($lab),
+			strain 	=> $self->_pack_obj($lab),
+			allele 	=> $lab->Allele_designation,
+			rep		=> $self->_pack_obj($lab->Representative,
+										$lab->Representative->Standard_name)
+		});
+	}
+	
+    my $data = { description => 'allele designation of the affiliated laboratory',
+		 data        => (scalar @table) ? \@table : undef };
+    return $data;
+
+}
+
 # eg: gene_classes
 # This method returns a data structure containing
 # gene classes assigned to the current lab affiliation
@@ -358,7 +380,7 @@ sub gene_classes {
 
  	foreach my $lab (@labs){
 		push( @table, map {{
-			lab 		=> $self->_pack_obj($lab, $lab->Mail),
+			lab 		=> $self->_pack_obj($lab),
 			gene_class	=> $self->_pack_obj($_)
 		}} $lab->Gene_classes );
  	}
