@@ -3,6 +3,19 @@
 [%
 
   WRAPPER highlight_box;
+      WRAPPER $field_block title='Ontology Term';          external_link('do', object.name.data.id, object.name.data.id);
+      END;
+
+      status;
+
+      WRAPPER $field_block title="Synonym" key="synonym";
+        fields.synonym.data.join('<br />');
+      END; 
+
+      WRAPPER $field_block title="Type" key="type";
+        tags2link(fields.type.data);
+      END; 
+
       WRAPPER $field_block title="OMIM ID" key="omim";
         FOREACH dbt IN fields.omim.data.keys;
             FOREACH id IN fields.omim.data.$dbt.ids; 
@@ -10,16 +23,6 @@
             END;
         END;
       END;
-
-      status;
-
-      WRAPPER $field_block title="Synonym" key="synonym";
-        tags2link(fields.synonym.data);
-      END; 
-
-      WRAPPER $field_block title="Type" key="type";
-        tags2link(fields.type.data);
-      END; 
   END;
 
   '<div class="description">';
