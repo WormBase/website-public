@@ -3,27 +3,19 @@
 
 laboratory(title="Laboratory affiliation");
 
-WRAPPER $field_block title="Strain designation" key="strain_designation";
+WRAPPER $field_block title="Lab information" key="lab_info";
 	build_data_table(
-		order=['strain', 'lab'],
+		order=['strain', 'allele', 'lab', 'rep'],
 		columns={
 			strain 	=> 'Strain',
-			lab		=> 'Laboratory'
+			allele	=> 'Allele',
+			lab		=> 'Laboratory',
+			rep		=> 'Representative'
 		},
-		key='strain_designation'
+		key='lab_info'
 	);
 END;
 
-WRAPPER $field_block title="Allele designation" key="allele_designation";
-	build_data_table(
-		order=['allele','lab'],
-		columns={
-			allele	=> 'Allele',
-			lab		=> 'Laboratory'
-		},
-		key='allele_designation'
-	);
-END;
 
 WRAPPER $field_block title="Gene classes" key="gene_classes";
     build_data_table(
