@@ -618,64 +618,80 @@ sub pfam_graph {
     
 sub motif_details {
     my $self = shift;
+    my $object = $self->object;
+    my @motif_homol = $object->Motif_homol;
     
-#     my $raw_features = $self ~~ '@Feature';
-    my $motif_homol = $self ~~ '@Motif_homol';
+    use Data::Dumper; # DELETE
     
     #  return unless $obj->Feature;
     
     # Summary by Motif
     my @tot_positions;
-    
-    if (@$motif_homol > 0) {
-	my %positions;
+	my @data = ();
 	
-# 	foreach my $feature (@$raw_features) {
-# 	    %positions = map {$_ => $_->right(1)} $feature->col;
-# 	    foreach my $start (sort {$a <=> $b} keys %positions) {			
-# 		my $stop =  $positions{$start};
-# 		push @tot_positions,[ ( "$feature",'','',
-# 					"$start",
-# 					"$stop")
-# 		];
-# 	    }
-# 	}
- 	
-	# Now deal with the motif_homol features
-	foreach my $feature (@$motif_homol) {
-	    my $score = $feature->right->col;
-	    
-	    my $start = $feature->right(3);
-	    my $stop  = $feature->right(4);
-	    my $type = $feature->right ||"";
-	    $type  ||= 'Interpro' if $feature =~ /IPR/;
-# 	    (my $label =$feature) =~ s/^[^:]+://;
-	    my $label = "$feature";
-	    $type = "$type";
-	    my $desc = $feature->Title ||$feature ;
-	    # Are the multiple occurences of this feature?
-	    my @multiple = $feature->right->right->col;
-	    @multiple = map {$_->right} $feature->right->col if(@multiple <= 1);
-	    if (@multiple > 1) {
-		foreach my $start (@multiple) {
-		    my $stop = $start->right;
-		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type, $desc && "$desc",
-					$start && "$start",
-					$stop && "$stop")
-		    ];
+    if (@motif_homol > 0) {
+	
+		# Now deal with the motif_homol features
+		foreach my $motif_homol (@motif_homol) {
+			my $score = $motif_homol->right->col;
+			
+			my $start = $motif_homol->right(3);
+			my $stop  = $motif_homol->right(4);
+			my $type = $motif_homol->right ||"";
+			$type  ||= 'interpro' if $motif_homol =~ /IPR/;
+			my $label = "$motif_homol";
+			$type = "$type";
+			my $desc = $motif_homol->Title ||$motif_homol ;
+			
+			# Are the multiple occurences of this motif_homol?
+			# Gets all scores for the current motif
+			my @scores = $motif_homol->right->col;
+			#@scores = map {$_->right} $motif_homol->right->col if(@scores <= 1);
+			
+			print "=====\n";
+			print "$_"."\n" foreach @scores;
+			print "=====\n";
+			
+			if (@scores > 1) {
+				foreach my $score (@scores) {
+					my $start = $score->right;
+					my $stop = $start->right;
+		#		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$motif_homol->class},$type, $desc && "$desc",
+		#					$start && "$start",
+		#					$stop && "$stop")
+		#		    ];
+					
+					push( @data, {
+						feat	=> _pack_obj($motif_homol),
+						start	=> $start,
+						stop	=> $stop,
+						type	=> $type,
+						desc	=> $desc
+					});
+					
+					
+				}
+			} else {
+				push( @data, {
+					feat	=> _pack_obj($motif_homol),
+					start	=> $start,
+					stop	=> $stop,
+					type	=> $type,
+					desc	=> $desc
+				});
+				
+	#			push @tot_positions,[  ({label=>$label,id=>$label,class=>$motif_homol->class},$type, $desc && "$desc",
+	#						$start && "$start",
+	#						$stop && "$stop")
+	#			];
+			}
 		}
-	    } else {
-		push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type, $desc && "$desc",
-					$start && "$start",
-					$stop && "$stop")
-		];
-	    }
-	}
 	
     }
     my $data = { description => 'The motif details of the protein',
-		 data        => @tot_positions ? \@tot_positions : undef,
-    }; 
+#		 data        => @tot_positions ? \@tot_positions : undef,
+		data => (scalar @data) > 1 ? \@data : undef
+	}; 
     
 }
 
@@ -777,6 +793,19 @@ sub history {
     
     return { description => 'curatorial history of the protein',
 	     data        =>  @data ? \@data : undef };
+}
+
+############################################################
+#
+# The Motifs widget
+#
+############################################################
+
+sub motif_summary{
+	return{
+		description => 'Summary of this protein\'s motifs',
+		data		=> [{'a','b'},{'c','d'}]
+	};
 }
 
 

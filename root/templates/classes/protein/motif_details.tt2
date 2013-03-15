@@ -2,3 +2,15 @@
 	  [% jquery_data_table_html(['Feature','Type','Description', 'Start','End'],motif_details.data,'motif_details_dataTable_full') %] 
 </div>
     
+[% 
+USE Dumper;
+Dumper.dump(fields.motif_details);
+
+build_data_table(
+	order=['desc'],
+	column={
+		desc => 'description'
+	},
+	key=motif_details
+);
+%]
