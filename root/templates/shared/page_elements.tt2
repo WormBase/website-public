@@ -918,7 +918,7 @@ END;
    contents = '';
    IF fields.remarks.data.0.defined('text');
       FOREACH obj IN fields.remarks.data;
-        contents = contents _ evidence(obj.evidence, '', obj.text);
+        contents = contents _ evidence(obj.evidence, '', obj.text) _ '<br />';
       END;
    ELSE;
       contents = contents _ markup(fields.remarks.data.join('<br />'),0);
