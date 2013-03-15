@@ -1971,11 +1971,9 @@ sub _pack_objects {
 #	(label): link text
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
-    my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
-
-$self->log->debug("CLASS: $wbclass");
-
     return undef unless $object; # this method shouldn't expect a list.
+
+    my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
     return {
         id       => "$object",
         label    => $label // $self->_make_common_name($object),
