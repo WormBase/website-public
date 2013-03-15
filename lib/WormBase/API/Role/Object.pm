@@ -1559,11 +1559,9 @@ sub _build_remarks {
     my $object = $self->object;
 
     #    my @remarks = grep defined, map { $object->$_} qw/Remark/;
-    my @remarks = $object->get('Remark') ||  $object->get('Comment');
+    my @remarks = $object->Remark if $object->get('Remark'); # ||  eval {$object->Comment };
+    @remarks = $object->Comment if (!@remarks && $object->get('Comment'));
     my $class   = $object->class;
-
-    # Need to add in evidence handling.
-    my @evidence = map {$_->col} @remarks;
 
     @remarks = grep { !/phenobank/ } @remarks if($class =~ /^RNAi$/i);
 
