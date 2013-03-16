@@ -9,107 +9,66 @@
 # so it doesn't have to be maintained across branches.
 source /usr/local/wormbase/wormbase.env
 
+
 # If the APP environment variable isn't set, 
 # assume we are running in production.
 if [ ! $APP ]; then
     echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
     export APP=production
-    export APP_ROOT=/usr/local/wormbase/website
+
+    # Application defaults
     export DAEMONIZE=true
     export PORT=5000
     export WORKERS=10
     export MAX_REQUESTS=500
-
-    # Configure our GBrowse App
-    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
-    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
-
-    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
-    export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
-    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
-    export PATH="/usr/local/wormbase/extlib/bin:$PATH"
-
-    # GBrowse ONLY production sites
-#    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
-#    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib2"
-#    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
-#    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
-
-# Set some configuration variables.
-    export WORMBASE_INSTALLATION_TYPE="production"
-    
-# Set my local configuration prefix so wormbase_production.conf takes precedence.
-# Used to override the location of the user database.
-    export CATALYST_CONFIG_LOCAL_SUFFIX="production"
-    
+   
 elif [ $APP == 'staging' ]; then
-    echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"
+    echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"    
 
-# Set some configuration variables.
-    export WORMBASE_INSTALLATION_TYPE="staging"
-    
-# Set my local configuration prefix so wormbase_staging.conf takes precedence.
-# Used to override the location of the user database.
-    export CATALYST_CONFIG_LOCAL_SUFFIX="staging"
+    # reduce the number of workers.
+    export DAEMONIZE=true
+    export PORT=5000
+    export WORKERS=5
+    export MAX_REQUESTS=500
+else
+    echo "   ---> APP is set to ${APP}: assuming we are host:qaqc.wormbase.org using wormbase_${APP}.conf"
 
-    # APP really just specifies directory on filesystem.
-    export APP=staging
-    export APP_ROOT=/usr/local/wormbase/website
+    # reduce the number of workers.
     export DAEMONIZE=true
     export PORT=5000
     export WORKERS=5
     export MAX_REQUESTS=500
 
-    # Configure our GBrowse App
-    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
-    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
-
-    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
-    export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
-    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
-    export PATH="/usr/local/wormbase/extlib/bin:$PATH"
-
-    # GBrowse ONLY production sites
-#    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
-#    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib2"
-#    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
-#    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
-
-        
-# Caltech MUST be run as root since DNS points directly at it.
-elif [ $APP == 'caltech' ]; then
-    echo "   ---> APP is set to caltech"
-    export APP=production
-    export APP_ROOT=/usr/local/wormbase/website
-    export DAEMONIZE=true
-    export PORT=80
-    export WORKERS=10
-    export MAX_REQUESTS=500
-
-    # Configure our GBrowse App
-    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
-    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
-
-    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
-    export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
-    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
-    export PATH="/usr/local/wormbase/extlib/bin:$PATH"
-
-    # GBrowse ONLY production sites
-#    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
-#    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib2"
-#    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
-#    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
-
-    
-# Set some configuration variables.
-    export WORMBASE_INSTALLATION_TYPE="production"
-    
-# Set my local configuration prefix so wormbase_staging.conf takes precedence.
-# Used to override the location of the user database.
-    export CATALYST_CONFIG_LOCAL_SUFFIX="production"
-    
 fi
+
+
+# General behavior of the app
+export APP_ROOT=/usr/local/wormbase/website
+
+# Set some variable that influence which configuration file we should use.
+# This affects how the app behaves for certain cases.    
+export WORMBASE_INSTALLATION_TYPE=$APP
+
+# The suffix for the configuration file to use.
+# This will take precedence over wormbase_local.conf
+# Primarily used to override the location of the user database.
+export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
+
+# Configure our GBrowse App
+export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
+export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
+
+# GBrowse ONLY production sites
+#    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
+#    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib2"
+#    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
+#    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
+
+export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
+export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
+export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
+export PATH="/usr/local/wormbase/extlib/bin:$PATH"  
+
 
 # Fetch local defaults
 PIDDIR=/tmp
