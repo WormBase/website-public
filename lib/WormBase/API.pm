@@ -244,12 +244,7 @@ sub fetch {
                                   " attempt to fetch $name of ace class $ace");
 				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);
 			}
-		}elsif ($aceclass eq 'Disease' ) {
-		     $self->log->debug("[API::fetch()]",
-                                  " attempt to fetch $name of ace class $aceclass");
- 		     $object = $self->xapian->_get_tag_info($self, $name, lc($aceclass),1);       
-		}
-		else { # assume a single Ace class
+		}else { # assume a single Ace class
 		    $self->log->debug("[API::fetch()]",
                               " attempt to fetch $name of ace class $aceclass");
 			$object = $service_dbh->fetch(-class => $aceclass, -name => $name);
