@@ -47,8 +47,16 @@ sub run {
     # To rectify, I use "all" as a placeholder so
     # that class indexes and class reports work the same way.
     if ($request_name eq 'all') {
-	$request_name  = '?' . ucfirst $request_class;
-	$request_class = 'Model';
+        my $aceclass = $self->_api->modelmap->WB2ACE_MAP->{class}->{ucfirst $request_class}
+                     || $self->_api->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst $request_class};
+        if (ref $aceclass eq 'ARRAY') {
+            foreach my $ace (@$aceclass) {
+            	$request_name  = '?' . ucfirst $ace;
+            }
+        }else{
+            $request_name  = '?' . ucfirst $aceclass;
+        }
+    	$request_class = 'Model';
     }
     $request_name =~ s/^#/?/ if $request_class eq 'Model';
     $dsn  = $self->ace_dsn->dbh;
