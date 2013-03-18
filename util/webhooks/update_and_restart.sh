@@ -20,7 +20,7 @@ cd $APP_PATH
 source ../wormbase.env
 source $APP_PATH/wormbase.env
 
-#git checkout staging
-#git pull origin staging
+git checkout staging
+git pull origin staging
 ./script/wormbase-init.sh stop
 ./script/wormbase-init.sh start
