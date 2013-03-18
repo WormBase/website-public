@@ -537,7 +537,6 @@ sub reload {
   $c->stash->{reload}=1;
 
   $c->stash->{logout}=1 if($logout);		    
-  $c->stash->{operator}=1 if(!$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ;
   return;
 }
 

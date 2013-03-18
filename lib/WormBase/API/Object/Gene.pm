@@ -93,6 +93,14 @@ sub _build__phenotypes {
 
 	foreach my $obj ($object->$type){
 
+	    # Don't include phenotypes that result from
+	    # the current gene driving overexpression of another gene.
+	    # These are displayed in the overexpression phenotypes table.
+	    if ($type eq 'Drives_Transgene') {
+		my $gene = $obj->Gene;
+		next unless ($gene && "$gene" eq "$object");
+	    }
+
 	    my $seq_status = eval { $obj->SeqStatus };
 	    my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
 	    my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
@@ -104,7 +112,7 @@ sub _build__phenotypes {
 		    # add some additional information for RNAis
 		    if ($type eq 'RNAi_result') {
 			$evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
-			my $genotype = $obj->Genotype;
+			my $genotype = $obj->Genotype;	
 			$evidence->{Genotype} = "$genotype" if $genotype;
 		    }
 		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
@@ -1242,6 +1250,57 @@ sub phenotype {
         data        => $self->_phenotypes,
 	};
 }
+
+
+
+sub drives_overexpression {
+    my ($self) = @_;
+    my $object = $self->object;
+    
+    my %phenotypes;
+    foreach my $type ('Drives_Transgene', 'Transgene_product'){
+	foreach my $transgene ($object->$type){
+	    
+	    # Only include those transgenes where the Driven_by_gene
+	    # is the current gene.
+	    next unless $transgene->Driven_by_gene eq $object;
+	    
+	    my $summary = $transgene->Summary;
+
+	    # Retain in case we also want to add not_observed...
+	    foreach my $obs ('Phenotype'){
+		foreach my $phene ($transgene->$obs){
+		    $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
+		    my $evidence = $self->_get_evidence($phene);
+		    $evidence->{Summary}   = "$summary" if $summary;
+		    $evidence->{Transgene} = $self->_pack_obj($transgene); 
+
+		    
+		    my ($key,$caused_by);
+		    if ($transgene->Gene) {
+			$caused_by = join(", ",map { $_->Public_name } $transgene->Gene);
+			$key       = "Overexpressed gene: " . $caused_by;
+		    } elsif ($transgene->Reporter_product) {
+			$caused_by = join(", ",$transgene->Reporter_product);
+			$key       = "Reporter product: " . $caused_by;
+		    }
+
+		    push @{$phenotypes{$obs}{$phene}{evidence}{$key}}, { text     => $self->_pack_obj($transgene,$transgene->Public_name ),
+									 evidence => $evidence } if $evidence && %$evidence;		    
+		    
+		}
+	    }
+	}
+    }   
+    return { data        => (defined $phenotypes{Phenotype}) ? \%phenotypes : undef ,
+	     description => 'phenotypes due to overexpression under the promoter of this gene', }; 
+#    return \%phenotypes;
+}
+
+
+
+
+
 
 #######################################
 #

@@ -720,7 +720,6 @@ div#create-prompt {
 
 .evidence {
   cursor:pointer;
-  margin:0 -0.5em;
 }
 
 .ev-more-text {
@@ -1398,7 +1397,6 @@ ul.nav-bar ul.wb-dropdown {
   border:1px solid #AAA;
   z-index:598;
   padding:0;
-  width:100%;
   list-style-type: none;
 }
 

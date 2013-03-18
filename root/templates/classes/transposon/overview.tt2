@@ -17,7 +17,10 @@ WRAPPER highlight_box;
   END;
 
   WRAPPER $field_block title="Copy status" key="copy_status";
-    evidence(fields.copy_status.data.evidence, '', fields.copy_status.data.text, 'more');
+  fields.copy_status.data.text;
+  '<br />';
+    '<div>' _ evidence(fields.copy_status.data.evidence);
+    '</div>';
   END;
 
 END;

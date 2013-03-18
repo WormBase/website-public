@@ -268,9 +268,14 @@ sub _get_tag_info {
         return $self->_pack_search_obj($c, $doc);
     }
   }
-  my $tag =  { id => $id,
+
+  my $api = $c->model('WormBaseAPI');
+  my $object = $api->fetch({ class => ucfirst $class, name => $id });
+  my $tag = $object->name->{data} if ($object > 0);
+
+  $tag =  { id => $id,
            class => $class
-  };
+  } unless $tag;
   $tag = { name => $tag, footer => $footer } if $fill;
   return $tag;
 }
