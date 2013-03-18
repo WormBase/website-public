@@ -22,6 +22,15 @@ if [ ! $APP ]; then
     export WORKERS=10
     export MAX_REQUESTS=500
    
+    # Set some variable that influence which configuration file we should use.
+    # This affects how the app behaves for certain cases.    
+    export WORMBASE_INSTALLATION_TYPE=$APP
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
+
 elif [ $APP == 'staging' ]; then
     echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"    
 
@@ -30,6 +39,15 @@ elif [ $APP == 'staging' ]; then
     export PORT=5000
     export WORKERS=5
     export MAX_REQUESTS=500
+
+    # Set some variable that influence which configuration file we should use.
+    # This affects how the app behaves for certain cases.    
+    export WORMBASE_INSTALLATION_TYPE=$APP
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 elif [ $APP == 'qaqc' ]; then
 
@@ -41,29 +59,25 @@ elif [ $APP == 'qaqc' ]; then
     export WORKERS=5
     export MAX_REQUESTS=500
 
+    # Set some variable that influence which configuration file we should use.
+    # This affects how the app behaves for certain cases.    
+    export WORMBASE_INSTALLATION_TYPE=$APP
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
+
 else
     echo "   ---> APP is set to ${APP}: using wormbase_local.conf"
 
-    # reduce the number of workers.
-    export DAEMONIZE=true
-    export PORT=5000
-    export WORKERS=5
-    export MAX_REQUESTS=500
+    # Assume these to all be set in the local environment
 
 fi
 
 
 # General behavior of the app
 export APP_ROOT=/usr/local/wormbase/website
-
-# Set some variable that influence which configuration file we should use.
-# This affects how the app behaves for certain cases.    
-export WORMBASE_INSTALLATION_TYPE=$APP
-
-# The suffix for the configuration file to use.
-# This will take precedence over wormbase_local.conf
-# Primarily used to override the location of the user database.
-export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 # Configure our GBrowse App
 export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
@@ -85,7 +99,7 @@ export PATH="/usr/local/wormbase/extlib/bin:$PATH"
 PIDDIR=/tmp
 PIDFILE=$PIDDIR/${APP}.pid
 APPLIB=$APP_ROOT/$APP/WormBase
-
+APPDIR=$APP_ROOT/$APP
 
 if [ ! -d "$APP_ROOT/$APP" ]; then
     echo "\$APP_ROOT/$APP does not exist"
@@ -143,9 +157,10 @@ _start() {
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
 	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/$APP/wormbase.psgi
+#	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/$APP/wormbase.psgi --error-log $APP_ROOT/$APP/logs/starman-error.log
     else
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_ROOT/$APP/wormbase.psgi
+	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_ROOT/$APP/wormbase.psgi --error-log $APP_ROOT/$APP/logs/starman-error.log
     fi
     
     echo ""
