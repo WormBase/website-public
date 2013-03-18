@@ -622,7 +622,7 @@ sub feed_POST {
 
 	    my ($issue_url,$issue_title,$issue_number) =
 		    $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent);
-      $c->stash->{userAgent} = $userAgent;
+	    $c->stash->{userAgent} = $userAgent;
 	    $self->_issue_email({ c       => $c,
 				  page    => $page,
 				  new     => 1,
@@ -1437,6 +1437,113 @@ sub _get_page {
     my ( $self, $c, $url ) = @_;
     return $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
 }
+
+
+########################################
+#
+# Admin level REST endpoints 
+# 
+
+
+# A generic webhook for receiving updates
+# from third party APIs
+# Currently, this is only used by GitHub
+# to send our app an update when there
+# has been a push to the staging branch.
+
+sub webhook :Path('/rest/admin/webhook') :Args(0) :ActionClass('REST') {}
+
+sub webhook_POST {
+    my ($self,$c) = @_;
+
+    # Assume JSON auto deserialized, but could be anything
+    my ($data) = $c->req->data;
+    
+    if (!$data) {
+	$c->response->status('415');
+	return 'No payload defined';
+    }
+    
+    $c->log->debug($data);
+
+    # It's a request from github if there is a "payload" key. Not fool-proof.
+    if ($data->{payload}) {
+	$self->_process_github_webhook($c,$data);
+    } else {
+	# Insert other webhooks here.
+    }
+
+    # Send an email that the staging server
+    # has been updated and restarted.
+#    $self->_issue_email({ c       => $c,
+#			  page    => $page,
+#			  new     => 1,
+#			  content => $content, 
+#			  change  => undef,
+#			  reporter_email   => $email, 
+#			  reporter_name    => $name, 
+#			  title   => $title,
+#			  issue_url    => $issue_url,
+#			  issue_title  => $issue_title,
+#			  issue_number => $issue_number});    
+    
+    $self->status_ok(
+	$c,
+	entity =>  {
+	    name    => 'WormBase',
+	    msg     => "Webhook received! We'll be acting on it shortly.",
+	    payload => $data,
+	},
+	);
+}
+
+
+
+
+sub _process_github_webhook {
+    my ($self,$c,$data) = @_;
+    
+    # We only allow github to call this action.
+    # Otherwise any request to this URI with the
+    # appropriate data payload would cause this
+    # hook to fire. Perhaps more appropriately
+    # handled at the proxy level...
+    # 207.97.227.253/32
+    # 50.57.128.197/32
+    # 108.171.174.178/32
+    # 50.57.231.61/32
+    # 204.232.175.64/27
+    # 192.30.252.0/22
+    # 127.0.0.1  - allow requests from us for testing.
+    my %allowed_addresses = map { $_ => $_ } qw/
+                            207.97.227.253
+	                    50.57.128.197
+                            108.171.174.178
+                            50.57.231.61
+                            204.232.175.64
+                            192.30.252.0
+                            127.0.0.1/;
+    my $ip = $c->req->address;
+    next unless (defined $allowed_addresses{$ip});
+    
+    # Pull the code and restart starman.
+    #!/bin/sh
+    #    cd ..
+    #    git reset --hard HEAD  # we probably don't want to reset to head
+    #    git pull origin staging
+    
+    my $path = WormBase::Web->path_to('/');
+    chdir($path) or $c->log->warn("Couldn't chdir to $path");    
+
+    # We might want to handle commits to the
+    # staging, master, or production branches
+    # differently.
+
+#    system("git pull origin staging");
+}
+
+
+
 
 =head1 AUTHOR
 
