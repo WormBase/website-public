@@ -19,9 +19,10 @@ END;
 
 WRAPPER $field_block title="Gene classes" key="gene_classes";
     build_data_table(
-		order=['gene_class','lab'],
+		order=['gene_class','remark','lab'],
 		columns={
 			gene_class	=> 'Gene class',
+			remark		=> 'Remark',
 			lab			=> 'Laboratory'
 		},
 		key='gene_classes'
