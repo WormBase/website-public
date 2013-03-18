@@ -22,6 +22,15 @@ if [ ! $APP ]; then
     export WORKERS=10
     export MAX_REQUESTS=500
    
+    # Set some variable that influence which configuration file we should use.
+    # This affects how the app behaves for certain cases.    
+    export WORMBASE_INSTALLATION_TYPE=$APP
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
+
 elif [ $APP == 'staging' ]; then
     echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"    
 
@@ -30,6 +39,15 @@ elif [ $APP == 'staging' ]; then
     export PORT=5000
     export WORKERS=5
     export MAX_REQUESTS=500
+
+    # Set some variable that influence which configuration file we should use.
+    # This affects how the app behaves for certain cases.    
+    export WORMBASE_INSTALLATION_TYPE=$APP
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 elif [ $APP == 'qaqc' ]; then
 
@@ -41,6 +59,15 @@ elif [ $APP == 'qaqc' ]; then
     export WORKERS=5
     export MAX_REQUESTS=500
 
+    # Set some variable that influence which configuration file we should use.
+    # This affects how the app behaves for certain cases.    
+    export WORMBASE_INSTALLATION_TYPE=$APP
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
+
 else
     echo "   ---> APP is set to ${APP}: using wormbase_local.conf"
 
@@ -50,20 +77,20 @@ else
     export WORKERS=5
     export MAX_REQUESTS=500
 
+    # Set some variable that influence which configuration file we should use.
+    # This affects how the app behaves for certain cases.    
+    export WORMBASE_INSTALLATION_TYPE=development
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=local
+
 fi
 
 
 # General behavior of the app
 export APP_ROOT=/usr/local/wormbase/website
-
-# Set some variable that influence which configuration file we should use.
-# This affects how the app behaves for certain cases.    
-export WORMBASE_INSTALLATION_TYPE=$APP
-
-# The suffix for the configuration file to use.
-# This will take precedence over wormbase_local.conf
-# Primarily used to override the location of the user database.
-export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 # Configure our GBrowse App
 export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
