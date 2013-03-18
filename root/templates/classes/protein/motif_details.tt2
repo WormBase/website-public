@@ -2,3 +2,17 @@
 	  [% jquery_data_table_html(['Feature','Type','Description', 'Start','End'],motif_details.data,'motif_details_dataTable_full') %] 
 </div>
     
+[% 
+build_data_table(
+	order=['feat','desc','start','stop','score','type'],
+	columns={
+		feat 	=> 'Feature',
+		start 	=> 'Start',
+		stop	=> 'Stop',
+		score	=> 'Score',
+		type	=> 'Type',
+		desc 	=> 'Description'
+	},
+	key='motif_details'
+);
+%]
