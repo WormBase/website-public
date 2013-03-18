@@ -30,8 +30,19 @@ elif [ $APP == 'staging' ]; then
     export PORT=5000
     export WORKERS=5
     export MAX_REQUESTS=500
-else
+
+elif [ $APP == 'qaqc' ]; then
+
     echo "   ---> APP is set to ${APP}: assuming we are host:qaqc.wormbase.org using wormbase_${APP}.conf"
+
+    # reduce the number of workers.
+    export DAEMONIZE=true
+    export PORT=5000
+    export WORKERS=5
+    export MAX_REQUESTS=500
+
+else
+    echo "   ---> APP is set to ${APP}: using wormbase_local.conf"
 
     # reduce the number of workers.
     export DAEMONIZE=true

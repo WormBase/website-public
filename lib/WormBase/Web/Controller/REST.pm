@@ -1441,8 +1441,8 @@ sub webhook_POST {
 	# Insert other webhooks here.
     }
 
-    # Send an email that the staging server
-    # has been updated and restarted.
+    # Send an email that the webhook has been
+    # received. This could get annoying, fast.
 #    $self->_issue_email({ c       => $c,
 #			  page    => $page,
 #			  new     => 1,
@@ -1453,8 +1453,7 @@ sub webhook_POST {
 #			  title   => $title,
 #			  issue_url    => $issue_url,
 #			  issue_title  => $issue_title,
-#			  issue_number => $issue_number});    
-    
+#			  issue_number => $issue_number});        
     $self->status_ok(
 	$c,
 	entity =>  {
@@ -1483,16 +1482,16 @@ sub _process_github_webhook {
     # 204.232.175.64/27
     # 192.30.252.0/22
     # 127.0.0.1  - allow requests from us for testing.
-    my %allowed_addresses = map { $_ => $_ } qw/
-                            207.97.227.253
-	                    50.57.128.197
-                            108.171.174.178
-                            50.57.231.61
-                            204.232.175.64
-                            192.30.252.0
-                            127.0.0.1/;
-    my $ip = $c->req->address;
-    next unless (defined $allowed_addresses{$ip});
+#    my %allowed_addresses = map { $_ => $_ } qw/
+#                            207.97.227.253
+#	                    50.57.128.197
+#                            108.171.174.178
+#                            50.57.231.61
+#                            204.232.175.64
+#                            192.30.252.0
+#                            127.0.0.1/;
+#    my $ip = $c->req->address;
+#    next unless (defined $allowed_addresses{$ip});
     
     # Pull the code and restart starman.
     #!/bin/sh
@@ -1505,9 +1504,17 @@ sub _process_github_webhook {
 
     # We might want to handle commits to the
     # staging, master, or production branches
-    # differently.
+    # differently. Unfortunately, the branch for
+    # a commit is not specified in the payload -
+    # we would need to query github for each issue.
+    # For now, we'll restart for *any* push to 
+    # WormBase/website. Not ideal.
 
-#    system("git pull origin staging");
+    # Note that since we are calling both the util
+    # script and the app handle the webhook on the 
+    # same server, the request will be terminated
+    # once the util script is called.
+    system("$path/util/webhooks/update_and_restart.sh $path");
 }
 
 
