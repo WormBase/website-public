@@ -18,6 +18,7 @@ sub _setup_page {
     my %l;
     map {$l{$_} = $c->user_session->{'layout'}->{$class}->{$_}->{'name'};} @layouts;
     $c->stash->{layouts} = \%l;
+    $c->response->headers->expires(time);
 }
 
 

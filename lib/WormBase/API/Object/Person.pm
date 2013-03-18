@@ -318,30 +318,32 @@ sub strain_designation {
     return $data;		     
 }
 
-# allele_designation { }
+# lab_info { }
 # This method returns a data structure containing
-# the allele designation of the current lab affiliation
-# of the person.
+# the allele and strain designations, and lab representative 
+# of each lab affiliation of the person.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
 
-sub allele_designation {
+sub lab_info {
     my $self   = shift;
     my $object = $self->object;
     my @labs   = eval{$object->Laboratory};
     my @table  = (); # passed to data, table = array of hashes
 	
 	foreach my $lab (@labs){
-		if($lab->Allele_designation){
-			push( @table, {
-				lab 	=> $self->_pack_obj($lab, $lab->Mail),
-				allele 	=> $lab->Allele_designation
-			});
-		}
+		push( @table, {
+			lab 	=> $self->_pack_obj($lab),
+			strain 	=> $self->_pack_obj($lab),
+			allele 	=> $lab->Allele_designation,
+			rep		=> $self->_pack_obj($lab->Representative,
+										$lab->Representative->Standard_name)
+		});
 	}
 	
     my $data = { description => 'allele designation of the affiliated laboratory',
 		 data        => (scalar @table) ? \@table : undef };
     return $data;
+
 }
 
 # eg: gene_classes
@@ -358,8 +360,9 @@ sub gene_classes {
 
  	foreach my $lab (@labs){
 		push( @table, map {{
-			lab 		=> $self->_pack_obj($lab, $lab->Mail),
-			gene_class	=> $self->_pack_obj($_)
+			lab 		=> $self->_pack_obj($lab),
+			gene_class	=> $self->_pack_obj($_),
+			remark		=> sprintf("%s",$_->Remark)
 		}} $lab->Gene_classes );
  	}
     
