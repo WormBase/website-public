@@ -646,25 +646,18 @@ sub motif_details {
 			# Are the multiple occurences of this motif_homol?
 			# Gets all scores for the current motif
 			my @scores = $motif_homol->right->col;
-			#@scores = map {$_->right} $motif_homol->right->col if(@scores <= 1);
 			
-			print "=====\n";
-			print "$_"."\n" foreach @scores;
-			print "=====\n";
-			
-			if (@scores > 1) {
+			if ( (scalar @scores) > 1) {
 				foreach my $score (@scores) {
 					my $start = $score->right;
 					my $stop = $start->right;
-		#		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$motif_homol->class},$type, $desc && "$desc",
-		#					$start && "$start",
-		#					$stop && "$stop")
-		#		    ];
 					
 					push( @data, {
-						feat	=> _pack_obj($motif_homol),
+						feat	=> 
+							$self->_pack_obj($motif_homol,"$motif_homol"),
 						start	=> $start,
 						stop	=> $stop,
+						score	=> $score,
 						type	=> $type,
 						desc	=> $desc
 					});
@@ -673,17 +666,16 @@ sub motif_details {
 				}
 			} else {
 				push( @data, {
-					feat	=> _pack_obj($motif_homol),
+					feat	=> 
+						$self->_pack_obj($motif_homol,"$motif_homol"),
 					start	=> $start,
 					stop	=> $stop,
+					score	=> 
+						(scalar @scores) == 1 ? $scores[0] : undef,
 					type	=> $type,
 					desc	=> $desc
 				});
 				
-	#			push @tot_positions,[  ({label=>$label,id=>$label,class=>$motif_homol->class},$type, $desc && "$desc",
-	#						$start && "$start",
-	#						$stop && "$stop")
-	#			];
 			}
 		}
 	
@@ -794,20 +786,6 @@ sub history {
     return { description => 'curatorial history of the protein',
 	     data        =>  @data ? \@data : undef };
 }
-
-############################################################
-#
-# The Motifs widget
-#
-############################################################
-
-sub motif_summary{
-	return{
-		description => 'Summary of this protein\'s motifs',
-		data		=> [{'a','b'},{'c','d'}]
-	};
-}
-
 
 
 

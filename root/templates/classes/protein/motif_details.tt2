@@ -3,14 +3,16 @@
 </div>
     
 [% 
-USE Dumper;
-Dumper.dump(fields.motif_details);
-
 build_data_table(
-	order=['desc'],
-	column={
-		desc => 'description'
+	order=['feat','desc','start','stop','score','type'],
+	columns={
+		feat 	=> 'Feature',
+		start 	=> 'Start',
+		stop	=> 'Stop',
+		score	=> 'Score',
+		type	=> 'Type',
+		desc 	=> 'Description'
 	},
-	key=motif_details
+	key='motif_details'
 );
 %]
