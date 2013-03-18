@@ -82,6 +82,7 @@ sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
     $c->stash->{noboiler}=1;
     $c->stash->{template} = 'header/default.tt2';
+    $c->response->headers->expires(time);
 }
 
 sub footer :Path("/footer") Args(0) {
@@ -97,6 +98,7 @@ sub me :Path("/me") Args(0) {
     $c->stash->{'section'} = 'me';
     $c->stash->{'class'} = "me";
     $c->stash->{template} = "me.tt2";
+    $c->response->headers->expires(time);
 }
 
 #######################################################
