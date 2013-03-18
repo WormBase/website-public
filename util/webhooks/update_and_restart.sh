@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # This webhook fires when /rest/admin/webook
 # is called with a JSON payload with single
 # top-level key of "payload"
@@ -14,9 +13,14 @@
 # script and will need to be on staging.wormbase.org
 # with the application running.
 
-$APP_PATH = $1
+APP_PATH=$1
 cd $APP_PATH
-git checkout staging
-git pull origin staging
+
+# Do we have a suitable ENV file? Source it.
+source ../wormbase.env
+source $APP_PATH/wormbase.env
+
+#git checkout staging
+#git pull origin staging
 ./script/wormbase-init.sh stop
 ./script/wormbase-init.sh start
