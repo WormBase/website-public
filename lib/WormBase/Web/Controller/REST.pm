@@ -1431,11 +1431,11 @@ sub webhook_POST {
 	$c->response->status('415');
 	return 'No payload defined';
     }
-    
-    $c->log->debug($data);
+   
 
     # It's a request from github if there is a "payload" key. Not fool-proof.
     if ($data->{payload}) {
+	$c->log->debug("Calling GitHub webhook...");
 	$self->_process_github_webhook($c,$data);
     } else {
 	# Insert other webhooks here.
@@ -1500,7 +1500,6 @@ sub _process_github_webhook {
     #    git pull origin staging
     
     my $path = WormBase::Web->path_to('/');
-    chdir($path) or $c->log->warn("Couldn't chdir to $path");    
 
     # We might want to handle commits to the
     # staging, master, or production branches
@@ -1514,7 +1513,8 @@ sub _process_github_webhook {
     # script and the app handle the webhook on the 
     # same server, the request will be terminated
     # once the util script is called.
-    system("$path/util/webhooks/update_and_restart.sh $path");
+    $c->log->debug($path);
+    system("$path/util/webhooks/update_and_restart.sh $path") or die "Couldn't call update script";
 }
 
 
