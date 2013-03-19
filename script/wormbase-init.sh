@@ -156,8 +156,9 @@ _start() {
     
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/$APP/wormbase.psgi
-#	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --error-log $APP_ROOT/$APP/logs/starman-error.log --daemonize $APP_ROOT/$APP/wormbase.psgi 
+	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --error-log $APP_ROOT/$APP/logs/starman-error.log --daemonize $APP_ROOT/$APP/wormbase.psgi 
+#	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/$APP/wormbase.psgi
+
 
 
     else
