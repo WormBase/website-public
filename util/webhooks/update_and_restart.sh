@@ -12,16 +12,71 @@
 # script and will need to be on staging.wormbase.org
 # with the application running.
 
+echo "GitHub webhook is calling!"
+
+
 APP_PATH=$1
 cd $APP_PATH
+echo "  Our app is at ${APP_PATH}."
 
 # Do we have a suitable ENV file in order of priority? Source it.
-source /usr/local/wormbase/wormbase.env
-source ../wormbase.env
-source $APP_PATH/wormbase.env
+if [ -e /usr/local/wormbase/wormbase.env ]
+then
+    source /usr/local/wormbase/wormbase.env
+fi
 
-git checkout staging
+if [ -e $APP_PATH/../wormbse.env ]
+then
+    source $APP_PATH/../wormbase.env
+fi
+
+if [ -e $APP_PATH/wormbase.env ]
+then 
+    source $APP_PATH/wormbase.env
+fi
+
+echo "    1. checking out the staging branch ..."
+echo "    2. fetching head ..."
+#git checkout staging
 #git pull origin staging
-git pull
-./script/wormbase-init.sh stop
-./script/wormbase-init.sh start
+#git pull
+
+echo "    3. stopping the starman service ..."
+#./script/wormbase-init.sh stop
+
+echo "    4. restarting starman ..."
+#./script/wormbase-init.sh start
+echo "    --  And we're back! --"
+
+echo '
+
+                         oooo$$$$$$$$$$$$oooo
+                      oo$$$$$$$$$$$$$$$$$$$$$$$$o
+                   oo$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o         o$   $$ o$
+   o $ oo        o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o       $$ $$ $$o$
+oo $ $ "$      o$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$o       $$$o$$o$
+"$$$$$$o$     o$$$$$$$$$      $$$$$$$$$$$      $$$$$$$$$$o    $$$$$$$$
+  $$$$$$$    $$$$$$$$$$$      $$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$
+  $$$$$$$$$$$$$$$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$$$$$$  """$$$
+   "$$$""""$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     "$$$
+    $$$   o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     "$$$o
+   o$$"   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$       $$$o
+   $$$    $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" "$$$$$$ooooo$$$$o
+  o$$$oooo$$$$$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   o$$$$$$$$$$$$$$$$$
+  $$$$$$$$"$$$$   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     $$$$""""""""
+ """"       $$$$    "$$$$$$$$$$$$$$$$$$$$$$$$$$$$"      o$$$
+            "$$$o     """$$$$$$$$$$$$$$$$$$"$$"         $$$
+              $$$o          "$$""$$$$$$""""           o$$$
+               $$$$o                                o$$$"
+                "$$$$o      o$$$$$$o"$$$$o        o$$$$
+                  "$$$$$oo     ""$$$$o$$$$$o   o$$$$""
+                     ""$$$$$oooo  "$$$o$$$$$$$$$"""
+                        ""$$$$$$$oo $$$$$$$$$$
+                                """"$$$$$$$$$$$
+                                    $$$$$$$$$$$$
+                                     $$$$$$$$$$"
+                                      "$$$""  
+
+
+
+'
