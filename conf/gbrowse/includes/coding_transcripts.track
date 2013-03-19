@@ -17,9 +17,9 @@ height  = sub {
 	return $feature->method =~  /transcript|UTR|coding_exon/i ? 10 : 6;
 	}
 balloon hover  = sub {my $f = shift;
-	                my $name = $f->name; 
-                        my $class = $f->class;
-    		        "url:/gbrowse_popup?name=$name;class=$class;type=PRIMARY_GENE_TRACK";
+	              my $name = $f->name; 
+                      my $class = $f->class;
+    		      "url:/gbrowse_popup?name=$name;class=$class;type=PRIMARY_GENE_TRACK";
 	} 
 link = sub {
 	my $f = shift;
@@ -28,8 +28,6 @@ link = sub {
 	return "/get?name=$name;class=Gene";
 	}
 feature = full_transcript:Coding_transcript 
-# The glyph definition MUST be in the primary configuration file for the species.
-# If it is in gene_models.track, the aggregators cannot be found.
 glyph    = sub { 
 	 my $f = shift;
 	 my ($source) = $f->source;
