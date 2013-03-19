@@ -375,7 +375,7 @@ sub print_sequence {
 sub _build_tracks {
     return {
         description => 'tracks',
-        data        => [qw(NG CG CLO LINK CANONICAL)]
+        data        => [qw(NG PRIMARY_GENE_TRACK CLO LINK CANONICAL)]
     };
 }
 
