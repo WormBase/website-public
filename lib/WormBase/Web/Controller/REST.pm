@@ -1430,19 +1430,19 @@ sub webhook_POST {
    
     # data not being posted correctly through proxy?
     # not using it at the moment.
-#    if (!$data) {
-#	$c->response->status('415');
-#	return 'No payload defined';
-#     }
+    if (!$data) {
+	$c->response->status('415');
+	return 'No payload defined';
+     }
    
 
     # It's a request from github if there is a "payload" key. Not fool-proof.
-#    if ($data->{payload}) {
+    if ($data->{payload}) {
 	$c->log->debug("Calling GitHub webhook...");
 	$self->_process_github_webhook($c,$data);
-#    } else {
+    } else {
 	# Insert other webhooks here.
-#    }
+    }
 
     # Send an email that the webhook has been
     # received. This could get annoying, fast.
@@ -1517,7 +1517,7 @@ sub _process_github_webhook {
     # same server, the request will be terminated
     # once the util script is called.
     $c->log->debug($path);
-    system("$path/util/webhooks/update_and_restart.sh $path") or die "Couldn't call update script";
+    system("$path/util/webhooks/update_and_restart.sh $path") && die "Couldn't call update script";
 }
 
 

@@ -4,9 +4,7 @@
 # top-level key of "payload"
 
 # To test the webhook URL and this util script:
-# curl -H "Content-Type: application/json" -w "%{http_code} %{url_effective}\\n" 
-#     \ --data @update_and_restart_sample_data.json
-#     \ -X POST http://yoursite:port/rest/admin/webhook
+# curl -H "Content-Type: application/json" -w "%{http_code} %{url_effective}\\n  --data @update_and_restart_sample_data.json -X POST http://yoursite:port/rest/admin/webhook
 
 # To test the webhook service at Github, this
 # script and will need to be on staging.wormbase.org
