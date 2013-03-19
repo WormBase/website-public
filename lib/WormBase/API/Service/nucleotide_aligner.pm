@@ -70,7 +70,7 @@ sub run {
     }
     $self->algorithms({map {$_=>1} @array});
     
-    my @types = 'CG';
+    my @types = 'PRIMARY_GENE_TRACK';
     foreach (sort keys %TRACKS) {
       push @types,$TRACKS{$_}  if $self->algorithms->{$_};
     }
