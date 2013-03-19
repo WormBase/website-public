@@ -10,16 +10,18 @@
 # script and will need to be on staging.wormbase.org
 # with the application running.
 
-echo "GitHub webhook is calling!"
-
 
 APP_PATH=$1
 cd $APP_PATH
 
-LOGFILE=$APP_PATH/logs/webhook_restarter.log
-exec > $LOGFILE 2>&1
+DATE=`date`
 
-echo "  Our app is at ${APP_PATH}."
+LOGFILE=$APP_PATH/logs/webhook_restarter.log
+#exec >> $LOGFILE 2>&1
+exec >> $LOGFILE 
+
+echo "GitHub webhook is calling at ${DATE}!"
+echo "  Our app is at ${APP_PATH}"
 
 # Do we have a suitable ENV file in order of priority? Source it.
 if [ -e /usr/local/wormbase/wormbase.env ]
