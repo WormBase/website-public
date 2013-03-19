@@ -1426,16 +1426,15 @@ sub webhook_POST {
 
     # Assume JSON auto deserialized, but could be anything
     my ($data) = $c->req->data;
-    $data || $c->req->params;
-   
+
     # data not being posted correctly through proxy?
     # not using it at the moment.
     if (!$data) {
+	$c->log->debug('no data passed by webhook caller.');
 	$c->response->status('415');
 	return 'No payload defined';
      }
    
-
     # It's a request from github if there is a "payload" key. Not fool-proof.
     if ($data->{payload}) {
 	$c->log->debug("Calling GitHub webhook...");
@@ -1496,12 +1495,6 @@ sub _process_github_webhook {
 #    my $ip = $c->req->address;
 #    next unless (defined $allowed_addresses{$ip});
     
-    # Pull the code and restart starman.
-    #!/bin/sh
-    #    cd ..
-    #    git reset --hard HEAD  # we probably don't want to reset to head
-    #    git pull origin staging
-    
     my $path = WormBase::Web->path_to('/');
 
     # We might want to handle commits to the
@@ -1517,7 +1510,7 @@ sub _process_github_webhook {
     # same server, the request will be terminated
     # once the util script is called.
     $c->log->debug($path);
-    system("$path/util/webhooks/update_and_restart.sh $path") && die "Couldn't call update script";
+    exec("$path/util/webhooks/update_and_restart.sh $path") && die "Couldn't call update script";
 }
 
 
