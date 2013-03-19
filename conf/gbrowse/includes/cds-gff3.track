@@ -1,5 +1,5 @@
 [CDS]
-feature      = coding:curated
+feature      = CDS:WormBase
 glyph        = cds
 frame0f      = cadetblue
 frame1f      = blue
