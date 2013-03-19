@@ -43,6 +43,7 @@ elif [ $APP == 'staging' ]; then
     # Set some variable that influence which configuration file we should use.
     # This affects how the app behaves for certain cases.    
     export WORMBASE_INSTALLATION_TYPE=$APP
+#    export WORMBASE_INSTALLATION_TYPE=development
 
     # The suffix for the configuration file to use.
     # This will take precedence over wormbase_local.conf

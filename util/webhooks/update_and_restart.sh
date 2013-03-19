@@ -15,6 +15,10 @@ echo "GitHub webhook is calling!"
 
 APP_PATH=$1
 cd $APP_PATH
+
+LOGFILE=$APP_PATH/logs/webhook_restarter.log
+exec > $LOGFILE 2>&1
+
 echo "  Our app is at ${APP_PATH}."
 
 # Do we have a suitable ENV file in order of priority? Source it.
