@@ -1,4 +1,38 @@
+[PRIMARY_GENE_TRACK]
+category     = Genes
+key          = Gene Models
+bgcolor      = sub {
+	     my $f = shift;
+	     return 'gray'   if $f->method =~ /pseudogene/i;
+             return 'gray'   if $f->source =~ /pseudogene/i;
+	     return 'gray'   if $f->source =~ /ncrna|non_coding/i;
+	     return 'violet' if $f->strand > 0;
+	     return 'turquoise';
+	     }
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height  = sub {
+	my $feature = shift;
+	return $feature->method =~  /transcript|UTR|coding_exon/i ? 10 : 6;
+	}
+#balloon hover  = sub {my $f = shift;
+#	                my $name = $f->name; 
+#                        my $class = $f->class;
+#    		        "url:/gbrowse_popup?name=$name;class=$class;type=CG";
+#	} 
+#link = sub {
+#	my $f = shift;
+#	return if $f->method eq 'RNAz';
+#	my $name = $f->attributes('Gene') || $f->name;
+#	return "/get?name=$name;class=Gene";
+#	}
 # Tier2/Tier3 species have slightly different labels and descriptions
+feature      = wormbase_cds:curated
+	       tRNAscan-SE-1.3:tRNA
+#glyph       = wormbase_transcript
+glyph        = transcript2
+title        = curated gene $name
 label        = sub {
                	my $f = shift;
 	       	my $label = $f->name;
@@ -35,3 +69,23 @@ link = sub {
 	my $name = $f->attributes('Gene') || $f->name;
 	return "/get?name=$name;class=Gene";
 	}
+# This only applies to C. elegans, C. briggsae, C. japonica, C. remanei, and C. brenneri.
+# All others that include this config file will need to override.
+citation = Protein-coding gene structures result from the integration of a variety 
+           of prediction methods and data sources followed by manual review and revison 
+           by WormBase curators. tRNAs are predicted by tRNAscan, and other non-coding 
+           RNA transcripts are taken from a variety of literature sources. 
+           The purple and blue colors indicate transcripts on the forward and 
+           reverse strands respectively. If sufficient room is available between 
+           features, gene models end with a triangle; if not a small arrow is used. 
+           For protein-coding genes, only the CDS is represented. Full models 
+           (with UTRs) can be seen on the "Coding transcripts" track.
+
+
+[PRIMARY_GENE_TRACK:150000]
+# necessary?
+#feature      = protein_coding_primary_transcript
+glyph        = generic
+strand_arrow = 1
+bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+description = 0
