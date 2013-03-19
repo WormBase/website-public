@@ -68,7 +68,7 @@ has 'tracks' => (
         my $self = shift;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/CG CLASSICAL_ALLELES/],
+            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/PRIMARY_GENE_TRACK CLASSICAL_ALLELES/],
         };
     }
 );
@@ -1144,13 +1144,24 @@ sub human_diseases {
   my $search = $self->_api->xapian;
 
   my %data;
-  if($data[0]){
-    foreach my $type ($data[0]->col) {
-      $data{$type} = ();
-      foreach my $disease ($type->col){
-        push (@{$data{$type}}, $search->_get_tag_info($self->_api, $disease, 'disease') || $disease)
+  if($object->Disease_info){
+    my @diseases = map { $self->_pack_obj($_)} $object->Potential_model;
+    $data{'disease'} = \@diseases;
+  }else{
+      if($data[0]){
+        foreach my $type ($data[0]->col) {
+          # $data{lc($type)} = ();
+          foreach my $disease ($type->col){
+            my $it = $search->search($self, $disease, 1, 'disease');
+            if($it->{mset}->size() > 0){
+              $data{lc($type)} = () unless $data{lc($type)};
+              my $o = @{$it->{struct}}[0];
+              my $objs = $search->_pack_search_obj($self, $o->get_document);
+              push (@{$data{lc($type)}}, $objs);
+            }
+          }
+        }
       }
-    }
   }
 
   return {

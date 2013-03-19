@@ -40,6 +40,10 @@ has 'modelmap' => (
     },
 );
 
+has '_api' => (
+    is => 'ro',
+);
+
 
 sub search {
     my ( $class, $c, $q, $page, $type, $species, $page_size) = @_;
@@ -269,7 +273,7 @@ sub _get_tag_info {
     }
   }
 
-  my $api = $c->model('WormBaseAPI');
+  my $api = $self->_api;
   my $object = $api->fetch({ class => ucfirst $class, name => $id });
   my $tag = $object->name->{data} if ($object > 0);
 

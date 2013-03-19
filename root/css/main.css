@@ -817,6 +817,10 @@ a#fade:hover {
   position:relative;
 }
 
+.result.evidence{
+  padding:0;
+}
+
 .result:hover {
   background-color: #E9EEF2;
 }

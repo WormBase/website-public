@@ -362,7 +362,7 @@ sub gene_classes {
 		push( @table, map {{
 			lab 		=> $self->_pack_obj($lab),
 			gene_class	=> $self->_pack_obj($_),
-			remark		=> sprintf("%s",$_->Remark)
+			desc		=> sprintf("%s",$_->Description)
 		}} $lab->Gene_classes );
  	}
     
