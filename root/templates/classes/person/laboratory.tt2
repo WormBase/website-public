@@ -5,7 +5,7 @@ laboratory(title="Laboratory affiliation");
 
 WRAPPER $field_block title="Lab information" key="lab_info";
 	build_data_table(
-		order=['strain', 'allele', 'lab', 'rep'],
+		order=['lab', 'rep', 'strain', 'allele'],
 		columns={
 			strain 	=> 'Strain',
 			allele	=> 'Allele',
@@ -19,10 +19,10 @@ END;
 
 WRAPPER $field_block title="Gene classes" key="gene_classes";
     build_data_table(
-		order=['gene_class','remark','lab'],
+		order=['gene_class','desc','lab'],
 		columns={
 			gene_class	=> 'Gene class',
-			remark		=> 'Remark',
+			desc		=> 'Description',
 			lab			=> 'Laboratory'
 		},
 		key='gene_classes'
