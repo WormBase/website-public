@@ -1426,20 +1426,23 @@ sub webhook_POST {
 
     # Assume JSON auto deserialized, but could be anything
     my ($data) = $c->req->data;
-    
-    if (!$data) {
-	$c->response->status('415');
-	return 'No payload defined';
-    }
+    $data || $c->req->params;
+   
+    # data not being posted correctly through proxy?
+    # not using it at the moment.
+#    if (!$data) {
+#	$c->response->status('415');
+#	return 'No payload defined';
+#     }
    
 
     # It's a request from github if there is a "payload" key. Not fool-proof.
-    if ($data->{payload}) {
+#    if ($data->{payload}) {
 	$c->log->debug("Calling GitHub webhook...");
 	$self->_process_github_webhook($c,$data);
-    } else {
+#    } else {
 	# Insert other webhooks here.
-    }
+#    }
 
     # Send an email that the webhook has been
     # received. This could get annoying, fast.
