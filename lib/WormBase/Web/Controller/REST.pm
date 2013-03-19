@@ -1427,21 +1427,21 @@ sub webhook_POST {
     # Assume JSON auto deserialized, but could be anything
     my ($data) = $c->req->data;
 
-    # data not being posted correctly through proxy?
-    # not using it at the moment.
-    if (!$data) {
-	$c->log->debug('no data passed by webhook caller.');
-	$c->response->status('415');
-	return 'No payload defined';
-     }
+    # I can't fetch any data when called from github?
+    # This isn't a proxy misconfig, weird app behavior?
+#    if (!$data) {
+#	$c->log->debug('no data passed by webhook caller.');
+#	$c->response->status('415');
+#	return 'No payload defined';
+#     }
    
     # It's a request from github if there is a "payload" key. Not fool-proof.
-    if ($data->{payload}) {
+#    if ($data->{payload}) {
 	$c->log->debug("Calling GitHub webhook...");
 	$self->_process_github_webhook($c,$data);
-    } else {
+#    } else {
 	# Insert other webhooks here.
-    }
+#    }
 
     # Send an email that the webhook has been
     # received. This could get annoying, fast.
@@ -1510,7 +1510,7 @@ sub _process_github_webhook {
     # same server, the request will be terminated
     # once the util script is called.
     $c->log->debug($path);
-    exec("$path/util/webhooks/update_and_restart.sh $path") && die "Couldn't call update script";
+    system("$path/util/webhooks/update_and_restart.sh $path"); # && die "Couldn't call update script";
 }
 
 
