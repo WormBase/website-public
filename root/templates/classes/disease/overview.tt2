@@ -3,7 +3,8 @@
 [%
 
   WRAPPER highlight_box;
-      WRAPPER $field_block title='Ontology Term';          external_link('do', object.name.data.id, object.name.data.id);
+      WRAPPER $field_block title='Ontology Term';          
+        external_link('do', object.name.data.id, object.name.data.id);
       END;
 
       status;
@@ -17,9 +18,9 @@
       END; 
 
       WRAPPER $field_block title="OMIM ID" key="omim";
-        FOREACH dbt IN fields.omim.data.keys;
-            FOREACH id IN fields.omim.data.$dbt.ids; 
-                external_link('omim',"OMIM:" _ id,id,dbt) _ '<br />';
+        FOREACH omim_dbt IN fields.omim.data.keys;
+            FOREACH omim_id IN fields.omim.data.$omim_dbt.ids; 
+                external_link('omim',"OMIM:" _ omim_id,omim_id,omim_dbt) _ '<br />';
             END;
         END;
       END;
@@ -27,7 +28,7 @@
 
   '<div class="description">';
     markup(fields.definition.data);
-  '</div>';
+
   
 
    WRAPPER $field_block title="Parent" key="parent";
@@ -38,7 +39,11 @@
      tags2link(fields.child.data);
    END; 
 
-  remarks;
 
+   WRAPPER $field_block title="<i>C. elegans</i> genes by orthology to human disease gene" key="genes";
+     tags2link(fields.genes.data);
+   END; 
+  '</div>';
+  remarks;
 
 %]

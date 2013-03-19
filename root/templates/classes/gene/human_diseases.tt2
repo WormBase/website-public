@@ -19,10 +19,8 @@ END;
   <p>
   [% FOREACH type IN ['disease', 'gene'] %]
     [% IF fields.human_diseases.data.$type; %]
-      [% t = type FILTER ucfirst %]
-      <h4>[% pluralize(t, fields.human_diseases.data.$type.size) %]</h4>
       [% FOREACH item IN fields.human_diseases.data.$type; 
-          tag2link(item, item.label _ ' (OMIM:' _ item.id _ ')');
+          tag2link(item, item.label _ ' (' _ item.id _ ')');
           '<br />';
         END;%]
     [% END %]
