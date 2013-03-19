@@ -35,15 +35,15 @@ fi
 
 echo "    1. checking out the staging branch ..."
 echo "    2. fetching head ..."
-#git checkout staging
+git checkout staging
 #git pull origin staging
-#git pull
+git pull
 
 echo "    3. stopping the starman service ..."
-#./script/wormbase-init.sh stop
+./script/wormbase-init.sh stop
 
 echo "    4. restarting starman ..."
-#./script/wormbase-init.sh start
+./script/wormbase-init.sh start
 echo "    --  And we're back! --"
 
 echo '
