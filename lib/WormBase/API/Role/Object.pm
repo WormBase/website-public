@@ -1559,11 +1559,9 @@ sub _build_remarks {
     my $object = $self->object;
 
     #    my @remarks = grep defined, map { $object->$_} qw/Remark/;
-    my @remarks = eval { $object->get('Remark') };
+    my @remarks = $object->get('Remark');
+    @remarks = $object->get('Comment') unless @remarks; 
     my $class   = $object->class;
-
-    # Need to add in evidence handling.
-    my @evidence = map {$_->col} @remarks;
 
     @remarks = grep { !/phenobank/ } @remarks if($class =~ /^RNAi$/i);
 
@@ -1868,7 +1866,7 @@ sub _build_xrefs {
         # Possibly multiple entries for a single DB
       $dbs{$db} = {};
       foreach my $dbt ($db->col){
-        @{$dbs{$db}{$dbt}{ids}} = map {( $_ =~ /^(OMIM:|GI:)(.*)/ ) ? "$2" : $_;} $dbt->col;
+        @{$dbs{$db}{$dbt}{ids}} = map {( $_ =~ /^(OMIM:|GI:)(.*)/ ) ? "$2" : "$_";} $dbt->col;
       }
     }
 
@@ -1972,10 +1970,12 @@ sub _pack_objects {
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return undef unless $object; # this method shouldn't expect a list.
+
+    my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
     return {
         id       => "$object",
         label    => $label // $self->_make_common_name($object),
-        class    => $object->class,
+        class    => $wbclass || $object->class,
         taxonomy => $self->_parsed_species($object),
         %args,
     };

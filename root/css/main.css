@@ -720,7 +720,6 @@ div#create-prompt {
 
 .evidence {
   cursor:pointer;
-  margin:0 -0.5em;
 }
 
 .ev-more-text {
@@ -816,6 +815,10 @@ a#fade:hover {
 .result {
   padding:0 0.5em 0.5em;
   position:relative;
+}
+
+.result.evidence{
+  padding:0;
 }
 
 .result:hover {
@@ -1398,7 +1401,6 @@ ul.nav-bar ul.wb-dropdown {
   border:1px solid #AAA;
   z-index:598;
   padding:0;
-  width:100%;
   list-style-type: none;
 }
 

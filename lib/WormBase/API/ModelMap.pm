@@ -38,6 +38,7 @@ BEGIN {
             Transcript => [qw(Transcript Pseudogene)],
             Cds       => [qw(CDS cds)],
             Rnai      => 'RNAi',
+            Disease   => [qw(DO_term Do_term do_term)],
             Go_term   => 'GO_term',
             Wbprocess => 'WBProcess',
             Model     => 'Model', #for schema display to work
@@ -53,6 +54,7 @@ BEGIN {
             Variation    => 'Public_name',
             Phenotype    => 'Primary_name',
             Gene_class   => 'Main_name',
+            DO_term      => 'Name',
             Gene_name    => 'Public_name_for',
             Species      => 'Common_name',
             Molecule     => [qw(Public_name Name)],

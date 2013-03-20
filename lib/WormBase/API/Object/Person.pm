@@ -303,34 +303,47 @@ sub strain_designation {
     my $object = $self->object;
        
     my @labs   = eval{ $object->Laboratory };
+    my @table  = (); # passed to data, table = array of hashes
+    
     
     foreach my $i (0..$#labs){
-		$labs[$i] = $self->_pack_obj($labs[$i]);
+		push( @table, { 
+			lab 	=> $self->_pack_obj($labs[$i], $labs[$i]->Mail),
+			strain 	=> $self->_pack_obj($labs[$i]) 
+		});
     }
        
     my $data = { description => 'strain designation of the affiliated lab',
-#		 data        => $lab || undef };
-		 data        => \@labs || undef };
+		 data        => (scalar @table) ? \@table : undef };
     return $data;		     
 }
 
-# allele_designation { }
+# lab_info { }
 # This method returns a data structure containing
-# the allele designation of the current lab affiliation
-# of the person.
+# the allele and strain designations, and lab representative 
+# of each lab affiliation of the person.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
 
-sub allele_designation {
+sub lab_info {
     my $self   = shift;
     my $object = $self->object;
     my @labs   = eval{$object->Laboratory};
-    my @allele_designations = map {
-		my $lab=$_; 
-		($lab && $lab->Allele_designation) ? $lab->Allele_designation->name : undef
-	} @labs;
+    my @table  = (); # passed to data, table = array of hashes
+	
+	foreach my $lab (@labs){
+		push( @table, {
+			lab 	=> $self->_pack_obj($lab),
+			strain 	=> $self->_pack_obj($lab),
+			allele 	=> $lab->Allele_designation,
+			rep		=> $self->_pack_obj($lab->Representative,
+										$lab->Representative->Standard_name)
+		});
+	}
+	
     my $data = { description => 'allele designation of the affiliated laboratory',
-		 data        => \@allele_designations };
+		 data        => (scalar @table) ? \@table : undef };
     return $data;
+
 }
 
 # eg: gene_classes
@@ -343,16 +356,19 @@ sub gene_classes {
     my $self   = shift;
     my $object = $self->object;
     my @labs    = eval { $object->Laboratory };
-    
-    my @gene_classes;
-	foreach my $lab (@labs){
-		@gene_classes = 
-			map { $self->_pack_obj($_) } $lab->Gene_classes if $lab;
-    }
+    my @table  = (); # passed to data, table = array of hashes
+
+ 	foreach my $lab (@labs){
+		push( @table, map {{
+			lab 		=> $self->_pack_obj($lab),
+			gene_class	=> $self->_pack_obj($_),
+			desc		=> sprintf("%s",$_->Description)
+		}} $lab->Gene_classes );
+ 	}
     
     my $data = { 
 		description => 'gene classes assigned to laboratory',
-		data        => @gene_classes ? \@gene_classes : undef
+		data        => (scalar @table) ? \@table : undef 
 	};
     return $data;
 }

@@ -37,38 +37,6 @@ Catalyst Controller.
 =head1 METHODS
 
 =cut
- 
-sub livechat :Path('/rest/livechat') :Args(0) :ActionClass('REST') {} 
-sub livechat_GET {
-    my ( $self, $c) = @_;
-    $c->user_session->{'livechat'}=1;
-    $c->stash->{template} = "auth/livechat.tt2";
-    my $role= $c->model('Schema::Role')->find({role=>"operator"});
-     
-    foreach my $op ( shuffle $role->users){
-      next unless($op->gtalk_key );
-      my $badge = Badge::GoogleTalk->new( key => $op->gtalk_key);
-      my $online_status = $badge->is_online();
-      my $status = $badge->get_status();
-      my $away_status = $badge->is_away();
-      if($online_status && $status ne 'Busy' && !$away_status) {
-      $c->log->debug("get gtalk badge for ",$op->username);
-      $c->stash->{badge_html}  = $badge->get_badge();
-      $c->stash->{operator}  = $op;
-      $c->log->debug($c->stash->{badge_html});
-      last;
-      }
-    }
-    $c->response->headers->expires(time);
-    $c->stash->{noboiler}=1;
-    $c->forward('WormBase::Web::View::TT');
-}
-sub livechat_POST {
-    my ( $self, $c) = @_;
-    $c->user_session->{'livechat'}=0;
-    $c->user_session->{'livechat'}=1 if($c->req->param('open'));
-    $c->log->debug('livechat open? '.$c->user_session->{'livechat'});
-}
 
 sub print :Path('/rest/print') :Args(0) :ActionClass('REST') {}
 sub print_POST {
@@ -622,7 +590,7 @@ sub feed_POST {
 
 	    my ($issue_url,$issue_title,$issue_number) =
 		    $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent);
-      $c->stash->{userAgent} = $userAgent;
+	    $c->stash->{userAgent} = $userAgent;
 	    $self->_issue_email({ c       => $c,
 				  page    => $page,
 				  new     => 1,
@@ -1437,6 +1405,116 @@ sub _get_page {
     my ( $self, $c, $url ) = @_;
     return $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
 }
+
+
+########################################
+#
+# Admin level REST endpoints 
+# 
+
+
+# A generic webhook for receiving updates
+# from third party APIs
+# Currently, this is only used by GitHub
+# to send our app an update when there
+# has been a push to the staging branch.
+
+sub webhook :Path('/rest/admin/webhook') :Args(0) :ActionClass('REST') {}
+
+sub webhook_POST {
+    my ($self,$c) = @_;
+
+    # Assume JSON auto deserialized, but could be anything
+    my ($data) = $c->req->data;
+
+    # I can't fetch any data when called from github?
+    # This isn't a proxy misconfig, weird app behavior?
+#    if (!$data) {
+#	$c->log->debug('no data passed by webhook caller.');
+#	$c->response->status('415');
+#	return 'No payload defined';
+#     }
+   
+    # It's a request from github if there is a "payload" key. Not fool-proof.
+#    if ($data->{payload}) {
+	$c->log->debug("Calling GitHub webhook...");
+	$self->_process_github_webhook($c,$data);
+#    } else {
+	# Insert other webhooks here.
+#    }
+
+    # Send an email that the webhook has been
+    # received. This could get annoying, fast.
+#    $self->_issue_email({ c       => $c,
+#			  page    => $page,
+#			  new     => 1,
+#			  content => $content, 
+#			  change  => undef,
+#			  reporter_email   => $email, 
+#			  reporter_name    => $name, 
+#			  title   => $title,
+#			  issue_url    => $issue_url,
+#			  issue_title  => $issue_title,
+#			  issue_number => $issue_number});        
+    $self->status_ok(
+	$c,
+	entity =>  {
+	    name    => 'WormBase',
+	    msg     => "Webhook received! We'll be acting on it shortly.",
+	    payload => $data,
+	},
+	);
+}
+
+
+
+
+sub _process_github_webhook {
+    my ($self,$c,$data) = @_;
+    
+    # We only allow github to call this action.
+    # Otherwise any request to this URI with the
+    # appropriate data payload would cause this
+    # hook to fire. Perhaps more appropriately
+    # handled at the proxy level...
+    # 207.97.227.253/32
+    # 50.57.128.197/32
+    # 108.171.174.178/32
+    # 50.57.231.61/32
+    # 204.232.175.64/27
+    # 192.30.252.0/22
+    # 127.0.0.1  - allow requests from us for testing.
+#    my %allowed_addresses = map { $_ => $_ } qw/
+#                            207.97.227.253
+#	                    50.57.128.197
+#                            108.171.174.178
+#                            50.57.231.61
+#                            204.232.175.64
+#                            192.30.252.0
+#                            127.0.0.1/;
+#    my $ip = $c->req->address;
+#    next unless (defined $allowed_addresses{$ip});
+    
+    my $path = WormBase::Web->path_to('/');
+
+    # We might want to handle commits to the
+    # staging, master, or production branches
+    # differently. Unfortunately, the branch for
+    # a commit is not specified in the payload -
+    # we would need to query github for each issue.
+    # For now, we'll restart for *any* push to 
+    # WormBase/website. Not ideal.
+
+    # Note that since we are calling both the util
+    # script and the app handle the webhook on the 
+    # same server, the request will be terminated
+    # once the util script is called.
+    $c->log->debug($path);
+    system("$path/util/webhooks/update_and_restart.sh $path"); # && die "Couldn't call update script";
+}
+
+
+
 
 =head1 AUTHOR
 
