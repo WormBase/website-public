@@ -79,7 +79,7 @@ sub type {
 
 sub synonym {
     my ($self) = @_;
-    my @synonym = map { $_->col} $self->object->Synonymn;
+    my @synonym = map { map { "$_" } $_->col } $self->object->Synonymn;
 
     return {
         description => 'Synonym of this disease',
