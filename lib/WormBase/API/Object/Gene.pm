@@ -1145,23 +1145,17 @@ sub human_diseases {
 
   my %data;
   if($object->Disease_info){
-    my @diseases = map { $self->_pack_obj($_)} $object->Potential_model;
-    $data{'disease'} = \@diseases;
-  }else{
-      if($data[0]){
-        foreach my $type ($data[0]->col) {
-          # $data{lc($type)} = ();
-          foreach my $disease ($type->col){
-            my $it = $search->search($self, $disease, 1, 'disease');
-            if($it->{mset}->size() > 0){
-              $data{lc($type)} = () unless $data{lc($type)};
-              my $o = @{$it->{struct}}[0];
-              my $objs = $search->_pack_search_obj($self, $o->get_document);
-              push (@{$data{lc($type)}}, $objs);
-            }
-          }
-        }
+    my @diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Potential_model;
+    $data{'potential_model'} = \@diseases;
+  }
+
+  if($data[0]){
+    foreach my $type ($data[0]->col) {
+        $data{lc($type)} = ();
+      foreach my $disease ($type->col){
+          push (@{$data{lc($type)}}, ($disease =~ /^(OMIM:)(.*)/ ) ? "$2" : "$disease");
       }
+    }
   }
 
   return {
