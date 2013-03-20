@@ -41,7 +41,7 @@ sub definition {
 
 sub omim {
 	my $self = shift; 
- 	my %data =  %{$self->xrefs->{data}->{OMIM}};
+ 	my %data =  %{$self->xrefs->{data}->{OMIM}} if $self->xrefs->{data}->{OMIM};
 	
 	return {
 		description => 'link to OMIM record',
