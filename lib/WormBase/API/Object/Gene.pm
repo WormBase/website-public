@@ -763,14 +763,18 @@ sub _process_variation {
                 $effects{$val}++;
                 if ($val =~ /missense/i) {
                   # Not specified for every allele.
-                  my ($aa_position,$aa_change_string) = eval { $val->right->row };
-                  if ($aa_change_string) {
-                      $aa_change_string =~ /(.*)\sto\s(.*)/;
-                      $aa_change = "$1$aa_position$2";
+                  ($aa_position,$aa_change) = eval { $val->right->row };
+                  if ($aa_change) {
+                      $aa_change =~ /(.*)\sto\s(.*)/;
+		      $aa_change = "$1 -> $2";
                   }
                 }  elsif ($val =~ /nonsense/i) {
                   # "Position" here really one of Amber, Ochre, etc.
                   ($aa_position,$aa_change) = eval { $val->right->row; };
+		  $aa_change   =~ /.*\((.*)\).*/;		  
+		  $aa_position = $1 ? $1 : $aa_position;
+		  # Strip the position from the change.
+		  $aa_change =~ s/\($aa_position\)//;
                 }
               }
     	    }
@@ -786,6 +790,7 @@ sub _process_variation {
         type             => $type && "$type",
         molecular_change => $molecular_change && "$molecular_change",
         aa_change        => $aa_change ? $aa_change : undef,
+	aa_position      => $aa_position ? $aa_position : undef,
         effects          => @effect ? \@effect : undef,
         phen_count       => scalar @phens || 0,
         locations	 => @location ? \@location : undef,
