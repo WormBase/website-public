@@ -1,0 +1,30 @@
+<h2>[% fields.name.data.label %] <span id="fade" style="font-size:0.7em;"> 
+[% IF fields.member_of.data %] 
+  ([% fields.member_of.data %])
+[% END %]
+</span></h2>
+
+[%
+
+WRAPPER highlight_box;
+
+   WRAPPER $field_block title="Old name" key="old_name";
+        fields.old_name.data;
+   END;
+
+  WRAPPER $field_block title="Type" key="member_of";
+    fields.member_of.data;
+  END;
+
+  WRAPPER $field_block title="Copy status" key="copy_status";
+  fields.copy_status.data.text;
+  '<br />';
+    '<div>' _ evidence(fields.copy_status.data.evidence);
+    '</div>';
+  END;
+
+END;
+'<div class="description">';
+remarks(no_toggle=1);
+'</div>';
+%] 

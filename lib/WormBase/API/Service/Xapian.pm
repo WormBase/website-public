@@ -40,6 +40,10 @@ has 'modelmap' => (
     },
 );
 
+has '_api' => (
+    is => 'ro',
+);
+
 
 sub search {
     my ( $class, $c, $q, $page, $type, $species, $page_size) = @_;
@@ -268,9 +272,14 @@ sub _get_tag_info {
         return $self->_pack_search_obj($c, $doc);
     }
   }
-  my $tag =  { id => $id,
+
+  my $api = $self->_api;
+  my $object = $api->fetch({ class => ucfirst $class, name => $id });
+  my $tag = $object->name->{data} if ($object > 0);
+
+  $tag =  { id => $id,
            class => $class
-  };
+  } unless $tag;
   $tag = { name => $tag, footer => $footer } if $fill;
   return $tag;
 }
@@ -290,7 +299,9 @@ sub _pack_search_obj {
   my $class = $doc->get_value(2);
   $class = $self->modelmap->ACE2WB_MAP->{class}->{$class} || $self->modelmap->ACE2WB_MAP->{fullclass}->{$class};
   return {  id => $id,
-            label => $label || $doc->get_value(6) || $id,
+            #label => $label || $doc->get_value(6) || $id,
+            # Restore this after xapian is built for WS237
+            label => $label || ($class ne 'Transposon' && $doc->get_value(6)) || $id,
             class => lc($class),
             taxonomy => $self->_get_taxonomy($doc),
             coord => { start => $doc->get_value(9),

@@ -230,8 +230,8 @@
                             $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
                             var email = new String(data.email);
                             if(data.email && data.status_ok){
-                              var re = new RegExp($jq("input#email").attr("value"),"gi");
-                              if (((email.match(re))) || !($jq("input#email").attr("value"))){
+                              var re = new RegExp($jq("input#email").val(),"gi");
+                              if (((email.match(re))) || !($jq("input#email").val())){
                                 $jq("#email").attr("disabled", "disabled").parent().hide(); 
                               }
                               $jq("input#wbemail").attr("value", email).parent().show();
@@ -599,7 +599,7 @@
   function hideTextOnFocus(selector){
     var area = $jq(selector);
       
-    if(area.attr("value") !== ""){
+    if(area.val() !== ""){
       area.siblings(".holder").fadeOut();
     }
     area.focus(function(){
@@ -607,7 +607,7 @@
     });
 
     area.blur(function(){
-      if($jq(this).attr("value") === ""){
+      if($jq(this).val() === ""){
         $jq(this).siblings(".holder").fadeIn();
       }
     });
@@ -645,10 +645,10 @@
 
       //show/hide default text if needed
       searchBox.focus(function(){
-        if($jq(this).attr("value") === searchBoxDefault) $jq(this).attr("value", "");
+        if($jq(this).val() === searchBoxDefault) $jq(this).attr("value", "");
       });
       searchBox.blur(function(){
-        if($jq(this).attr("value") === "") $jq(this).attr("value", searchBoxDefault);
+        if($jq(this).val() === "") $jq(this).attr("value", searchBoxDefault);
       });
       
       searchBox.autocomplete({
