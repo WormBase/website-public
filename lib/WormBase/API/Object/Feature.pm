@@ -75,8 +75,8 @@ sub flanking_sequences {
 
     my ($seq, @flanks);
     if (my ($flanking_seq) = $self->object->Flanking_sequences) {
-        ($seq, @flanks) = $flanking_seq->row;
-        $seq = $self->_pack_obj($seq);
+        (@flanks) = $flanking_seq->row;
+        $seq = $self->_pack_obj($object->Mapping_target);
         @flanks = map {"$_"} @flanks;
     }
 
