@@ -20,7 +20,7 @@
       WRAPPER $field_block title="OMIM ID" key="omim";
         FOREACH omim_dbt IN fields.omim.data.keys;
             FOREACH omim_id IN fields.omim.data.$omim_dbt.ids; 
-                external_link('omim',"OMIM:" _ omim_id,omim_id,omim_dbt) _ '<br />';
+                external_link('omim',"OMIM:" _ omim_id,omim_id) _ '<br />';
             END;
         END;
       END;
