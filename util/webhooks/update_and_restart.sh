@@ -17,8 +17,8 @@ cd $APP_PATH
 DATE=`date`
 
 LOGFILE=$APP_PATH/logs/webhook_restarter.log
-#exec >> $LOGFILE 2>&1
-exec >> $LOGFILE 
+exec >> $LOGFILE 2>&1
+#exec >> $LOGFILE 
 
 echo "GitHub webhook is calling at ${DATE}!"
 echo "  Our app is at ${APP_PATH}"
