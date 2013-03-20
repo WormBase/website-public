@@ -24,9 +24,9 @@ END;
         END;%]
     [% END %]
 
-  [% FOREACH type IN ['disease', 'gene', 'accession_number'] %]
+  [% FOREACH type IN ['disease', 'gene'] %]
     [% IF fields.human_diseases.data.$type; %]
-    <h4>[% type.replace('_', ' ') %]</h4>
+    <h4>[% pluralize(type, fields.human_diseases.data.$type.size) | ucfirst %]</h4>
       [% FOREACH item IN fields.human_diseases.data.$type; 
        external_link('omim',"OMIM:" _ item,item) _ '<br />';
         END;%]

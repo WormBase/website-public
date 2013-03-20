@@ -453,28 +453,6 @@ sub rest_homology_image {
      
 }
 
-# motifs { }
-# This method returns a data structure containing
-# motifs and motif homlogies identified in the protein.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/motifs
-
-sub motifs {
-    my $self = shift;
-    my (%motif);
-#     my %hash;
-    my @row;
-    foreach (@{$self ~~ '@Motif_homol'}) {
-      my $title = $_->Title;
-      my ($database,$description,$accession) = $_->Database->row if $_->Database;
-      $title||=$_;
-      push @row,[($database && "$database", $title && "$title",{ label=>"$_", id=>"$_", class=>$_->class || undef})];
-#       $hash{database}{$_} = $database;
-#       $hash{description}{$_} = $title||$_;
-#       $hash{accession}{$_} = { label=>$_, id=>$_, class=>$_->class};
-    }
-    return { description => 'motifs and motif homologies identified in the protein',
-	     data        => @row ? \@row : undef };
-}	  
 
 # pfam_graph { }
 # This method returns a data structure containing the 
@@ -637,10 +615,10 @@ sub motif_details {
 			
 			my $start = $motif_homol->right(3);
 			my $stop  = $motif_homol->right(4);
-			my $type = $motif_homol->right ||"";
-			$type  ||= 'interpro' if $motif_homol =~ /IPR/;
+			my $source = $motif_homol->right ||"";
+			$source  ||= 'interpro' if $motif_homol =~ /IPR/;
 			my $label = "$motif_homol";
-			$type = "$type";
+			$source = "$source";
 			my $desc = $motif_homol->Title ||$motif_homol ;
 			
 			# Are the multiple occurences of this motif_homol?
@@ -658,7 +636,7 @@ sub motif_details {
 						start	=> $start,
 						stop	=> $stop,
 						score	=> $score,
-						type	=> $type,
+						source	=> $source,
 						desc	=> $desc
 					});
 					
@@ -672,7 +650,7 @@ sub motif_details {
 					stop	=> $stop,
 					score	=> 
 						(scalar @scores) == 1 ? $scores[0] : undef,
-					type	=> $type,
+					source	=> $source,
 					desc	=> $desc
 				});
 				

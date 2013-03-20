@@ -1,16 +1,18 @@
- <div id="motif_details_dataTable">
-	  [% jquery_data_table_html(['Feature','Type','Description', 'Start','End'],motif_details.data,'motif_details_dataTable_full') %] 
-</div>
-    
 [% 
+
+# convert motif_details.source to link
+FOREACH row IN fields.motif_details.data;
+	row.source = external_link(row.source);
+END;
+
 build_data_table(
-	order=['feat','desc','start','stop','score','type'],
+	order=['source','desc','feat','start','stop','score'],
 	columns={
 		feat 	=> 'Feature',
 		start 	=> 'Start',
 		stop	=> 'Stop',
 		score	=> 'Score',
-		type	=> 'Type',
+		source	=> 'Source',
 		desc 	=> 'Description'
 	},
 	key='motif_details'
