@@ -1330,9 +1330,10 @@ sub antibodies {
   my @data;
   foreach ($object->Antibody) {
       my $summary = $_->Summary;
+      my @labs = map { $self->_pack_obj($_) } $_->Location;
       push @data, { antibody   => $self->_pack_obj($_),
 		    summary    => "$summary",
-		    laboratory => $_->Location ? $self->_pack_obj($_->Location) : "" };
+		    laboratory => \@labs };
   }
 
   return {  description =>  "antibodies generated against protein products or gene fusions",
@@ -1458,8 +1459,9 @@ sub transgenes {
     my @data; 
     foreach ($object->Drives_transgene) {
 	my $summary = $_->Summary;
+    my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => eval {$_->Location} ? $self->_pack_obj($_->Location) : '',
+		      laboratory => \@labs,
 		      summary    => "$summary",
 	};
     }
@@ -1481,8 +1483,9 @@ sub transgene_products {
     my @data; 
     foreach ($object->Transgene_product) {
 	my $summary = $_->Summary;
+        my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => eval {$_->Location} ? $self->_pack_obj($_->Location) : '',
+		      laboratory => \@labs,
 		      summary    => "$summary",
 	};
     }
