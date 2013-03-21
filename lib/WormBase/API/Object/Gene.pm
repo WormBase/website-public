@@ -536,15 +536,7 @@ sub anatomic_expression_patterns {
     foreach my $ep (@eps) {
 	my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$ep.jpg");
         $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
-        # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
-# <<<<<<< HEAD
-#         my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
-#         $pattern    =~ s/(.{384}).+/$1.../;
-# =======
-
         my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
-#         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
-#         $pattern    =~ s/(.{384}).+/$1.../;
 		foreach($ep->Picture) {
 			 next unless($_->class eq 'Picture');
 	    	 my $pic = $self->_api->wrap($_);
@@ -553,7 +545,7 @@ sub anatomic_expression_patterns {
 					last;
 			 }	
 		}
-# >>>>>>> master
+
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
