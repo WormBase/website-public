@@ -746,30 +746,34 @@ sub _process_variation {
     my @phens = $variation->Phenotype;
     my %effects;
     my %locations;
-    my ($aa_change,$aa_position);
+    my (@aa_change,@aa_position, @isoform);
+    my ($aa_cha,$aa_pos);
     foreach my $type_affected ( $variation->Affects ) {
         foreach my $item_affected ( $type_affected->col ) {    # is a subtree
-    	    foreach my $val ($item_affected->col){
+          foreach my $val ($item_affected->col){
               if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
               else { 
                 $effects{$val}++;
                 if ($val =~ /missense/i) {
                   # Not specified for every allele.
-                  ($aa_position,$aa_change) = eval { $val->right->row };
-                  if ($aa_change) {
-                      $aa_change =~ /(.*)\sto\s(.*)/;
-		      $aa_change = "$1 -> $2";
+                  ($aa_pos,$aa_cha) = eval { $val->right->row };
+                  if ($aa_cha) {
+                      $aa_cha =~ /(.*)\sto\s(.*)/;
+                      $aa_cha = "$1 -> $2";
                   }
                 }  elsif ($val =~ /nonsense/i) {
                   # "Position" here really one of Amber, Ochre, etc.
-                  ($aa_position,$aa_change) = eval { $val->right->row; };
-		  $aa_change   =~ /.*\((.*)\).*/;		  
-		  $aa_position = $1 ? $1 : $aa_position;
-		  # Strip the position from the change.
-		  $aa_change =~ s/\($aa_position\)//;
+                    ($aa_pos,$aa_cha) = eval { $val->right->row; };
+                    $aa_cha   =~ /.*\((.*)\).*/;
+                    $aa_pos = $1 ? $1 : $aa_pos;
+                    # Strip the position from the change.
+                    $aa_cha =~ s/\($aa_pos\)//;
                 }
+                push(@aa_change, $aa_cha) if $aa_cha;
+                push(@aa_position, $aa_pos) if $aa_pos;
+                push(@isoform, $self->_pack_obj($item_affected)) if $aa_pos;
               }
-    	    }
+          }
         }
     }
 
@@ -781,8 +785,9 @@ sub _process_variation {
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
         molecular_change => $molecular_change && "$molecular_change",
-        aa_change        => $aa_change ? $aa_change : undef,
-	aa_position      => $aa_position ? $aa_position : undef,
+        aa_change        => @aa_change ? join('<br />', @aa_change) : undef,
+        aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
+        isoform          => @isoform ? \@isoform : undef,
         effects          => @effect ? \@effect : undef,
         phen_count       => scalar @phens || 0,
         locations	 => @location ? join(', ', map {$_=~s/_/ /g;$_} @location) : undef,
