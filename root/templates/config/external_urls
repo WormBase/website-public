@@ -122,6 +122,13 @@
 		base		= 'http://www.ensembl.org'
         }
 
+
+	EnsEMBLGenomes	= {
+		description	= 'Ensembl Genomes produces and maintains annotation on selected genomes across the taxonomic space'
+		base		= 'http://www.ensemblgenomes.org'
+		search		= 'http://www.ensemblgenomes.org/search?site=ensembl&q="%s"&genomic_unit=all'
+	}
+
         flybase = {
 		description	= 'FlyBase: a database for drosophila genetics and molecular biology'
 		maintainer	= ''
