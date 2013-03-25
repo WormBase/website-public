@@ -739,9 +739,9 @@ sub polymorphisms {
 sub _process_variation {
     my ( $self, $variation ) = @_;
 
-    my $type = lc( join ', ', $variation->Variation_type ) || 'unknown';
+    my $type = join (', ', map {$_=~s/_/ /g;$_} $variation->Variation_type ) || 'unknown';
 
-    my $molecular_change = lc( $variation->Type_of_mutation || "Not curated" );
+    my $molecular_change =  $variation->Type_of_mutation || "Not curated" ;
 
     my @phens = $variation->Phenotype;
     my %effects;
