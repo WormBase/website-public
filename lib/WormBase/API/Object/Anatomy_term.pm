@@ -238,7 +238,7 @@ sub _anatomy_function {
 			      my @geno = $as->Genotype; 			      
 			      {evidence => { genotype => join('<br /> ', @geno) },
 			       text => "$_",}
-			  } else { $_ }
+			  } else { "$_" }
 	} $_->Assay;
 	my $pev;
 	push @data_pack, {
