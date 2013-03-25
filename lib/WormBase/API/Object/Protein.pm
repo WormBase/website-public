@@ -364,8 +364,8 @@ sub homology_groups {
     my @hg;
     foreach my $k ($object->Homology_group) {
       my $title = $k->Title;
-      my $type  = $k->Group_type;
-      push @hg ,{ type  => "$type"  || '',
+      my $type  = join(':', ($k->Group_type,$k->Group_type->right(2))) if $k->Group_type;
+      push @hg ,{ type  => "$type",
               title => "$title" || '',
               id    => $self->_pack_obj($k),
       };
