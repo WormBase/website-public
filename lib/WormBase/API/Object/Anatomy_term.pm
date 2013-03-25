@@ -90,13 +90,13 @@ sub synonyms {
 # wormatlas link of this anatomy term object.
 
 sub wormatlas {
-	my $self = shift; 
- 	my $data =  $self->xrefs->{data}->{WormAtlas};
-	
-	return {
-		description => 'link to WormAtlas record',
-		data => $data ? \$data : undef 
-	}
+    my $self = shift; 
+    my %data =  %{$self->xrefs->{data}->{WormAtlas}} if $self->xrefs->{data}->{WormAtlas};
+
+    return {
+        description => 'link to WormAtlas record',
+        data => %data ? \%data : undef 
+    }
 }
 
 # remarks {}
