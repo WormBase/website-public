@@ -741,7 +741,7 @@ sub _process_variation {
 
     my $type = lc( join ', ', $variation->Variation_type ) || 'unknown';
 
-    my $molecular_change = lc( $variation->Type_of_mutation || "other" );
+    my $molecular_change = lc( $variation->Type_of_mutation || "Not curated" );
 
     my @phens = $variation->Phenotype;
     my %effects;
@@ -785,7 +785,7 @@ sub _process_variation {
 	aa_position      => $aa_position ? $aa_position : undef,
         effects          => @effect ? \@effect : undef,
         phen_count       => scalar @phens || 0,
-        locations	 => @location ? \@location : undef,
+        locations	 => @location ? join(', ', map {$_=~s/_/ /g;$_} @location) : undef,
     );
     return \%data;
 }
