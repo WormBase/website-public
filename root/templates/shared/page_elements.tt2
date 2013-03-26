@@ -1076,7 +1076,7 @@ END;
                                          fields.strains.data.carrying_gene_alone,
             "Available from the CGC",    fields.strains.data.available_from_cgc,
             "",                          fields.strains.data.carrying_gene_alone_and_cgc,
-            "Other strains",             fields.strains.data.others);
+            "Other strains",             fields.strains.data.others, "strains");
 
     '<br />';
 
