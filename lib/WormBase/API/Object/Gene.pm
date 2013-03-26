@@ -739,7 +739,7 @@ sub polymorphisms {
 sub _process_variation {
     my ( $self, $variation ) = @_;
 
-    my $type = join (', ', map {$_=~s/_/ /g;$_} $variation->Variation_type ) || 'unknown';
+    my $type = join (', ', map {$_=~s/_/ /g;$_} grep{ $_=~/^(?!Natural_variant)/; } $variation->Variation_type ) || 'unknown';
 
     my $molecular_change =  $variation->Type_of_mutation || "Not curated" ;
 
