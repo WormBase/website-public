@@ -33,10 +33,11 @@
     END;
 
     WRAPPER $field_block title="Anatomy function NOTS" key="anatomy_function_nots";
-      build_data_table( order = ['af_data', 'gene', 'phenotype', 'bp_inv', 'bp_not_inv', 'reference'],
+      build_data_table( order = ['af_data', 'assay', 'gene', 'phenotype', 'bp_inv', 'bp_not_inv', 'reference'],
 			  columns = { 'af_data' => 'WormBase ID',
 				      'phenotype'   => 'Phenotype',
 				      'gene' => 'Gene',
+                      'assay' => 'Assay',
 				      'bp_inv'   => 'Body Parts<br />Involved',
 				      'bp_not_inv'   => 'Body Parts<br />Not Involved',
 				      'reference' => 'Reference'},
