@@ -174,28 +174,19 @@
           ret =  ret _ "<th>$title_none</th>";
           ret =  ret _ "</tr>";
           ret =  ret _ "<tr class=\"venn-data\"><td class=\"venn-a\">";
-        FOREACH obj IN list_a;
-               ret =  ret _ "<b>" _ tag2link(obj) _ " </b>";
-        END;
+          ret = ret _ tags2link(list_a, ', ', 'strains');
           ret =  ret _ "</td>";
           ret =  ret _ "<td class=\"venn-ab\">";
-        FOREACH obj IN list_ab;
-               ret =  ret _ "<b><i>" _ tag2link(obj) _ " </i></b>";
-        END;
+          ret = ret _ tags2link(list_ab, ', ', 'strains');
           ret =  ret _ "</td>";
           ret =  ret _ "<td class=\"venn-b\">";
-        FOREACH obj IN list_b;
-               ret =  ret _ "<i>" _ tag2link(obj) _ " </i>";
-        END;
+          ret = ret _ tags2link(list_b, ', ', 'strains');
           ret =  ret _ "</td>";
           ret =  ret _ "<td>";
-    
-        FOREACH obj IN list_none;
-               ret =  ret _ tag2link(obj) _ " ";
-        END;
+          ret = ret _ tags2link(list_none, ', ', 'strains');
           ret =  ret _ "</td></tr>";
-        ret =  ret _ "<tr><td></td><td class=\"venn-b\" colspan=2></td></tr>";
-    ret =  ret _ "</table>";
+          ret =  ret _ "<tr><td></td><td class=\"venn-b\" colspan=2></td></tr>";
+          ret =  ret _ "</table>";
     ret;
     END;
 

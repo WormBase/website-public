@@ -40,34 +40,8 @@
 
    # Strains
    WRAPPER $field_block title="Strains" key="strains";
-
-     venn("Carrying " _ tag2link(object.name.data) _ " alone", 
-                                         fields.strains.data.carrying_gene_alone,
-    	    "Available from the CGC",    fields.strains.data.available_from_cgc,
-    	    "",                          fields.strains.data.carrying_gene_alone_and_cgc,
-    	    "Other strains",             fields.strains.data.others);
-
-    '<br />';
-
-    rows = [];
-    FOREACH type IN fields.strains.data.keys.sort;
-      cgc = (( type == 'available_from_cgc') || (type == 'carrying_gene_alone_and_cgc')) ? 1 : 0;
-      FOREACH strain IN fields.strains.data.$type;
-      rows.push( { strain  = tag2link(strain),
-                  genotype        = strain.genotype,
-                  cgc        = cgc ? external_link('cgc', 'yes', strain.id) : 'no',
-		  transgenes = tag2link(strain.transgenes),
-                } );
-      END;
-    END;
-
-       build_data_table(order=['strain','genotype','cgc','transgenes'],
-                         columns={ strain    => 'Strain',
-	        	              cgc    => 'Available<br /> from CGC?',
-		                  genotype   => 'Genotype',
-				  transgenes => 'Carries Transgene',
-                                 },
-                         passed_data=rows, key='strains');
+  strains;
    END;
+   
 
 %]
