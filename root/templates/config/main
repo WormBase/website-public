@@ -165,29 +165,32 @@
     END;
     
 # create venn type diagram with tables and colours
-    MACRO venn(title_a, list_a, title_b, list_b, title_ab, list_ab, title_none, list_none) BLOCK;
-    ret = "<br/><table class=\"venn\" cellspacing=\"0\" cellpadding=\"5\">";
-    ret =  ret _ "<tr class=\"venn-a\"><th colspan=\"2\">$title_a</th></tr>";
-          ret =  ret _ "<tr><th class=\"venn-a\"></th>";
-          ret =  ret _ "<th class=\"venn-ab\"></th>";
-          ret =  ret _ "<th class=\"venn-b\">$title_b</th>";
-          ret =  ret _ "<th>$title_none</th>";
-          ret =  ret _ "</tr>";
-          ret =  ret _ "<tr class=\"venn-data\"><td class=\"venn-a\">";
-          ret = ret _ tags2link(list_a, ', ', 'strains');
-          ret =  ret _ "</td>";
-          ret =  ret _ "<td class=\"venn-ab\">";
-          ret = ret _ tags2link(list_ab, ', ', 'strains');
-          ret =  ret _ "</td>";
-          ret =  ret _ "<td class=\"venn-b\">";
-          ret = ret _ tags2link(list_b, ', ', 'strains');
-          ret =  ret _ "</td>";
-          ret =  ret _ "<td>";
-          ret = ret _ tags2link(list_none, ', ', 'strains');
-          ret =  ret _ "</td></tr>";
-          ret =  ret _ "<tr><td></td><td class=\"venn-b\" colspan=2></td></tr>";
-          ret =  ret _ "</table>";
-    ret;
+    MACRO venn(title_a, list_a, title_b, list_b, title_ab, list_ab, title_none, list_none, expandable_title) BLOCK;
+    %]
+    <table class="venn" cellspacing="0" cellpadding="5">
+      <tr class="venn-a"><th colspan="2">[% title_a %]</th></tr>
+          <tr><th class="venn-a"></th>
+          <th class="venn-ab"></th>
+          <th class="venn-b">[% title_b %]</th>
+          <th>[% title_none %]</th>
+      </tr>
+      <tr class="venn-data">
+          <td class="venn-a">
+            [% tags2link(list_a, ', ', expandable_title); %]
+          </td>
+          <td class="venn-ab">
+            [% tags2link(list_ab, ', ', expandable_title); %]
+          </td>
+          <td class="venn-b">
+            [% tags2link(list_b, ', ', expandable_title); %]
+          </td>
+          <td>
+            [% tags2link(list_none, ', ', expandable_title); %]
+          </td>
+        </tr>
+        <tr><td></td><td class="venn-b" colspan=2></td></tr>
+    </table>
+    [%
     END;
 
 

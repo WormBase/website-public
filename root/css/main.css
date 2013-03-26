@@ -2634,6 +2634,7 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 
 table.venn tr.venn-data td {
   max-width:8em;
+  vertical-align:top;
 }
 
 .issue-layout-box {
