@@ -51,7 +51,6 @@
       comment.init(pageInfo);
       issue.init(pageInfo);
         
-      if($jq(".star-status-" + pageInfo['wbid']).size()>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
       updateCounts(pageInfo['ref']);
       if(pageInfo['notify']){ displayNotification(pageInfo['notify']); }
@@ -62,6 +61,7 @@
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
       } else {
+        if($jq(".star-status-" + pageInfo['wbid']).size()>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
         widgetInit();
       }
       effects();
@@ -547,7 +547,7 @@
           ajaxPanel.html(data);
         },
         error:function(xhr, textStatus, thrownError){
-          var error = $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+          var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
           ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p><a href="/tools/support?url=' + location.pathname 
                   + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
@@ -1906,7 +1906,6 @@ function setupCytoscape(data, types){
               });
               $jq( "#resizable" ).resizable();
     }
-
 
     function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
