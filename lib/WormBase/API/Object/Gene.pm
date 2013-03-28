@@ -962,6 +962,7 @@ sub history {
                  ( $vers, $date, $curator, $event, $action, $remark )
                     = $version->row;
 
+                $action = '' unless defined $action;
                 next if $action eq 'Imported';
                 # For some cases, the remark is actually a gene object
                 if (   $action eq 'Merged_into'
