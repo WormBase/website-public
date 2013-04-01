@@ -80,6 +80,7 @@
           <li>
             <select id="data-freezes" onchange="window.location.href = this.options[this.selectedIndex].value"> 
                 <option selected="selected" value="--">--</option> 
+                <option value="http://legacy.wormbase.org">WS230 (Mar 2012)</option> 
                 <option value="http://ws220.wormbase.org">WS220 (16 Dec 2010)</option> 
                 <option value="http://ws210.wormbase.org">WS210 (15 Jan 2010)</option> 
                 <option value="http://ws205.wormbase.org">WS205 (18 Sep 2009)</option> 
@@ -105,6 +106,11 @@
     <br clear="all" />
 
     <div id="footercredit"> 
+      [% IF c.check_any_user_role('admin', 'curator') %]
+      [% git_commit_url = "https://github.com/WormBase/website/commit/" _ git_commit_id %]
+      <span>Current commit head: [% external_link(git_commit_url, git_commit_id) %]
+      </span><br />
+      [% END %]
       <span>
         WormBase is supported by grant #P41 HG02223 from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a></span><br /><span>at the <a href="http://www.nih.gov/">US National Institutes of Health</a> and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
       </span>
