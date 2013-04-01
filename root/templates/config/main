@@ -251,7 +251,7 @@
               ext_url = site.external_urls.$link.base FILTER url;
           END;
         END;
-        UNLESS (ext_url.defined); ext_url = link; END; 
+        UNLESS (ext_url.length > 1); ext_url = link; END; 
 
         "<a href=\"$ext_url\" 
             onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
@@ -369,6 +369,9 @@
 
    # For debugging ONLY!
    USE Dumper(Indent=1);
+
+   git_commit_id = '$Id$';
+   git_commit_id = git_commit_id.remove('\$Id\: | \$');
 
    #######################################
    # Define some convenient macros   
