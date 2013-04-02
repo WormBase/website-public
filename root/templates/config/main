@@ -373,6 +373,9 @@
    git_commit_id = '$Id$';
    git_commit_id = git_commit_id.remove('\$Id\: | \$');
 
+   git_update_time = '$Date$';
+   git_update_time = git_update_time.remove('\$Date|\: |\$');
+
    #######################################
    # Define some convenient macros   
    #######################################
