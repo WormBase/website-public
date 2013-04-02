@@ -106,9 +106,8 @@
     <br clear="all" />
 
     <div id="footercredit"> 
-      [% IF c.check_any_user_role('admin', 'curator') %]
-      [% git_commit_url = "https://github.com/WormBase/website/commit/" _ git_commit_id %]
-      <span>Current commit head: [% external_link(git_commit_url, git_commit_id) %]
+      [% IF git_update_time %]
+      <span>Last software update: [% git_update_time %]
       </span><br />
       [% END %]
       <span>
