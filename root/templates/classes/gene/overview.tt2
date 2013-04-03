@@ -118,3 +118,19 @@ remarks;
 '</div>';
 
 %]
+
+[% 
+	IF fields.status.data == 'Dead';
+		'<div class="ui-state-error ui-corner-all" float="left" display:inline-block>';
+		'This gene is dead!<br/>';
+		
+		IF fields.merged_into.data;
+			'Merged into -> ';
+			tags2link(fields.merged_into.data);
+			'<br/>';
+		END;
+		
+		'</div>';
+	END;
+%]
+
