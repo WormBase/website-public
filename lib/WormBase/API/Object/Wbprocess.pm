@@ -5,6 +5,7 @@ use WormBase::API::Object::Gene qw/classification/;
 use Switch;
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Interaction';
 extends 'WormBase::API::Object';
 
 
