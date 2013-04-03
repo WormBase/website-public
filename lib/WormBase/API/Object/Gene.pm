@@ -1009,7 +1009,7 @@ sub history{
 						);
 					}else{
 						%final_row = %current_row;
-					}
+					} 
 					
 					push @data, \%final_row;
 				}
