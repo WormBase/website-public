@@ -44,4 +44,9 @@
   window.close();
 [% END %]  
 
+if(WB){
+      WB.getPlugin("placeholder", function(){
+        $jq('input, textarea').placeholder();
+      });
+    }
 </script>
