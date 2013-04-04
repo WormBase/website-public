@@ -105,7 +105,17 @@
 
     <br clear="all" />
 
+
+
     <div id="footercredit"> 
+
+     <div id="footermeta">
+      <a id="footer-mail" href="mailto:help@wormbase.org"><div class="social-icons"></div></a>
+      <a id="footer-tweet" href="http://twitter.com/wormbase"><div class="social-icons"></div></a>
+      <a id="footer-rss"  href="http://feeds.feedburner.com/wormbase"><div class="social-icons"></div></a>
+    </div>
+    <br />
+    <br style="clear:both" />
       [% IF git_update_time %]
       <span>Last software update: [% git_update_time %]
       </span><br />
@@ -115,11 +125,7 @@
       </span>
     </div>
 
-    <div id="footermeta">
-      <a id="footer-mail" href="mailto:help@wormbase.org"><div class="social-icons"></div></a>
-      <a id="footer-tweet" href="http://twitter.com/wormbase"><div class="social-icons"></div></a>
-      <a id="footer-rss"  href="http://feeds.feedburner.com/wormbase"><div class="social-icons"></div></a>
-    </div>
+
 </div>
 
 

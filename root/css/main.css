@@ -1663,11 +1663,7 @@ div#footercredit a{
 
 
 #footermeta {
-    overflow:hidden;
-    position:absolute;
-    bottom:1em;
-    right:1.4em;
-    width:120px;
+    float:left;
 }
 
 
