@@ -1412,6 +1412,8 @@ var Scrolling = (function(){
           feed.find("#issue-content").focus();
           return;
         }
+
+
         $jq.ajax({
           type: 'POST',
           url: rel,
@@ -1426,14 +1428,15 @@ var Scrolling = (function(){
                 userAgent: window.navigator.userAgent},
           success: function(data){
                   var content = $jq("#issues-new");
-                  content.children().remove();
-                  content.prepend(data.message);
+                  content.append(data.message);
               },
           error: function(xhr,status,error) {
-             alert("Submitting this issue was unsuccessful. Please try again. " + " " + status + " " + error);
+             alert("Sorry! Submitting this issue was unsuccessful :( Please email help@wormbase.org with your query. \n" + " " + status + " " + error);
               }
         });
-
+        var content = $jq("#issues-new");
+        content.children().remove();
+        content.append("<h2>Thank you for helping WormBase</h2><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation shortly. Please email help\@wormbase.org if you have any concerns.</p>")
         return false;
    },
    isDelete: function(button){

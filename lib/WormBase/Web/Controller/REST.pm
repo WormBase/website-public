@@ -578,8 +578,8 @@ sub feed_POST {
         my $name = $c->req->params->{name}; 
         my $email = $c->req->params->{email};
         if($c->user_exists){
-          my $name = $c->user->username;
-          my $email = $c->user->primary_email->email;
+          $name = $c->user->username;
+          $email = $c->user->primary_email->email;
         }
 
         my $url = $c->req->params->{url};
@@ -588,7 +588,6 @@ sub feed_POST {
         my $page = $c->req->params->{page} || $self->_get_page($c, $url);
         $url = $url . $hash;
         $content =~ s/\n/<br \/>/g;
-
         my ($issue_url,$issue_title,$issue_number) =
         $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
         $c->stash->{userAgent} = $userAgent;
@@ -604,7 +603,7 @@ sub feed_POST {
                               issue_url    => $issue_url,
                               issue_title  => $issue_title,
                               issue_number => $issue_number});
-        my $message = qq|<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly. You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|;
+        my $message = "<p>You can track the progress on your question, <a href='$issue_url' target='_blank'>$issue_title (#$issue_number)</a> on our <a href='$issue_url' target='_blank'>issue tracker</a>.</p>";
         $self->status_ok(
           $c,
           entity => {
