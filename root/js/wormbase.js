@@ -65,6 +65,12 @@
         widgetInit();
       }
       effects();
+
+      if($jq(".lightbox").size()){
+        WB.getPlugin("colorbox", function(){
+          $jq(".lightbox").colorbox();
+        });
+      }
     }
     
     
