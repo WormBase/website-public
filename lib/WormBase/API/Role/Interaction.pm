@@ -180,11 +180,11 @@ sub _get_interactions {
     #determine object type and extract interactions accordingly
     if ($nearby){ 
       @objects = map {$_->Interaction} grep {($_->class =~ /gene/i) && ($data->{nodes}{"$_"}{predicted} == 0)} values %{$data->{nodes_obj}} 
-    } elsif ($object->class =~ /gene/i) { 
+    } elsif ($object->class =~ /gene|wbprocess/i ) { # ELSEIF PROCESS, COPY GENE FUNC
       @objects = $object->Interaction 
     } elsif ($object->class =~ /interaction/i ) { 
       @objects = ($object) 
-    }
+    } 
     if($nearby && (scalar @objects > 3000)){
         $data->{showall} = 0;
         return $data;
