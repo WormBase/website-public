@@ -589,8 +589,8 @@ sub feed_POST {
         $url = $url . $hash;
         $content =~ s/\n/<br \/>/g;
 
-        my ($issue_url,$issue_title,$issue_number);# =
-        #$self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
+        my ($issue_url,$issue_title,$issue_number) =
+        $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
         $c->stash->{userAgent} = $userAgent;
         $self->_issue_email({ c       => $c,
                               page    => $page,
