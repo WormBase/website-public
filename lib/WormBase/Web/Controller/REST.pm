@@ -552,105 +552,66 @@ sub feed_POST {
         }
       }else{
         my $content= $c->req->params->{content};
-
         my $url = $c->req->params->{url};
         my $page = $self->_get_page($c, $url);
-
         my $user = $c->user;
         unless($c->user_exists){
           $user = $c->model('Schema::User')->create({username=>$c->req->params->{name}, active=>0});
           $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->user_id});
         }
         my $commment = $c->model('Schema::Comment')->find_or_create({user_id=>$user->user_id, page_id=>$page->page_id, content=>$content,'timestamp'=>time()});
-
       }
-    }
-    elsif($type eq 'issue'){
-	if($c->req->params->{method} || '' eq 'delete'){
-	    my $id = $c->req->params->{issues};
-	    if($id){
-		foreach (split('_',$id) ) {
-		    my $issue = $c->model('Schema::Issue')->find($_);
-		    $c->log->debug("delete issue #",$issue->issue_id);
-		    $issue->delete();
-		    $issue->update();
-		}
-	    }
-	}else{
-	    my $content    = $c->req->params->{content};
-	    my $title      = $c->req->params->{title};
-	    my $name = $c->req->params->{name} || $c->user->username;
-	    my $email = $c->req->params->{email} || $c->user->primary_email->email;
-	    
-	    my $url = $c->req->params->{url};
-      my $userAgent = $c->req->params->{userAgent};
-	    my $page = $self->_get_page($c, $url);
+    }elsif($type eq 'issue'){
+      if($c->req->params->{method} || '' eq 'delete'){
+        my $id = $c->req->params->{issues};
+        if($id){
+          foreach (split('_',$id) ) {
+            my $issue = $c->model('Schema::Issue')->find($_);
+            $c->log->debug("delete issue #",$issue->issue_id);
+            $issue->delete();
+            $issue->update();
+          }
+        }
+      }else{
+        my $content    = $c->req->params->{content};
+        my $title      = $c->req->params->{title};
+        my $name = $c->req->params->{name}; 
+        my $email = $c->req->params->{email};
+        if($c->user_exists){
+          my $name = $c->user->username;
+          my $email = $c->user->primary_email->email;
+        }
 
-	    $content =~ s/\n/<br \/>/g;
+        my $url = $c->req->params->{url};
+        my $hash = $c->req->params->{hash};
+        my $userAgent = $c->req->params->{userAgent};
+        my $page = $c->req->params->{page} || $self->_get_page($c, $url);
+        $url = $url . $hash;
+        $content =~ s/\n/<br \/>/g;
 
-	    my ($issue_url,$issue_title,$issue_number) =
-		    $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent);
-	    $c->stash->{userAgent} = $userAgent;
-	    $self->_issue_email({ c       => $c,
-				  page    => $page,
-				  new     => 1,
-				  content => $content, 
-				  change  => undef,
-				  reporter_email   => $email, 
-				  reporter_name    => $name, 
-				  title   => $title,
-				  issue_url    => $issue_url,
-				  issue_title  => $issue_title,
-				  issue_number => $issue_number});
-	    $c->stash->{message} = $title
-		? qq|<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|
-		: qq|<h2>Your report has been submitted</h2> <p>Thank you for helping WormBase improve the site!</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|;
-	    $c->stash->{template} = "shared/generic/message.tt2"; 
-	    $c->stash->{redirect} = $url if $title;
-	    $c->stash->{noboiler} = 1;
-	    $c->forward('WormBase::Web::View::TT');
-	}
-    }elsif($type eq 'thread'){
-	my $content= $c->req->params->{content};
-	my $issue_id = $c->req->params->{issue};
-	my $state    = $c->req->params->{state};
-	my $severity = $c->req->params->{severity};
-	my $assigned_to= $c->req->params->{assigned_to};
-	if($issue_id) { 
-	    my $hash;
-	    my $issue = $c->model('Schema::Issue')->find($issue_id);
-	    if ($state) {
-		$hash->{status}={old=>$issue->state,new=>$state};
-		$issue->state($state) ;
-	    }
-	    if ($severity) {
-		$hash->{severity}={old=>$issue->severity,new=>$severity};
-		$issue->severity($severity);
-	    }
-	    if($assigned_to) {
-		my $people=$c->model('Schema::User')->find($assigned_to);
-		$hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
-		$issue->responsible_id($assigned_to);
-#         $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
-	    }
-	    $issue->update();
-	    
-	    my $user = $self->_check_user_info($c);
-	    return unless $user;
-	    my $thread  = { owner=>$user,
-			    timestamp=>time(),
-	    };
-	    if($content){
-		$c->log->debug("create new thread for issue #$issue_id!");
-		my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
-		my $thread_id=1;
-		$thread_id = $threads[0]->thread_id +1 if(@threads);
-		$thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
-	    }  
-	    if($state || $assigned_to || $content){
-		$self->_issue_email($c,$issue->page,$thread,$content,$hash);
-	    }
-	}
+        my ($issue_url,$issue_title,$issue_number);# =
+        #$self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
+        $c->stash->{userAgent} = $userAgent;
+        $self->_issue_email({ c       => $c,
+                              page    => $page,
+                              new     => 1,
+                              content => $content, 
+                              change  => undef,
+                              reporter_email   => $email, 
+                              reporter_name    => $name, 
+                              title   => $title,
+                              url     => $url,
+                              issue_url    => $issue_url,
+                              issue_title  => $issue_title,
+                              issue_number => $issue_number});
+        my $message = qq|<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly. You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|;
+        $self->status_ok(
+          $c,
+          entity => {
+              message => $message,
+          }
+        );
+      }
     }
 }
 
@@ -1088,7 +1049,7 @@ sub _check_user_info {
 
 
 sub _post_to_github {
-  my ($self,$c,$content,$email, $name, $title, $page, $userAgent) = @_;
+  my ($self,$c,$content,$email, $name, $title, $page, $userAgent, $u) = @_;
 
   my $url     = 'https://api.github.com/repos/wormbase/website/issues';
 
@@ -1123,8 +1084,8 @@ sub _post_to_github {
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
         
-  my $ptitle = $page->title;
-  my $purl = $page->url;
+  my $ptitle = $page->title || $page;
+  my $purl = $page->url || $u;
         
 $content .= <<END;
 
