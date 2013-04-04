@@ -17,6 +17,8 @@
  *         abigail.cabunoc@oicr.on.ca
  */
 
+
+
 +function(window, document, undefined){ 
   var location = window.location,
       $jq = jQuery.noConflict();
@@ -34,7 +36,7 @@
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results"),
           sysMessage = $jq("#top-system-message").children(".system-message-close"),
-          history_on = (pageInfo['history'] === 1) ? 1 : undefined;
+          history_on = (pageInfo['hitsory'] === 1) ? 1 : undefined;
 
       if(history_on){
         $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
@@ -65,6 +67,9 @@
         widgetInit();
       }
       effects();
+      Plugin.getPlugin("placeholder", function(){
+        $jq('input, textarea').placeholder();
+      });
 
       if($jq(".lightbox").size()){
         WB.getPlugin("colorbox", function(){
@@ -566,64 +571,13 @@
     }
     
       function operator(){
-        var opTimer,
-            opLoaded = false;
-        $jq('#operator-box').click(function(){ 
-          var opBox = $jq(this);
-          if(!(opLoaded)){
-            ajaxGet($jq("#operator-box"), "/rest/livechat", 0);
-            opLoaded = true;
-          }
-          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}).children().show() : opBox.animate({width:"1.5em"}).children().hide();
-          opBox.toggleClass("minimize");
-        });
         
-        $jq('.operator').click(function() { 
-          if($jq(this).attr("rel")) {
-            $jq.post("/rest/livechat?open=1",function() {
-              location.href="/tools/operator";
-            });
-          }else {
-            var opBox = $jq("#operator-box");
-            ajaxGet(opBox, "/rest/livechat", 0);
-            opLoaded = true;
-            if(opBox.hasClass("minimize"))
-                opBox.removeClass("minimize").animate({width:"9em"}).children().show();
-            opTimer = setTimeout(function() {
-              opBox.addClass("minimize").animate({width:"1.5em"}).children().hide();
-            }, 4e3)
-          }
-        }); 
-        
-        $jq("#issue-box").click(function(){
-          var isBox = $jq(this);
-          isBox.toggleClass("minimize").children().toggle();
-          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "14em"})
+        $jq("#issue-box-tab").click(function(){
+          var isBox = $jq(this).parent();
+          isBox.toggleClass("minimize");//.children().toggle();
+          // isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "14em"})
         });
     }
-    
-  function hideTextOnFocus(selector){
-    var area = $jq(selector);
-      
-    if(area.val() !== ""){
-      area.siblings(".holder").fadeOut();
-    }
-    area.focus(function(){
-      $jq(this).siblings(".holder").fadeOut();
-    });
-
-    area.blur(function(){
-      if($jq(this).val() === ""){
-        $jq(this).siblings(".holder").fadeIn();
-      }
-    });
-  }
-
-
-
-
-
-
 
 
 
@@ -649,14 +603,6 @@
         $jq(this).removeClass("active");
       });
 
-      //show/hide default text if needed
-      searchBox.focus(function(){
-        if($jq(this).val() === searchBoxDefault) $jq(this).attr("value", "");
-      });
-      searchBox.blur(function(){
-        if($jq(this).val() === "") $jq(this).attr("value", searchBoxDefault);
-      });
-      
       searchBox.autocomplete({
           source: function( request, response ) {
               lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
@@ -1454,33 +1400,37 @@ var Scrolling = (function(){
    submit:function(is){
         var rel= is.attr("rel"),
             url = is.attr("url"),
+            page = is.attr("page"),
             feed = is.closest('#issues-new'),
             name = feed.find("#name"),
             dc = feed.find("#desc-content"),
-            email = feed.find("#email");
+            email = feed.find("#email"),
+            content = feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : '');
         if (!validate_fields(email, name))
           return;
-
+        if(!content){
+          feed.find("#issue-content").focus();
+          return;
+        }
         $jq.ajax({
           type: 'POST',
           url: rel,
+          dataType: 'json',
           data: {title:feed.find("#issue-title option:selected").val(), 
-                content: feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : ''), 
+                content: content, 
                 name: name.val(),
                 email: email.val(),
                 url: url || issue.url,
+                page: page,
+                hash: location.hash,
                 userAgent: window.navigator.userAgent},
           success: function(data){
-                if(data===0) {
-                   alert("The email address has already been registered! Please sign in."); 
-                }else {
-                  var content = $jq("#content");
-                  content.children().not("#spacer").remove();
-                  content.prepend(data);
-                }
+                  var content = $jq("#issues-new");
+                  content.children().remove();
+                  content.prepend(data.message);
               },
-          error: function(request,status,error) {
-                alert(request + " " + status + " " + error);
+          error: function(xhr,status,error) {
+             alert("Submitting this issue was unsuccessful. Please try again. " + " " + status + " " + error);
               }
         });
 
@@ -2066,7 +2016,6 @@ function setupCytoscape(data, types){
     return{
       init: init,
       ajaxGet: ajaxGet,
-      hideTextOnFocus: hideTextOnFocus,
       goToAnchor: Scrolling.goToAnchor,
       setLoading: setLoading,
       resetLayout: Layout.resetLayout,

@@ -44,10 +44,7 @@
           <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" /> 	
           <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />   
         </div>
-      <br /><br />
+      <div>
       You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create and track an issue on Github') %]
+    </div>
       </div>
-
-[% UNLESS c.user_exists %]
-[% lighbox_js %]
-[% END %]
