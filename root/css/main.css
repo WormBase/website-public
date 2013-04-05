@@ -992,6 +992,9 @@ a#fade:hover {
   z-index:9999;
   font-weight:bold;
   color:#707070;
+  -webkit-transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
 }
 
 #notifications>span.ui-icon {
@@ -1241,6 +1244,9 @@ div#header .release_date { }
   position:fixed;
   z-index:999999;
   border-bottom:1px solid black;
+  -webkit-transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
 }
 
 #top-system-message a{
@@ -2724,6 +2730,9 @@ table.venn tr.venn-data td {
   bottom:0;
   right:1em;  
   z-index:100;
+  -webkit-transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
 }
 
 @keyframes tab {
