@@ -478,7 +478,16 @@ sub version {
     };
 }
 
+sub merged_into {
+	my $self = shift;
+	my $object = $self->object;
 
+	my $gene_merged_into = $object->Merged_into;
+	return {
+		description => 'the gene this one has merged into',
+		data		=> $self->_pack_obj($gene_merged_into)
+	};
+}
 
 #######################################
 #
@@ -933,77 +942,88 @@ sub gene_ontology {
 # curatorial history of the gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/history
 
-sub history {
+sub history{
     my $self   = shift;
     my $object = $self->object;
     my @data;
 
-    foreach my $history ( $object->History ) {
-        my $type = $history;
-        $type =~ s/_ / /g;
-
-        my @versions = $history->col;
-        foreach my $version (@versions) {
-        
-			my @events = ();
-			if( $history eq 'Version_change' &&
-				(scalar @versions) < 2
-			  ) 
-			{
-				@events = $history->right(4)->col;
-			}
-
-            #  next unless $history eq 'Version_change';    # View Logic
-            my ($vers,   $date,   $curator, $event,
-                $action, $remark, $gene,    $person
-            );
-            if ( $history eq 'Version_change' ) {
-            
-                 ( $vers, $date, $curator, $event, $action, $remark )
-                    = $version->row;
-
-                next if $action eq 'Imported';
-                # For some cases, the remark is actually a gene object
-                if (   $action eq 'Merged_into'
-                    || $action eq 'Acquires_merge'
-                    || $action eq 'Split_from'
-                    || $action eq 'Split_into' )
-                {
-                    $gene   = $remark;
-                    $remark = undef;
-                }
-            }
-            else {
-                ($gene) = $version->row;
-            }
-
-			if( (scalar @events) == 0 ) {
-				push @events, $action || $vers;
-			}
-			foreach my $version_action (@events){
+	foreach my $history_type ( $object->History ){
+		$history_type =~ s/_ / /g;
+		
+		# foreach version if version change
+		if($history_type eq 'Version_change'){
 			
-				push @data, {
-					history => $history && "$history",
-					version => $version && "$version",
-					type    => $type && "$type",
-					date    => $date && "$date",
-					action  => $version_action && "$version_action",
-					remark  => $remark && "$remark",
-					gene    => $self->_pack_obj($gene),
-					curator => $self->_pack_obj($curator),
-				};
+			my @versions = $history_type->col;
+			foreach my $version (@versions){
 				
-            }
-        }
-    }
-
+				#print "(".join(",",$version->row).")\n"; # DELETE
+				# WBGene00011256, WBGene00043702
+				
+				# NOTE: version may not contain event
+				my ($vers,   $date,   $curator, $event) 
+					= $version->row;
+				
+				my %current_row = (
+					version => $version && "$version",
+					date    => $date && "$date",
+					type    => $history_type && "$history_type", # <- is this needed?
+					curator => $self->_pack_obj($curator), 
+				);
+				
+				if($event){
+				
+					my @events = $version->right(3)->col;
+					foreach my $event (@events){
+						
+						my ($action, $remark, $gene) = $event->row;
+						
+						next if $action eq 'Imported';
+						
+						# In some cases, the remark is actually a gene object
+						if (   $action eq 'Merged_into'
+							|| $action eq 'Acquires_merge'
+							|| $action eq 'Split_from'
+							|| $action eq 'Split_into' )
+						{
+							$gene   = $remark;
+							$remark = undef;
+						}
+						
+						my %final_row = ( %current_row,
+							action  => $action && "$action",
+							remark  => $remark && "$remark",
+							gene    => $self->_pack_obj($gene),
+						);
+						push @data, \%final_row;
+					}
+					
+				}else{
+				
+					my %final_row;
+					if( $object->Merged_into ){
+						my $gene = $object->Merged_into;
+						print "FLAG!\n";
+						%final_row = ( %current_row,
+							action  => "Merged_into",
+							gene    => $self->_pack_obj($gene),
+						);
+					}else{
+						%final_row = %current_row;
+					} 
+					
+					push @data, \%final_row;
+				}
+				
+			}
+		}
+	}
+	
     return {
         description => 'the curatorial history of the gene',
         data        => @data ? \@data : undef
     };
+
 }
-
-
 
 
 #######################################

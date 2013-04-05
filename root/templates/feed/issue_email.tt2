@@ -6,7 +6,7 @@
 </p>
 
 <p>Submitted From:
-<br>&nbsp;&nbsp;[% page.title %] <span class="fade">([% page.url %])</span>
+<br>&nbsp;&nbsp;[% page.title || page %] <span class="fade">([% page.url || url %])</span>
 </p>
 
 <p>

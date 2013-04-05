@@ -17,6 +17,8 @@
  *         abigail.cabunoc@oicr.on.ca
  */
 
+
+
 +function(window, document, undefined){ 
   var location = window.location,
       $jq = jQuery.noConflict();
@@ -34,8 +36,7 @@
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results"),
           sysMessage = $jq("#top-system-message").children(".system-message-close"),
-          history_on = (pageInfo['history'] === 1) ? 1 : undefined;
-
+          history_on = (pageInfo['history'] === '1') ? 1 : undefined;
       if(history_on){
         $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
       }
@@ -51,7 +52,6 @@
       comment.init(pageInfo);
       issue.init(pageInfo);
         
-      if($jq(".star-status-" + pageInfo['wbid']).size()>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
       updateCounts(pageInfo['ref']);
       if(pageInfo['notify']){ displayNotification(pageInfo['notify']); }
@@ -62,9 +62,19 @@
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
       } else {
+        if($jq(".star-status-" + pageInfo['wbid']).size()>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
         widgetInit();
       }
       effects();
+      Plugin.getPlugin("placeholder", function(){
+        $jq('input, textarea').placeholder();
+      });
+
+      if($jq(".lightbox").size()){
+        WB.getPlugin("colorbox", function(){
+          $jq(".lightbox").colorbox();
+        });
+      }
     }
     
     
@@ -547,7 +557,7 @@
           ajaxPanel.html(data);
         },
         error:function(xhr, textStatus, thrownError){
-          var error = $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+          var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
           ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p><a href="/tools/support?url=' + location.pathname 
                   + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
@@ -560,64 +570,13 @@
     }
     
       function operator(){
-        var opTimer,
-            opLoaded = false;
-        $jq('#operator-box').click(function(){ 
-          var opBox = $jq(this);
-          if(!(opLoaded)){
-            ajaxGet($jq("#operator-box"), "/rest/livechat", 0);
-            opLoaded = true;
-          }
-          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}).children().show() : opBox.animate({width:"1.5em"}).children().hide();
-          opBox.toggleClass("minimize");
-        });
         
-        $jq('.operator').click(function() { 
-          if($jq(this).attr("rel")) {
-            $jq.post("/rest/livechat?open=1",function() {
-              location.href="/tools/operator";
-            });
-          }else {
-            var opBox = $jq("#operator-box");
-            ajaxGet(opBox, "/rest/livechat", 0);
-            opLoaded = true;
-            if(opBox.hasClass("minimize"))
-                opBox.removeClass("minimize").animate({width:"9em"}).children().show();
-            opTimer = setTimeout(function() {
-              opBox.addClass("minimize").animate({width:"1.5em"}).children().hide();
-            }, 4e3)
-          }
-        }); 
-        
-        $jq("#issue-box").click(function(){
-          var isBox = $jq(this);
-          isBox.toggleClass("minimize").children().toggle();
-          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "14em"})
+        $jq("#issue-box-tab").click(function(){
+          var isBox = $jq(this).parent();
+          isBox.toggleClass("minimize");//.children().toggle();
+          // isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "14em"})
         });
     }
-    
-  function hideTextOnFocus(selector){
-    var area = $jq(selector);
-      
-    if(area.val() !== ""){
-      area.siblings(".holder").fadeOut();
-    }
-    area.focus(function(){
-      $jq(this).siblings(".holder").fadeOut();
-    });
-
-    area.blur(function(){
-      if($jq(this).val() === ""){
-        $jq(this).siblings(".holder").fadeIn();
-      }
-    });
-  }
-
-
-
-
-
-
 
 
 
@@ -643,14 +602,6 @@
         $jq(this).removeClass("active");
       });
 
-      //show/hide default text if needed
-      searchBox.focus(function(){
-        if($jq(this).val() === searchBoxDefault) $jq(this).attr("value", "");
-      });
-      searchBox.blur(function(){
-        if($jq(this).val() === "") $jq(this).attr("value", searchBoxDefault);
-      });
-      
       searchBox.autocomplete({
           source: function( request, response ) {
               lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
@@ -870,11 +821,6 @@
       curr.html(button.html());
       return false;
     });
-    
-
-    if (type === 'paper')
-      Layout.resize();
-    
   }
 
 
@@ -1448,36 +1394,43 @@ var Scrolling = (function(){
    submit:function(is){
         var rel= is.attr("rel"),
             url = is.attr("url"),
+            page = is.attr("page"),
             feed = is.closest('#issues-new'),
             name = feed.find("#name"),
             dc = feed.find("#desc-content"),
-            email = feed.find("#email");
+            email = feed.find("#email"),
+            content = feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : '');
         if (!validate_fields(email, name))
           return;
+        if(!content){
+          feed.find("#issue-content").focus();
+          return;
+        }
+
 
         $jq.ajax({
           type: 'POST',
           url: rel,
+          dataType: 'json',
           data: {title:feed.find("#issue-title option:selected").val(), 
-                content: feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : ''), 
+                content: content, 
                 name: name.val(),
                 email: email.val(),
                 url: url || issue.url,
+                page: page,
+                hash: location.hash,
                 userAgent: window.navigator.userAgent},
           success: function(data){
-                if(data===0) {
-                   alert("The email address has already been registered! Please sign in."); 
-                }else {
-                  var content = $jq("#content");
-                  content.children().not("#spacer").remove();
-                  content.prepend(data);
-                }
+                  var content = $jq("#issues-new");
+                  content.append(data.message);
               },
-          error: function(request,status,error) {
-                alert(request + " " + status + " " + error);
+          error: function(xhr,status,error) {
+             alert("Sorry! Submitting this issue was unsuccessful :( Please email help@wormbase.org with your query. \n" + " " + status + " " + error);
               }
         });
-
+        var content = $jq("#issues-new");
+        content.children().remove();
+        content.append("<p><h2>Thank you for helping WormBase</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
         return false;
    },
    isDelete: function(button){
@@ -1610,9 +1563,11 @@ var Scrolling = (function(){
             if(callback) callback();
         });
     }else{
-      $jq.post("/rest/history", { 'history_on': value }, function(){ if(callback) callback(); });
-      histUpdate(value === 1 ? 1 : undefined);
+      $jq.post("/rest/history", { 'history_on': value }, function(){ 
+        histUpdate(value == 1 ? 1 : undefined); 
+        if(callback) callback(); });
       if($jq.colorbox) $jq.colorbox.close();
+      $jq(".user-history").add("#user_history-content").html("<div><span id='fade'>Please wait, updating your history preferences</span></div>");
     }
   }
   
@@ -1907,7 +1862,6 @@ function setupCytoscape(data, types){
               $jq( "#resizable" ).resizable();
     }
 
-
     function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
         Plugin.getPlugin("markitup-wiki", callback);
@@ -1927,7 +1881,8 @@ function setupCytoscape(data, types){
                         markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         cytoscape_web: "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb_all.min.js",
-                        tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.all.min.js"
+                        tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.all.min.js",
+                        placeholder: "/js/jquery/plugins/jquery.placeholder.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
@@ -2060,7 +2015,6 @@ function setupCytoscape(data, types){
     return{
       init: init,
       ajaxGet: ajaxGet,
-      hideTextOnFocus: hideTextOnFocus,
       goToAnchor: Scrolling.goToAnchor,
       setLoading: setLoading,
       resetLayout: Layout.resetLayout,
