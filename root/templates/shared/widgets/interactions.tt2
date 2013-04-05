@@ -1,8 +1,4 @@
 [%
-USE Dumper;
-Dumper.dump(fields.interactions.data.edges_all.size);
-'<br/><br/><br/>';
-
   MACRO interaction_table BLOCK;
   WRAPPER $field_block title="Interactions" key="interactions";
       'Found ';

@@ -303,7 +303,7 @@ sub _get_interaction_info {
       foreach my $obj (@effectors, @others) {
           foreach my $obj2 (@affected) {
             next if "$obj" eq "$obj2";
-            if (!$nearby && $object->class ne 'Interaction') { 
+            if (!$nearby && $object->class ne 'Interaction' && $object->class ne 'WBProcess') { 
               next unless ("$obj" eq "$object" || "$obj2" eq "$object")
             };
             @{$results{"$obj $obj2"}} = ($type, $obj, $obj2, 'Effector->Affected', $phenotype);
