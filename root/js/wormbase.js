@@ -822,11 +822,6 @@
       curr.html(button.html());
       return false;
     });
-    
-
-    if (type === 'paper')
-      Layout.resize();
-    
   }
 
 
