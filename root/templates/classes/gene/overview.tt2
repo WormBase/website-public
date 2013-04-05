@@ -4,6 +4,8 @@
 [% END %]
 </span></h2> 
 
+
+
 [%
 
 WRAPPER highlight_box;
@@ -55,6 +57,25 @@ END;
     evidence(fields.concise_description.data.evidence, 'Provisional_description', fields.concise_description.data.text);
 
 '</div>';
+
+
+IF fields.status.data == 'Dead';
+	'<br/>';
+	'<h3>';
+	'This gene is dead!<br/>';
+	
+	IF fields.merged_into.data;
+		'Merged into -> ';
+		tags2link(fields.merged_into.data);
+		'<br/>';
+	END;
+	
+	'</h3>';
+	#'</div>';
+	'<br/><br/>';
+END;
+
+
 
 
 IF (fields.human_disease_relevance.data.defined);
@@ -117,20 +138,5 @@ IF fields.status.data == 'Dead'; no_toggle = 1; END;
 remarks;
 '</div>';
 
-%]
-
-[% 
-	IF fields.status.data == 'Dead';
-		'<div class="ui-state-error ui-corner-all" float="left" display:inline-block>';
-		'This gene is dead!<br/>';
-		
-		IF fields.merged_into.data;
-			'Merged into -> ';
-			tags2link(fields.merged_into.data);
-			'<br/>';
-		END;
-		
-		'</div>';
-	END;
 %]
 
