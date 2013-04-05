@@ -12,7 +12,6 @@ use Storable;
 use MRO::Compat;
 use Time::HiRes qw/gettimeofday tv_interval/;
 use Config::General;
-use Number::Format qw(:subs :vars);
 use URI::Escape;
 
 
@@ -67,7 +66,7 @@ sub search {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->qp->parse_query( $q, 512|16 );
+    my $query=$class->_setup_query($q, $class->qp, 512|16); 
     my $enq       = $class->db->enquire ( $query );
 
     if($type && $type =~ /paper/){
@@ -76,6 +75,7 @@ sub search {
     my $mset      = $enq->get_mset( ($page-1)*$page_size,
                                      $page_size );
 
+    # $c->log->debug("Parsed query is: " . $query->get_description());
 
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
@@ -87,15 +87,15 @@ sub search_autocomplete {
     my ( $class, $c, $q, $type) = @_;
     $q = $class->_add_type_range($c, $q . "*", $type);
 
-    my $query=$class->syn_qp->parse_query( $q, 64|16 );
+    my $query=$class->_setup_query($q, $class->syn_qp,64|16);
     my $enq       = $class->syn_db->enquire ( $query );
-    $c->log->debug("query auto:" . $query->get_description());
+    # $c->log->debug("query auto:" . $query->get_description());
     my $mset      = $enq->get_mset( 0, 10 );
 
     if($mset->empty()){
-      $query=$class->qp->parse_query( $q, 64|16 );
+      $query=$class->_setup_query($q, $class->qp,64|16);
       $enq       = $class->db->enquire ( $query );
-      $c->log->debug("query auto2:" . $query->get_description());
+      # $c->log->debug("query auto2:" . $query->get_description());
       $mset      = $enq->get_mset( 0, 10 );
     }
 
@@ -107,15 +107,15 @@ sub search_exact {
     my ($class, $c, $q, $type) = @_;
     my ($query, $enq, $mset);
     if( $type ){
-      $query=$class->qp->parse_query( "\"$type$q\"", 1|2 );
+      $query=$class->_setup_query("\"$type$q\" $type..$type", $class->qp,1|2);
       $enq       = $class->db->enquire ( $query );
-      $c->log->debug("query exacta:" . $query->get_description());
+      # $c->log->debug("query exacta:" . $query->get_description());
       $mset = $enq->get_mset( 0,2 ) if $enq;
 
       if ($mset->size() != 1){
-        $query=$class->qp->parse_query( $class->_uniquify($q, $type) . "*", 1|2 );
+        $query=$class->_setup_query($class->_uniquify($q, $type) . "* $type..$type", $class->qp,1|2);
         $enq       = $class->db->enquire ( $query );
-        $c->log->debug("query exactaa:" . $query->get_description());
+        # $c->log->debug("query exactaa:" . $query->get_description());
         $mset = $enq->get_mset( 0,2 ) if $enq;
       }
       $mset = undef if ($mset->size() != 1);
@@ -125,9 +125,9 @@ sub search_exact {
         my $qu = "$q";
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/));
         $qu = $class->_add_type_range($c, "$qu", $type);
-        $query=$class->syn_qp->parse_query( $qu, 16|2|256 );
+        $query=$class->_setup_query($qu, $class->syn_qp,16|2|256);
         $enq       = $class->syn_db->enquire ( $query );
-        $c->log->debug("query exactb:" . $query->get_description());
+        # $c->log->debug("query exactb:" . $query->get_description());
         $mset      = $enq->get_mset( 0,2 ) if $enq;
     }
 
@@ -135,9 +135,9 @@ sub search_exact {
       $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/_/));
       $q =~ s/\s/\* /g;
       $q = $class->_add_type_range($c, "$q", $type);
-      $query=$class->qp->parse_query( $q, 2|16|256|512 );
+      $query=$class->_setup_query($q, $class->qp, 2|16|256|512);
       $enq       = $class->db->enquire ( $query );
-      $c->log->debug("query exactc:" . $query->get_description());
+      # $c->log->debug("query exactc:" . $query->get_description());
       $mset      = $enq->get_mset( 0,2 );
     }
 
@@ -170,12 +170,12 @@ sub search_count {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->qp->parse_query( $q, 512|16 );
+    my $query=$class->_setup_query($q, $class->qp, 512|16);
     my $enq       = $class->db->enquire ( $query );
-    $c->log->debug("query count:" . $query->get_description());
+    # $c->log->debug("query count:" . $query->get_description());
 
     my $mset      = $enq->get_mset( 0, 500000 );
-    return format_number($mset->get_matches_estimated());
+    return $mset->get_matches_estimated();
 }
  
  
@@ -293,15 +293,22 @@ sub _get_taxonomy {
   return $taxonomy;
 }
 
+sub _setup_query {
+  my($self, $q, $qp, $opts) = @_;
+  my $query=$qp->parse_query( $q, $opts );
+  if($query->get_length() > 1000){
+    $query = $qp->parse_query($q);
+  }
+  return $query;
+}
+
 sub _pack_search_obj {
   my ($self, $c, $doc, $label) = @_;
   my $id = $doc->get_value(1);
   my $class = $doc->get_value(2);
   $class = $self->modelmap->ACE2WB_MAP->{class}->{$class} || $self->modelmap->ACE2WB_MAP->{fullclass}->{$class};
   return {  id => $id,
-            #label => $label || $doc->get_value(6) || $id,
-            # Restore this after xapian is built for WS237
-            label => $label || ($class ne 'Transposon' && $doc->get_value(6)) || $id,
+            label => $label || $doc->get_value(6) || $id,
             class => lc($class),
             taxonomy => $self->_get_taxonomy($doc),
             coord => { start => $doc->get_value(9),

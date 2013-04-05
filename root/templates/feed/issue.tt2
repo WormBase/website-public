@@ -25,13 +25,13 @@
         <div>
           Type of question:<br />
           <select name="email[subject]" id="issue-title" class="valid">
-            <option value="-"></option>
-            <option value="Bug Report">Bug Report</option>
-            <option value="My Account">My Account</option>
-            <option value="Feature Request">Feature Request</option>
-            <option value="Content Correction">Content Correction</option>
-            <option value="How Do I ...?">How Do I ...?</option>
-            <option value="Everything's broken!">Everything's broken!</option>
+              <option value="-" style="display:none">Type of Question / Comment</option>
+              <option value="Bug Report">Bug Report</option>
+              <option value="Feature Request">Feature Request</option>
+              <option value="Content Correction">Content Correction</option>
+              <option value="How Do I ...?">How Do I ...?</option>
+              <option value="My Account">My Account</option>
+              <option value="Everything's broken!">Everything's broken!</option>
           </select>
         </div>
 
@@ -44,10 +44,7 @@
           <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" /> 	
           <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />   
         </div>
-      <br /><br />
+      <div>
       You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create and track an issue on Github') %]
+    </div>
       </div>
-
-[% UNLESS c.user_exists %]
-[% lighbox_js %]
-[% END %]

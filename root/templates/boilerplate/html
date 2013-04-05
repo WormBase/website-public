@@ -12,7 +12,7 @@
     </title>
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link type="text/css" href="/css/jquery-ui.min.css" rel="stylesheet" />
-    <link type="text/css" href="/css/main[% c.config.installation_type == 'development' ? '' : '.min' %].css?v$Id$" rel="stylesheet" />
+    <link type="text/css" href="/css/main[% c.config.installation_type == 'development' ? '' : '.min' %].css?v[% git_commit_id %]" rel="stylesheet" />
   </head>
 
   <body>  
@@ -29,7 +29,7 @@
 
     <script>
       var se = document.createElement('script');
-      se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v$Id$";
+      se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v[% git_commit_id %]";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
       [% INCLUDE google_analytics %]
     </script>

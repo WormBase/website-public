@@ -57,7 +57,7 @@ elif [ $APP == 'qaqc' ]; then
     # reduce the number of workers.
     export DAEMONIZE=true
     export PORT=5000
-    export WORKERS=5
+    export WORKERS=8
     export MAX_REQUESTS=500
 
     # Set some variable that influence which configuration file we should use.

@@ -43,26 +43,14 @@
           <div style="padding:0.5em">
             You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login').path %]" >Login</a></h3> to use this feature
           </div>
-        [% lighbox_js %]
+          <script>
+            WB.getPlugin("colorbox", function(){
+              $jq(".lightbox").colorbox();
+            });
+          </script>
     [% END %]
 
 [% END %]
-
-[% MACRO lighbox_js BLOCK %]
-           <script>
-window.onload = getBox;
-function getBox(){
-  WB.getPlugin("colorbox", function(){
-    $jq(".lightbox").colorbox();
-  });
-}
-
-getBox();
-          </script>
-
-[% END %]
-
-
 
 [% BLOCK toggle %]
     <div class="toggle [% IF lazy; 'load-toggle'; END; %]" 
