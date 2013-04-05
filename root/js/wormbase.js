@@ -36,8 +36,7 @@
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results"),
           sysMessage = $jq("#top-system-message").children(".system-message-close"),
-          history_on = (pageInfo['hitsory'] === 1) ? 1 : undefined;
-
+          history_on = (pageInfo['history'] === '1') ? 1 : undefined;
       if(history_on){
         $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
       }
@@ -1565,7 +1564,7 @@ var Scrolling = (function(){
         });
     }else{
       $jq.post("/rest/history", { 'history_on': value }, function(){ if(callback) callback(); });
-      histUpdate(value === 1 ? 1 : undefined);
+      histUpdate(value == 1 ? 1 : undefined);
       if($jq.colorbox) $jq.colorbox.close();
     }
   }
@@ -1881,7 +1880,7 @@ function setupCytoscape(data, types){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         cytoscape_web: "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb_all.min.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.all.min.js",
-                        placeholder: "js/jquery/plugins/jquery.placeholder.min.js"
+                        placeholder: "/js/jquery/plugins/jquery.placeholder.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
