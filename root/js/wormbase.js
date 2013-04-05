@@ -1563,9 +1563,11 @@ var Scrolling = (function(){
             if(callback) callback();
         });
     }else{
-      $jq.post("/rest/history", { 'history_on': value }, function(){ if(callback) callback(); });
-      histUpdate(value == 1 ? 1 : undefined);
+      $jq.post("/rest/history", { 'history_on': value }, function(){ 
+        histUpdate(value == 1 ? 1 : undefined); 
+        if(callback) callback(); });
       if($jq.colorbox) $jq.colorbox.close();
+      $jq(".user-history").add("#user_history-content").html("<div><span id='fade'>Please wait, updating your history preferences</span></div>");
     }
   }
   
