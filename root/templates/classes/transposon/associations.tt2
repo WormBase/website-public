@@ -1,0 +1,13 @@
+
+[%
+
+
+   WRAPPER $field_block title=pluralize("Gene", fields.gene.data.size) key="gene";
+        tags2link(fields.gene.data);
+   END;
+
+      WRAPPER $field_block title=pluralize("Sequence", fields.sequence.data.size) key="sequence";
+        tags2link(fields.sequence.data);
+   END;
+
+%] 

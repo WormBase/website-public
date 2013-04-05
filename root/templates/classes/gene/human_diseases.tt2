@@ -15,17 +15,23 @@ END;
   <p>
     <h3>Automatically inferred from human protein orthology</h3>
   </p>
-
-  <p>
-  [% FOREACH type IN ['disease', 'gene'] %]
-    [% IF fields.human_diseases.data.$type; %]
-      [% t = type FILTER ucfirst %]
-      <h4>[% pluralize(t, fields.human_diseases.data.$type.size) %]</h4>
-      [% FOREACH item IN fields.human_diseases.data.$type; 
-          tag2link(item, item.label _ ' (OMIM:' _ item.id _ ')');
+  <div class="description">
+    [% IF fields.human_diseases.data.potential_model; %]
+      [% FOREACH item IN fields.human_diseases.data.potential_model; 
+          text = object.name.data.label _ ' is a potential model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
+          item.ev ? evidence(item.ev, 0 , text) : text;
           '<br />';
         END;%]
     [% END %]
+
+  [% FOREACH type IN ['disease', 'gene'] %]
+    [% IF fields.human_diseases.data.$type; %]
+    <h4>[% pluralize(type, fields.human_diseases.data.$type.size) | ucfirst %]</h4>
+      [% FOREACH item IN fields.human_diseases.data.$type; 
+       external_link('omim',"OMIM:" _ item,item) _ '<br />';
+        END;%]
+    [% END %]
+    <br />
   [% END %]
-  </p>
+  </div>
 [% END %]

@@ -65,9 +65,10 @@ has 'tracks' => (
     is      => 'ro',
     lazy    => 1,
     default => sub {
+        my $self = shift;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => [qw/CG Allele/],
+            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/PRIMARY_GENE_TRACK CLASSICAL_ALLELES/],
         };
     }
 );
@@ -92,6 +93,14 @@ sub _build__phenotypes {
 
 	foreach my $obj ($object->$type){
 
+	    # Don't include phenotypes that result from
+	    # the current gene driving overexpression of another gene.
+	    # These are displayed in the overexpression phenotypes table.
+	    if ($type eq 'Drives_Transgene') {
+		my $gene = $obj->Gene;
+		next unless ($gene && "$gene" eq "$object");
+	    }
+
 	    my $seq_status = eval { $obj->SeqStatus };
 	    my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
 	    my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
@@ -103,7 +112,7 @@ sub _build__phenotypes {
 		    # add some additional information for RNAis
 		    if ($type eq 'RNAi_result') {
 			$evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
-			my $genotype = $obj->Genotype;
+			my $genotype = $obj->Genotype;	
 			$evidence->{Genotype} = "$genotype" if $genotype;
 		    }
 		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
@@ -185,6 +194,8 @@ sub classification {
         $data->{type} = "protein coding";
     }
 
+    $data->{type} = 'Transposon in origin' if $object->Corresponding_transposon;
+
     unless($data->{type}){
       # Is this a non-coding RNA?
       my @transcripts = $object->Corresponding_transcript;
@@ -197,7 +208,7 @@ sub classification {
     $data->{associated_sequence} = @cds ? 1 : 0;
 
     # Confirmed?
-    $data->{confirmed} = @cds ? $cds[0]->Prediction_status->name : 0;
+    $data->{confirmed} = @cds ? $cds[0]->Prediction_status && $cds[0]->Prediction_status->name : 0;
     my @matching_cdna = @cds ? $cds[0]->Matching_cDNA : '';
 
     # Create a prose description; possibly better in a template.
@@ -343,6 +354,22 @@ sub operon {
     data        => $self->_pack_obj($object->Contained_in_operon)};
 }
 
+# transposon { }
+# This method will return a data structure containing
+# the transposon packed tag of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/operon
+
+sub transposon {
+    my $self   = shift;
+    my $object = $self->object;  
+    my @transposons = map { $self->_pack_obj($_)} $object->Corresponding_transposon;
+    
+    return {
+        description => "Corresponding transposon for this gene",
+        data        => @transposons ? \@transposons : undef
+    }
+}
+
 
 # legacy_information { }
 # This method will return a data structure containing
@@ -451,7 +478,16 @@ sub version {
     };
 }
 
+sub merged_into {
+	my $self = shift;
+	my $object = $self->object;
 
+	my $gene_merged_into = $object->Merged_into;
+	return {
+		description => 'the gene this one has merged into',
+		data		=> $self->_pack_obj($gene_merged_into)
+	};
+}
 
 #######################################
 #
@@ -509,15 +545,7 @@ sub anatomic_expression_patterns {
     foreach my $ep (@eps) {
 	my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$ep.jpg");
         $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
-        # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
-# <<<<<<< HEAD
-#         my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
-#         $pattern    =~ s/(.{384}).+/$1.../;
-# =======
-
         my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
-#         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
-#         $pattern    =~ s/(.{384}).+/$1.../;
 		foreach($ep->Picture) {
 			 next unless($_->class eq 'Picture');
 	    	 my $pic = $self->_api->wrap($_);
@@ -526,7 +554,7 @@ sub anatomic_expression_patterns {
 					last;
 			 }	
 		}
-# >>>>>>> master
+
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
@@ -720,33 +748,41 @@ sub polymorphisms {
 sub _process_variation {
     my ( $self, $variation ) = @_;
 
-    my $type = lc( join ', ', $variation->Variation_type ) || 'unknown';
+    my $type = join (', ', map {$_=~s/_/ /g;$_} grep{ $_=~/^(?!Natural_variant)/; } $variation->Variation_type ) || 'unknown';
 
-    my $molecular_change = lc( $variation->Type_of_mutation || "other" );
+    my $molecular_change =  $variation->Type_of_mutation || "Not curated" ;
 
     my @phens = $variation->Phenotype;
     my %effects;
     my %locations;
-    my ($aa_change,$aa_position);
+    my (@aa_change,@aa_position, @isoform);
+    my ($aa_cha,$aa_pos);
     foreach my $type_affected ( $variation->Affects ) {
         foreach my $item_affected ( $type_affected->col ) {    # is a subtree
-    	    foreach my $val ($item_affected->col){
+          foreach my $val ($item_affected->col){
               if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
               else { 
                 $effects{$val}++;
                 if ($val =~ /missense/i) {
                   # Not specified for every allele.
-                  my ($aa_position,$aa_change_string) = eval { $val->right->row };
-                  if ($aa_change_string) {
-                      $aa_change_string =~ /(.*)\sto\s(.*)/;
-                      $aa_change = "$1$aa_position$2";
+                  ($aa_pos,$aa_cha) = eval { $val->right->row };
+                  if ($aa_cha) {
+                      $aa_cha =~ /(.*)\sto\s(.*)/;
+                      $aa_cha = "$1 -> $2";
                   }
                 }  elsif ($val =~ /nonsense/i) {
                   # "Position" here really one of Amber, Ochre, etc.
-                  ($aa_position,$aa_change) = eval { $val->right->row; };
+                    ($aa_pos,$aa_cha) = eval { $val->right->row; };
+                    $aa_cha   =~ /.*\((.*)\).*/;
+                    $aa_pos = $1 ? $1 : $aa_pos;
+                    # Strip the position from the change.
+                    $aa_cha =~ s/\($aa_pos\)//;
                 }
+                push(@aa_change, $aa_cha) if $aa_cha;
+                push(@aa_position, $aa_pos) if $aa_pos;
+                push(@isoform, $self->_pack_obj($item_affected)) if $aa_pos;
               }
-    	    }
+          }
         }
     }
 
@@ -758,10 +794,12 @@ sub _process_variation {
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
         molecular_change => $molecular_change && "$molecular_change",
-        aa_change        => $aa_change ? $aa_change : undef,
+        aa_change        => @aa_change ? join('<br />', @aa_change) : undef,
+        aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
+        isoform          => @isoform ? \@isoform : undef,
         effects          => @effect ? \@effect : undef,
         phen_count       => scalar @phens || 0,
-        locations	 => @location ? \@location : undef,
+        locations	 => @location ? join(', ', map {$_=~s/_/ /g;$_} @location) : undef,
     );
     return \%data;
 }
@@ -904,74 +942,88 @@ sub gene_ontology {
 # curatorial history of the gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/history
 
-sub history {
+sub history{
     my $self   = shift;
     my $object = $self->object;
     my @data;
 
-    foreach my $history ( $object->History ) {
-        my $type = $history;
-        $type =~ s/_ / /g;
-
-        my @versions = $history->col;
-        foreach my $version (@versions) {
-        
-			my @events = ();
-			if( $history eq 'Version_change' ) {
-				@events = $history->right(4)->col;
-			}
-
-            #  next unless $history eq 'Version_change';    # View Logic
-            my ($vers,   $date,   $curator, $event,
-                $action, $remark, $gene,    $person
-            );
-            if ( $history eq 'Version_change' ) {
-            
-                 ( $vers, $date, $curator, $event, $action, $remark )
-                    = $version->row;
-
-                next if $action eq 'Imported';
-                # For some cases, the remark is actually a gene object
-                if (   $action eq 'Merged_into'
-                    || $action eq 'Acquires_merge'
-                    || $action eq 'Split_from'
-                    || $action eq 'Split_into' )
-                {
-                    $gene   = $remark;
-                    $remark = undef;
-                }
-            }
-            else {
-                ($gene) = $version->row;
-            }
-
-			if( (scalar @events) == 0 ) {
-				push @events, $action || $vers;
-			}
-			foreach my $version_action (@events){
+	foreach my $history_type ( $object->History ){
+		$history_type =~ s/_ / /g;
+		
+		# foreach version if version change
+		if($history_type eq 'Version_change'){
 			
-				push @data, {
-					history => $history && "$history",
-					version => $version && "$version",
-					type    => $type && "$type",
-					date    => $date && "$date",
-					action  => $version_action && "$version_action",
-					remark  => $remark && "$remark",
-					gene    => $self->_pack_obj($gene),
-					curator => $self->_pack_obj($curator),
-				};
+			my @versions = $history_type->col;
+			foreach my $version (@versions){
 				
-            }
-        }
-    }
-
+				#print "(".join(",",$version->row).")\n"; # DELETE
+				# WBGene00011256, WBGene00043702
+				
+				# NOTE: version may not contain event
+				my ($vers,   $date,   $curator, $event) 
+					= $version->row;
+				
+				my %current_row = (
+					version => $version && "$version",
+					date    => $date && "$date",
+					type    => $history_type && "$history_type", # <- is this needed?
+					curator => $self->_pack_obj($curator), 
+				);
+				
+				if($event){
+				
+					my @events = $version->right(3)->col;
+					foreach my $event (@events){
+						
+						my ($action, $remark, $gene) = $event->row;
+						
+						next if $action eq 'Imported';
+						
+						# In some cases, the remark is actually a gene object
+						if (   $action eq 'Merged_into'
+							|| $action eq 'Acquires_merge'
+							|| $action eq 'Split_from'
+							|| $action eq 'Split_into' )
+						{
+							$gene   = $remark;
+							$remark = undef;
+						}
+						
+						my %final_row = ( %current_row,
+							action  => $action && "$action",
+							remark  => $remark && "$remark",
+							gene    => $self->_pack_obj($gene),
+						);
+						push @data, \%final_row;
+					}
+					
+				}else{
+				
+					my %final_row;
+					if( $object->Merged_into ){
+						my $gene = $object->Merged_into;
+						print "FLAG!\n";
+						%final_row = ( %current_row,
+							action  => "Merged_into",
+							gene    => $self->_pack_obj($gene),
+						);
+					}else{
+						%final_row = %current_row;
+					} 
+					
+					push @data, \%final_row;
+				}
+				
+			}
+		}
+	}
+	
     return {
         description => 'the curatorial history of the gene',
         data        => @data ? \@data : undef
     };
+
 }
-
-
 
 
 #######################################
@@ -1114,11 +1166,16 @@ sub human_diseases {
   my $search = $self->_api->xapian;
 
   my %data;
+  if($object->Disease_info){
+    my @diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Potential_model;
+    $data{'potential_model'} = \@diseases;
+  }
+
   if($data[0]){
     foreach my $type ($data[0]->col) {
-      $data{$type} = ();
+        $data{lc($type)} = ();
       foreach my $disease ($type->col){
-        push (@{$data{$type}}, $search->_get_tag_info($self->_api, $disease, 'disease') || $disease)
+          push (@{$data{lc($type)}}, ($disease =~ /^(OMIM:)(.*)/ ) ? "$2" : "$disease");
       }
     }
   }
@@ -1221,6 +1278,57 @@ sub phenotype {
 	};
 }
 
+
+
+sub drives_overexpression {
+    my ($self) = @_;
+    my $object = $self->object;
+    
+    my %phenotypes;
+    foreach my $type ('Drives_Transgene', 'Transgene_product'){
+	foreach my $transgene ($object->$type){
+	    
+	    # Only include those transgenes where the Driven_by_gene
+	    # is the current gene.
+	    next unless $transgene->Driven_by_gene eq $object;
+	    
+	    my $summary = $transgene->Summary;
+
+	    # Retain in case we also want to add not_observed...
+	    foreach my $obs ('Phenotype'){
+		foreach my $phene ($transgene->$obs){
+		    $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
+		    my $evidence = $self->_get_evidence($phene);
+		    $evidence->{Summary}   = "$summary" if $summary;
+		    $evidence->{Transgene} = $self->_pack_obj($transgene); 
+
+		    
+		    my ($key,$caused_by);
+		    if ($transgene->Gene) {
+			$caused_by = join(", ",map { $_->Public_name } $transgene->Gene);
+			$key       = "Overexpressed gene: " . $caused_by;
+		    } elsif ($transgene->Reporter_product) {
+			$caused_by = join(", ",$transgene->Reporter_product);
+			$key       = "Reporter product: " . $caused_by;
+		    }
+
+		    push @{$phenotypes{$obs}{$phene}{evidence}{$key}}, { text     => $self->_pack_obj($transgene,$transgene->Public_name ),
+									 evidence => $evidence } if $evidence && %$evidence;		    
+		    
+		}
+	    }
+	}
+    }   
+    return { data        => (defined $phenotypes{Phenotype}) ? \%phenotypes : undef ,
+	     description => 'phenotypes due to overexpression under the promoter of this gene', }; 
+#    return \%phenotypes;
+}
+
+
+
+
+
+
 #######################################
 #
 # The Reagents Widget
@@ -1239,9 +1347,10 @@ sub antibodies {
   my @data;
   foreach ($object->Antibody) {
       my $summary = $_->Summary;
+      my @labs = map { $self->_pack_obj($_) } $_->Location;
       push @data, { antibody   => $self->_pack_obj($_),
 		    summary    => "$summary",
-		    laboratory => $_->Location ? $self->_pack_obj($_->Location) : "" };
+		    laboratory => \@labs };
   }
 
   return {  description =>  "antibodies generated against protein products or gene fusions",
@@ -1367,8 +1476,9 @@ sub transgenes {
     my @data; 
     foreach ($object->Drives_transgene) {
 	my $summary = $_->Summary;
+    my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => eval {$_->Location} ? $self->_pack_obj($_->Location) : '',
+		      laboratory => \@labs,
 		      summary    => "$summary",
 	};
     }
@@ -1390,8 +1500,9 @@ sub transgene_products {
     my @data; 
     foreach ($object->Transgene_product) {
 	my $summary = $_->Summary;
+        my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => eval {$_->Location} ? $self->_pack_obj($_->Location) : '',
+		      laboratory => \@labs,
 		      summary    => "$summary",
 	};
     }
@@ -1510,7 +1621,7 @@ sub gene_models {
     # I still need to fetch some details from sequence
     # Fetch a variety of information about all transcripts / CDS prior to printing
     # These will be stored using the following keys (which correspond to column headers)
-
+ 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
         my $gff   = $self->_fetch_gff_gene($sequence) or next;

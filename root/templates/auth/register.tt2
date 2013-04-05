@@ -6,16 +6,13 @@
 <b><center>Join the online worm community!</center></b> 
 <div style="float:left;margin-left:-1em;">
     <div class="login-holder">
-        <span id="fade" class="holder">full name</span>
-        <input id="name" type="text" name="name" size="22" value="[% full_name %]"/>
+        <input id="name" type="text" name="name" size="22" placeholder="full name" value="[% full_name %]"/>
     </div>
     <div class="login-holder">
-        <span id="fade" class="holder">email</span>
-        <input id="email" type="email" name="email" size="22" value="[% email %]"/>
+        <input id="email" type="email" name="email" size="22" placeholder="email" value="[% email %]"/>
     </div>
     <div class="login-holder">
-        <span id="fade" class="holder">password</span>
-        <input id="password" type="password" name="password" size="22" value="[% password %]"/>
+        <input id="password" type="password" name="password" placeholder="password" size="22" value="[% password %]"/>
     </div>
     <input id="redirect" type="text" name="redirect" size="22" style="display:none;" value=""/>
 
@@ -44,11 +41,12 @@
 
 
 <script>
+if(WB){
+      WB.getPlugin("placeholder", function(){
+        $jq('input, textarea').placeholder();
+      });
+    }
 $jq("#redirect").attr("value", window.location);
-WB.hideTextOnFocus("#name");
-WB.hideTextOnFocus("#email");
-WB.hideTextOnFocus("#password");
-
 </script>
 
 [% ELSE %]

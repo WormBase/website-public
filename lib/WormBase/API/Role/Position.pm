@@ -218,7 +218,7 @@ sub _build_genetic_position {
     # Nothing yet? Trying fetching interpolated position.
     unless ($chromosome) {
         #      if ($object->Interpolated_map_position) {
-        if ($class eq 'Sequence' && $object->Interpolated_map_position) {
+        if (($class eq 'Sequence' || $class eq 'Gene') && $object->Interpolated_map_position) {
             ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
             $method = 'interpolated';
         }

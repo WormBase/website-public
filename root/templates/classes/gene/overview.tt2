@@ -4,6 +4,8 @@
 [% END %]
 </span></h2> 
 
+
+
 [%
 
 WRAPPER highlight_box;
@@ -30,6 +32,10 @@ WRAPPER highlight_box;
            tag2link(fields.operon.data);
    END;
 
+   WRAPPER $field_block title="Transposon" key="transposon";
+           tags2link(fields.transposon.data);
+   END;
+
    status;
 
    WRAPPER $field_block title="Cloned By" key="cloned_by";
@@ -51,6 +57,25 @@ END;
     evidence(fields.concise_description.data.evidence, 'Provisional_description', fields.concise_description.data.text);
 
 '</div>';
+
+
+IF fields.status.data == 'Dead';
+	'<br/>';
+	'<h3>';
+	'This gene is dead!<br/>';
+	
+	IF fields.merged_into.data;
+		'Merged into -> ';
+		tags2link(fields.merged_into.data);
+		'<br/>';
+	END;
+	
+	'</h3>';
+	#'</div>';
+	'<br/><br/>';
+END;
+
+
 
 
 IF (fields.human_disease_relevance.data.defined);
@@ -114,3 +139,4 @@ remarks;
 '</div>';
 
 %]
+

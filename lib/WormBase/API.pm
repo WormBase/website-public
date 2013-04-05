@@ -111,7 +111,7 @@ sub _build_xapian {
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $syn_qp->add_valuerangeprocessor($svrp);
 
-  my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp});
+  my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp, _api => $self});
 
   $xapian->search($self, "*", 1, "gene");
   $xapian->search_autocomplete($self, "*", "gene");
@@ -244,12 +244,7 @@ sub fetch {
                                   " attempt to fetch $name of ace class $ace");
 				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);
 			}
-		}elsif ($aceclass eq 'Disease' ) {
-		     $self->log->debug("[API::fetch()]",
-                                  " attempt to fetch $name of ace class $aceclass");
- 		     $object = $self->xapian->_get_tag_info($self, $name, lc($aceclass),1);       
-		}
-		else { # assume a single Ace class
+		}else { # assume a single Ace class
 		    $self->log->debug("[API::fetch()]",
                               " attempt to fetch $name of ace class $aceclass");
 			$object = $service_dbh->fetch(-class => $aceclass, -name => $name);

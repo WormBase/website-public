@@ -1,4 +1,3 @@
-
 [% IF c.user_session.history_on == 1 %]
   [% FOREACH h IN c.stash.history %]
     <li>
@@ -13,8 +12,7 @@
   [% UNLESS sidebar %]
     <li><a id="fade" onclick='WB.ajaxGet($jq("div#user_history"), "/rest/history?clear=1");'>clear history</a></li>
 
-    <a href="/" onclick='WB.ajaxGet($jq(this).closest(".content"), "/rest/history?history_on=1");return false;'>turn off history</a>
-
+  <div class="ui-button history-logging ui-corner-large-all" onClick='WB.historyOn("post", 0);$jq(this).closest(".content").load("/rest/history");'>turn off history ›</div>
   [% END %]
 [% ELSE %]
   <div style="padding:0 1em 0.5em 1.5em">

@@ -82,6 +82,7 @@ sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
     $c->stash->{noboiler}=1;
     $c->stash->{template} = 'header/default.tt2';
+    $c->response->headers->expires(time);
 }
 
 sub footer :Path("/footer") Args(0) {
@@ -97,6 +98,7 @@ sub me :Path("/me") Args(0) {
     $c->stash->{'section'} = 'me';
     $c->stash->{'class'} = "me";
     $c->stash->{template} = "me.tt2";
+    $c->response->headers->expires(time);
 }
 
 #######################################################
@@ -223,7 +225,7 @@ sub gbrowse_popup :Path('gbrowse_popup') :Args(0) {
 
     # WARNING: quickly hacked together code ahead with View and Model code!
     # consider making a proper model and view for this GBrowse popup data
-    if ($type eq 'CG') {
+    if ($type eq 'PRIMARY_GENE_TRACK') {
         if (my $ace = $api->fetch({aceclass => $class, name => $name})) {
             $ace = $ace->object;
             my $gene = eval { $ace->Corresponding_CDS->Gene } || eval { $ace->Gene };

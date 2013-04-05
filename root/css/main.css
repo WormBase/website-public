@@ -720,7 +720,6 @@ div#create-prompt {
 
 .evidence {
   cursor:pointer;
-  margin:0 -0.5em;
 }
 
 .ev-more-text {
@@ -816,6 +815,10 @@ a#fade:hover {
 .result {
   padding:0 0.5em 0.5em;
   position:relative;
+}
+
+.result.evidence{
+  padding:0;
 }
 
 .result:hover {
@@ -989,6 +992,9 @@ a#fade:hover {
   z-index:9999;
   font-weight:bold;
   color:#707070;
+  -webkit-transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
 }
 
 #notifications>span.ui-icon {
@@ -1238,6 +1244,9 @@ div#header .release_date { }
   position:fixed;
   z-index:999999;
   border-bottom:1px solid black;
+  -webkit-transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
 }
 
 #top-system-message a{
@@ -1398,7 +1407,6 @@ ul.nav-bar ul.wb-dropdown {
   border:1px solid #AAA;
   z-index:598;
   padding:0;
-  width:100%;
   list-style-type: none;
 }
 
@@ -1661,11 +1669,7 @@ div#footercredit a{
 
 
 #footermeta {
-    overflow:hidden;
-    position:absolute;
-    bottom:1em;
-    right:1.4em;
-    width:120px;
+    float:left;
 }
 
 
@@ -2162,7 +2166,7 @@ div#google-map {
 }
 
 .toggle {
-	padding: 0.25em 0 0;
+  padding: 0.25em 0 0;
     cursor:pointer;
     margin: 0 0 0 -0.4em;
 }
@@ -2175,8 +2179,8 @@ div#google-map {
 #loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; }
 
 .tooltip {
-	margin-left: 7px;
-	padding:0 0 0 20px;
+  margin-left: 7px;
+  padding:0 0 0 20px;
     cursor:pointer;
 }
 
@@ -2440,8 +2444,7 @@ div#google-map {
   vertical-align:top;
 }
 
-
-.placeholder {
+#widgets .sortable>.placeholder{
   background:white;
   padding:0 1em 0 0.5em;
   margin:0 0 0.5em 0.5em;
@@ -2460,25 +2463,14 @@ div#google-map {
 }
 
 .history-logging {
-  padding:0.5em;
+  padding:0.5em 0.8em;
   color: white;
   margin:0.3em 0;
   font-weight:bold;
   border:none;
   background: #9C4041;
-  background: #9C4041 -moz-linear-gradient(90deg, #9C4041, #C98788);
-  background: #9C4041 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#C98788), to(#9C4041));
-  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C98788,endColorStr=#9C4041);
 }
 
-
-
-.history-logging:hover{
-  background: #C98788;
-  background: #C98788 -moz-linear-gradient(90deg, #9C4041, #D4A3A4);
-  background: #C98788 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#D4A3A4), to(#9C4041));
-  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#D4A3A4,endColorStr=#9C4041);
-}
 
 
 div.detail-box{
@@ -2632,6 +2624,7 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 
 table.venn tr.venn-data td {
   max-width:8em;
+  vertical-align:top;
 }
 
 .issue-layout-box {
@@ -2723,70 +2716,109 @@ table.venn tr.venn-data td {
 
 #operator-box-wrap{  
   position:fixed;       
-  bottom:10em;
-  right:0;  
+  bottom:0;
+  right:1em;  
   z-index:100;
+  -webkit-transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
 }
 
-#operator-box{
-  position:absolute;  
-  height:5em; 
-  right:0; 
-  padding:0.5em; 
-  border:1px solid #CDCDCD;
-  background:#E9EEF2;
-  z-index:100;
-  cursor:pointer;
+@keyframes tab {
+  0% {margin-bottom: -50px;}
+  50% {margin-bottom: 0px;}
+  100% {}
+}
+
+@-webkit-keyframes tab {
+  0% {margin-bottom: -50px;}
+  50% {margin-bottom: 0px;}
+  100% {}
+}
+
+@-moz-keyframes tab {
+  0% {margin-bottom: -50px;}
+  50% {margin-bottom: 0px;}
+  100% {}
+}
+
+#issue-icon:before{
+  font-family: icons;
+  content: '–';
+  speak: none;
+  font-weight:bolder;
+  font-size:1.5em;
+  line-height: 0.5em;
+  padding:0 3px;
+}
+
+.minimize #issue-icon:before{
+  content: '+';
+}
+
+
+#issue-box.minimize{
+    -webkit-animation-name: tab;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-timing-function: ease-in;
+    -moz-animation-name: tab;
+    -moz-animation-duration: 1s;
+    -moz-animation-iteration-count: 1;
+    -moz-animation-direction: alternate;
+    -moz-animation-timing-function: ease-in;
 }
 
 #issue-box{
   position:absolute;  
-  height:1.5em; 
-  right:0;   
-  top:6.5em;
-  padding:0.5em 0.3em 0.3em 0.5em; 
-  background: #D6C2C2;
-  border:1px solid #CDCDCD;
-  cursor:pointer;
-  z-index:101;
-  white-space: nowrap;
-}
-
-#issue-box.minimize{
-  background: #9C4041;
+  right:0;
+  bottom:0;
   z-index:99;
-  border:none;
-  width:1em;
 }
 
-#issue-box span{
-  float:left;
-}
-
-#operator-box.minimize{
-  background:#406F9C;
-  background-image:url('/img/chat.png');
-  background-repeat:no-repeat;
-  background-position: 0.2em 0.5em;
+#issue-box-tab {
+  padding:0.7em; 
+  background: #6D1B1C;
+  font-weight:bold;
+  font-size:0.9em;
   color:white;
-  border:none;
-  height:5em; 
-  padding:0.5em 0;
-  width:1.5em;
+  float:right;
+  z-index:101;
+  cursor:pointer;
 }
 
-#operator-box.minimize:hover{
-  background-color:#0F2F4D;
-  width:2em;
+#issue-box-content {
+  width:400px;
+  clear:right;
+  float:right;
+  background:#6D1B1C;
+  color:white;
+}
+#issue-box-content #issues-new{
+  margin:15px;
 }
 
-#issue-box.minimize:hover{
-  background: #B81417; 
-  width:1.5em !important;
+#issue-box textarea, #issue-box input, #issue-box select, #issue-box option{
+  background: #222;
+  padding: 5px;
+  border:1px solid black;
+  color:white;
+  width:370px;
 }
 
-#operator-box.minimize>div{
-  display:none;
+#issue-box textarea, #issue-box #name, #issue-box #email{
+    width:358px;
+}
+
+#issue-box textarea{
+  resize:vertical;
+  max-height: 300px;
+}
+
+.minimize #issue-box-content {
+  height:10px;
+  padding:0;
 }
 
 #resizable { 
@@ -2796,7 +2828,10 @@ table.venn tr.venn-data td {
   margin:0 auto;
 }
 
-
+#issue-box a:link, #issue-box a:visited{
+  color:white;
+  text-decoration: underline;
+}
 
 /* = Generic styling added by TH; possibly redundant  ========================== */
 
