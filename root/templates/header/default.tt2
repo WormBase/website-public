@@ -23,7 +23,10 @@
 <div id="operator-box-wrap">
   <div id="issue-box" class="minimize">
     <div id="issue-box-tab" class="ui-corner-top">
-      <span>Questions, Feedback & Help</span>
+      <span>
+         Questions, Feedback & Help
+         <span aria-hidden="true" id="issue-icon"></span>
+       </span>
     </div>
     <div id="issue-box-content" class="ui-corner-tl">
       <div id="issues-new">

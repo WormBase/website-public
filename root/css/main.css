@@ -2463,25 +2463,14 @@ div#google-map {
 }
 
 .history-logging {
-  padding:0.5em;
+  padding:0.5em 0.8em;
   color: white;
   margin:0.3em 0;
   font-weight:bold;
   border:none;
   background: #9C4041;
-  background: #9C4041 -moz-linear-gradient(90deg, #9C4041, #C98788);
-  background: #9C4041 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#C98788), to(#9C4041));
-  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C98788,endColorStr=#9C4041);
 }
 
-
-
-.history-logging:hover{
-  background: #C98788;
-  background: #C98788 -moz-linear-gradient(90deg, #9C4041, #D4A3A4);
-  background: #C98788 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#D4A3A4), to(#9C4041));
-  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#D4A3A4,endColorStr=#9C4041);
-}
 
 
 div.detail-box{
@@ -2753,6 +2742,20 @@ table.venn tr.venn-data td {
   100% {}
 }
 
+#issue-icon:before{
+  font-family: icons;
+  content: '–';
+  speak: none;
+  font-weight:bolder;
+  font-size:1.5em;
+  line-height: 0.5em;
+  padding:0 3px;
+}
+
+.minimize #issue-icon:before{
+  content: '+';
+}
+
 
 #issue-box.minimize{
     -webkit-animation-name: tab;
@@ -2797,7 +2800,7 @@ table.venn tr.venn-data td {
 }
 
 #issue-box textarea, #issue-box input, #issue-box select, #issue-box option{
-  background: #3E3E3E;
+  background: #222;
   padding: 5px;
   border:1px solid black;
   color:white;
