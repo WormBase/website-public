@@ -13,7 +13,7 @@ has 'tracks' => (
     default => sub {
         return {
             description => 'tracks displayed in GBrowse',
-            data        => [qw/CG RNASEQ_ASYMMETRIES RNASEQ RNASEQ_SPLICE POLYSOMES MICRO_ORF DNAseI_HYPERSENSITIVE_SITE REGULATORY_REGIONS PROMOTER_REGIONS HISTONE_BINDING_SITE_REGIONS TRANSCRIPTION_FACTOR_BINDING_REGION TRANSCRIPTION_FACTOR_BINDING_SITE CORRECTED_GENOME_SEQUENCE_ERROR PREDICTED_BINDING_SITES CURATED_BINDING_SITES BINDING_REGIONS GENOME_SEQUENCE_ERROR/],
+            data        => [qw/PRIMARY_GENE_TRACK RNASEQ_ASYMMETRIES RNASEQ RNASEQ_SPLICE POLYSOMES MICRO_ORF DNAseI_HYPERSENSITIVE_SITE REGULATORY_REGIONS PROMOTER_REGIONS HISTONE_BINDING_SITE_REGIONS TRANSCRIPTION_FACTOR_BINDING_REGION TRANSCRIPTION_FACTOR_BINDING_SITE CORRECTED_GENOME_SEQUENCE_ERROR PREDICTED_BINDING_SITES CURATED_BINDING_SITES BINDING_REGIONS GENOME_SEQUENCE_ERROR/],
         };
     }
 );
@@ -75,8 +75,8 @@ sub flanking_sequences {
 
     my ($seq, @flanks);
     if (my ($flanking_seq) = $self->object->Flanking_sequences) {
-        ($seq, @flanks) = $flanking_seq->row;
-        $seq = $self->_pack_obj($seq);
+        (@flanks) = $flanking_seq->row;
+        $seq = $self->_pack_obj($object->Mapping_target);
         @flanks = map {"$_"} @flanks;
     }
 

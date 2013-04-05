@@ -1,0 +1,22 @@
+[% 
+
+    WRAPPER $field_block title="Associated anatomy" key="associated_anatomy";
+      build_data_table( order = ['bp_inv', 'bp_not_inv','gene', 'assay', 'reference'],
+			  columns = { 'assay' => 'Assay',				      
+				      'gene' => 'Gene',
+				      'bp_inv'   => 'Body Parts Involved',
+				      'bp_not_inv'   => 'Body Parts <br />Not Involved',
+				      'reference' => 'Reference'},
+			  key = 'associated_anatomy');
+
+#      build_data_table( order = ['af_data', 'assay', 'gene', 'phenotype', 'bp_inv', 'bp_not_inv', 'reference'],
+#			  columns = { 'af_data' => 'WormBase ID',
+#                       'assay' => 'Assay',
+#				      'phenotype'   => 'Phenotype',
+#				      'gene' => 'Gene',
+#				      'bp_inv'   => 'Body Parts Involved',
+#				      'bp_not_inv'   => 'Body Parts <br />Not Involved',
+#				      'reference' => 'Reference'},
+#			  key = 'associated_anatomy');
+    END;
+%]

@@ -188,7 +188,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? [qw(PRIMARY_GENE_TRACK ESTB)] : undef,
     };
 }
 

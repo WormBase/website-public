@@ -113,7 +113,10 @@ sub object_report :Path("/species") Args(3) {
     }
     $c->res->redirect($c->uri_for("/species", 'c_elegans', $class, $name)->path, 307) unless $species;
 
-    $c->detach unless $self->_is_class($c, $class);
+    unless ($self->_is_class($c, $class)) {
+        $c->res->redirect($c->uri_for('/search',"all","$class $name")->path."?redirect=1", 307);
+        $c->detach;
+    }
 
     $c->stash->{species}    = $species;
     $c->stash->{query_name} = $name;
@@ -131,7 +134,7 @@ sub object_report :Path("/species") Args(3) {
       $object->{class} = lc($class);
     }
 
-    if(!($object->{label}) || $object->{id} ne $name || $object->{class} ne lc($class)){
+    if(!($object->{label}) || $object->{id} ne $name || lc($object->{class}) ne lc($class)){
       $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1", 307);
       return;
     } else {

@@ -302,50 +302,48 @@ sub strain_designation {
     my $self   = shift;
     my $object = $self->object;
        
-    my $lab   = eval {$object->Laboratory};
-    $lab = $self->_pack_obj($lab) if $lab;
+    my @labs   = eval{ $object->Laboratory };
+    my @table  = (); # passed to data, table = array of hashes
+    
+    
+    foreach my $i (0..$#labs){
+		push( @table, { 
+			lab 	=> $self->_pack_obj($labs[$i], $labs[$i]->Mail),
+			strain 	=> $self->_pack_obj($labs[$i]) 
+		});
+    }
        
     my $data = { description => 'strain designation of the affiliated lab',
-		 data        => $lab || undef };
+		 data        => (scalar @table) ? \@table : undef };
     return $data;		     
 }
 
-# allele_designation { }
+# lab_info { }
 # This method returns a data structure containing
-# the allele designation of the current lab affiliation
-# of the person.
+# the allele and strain designations, and lab representative 
+# of each lab affiliation of the person.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
 
-sub allele_designation {
+sub lab_info {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = eval{$object->Laboratory};
-    my $allele_designation = ($lab && $lab->Allele_designation) ? $lab->Allele_designation->name : undef;
+    my @labs   = eval{$object->Laboratory};
+    my @table  = (); # passed to data, table = array of hashes
+	
+	foreach my $lab (@labs){
+		push( @table, {
+			lab 	=> $self->_pack_obj($lab),
+			strain 	=> $self->_pack_obj($lab),
+			allele 	=> $lab->Allele_designation,
+			rep		=> $self->_pack_obj($lab->Representative,
+										$lab->Representative->Standard_name)
+		});
+	}
+	
     my $data = { description => 'allele designation of the affiliated laboratory',
-		 data        => $allele_designation };
+		 data        => (scalar @table) ? \@table : undef };
     return $data;
-}
 
-# lab_representative { }
-# This method returns a data structure containing
-# the current lab representative of the affiliated lab.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative
-
-sub lab_representative {
-    my $self   = shift;
-    my $object = $self->object;
-    my $lab    = eval{$object->Laboratory};
-    
-    my $rep;
-    if ($lab) { 
-	my $representative = $lab->Representative;
-	my $name = $representative->Standard_name; 
-	$rep = $self->_pack_obj($representative, "$name");
-    }
-    
-    my $data = { description => 'official representative of the laboratory',
-		 data        => $rep || undef };
-    return $data;
 }
 
 # eg: gene_classes
@@ -357,12 +355,21 @@ sub lab_representative {
 sub gene_classes {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = eval { $object->Laboratory };
+    my @labs    = eval { $object->Laboratory };
+    my @table  = (); # passed to data, table = array of hashes
 
-    my @gene_classes = map { $self->_pack_obj($_) } $lab->Gene_classes if $lab;
+ 	foreach my $lab (@labs){
+		push( @table, map {{
+			lab 		=> $self->_pack_obj($lab),
+			gene_class	=> $self->_pack_obj($_),
+			desc		=> sprintf("%s",$_->Description)
+		}} $lab->Gene_classes );
+ 	}
     
-    my $data = { description => 'gene classes assigned to laboratory',
-		 data        => @gene_classes ? \@gene_classes : undef};
+    my $data = { 
+		description => 'gene classes assigned to laboratory',
+		data        => (scalar @table) ? \@table : undef 
+	};
     return $data;
 }
 

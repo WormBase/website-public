@@ -1,8 +1,9 @@
 package WormBase::API::Object::Rnai;
 use Moose;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with 'WormBase::API::Role::Object';
+
 
 =pod 
 
@@ -144,11 +145,18 @@ sub reagent {
 sub sequence {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->Sequence_info->right if $object->Sequence_info;
-    my @data   = map { {sequence=>"$_",
-			length=>length($_),
-		      } 
-		} @tag_objects;
+
+    my @tag_objects = map {{ sequence=> "$_", header=> $_->right }} $object->Sequence || $object->DNA_text;
+    if (!@tag_objects  && $object->PCR_product) {
+        @tag_objects = map {    {   header=>"$_", 
+                                    sequence=> $self->_api->wrap($_)->segment->{data}->{dna} 
+                                }} $object->PCR_product;
+    }
+    my @data   = map { {sequence=> $_->{sequence},
+            			length=>length($_->{sequence}),
+                        header => $_->{header}
+        		      } 
+        		} @tag_objects;
     return { data        => @data ? \@data : undef,
 	     description => 'rnai sequence'
     };

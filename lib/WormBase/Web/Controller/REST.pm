@@ -37,38 +37,6 @@ Catalyst Controller.
 =head1 METHODS
 
 =cut
- 
-sub livechat :Path('/rest/livechat') :Args(0) :ActionClass('REST') {} 
-sub livechat_GET {
-    my ( $self, $c) = @_;
-    $c->user_session->{'livechat'}=1;
-    $c->stash->{template} = "auth/livechat.tt2";
-    my $role= $c->model('Schema::Role')->find({role=>"operator"});
-     
-    foreach my $op ( shuffle $role->users){
-      next unless($op->gtalk_key );
-      my $badge = Badge::GoogleTalk->new( key => $op->gtalk_key);
-      my $online_status = $badge->is_online();
-      my $status = $badge->get_status();
-      my $away_status = $badge->is_away();
-      if($online_status && $status ne 'Busy' && !$away_status) {
-      $c->log->debug("get gtalk badge for ",$op->username);
-      $c->stash->{badge_html}  = $badge->get_badge();
-      $c->stash->{operator}  = $op;
-      $c->log->debug($c->stash->{badge_html});
-      last;
-      }
-    }
-    $c->response->headers->expires(time);
-    $c->stash->{noboiler}=1;
-    $c->forward('WormBase::Web::View::TT');
-}
-sub livechat_POST {
-    my ( $self, $c) = @_;
-    $c->user_session->{'livechat'}=0;
-    $c->user_session->{'livechat'}=1 if($c->req->param('open'));
-    $c->log->debug('livechat open? '.$c->user_session->{'livechat'});
-}
 
 sub print :Path('/rest/print') :Args(0) :ActionClass('REST') {}
 sub print_POST {
@@ -314,7 +282,7 @@ sub history_POST {
       $hist->set_column(visit_count=>(($hist->visit_count || 0) + 1));
       $hist->update;
     }
-#     $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} // $c->user_session->{'history_on'};
+    $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} if defined $c->request->body_parameters->{'history_on'};
 }
 
 
@@ -584,105 +552,65 @@ sub feed_POST {
         }
       }else{
         my $content= $c->req->params->{content};
-
         my $url = $c->req->params->{url};
         my $page = $self->_get_page($c, $url);
-
         my $user = $c->user;
         unless($c->user_exists){
           $user = $c->model('Schema::User')->create({username=>$c->req->params->{name}, active=>0});
           $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->user_id});
         }
         my $commment = $c->model('Schema::Comment')->find_or_create({user_id=>$user->user_id, page_id=>$page->page_id, content=>$content,'timestamp'=>time()});
-
       }
-    }
-    elsif($type eq 'issue'){
-	if($c->req->params->{method} || '' eq 'delete'){
-	    my $id = $c->req->params->{issues};
-	    if($id){
-		foreach (split('_',$id) ) {
-		    my $issue = $c->model('Schema::Issue')->find($_);
-		    $c->log->debug("delete issue #",$issue->issue_id);
-		    $issue->delete();
-		    $issue->update();
-		}
-	    }
-	}else{
-	    my $content    = $c->req->params->{content};
-	    my $title      = $c->req->params->{title};
-	    my $name = $c->req->params->{name} || $c->user->username;
-	    my $email = $c->req->params->{email} || $c->user->primary_email->email;
-	    
-	    my $url = $c->req->params->{url};
-	    my $page = $self->_get_page($c, $url);
+    }elsif($type eq 'issue'){
+      if($c->req->params->{method} || '' eq 'delete'){
+        my $id = $c->req->params->{issues};
+        if($id){
+          foreach (split('_',$id) ) {
+            my $issue = $c->model('Schema::Issue')->find($_);
+            $c->log->debug("delete issue #",$issue->issue_id);
+            $issue->delete();
+            $issue->update();
+          }
+        }
+      }else{
+        my $content    = $c->req->params->{content};
+        my $title      = $c->req->params->{title};
+        my $name = $c->req->params->{name}; 
+        my $email = $c->req->params->{email};
+        if($c->user_exists){
+          $name = $c->user->username;
+          $email = $c->user->primary_email->email;
+        }
 
-	    $content =~ s/\n/<br \/>/g;
-
-	    my ($issue_url,$issue_title,$issue_number) =
-		$self->_post_to_github($c,$content, $email, $name, $title, $page);
-
-	    $self->_issue_email({ c       => $c,
-				  page    => $page,
-				  new     => 1,
-				  content => $content, 
-				  change  => undef,
-				  reporter_email   => $email, 
-				  reporter_name    => $name, 
-				  title   => $title,
-				  issue_url    => $issue_url,
-				  issue_title  => $issue_title,
-				  issue_number => $issue_number });
-	    
-	    $c->stash->{message} = $title 
-		? qq|<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|
-		: qq|<h2>Your report has been submitted</h2> <p>Thank you for helping WormBase improve the site!</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|;
-	    $c->stash->{template} = "shared/generic/message.tt2"; 
-	    $c->stash->{redirect} = $url if $title;
-	    $c->stash->{noboiler} = 1;
-	    $c->forward('WormBase::Web::View::TT');
-	}
-    }elsif($type eq 'thread'){
-	my $content= $c->req->params->{content};
-	my $issue_id = $c->req->params->{issue};
-	my $state    = $c->req->params->{state};
-	my $severity = $c->req->params->{severity};
-	my $assigned_to= $c->req->params->{assigned_to};
-	if($issue_id) { 
-	    my $hash;
-	    my $issue = $c->model('Schema::Issue')->find($issue_id);
-	    if ($state) {
-		$hash->{status}={old=>$issue->state,new=>$state};
-		$issue->state($state) ;
-	    }
-	    if ($severity) {
-		$hash->{severity}={old=>$issue->severity,new=>$severity};
-		$issue->severity($severity);
-	    }
-	    if($assigned_to) {
-		my $people=$c->model('Schema::User')->find($assigned_to);
-		$hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
-		$issue->responsible_id($assigned_to);
-#         $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
-	    }
-	    $issue->update();
-	    
-	    my $user = $self->_check_user_info($c);
-	    return unless $user;
-	    my $thread  = { owner=>$user,
-			    timestamp=>time(),
-	    };
-	    if($content){
-		$c->log->debug("create new thread for issue #$issue_id!");
-		my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
-		my $thread_id=1;
-		$thread_id = $threads[0]->thread_id +1 if(@threads);
-		$thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
-	    }  
-	    if($state || $assigned_to || $content){
-		$self->_issue_email($c,$issue->page,$thread,$content,$hash);
-	    }
-	}
+        my $url = $c->req->params->{url};
+        my $hash = $c->req->params->{hash};
+        my $userAgent = $c->req->params->{userAgent};
+        my $page = $c->req->params->{page} || $self->_get_page($c, $url);
+        $url = $url . $hash;
+        $content =~ s/\n/<br \/>/g;
+        my ($issue_url,$issue_title,$issue_number) =
+        $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
+        $c->stash->{userAgent} = $userAgent;
+        $self->_issue_email({ c       => $c,
+                              page    => $page,
+                              new     => 1,
+                              content => $content, 
+                              change  => undef,
+                              reporter_email   => $email, 
+                              reporter_name    => $name, 
+                              title   => $title,
+                              url     => $url,
+                              issue_url    => $issue_url,
+                              issue_title  => $issue_title,
+                              issue_number => $issue_number});
+        my $message = "<p>You can track the progress on your question, <a href='$issue_url' target='_blank'>$issue_title (#$issue_number)</a> on our <a href='$issue_url' target='_blank'>issue tracker</a>.</p>";
+        $self->status_ok(
+          $c,
+          entity => {
+              message => $message,
+          }
+        );
+      }
     }
 }
 
@@ -1120,7 +1048,7 @@ sub _check_user_info {
 
 
 sub _post_to_github {
-  my ($self,$c,$content,$email, $name, $title, $page) = @_;
+  my ($self,$c,$content,$email, $name, $title, $page, $userAgent, $u) = @_;
 
   my $url     = 'https://api.github.com/repos/wormbase/website/issues';
 
@@ -1155,14 +1083,16 @@ sub _post_to_github {
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
         
-  my $ptitle = $page->title;
-  my $purl = $page->url;
+  my $ptitle = $page->title || $page if $page;
+  my $purl = $page ? $page->url || $u : $u;
         
 $content .= <<END;
 
 
 Reported by: $obscured_name ($obscured_email) (obscured for privacy)
 Submitted From: $ptitle ($purl)
+
+$userAgent
 
 END
 ;
@@ -1202,8 +1132,8 @@ sub _issue_email{
     $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . $params->{reporter_name} . ')';
 
     foreach (keys %$params) {	
-	next if $_ eq 'c';
-	$c->stash->{$_} = $params->{$_};
+      next if $_ eq 'c';
+      $c->stash->{$_} = $params->{$_};
     }
     $c->stash->{noboiler} = 1;
     $c->stash->{timestamp} = time();
@@ -1435,6 +1365,116 @@ sub _get_page {
     my ( $self, $c, $url ) = @_;
     return $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
 }
+
+
+########################################
+#
+# Admin level REST endpoints 
+# 
+
+
+# A generic webhook for receiving updates
+# from third party APIs
+# Currently, this is only used by GitHub
+# to send our app an update when there
+# has been a push to the staging branch.
+
+sub webhook :Path('/rest/admin/webhook') :Args(0) :ActionClass('REST') {}
+
+sub webhook_POST {
+    my ($self,$c) = @_;
+
+    # Assume JSON auto deserialized, but could be anything
+    my ($data) = $c->req->data;
+
+    # I can't fetch any data when called from github?
+    # This isn't a proxy misconfig, weird app behavior?
+#    if (!$data) {
+#	$c->log->debug('no data passed by webhook caller.');
+#	$c->response->status('415');
+#	return 'No payload defined';
+#     }
+   
+    # It's a request from github if there is a "payload" key. Not fool-proof.
+#    if ($data->{payload}) {
+	$c->log->debug("Calling GitHub webhook...");
+	$self->_process_github_webhook($c,$data);
+#    } else {
+	# Insert other webhooks here.
+#    }
+
+    # Send an email that the webhook has been
+    # received. This could get annoying, fast.
+#    $self->_issue_email({ c       => $c,
+#			  page    => $page,
+#			  new     => 1,
+#			  content => $content, 
+#			  change  => undef,
+#			  reporter_email   => $email, 
+#			  reporter_name    => $name, 
+#			  title   => $title,
+#			  issue_url    => $issue_url,
+#			  issue_title  => $issue_title,
+#			  issue_number => $issue_number});        
+    $self->status_ok(
+	$c,
+	entity =>  {
+	    name    => 'WormBase',
+	    msg     => "Webhook received! We'll be acting on it shortly.",
+	    payload => $data,
+	},
+	);
+}
+
+
+
+
+sub _process_github_webhook {
+    my ($self,$c,$data) = @_;
+    
+    # We only allow github to call this action.
+    # Otherwise any request to this URI with the
+    # appropriate data payload would cause this
+    # hook to fire. Perhaps more appropriately
+    # handled at the proxy level...
+    # 207.97.227.253/32
+    # 50.57.128.197/32
+    # 108.171.174.178/32
+    # 50.57.231.61/32
+    # 204.232.175.64/27
+    # 192.30.252.0/22
+    # 127.0.0.1  - allow requests from us for testing.
+#    my %allowed_addresses = map { $_ => $_ } qw/
+#                            207.97.227.253
+#	                    50.57.128.197
+#                            108.171.174.178
+#                            50.57.231.61
+#                            204.232.175.64
+#                            192.30.252.0
+#                            127.0.0.1/;
+#    my $ip = $c->req->address;
+#    next unless (defined $allowed_addresses{$ip});
+    
+    my $path = WormBase::Web->path_to('/');
+
+    # We might want to handle commits to the
+    # staging, master, or production branches
+    # differently. Unfortunately, the branch for
+    # a commit is not specified in the payload -
+    # we would need to query github for each issue.
+    # For now, we'll restart for *any* push to 
+    # WormBase/website. Not ideal.
+
+    # Note that since we are calling both the util
+    # script and the app handle the webhook on the 
+    # same server, the request will be terminated
+    # once the util script is called.
+    $c->log->debug($path);
+    system("$path/util/webhooks/update_and_restart.sh $path"); # && die "Couldn't call update script";
+}
+
+
+
 
 =head1 AUTHOR
 

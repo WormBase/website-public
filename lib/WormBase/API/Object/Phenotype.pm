@@ -279,12 +279,65 @@ sub anatomy_ontology {
 }
 
 
+# anatomy_functions { }
+# This method will return a data structure anatomy_functions associated with this anatomy_term.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_functions
+
+sub associated_anatomy {
+    my ($self) = @_;
+
+    my $data = $self->_anatomy_function('Anatomy_function');
+    return {
+        data        => @$data ? $data : undef,
+        description => 'anatomy_functions associatated with this anatomy_term',
+    };
+}
+
+
+
 
 ############################################################
 #
 # Private methods
 #
 ############################################################
+
+sub _anatomy_function {
+    my ($self, $tag) = @_;
+    my $object = $self->object;
+    my @data_pack;
+    foreach ($object->$tag){
+	my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+			   else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
+			  } $_->Involved;
+	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+               else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
+			  } $_->Not_involved;
+
+	# Genotype removed from the evidence hash in WS234?
+	my @assay = map { my $as = $_->right;
+			  if ($as) {
+			      my @geno = $as->Genotype; 			      
+			      {evidence => { genotype => join('<br /> ', @geno) },
+			       text => "$_",}
+			  }
+	} $_->Assay;
+	my $pev;
+	push @data_pack, {
+            af_data   => $_ && "$_",
+            phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+                          { evidence => $pev,
+                           text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
+            gene      => $self->_pack_obj(scalar $_->Gene),
+        assay    => @assay ? \@assay : undef,
+	    bp_inv    => @bp_inv ? \@bp_inv : undef,
+	    bp_not_inv=> @bp_not_inv ? \@bp_not_inv : undef,
+	    reference => $self->_pack_obj(scalar $_->Reference),
+	    };
+    } # array of hashes -- note the comma
+
+    return \@data_pack;
+}
 
 sub rnai_json {
     return {
@@ -353,10 +406,46 @@ sub _transgene {
 
     foreach my $tag_object (@tag_objects) {
         my $tag_info = $self->_pack_obj($tag_object);
-        my $species_info = $self->_pack_obj($tag_object->Species);
+	my $oe_gene          = $tag_object->Gene ? $self->_pack_obj($tag_object->Gene) : '';
+	my $reporter_product = $tag_object->Reporter_product ? $self->_pack_obj($tag_object->Reporter_product) : '';
+
+	my @oe_genes;
+	push @oe_genes,$oe_gene          if $oe_gene;
+	push @oe_genes,$reporter_product if $reporter_product;
+	
+	# Deal with the Phenotype_info hash for the CURRENT phenotype only.
+	# Wow, this is really circular.
+	my @phenotypes = $tag_object->Phenotype;
+	my %tags_with_evidence;
+	my @caused_by;
+	foreach my $phenotype (@phenotypes) {	    
+	    next unless $phenotype eq $object;
+	    my %hash = map { $_ => $_->right } eval { $phenotype->col };
+	    
+	    # Keys with evidence
+	    foreach my $tag (qw/Caused_by Caused_by_other Remark/) {
+		if (defined $hash{$tag}) {
+		    my $text     = $self->_pack_obj($hash{$tag});
+		    my $evidence = $self->_get_evidence($hash{$tag});
+		    # This is a string.
+		    if ($tag eq 'Caused_by_other') {
+			$text = "$hash{$tag}";
+		    } 
+
+		    $tags_with_evidence{$tag} = { text     => $text,
+						  evidence => $evidence };
+		}
+	    }
+	}
+	
+	push @caused_by,$tags_with_evidence{Caused_by};
+	push @caused_by,$tags_with_evidence{Caused_by_other};
         push @data_pack, {
-        	transgene => $tag_info,
-        	species => $species_info
+	    transgene => $tag_info,
+		overexpressed_genes => \@oe_genes,
+		remark             => $tags_with_evidence{Remark},
+#		caused_by          => $tags_with_evidence{Caused_by},
+		caused_by          => \@caused_by,
         };
     }
     return \@data_pack;

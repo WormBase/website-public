@@ -60,7 +60,6 @@ IF (fields.previous_addresses.data.defined && fields.previous_addresses.data.siz
 
      FOREACH address IN fields.previous_addresses.data;
           "<p>";
-          address.date_modified;
           TRY; IF address.street_address; address.street_address; END; END;
           TRY; IF address.country; "<br>" ; address.country; END; END;
           TRY; IF address.institution; "<br>" ; address.institution; END; END;

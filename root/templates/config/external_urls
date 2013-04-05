@@ -98,6 +98,12 @@
 		search		= 'http://www.ncbi.nlm.nih.gov/SNP/snp_ss.cgi?ss=%s'
 	}
 
+	do = {
+		description	= 'Disease Ontology'
+		base		= 'http://disease-ontology.org'
+		search		= 'http://disease-ontology.org/term/%s'
+	}
+
 	eggnog = {
 		description	= 'evolutionary genealogy of genes: Non-supervised Orthologous Groups'
 		base		= 'http://eggnog.embl.de/'
@@ -115,6 +121,13 @@
 		search		= 'http://www.ensembl.org/%s/protview?peptide=%s'
 		base		= 'http://www.ensembl.org'
         }
+
+
+	EnsEMBLGenomes	= {
+		description	= 'Ensembl Genomes produces and maintains annotation on selected genomes across the taxonomic space'
+		base		= 'http://www.ensemblgenomes.org'
+		search		= 'http://www.ensemblgenomes.org/search?site=ensembl&q="%s"&genomic_unit=all'
+	}
 
         flybase = {
 		description	= 'FlyBase: a database for drosophila genetics and molecular biology'

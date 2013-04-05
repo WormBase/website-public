@@ -4,12 +4,10 @@
   <form method="post" align="left" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;">
 
     <div class="login-holder">
-        <span id="fade" class="holder">email</span>
-        <input class="email" type="email" name="email" size="28"/>
+        <input class="email" type="email" name="email" placeholder="email" size="28"/>
     </div>
     <div class="login-holder">
-        <span id="fade" class="holder">password</span>
-        <input class="password" type="password" name="password" size="19"/>
+        <input class="password" type="password" name="password" placeholder="password" size="19"/>
         <input type="submit" onClick='var form = $jq(this).closest("#login-form"); return WB.validate_fields(form.find("input.email"), null, form.find("input.password")  );' value="Login" id="login"/>
     </div>
     <div class="login-holder">
@@ -40,16 +38,15 @@
       window.location = "/";
    [% ELSIF prompt_wbid %]
       opener.location.href="[% c.uri_for('/auth/wbid').path %]?redirect=[% redirect %]";
-   [% ELSIF logout || ! operator %]
-      opener.location.reload(1);
    [% ELSE %]
-      var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
-      if(answer) { opener.location.href ="[% c.uri_for(c.controller('auth').action_for('operator')).path %]"; }
-      else { opener.location.reload(1);}
+      opener.location.reload(1);
   [% END %] 
   window.close();
 [% END %]  
 
-WB.hideTextOnFocus(".email");
-WB.hideTextOnFocus(".password");
+if(WB){
+      WB.getPlugin("placeholder", function(){
+        $jq('input, textarea').placeholder();
+      });
+    }
 </script>

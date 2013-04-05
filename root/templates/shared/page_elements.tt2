@@ -3,7 +3,7 @@
 #
 #  Widgets, Fields, Subfields
 #
-####################################################
+####################################################  
 %]
 
 [% MACRO evidence(data, id, text, label) BLOCK %]
@@ -43,26 +43,14 @@
           <div style="padding:0.5em">
             You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login').path %]" >Login</a></h3> to use this feature
           </div>
-        [% lighbox_js %]
+          <script>
+            WB.getPlugin("colorbox", function(){
+              $jq(".lightbox").colorbox();
+            });
+          </script>
     [% END %]
 
 [% END %]
-
-[% MACRO lighbox_js BLOCK %]
-           <script>
-window.onload = getBox;
-function getBox(){
-  WB.getPlugin("colorbox", function(){
-    $jq(".lightbox").colorbox();
-  });
-}
-
-getBox();
-          </script>
-
-[% END %]
-
-
 
 [% BLOCK toggle %]
     <div class="toggle [% IF lazy; 'load-toggle'; END; %]" 
@@ -266,13 +254,12 @@ END;
     [% TRY; IF (key && !fields.$key.defined('data')) || disabled; " disabled "; END; END;%]
 
         ">
-        [% IF title %]
          <div class="field-title">
                   <span title="[% tooltip ? tooltip : fields.$key.description %]">
-                     [% title _ ': '%]
+                     [% IF title ; title _ ': '; END; %]
                    </span>
           </div>
-        [% END %]
+
           <div class="field-content">
              [% content %]
           </div>
@@ -492,12 +479,12 @@ END; %]
 
 
 [% MACRO show_genotype(obj) BLOCK;
-	genstr = obj.str;
-	FOREACH key IN obj.data.keys.sort;
-	    lnk = tag2link(obj.data.$key);
-	    genstr = genstr.replace(key.replace('\-', '\-'), lnk);
-	END;
-	genstr;    
+   genstr = obj.str;
+   FOREACH key IN obj.data.keys.sort;
+       lnk = tag2link(obj.data.$key);
+       genstr = genstr.replace(key.replace('\-', '\-'), lnk);
+   END;
+  markup_var(genstr);
 END; %]
 
 [% MACRO cell_content(cell) BLOCK;
@@ -667,7 +654,8 @@ END; %]
 %]
 [% BLOCK olark %]
 <!-- begin olark code --><script data-cfasync="false" type='text/javascript'>/*{literal}<![CDATA[*/
-window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){f[z]=function(){(a.s=a.s||[]).push(arguments)};var a=f[z]._={},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={0:+new Date};a.P=function(u){a.p[u]=new Date-a.p[0]};function s(){a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{b.contentWindow[g].open()}catch(w){c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{var t=b.contentWindow[g];t.write(p());t.close()}catch(x){b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
+window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){f[z]=function(){(a.s=a.s||[]).push(arguments)};var a=f[z]._={},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={0:+new Date};a.P=function(u){a.p[u]=new Date-a.p[0]};function s(){a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){b.src="javascript:
+false"}b.allowTransparency="true";v[j](b);try{b.contentWindow[g].open()}catch(w){c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{var t=b.contentWindow[g];t.write(p());t.close()}catch(x){b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
 /* custom configuration goes here (www.olark.com/documentation) */
 olark.identify('2761-632-10-6316');/*]]>{/literal}*/</script><noscript><a href="https://www.olark.com/site/2761-632-10-6316/contact" title="Contact us" target="_blank">Questions? Feedback?</a> powered by <a href="http://www.olark.com?welcome" title="Olark live chat software">Olark live chat software</a></noscript><!-- end olark code -->
 [% END %]
@@ -840,23 +828,36 @@ END;
      # The Laboratory field
      # Expects the stash to contain the "laboratory" key.
      WRAPPER $field_block title="$title"||'Laboratory' key="laboratory";
-         tag2link(fields.laboratory.data.0.laboratory);
- 
-         # Include the lab representative, if one exists         
-         IF fields.laboratory.data.0.representative;
-              "<br /> (" ; 
-              tag2link(fields.laboratory.data.0.representative); 
-              ")" ; 
-         END;
+         FOREACH index IN [0..fields.laboratory.data.max];
+         
+			lab = fields.laboratory.data.$index;
+			'<div style="white-space:nowrap;">';
+			tag2link(lab.laboratory);
+			'</div>';
+			
+			# Include the lab representative, if one exists         
+			IF lab.representative;
+				"(" ; 
+				tag2link(lab.representative); 
+				")" ; 
+			END;
+			
+			IF index != fields.laboratory.data.max;
+				'<br /><br />';
+			END;
 
-	 # HACK! On strain pages, link directly to the CGC
-	 IF title == "Available From";
-	     IF	fields.laboratory.data.0.laboratory.label.match('CGC');
-	        '<br /><a href="http://www.cbs.umn.edu/CGC/" target="_blank">Visit the CGC home page</a>.';
-             END;
-	 END;	 
+		 END;
+         
+ 
+		 # HACK! On strain pages, link directly to the CGC
+		 IF title == "Available From";
+			IF	fields.laboratory.data.0.laboratory.label.match('CGC');
+				'<br /><a href="http://www.cbs.umn.edu/CGC/" target="_blank">Visit the CGC home page</a>.';
+			END;
+		 END;	 
      END;
   END;
+  
 %]
 
 [%# 
@@ -904,7 +905,7 @@ END;
    contents = '';
    IF fields.remarks.data.0.defined('text');
       FOREACH obj IN fields.remarks.data;
-        contents = contents _ evidence(obj.evidence, '', obj.text);
+        contents = contents _ evidence(obj.evidence, '', obj.text) _ '<br />';
       END;
    ELSE;
       contents = contents _ markup(fields.remarks.data.join('<br />'),0);
@@ -1063,7 +1064,7 @@ END;
                                          fields.strains.data.carrying_gene_alone,
             "Available from the CGC",    fields.strains.data.available_from_cgc,
             "",                          fields.strains.data.carrying_gene_alone_and_cgc,
-            "Other strains",             fields.strains.data.others);
+            "Other strains",             fields.strains.data.others, "strains");
 
     '<br />';
 
