@@ -1083,8 +1083,8 @@ sub _post_to_github {
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
         
-  my $ptitle = $page->title || $page;
-  my $purl = $page->url || $u;
+  my $ptitle = $page->title || $page if $page;
+  my $purl = $page ? $page->url || $u : $u;
         
 $content .= <<END;
 
@@ -1132,8 +1132,8 @@ sub _issue_email{
     $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . $params->{reporter_name} . ')';
 
     foreach (keys %$params) {	
-	next if $_ eq 'c';
-	$c->stash->{$_} = $params->{$_};
+      next if $_ eq 'c';
+      $c->stash->{$_} = $params->{$_};
     }
     $c->stash->{noboiler} = 1;
     $c->stash->{timestamp} = time();
