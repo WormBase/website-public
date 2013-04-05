@@ -282,7 +282,7 @@ sub history_POST {
       $hist->set_column(visit_count=>(($hist->visit_count || 0) + 1));
       $hist->update;
     }
-#     $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} // $c->user_session->{'history_on'};
+    $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} if defined $c->request->body_parameters->{'history_on'};
 }
 
 

@@ -1,4 +1,3 @@
-
 [% IF c.user_session.history_on == 1 %]
   [% FOREACH h IN c.stash.history %]
     <li>
