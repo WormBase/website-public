@@ -12,7 +12,6 @@ use Storable;
 use MRO::Compat;
 use Time::HiRes qw/gettimeofday tv_interval/;
 use Config::General;
-use Number::Format qw(:subs :vars);
 use URI::Escape;
 
 
@@ -176,7 +175,7 @@ sub search_count {
     # $c->log->debug("query count:" . $query->get_description());
 
     my $mset      = $enq->get_mset( 0, 500000 );
-    return format_number($mset->get_matches_estimated());
+    return $mset->get_matches_estimated();
 }
  
  
