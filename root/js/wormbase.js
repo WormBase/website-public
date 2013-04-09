@@ -1430,7 +1430,7 @@ var Scrolling = (function(){
         });
         var content = $jq("#issues-new");
         content.children().remove();
-        content.append("<p><h2>Thank you for helping WormBase</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
+        content.append("<p><h2>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
         return false;
    },
    isDelete: function(button){
