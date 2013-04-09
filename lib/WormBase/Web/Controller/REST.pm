@@ -273,6 +273,7 @@ sub history_POST {
     if($c->user_session->{'history_on'} || 0 == 1){
       my $session = $self->_get_session($c);
       my $url = $c->request->body_parameters->{'ref'};
+      return unless $url;
       my $name = URI::Escape::uri_unescape($c->request->body_parameters->{'name'});
       my $is_obj = $c->request->body_parameters->{'is_obj'};
 
@@ -1215,7 +1216,8 @@ sub _get_search_result {
     my $id = uri_unescape($parts[-1]);
     $c->log->debug("class: $class, id: $id");
 
-    return $api->xapian->_get_tag_info($c, $id, $class, 1, $footer);
+    my $ret = $api->xapian->_get_tag_info($c, $id, $class, 1, $footer);
+    return $ret unless($ret->{name}{id} ne $id || $ret->{name}{class} ne $class || ($ret->{name}{taxonomy} && $ret->{name}{taxonomy} ne $parts[-3]));
   }
 
   return { 'name' => {  url => $page->url, 
