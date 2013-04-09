@@ -224,8 +224,7 @@ END;
 [% #get page info %]
 [% BLOCK page_info %]
   [% path = c.req.path %]
-  [% url = c.req.uri.path %]
-
+  [% url = c.req.uri.path.remove('(\/+)$') %]
   [% label = c.req.args.-1 %]
   [% IF (c.action.name == 'index'); label = 'home'; 
     ELSIF c.action.name == 'me'; label = 'my wormbase'; 
