@@ -1425,7 +1425,10 @@ var Scrolling = (function(){
                   content.append(data.message);
               },
           error: function(xhr,status,error) {
-             alert("Sorry! Submitting this issue was unsuccessful :( Please email help@wormbase.org with your query. \n" + " " + status + " " + error);
+                  var content = $jq("#issues-new"),
+                      error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                  content.append('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p>' + error + '</p></div>');
               }
         });
         var content = $jq("#issues-new");
@@ -1446,7 +1449,7 @@ var Scrolling = (function(){
               url : url,
               data: {method:"delete",issues:id.join('_')}, 
               success: function(data){
-                  window.location.reload(1);
+                window.location.reload(1);
               },
               error: function(request,status,error) {
                   alert(request + " " + status + " " + error );
