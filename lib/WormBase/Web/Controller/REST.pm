@@ -849,7 +849,6 @@ sub widget_static_POST {
 
       #only admins can delete
       if($c->req->params->{delete} && $c->check_user_roles("admin")){ 
-        die "no delete!";
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->delete();
         $widget->update();
