@@ -41,7 +41,7 @@
 
           <div>
             <select name="email[subject]" id="issue-title" class="valid">
-              <option value="-" style="display:none">Type of Question / Comment</option>
+              <option value="" style="display:none">Type of Question / Comment</option>
               <option value="Bug Report">Bug Report</option>
               <option value="Feature Request">Feature Request</option>
               <option value="Content Correction">Content Correction</option>
