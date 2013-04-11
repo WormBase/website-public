@@ -189,7 +189,6 @@ sub get_user_info_GET{
 
   my $api = $c->model('WormBaseAPI');
   my $object = $api->fetch({ class => 'Person', name  => $name });
-
   my $message;
   my $status_ok;
   my @users = $c->model('Schema::User')->search({wbid=>$name, wb_link_confirm=>1});
@@ -845,12 +844,12 @@ sub widget_static_GET {
 
 sub widget_static_POST {
     my ($self,$c,$widget_id) = @_; 
-
     #only admins and curators can modify widgets
     if($c->check_any_user_role(qw/admin curator editor/)){ 
 
       #only admins can delete
       if($c->req->params->{delete} && $c->check_user_roles("admin")){ 
+        die "no delete!";
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->delete();
         $widget->update();
@@ -1084,8 +1083,8 @@ sub _post_to_github {
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
         
-  my $ptitle = $page->title || $page if $page;
-  my $purl = $page ? $page->url || $u : $u;
+  my $ptitle = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->title : $page;
+  my $purl = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->url || $u : $u;
         
 $content .= <<END;
 
