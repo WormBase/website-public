@@ -324,10 +324,6 @@ END;
      
 [% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns) BLOCK %]
 
-       <script type="text/javascript" >
-    console.log([% table_name %]);
-    </script>
-
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
        IF rows.size < 11 || (rows.size < 31 && table_headers.size < 3);
