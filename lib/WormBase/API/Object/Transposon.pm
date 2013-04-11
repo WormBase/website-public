@@ -123,7 +123,7 @@ sub _build__segments {
 
     # Yuck. Still have some species specific stuff here.
 
-    if (@$sequences and $species =~ /briggsae/) {
+    if ($sequences and $species =~ /briggsae/) {
         if (@segments = map {$dbh->segment(CDS => "$_")} @$sequences
             or @segments = map {$dbh->segment(Pseudogene => "$_")} @$sequences) {
             return \@segments;
@@ -151,7 +151,7 @@ sub gene {
 
 sub sequence {
     my ($self) = @_;
-    my @sequence = map {$self->_pack_obj($_)} @{$self->sequences};
+    my @sequence = map {$self->_pack_obj($_)} @{$self->sequences} if $self->sequences;
     return {
         description => 'Sequences associated with this transposon',
         data        => @sequence ? \@sequence : undef,

@@ -153,8 +153,12 @@
                 print.html('');
                 location.href=data;
               },
-              error: function(request,status,error) {
-                alert(request + " " + status + " " + error );
+              error: function(xhr,status,error) {
+                var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                print.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p><a href="/tools/support?url=' + location.pathname 
+                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                  + '">Let us know</a></p><p>' + error + '</p></div>');
               }
             });
       });
@@ -274,8 +278,12 @@
 
                           }
                       },
-                    error: function(request,status,error) {
-                        alert(request + " " + status + " " + error );
+                    error: function(xhr,status,error) {
+                        var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                        $jq(".error").prepend('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                          + '<p><a href="/tools/support?url=' + location.pathname 
+                          + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                          + '">Let us know</a></p><p>' + error + '</p></div>');
                       }
                 });
                 $jq(this).parent().parent().addClass("ui-state-highlight");
@@ -1357,8 +1365,12 @@ var Scrolling = (function(){
             feed.find(".comment-content").val("write a comment...");
             updateCounts(url);
               },
-          error: function(request,status,error) {
-                alert(request + " " + status + " " + error);
+          error: function(xhr,status,error) {
+                var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                $jq("#comments").prepend('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p><a href="/tools/support?url=' + location.pathname 
+                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                  + '">Let us know</a></p><p>' + error + '</p></div>');
               }
         });
         var box = $jq('<div class="comment-box"><a href="/me">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
@@ -1377,8 +1389,13 @@ var Scrolling = (function(){
         success: function(data){
                       updateCounts(url);
           },
-        error: function(request,status,error) {
-            alert(request + " " + status + " " + error );
+        error: function(xhr,status,error) {
+            var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                $jq("#comments").prepend('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p><a href="/tools/support?url=' + location.pathname 
+                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                  + '">Let us know</a></p><p>' + error + '</p></div>');
+            cm.innerHTML(error);
           }
       });
       cm.parent().remove(); 
@@ -1407,7 +1424,6 @@ var Scrolling = (function(){
           return;
         }
 
-
         $jq.ajax({
           type: 'POST',
           url: rel,
@@ -1425,54 +1441,15 @@ var Scrolling = (function(){
                   content.append(data.message);
               },
           error: function(xhr,status,error) {
-             alert("Sorry! Submitting this issue was unsuccessful :( Please email help@wormbase.org with your query. \n" + " " + status + " " + error);
+                  var content = $jq("#issues-new"),
+                      error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                  content.append('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p>' + error + '</p></div>');
               }
         });
         var content = $jq("#issues-new");
         content.children().remove();
-        content.append("<p><h2>Thank you for helping WormBase</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
-        return false;
-   },
-   isDelete: function(button){
-      var url = button.attr("rel"),
-          id = new Array();
-      $jq(".issue-deletebox").filter(":checked").each(function(){
-         id.push($jq(this).attr('name'));
-      });
-      var answer = confirm("Do you really want to delete these issues: #"+id.join(' #'));
-      if(answer){
-        $jq.ajax({
-              type: "POST",
-              url : url,
-              data: {method:"delete",issues:id.join('_')}, 
-              success: function(data){
-                  window.location.reload(1);
-              },
-              error: function(request,status,error) {
-                  alert(request + " " + status + " " + error );
-            }
-          });
-      } 
-   },
-   update: function(is, issue_id){
-          var url= is.attr("rel"),
-              thread = is.closest('#threads-new');
-          $jq.ajax({
-            type: 'POST',
-            url: url,
-            data: { content: $jq("textarea").val(),
-                    issue:issue_id,
-                    state:$jq("#issue_status option:selected").val(),
-                    severity:$jq("#issue_severity option:selected").val(),
-                    assigned_to:$jq("#issue_assigned_to option:selected").val()},
-            success: function(data){
-                      window.location.reload();  
-                },
-            error: function(request,status,error) {
-    // I don't know why this always throws an error if everything goes well....
-//                       alert(request + " " + status + " " + error);
-                }
-          });
+        content.append("<p><h2>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
         return false;
    }
   }
@@ -1494,8 +1471,12 @@ var Scrolling = (function(){
               success: function(data){
                     StaticWidgets.reload(widget_id, 0, data.widget_id);
                 },
-              error: function(request,status,error) {
-                  alert(request + " " + status + " " + error );
+              error: function(xhr,status,error) {
+                var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                widget.find(".content").html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p><a href="/tools/support?url=' + location.pathname 
+                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                  + '">Let us know</a></p><p>' + error + '</p></div>');
                 }
           }); 
     },
@@ -1533,8 +1514,12 @@ var Scrolling = (function(){
           success: function(data){
             $jq("#nav-static-widget-" + widget_id).click().hide();
           },
-          error: function(request,status,error) {
-            alert(request + " " + status + " " + error );
+          error: function(xhr,status,error) {
+              var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+              $jq("li#static-widget-" + widget_id).find(".content").html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                + '<p><a href="/tools/support?url=' + location.pathname 
+                + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                + '">Let us know</a></p><p>' + error + '</p></div>');
           }
         }); 
       }
