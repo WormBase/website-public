@@ -28,8 +28,8 @@
 <table   width="100%" >
 		<tr>
 <td>
-[% 
-   user_login_info;
+[%
+    user_login_info;
    IF c.user_exists;
       linkUser(c.user,'suppress_social_links'); 
       ' says: <input style="display:none" id="display-name" value="' _ c.user.username _ '" />';
@@ -40,7 +40,7 @@
 				 
 		<tr>
 			<td>
-				<textarea class="issue-text comment-content" id="comment-content-[% widget %]" rows="10" [% UNLESS c.user_exists; 'disabled=1'; END %]>write a comment...</textarea>
+				<textarea class="issue-text comment-content" id="comment-content-[% widget %]" placeholder="write a comment..." rows="10" [% UNLESS c.user_exists; 'disabled=1'; END %]></textarea>
 			</td>
 		</tr>
 	</table>
@@ -55,15 +55,11 @@
 <script>
   (function(){
   var contentBox = $jq(".comment-content"),
-      contentBoxDefault = "write a comment..."
-
   contentBox.bind('focus',function() {
-    if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
     $jq(".comment-submit").show();
   });
   contentBox.bind('blur',function() {
     if($jq(this).val().trim() == "") {
-      $jq(this).attr("value",contentBoxDefault);
       $jq(".comment-submit").hide();
     }
   });
