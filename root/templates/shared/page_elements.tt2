@@ -224,8 +224,7 @@ END;
 [% #get page info %]
 [% BLOCK page_info %]
   [% path = c.req.path %]
-  [% url = c.req.uri.path %]
-
+  [% url = c.req.uri.path.remove('(\/+)$') %]
   [% label = c.req.args.-1 %]
   [% IF (c.action.name == 'index'); label = 'home'; 
     ELSIF c.action.name == 'me'; label = 'my wormbase'; 
@@ -303,7 +302,7 @@ END;
 [% MACRO build_data_table BLOCK;
 
       local_data = passed_data ? passed_data : fields.$key.data;
-
+      key = key || widget;
       headers = [];
       FOREACH o IN order; headers.push(columns.$o); END;
 
@@ -324,6 +323,7 @@ END;
 %]
      
 [% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns) BLOCK %]
+
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
        IF rows.size < 11 || (rows.size < 31 && table_headers.size < 3);
