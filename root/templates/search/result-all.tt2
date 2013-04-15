@@ -94,7 +94,13 @@
       <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search('SearchResult'); return false;" value="">
     </div>
   </form>
-<span id="search-more"><a href="[% c.uri_for("/search").path %][% IF query; "?q=$query"; END; %]">more options</a></span>
+<span id="search-more">
+  [% IF type == 'issue' %]
+      <a href="[% c.uri_for("/tools/support").path %]">create an issue</a>
+  [% ELSE %]
+  <a href="[% c.uri_for("/search").path %][% IF query; "?q=$query"; END; %]">more options</a>
+  [% END %]
+</span>
 <br style="clear:both" />
 
       </h2>
@@ -143,6 +149,19 @@
             </li>
         [% END %]
         </div>
+      [% END %]
+      [% IF type == 'issue' %]
+        [% FOREACH s IN ['open', 'closed'] %]
+            [% searchurl = "/search/issue/" _ query _ "/1?inline=1&state=" _ s %]
+            <li class="load-results [%IF s=='open'; 'ui-selected'; END; %]" href="[% searchurl %]">
+              <a href="[% searchurl %]">[% s %] issues</a> 
+              <span class="ui-icon ui-icon-close"></span>
+            </li>
+            
+        [% END %]
+        <li>  
+        <a href="[% c.uri_for("/tools/support").path %]">create an issue</a>
+      </li>
       [% END %]
       [% IF( !(species) && (c.config.sections.species.$type.defined || type == 'all') )%]
              <li class="title toggle ui-helper-hidden">Species<span class="ui-icon ui-icon-triangle-1-s"></span></li><div>

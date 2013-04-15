@@ -1,10 +1,23 @@
-
+ [% USE date(format = '%l:%M%P, %d %b %y', locale = 'en_GB') %]
+ [% USE time_dir = Time.Duration %]
+[% MACRO git_user(user) BLOCK %]
+  [% IF user.login %]
+<img width="15px" src="[% user.avatar_url %]"/ > [% external_link(user.html_url, user.login)%] 
+  [% ELSE %]
+      [% user %]
+  [% END %]
+[% END %]
 
 <div id="page-count" data-count="[% c.stash.count %]"></div>
 [% IF (page && page > 1) %]
  [% IF results.size > 0 %]<br /><b style="padding-left:0.5em;">Page [% page %] </b>[% END %]
 [% END %]
 [% FOREACH item IN results %]
+
+
+[% IF type == 'issue' %]
+      [% PROCESS "search/issue.tt2" %]
+[% ELSE %]
 
  <div class="result [% UNLESS nostar %]tip-simple star[% END %] result-[% type %]" tip="save">
  [% class = item.name.class || 'page' %]
@@ -59,5 +72,8 @@
     [% error %]
   [% END %]
   </div>
+
+
+  [% END %]
 [% END %]
 

@@ -45,17 +45,18 @@
     [% IF results.size > 0 %]
     [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title FILTER lcfirst %]
 
-      <div id="fade">about <span id="count">[% c.stash.count%]</span> 
+      <div id="fade">about <span id="count">[% c.stash.count %]</span> 
         [% UNLESS type == 'all'; pluralize(lowerClass, results.size) _ ' found'; ELSE; 'results'; END; %]
         [% IF querytime; "(" _ querytime _ " seconds)"; END %]
       </div>
     [% ELSE %]
-      Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
+      Sorry, <span id="count">[% results.size %]</span> results found for the [% search_type %] search [% c.stash.query %]
     [% END %]
-
-
-
+  [% ELSIF type == 'issue' %]
+    <div id="fade">searching [% state %] issues </div>
   [% END %]
+
+
   <ul class="results-[% type %]">
     [% PROCESS "search/result_list.tt2" %]
   </ul>
