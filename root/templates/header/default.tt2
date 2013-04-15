@@ -19,48 +19,7 @@
         <div class="system-message" ></div>
       [% END %]
 
-[% UNLESS c.req.uri.path.match('tools/support') %]
-<div id="operator-box-wrap">
-  <div id="issue-box" class="minimize">
-    <div id="issue-box-tab" class="ui-corner-top">
-      <span>
-         Questions, Feedback & Help
-         <span aria-hidden="true" id="issue-icon"></span>
-       </span>
-    </div>
-    <div id="issue-box-content" class="ui-corner-tl">
-      <div id="issues-new">
-          <div>
-            Send us an email and we'll get back to you ASAP. Or you can browse our [% external_link("https://github.com/WormBase/website/issues", "issue tracker") %].
-          </div>
-
-          [% UNLESS c.user_exists %]
-            <div><input id="name" type="text" size="48" placeholder="Name"/></div>
-            <div><input id="email" type="text"  size="48" placeholder="Email (so we can get back to you)"/> </div>
-          [% END %]
-
-          <div>
-            <select name="email[subject]" id="issue-title" class="valid">
-              <option value="" style="display:none">Type of Question / Comment</option>
-              <option value="Bug Report">Bug Report</option>
-              <option value="Feature Request">Feature Request</option>
-              <option value="Content Correction">Content Correction</option>
-              <option value="How Do I ...?">How Do I ...?</option>
-              <option value="My Account">My Account</option>
-              <option value="Everything's broken!">Everything's broken!</option>
-            </select>
-          </div>
-          <div>
-            <textarea class="issue-text" id="issue-content" rows="6" name="content" placeholder="Question?"></textarea>
-          </div>
-          <div id="issue-submit-box">
-            <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% template_title %]" url="[% c.req.uri.path %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
-          </div>
-      </div>
-    </div>
-  </div>
-</div> 
-[% END %]
+  [% PROCESS "boilerplate/issue_box.tt2" %]
 [% PROCESS page_info %]
 
 [% save = object.name.data.class.match('paper') ? 'my_library' : 'reports'%]
