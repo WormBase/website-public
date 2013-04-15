@@ -793,7 +793,7 @@
   }
   
   function allResults(type, species, query, widget){
-    var url = "/search/" + type + "/" + query + "/?inline=1" + (species && "&species=" + species),
+    var url = "/search/" + type + "/" + query + "/1?inline=1" + (species && "&species=" + species),
         allSearch = $jq("#all-search-results"),
         searchSummary = $jq("#search-count-summary"),
         curr = $jq("#curr-ref-text");
@@ -1437,19 +1437,16 @@ var Scrolling = (function(){
                 hash: location.hash,
                 userAgent: window.navigator.userAgent},
           success: function(data){
-                  var content = $jq("#issues-new");
-                  content.append(data.message);
+                  feed.append(data.message);
               },
           error: function(xhr,status,error) {
-                  var content = $jq("#issues-new"),
-                      error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-                  content.append('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+                  feed.append('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p>' + error + '</p></div>');
               }
         });
-        var content = $jq("#issues-new");
-        content.children().remove();
-        content.append("<p><h2>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
+        feed.children().remove();
+        feed.append("<p><h2>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
         return false;
    }
   }
