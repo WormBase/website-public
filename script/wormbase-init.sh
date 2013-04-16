@@ -7,7 +7,9 @@
 # production servers won't have it; staging servers do.
 # We keep our env file outside of the repository to
 # so it doesn't have to be maintained across branches.
-source /usr/local/wormbase/wormbase.env
+#source /usr/local/wormbase/wormbase.env
+
+# $ENV{APP} needs to be set during build.
 
 
 # If the APP environment variable isn't set, 
@@ -77,8 +79,9 @@ else
 fi
 
 
-# General behavior of the app
-export APP_ROOT=/usr/local/wormbase/website
+# The absolute path to our installation.
+CURR_DIR=`pwd`
+export APP_ROOT=$CURR_DIR/../
 
 # Configure our GBrowse App
 export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
