@@ -81,7 +81,7 @@ fi
 
 # The absolute path to our installation.
 CURR_DIR=`pwd`
-export APP_ROOT=$CURR_DIR/../
+export APP_ROOT=$CURR_DIR/..
 
 # Configure our GBrowse App
 export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
