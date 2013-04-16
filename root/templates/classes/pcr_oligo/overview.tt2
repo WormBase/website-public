@@ -107,4 +107,8 @@ END;
           external_link('MRC_geneservice','Source BioScience: ' _ fields.source.data,fields.source.data);
     END;
 
+
+    WRAPPER $field_block title='Assay conditions' key='assay_conditions';
+          fields.assay_conditions.data;
+    END;
 %]
