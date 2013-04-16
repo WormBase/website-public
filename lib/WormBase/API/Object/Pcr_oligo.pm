@@ -53,7 +53,11 @@ sub _build__object_class {
 sub _build_tracks {
     my ($self) = @_;
     my @tracks = qw/PRIMARY_GENE_TRACK OLIGO PCR OSTP CLO/;
-    return \@tracks;
+
+    return {
+        description => 'tracks displayed in GBrowse',
+        data => \@tracks
+    };
 }
 
 
