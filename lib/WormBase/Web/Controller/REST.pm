@@ -1049,7 +1049,7 @@ sub _check_user_info {
 sub _post_to_github {
   my ($self,$c,$content,$email, $name, $title, $page, $userAgent, $u) = @_;
 
-  my $url     = $c->config->{github_issues_url};
+  my $url     = "https://api.github.com/repos/" . $c->config->{github_repo} . "/issues";
 
   # Get a new authorization for the website repo,
   # curl -H "Content-Type: application/json"  -u "tharris" -X POST https://api.github.com/authorizations -d '{"scopes": [ "website" ],"note": "wormbase helpdesk cross-post" }'
