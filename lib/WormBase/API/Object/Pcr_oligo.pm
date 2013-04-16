@@ -49,6 +49,15 @@ sub _build__object_class {
     return $class;
 }
 
+
+sub _build_tracks {
+    my ($self) = @_;
+    my @tracks = qw/PRIMARY_GENE_TRACK OLIGO PCR OSTP CLO/;
+    return \@tracks;
+}
+
+
+
 # satisfy Role::Position requirements
 sub _build__segments {
     my $self = shift;
