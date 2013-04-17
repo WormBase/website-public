@@ -688,11 +688,9 @@ sub blast_details {
       
       # Try fetching the species first with the identification
       # then method then the embedded species
-      my $species = $self->id2species($h);
-      $species  ||= $self->id2species($method);
+      my $species = $h->{hit}->Species || $self->id2species($h) || $self->id2species($method);
       
       # Not all proteins are populated with the species 
-      $species ||= $h->{hit}->Species;
       $species =~ s/^(\w)\w* /$1. /;
       $species =~ /(.*)\.(.*)/;
       
