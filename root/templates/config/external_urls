@@ -1,6 +1,6 @@
 [%#  External URLs currently referenced by WormBase
 
-     Usage: site.external_url.[symbolic_name].base	
+     Usage: site.external_url.[symbolic_name].base  
 
      Note that we also store this information in the database
      but is maintained here for ease of updates between releases.
@@ -22,7 +22,7 @@
         [custom] -> custom pages or searches at the resource
 
 %]
-	
+  
 
 
 [% site.external_urls = {
@@ -61,379 +61,377 @@
        base       = 'http://50.18.180.228:3000'
      }
 
-# Done to here only!
+  cell = {
+    base    = 'http://www.cell.com/'
+    search    = 'http://www.sciencedirect.com/science/article/pii/%s'
+  }
 
-	cell = {
-		base		= 'http://www.cell.com/'
-		search		= 'http://www.sciencedirect.com/science/article/pii/%s'
-	}
+  chebi = {
+    description  = 'Chemical Entities of Biological Interest (ChEBI) is a freely available dictionary of molecular entities focused on small chemical compounds.'
+    base    = 'http://www.ebi.ac.uk/chebi/init.do'
+    search    = 'http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=%s'
+  }
 
-	chebi = {
-		description	= 'Chemical Entities of Biological Interest (ChEBI) is a freely available dictionary of molecular entities focused on small chemical compounds.'
-		base		= 'http://www.ebi.ac.uk/chebi/init.do'
-		search		= 'http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=%s'
-	}
+  ctd = {
+    description  = 'Comparative Toxicogenomic Database advances the understanding of the effects of environmental chemicals on human health and includes manually curated data describing cross-species chemical gene/protein interactions and chemical- and gene- disease relationships to illuminate molecular mechanisms underlying variable susceptibility and environmentally influenced diseases. These data will also provide insights into complex chemical-gene and protein interaction networks.'
+    base    = 'http://ctd.mdibl.org'
+    search    = 'http://ctd.mdibl.org/detail.go?type=chem&acc=%s'
+  }
 
-	ctd = {
-		description	= 'Comparative Toxicogenomic Database advances the understanding of the effects of environmental chemicals on human health and includes manually curated data describing cross-species chemical gene/protein interactions and chemical- and gene- disease relationships to illuminate molecular mechanisms underlying variable susceptibility and environmentally influenced diseases. These data will also provide insights into complex chemical-gene and protein interaction networks.'
-		base		= 'http://ctd.mdibl.org'
-		search		= 'http://ctd.mdibl.org/detail.go?type=chem&acc=%s'
-	}
+  development = {
+    description  = 'Development is a leading primary research journal in the field of developmental biology that is published by The Company of Biologists, a not-for-profit charitable organization run by biologists for the benefit of the biological community.'
+    base    = 'http://dev.biologists.org/'
+    search    = 'http://dev.biologists.org/content/%S'
+  }
 
-	development = {
-		description	= 'Development is a leading primary research journal in the field of developmental biology that is published by The Company of Biologists, a not-for-profit charitable organization run by biologists for the benefit of the biological community.'
-		base		= 'http://dev.biologists.org/'
-		search		= 'http://dev.biologists.org/content/%S'
-	}
+  dbsnp_rs = {
+    description  = 'Single Nucleotide Polymorphism Database - Reference SNP'
+    base    = 'http://www.ncbi.nlm.nih.gov/SNP/'
+    search    = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=%s'
+  }
 
-	dbsnp_rs = {
-		description	= 'Single Nucleotide Polymorphism Database - Reference SNP'
-		base		= 'http://www.ncbi.nlm.nih.gov/SNP/'
-		search		= 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=%s'
-	}
+  dbsnp_ss = {
+    description  = 'Single Nucleotide Polymorphism Database - Submitter SNP'
+    base    = 'http://www.ncbi.nlm.nih.gov/SNP/'
+    search    = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ss.cgi?ss=%s'
+  }
 
-	dbsnp_ss = {
-		description	= 'Single Nucleotide Polymorphism Database - Submitter SNP'
-		base		= 'http://www.ncbi.nlm.nih.gov/SNP/'
-		search		= 'http://www.ncbi.nlm.nih.gov/SNP/snp_ss.cgi?ss=%s'
-	}
+  do = {
+    description  = 'Disease Ontology'
+    base    = 'http://disease-ontology.org'
+    search    = 'http://disease-ontology.org/term/%s'
+  }
 
-	do = {
-		description	= 'Disease Ontology'
-		base		= 'http://disease-ontology.org'
-		search		= 'http://disease-ontology.org/term/%s'
-	}
+  eggnog = {
+    description  = 'evolutionary genealogy of genes: Non-supervised Orthologous Groups'
+    base    = 'http://eggnog.embl.de/'
+    search    = 'http://eggnog.embl.de/cgi_bin/display_multi_clusters.pl?number_of_entries=1&species=auto_detect&1=%s'
+  }
 
-	eggnog = {
-		description	= 'evolutionary genealogy of genes: Non-supervised Orthologous Groups'
-		base		= 'http://eggnog.embl.de/'
-		search		= 'http://eggnog.embl.de/cgi_bin/display_multi_clusters.pl?number_of_entries=1&species=auto_detect&1=%s'
-	}
+  embl = {
+    description  = 'The EMBL Nucleotide Sequence Database constitutes Europe\'s primary nucleotide sequence resource'
+    base    = 'http://www.ebi.ac.uk/embl/'
+    search    = 'http://www.ebi.ac.uk/ena/data/view/%s'
+  }
 
-	embl = {
-		description	= 'The EMBL Nucleotide Sequence Database constitutes Europe\'s primary nucleotide sequence resource'
-		base		= 'http://www.ebi.ac.uk/embl/'
-		search		= 'http://www.ebi.ac.uk/ena/data/view/%s'
-	}
-
-	ensembl = {
-		description	= 'Ensembl produces and maintains automatic annotation on selected eukaryotic genomes'
-		search		= 'http://www.ensembl.org/%s/protview?peptide=%s'
-		base		= 'http://www.ensembl.org'
+  ensembl = {
+    description  = 'Ensembl produces and maintains automatic annotation on selected eukaryotic genomes'
+    search    = 'http://www.ensembl.org/%s/protview?peptide=%s'
+    base    = 'http://www.ensembl.org'
         }
 
 
-	EnsEMBLGenomes	= {
-		description	= 'Ensembl Genomes produces and maintains annotation on selected genomes across the taxonomic space'
-		base		= 'http://www.ensemblgenomes.org'
-		search		= 'http://www.ensemblgenomes.org/search?site=ensembl&q="%s"&genomic_unit=all'
-	}
+  EnsEMBLGenomes  = {
+    description  = 'Ensembl Genomes produces and maintains annotation on selected genomes across the taxonomic space'
+    base    = 'http://www.ensemblgenomes.org'
+    search    = 'http://www.ensemblgenomes.org/search?site=ensembl&q="%s"&genomic_unit=all'
+  }
 
         flybase = {
-		description	= 'FlyBase: a database for drosophila genetics and molecular biology'
-		maintainer	= ''
-		base		= 'http://www.flybase.org'
-		search		= 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
-	}
+    description  = 'FlyBase: a database for drosophila genetics and molecular biology'
+    maintainer  = ''
+    base    = 'http://www.flybase.org'
+    search    = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
+  }
 
-	gadfly = {
-		description	= 'gadfly'
-		maintainer	= ''
-		base		= 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
-		search		= 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
-	}
+  gadfly = {
+    description  = 'gadfly'
+    maintainer  = ''
+    base    = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
+    search    = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
+  }
 
-	gazette = {
-		description	= 'The Worm Breeder\'s Gazette'
-		maintainer	= 'help@wormbook.org'
-		base		= 'http://www.wormbook.org/wbg/'
-	}
+  gazette = {
+    description  = 'The Worm Breeder\'s Gazette'
+    maintainer  = 'help@wormbook.org'
+    base    = 'http://www.wormbook.org/wbg/'
+  }
 
-	gbrowse = {
-		description  = 'The WormBase Genome Browser Image'
-		maintainer   = ''
-		base = c.uri_for('/tools', 'genome', 'gbrowse').path  _ '/'
-		search = c.uri_for('/tools', 'genome', 'gbrowse').path  _ '/%s'
-	}
+  gbrowse = {
+    description  = 'The WormBase Genome Browser Image'
+    maintainer   = ''
+    base = c.uri_for('/tools', 'genome', 'gbrowse').path  _ '/'
+    search = c.uri_for('/tools', 'genome', 'gbrowse').path  _ '/%s'
+  }
 
-	gbrowse_image = {
-		description  = 'The WormBase Genome Browser Image'
-		maintainer   = ''
-		base = c.uri_for('/tools', 'genome', 'gbrowse_img').path  _ '/'
-		search = c.uri_for('/tools', 'genome', 'gbrowse_img').path  _ '/%s'
-	}
+  gbrowse_image = {
+    description  = 'The WormBase Genome Browser Image'
+    maintainer   = ''
+    base = c.uri_for('/tools', 'genome', 'gbrowse_img').path  _ '/'
+    search = c.uri_for('/tools', 'genome', 'gbrowse_img').path  _ '/%s'
+  }
 
-	geo = {
-		description	= 'Gene Expression Omnibus: a public functional genomics data repository supporting MIAME-compliant data submissions. Array- and sequence-based data are accepted. Tools are provided to help users query and download experiments and curated gene expression profiles.'
-		base		= 'http://www.ncbi.nlm.nih.gov/geo/'
-		search		= 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s'
-	}
+  geo = {
+    description  = 'Gene Expression Omnibus: a public functional genomics data repository supporting MIAME-compliant data submissions. Array- and sequence-based data are accepted. Tools are provided to help users query and download experiments and curated gene expression profiles.'
+    base    = 'http://www.ncbi.nlm.nih.gov/geo/'
+    search    = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=%s'
+  }
 
-	gene_knockout_consortium = {
-		description	= 'Gene Knockout Consortium. Members: Oklahoma Medical Research Foundation, The University of British Columbia & The Genome Sciences Centre, Vancouver'
-		base		= 'http://celeganskoconsortium.omrf.org/'
-		email		= 'celeganskoconsortium@omrf.ouhsc.edu'
-		search		= 'http://celeganskoconsortium.omrf.org/variation.aspx?allele=%s'
-	}
+  gene_knockout_consortium = {
+    description  = 'Gene Knockout Consortium. Members: Oklahoma Medical Research Foundation, The University of British Columbia & The Genome Sciences Centre, Vancouver'
+    base    = 'http://celeganskoconsortium.omrf.org/'
+    email    = 'celeganskoconsortium@omrf.ouhsc.edu'
+    search    = 'http://celeganskoconsortium.omrf.org/variation.aspx?allele=%s'
+  }
 
-	gloworm_scene = {
-		description	= 'Repository of annotated multidimensional embryo movies'
-		base		= 'http://glowormnotes.blogspot.com'
-		email		= 'wmohler@neuron.uchc.edu'
-		search		= 'http://fsbill.vcell.uchc.edu/cgi-bin/gloworm.pl?%s'
-	}
+  gloworm_scene = {
+    description  = 'Repository of annotated multidimensional embryo movies'
+    base    = 'http://glowormnotes.blogspot.com'
+    email    = 'wmohler@neuron.uchc.edu'
+    search    = 'http://fsbill.vcell.uchc.edu/cgi-bin/gloworm.pl?%s'
+  }
 
-	'H-INV' = {
-		description	= 'H-Invitational Database (H-InvDB), an integrated database of human genes and transcripts.'
-		base		= 'http://h-invitational.jp/'
-		search		= 'http://h-invitational.jp/hinv/spsoup/transcript_view?hit_id=%s'
-	}
+  'H-INV' = {
+    description  = 'H-Invitational Database (H-InvDB), an integrated database of human genes and transcripts.'
+    base    = 'http://h-invitational.jp/'
+    search    = 'http://h-invitational.jp/hinv/spsoup/transcript_view?hit_id=%s'
+  }
 
-	hi = {
-		description	= 'H-InvDB: Annotated Human Gene Database'
-		search		= 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
-	}
+  hi = {
+    description  = 'H-InvDB: Annotated Human Gene Database'
+    search    = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
+  }
 
-	interpro = {
-		description	= 'InterPro provides an integrated view of the commonly used signature databases'
-		base		= 'http://www.ebi.ac.uk/interpro/'
-		search		= 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s'
-	}
+  interpro = {
+    description  = 'InterPro provides an integrated view of the commonly used signature databases'
+    base    = 'http://www.ebi.ac.uk/interpro/'
+    search    = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s'
+  }
 
-	kegg = {
-		description	= 'KEGG is a database of biological systems, consisting of genetic building blocks of genes and proteins (KEGG GENES), chemical building blocks of both endogenous and exogenous substances (KEGG LIGAND), molecular wiring diagrams of interaction and reaction networks (KEGG PATHWAY), and hierarchies and relationships of various biological objects (KEGG BRITE). KEGG provides a reference knowledge base for linking genomes to biological systems and also to environments by the processes of PATHWAY mapping and BRITE mapping.'
-		base		= 'http://www.genome.jp/kegg'
-		search		= 'http://www.genome.jp/dbget-bin/www_bget?%s'
-	}
+  kegg = {
+    description  = 'KEGG is a database of biological systems, consisting of genetic building blocks of genes and proteins (KEGG GENES), chemical building blocks of both endogenous and exogenous substances (KEGG LIGAND), molecular wiring diagrams of interaction and reaction networks (KEGG PATHWAY), and hierarchies and relationships of various biological objects (KEGG BRITE). KEGG provides a reference knowledge base for linking genomes to biological systems and also to environments by the processes of PATHWAY mapping and BRITE mapping.'
+    base    = 'http://www.genome.jp/kegg'
+    search    = 'http://www.genome.jp/dbget-bin/www_bget?%s'
+  }
 
-	medline = {
-		description	= 'Bibliographic database of life sciences and biomedical information accessed via the PubMed search engine.'
-		base		= 'http://www.ncbi.nlm.nih.gov/pubmed'
-		email		= 'custserv@nlm.nih.gov'
-		search		= 'http://www.ncbi.nlm.nih.gov/pubmed/%s'
-	}
+  medline = {
+    description  = 'Bibliographic database of life sciences and biomedical information accessed via the PubMed search engine.'
+    base    = 'http://www.ncbi.nlm.nih.gov/pubmed'
+    email    = 'custserv@nlm.nih.gov'
+    search    = 'http://www.ncbi.nlm.nih.gov/pubmed/%s'
+  }
 
-	'Midwest Center for Structural Genomics' = {
-		description	= 'The objective of the Midwest Center for Structural Genomics (MCSG) is to develop and optimize new, rapid, integrated methods for highly cost-effective determination of protein structures through X-ray crystallography'
-		base		= 'http://www.mcsg.anl.gov/'
-		search		= 'http://targetdb.pdb.org/servlet/TargetSearch?seqname=Query&id=%s&pdbid=&pfamid=&status=&which_lab=SECSG&which_seq=ALL&Aftermonth=&Afterday=&Afteryear=&Beforemonth=&Beforeday=&Beforeyear=&p_name=&org_name=&Sequence=&evalue=10&format=html&cp=1'
-	}
+  'Midwest Center for Structural Genomics' = {
+    description  = 'The objective of the Midwest Center for Structural Genomics (MCSG) is to develop and optimize new, rapid, integrated methods for highly cost-effective determination of protein structures through X-ray crystallography'
+    base    = 'http://www.mcsg.anl.gov/'
+    search    = 'http://targetdb.pdb.org/servlet/TargetSearch?seqname=Query&id=%s&pdbid=&pfamid=&status=&which_lab=SECSG&which_seq=ALL&Aftermonth=&Afterday=&Afteryear=&Beforemonth=&Beforeday=&Beforeyear=&p_name=&org_name=&Sequence=&evalue=10&format=html&cp=1'
+  }
 
-	mirbase = {
-		description	= 'microRNA Database'
-		base		= 'http://microrna.sanger.ac.uk/'
-		search		= 'http://microrna.sanger.ac.uk/cgi-bin/sequences/mirna_entry.pl?acc=%s'
-	}
+  mirbase = {
+    description  = 'microRNA Database'
+    base    = 'http://microrna.sanger.ac.uk/'
+    search    = 'http://microrna.sanger.ac.uk/cgi-bin/sequences/mirna_entry.pl?acc=%s'
+  }
 
-	modencode = {
-		description	= 'The National Human Genome Research Institute (NHGRI) model organism ENCyclopedia Of DNA Elements (modENCODE) Project will try to identify all of the sequence-based functional elements in the Caenorhabditis elegans and Drosophila melanogaster genomes.'
-		base		= 'http://www.modencode.org'
-		email		= 'help@modencode.org'
-		search		= 'http://submit.modencode.org/submit/public/citation/%s'
-	}
+  modencode = {
+    description  = 'The National Human Genome Research Institute (NHGRI) model organism ENCyclopedia Of DNA Elements (modENCODE) Project will try to identify all of the sequence-based functional elements in the Caenorhabditis elegans and Drosophila melanogaster genomes.'
+    base    = 'http://www.modencode.org'
+    email    = 'help@modencode.org'
+    search    = 'http://submit.modencode.org/submit/public/citation/%s'
+  }
 
-	modencodetissueya_cepsh = {
-		description	= 'MODEncode Genome Browser Wiggle Track for Tissue YA_CEPsh'
-		base		= 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/YA_CEPsh'
-	}
+  modencodetissueya_cepsh = {
+    description  = 'MODEncode Genome Browser Wiggle Track for Tissue YA_CEPsh'
+    base    = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/YA_CEPsh'
+  }
 
-	MRC_geneservice = {
-		description	= 'Supplier of genomic products and contract research company'
-		base		= 'http://www.geneservice.co.uk/products/rnai/index.jsp'
-		search		= 'http://www.lifesciences.sourcebioscience.com/genomecube?kw=%s'
-		email		= 'webmaster@geneservice.co.uk'
-	}
+  MRC_geneservice = {
+    description  = 'Supplier of genomic products and contract research company'
+    base    = 'http://www.geneservice.co.uk/products/rnai/index.jsp'
+    search    = 'http://www.lifesciences.sourcebioscience.com/genomecube?kw=%s'
+    email    = 'webmaster@geneservice.co.uk'
+  }
 
-	national_bioresource_project = {
-		description	= 'National Bioresource Project of Japan. Knockout Alleles'
-		base		= 'http://shigen.lab.nig.ac.jp/c.elegans/index.jsp'
-		email		= 'mitani1@research.twmu.ac.jp'
-		search		= 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
-	}
+  national_bioresource_project = {
+    description  = 'National Bioresource Project of Japan. Knockout Alleles'
+    base    = 'http://shigen.lab.nig.ac.jp/c.elegans/index.jsp'
+    email    = 'mitani1@research.twmu.ac.jp'
+    search    = 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
+  }
 
 
-	ncbi_genome_assembly = {
-	       description     = 'Genome assembly archive at NCBI',
-	       base            = 'http://www.ncbi.nlm.nih.gov/assembly/',
-	       search          = 'http://www.ncbi.nlm.nih.gov/assembly/%s',
+  ncbi_genome_assembly = {
+         description     = 'Genome assembly archive at NCBI',
+         base            = 'http://www.ncbi.nlm.nih.gov/assembly/',
+         search          = 'http://www.ncbi.nlm.nih.gov/assembly/%s',
         }
 
-	ncbi_protein = {
-		description	= 'The Protein database is a collection of sequences from several sources, including translations from annotated coding regions in GenBank, RefSeq and TPA, as well as records from SwissProt, PIR, PRF, and PDB. Protein sequences are the fundamental determinants of biological structure and function.'
-		base		= 'http://www.ncbi.nlm.nih.gov/protein'
-		email		= 'info@ncbi.nlm.nih.gov'
-		search		= 'http://www.ncbi.nlm.nih.gov/protein/%s'
-	}
+  ncbi_protein = {
+    description  = 'The Protein database is a collection of sequences from several sources, including translations from annotated coding regions in GenBank, RefSeq and TPA, as well as records from SwissProt, PIR, PRF, and PDB. Protein sequences are the fundamental determinants of biological structure and function.'
+    base    = 'http://www.ncbi.nlm.nih.gov/protein'
+    email    = 'info@ncbi.nlm.nih.gov'
+    search    = 'http://www.ncbi.nlm.nih.gov/protein/%s'
+  }
 
-	ncbi_pubmed  =	{
-		description	= 'PubMed comprises more than 21 million citations for biomedical literature from MEDLINE, life science journals, and online books. Citations may include links to full-text content from PubMed Central and publisher web sites.'
-		base		= 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
-		search		= 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
-	}
+  ncbi_pubmed  =  {
+    description  = 'PubMed comprises more than 21 million citations for biomedical literature from MEDLINE, life science journals, and online books. Citations may include links to full-text content from PubMed Central and publisher web sites.'
+    base    = 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
+    search    = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
+  }
 
-	ncbi_taxonomy = {
-		description 	= 'NCBI Taxonomy'
-		base		= 'http://www.ncbi.nlm.nih.gov/Taxonomy/'
-		search		= 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s' 
-	}
+  ncbi_taxonomy = {
+    description   = 'NCBI Taxonomy'
+    base    = 'http://www.ncbi.nlm.nih.gov/Taxonomy/'
+    search    = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s' 
+  }
 
-	nemagenetag_consortium = {
-		description	= 'NemaGENETAG Consortium. Transposon insertion project.'
-		base		= 'http://elegans.imbb.forth.gr/nemagenetag/'
-		search		= 'http://pbil.univ-lyon1.fr/segalat/data/mos.php?mode_aff=0&allele_name=%s'
-	}
+  nemagenetag_consortium = {
+    description  = 'NemaGENETAG Consortium. Transposon insertion project.'
+    base    = 'http://elegans.imbb.forth.gr/nemagenetag/'
+    search    = 'http://pbil.univ-lyon1.fr/segalat/data/mos.php?mode_aff=0&allele_name=%s'
+  }
 
-	nemapath = {
-		description	= 'NemaPath provides a nematode view of KEGG pathways'
-		base		= 'http://www.nematode.net/cgi-bin/keggview.cgi'
-		search		= 'http://nematode.net/KEGGscan/cgi-bin/EC_Portal.cgi?EC=%s'
-	}
+  nemapath = {
+    description  = 'NemaPath provides a nematode view of KEGG pathways'
+    base    = 'http://www.nematode.net/cgi-bin/keggview.cgi'
+    search    = 'http://nematode.net/KEGGscan/cgi-bin/EC_Portal.cgi?EC=%s'
+  }
 
-	nembase = {
-		description	= 'A database resource for nematode EST datasets.'
-		base		= 'http://www.nematodes.org/nematodeESTs/nembase.html'
-		search		= 'http://www.nematodes.org/nembase3/cluster.php?cluster=%s'
-	}
+  nembase = {
+    description  = 'A database resource for nematode EST datasets.'
+    base    = 'http://www.nematodes.org/nematodeESTs/nembase.html'
+    search    = 'http://www.nematodes.org/nembase3/cluster.php?cluster=%s'
+  }
 
-	neuralnet = {
-		description	= 'A C. elegans neural network browser by Nikhil Bhatla'
-		base		= 'http://wormweb.org/neuralnet'
-		email		= 'nbhatla@mit.edu'
-		search		= 'http://wormweb.org/neuralnet#%s'
-	}
+  neuralnet = {
+    description  = 'A C. elegans neural network browser by Nikhil Bhatla'
+    base    = 'http://wormweb.org/neuralnet'
+    email    = 'nbhatla@mit.edu'
+    search    = 'http://wormweb.org/neuralnet#%s'
+  }
 
-	neurobrowse = {
-		description	= 'A C. elegans neural network browser based on NBrowse2'
-		email		= 'raymond@caltech.edu'
-		search		= 'http://aquila.bio.nyu.edu/cgi-bin/NBrowseJnlpProd?-q=%s&-d=NEUROBROWSE&-s=New%20Search&-l=Locate%20Node'
-	}
+  neurobrowse = {
+    description  = 'A C. elegans neural network browser based on NBrowse2'
+    email    = 'raymond@caltech.edu'
+    search    = 'http://aquila.bio.nyu.edu/cgi-bin/NBrowseJnlpProd?-q=%s&-d=NEUROBROWSE&-s=New%20Search&-l=Locate%20Node'
+  }
 
-	nlm_mesh = {
-		description	= 'The National Library of Medicine Medical Subject Headings thesaurus. These terms are used by the NLM for indexing articles for the MEDLNE/PubMED database.'
-		base		= 'http://www.nlm.nih.gov/mesh'
-		email		= 'nelson@nlm.nih.gov'
-		search		= 'http://www.nlm.nih.gov/cgi/mesh/2010/MB_cgi?field=uid&term=%s'
-	}
+  nlm_mesh = {
+    description  = 'The National Library of Medicine Medical Subject Headings thesaurus. These terms are used by the NLM for indexing articles for the MEDLNE/PubMED database.'
+    base    = 'http://www.nlm.nih.gov/mesh'
+    email    = 'nelson@nlm.nih.gov'
+    search    = 'http://www.nlm.nih.gov/cgi/mesh/2010/MB_cgi?field=uid&term=%s'
+  }
 
-	omim = {
-		description	= 'OMIM: Online Mendelian Inheritance in Man'
-		maintainer	= 'info@ncbi.nlm.nih.gov'
-		base		= 'http://omim.org'
-		search		= 'http://omim.org/entry/%s'
-	}
+  omim = {
+    description  = 'OMIM: Online Mendelian Inheritance in Man'
+    maintainer  = 'info@ncbi.nlm.nih.gov'
+    base    = 'http://omim.org'
+    search    = 'http://omim.org/entry/%s'
+  }
 
-	pfam = {
-		description	= 'Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains and families'
-		base		= 'http://pfam.sanger.ac.uk/'
-		email		= 'pfam-help@sanger.ac.uk'
-		search		= 'http://pfam.sanger.ac.uk/family/%s'
-	}
+  pfam = {
+    description  = 'Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains and families'
+    base    = 'http://pfam.sanger.ac.uk/'
+    email    = 'pfam-help@sanger.ac.uk'
+    search    = 'http://pfam.sanger.ac.uk/family/%s'
+  }
 
-	Phenobank2 = {
-		base		= 'http://worm.mpi-cbg.de/phenobank2/cgi-bin/MenuPage.py'
-		maintainer	= ''
-	}
+  Phenobank2 = {
+    base    = 'http://worm.mpi-cbg.de/phenobank2/cgi-bin/MenuPage.py'
+    maintainer  = ''
+  }
 
-	phosphopep = {
-		description	= 'PhospoPep is a project to support systems biology signaling research in D. melanogaster and other organisms. It contains phosphorylation site data generated by the Aebersold group at the Swiss Federal Institute of Technology (ETH) in collaboration with the Functional Genomics Center (FGCZ) in Zurich, Switzerland, and the Institute for Systems Biology (ISB) in Seattle, Washington, USA.'
-		maintainer	= ''
-		email		= 'bodenmiller@imsb.biol.ethz.ch'
-		base		= 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi',
-		search		= 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
-	}
+  phosphopep = {
+    description  = 'PhospoPep is a project to support systems biology signaling research in D. melanogaster and other organisms. It contains phosphorylation site data generated by the Aebersold group at the Swiss Federal Institute of Technology (ETH) in collaboration with the Functional Genomics Center (FGCZ) in Zurich, Switzerland, and the Institute for Systems Biology (ISB) in Seattle, Washington, USA.'
+    maintainer  = ''
+    email    = 'bodenmiller@imsb.biol.ethz.ch'
+    base    = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi',
+    search    = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
+  }
 
-	reactome = {
-		description	= 'an online resource of curated pathways'
-		maintainer	= ''
-		base		= 'http://www.reactome.org/'
-		search		= 'http://www.reactome.org/cgi-bin/search?QUERY=%s&QUERY_CLASS=DatabaseIdentifier'
-	}
+  reactome = {
+    description  = 'an online resource of curated pathways'
+    maintainer  = ''
+    base    = 'http://www.reactome.org/'
+    search    = 'http://www.reactome.org/cgi-bin/search?QUERY=%s&QUERY_CLASS=DatabaseIdentifier'
+  }
 
-	remanei_prerelease = {
-		description	= 'WormBase Caenorhabditis remanei prerelease gene models and draft assembly. Data is subject to change with publication of a final assembly.'
-		base		= 'http://wormbase.org/db/seq/gbrowse/remanei/'
-		search		= 'http://www.wormbase.org/db/seq/gbrowse/remanei/?name=%s'
-	}
+  remanei_prerelease = {
+    description  = 'WormBase Caenorhabditis remanei prerelease gene models and draft assembly. Data is subject to change with publication of a final assembly.'
+    base    = 'http://wormbase.org/db/seq/gbrowse/remanei/'
+    search    = 'http://www.wormbase.org/db/seq/gbrowse/remanei/?name=%s'
+  }
 
-	rfam = {
-		description	= 'The Rfam database is a collection of RNA families, each represented by multiple sequence alignments, consensus secondary structures and covariance models (CMs).'
-		base		= 'http://rfam.sanger.ac.uk/'
-		email		= 'rfam-help@sanger.ac.uk'
-		search		= 'http://rfam.sanger.ac.uk/family?acc=%s'
-	}
+  rfam = {
+    description  = 'The Rfam database is a collection of RNA families, each represented by multiple sequence alignments, consensus secondary structures and covariance models (CMs).'
+    base    = 'http://rfam.sanger.ac.uk/'
+    email    = 'rfam-help@sanger.ac.uk'
+    search    = 'http://rfam.sanger.ac.uk/family?acc=%s'
+  }
 
-	secsg = {
-		description	= 'The Southeast Collaboratory for Structural Genomics'
-		base		= 'http://www.secsg.org/'
-		search		= ''
-	}
+  secsg = {
+    description  = 'The Southeast Collaboratory for Structural Genomics'
+    base    = 'http://www.secsg.org/'
+    search    = ''
+  }
 
-	sgd = {
-		description	= 'GO Term finder - Stanford University. SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
-		search		= 'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
-		base		= 'http://genome-www4.stanford.edu'
-	}
+  sgd = {
+    description  = 'GO Term finder - Stanford University. SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
+    search    = 'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
+    base    = 'http://genome-www4.stanford.edu'
+  }
 
-	sra = {
-		description	= 'The Sequence Read Archive (SRA) stores raw sequencing data from the next generation of sequencing platforms including Roche 454 GS System®, Illumina Genome Analyzer®, Applied Biosystems SOLiD® System, Helicos Heliscope®, Complete Genomics®, and Pacific Biosciences SMRT®.'
-		base		= 'http://www.ncbi.nlm.nih.gov/sra'
-		search		= 'http://www.ncbi.nlm.nih.gov/sra?term=%s'
-	}
+  sra = {
+    description  = 'The Sequence Read Archive (SRA) stores raw sequencing data from the next generation of sequencing platforms including Roche 454 GS System®, Illumina Genome Analyzer®, Applied Biosystems SOLiD® System, Helicos Heliscope®, Complete Genomics®, and Pacific Biosciences SMRT®.'
+    base    = 'http://www.ncbi.nlm.nih.gov/sra'
+    search    = 'http://www.ncbi.nlm.nih.gov/sra?term=%s'
+  }
 
-	swissprot = {
-		description	= 'SwissProt is a curated protein sequence database which strives to provide a high level of annotation (such as the description of the function of a protein, its domains structure, post-translational modifications, variants, etc.), a minimal level of redundancy and high level of integration with other databases'
-		base		= 'http://expasy.org/sprot'
-		email		= 'swiss-prot@expasy.org'
-		search		= 'http://www.expasy.org/uniprot/%s'
-	}
+  swissprot = {
+    description  = 'SwissProt is a curated protein sequence database which strives to provide a high level of annotation (such as the description of the function of a protein, its domains structure, post-translational modifications, variants, etc.), a minimal level of redundancy and high level of integration with other databases'
+    base    = 'http://expasy.org/sprot'
+    email    = 'swiss-prot@expasy.org'
+    search    = 'http://www.expasy.org/uniprot/%s'
+  }
 
-	treefam  = {
-		description	= 'TreeFam (Tree families database) is a database of phylogenetic trees of animal genes. It aims at developing a curated resource that gives reliable information about ortholog and paralog assignments, and evolutionary history of various gene families.'
-		maintainer	= ''
-		base		= 'http://www.treefam.org/'
-		search		= 'http://www.treefam.org/cgi-bin/TFinfo.pl?ac=%s'
-		image		= 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
-	}
+  treefam  = {
+    description  = 'TreeFam (Tree families database) is a database of phylogenetic trees of animal genes. It aims at developing a curated resource that gives reliable information about ortholog and paralog assignments, and evolutionary history of various gene families.'
+    maintainer  = ''
+    base    = 'http://www.treefam.org/'
+    search    = 'http://www.treefam.org/cgi-bin/TFinfo.pl?ac=%s'
+    image    = 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
+  }
 
-	trembl = {
-		description	= 'TrEMBL is a computer-annotated supplement of Swiss-Prot that contains all the translations of EMBL nucleotide sequence entries not yet integrated in Swiss-Prot.'
-		base		= 'http://expasy.org/sprot'
-		email		= 'swiss-prot@expasy.org'
-		search		= 'http://www.expasy.org/uniprot/%s'
-	}
+  trembl = {
+    description  = 'TrEMBL is a computer-annotated supplement of Swiss-Prot that contains all the translations of EMBL nucleotide sequence entries not yet integrated in Swiss-Prot.'
+    base    = 'http://expasy.org/sprot'
+    email    = 'swiss-prot@expasy.org'
+    search    = 'http://www.expasy.org/uniprot/%s'
+  }
 
-	ucsc_genome_browser = {
-	      description = 'The UCSC Genome Browser',
-	      base        = 'http://genome.ucsc.edu/cgi-bin/hgGateway',
-	      search      = 'http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=%s',
-	}
+  ucsc_genome_browser = {
+        description = 'The UCSC Genome Browser',
+        base        = 'http://genome.ucsc.edu/cgi-bin/hgGateway',
+        search      = 'http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=%s',
+  }
 
-	UniProt = {
-		description	= 'UniProt | The Universal Protein Resource | EBI. The mission of UniProt is to provide the scientific community with a comprehensive, high-quality and freely accessible resource of protein sequence and functional information.'
-		maintainer	= ''
-		base		= 'http://www.ebi.ac.uk/uniprot'
-		search		= 'http://www.ebi.uniprot.org/entry/%s'
-	}
+  UniProt = {
+    description  = 'UniProt | The Universal Protein Resource | EBI. The mission of UniProt is to provide the scientific community with a comprehensive, high-quality and freely accessible resource of protein sequence and functional information.'
+    maintainer  = ''
+    base    = 'http://www.ebi.ac.uk/uniprot'
+    search    = 'http://www.ebi.uniprot.org/entry/%s'
+  }
 
-	wormatlas = {
-		description	= 'A C. elegans database of behavioral and structural anatomy'
-		base		= 'http://wormatlas.org/'
-		search		= 'http://wormatlas.org/%s'
-	}
+  wormatlas = {
+    description  = 'A C. elegans database of behavioral and structural anatomy'
+    base    = 'http://wormatlas.org/'
+    search    = 'http://wormatlas.org/%s'
+  }
 
-	wormbook = {
-		description	= 'WormBook: The online reference for C. elegans and related nematodes'
-		maintainer	= 'help@wormbook.org'
-		base		= 'http://www.wormbook.org/'
-		search		= 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
-	}
+  wormbook = {
+    description  = 'WormBook: The online reference for C. elegans and related nematodes'
+    maintainer  = 'help@wormbook.org'
+    base    = 'http://www.wormbook.org/'
+    search    = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
+  }
 
-	wormpep = {
-		description	= 'WORMPEP is the C.elegans protein set'
-		base		= 'http://www.wormbase.org'
-		maintainer		= 'help@wormbase.org'
-		search		= 'http://www.wormbase.org/db/seq/protein?name=%s'
-	}
+  wormpep = {
+    description  = 'WORMPEP is the C.elegans protein set'
+    base    = 'http://www.wormbase.org'
+    maintainer    = 'help@wormbase.org'
+    search    = 'http://www.wormbase.org/db/seq/protein?name=%s'
+  }
 
 
     WormQTL = {
@@ -478,168 +476,4 @@
 [%
 # The DOI resolver for WormBook chapters
 $DOI             = 'http://dx.doi.org/';
-%]
-
-[%# MIGRATING THESE URLs ON AN AS-NEEDED BASIS 
-
-   genomic_location 
-           = { description  = 'The WormBase Genome Browser'
-               maintainer   = 'WormBase'
-               email        = 'help@wormbase.org',
-          #     base         = 'http://www.wormbase.org/db/gb2/gbrowse/'
-          #     search       = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
-               # base         = '/gb2/gbrowse/'
-	        #search      = '/gb2/gbrowse/%s'   
-                base         = '/tools/genome/gbrowse/'
-            search      = '/tools/genome/gbrowse/%s'   
-             }
-
-        ensembl = { base = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s' }
-
-	ncbi_genbank     = { base              = 'http://www.ncbi.nlm.nih.gov'
-		     nucleotide_search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s'
-		   }
-
-	
-        sgd     = { base=  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s' }
-		 
-        wp      ={ base = '/db/seq/protein?class=Protein;name=WP:%s' }
-		  
-        bp      ={ base = '/db/seq/protein?class=Protein;name=BP:%s' }
-		  
-        vg      ={ base = 'http://vega.sanger.ac.uk/Homo_sapiens/protview?peptide=%s&amp;db=core' }
-		  
-        sw      ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
-		  
-        sptrembl ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
-		  
-        tr      ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
-		  
-        pfam    ={ base = 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?%s' }
-		  
-        PS      ={ base = 'http://www.expasy.ch/cgi-bin/prosite-search-de?%s' }
-		  
-        INTERPRO ={ base = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }
-		  
-        NCBI ={ base =     'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=protein&cmd=search&term=%s' }
-		  
-        EMBL ={ base =     'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=%s' }
-		  
-
-		  
-        TARGETDB       ={ base = 'http://targetdb.pdb.org/servlet/TargetSearch?seqname=Query&id=%s&pdbid=&pfamid=&status=&which_lab=%s&which_seq=ALL&Aftermonth=&Afterday=&Afteryear=&Beforemonth=&Beforeday=&Beforeyear=&p_name=&org_name=&Sequence=&evalue=10&format=html&cp=1' }
-		  
-        NESG_TARGET    ={ base = 'http://spine.nesg.org/target.pl?id=%s' }
-		  
-        NESG_GALLERY   ={ base = 'http://spine.nesg.org:7000/gallery/jsp/ShowStructure.jsp?pdb_id=%s' }
-		  
-        PDB            ={ base = 'http://pdb.rcsb.org/pdb/explore.do?structureId=%s' }
-		  
-        PFAM_WITH_PDB  ={ base = 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?acc=%s&pdb=%s' }
-	
-
-
-
-	submit_forms = { base      = ''
-                         alleles   = 'http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/allele.cgi'
-		       }
-
-
-	interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
-		     search       = 'http://www.ebi.ac.uk/interpro/IEntry?ac='
-		   }
-	Intronerator = { base   = ''
-			 search = 'http://www.cse.ucsc.edu/~kent/cgi-bin/tracks.exe?where='
-
-	PFAM     = { base         = 'http://www.sanger.ac.uk/Software/Pfam/'
-		     search       = 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?'
-		   }
-	Prosite  = { base         = ''
-		     search       = 'http://kr.expasy.org/cgi-bin/prosite-search-ac?'
-		   }		
-$HYMAN        = 'http://worm-srv1.mpi-cbg.de/dbScreen/cgi-bin/ViewRNA.py?RNAName=';
-$RNAIDB	      = 'http://www.rnai.org/cgi-bin/rnai/browse/card.rnai.cgi?query=';
-$PHENOBANK    = 'http://worm.mpi-cbg.de/phenobank2';
-$ORFEOME      = 'http://worfdb.dfci.harvard.edu/searchallwormorfs.pl?by=name&sid=';
-$MOVIE        = 'http://www.wormbase.org/ace_images/elegans/external/movies/';
-$KOCONSORTIUM = 'http://celeganskoconsortium.omrf.org/';
-$GO_EVIDENCE  = 'http://www.geneontology.org/GO.evidence.html';
-
-
-# These are redundant with Ace::Browser::GeneSubs
-# but are consolidated here for quicker and easier modification
-#$SRS            = 'http://srs.ebi.ac.uk/srs6bin/cgi-bin/wgetz?-newId+[SWALL-AllText:%s*]+-lv+30+-view+SeqSimpleView';
-#$SRS            = 'http://www.ebi.ac.uk/ebisearch/search.ebi?db=allebi&query=%s&FormsButton3=Go';
-# Link directly to the protein page
-$SRS             = 'http://www.ebi.ac.uk/ebisearch/search.ebi?db=proteinSequences&query=%s';
-
-$NEXTDB         = 'http://spock.genes.nig.ac.jp/~genome/cgi-bin/mas.pl.cgi?cele0:';
-
-$NEXTDB_HOME           = 'http://nematode.lab.nig.ac.jp/db2/index.php';
-$NEXTDB_EXPRESSION     = 'http://nematode.lab.nig.ac.jp/db2/ShowCloneInfo.php?clone=%s';
-
-$UNIPROT        = 'http://www.uniprot.org/entry/';
-# NCBI - Some obvious redunancy here
-$NCBI           = 'http://www.ncbi.nlm.nih.gov/htbin-post/Entrez/query';
-$GENBANK        = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=%s';
-
-# NCBI
-$PUBMED         = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=PubMed&cmd=Search&term=nematode+AND+';
-
-# Old format
-# $PUBMED       = 'http://www.ncbi.nlm.nih.gov/htbin-post/Entrez/query?db=m&form=4&term=nematode [ORGANISM]+AND+';
-# $PUBMED         = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=PubMed&cmd=Search&term=nematode%20[ORGANISM]+AND+';
-$ENTREZ         = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&doptcmdl=GenBank&term=';
-$ENTREZP        = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&doptcmdl=GenPep&term=';
-$ENTREZ_GENE    = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids=';
-
-
-$PROTEOME       = 'http://www.proteome.com/WormPD/';
-$SWISSPROT      = 'http://www.ncbi.nlm.nih.gov/htbin-post/Entrez/query?db=p&form=1&field=Sequence+ID&term=';
-
-$MEOW_CONFIRMED = 'http://iubio.bio.indiana.edu/meow/.bin/moquery?dbid=ACEDB:';
-$MEOW_PREDICTED = 'http://iubio.bio.indiana.edu/meow/.bin/moquery?dbid=ACEPRED:';
-$GENESERVICE    = 'http://www.hgmp.mrc.ac.uk/geneservice/reagents/products/descriptions/Celegans.shtml';
-$GENESERVICE_ORF = 'http://www.geneservice.co.uk/products/cdna/Celegans_ORF.jsp';
-$GENESERVICE_FOSMIDS = 'http://www.geneservice.co.uk/products/clones/Celegans_Fos.jsp';
-$OPENBIO         = 'http://www.openbiosystems.com/Query/dfci.harvard.php?clone=%s';
-
-$TEXTPRESSO     = 'http://www.textpresso.org/cgi-bin/wb/textpressoforwormbase.cgi?allabstracts=on&searchmode=sentence&searchtargets=Paper&searchtargets=Abstract';
-# $TREMBL         = 'http://www.expasy.org/cgi-bin/get-sprot-entry?';
-$TREMBL         = 'http://www.ebi.uniprot.org/entry/%s',
-$WBG            = 'http://elegans.swmed.edu/wli/';
-$KIM_MOUNTAINS  = 'http://www.sciencemag.org/feature/data/kim1061603/gl/gene_list.html';
-
-
-
-###################### PROTEIN LINKS #################
-# This is a misnomer.  It is now being used for all sorts of external database links.
-
-%PROTEIN_LINKS = (
-		  GADFLY  => 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s',
-		  FLYBASE => 'http://flybase.net/reports/%s.html',
-		  ENSEMBL => 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s',
-		  SGD     => 'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s',
-		  WP      => '/db/seq/protein?class=Protein;name=WP:%s',
-		  BP      => '/db/seq/protein?class=Protein;name=BP:%s',
-		  VG      => 'http://vega.sanger.ac.uk/Homo_sapiens/protview?peptide=%s&amp;db=core',
-		  SW      => 'http://www.ebi.uniprot.org/entry/%s',
-		  SPTREMBL=> 'http://www.ebi.uniprot.org/entry/%s',
-		  TR      => 'http://www.ebi.uniprot.org/entry/%s',
-		  PFAM    => 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?%s',
-		  PS      => 'http://www.expasy.ch/cgi-bin/prosite-search-de?%s',
-		  INTERPRO => 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s',
-		  NCBI =>     'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=protein&cmd=search&term=%s',
-		  EMBL =>     'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=%s',
-		  REFSEQ  => 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&term=%s[accn]&doptcmdl=GenPept',
-		  TARGETDB       => 'http://targetdb.pdb.org/servlet/TargetSearch?seqname=Query&id=%s&pdbid=&pfamid=&status=&which_lab=%s&which_seq=ALL&Aftermonth=&Afterday=&Afteryear=&Beforemonth=&Beforeday=&Beforeyear=&p_name=&org_name=&Sequence=&evalue=10&format=html&cp=1',         
-		  NESG_TARGET    => 'http://spine.nesg.org/target.pl?id=%s',
-		  NESG_GALLERY   => 'http://spine.nesg.org:7000/gallery/jsp/ShowStructure.jsp?pdb_id=%s',
-		  PDB            => 'http://pdb.rcsb.org/pdb/explore.do?structureId=%s',
-		  PFAM_WITH_PDB  => 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?acc=%s&pdb=%s',
-		  );
-
-
-
-
 %]
