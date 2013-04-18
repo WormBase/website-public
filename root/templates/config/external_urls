@@ -26,6 +26,7 @@
 
 
 [% site.external_urls = {
+  ### ADD ENTRIES AFTER THIS POINT ###
 
  AceView 
    = { description =  'The AceView genes - NCBI'
@@ -35,7 +36,6 @@
        search      = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
      }
 
- # No CGC entry in ?Database !
  cgc
    = { description  = 'The C. elegans Genetics Center'
        maintainer   = 'Aric Daul'
@@ -469,6 +469,9 @@
         description = 'Spencer et al., 2011 (WBPaper00037950) Compendium Resource'
         base        = 'http://www.vanderbilt.edu/wormdoc/wormmap/Expressed_genes.html'
     }
+
+
+    ### DO NOT ADD ENTRIES AFTER THIS POINT ###
 }
 
 -%]
