@@ -394,11 +394,9 @@ sub _build_best_blastp_matches {
 
         # Try fetching the species first with the identification
         # then method then the embedded species
-        my $species = $self->id2species($hit);
-        $species ||= $self->id2species($method);
+        my $species = $best{$method}{hit}->Species || $self->id2species($hit) || $self->id2species($method);
 
         # Not all proteins are populated with the species
-        $species ||= $best{$method}{hit}->Species;
         $species =~ s/^(\w)\w* /$1. / if $species;
         my $description = $best{$method}{hit}->Description
           || $best{$method}{hit}->Gene_name;
