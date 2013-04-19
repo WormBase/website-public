@@ -496,6 +496,11 @@ sub _get_evidence {
           } elsif ($type eq 'Date_last_updated') { 
               $label =~ s/\s00:00:00//;
               undef $class;
+          } elsif ($type eq 'Affected_by'){
+            foreach my $ev ($evidence) {
+              push(@evidences, map {$self->_pack_obj($_)} $ev->col);
+            }
+            next;
           } else {
               $packed = $self->_pack_obj($evidence);
           } 
