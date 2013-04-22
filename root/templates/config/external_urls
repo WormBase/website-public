@@ -421,6 +421,13 @@
 		search		= 'http://wormatlas.org/%s'
 	}
 
+	wikipathways = {
+		description	= 'WikiPathways: A public platform dedicated to the curation of biological pathways by and for 
+the scientific community.'
+		maintainer	= 'wikipathways-discuss@googlegroups.com'
+		base		= 'http://www.wikipathways.org/'
+		search		= 'http://www.wikipathways.org/wpi/PathwayWidget.php?id=%s'
+	}
 	wormbook = {
 		description	= 'WormBook: The online reference for C. elegans and related nematodes'
 		maintainer	= 'help@wormbook.org'
@@ -431,7 +438,7 @@
 	wormpep = {
 		description	= 'WORMPEP is the C.elegans protein set'
 		base		= 'http://www.wormbase.org'
-		maintainer		= 'help@wormbase.org'
+		maintainer	= 'help@wormbase.org'
 		search		= 'http://www.wormbase.org/db/seq/protein?name=%s'
 	}
 
