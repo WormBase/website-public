@@ -303,10 +303,13 @@ sub SNP_loci {
 sub assay_conditions {
 	my ($self) = @_;
 	my $conditions = $self ~~ 'Assay_conditions';
+  my $text = $conditions && $conditions->right;
+  $text =~ s/^\n+//;
+  $text =~ s/\n/\<br\>/g;
 
 	return {
 		description => 'Assay conditions for this PCR product',
-		data		=> $conditions && $conditions->name,
+		data		=> $text && "$text",
 	};
 }
 
