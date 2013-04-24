@@ -977,7 +977,7 @@ sub history{
 						
 						my ($action, $remark, $gene) = $event->row;
 						
-						next if $action eq 'Imported';
+						#next if $action eq 'Imported';
 						
 						# In some cases, the remark is actually a gene object
 						if (   $action eq 'Merged_into'
