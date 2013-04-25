@@ -977,7 +977,7 @@ sub history{
 						
 						my ($action, $remark, $gene) = $event->row;
 						
-						next if $action eq 'Imported';
+						#next if $action eq 'Imported';
 						
 						# In some cases, the remark is actually a gene object
 						if (   $action eq 'Merged_into'
@@ -1025,6 +1025,29 @@ sub history{
 
 }
 
+# Subroutine for the "Historical Annotations" table 
+sub old_annot{
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+	
+	foreach (
+		$object->Corresponding_CDS_history,
+		$object->Corresponding_transcript_history,
+		$object->Corresponding_pseudogene_history
+	){
+		my %row = (
+			class => $_->class,
+			name => $self->_pack_obj($_)
+		);
+		push @data, \%row;
+	}
+	
+	return {
+		description => 'the historical annotations of this gene',
+		data		=> @data ? \@data : undef
+	};
+}
 
 #######################################
 #

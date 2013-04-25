@@ -12,15 +12,31 @@ IF object.name.data.class == 'Protein';
 
 ELSIF fields.history.data.size > 0;
     '<h4>Curatorial history</h4><br />';
-       build_data_table(order=['version','date','action','remark','gene','curator'],
-                         columns={ version => 'Version',
-		                   date    => 'Date',
-			           action  => 'Action',
- 				   remark  => 'Remark',
-				   gene    => 'Gene',
-				   curator => 'Curator'
-                                 },
-                         key='history');
+		build_data_table(
+			order=['version','date','action','remark','gene','curator'],
+            columns={ 
+				version => 'Version',
+				date    => 'Date',
+			    action  => 'Action',
+ 				remark  => 'Remark',
+				gene    => 'Gene',
+				curator => 'Curator'
+            },
+			key='history'
+		);
+
+	IF object.name.data.class == 'Gene';
+	
+		'<br /><h4>Historical annotations:</h4><br />';
+		build_data_table(
+			order=['class','name'],
+			columns={
+				class	=> 'Class',
+				name	=> 'Name'
+			},
+			key = 'old_annot'
+		);
+	END;
 
 END;
 

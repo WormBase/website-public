@@ -871,7 +871,7 @@ has 'laboratory' => (
 
 # laboratory: Whenever a cross-ref to lab is needed.
 # Returns the lab as well as the current representative.
-# Used in: Person, Gene_class, Transgene
+# Used in: Person, Gene_class, transgene
 # template: shared/fields/laboratory.tt2
 sub _build_laboratory {
     my ($self) = @_;
@@ -1895,6 +1895,7 @@ sub mysql_dsn {
 sub gff_dsn {
     my ($self, $species) = @_;
     $species ||= $self->_parsed_species;
+    $species =~ s/^all$/c_elegans/;
     $self->log->debug("getting gff database species $species");
     return $self->dsn->{"gff_" . $species};
 }
@@ -1988,7 +1989,7 @@ sub _parsed_species {
         return lc "${g}_$species";
     }
 
-    return 'c_elegans';
+    return 'all';
 }
 
 # Take a string of Genus species and return a 
