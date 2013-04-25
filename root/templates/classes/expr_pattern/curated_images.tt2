@@ -1,36 +1,23 @@
 [% WRAPPER $field_block title="Curated Images" %]
 
-[% IF curated_images.data %]	
+  [% IF curated_images.data %]	
 
+     [% FOREACH group IN curated_images.data.sort %]
+        <div>
+        [% FOREACH img IN curated_images.data.$group %]
+           <a href="[% c.uri_for('/rest', 'widget', 'picture', img.id, 'lightbox').path %]"
+              class="slink"
+              data-class='picture'>
+             <img src="[% img.draw.class %]/[% img.draw.name %]_200.[% img.draw.format %]"
+                  alt="[% img.id %] thumbnail" >
+           </a><br />
+        [% cite_image(img.external_source, img.source) %]
+        [% END %]
+        </div>
+     [% END %]
 
-   [% FOREACH group IN curated_images.data.sort %]
-   <div style="display:inline-block;">
-      [% FOREACH img IN curated_images.data.$group %]
-      <div style="display:inline-block;max-width:200px;margin:1em;">
-         <a class="picturebox" rel="curated_images"  href="/rest/widget/picture/[% img.id %]/lightbox?inline=1">
-	  
-         <img src="[% img.draw.class %]/[% img.draw.name %]_200.[% img.draw.format %]"
-              alt="[% img.id %] thumbnail" style="max-width:100%;margin:auto;display:block;"></a><br>
-      </div>
-      [% END %]
-      <div>[% cite_image(img.external_source, img.source) %]</div>
-   </div>
-   [% END %]
-
-   <script type="text/javascript">
-    WB.getPlugin("colorbox", function(){
-      $jq('.picturebox').click(function(){
-          var pic = $jq(this);
-           pic.colorbox({data: pic.attr("href"), 
-                            width: "80%", 
-                            });
-      });
-    }); 
-
-
-  </script>
-[% ELSE %]
-   No curated images available.
-[% END %]
+  [% ELSE %]
+     No curated images available.
+  [% END %]
 
 [% END %]
