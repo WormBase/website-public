@@ -1,4 +1,3 @@
-[% WRAPPER boilerplate/html # need the CSS %]
 <div class="picture_lightbox">
 
 [% MACRO img2link(img, label) BLOCK;
@@ -95,11 +94,10 @@ $jq('.picture_lightbox a:not([target])').click(function () {
    parent.location=this.href; 
    return false;
 });
-$jq('a:[target="lightbox"]').click(function () {
+$jq('a[target="lightbox"]').click(function () {
    $jq.colorbox({href:this.href,width:"80%", height:"80%", opacity:"0.4"});
    return false;
 });
 </script>
 
-[% END # end of CSS boilerplate wrapper %]
 
