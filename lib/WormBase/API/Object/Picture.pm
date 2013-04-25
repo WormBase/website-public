@@ -159,11 +159,10 @@ sub external_source {
         foreach my $dbtag (qw(Journal_URL Publisher_URL)) {
             my $db = $obj->$dbtag or next;
             my $text = $db->Name || $db->name;
-            my $url = $db->URL;
 
             $source->{template_items}->{$dbtag} = {
                 text => $text && "$text",
-                url  => $url && "$url",
+                db => "$db",
             };
         }
 
@@ -174,17 +173,15 @@ sub external_source {
 
         if (my ($dbnode) = $obj->Article_URL) {
             my ($db, $field, $accessor) = $dbnode->row;
-            my $url   = $db->URL_constructor;
-            $url   =~ s/%S/$accessor/g if $accessor; # is this always the case? %S?
-            # one would imagine $url = sprintf($url, $accessor);
-            $url ||= $db->URL;
 
             my $ref = $self->reference->{data};
             my $text = $ref && $ref->{label}; # try this for now
             # what if there's no text?
             $source->{template_items}->{Article_URL} = {
                 text => $text,
-                url  => $url,
+                db => "$db",
+                id => "$accessor",
+                dbt => "$field",
             };
         }
     }

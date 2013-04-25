@@ -245,14 +245,17 @@
                 array=id.split('&');
                 ext_url = String(array.first array.last) FILTER url;
               ELSE;
-                ext_url = String(id) FILTER url;
+                UNLESS id.match('\/');
+                  ext_url = String(id) FILTER url;
+                ELSE;
+                  ext_url = String().replace('%S', id) FILTER url; #I don't know why format doesn't work sometimes.
+                END;
               END;
           ELSE;
               ext_url = site.external_urls.$link.base FILTER url;
           END;
         END;
         UNLESS (ext_url.length > 1); ext_url = link; END; 
-
         "<a href=\"$ext_url\" 
             onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
             target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
@@ -332,15 +335,16 @@
            IF extsrc;
               link = extsrc.template;
               FOR match IN extsrc.template.match('\<([^>]+)\>', 'global');
+                  match_item = extsrc.template_items.$match;
                   IF extsrc.template_items.size == 1; # Person heuristic
                      IF src; # there is an internal source... tag it
                         replacement = tag2link(src);
                      ELSE; # we only have their name?
-                        replacement = extsrc.template_items.$match.text;
+                        replacement = match_item.text;
                      END;
                   ELSE;
-                     replacement = external_link(extsrc.template_items.$match.url,
-                                                extsrc.template_items.$match.text);
+                     replacement = external_link(match_item.db,
+                                                match_item.text, match_item.id);
                   END;
                   link = link.replace("\<$match\>", replacement);
               END;
