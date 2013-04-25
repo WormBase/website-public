@@ -699,7 +699,7 @@ sub _build_description {
       my @array =map {{text=>"$_",evidence=>$self->_get_evidence($_)}}  @{$self ~~ "\@$tag"} ;
       $description = @array? \@array:undef;
     }else{
-	$description = eval {join(' ', $object->$tag)} || undef;
+	$description = eval {join('<br />', $object->$tag)} || undef;
     }
     return {
         description => "description of the $class $object",
