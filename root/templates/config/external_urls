@@ -343,7 +343,7 @@
   PLoSOne = { 
     description = 'PLOS ONE is an international, peer-reviewed, open-access, online publication featuring reports of original research from all disciplines within science and medicine.'
     base = 'http://www.plosone.org/',
-    search = 'http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.%S'
+    search = 'http://www.plosone.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pone.%s'
   }
 
   reactome = {
