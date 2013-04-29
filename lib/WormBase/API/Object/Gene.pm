@@ -457,7 +457,7 @@ sub structured_description {
 
 sub human_disease_relevance {
     my $self = shift;
-    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Human_disease_relevance;
+    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Disease_relevance;
 
     return {  description => "curated description of human disease relevance",
               data        =>  @objs ? \@objs : undef };
@@ -1192,6 +1192,9 @@ sub human_diseases {
   if($object->Disease_info){
     my @diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Potential_model;
     $data{'potential_model'} = \@diseases;
+
+    my @exp_diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Experimental_model;
+    $data{'experimental_model'} = \@exp_diseases;
   }
 
   if($data[0]){
