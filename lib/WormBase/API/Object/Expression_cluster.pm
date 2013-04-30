@@ -2,6 +2,7 @@ package WormBase::API::Object::Expression_cluster;
 use Moose;
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
 =pod 
@@ -112,20 +113,6 @@ sub anatomy_terms {
     };
 }
 
-# expression_patterns { }
-# This method will return a data structure 
-# with expression patterns associated with
-# the expression_cluster.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/expression_patterns
-
-sub expression_patterns {
-    my $self   = shift;
-    my $object = $self->object;
-    my $data   = $self->_pack_objects($object->Expr_pattern);
-    return { data        => %$data ? $data : undef,
-	     description => 'expression patterns associated with this cluster'
-    };
-}
 
 
 #######################################

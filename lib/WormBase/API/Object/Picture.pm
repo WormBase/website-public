@@ -5,6 +5,7 @@ use File::Spec;
 use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
 =pod 

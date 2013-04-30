@@ -14,8 +14,6 @@ WRAPPER $field_block title="Anatomy Terms" key="anatomy_terms";
 		key = 'anatomy_terms');
 END;
 
-WRAPPER $field_block title="Expression Patterns" key="expression_patterns";
-    tags2link(fields.expression_patterns.data);
-END;
+expression_patterns;
 
 %]

@@ -2,6 +2,7 @@ package WormBase::API::Object::Transgene;
 use Moose;
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
 =pod 
@@ -157,7 +158,7 @@ sub synonym {
     my $object  = $self->object;
     my $synonym = $object->Synonym;
     return { description => 'a synonym for the transgene',
-	     data        =>  "$synonym" || undef };
+	     data        =>  $synonym && "$synonym"};
 }
 
 # summary { }
@@ -188,7 +189,7 @@ sub driven_by_construct {
     
     my $construct = $object->Driven_by_construct;
     return { description => 'construct that drives the transgene',
-	     data        => "$construct" || undef };
+	     data        => $construct && "$construct"};
 }
 
 # remarks {}
@@ -260,7 +261,7 @@ sub author {
     }
     
     return { description => 'the person who created the transgene',
-	     data        => $self->_pack_obj($person, "$name") };
+	     data        => $self->_pack_obj($person, $name && "$name") };
 }
 
 # laboratory { }
@@ -291,7 +292,7 @@ sub fragment {
     my $object = $self->object;
     my $frag = $object->Fragment;
     return { description => 'clone fragments contained in this transgene',
-	     data        => "$frag" || undef };
+	     data        => $frag && "$frag" };
 }
 
 
@@ -388,7 +389,7 @@ sub marker_for {
     my $object = $self->object;
     my $marker = $object->Marker_for;
     return { description => 'string decribing what the transgene is a marker for',
-	     data        =>  "$marker" || undef };
+	     data        =>  $marker && "$marker" };
 }
 
 
