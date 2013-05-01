@@ -565,7 +565,7 @@ sub expression_patterns {
         my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
         my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
         my @transgene = map { 
-                my @cs =$_->Construction_summary;
+                my @cs =map { "$_" } $_->Construction_summary;
                 @cs ?   {   text=>$self->_pack_obj($_), 
                             evidence=>{'Construction summary'=> \@cs }
                         } : $self->_pack_obj($_)
@@ -583,14 +583,15 @@ sub expression_patterns {
                 last;
             }   
         }
+        my $sub = $expr->Subcellular_localization;
 
         push @data, {
             expression_pattern =>  $expr_packed,
             description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
             type             => $type && "$type",
-            expressed_in    => \@expressed_in,
-            life_stage    => \@life_stage,
-            go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => $expr->Subcellular_localization}} : undef,
+            expressed_in    => @expressed_in ? \@expressed_in : undef,
+            life_stage    => @life_stage ? \@life_stage : undef,
+            go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
             transgene => \@transgene
 
         };
