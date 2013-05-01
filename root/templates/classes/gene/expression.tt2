@@ -1,6 +1,10 @@
 [% 
 
-WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expression_patterns";
+
+
+
+
+WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patterns";
     gene_image = fields.anatomic_expression_patterns.data.image;
     IF gene_image;
       '<div style="max-width:500px;">';
@@ -9,34 +13,18 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
         '</a>';
       '</div>';
     END;	
-	
-    hidden = '';
-    '<ul class="expr_patterns" id="results">';
-        FOREACH key IN fields.anatomic_expression_patterns.data.expr.keys.sort.reverse; 
-          ep = fields.anatomic_expression_patterns.data.expr.$key;
-          '<li>';
-            tag2link(ep.object, ep.object.id);
-            IF ep.image;
-              '<a class="ui-icon ui-icon-image exprbox"  rel="expression_pattern_images" href="#' _ ep.object.id _ '" title="expression image for ' _ ep.object.id _ '"></a>';
- 
-              hidden = hidden _ '<div id="' _ ep.object.id _ '"><a href="' _ ep.image _ '" target="_blank">'
-              _ image(ep.image) _ '</a></div>';
 
-            END;
-            IF ep.curated_images;
-              '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ ep.object.id _ '/curated_images"  title="curated pictures for ' _ ep.object.id _ '"></a>';      
-            END;
-            IF ep.image || ep.curated_images;
-              '<small>view images</small>';
-            END;
-          '</li>';
-          '<div class="text-width text-min">' _ markup(ep.details,0) _ '</div>';
-        END;
-    '</ul>';
-
-    '<div style="display:none">';
-        hidden;
-    '</div>';
+           build_data_table(order=['expression_pattern','type', 'description', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
+                      columns={ 
+                          expression_pattern => 'Pattern',
+                          description  => 'Description',
+                          type => 'Type',
+                          expressed_in => 'Expressed in',
+                          life_stage => 'Life stage',
+                          go_term => 'GO term',
+                          transgene => 'Transgene'
+                             },
+                    key='expression_patterns');
 END;
 
 WRAPPER $field_block title="Anatomy terms" key="anatomy_terms";
