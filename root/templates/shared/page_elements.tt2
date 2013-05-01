@@ -17,8 +17,8 @@
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
     [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>:
-        [% tags2link(data.$type, '; ') %]  
+        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: [% tags2link(data.$type, '; ') %]  
+        [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
 [% IF text %]    </div>
@@ -731,12 +731,14 @@ END;
 
 [% MACRO expression_patterns BLOCK ;
 
-   WRAPPER $field_block title="Patterns" key="expression_patterns";
+   WRAPPER $field_block title="Expression patterns" key="expression_patterns";
 
-       build_data_table(order=['expression_pattern','description','author'],
-                      columns={ expression_pattern => 'Pattern',
-                        description        => 'Description',
-                    author             => 'Author',
+       build_data_table(order=['expression_pattern','gene', 'description','author'],
+                      columns={ 
+                          expression_pattern => 'Pattern',
+                          gene => 'Gene',
+                          description  => 'Description',
+                          author => 'Author',
                              },
                     key='expression_patterns');
     END;
