@@ -83,14 +83,19 @@ sub tools :Path Args {
     } elsif ($tool =~ /epic/ || $tool =~ /gmap/) {
         $data = $api->_tools->{$tool}->$action($c,$c->req->params);
     } else {
-        $data = $api->_tools->{$tool}->$action($c->req->params);
+        $data = $api->_tools->{$tool}->$action($c->req->params, $c);
     }
  
     # Create different actions for different tools instead of using
     #   this single catch-all action? -AD
     if($data->{redirect}){
-	my $url = $c->uri_for('/search',$data->{class},$data->{name})->path;
-	     $c->res->redirect($url."?from=".$data->{redirect}."&query=".$data->{msg}, 307);
+        my $url;
+        if ($data->{redirect_as_is}) {
+            $url = $data->{redirect};
+        } else {
+	    $url = $c->uri_for('/search',$data->{class},$data->{name})->path."?from=".$data->{redirect}."&query=".$data->{msg};
+        }
+	$c->res->redirect($url, 307);
     }
 
     if ($tool eq 'tree' || $tool eq 'epic') { $c->stash->{data} = $data; }
