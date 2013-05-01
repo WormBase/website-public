@@ -63,15 +63,6 @@ sub synonyms {
 # This method will return a data structure with gene regulation processes involving the molecule.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/gene_regulation
 
-sub gene_regulation {
-    my $self     = shift;
-    my $gene_reg = $self->_pack_objects($self ~~ '@Gene_regulator');
-    return {
-        'data'        => %$gene_reg ? $gene_reg : undef,
-        'description' => 'gene regulation involving the molecule'
-    };
-}
-
 # molecule_use { }
 # This method will return a data structure with information on how the molecule is used.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/molecule_use
