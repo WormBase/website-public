@@ -457,7 +457,7 @@ sub structured_description {
 
 sub human_disease_relevance {
     my $self = shift;
-    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Disease_relevance;
+    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_->right) } } $self->object->Disease_relevance;
 
     return {  description => "curated description of human disease relevance",
               data        =>  @objs ? \@objs : undef };
@@ -538,26 +538,6 @@ sub anatomic_expression_patterns {
     my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
     $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
 
-    # All expression patterns except Mohlers, presented elsewhere.
-    my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
-                   $object->Expr_pattern;
-
-    foreach my $ep (@eps) {
-	my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$ep.jpg");
-        $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
-        my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
-		foreach($ep->Picture) {
-			 next unless($_->class eq 'Picture');
-	    	 my $pic = $self->_api->wrap($_);
-			 if( $pic->image->{data}) {
-        			$data_pack{"expr"}{"$ep"}{curated_images} = 1;
-					last;
-			 }	
-		}
-
-        $data_pack{"expr"}{"$ep"}{details} = $pattern;
-        $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
-    }
 
     return {
         description => 'expression patterns for the gene',
@@ -565,6 +545,63 @@ sub anatomic_expression_patterns {
     };
 }
 
+sub expression_patterns {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $expr ($object->Expr_pattern) {
+
+        my $author = $expr->Author;
+        my @patterns = $expr->Pattern
+            || $expr->Subcellular_localization
+            || $expr->Remark;
+        my $desc = join("<br />", @patterns) if @patterns;
+        my $type = $expr->Type;
+        $type =~ s/_/ /g if $type;
+        my $reference = $self->_pack_obj($expr->Reference);
+
+        my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
+        my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
+        my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
+        my @transgene = map { 
+                my @cs =map { "$_" } $_->Construction_summary;
+                @cs ?   {   text=>$self->_pack_obj($_), 
+                            evidence=>{'Construction summary'=> \@cs }
+                        } : $self->_pack_obj($_)
+            } $expr->Transgene;
+        my $expr_packed = $self->_pack_obj($expr, "$expr");
+
+
+        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
+        $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
+        foreach($expr->Picture) {
+            next unless($_->class eq 'Picture');
+            my $pic = $self->_api->wrap($_);
+            if( $pic->image->{data}) {
+                $expr_packed->{curated_images} = 1;
+                last;
+            }   
+        }
+        my $sub = $expr->Subcellular_localization;
+
+        push @data, {
+            expression_pattern =>  $expr_packed,
+            description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
+            type             => $type && "$type",
+            expressed_in    => @expressed_in ? \@expressed_in : undef,
+            life_stage    => @life_stage ? \@life_stage : undef,
+            go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
+            transgene => \@transgene
+
+        };
+    }
+
+    return {
+        description => "expression patterns associated with the gene:$object",
+        data        => @data ? \@data : undef
+    };
+}
 
 
 # anatomy_terms { }

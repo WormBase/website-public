@@ -14,7 +14,7 @@ has 'certainty_ev' => (
     isa => 'HashRef',
     default => sub(){ return {    Certain => ' was observed to be expressed in ',
                     Partial => ' was observed to be expressed in some cells of a group of cells that include ',
-                    Uncertain => ' was sometimes observed to be expressed in / was observed to be expressed in a cell that could be '};},
+                    Uncertain => ' could be expressed in '};},
 );
 
 =head3 expression_patterns
