@@ -1883,9 +1883,10 @@ sub _pack_obj {
     return undef unless $object; # this method shouldn't expect a list.
 
     my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
+    $label = $label // $self->_make_common_name($object);
     return {
         id       => "$object",
-        label    => $label // $self->_make_common_name($object),
+        label    => "$label",
         class    => $wbclass || $object->class,
         taxonomy => $self->_parsed_species($object),
         %args,

@@ -168,7 +168,7 @@ sub external_source {
         }
 
         if (my $person_name = $obj->Person_name) {
-            $source->{template_items}->{Person_name}->{text} = $person_name;
+            $source->{template_items}->{Person_name}->{text} = "$person_name";
             # if it's a person and they are a WBPerson then... ?
         }
 
