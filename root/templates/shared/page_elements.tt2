@@ -534,7 +534,7 @@ END; %]
         END;
 	  END;
 	ELSE;
-	   markup(cell);
+	   cell;
 	END;
   END;
 %]

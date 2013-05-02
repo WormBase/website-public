@@ -13,7 +13,6 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
         '</a>';
       '</div>';
     END;	
-
            build_data_table(order=['expression_pattern','type', 'description', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={ 
                           expression_pattern => 'Pattern',
@@ -25,6 +24,7 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
                           transgene => 'Transgene'
                              },
                     key='expression_patterns');
+
 END;
 
 WRAPPER $field_block title="Anatomy terms" key="anatomy_terms";
