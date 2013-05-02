@@ -35,10 +35,9 @@
 
         IF data.image;
           '<a class="ui-icon ui-icon-image exprbox"  rel="expression_pattern_images" href="#' _ data.id _ '" title="expression image for ' _ data.id _ '"></a>';
-
-          hidden = hidden _ '<div id="' _ data.id _ '"><a href="' _ data.image _ '" target="_blank">'
-          _ image(data.image) _ '</a></div>';
-
+          '<div class="ui-helper-hidden">';
+            '<div id="' _ data.id _ '"><a href="' _ data.image _ '" target="_blank">' _ image(data.image) _ '</a></div>';
+          '</div>';
         END;
         IF data.curated_images;
           '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ data.id _ '/curated_images"  title="curated pictures for ' _ data.id _ '"></a>';      
