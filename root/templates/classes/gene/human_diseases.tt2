@@ -13,7 +13,7 @@
 [%
 
 IF (fields.human_disease_relevance.data.defined);
-'<p><h3>Curated Human disease associations</h3></p><p>';
+'<p><h3>Curated Human Disease Relevance</h3></p><p>';
     FOREACH obj IN fields.human_disease_relevance.data;
         '<div class="description">';
             evidence(obj.evidence,sd, obj.text);
