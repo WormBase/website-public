@@ -334,7 +334,7 @@ sub gene_class {
     return {
     description => "The gene class for this gene",
     data        => $gene_class ? { tag => $self->_pack_obj($gene_class),
-                     description => $gene_class ? $gene_class->Description : '',
+                     description => $gene_class ? $gene_class->Description->asString : '',
     } : undef };
 }
 
@@ -592,7 +592,7 @@ sub expression_patterns {
             expressed_in    => @expressed_in ? \@expressed_in : undef,
             life_stage    => @life_stage ? \@life_stage : undef,
             go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
-            transgene => \@transgene
+            transgene => @transgene ? \@transgene : undef
 
         };
     }
@@ -1541,7 +1541,7 @@ sub transgenes {
 	my $summary = $_->Summary;
     my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => \@labs,
+		      laboratory => @labs ? \@labs : undef,
 		      summary    => "$summary",
 	};
     }
@@ -1565,7 +1565,7 @@ sub transgene_products {
 	my $summary = $_->Summary;
         my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => \@labs,
+		      laboratory => @labs ? \@labs : undef,
 		      summary    => "$summary",
 	};
     }

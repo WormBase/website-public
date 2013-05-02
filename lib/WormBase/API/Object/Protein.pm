@@ -93,7 +93,7 @@ sub _build__common_name {
 	return "$object";
     } else {
 	# Otherwise use the more human friendly Gene_name.
-	return $object->Gene_name;
+	return $object->Gene_name && $object->Gene_name->asString;
     }
 }
 
@@ -633,11 +633,11 @@ sub motif_details {
 					push( @data, {
 						feat	=> 
 							$self->_pack_obj($motif_homol,"$motif_homol"),
-						start	=> $start,
-						stop	=> $stop,
-						score	=> $score,
-						source	=> $source,
-						desc	=> $desc
+						start	=> "$start",
+						stop	=> "$stop",
+						score	=> "$score",
+						source	=> "$source",
+						desc	=> "$desc"
 					});
 					
 					
@@ -646,12 +646,11 @@ sub motif_details {
 				push( @data, {
 					feat	=> 
 						$self->_pack_obj($motif_homol,"$motif_homol"),
-					start	=> $start,
-					stop	=> $stop,
-					score	=> 
-						(scalar @scores) == 1 ? $scores[0] : undef,
-					source	=> $source,
-					desc	=> $desc
+					start	=> "$start",
+					stop	=> "$stop",
+					score	=> (scalar @scores) == 1 ? "$scores[0]" : undef,
+					source	=> "$source",
+					desc	=> "$desc"
 				});
 				
 			}
