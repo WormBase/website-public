@@ -56,13 +56,12 @@ sub _build__common_name {
     my ($self) = @_;
 
     my $name;
-    if (my $expr_patterns = $self->expression_patterns->{data}) {
-        if (@$expr_patterns > 1) { # according to curator, this won't happen...
+    if (my @expr_patterns = $self->object->Expr_pattern) {
+        if (@expr_patterns > 1) { # according to curator, this won't happen...
             $name = "Multiple expression patterns";
         }
         else { # should be 1 item
-            my $exprname = $expr_patterns->[0]->{expression_pattern}->{label};
-            $name = "$exprname";
+            $name = $self->_pack_obj($expr_patterns[0])->{label};
         }
     }
 

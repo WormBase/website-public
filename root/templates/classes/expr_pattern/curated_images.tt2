@@ -5,7 +5,8 @@
      [% FOREACH group IN curated_images.data.sort %]
         <div>
         [% FOREACH img IN curated_images.data.$group %]
-           <a href="[% c.uri_for('/rest', 'widget', 'picture', img.id, 'lightbox').path %]"
+           <a href="[% c.uri_for('/resources', 'picture', img.id).path %]">
+           <span href="[% c.uri_for('/rest', 'widget', 'picture', img.id, 'lightbox').path %]"
               class="slink"
               data-class='picture'>
              <img src="[% img.draw.class %]/[% img.draw.name %]_200.[% img.draw.format %]"
