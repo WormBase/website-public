@@ -765,11 +765,14 @@ sub widget_GET {
             fields => $c->stash->{fields},
         }
     );
-    my $filename = join( '_', $class, $name, $widget ) . '.'
-        . $c->config->{api}->{content_type}->{$content_type};
-    $c->log->debug("$filename download in the format: $content_type");
-    $c->response->header(
-        'Content-Disposition' => 'attachment; filename=' . $filename );
+
+    if($c->req->params->{'download'}){
+      my $filename = join( '_', $class, $name, $widget ) . '.'
+          . $c->config->{api}->{content_type}->{$content_type};
+      $c->log->debug("$filename download in the format: $content_type");
+      $c->response->header(
+          'Content-Disposition' => 'attachment; filename=' . $filename );
+    }
 }
 
 
