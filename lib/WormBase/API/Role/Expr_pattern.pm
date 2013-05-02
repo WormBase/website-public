@@ -84,7 +84,8 @@ sub _build_expression_patterns {
     my $class  = $object->class;
     my @data;
     my $obj_label = $self->_common_name;
-
+    my ($certainty, $c_ev);
+    
     foreach ($object->Expr_pattern) {
         my $author = $_->Author;
         my @patterns = $_->Pattern
@@ -92,11 +93,12 @@ sub _build_expression_patterns {
             || $_->Remark;
         my $gene      = $self->_pack_obj($_->Gene);
 
-        my $certainty = $_->fetch()->at("Expressed_in.$class.$object");
-        $certainty = $certainty->right if $certainty;
-        my $c_ev = $self->_get_evidence($certainty);
-        $c_ev->{$certainty} = $gene->{label} . $self->certainty_ev->{$certainty} . $obj_label if $certainty;
-
+        if($class eq 'Anatomy_term'){
+            $certainty = $_->fetch()->at("Expressed_in.$class.$object");
+            $certainty = $certainty->right if $certainty;
+            $c_ev = $self->_get_evidence($certainty);
+            $c_ev->{$certainty} = $gene->{label} . $self->certainty_ev->{$certainty} . $obj_label if $certainty;
+        }
         push @data, {
             expression_pattern => $self->_pack_obj($_),
             description        => join("<br />", @patterns) || undef,
