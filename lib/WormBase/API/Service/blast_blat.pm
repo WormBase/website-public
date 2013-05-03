@@ -1034,6 +1034,13 @@ sub extract_hit_info {
 
             my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
 
+            // If the feature is on the reverse strand, then swap start/end coordinates.
+            if ($hsp_strand == -1) {
+              my $tmp = $hsp_start;
+              $hsp_start = $hsp_end;
+              $hsp_end = $tmp;
+            }
+
             push @hsp_genome_link_parts, $hsp_genome_link_part
               if @hsp_genome_link_parts < $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT};
         }
