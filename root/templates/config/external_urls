@@ -241,7 +241,7 @@
     search    = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
   }
 
-  FoliaBiologica(Praha) = {
+  'FoliaBiologica(Praha)' = {
     description = 'Folia Biologica (Praha)'
     base =     'http://fb.cuni.cz/'
     search =	'http://fb.cuni.cz/%s'
@@ -368,7 +368,7 @@
     search =	'http://jgp.rupress.org/content/%s'
   }
 
-  JournalofHistochemistry&Cytochemistry = {
+  'JournalofHistochemistry&Cytochemistry' = {
     description = 'Journal of Histochemistry & Cytochemistry'
     base =	'http://jhc.sagepub.com/'
     search =	'http://jhc.sagepub.com/content/%s'
