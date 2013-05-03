@@ -258,11 +258,7 @@
                 array=id.split('&');
                 ext_url = String(array.first array.last) FILTER url;
               ELSE;
-                UNLESS id.match('\/');
-                  ext_url = String(id) FILTER url;
-                ELSE;
-                  ext_url = String().replace('%S', id) FILTER url; #I don't know why format doesn't work sometimes.
-                END;
+                ext_url = String(id) FILTER url;
               END;
           ELSE;
               ext_url = site.external_urls.$link.base FILTER url;
