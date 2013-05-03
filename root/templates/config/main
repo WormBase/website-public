@@ -305,13 +305,19 @@
 # [A-Za-z]{3,4}-(\d){1,3}[a-z]?
     MACRO markup_locus(text, link) BLOCK;
       text = "$text";
-      text.replace('(\b([A-Z][a-z]{1,2}\-)?[a-z]{3,4}-(\d+(\.\d+)?)[a-z]*( [IVXLCDM]+|\(RNAi\))?)', span_class('$1', "locus", 'gene', link));
+      # The '(^|[^/])\K' at the beginning of the regexp denotes that the match in group $2
+      # cannot be preceeded by a '/' character. That way, substrings of URIs are not linked
+      # as locus references. (see also 'markup_var')
+      text.replace('(^|[^/])\K(\b([A-Z][a-z]{1,2}\-)?[a-z]{3,4}-(\d+(\.\d+)?)[a-z]*( [IVXLCDM]+|\(RNAi\))?)', span_class('$2', "locus", 'gene', link));
     END;
 
 # Markup any variation name in text
     MACRO markup_var(text, link) BLOCK;
       text = "$text";
-      text.replace('(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+)+)', span_class('$1', "var",'variation', link));
+      # The '(^|[^/])\K' at the beginning of the regexp denotes that the match in group $2
+      # cannot be preceeded by a '/' character. That way, substrings of URIs are not linked
+      # as variation names. (see also 'markup_locus')
+      text.replace('(^|[^/])\K(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+)+)', span_class('$2', "var",'variation', link));
     END;
 
 # format taxonomy
