@@ -85,7 +85,7 @@
   BiochemicalandBiophysicalResearchCommunications = {
     description = 'Biochemical and Biophysical Research Communications'
     base =	'http://www.journals.elsevier.com/biochemical-and-biophysical-research-communications/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   Biochemistry = {
@@ -97,7 +97,7 @@
   BiochimicaetBiophysicaActa = {
     description = 'Biochimica et Biophysica Acta'
     base =	'http://www.elsevier.com/journals/bba-biochimica-et-biophysica-acta/FS00-0253'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   BiologicalChemistry = {
@@ -148,13 +148,13 @@
   CurrentBiology = {
     description = 'Current Biology'
     base =     'http://www.cell.com/current-biology/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   development = {
     description  = 'Development is a leading primary research journal in the field of developmental biology that is published by The Company of Biologists, a not-for-profit charitable organization run by biologists for the benefit of the biological community.'
     base    = 'http://dev.biologists.org/'
-    search    = 'http://dev.biologists.org/content/%S'
+    search    = 'http://dev.biologists.org/content/%s'
   }
 
   dbsnp_rs = {
@@ -172,7 +172,7 @@
   DevelopmentalCell = {
     description = 'Developmental Cell'
     base =	'http://www.cell.com/developmental-cell/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   do = {
@@ -277,7 +277,7 @@
   Gene = {
     description = 'Gene'
     base =     'http://www.journals.elsevier.com/gene/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   GeneExpressionPatterns = {
@@ -286,10 +286,10 @@
     search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
-  Genes&Development = {
+  'Genes&Development' = {
     description = 'Genes & Development'
     base =	'http://genesdev.cshlp.org/'
-    search =	'http://genesdev.cshlp.org/content/%S'
+    search =	'http://genesdev.cshlp.org/content/%s'
   }
 
   GenomeResearch = {
@@ -301,7 +301,7 @@
   Genomics = {
     description = 'Genomics'
     base =	'http://www.journals.elsevier.com/genomics/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   geo = {
@@ -359,7 +359,7 @@
   JournalofCellScience = {
     description = 'Journal of Cell Science'
     base =     'http://jcs.biologists.org/'
-    search =	'http://jcs.biologists.org/content/%S'
+    search =	'http://jcs.biologists.org/content/%s'
   }
 
   JournalofGeneralPhysiology = {
@@ -377,13 +377,13 @@
   JournalofMolecularBiology = {
     description = 'Journal of Molecular Biology'
     base =	'http://www.journals.elsevier.com/journal-of-molecular-biology/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   JournalofStructuralBiology = {
     description = 'Journal of Structural Biology'
     base =	'http://www.journals.elsevier.com/journal-of-structural-biology/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   JournaloftheAmericanSocietyofNephrology = {
@@ -406,7 +406,7 @@
   MechanismsofDevelopment = {
     description = 'Mechanisms of Development'
     base =	'http://www.journals.elsevier.com/mechanisms-of-development/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   medline = {
@@ -443,13 +443,13 @@
   MolecularBiologyoftheCell = {
     description = 'Molecular Biology of the Cell'
     base =     'http://www.molbiolcell.org/'
-    search =	'http://www.molbiolcell.org/cgi/content/full/%S'
+    search =	'http://www.molbiolcell.org/cgi/content/full/%s'
   }
 
   MolecularCell = {
     description = 'Molecular Cell'
     base =	'http://www.cell.com/molecular-cell/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   MRC_geneservice = {
@@ -535,7 +535,7 @@
   Neuron = {
     description = 'Neuron'
     base =     'http://www.cell.com/neuron/'
-    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   nlm_mesh = {
@@ -580,19 +580,19 @@
   PLoSBiology = {
     description = 'PLoS Biology'
     base =	'http://www.plosbiology.org/'
-    search =	'http://www.plosbiology.org/article/info:doi%%2F10.1371%%2Fjournal.pbio.%S'
+    search =	'http://www.plosbiology.org/article/info:doi%%2F10.1371%%2Fjournal.pbio.%s'
   }
 
   PLoSComputationalBiology = {
     description = 'PLoS Computational Biology'
     base =	'http://www.ploscompbiol.org/E3'
-    search =	'http://www.ploscompbiol.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pcbi.%S'
+    search =	'http://www.ploscompbiol.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pcbi.%s'
   }
 
   PLoSGenetics = {
     description = 'PLoS Genetics'
     base =	'http://www.plosgenetics.org/'
-    search =	'http://www.plosgenetics.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pgen.%S'
+    search =	'http://www.plosgenetics.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pgen.%s'
   }
 
   PLoSOne = { 
@@ -604,7 +604,7 @@
   PLoSPathogens = {
     description = 'PLoS Pathogens'
     base =	'http://www.plospathogens.org/'
-    search =	'http://www.plospathogens.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.ppat.%S'
+    search =	'http://www.plospathogens.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.ppat.%s'
   }
 
   PortlandPressLTD = {
@@ -615,7 +615,7 @@
   ProcNatlAcadSciUSA = {
     description = 'Proc Natl Acad Sci U S A'
     base =	'http://www.pnas.org/'
-    search =	'http://www.pnas.org/content/%S'
+    search =	'http://www.pnas.org/content/%s'
   }
 
   reactome = {
@@ -647,7 +647,7 @@
   Science = {
     description = 'Science'
     base =     'http://www.sciencemag.org/'
-    search =	'http://www.sciencemag.org/content/%S'
+    search =	'http://www.sciencemag.org/content/%s'
   }
 
   secsg = {
@@ -698,13 +698,13 @@
   TheJournalofBiologicalChemistry = {
     description = 'The Journal of Biological Chemistry'
     base =	'http://www.jbc.org/'
-    search =	'http://www.jbc.org/content/%S'
+    search =	'http://www.jbc.org/content/%s'
   }
 
   TheJournalofCellBiology = {
     description = 'The Journal of Cell Biology'
     base =	'http://jcb.rupress.org/'
-    search =	'http://jcb.rupress.org/content/%S'
+    search =	'http://jcb.rupress.org/content/%s'
   }
 
   TheJournalofExperimentalBiology = {
@@ -716,7 +716,7 @@
   TheJournalofNeuroscience = {
     description = 'The Journal of Neuroscience'
     base =	'http://www.jneurosci.org/'
-    search =	'http://www.jneurosci.org/content/%S'
+    search =	'http://www.jneurosci.org/content/%s'
   }
 
   TheRockefellerUniversityPress = {
