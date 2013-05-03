@@ -1203,6 +1203,7 @@ END;
     SET this_object_label = species; 
     base = base _ '/index';
     arg1 = species;
+    this_object_id = class;
     IF species; 
       section_fetch = 'species_list'; 
       IF class == 'all';
@@ -1214,8 +1215,8 @@ END;
         section_fetch = c.config.sections.$section;
     END;
   ELSE;
-    SET this_object_id    = object.name.data.id || class || 'all';
-    SET this_object_label = object.name.data.label || 'all';
+    SET this_object_id    = object.name.data.id || 'all';
+    SET this_object_label = object.name.data.label || class  || 'all';
     arg1 = class;
     section_fetch = c.config.sections.$section.$class;
   END;
@@ -1250,7 +1251,7 @@ END;
     displayed_widgets.push(widget_name);
     w = {  id    = widget_name
             title = widget.title
-            href  = c.uri_for(base, arg1, is_class_index ? class : this_object_id , widget_name).path
+            href  = c.uri_for(base, arg1, this_object_id , widget_name).path
             type  = section == 'species' ? class : section
           };
 
