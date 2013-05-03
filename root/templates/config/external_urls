@@ -169,12 +169,6 @@
     search    = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ss.cgi?ss=%s'
   }
 
-  Development = {
-    description = 'Development'
-    base =     'http://dev.biologists.org/'
-    search =	'http://dev.biologists.org/content/%S'
-  }
-
   DevelopmentalCell = {
     description = 'Developmental Cell'
     base =	'http://www.cell.com/developmental-cell/'
