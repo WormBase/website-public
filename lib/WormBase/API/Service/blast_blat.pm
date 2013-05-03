@@ -1032,11 +1032,12 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
-
-            # If the feature is on the reverse strand, then swap start/end coordinates.
-            if ($hsp_strand == -1) {
-              my $tmp = $hsp_start; $hsp_start = $hsp_end; $hsp_end = $tmp;
+            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
+            my $hsp_genome_link_part;
+            if ($hsp_strand == 1) {
+              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+            } else {
+              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1082,11 +1083,12 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            my $hsp_genome_link_part = qq[$hsp_start..$hsp_end];
-
-            # If the feature is on the reverse strand, then swap start/end coordinates.
-            if ($hsp_strand == -1) {
-              my $tmp = $hsp_start; $hsp_start = $hsp_end; $hsp_end = $tmp;
+            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
+            my $hsp_genome_link_part;
+            if ($hsp_strand == 1) {
+              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+            } else {
+              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1149,11 +1151,12 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
-
-            # If the feature is on the reverse strand, then swap start/end coordinates.
-            if ($hsp_strand == -1) {
-              my $tmp = $hsp_start; $hsp_start = $hsp_end; $hsp_end = $tmp;
+            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
+            my $hsp_genome_link_part;
+            if ($hsp_strand == 1) {
+              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+            } else {
+              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
