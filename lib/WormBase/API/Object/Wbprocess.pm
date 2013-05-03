@@ -103,7 +103,7 @@ sub other_name{
 		
 	return {  
 		description => "Term alias",
-		data => "$other_name"
+		data => $other_name ? "$other_name" : undef
 	};
 }
 
