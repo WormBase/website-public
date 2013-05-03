@@ -292,6 +292,12 @@
       END;
     END;
 
+    # Markup link-outs to URIs given within the text.
+    MACRO markup_linkouts(text) BLOCK;
+      text = "$text";
+      text.replace('(^|\W)(http://.+?)(\s|$)', external_link('$2', '$1$2$3'));
+    END;
+
 # Markup any OMIM reference in a text
 # marks up ALL references in the format OMIM:(\d+)
 # only works for up to two references listed in a row with OMIM before only the first one
@@ -340,12 +346,11 @@
       END;
     END;
 
-
-#  Add params to have options on what to markup.  ie. omim, locus...
     MACRO markup(text, omim, locus, var, link) BLOCK;
       UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
       UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
       UNLESS (omim == 0); text = markup_omim(text); END;
+      text = markup_linkouts(text);
       text;
     END;
 
