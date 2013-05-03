@@ -74,7 +74,7 @@ http://wormbase.org/species/*/transgene
 		    my $summary      = $_->Summary;
 		    my $reporter_tag = $_->Reporter;
 		    my $reporter;
-		    if ($reporter_tag eq 'Gene') {
+		    if ($reporter_tag && ($reporter_tag eq 'Gene')) {
 			$reporter = $self->_pack_obj($reporter_tag->Public_name);
 		    } elsif ($reporter_tag) {
 			$reporter = $reporter_tag->col;
@@ -112,15 +112,15 @@ http://wormbase.org/species/*/transgene
 		    
 		    {
 			transgene          => $self->_pack_obj($_),
-			summary            => "$summary",
-			map_position       => "$map_position",			
-			reporter           => "$reporter",
-			expression_patterns => \@expr,
-			strains            => \@strains,
-		        driven_by          => $self->_pack_obj($gene),
-			ao                 => \@ao,
-			life_stage         => \@life_stage,
-			reference          => $self->_pack_obj($ref),
+			summary            => $summary && "$summary",
+			map_position       => $map_position && "$map_position",			
+			reporter           => $reporter && "$reporter",
+			expression_patterns => @expr ? \@expr : undef,
+			strains            => @strains ? \@strains : undef,
+		        driven_by          => $gene ? $self->_pack_obj($gene) : undef,
+			ao                 => @ao ? \@ao : undef,
+			life_stage         => @life_stage ? \@life_stage : undef,
+			reference          => $ref ? $self->_pack_obj($ref) : undef,
 		    };
 		} grep { $_->Map }                
 		$self->ace_dsn->dbh->fetch(-query => "find Transgene")
