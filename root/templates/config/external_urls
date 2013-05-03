@@ -61,9 +61,65 @@
        base       = 'http://50.18.180.228:3000'
      }
 
+  AmerChemicalSoc = {
+    description = 'Amer Chemical Soc'
+    base =     'http://pubs.acs.org/'
+  }
+
+  AmericanSocietyofNephrology = {
+    description = 'American Society of Nephrology'
+    base =	'http://www.asn-online.org/'
+  }
+
+  BerlinWalterDeGruyter = {
+    description = 'Berlin Walter De Gruyter'
+    base =	'http://www.degruyter.com/'
+  }
+
+  BiochemicalJournal = {
+    description = 'Biochemical Journal'
+    base =	'http://www.biochemj.org/bj/default.htm'
+    search =	'http://www.biochemj.org/bj/%s'
+  }
+
+  BiochemicalandBiophysicalResearchCommunications = {
+    description = 'Biochemical and Biophysical Research Communications'
+    base =	'http://www.journals.elsevier.com/biochemical-and-biophysical-research-communications/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
+  Biochemistry = {
+    description = 'Biochemistry'
+    base =	'http://pubs.acs.org/journal/bichaw'
+    search =	'http://pubs.acs.org/doi/abs/%s'
+  }
+
+  BiochimicaetBiophysicaActa = {
+    description = 'Biochimica et Biophysica Acta'
+    base =	'http://www.elsevier.com/journals/bba-biochimica-et-biophysica-acta/FS00-0253'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
+  BiologicalChemistry = {
+    description = 'Biological Chemistry'
+    base =	'http://www.degruyter.com/view/j/bchm'
+    search =	'http://www.degruyter.com/view/j/%s'
+  }
+
   cell = {
     base    = 'http://www.cell.com/'
     search    = 'http://www.sciencedirect.com/science/article/pii/%s'
+  }
+
+  CellMetabolism = {
+    description = 'Cell Metabolism'
+    base =     'http://www.cell.com/cell-metabolism/home'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
+  }
+
+  CharlesUnivPrague = {
+    description = 'Charles Univ Prague'
+    base =	'http://fb.cuni.cz/'
   }
 
   chebi = {
@@ -72,10 +128,27 @@
     search    = 'http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=%s'
   }
 
+  ColdSpringHarborLabPress = {
+    description = 'Cold Spring Harbor Lab Press'
+    base =     'http://www.cshlpress.com/'
+  }
+
+  ComparativeandFunctionalGenomics = {
+    description = 'Comparative and Functional Genomics'
+    base =	'http://www.hindawi.com/journals/cfg/'
+    search =	'http://www.ncbi.nlm.nih.gov/pmc/articles/%s'
+  }
+
   ctd = {
     description  = 'Comparative Toxicogenomic Database advances the understanding of the effects of environmental chemicals on human health and includes manually curated data describing cross-species chemical gene/protein interactions and chemical- and gene- disease relationships to illuminate molecular mechanisms underlying variable susceptibility and environmentally influenced diseases. These data will also provide insights into complex chemical-gene and protein interaction networks.'
     base    = 'http://ctd.mdibl.org'
     search    = 'http://ctd.mdibl.org/detail.go?type=chem&acc=%s'
+  }
+
+  CurrentBiology = {
+    description = 'Current Biology'
+    base =     'http://www.cell.com/current-biology/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
   }
 
   development = {
@@ -96,16 +169,39 @@
     search    = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ss.cgi?ss=%s'
   }
 
+  Development = {
+    description = 'Development'
+    base =     'http://dev.biologists.org/'
+    search =	'http://dev.biologists.org/content/%S'
+  }
+
+  DevelopmentalCell = {
+    description = 'Developmental Cell'
+    base =	'http://www.cell.com/developmental-cell/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
   do = {
     description  = 'Disease Ontology'
     base    = 'http://disease-ontology.org'
     search    = 'http://disease-ontology.org/term/%s'
   }
 
+  DNAandCellBiol = {
+    description = 'DNA and Cell Biol'
+    base =     'http://www.liebertpub.com/DNA'
+    search =	'online.liebertpub.com/doi/abs/10.1089/dna.%s'
+  }
+
   eggnog = {
     description  = 'evolutionary genealogy of genes: Non-supervised Orthologous Groups'
     base    = 'http://eggnog.embl.de/'
     search    = 'http://eggnog.embl.de/cgi_bin/display_multi_clusters.pl?number_of_entries=1&species=auto_detect&1=%s'
+  }
+
+  Elsevier = {
+    description = 'Elsevier'
+    base =     'http://www.elsevier.com'
   }
 
   embl = {
@@ -127,11 +223,34 @@
     search    = 'http://www.ensemblgenomes.org/search?site=ensembl&q="%s"&genomic_unit=all'
   }
 
+  ExperimentalCellResearch = {
+    description = 'Experimental Cell Research'
+    base =     'http://www.journals.elsevier.com/experimental-cell-research'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
+  }
+
+  FASEBJournal = {
+    description = 'FASEB Journal'
+    base =     'http://www.fasebj.org/'
+    search =	'http://www.fasebj.org/content/%s'
+  }
+
+  FederationAmerSocExpBiol = {
+    description = 'Federation Amer Soc Exp Biol'
+    base =	'http://www.faseb.org/'
+  }
+
         flybase = {
     description  = 'FlyBase: a database for drosophila genetics and molecular biology'
     maintainer  = ''
     base    = 'http://www.flybase.org'
     search    = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
+  }
+
+  FoliaBiologica(Praha) = {
+    description = 'Folia Biologica (Praha)'
+    base =     'http://fb.cuni.cz/'
+    search =	'http://fb.cuni.cz/%s'
   }
 
   gadfly = {
@@ -161,6 +280,36 @@
     search = c.uri_for('/tools', 'genome', 'gbrowse_img').path  _ '/%s'
   }
 
+  Gene = {
+    description = 'Gene'
+    base =     'http://www.journals.elsevier.com/gene/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
+  GeneExpressionPatterns = {
+    description = 'Gene Expression Patterns'
+    base =     'http://www.journals.elsevier.com/gene-expression-patterns'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
+  }
+
+  Genes&Development = {
+    description = 'Genes & Development'
+    base =	'http://genesdev.cshlp.org/'
+    search =	'http://genesdev.cshlp.org/content/%S'
+  }
+
+  GenomeResearch = {
+    description = 'Genome Research'
+    base =     'http://genome.cshlp.org/'
+    search =	'http://genome.cshlp.org/content/%s'
+  }
+
+  Genomics = {
+    description = 'Genomics'
+    base =	'http://www.journals.elsevier.com/genomics/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
   geo = {
     description  = 'Gene Expression Omnibus: a public functional genomics data repository supporting MIAME-compliant data submissions. Array- and sequence-based data are accepted. Tools are provided to help users query and download experiments and curated gene expression profiles.'
     base    = 'http://www.ncbi.nlm.nih.gov/geo/'
@@ -181,6 +330,11 @@
     search    = 'http://fsbill.vcell.uchc.edu/cgi-bin/gloworm.pl?%s'
   }
 
+  GSA = {
+    description = 'Genetics Society of America'
+    base =     'http://www.genetics-gsa.org/'
+  }
+
   'H-INV' = {
     description  = 'H-Invitational Database (H-InvDB), an integrated database of human genes and transcripts.'
     base    = 'http://h-invitational.jp/'
@@ -192,16 +346,73 @@
     search    = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
   }
 
+  HindawiPublishingCorporation = {
+    description = 'Hindawi Publishing Corporation'
+    base =     'http://www.hindawi.com/'
+  }
+
+  HistochemicalSocInc = {
+    description = 'Histochemical Soc Inc'
+    base =	'http://histochemicalsociety.org/'
+  }
+
   interpro = {
     description  = 'InterPro provides an integrated view of the commonly used signature databases'
     base    = 'http://www.ebi.ac.uk/interpro/'
     search    = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s'
   }
 
+  JournalofCellScience = {
+    description = 'Journal of Cell Science'
+    base =     'http://jcs.biologists.org/'
+    search =	'http://jcs.biologists.org/content/%S'
+  }
+
+  JournalofGeneralPhysiology = {
+    description = 'Journal of General Physiology'
+    base =	'http://jgp.rupress.org'
+    search =	'http://jgp.rupress.org/content/%s'
+  }
+
+  JournalofHistochemistry&Cytochemistry = {
+    description = 'Journal of Histochemistry & Cytochemistry'
+    base =	'http://jhc.sagepub.com/'
+    search =	'http://jhc.sagepub.com/content/%s'
+  }
+
+  JournalofMolecularBiology = {
+    description = 'Journal of Molecular Biology'
+    base =	'http://www.journals.elsevier.com/journal-of-molecular-biology/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
+  JournalofStructuralBiology = {
+    description = 'Journal of Structural Biology'
+    base =	'http://www.journals.elsevier.com/journal-of-structural-biology/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
+  JournaloftheAmericanSocietyofNephrology = {
+    description = 'Journal of the American Society of Nephrology'
+    base =	'http://jasn.asnjournals.org/'
+    search =	'http://jasn.asnjournals.org/content/%s'
+  }
+
   kegg = {
     description  = 'KEGG is a database of biological systems, consisting of genetic building blocks of genes and proteins (KEGG GENES), chemical building blocks of both endogenous and exogenous substances (KEGG LIGAND), molecular wiring diagrams of interaction and reaction networks (KEGG PATHWAY), and hierarchies and relationships of various biological objects (KEGG BRITE). KEGG provides a reference knowledge base for linking genomes to biological systems and also to environments by the processes of PATHWAY mapping and BRITE mapping.'
     base    = 'http://www.genome.jp/kegg'
     search    = 'http://www.genome.jp/dbget-bin/www_bget?%s'
+  }
+
+  MaryAnnLiebertInc = {
+    description = 'Mary Ann Liebert Inc'
+    base =     'http://www.liebertpub.com/'
+  }
+
+  MechanismsofDevelopment = {
+    description = 'Mechanisms of Development'
+    base =	'http://www.journals.elsevier.com/mechanisms-of-development/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
   }
 
   medline = {
@@ -235,11 +446,33 @@
     base    = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/YA_CEPsh'
   }
 
+  MolecularBiologyoftheCell = {
+    description = 'Molecular Biology of the Cell'
+    base =     'http://www.molbiolcell.org/'
+    search =	'http://www.molbiolcell.org/cgi/content/full/%S'
+  }
+
+  MolecularCell = {
+    description = 'Molecular Cell'
+    base =	'http://www.cell.com/molecular-cell/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
   MRC_geneservice = {
     description  = 'Supplier of genomic products and contract research company'
     base    = 'http://www.geneservice.co.uk/products/rnai/index.jsp'
     search    = 'http://www.lifesciences.sourcebioscience.com/genomecube?kw=%s'
     email    = 'webmaster@geneservice.co.uk'
+  }
+
+  NationalAcademyofSciences = {
+    description = 'National Academy of Sciences'
+    base =     'http://www.nasonline.org'
+  }
+
+  NationalAcademyofSciencesUSA = {
+    description = 'National Academy of Sciences USA'
+    base =	'http://www.nasonline.org/'
   }
 
   national_bioresource_project = {
@@ -248,7 +481,6 @@
     email    = 'mitani1@research.twmu.ac.jp'
     search    = 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
   }
-
 
   ncbi_genome_assembly = {
          description     = 'Genome assembly archive at NCBI',
@@ -306,6 +538,12 @@
     search    = 'http://aquila.bio.nyu.edu/cgi-bin/NBrowseJnlpProd?-q=%s&-d=NEUROBROWSE&-s=New%20Search&-l=Locate%20Node'
   }
 
+  Neuron = {
+    description = 'Neuron'
+    base =     'http://www.cell.com/neuron/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%S'
+  }
+
   nlm_mesh = {
     description  = 'The National Library of Medicine Medical Subject Headings thesaurus. These terms are used by the NLM for indexing articles for the MEDLNE/PubMED database.'
     base    = 'http://www.nlm.nih.gov/mesh'
@@ -340,10 +578,50 @@
     search    = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
   }
 
+  PLoS = {
+    description = 'PLoS'
+    base =     'http://www.plos.org/'
+  }
+
+  PLoSBiology = {
+    description = 'PLoS Biology'
+    base =	'http://www.plosbiology.org/'
+    search =	'http://www.plosbiology.org/article/info:doi%%2F10.1371%%2Fjournal.pbio.%S'
+  }
+
+  PLoSComputationalBiology = {
+    description = 'PLoS Computational Biology'
+    base =	'http://www.ploscompbiol.org/E3'
+    search =	'http://www.ploscompbiol.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pcbi.%S'
+  }
+
+  PLoSGenetics = {
+    description = 'PLoS Genetics'
+    base =	'http://www.plosgenetics.org/'
+    search =	'http://www.plosgenetics.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pgen.%S'
+  }
+
   PLoSOne = { 
-    description = 'PLOS ONE is an international, peer-reviewed, open-access, online publication featuring reports of original research from all disciplines within science and medicine.'
+    description = 'PloS One'
     base = 'http://www.plosone.org/',
     search = 'http://www.plosone.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pone.%s'
+  }
+
+  PLoSPathogens = {
+    description = 'PLoS Pathogens'
+    base =	'http://www.plospathogens.org/'
+    search =	'http://www.plospathogens.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.ppat.%S'
+  }
+
+  PortlandPressLTD = {
+    description = 'Portland Press LTD'
+    base =	'http://www.portlandpress.com'
+  }
+
+  ProcNatlAcadSciUSA = {
+    description = 'Proc Natl Acad Sci U S A'
+    base =	'http://www.pnas.org/'
+    search =	'http://www.pnas.org/content/%S'
   }
 
   reactome = {
@@ -366,6 +644,18 @@
     search    = 'http://rfam.sanger.ac.uk/family?acc=%s'
   }
 
+  RNA = {
+    description = 'RNA'
+    base =     'http://rnajournal.cshlp.org/'
+    search =	'http://rnajournal.cshlp.org/content/%s'
+  }
+
+  Science = {
+    description = 'Science'
+    base =     'http://www.sciencemag.org/'
+    search =	'http://www.sciencemag.org/content/%S'
+  }
+
   secsg = {
     description  = 'The Southeast Collaboratory for Structural Genomics'
     base    = 'http://www.secsg.org/'
@@ -376,6 +666,11 @@
     description  = 'GO Term finder - Stanford University. SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
     search    = 'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
     base    = 'http://genome-www4.stanford.edu'
+  }
+
+  SocietyofNeuroscience = {
+    description = 'Society of Neuroscience'
+    base =     'www.sfn.org'
   }
 
   sra = {
@@ -391,6 +686,50 @@
     search    = 'http://www.expasy.org/uniprot/%s'
   }
 
+  TheAmericanSocietyForBiochemistryandMolecularBiology = {
+    description = 'The American Society For Biochemistry and Molecular Biology'
+    base =     'http://www.asbmb.org/'
+  }
+
+  TheAmericanSocietyForCellBiology = {
+    description = 'The American Society For Cell Biology'
+    base =	'http://www.ascb.org/'
+  }
+
+  TheCompanyofBiologists = {
+    description = 'The Company of Biologists'
+    base =	'http://www.biologists.com/'
+  }
+
+  TheJournalofBiologicalChemistry = {
+    description = 'The Journal of Biological Chemistry'
+    base =	'http://www.jbc.org/'
+    search =	'http://www.jbc.org/content/%S'
+  }
+
+  TheJournalofCellBiology = {
+    description = 'The Journal of Cell Biology'
+    base =	'http://jcb.rupress.org/'
+    search =	'http://jcb.rupress.org/content/%S'
+  }
+
+  TheJournalofExperimentalBiology = {
+    description = 'The Journal of Experimental Biology'
+    base =	'http://jeb.biologists.org/'
+    search =	'http://jeb.biologists.org/content/%s'
+  }
+
+  TheJournalofNeuroscience = {
+    description = 'The Journal of Neuroscience'
+    base =	'http://www.jneurosci.org/'
+    search =	'http://www.jneurosci.org/content/%S'
+  }
+
+  TheRockefellerUniversityPress = {
+    description = 'The Rockefeller University Press'
+    base =	'http://www.rupress.org/'
+  }
+
   treefam  = {
     description  = 'TreeFam (Tree families database) is a database of phylogenetic trees of animal genes. It aims at developing a curated resource that gives reliable information about ortholog and paralog assignments, and evolutionary history of various gene families.'
     maintainer  = ''
@@ -404,6 +743,12 @@
     base    = 'http://expasy.org/sprot'
     email    = 'swiss-prot@expasy.org'
     search    = 'http://www.expasy.org/uniprot/%s'
+  }
+
+  TrendsinParasitology = {
+    description = 'Trends in Parasitology'
+    base =     'http://www.cell.com/trends/parasitology/'
+    search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
 
   ucsc_genome_browser = {
