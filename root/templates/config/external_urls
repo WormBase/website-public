@@ -778,6 +778,13 @@
     search    = 'http://www.wormbase.org/db/seq/protein?name=%s'
   }
 
+	wikipathways = {
+		description	= 'WikiPathways: A public platform dedicated to the curation of biological pathways by and for 
+the scientific community.'
+		maintainer	= 'wikipathways-discuss@googlegroups.com'
+		base		= 'http://www.wikipathways.org/'
+		search		= 'http://www.wikipathways.org/wpi/PathwayWidget.php?id=%s'
+	}
 
     WormQTL = {
         description = 'WormQTL is an online scalable system for QTL exploration to service the worm community'
