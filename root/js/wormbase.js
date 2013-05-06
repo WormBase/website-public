@@ -91,11 +91,12 @@
     }
    
     function ajaxError(xhr){
-          var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+          var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '',
+              statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
           return '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p><a href="/tools/support?url=' + location.pathname 
                   + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p><p>' + xhr.statusText + '</p></div>';
+                  + '">Let us know</a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
     }
 
     function navBarInit(){
@@ -557,8 +558,9 @@
     function ajaxGet(ajaxPanel, $url, noLoadImg, callback) {
       $jq.ajax({
         url: $url,
-        beforeSend:function(){
+        beforeSend:function(xhr){
           if(!noLoadImg){ setLoading(ajaxPanel); }
+          xhr.requestURL = $url;
         },
         success:function(data){
           ajaxPanel.html(data);
