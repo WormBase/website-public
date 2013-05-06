@@ -562,6 +562,7 @@
   Phenobank2 = {
     base    = 'http://worm.mpi-cbg.de/phenobank2/cgi-bin/MenuPage.py'
     maintainer  = ''
+    search = 'http://www.worm.mpi-cbg.de/phenobank/cgi-bin/GenePage.py?%s'
   }
 
   phosphopep = {
