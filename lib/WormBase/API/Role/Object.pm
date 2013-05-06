@@ -1809,7 +1809,9 @@ sub gff_dsn {
     $species ||= $self->_parsed_species;
     $species =~ s/^all$/c_elegans/;
     $self->log->debug("getting gff database species $species");
-    return $self->dsn->{"gff_" . $species};
+    my $gff = $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
+    die "Can't find gff database for $species" unless $gff;
+    return $gff;
 }
 
 sub ace_dsn {
