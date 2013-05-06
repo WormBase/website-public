@@ -48,7 +48,7 @@ This searches the underlying ACeDB database using either the old-style
       <label for="rtype-text">Plain Text output</label>
 </form>
 [%# Getting arrays of size 1 that are empty with broken queries. %]
-[% IF data.size > 0 && data.0.id.match('\w') %]
+[% IF data.size > 0 && (data.0.id.match('\w') || data.0.0.id.match('\w'))%]
    [% IF query_type == 'WQL' %]
       [% tags2link(data); %]
    [% ELSE %]

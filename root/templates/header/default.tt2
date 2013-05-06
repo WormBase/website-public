@@ -19,48 +19,7 @@
         <div class="system-message" ></div>
       [% END %]
 
-[% UNLESS c.req.uri.path.match('tools/support') %]
-<div id="operator-box-wrap">
-  <div id="issue-box" class="minimize">
-    <div id="issue-box-tab" class="ui-corner-top">
-      <span>
-         Questions, Feedback & Help
-         <span aria-hidden="true" id="issue-icon"></span>
-       </span>
-    </div>
-    <div id="issue-box-content" class="ui-corner-tl">
-      <div id="issues-new">
-          <div>
-            Send us an email and we'll get back to you ASAP. Or you can browse our [% external_link("https://github.com/WormBase/website/issues", "issue tracker") %].
-          </div>
-
-          [% UNLESS c.user_exists %]
-            <div><input id="name" type="text" size="48" placeholder="Name"/></div>
-            <div><input id="email" type="text"  size="48" placeholder="Email (so we can get back to you)"/> </div>
-          [% END %]
-
-          <div>
-            <select name="email[subject]" id="issue-title" class="valid">
-              <option value="" style="display:none">Type of Question / Comment</option>
-              <option value="Bug Report">Bug Report</option>
-              <option value="Feature Request">Feature Request</option>
-              <option value="Content Correction">Content Correction</option>
-              <option value="How Do I ...?">How Do I ...?</option>
-              <option value="My Account">My Account</option>
-              <option value="Everything's broken!">Everything's broken!</option>
-            </select>
-          </div>
-          <div>
-            <textarea class="issue-text" id="issue-content" rows="6" name="content" placeholder="Question?"></textarea>
-          </div>
-          <div id="issue-submit-box">
-            <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% template_title %]" url="[% c.req.uri.path %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
-          </div>
-      </div>
-    </div>
-  </div>
-</div> 
-[% END %]
+  [% PROCESS "boilerplate/issue_box.tt2" %]
 [% PROCESS page_info %]
 
 [% save = object.name.data.class.match('paper') ? 'my_library' : 'reports'%]
@@ -79,6 +38,19 @@
       </p>
   </div>
 
+[% MACRO nav_species(species_name) BLOCK %]
+  <li><a href="/[% title %]/[% species_name %]" class="species"> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$species_name.title %]</a>
+              <ul class="wb-dropdown">  
+                <li>[% text2link('genomic_location',species_name,'Browse Genome') %]</li>
+
+              [% FOREACH class IN c.config.sections.species_list.$species_name.available_classes.class %]
+                <li><a href="[% c.uri_for('/species',species_name,class).path  %]">[% pluralize(c.config.sections.species.$class.title || c.config.sections.resources.$class.title) %]</a></li>
+              [% END %]
+
+              </ul>
+            </li>
+
+[% END %]
 
   <div id="nav-bar">
     <ul class="nav-bar">
@@ -89,30 +61,38 @@
           <ul class="wb-dropdown">
 
             [% IF (title == 'species') %]
-           
-	
-    	[%# Force C. elegans to the top without having to hard-code it in configuration %]
-        [% species = c.config.sections.species_list.keys.sort %]
-        [% species.unshift('c_elegans') %]
-        [% species.unshift('all') %]
-        [% species = species.unique %]
 
-          [% FOREACH option IN species %]
-            [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
+              [% genus_list = {} %]
+              [% FOREACH s IN c.config.sections.species_list.keys.sort;
+                genus = c.config.sections.species_list.$s.genus;
+                NEXT UNLESS genus;
+                genus_list.$genus = genus_list.$genus || [];
+                genus_list.$genus.push(s);
+               END %]
 
-            <li><a href="/[% title %]/[% option %]" class="species"> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$option.title %]</a>
-              <ul class="wb-dropdown">  
-                <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
+              [% g_sort = genus_list.keys.sort %]
+              [% g_sort.unshift('Caenorhabditis') %]
+              [% g_sort.unshift('c_elegans') %]
+              [% g_sort.unshift('all') %]
+              [% g_sort = g_sort.unique %]
 
-              [% FOREACH class IN c.config.sections.species_list.$option.available_classes.class %]
-                <li><a href="[% c.uri_for('/species',option,class).path  %]">[% pluralize(c.config.sections.species.$class.title || c.config.sections.resources.$class.title) %]</a></li>
+              [% FOREACH option IN g_sort %]
+
+                [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
+                  [% nav_species(option); %]
+                [% ELSE %]
+                <li>
+                  <a class="species">
+                    <span class="ui-icon ui-icon-triangle-1-e"></span>[% option %]
+                  </a>
+                  <ul class="wb-dropdown">  
+                      [% FOREACH s IN genus_list.$option %]
+                        [% nav_species(s); %]
+                      [% END %]
+                  </ul>
+                </li>
+                [% END %]
               [% END %]
-
-              </ul>
-            </li>
-            [% END %]
-          [% END %]
-
 
         [% ELSE %]
           [% FOREACH option IN c.config.sections.$title.keys.sort %]

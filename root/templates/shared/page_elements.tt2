@@ -17,8 +17,8 @@
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
     [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>:
-        [% tags2link(data.$type, '; ') %]  
+        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: [% tags2link(data.$type, '; ') %]  
+        [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
 [% IF text %]    </div>
@@ -401,9 +401,17 @@ WB.getPlugin("dataTables", function(){
             "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
             "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
             "oTableTools": {
-            "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_cvs_xls_pdf.swf"
-        }
-            [% style %]
+              "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_cvs_xls_pdf.swf",
+              "aButtons": [
+                {
+                  "sExtends": "collection",
+                  "sButtonText": "Save",
+                  "aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
+                }
+              ],
+              [% style %]
+            }
+
           });
 
         });
@@ -498,7 +506,7 @@ END; %]
             searchlink(cell.class, cell.id, cell.id);
           END;
       ELSIF cell.defined('evidence');
-          evidence(cell.evidence,table_name _ index, cell.text, 'details');
+          evidence(cell.evidence,table_name _ index, cell_content(cell.text), 'details');
       ELSIF cell.defined('interaction');
           interaction_cell(cell);
       ELSIF cell.defined('xrefs');
@@ -579,7 +587,7 @@ END; %]
          
                 <div id="widget-footer" class="ui-helper-hidden">
 [% UNLESS type.match('(tool)|(me)') %]
-                    <a   onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
+                    <a   onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,is_class_index? 'all': this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
 [% END %] 
 [% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator", "editor") %]
@@ -730,12 +738,14 @@ END;
 
 [% MACRO expression_patterns BLOCK ;
 
-   WRAPPER $field_block title="Patterns" key="expression_patterns";
+   WRAPPER $field_block title="Expression patterns" key="expression_patterns";
 
-       build_data_table(order=['expression_pattern','description','author'],
-                      columns={ expression_pattern => 'Pattern',
-                        description        => 'Description',
-                    author             => 'Author',
+       build_data_table(order=['expression_pattern','gene', 'description','author'],
+                      columns={ 
+                          expression_pattern => 'Pattern',
+                          gene => 'Gene',
+                          description  => 'Description',
+                          author => 'Author',
                              },
                     key='expression_patterns');
     END;
@@ -1193,6 +1203,7 @@ END;
     SET this_object_label = species; 
     base = base _ '/index';
     arg1 = species;
+    this_object_id = class;
     IF species; 
       section_fetch = 'species_list'; 
       IF class == 'all';
@@ -1204,8 +1215,8 @@ END;
         section_fetch = c.config.sections.$section;
     END;
   ELSE;
-    SET this_object_id    = object.name.data.id || class || 'all';
-    SET this_object_label = object.name.data.label || 'all';
+    SET this_object_id    = object.name.data.id || 'all';
+    SET this_object_label = object.name.data.label || class  || 'all';
     arg1 = class;
     section_fetch = c.config.sections.$section.$class;
   END;
@@ -1240,7 +1251,7 @@ END;
     displayed_widgets.push(widget_name);
     w = {  id    = widget_name
             title = widget.title
-            href  = c.uri_for(base, arg1, is_class_index ? class : this_object_id , widget_name).path
+            href  = c.uri_for(base, arg1, this_object_id , widget_name).path
             type  = section == 'species' ? class : section
           };
 

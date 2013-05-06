@@ -6,10 +6,11 @@
     END;
 
     WRAPPER $field_block title="Expression patterns" key="expression_patterns";
-       build_data_table(order=['expression_pattern','gene','description'],
+       build_data_table(order=['expression_pattern','gene','description', 'certainty'],
                         columns={ expression_pattern     => 'Expression Pattern',
 	      	              gene      => 'Gene',
 		                 description   => 'Description',
+                     certainty => 'Certainty',
                                },
                         key='expression_patterns');
     END;
