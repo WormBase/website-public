@@ -14,13 +14,13 @@ use Bio::Graphics::Browser2::Render::HTML;
 
 use constant DEV_DEFAULT_GB => 'cgi-bin';
 
-# The symbolic name of our application.
+# The symbolic name of our application, used for configuration only.
 my $app      = $ENV{APP};
 my $app_root = $ENV{APP_ROOT};
 my $app_path;
 
 if ($app_root) {
-    $app_path = ( $app ? "$app_root/$app" : "$app_root/wormbase" );
+    $app_path = ( $app ? "$app_root" : "$app_root/wormbase" );
 }
 else { # no app[root] provided; use catalyst to figure it out
     $app_path = WormBase::Web->path_to('/');

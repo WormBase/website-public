@@ -47,8 +47,9 @@ sub run {
     # To rectify, I use "all" as a placeholder so
     # that class indexes and class reports work the same way.
     if ($request_name eq 'all') {
+        $request_class = lc($request_class);
         my $aceclass = $self->_api->modelmap->WB2ACE_MAP->{class}->{ucfirst $request_class}
-                     || $self->_api->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst $request_class};
+                     || $self->_api->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst $request_class} || ucfirst $request_class;
         if (ref $aceclass eq 'ARRAY') {
             foreach my $ace (@$aceclass) {
             	$request_name  = '?' . ucfirst $ace;

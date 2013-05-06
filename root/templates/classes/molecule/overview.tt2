@@ -4,15 +4,17 @@
 
 WRAPPER highlight_box;
  WRAPPER $field_block title=pluralize('Synonym', fields.synonyms.data.size) key="synonyms";
-    cell_content(fields.synonyms.data);
+   tags2link(fields.synonyms.data);
 END;
 
 END;
 
 
-
+'<div class="description">';
 WRAPPER $field_block title="Molecule Use" key="molecule_use";
-    tags2link(fields.molecule_use.data);
+    FOREACH mu IN fields.molecule_use.data;
+    evidence(mu.evidence, '', mu.text);
+    END;
 END;
 
 WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
@@ -20,5 +22,5 @@ WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
 END;
 
 remarks(no_toggle=1);
-
+'</div>';
 %]

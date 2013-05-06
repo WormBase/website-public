@@ -1,6 +1,8 @@
+<h1>WormBase Help</h1>
 
-    
-    <h3>Contact WormBase Help</h3>
+<p class="text-width">We're constantly working on making WormBase better for you. Please let us know if you have any feedback for us.
+</p>
+
       <div id="issues-new">
 
 
@@ -37,14 +39,25 @@
 
         <div>
           Question:<br />
-          <textarea class="text-width issue-text" id="issue-content" rows="10"     name="content"  ></textarea>
+          <textarea class="text-width issue-text" id="issue-content" rows="10" name="content"  ></textarea>
         </div>
 
         <div id="issue-submit-box">
-          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" /> 	
+          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />   
           <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />   
         </div>
-      <div>
-      You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create and track an issue on Github') %]
-    </div>
+      <!-- <div> -->
+<!--       You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create and track an issue on Github') %]
+    </div> -->
       </div>
+
+<br />
+
+[% '<a href="' _ c.uri_for('/search','issue','*') _ '">see more issues ›</a>' %]
+<br />
+<br />
+[% '<a href="mailto:help@wormbase.org">help@wormbase.org</a>' %]
+<br />
+[% external_link("https://twitter.com/wormbase", "@wormbase") %]
+<br />
+

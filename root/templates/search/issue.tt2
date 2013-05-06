@@ -1,0 +1,16 @@
+  <div class="entry result">
+    <li>
+      <div id="fade" class="date">
+        [% IF item.comments %][% external_link(item.html_url, item.comments _ pluralize(' comment', item.comments)) %][% END %]
+      </div>
+      [% external_link(item.html_url, item.number _ ': ' _ item.title) %]
+    </li>
+[% c_time = date.now - date.format(item.created_at.replace('T|Z', ' '), '%s'); %]
+[% u_time = date.now - date.format(item.updated_at.replace('T|Z', ' '), '%s'); %]
+      <div>Opened by [% git_user(item.user) %] [% time_dir.ago(c_time,1) %] [% UNLESS(c_time.match(u_time)); '<span id="fade">(Updated ' _ time_dir.ago(u_time, 1) _ ')</span>'; END; %]</div>
+      [% IF item.assignee %] <div>Assigned to [% git_user(item.assignee) %] </div>[% END %]
+      <div>Status: [% item.state %]</div>
+      <div class="text-min">
+          [% item.body %]
+      </div>
+  </div>
