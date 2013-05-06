@@ -467,6 +467,9 @@ sub pfam_graph {
     my $motif_homol = $self ~~ '@Motif_homol';
     my $hash;
     my $length = length($self->peptide);
+    my $ret = { description => "The motif graph of the protein",
+                data => undef};
+
 
     for( my $i=0;my $feature=shift @$motif_homol;$i++) {
 	    my $score = $feature->right(2);
@@ -495,7 +498,7 @@ sub pfam_graph {
     # extract the exons, then map them
     # onto the protein backbone.
     my $gene    = $self->cds->[0];
-    my $gffdb = $self->gff_dsn || return;
+    my $gffdb = $self->gff_dsn || return $ret;
     my ($seq_obj) = eval{$gffdb->segment(CDS => $gene)}; return if $@;
 
     my (@exons,@segmented_exons);
@@ -582,10 +585,8 @@ sub pfam_graph {
 	$hash->{$type} = to_json ($graph);
     }
 
-    return {
-        description => 'The motif graph of the protein',
-        data        => scalar keys %$hash ? $hash : undef,
-    };
+    $ret->{data} = scalar keys %$hash ? $hash : undef;
+    return $ret;
 }
 } # end of block for pfam_graph
 

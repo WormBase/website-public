@@ -102,8 +102,8 @@ B<Response example>
 sub sequence_type {
     my ($self) = @_;
     return {
-	description => 'the general type of the sequence',
-	data        => $self->type,
+    	description => 'the general type of the sequence',
+    	data        => $self->type,
     };
 }
 

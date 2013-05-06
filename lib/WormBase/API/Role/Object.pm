@@ -355,7 +355,9 @@ sub _build_best_blastp_matches {
 
     # find the best pep_homol in each category
     my %best;
-    return "" unless @pep_homol;
+    return {  description => 'no proteins found, no best blastp hits to display',
+              data        => undef,
+    } unless @pep_homol;
     for my $hit (@pep_homol) {
         # Ignore mass spec hits
         #     next if ($hit =~ /^MSP/);

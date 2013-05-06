@@ -146,7 +146,7 @@ sub sequence {
     my $self        = shift;
     my $object      = $self->object;
 
-    my @tag_objects = map {{ sequence=> "$_", header=> $_->right }} $object->Sequence || $object->DNA_text;
+    my @tag_objects = map {{ sequence=> "$_", header=> $_->right && $_->right->asString }} $object->Sequence || $object->DNA_text;
     if (!@tag_objects  && $object->PCR_product) {
         @tag_objects = map {    {   header=>"$_", 
                                     sequence=> $self->_api->wrap($_)->segment->{data}->{dna} 
