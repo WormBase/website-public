@@ -91,13 +91,13 @@ sub interactions  {
     return {
         description => 'genetic and predicted interactions',
         data        => $results->{showall} ? {    
-                            edges => \@edges,
+                            edges => @edges ? \@edges : undef,
                             types => $results->{types},
                             nodes => $results->{nodes},
                             showall => $results->{showall},
                             ntypes => $results->{ntypes},
-                            edges_all => \@edges_all
-                       } : { edges => \@edges },
+                            edges_all => @edges_all ? \@edges_all : undef
+                       } : { edges => @edges ? \@edges :undef },
     };
 
 }
@@ -158,7 +158,7 @@ sub interaction_details {
 
     return {
 		description	=> 'addtional nearby interactions',
-		data		=> {    edges => \@edges,
+		data		=> {    edges => @edges ? \@edges : undef,
                             types => $results->{types},
                             nodes => $results->{nodes},
                             ntypes => $results->{ntypes},

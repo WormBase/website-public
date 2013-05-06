@@ -91,7 +91,8 @@ sub _build_expression_patterns {
         my @patterns = $_->Pattern
             || $_->Subcellular_localization
             || $_->Remark;
-        my $gene      = $self->_pack_obj($_->Gene);
+        my $gene = $_->Gene;
+        $gene = $self->_pack_obj($gene);
 
         if($class eq 'Anatomy_term'){
             $certainty = $_->fetch()->at("Expressed_in.$class.$object");

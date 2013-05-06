@@ -121,7 +121,7 @@ sub _build__phenotypes {
 	}
     }
 
-    return \%phenotypes;
+    return %phenotypes ? \%phenotypes : undef;
 }
 
 #######################################
@@ -1433,7 +1433,7 @@ sub matching_cdnas {
     my %unique;
     my @mcdnas = map {$self->_pack_obj($_)} grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
     return { description => 'cDNAs matching this gene',
-	     data        => \@mcdnas };
+	     data        => @mcdnas ? \@mcdnas : undef };
 }
 
 
@@ -1497,7 +1497,9 @@ sub primer_pairs {
     my $self   = shift;
     my $object = $self->object;
     
-    return unless @{$self->sequences};
+    return {    description => "No primer pairs found",
+                data => undef
+            } unless @{$self->sequences};
     
     my @segments = @{$self->_segments};
     my @primer_pairs =  
