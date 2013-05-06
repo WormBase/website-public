@@ -110,7 +110,7 @@ sub _build_type {
 		$type = $s->Properties(1);
     }
     $type ||= 'unknown';
-    return $type;
+    return $type && "$type";
 }
 
 
