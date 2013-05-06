@@ -234,7 +234,7 @@ END;
 [% END %]
 
 [% MACRO get_star_id(id) BLOCK;
-  id.remove('[:/ &\.\[\]\+]');
+  id.remove('[^_a-zA-Z0-9-]');
   END %]
 
 [% MACRO make_star(wbid, href) BLOCK;
