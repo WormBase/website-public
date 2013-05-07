@@ -1608,7 +1608,6 @@ var Scrolling = (function(){
 
   
 function setupCytoscape(data, types, clazz){
-    alert(clazz);
     
           var edgeColor = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E" ],
               edgeColorMapper = {
@@ -1736,9 +1735,13 @@ function setupCytoscape(data, types, clazz){
                 function resetChecked(){
                   legend.find('input:checkbox').map(function(){
                     var t = $jq(this);
-                    if (t.attr('name') == 'type'){ t.prop('checked', (!t.val().match('Predicted')));}
-                    //else if(){} // HERE filter out wbprocess make unchecked by default ===================================================================================================
-                    else { t.prop('checked', true);}
+                    if (t.attr('name') == 'type'){ 
+                        t.prop('checked', (!t.val().match('Predicted')));
+                    }else if(clazz === 'WBProcess' && t.val().match('nearby')){
+                        // don't check nearby if process page
+                    }else { 
+                        t.prop('checked', true);
+                    }
                   });
                 }
                 

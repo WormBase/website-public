@@ -101,8 +101,9 @@ sub interactions  {
                             nodes => $results->{nodes},
                             showall => $results->{showall},
                             ntypes => $results->{ntypes},
-                            edges_all => @edges_all ? \@edges_all : undef
-                       } : { edges => @edges ? \@edges :undef },
+                            edges_all => @edges_all ? \@edges_all : undef,
+                            class => $class
+                       } : { edges => \@edges },
     };
 
 }
