@@ -1072,6 +1072,7 @@ sub extract_hit_info {
         my $top_hsp_strand;
 
         $hit->rewind;
+        my $on_reverse_strand = '';
         my @hsp_genome_link_parts;
         while (my $hsp = $hit->next_hsp) {
             $counter++;
@@ -1083,12 +1084,11 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
-            my $hsp_genome_link_part;
-            if ($hsp_strand == 1) {
-              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
-            } else {
-              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
+            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+
+            # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
+            if ($hsp_strand == -1) {
+                $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1112,7 +1112,7 @@ sub extract_hit_info {
 
         }
 
-	my $hit_ranges = qq[add=${chr}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+	my $hit_ranges = qq[${on_reverse_strand}add=${chr}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
         my $view_start;
         my $view_end;
@@ -1140,6 +1140,7 @@ sub extract_hit_info {
         my $top_hsp_strand;
 
         $hit->rewind;
+        my $on_reverse_strand = '';
         my @hsp_genome_link_parts;
         while (my $hsp = $hit->next_hsp) {
             $counter++;
@@ -1151,12 +1152,11 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
-            my $hsp_genome_link_part;
-            if ($hsp_strand == 1) {
-              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
-            } else {
-              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
+            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+
+            # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
+            if ($hsp_strand == -1) {
+                $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1180,7 +1180,7 @@ sub extract_hit_info {
 
         }
 
-	my $hit_ranges = qq[add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+	my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
         my $view_start;
         my $view_end;
