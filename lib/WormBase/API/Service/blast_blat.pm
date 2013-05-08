@@ -1036,15 +1036,15 @@ sub extract_hit_info {
             my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
 
             # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
-            if ($hsp_strand != 1) {
-                $on_reverse_strand = 'flip=1;'
+            if ($hsp_strand == -1) {
+                $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
               if @hsp_genome_link_parts < $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT};
         }
 
-	my $hit_ranges = qq[${on_reverse_strand};add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+	my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
         $hit_genome_link = $gbrowse_root . qq[?name=${hit_name};$hit_ranges] if $gbrowse_root;
         $hit_expand_link = $expand_root . qq[?] . join(";", 'width=450', qq[name=${hit_name};$hit_ranges]) if $expand_root;
