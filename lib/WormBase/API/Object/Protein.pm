@@ -9,8 +9,9 @@ use Bio::Graphics::Panel;
 use Digest::MD5 'md5_hex';
 use JSON;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
  
 use vars qw(%HIT_CACHE);
 %HIT_CACHE=();
@@ -763,13 +764,45 @@ sub history {
 	     data        =>  @data ? \@data : undef };
 }
 
+############################################################
+#
+# Location Widget (template supplied by shared/widgets/location.tt2)
+#
+############################################################
 
+sub _build_genetic_position {
+    my ($self) = @_;
 
+    my @genes = grep{ $_->Method ne 'history'}  @{$self->cds};
+    my ($chromosome,$position,$error) = $self->_api->wrap($genes[0])->_get_interpolated_position();
+    my $genetic_position = $self->make_genetic_position_object('Protein', $self->object, $chromosome, $position, $error, 'interpolated');
 
+    return $genetic_position;
+}
 
+sub _build_genetic_position_interpolated {
+    my ($self) = @_;
 
+    return $self->_build_genetic_position();
+}
 
- 
+sub _build__segments {
+    my ($self) = @_;
+    my @segments;
+    my $gffdb = $self->gff_dsn() || return \@segments;
+    my $dbh = $gffdb->dbh || return;
+
+    my $gene = $self->cds->[0];
+    @segments = map {$dbh->segment(CDS => $gene)} $self->corresponding_transcripts()->{data}->[0];
+
+    return \@segments;
+}
+
+sub _build_tracks {
+    my ($self) = @_;
+    my @segments;
+    return \@segments;
+}
 
 ############################################################
 #
