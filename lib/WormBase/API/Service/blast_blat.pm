@@ -1037,7 +1037,7 @@ sub extract_hit_info {
 
             # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
             if ($hsp_strand == -1) {
-                $on_reverse_strand = 'flip=1;';
+                # $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1088,7 +1088,7 @@ sub extract_hit_info {
 
             # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
             if ($hsp_strand == -1) {
-                $on_reverse_strand = 'flip=1;';
+                # $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1156,7 +1156,7 @@ sub extract_hit_info {
 
             # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
             if ($hsp_strand == -1) {
-                $on_reverse_strand = 'flip=1;';
+                # $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
