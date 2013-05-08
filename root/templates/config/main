@@ -341,10 +341,10 @@
     END;
 
     MACRO markup(text, omim, locus, var, link) BLOCK;
+      text = markup_linkouts(text);
       UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
       UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
       UNLESS (omim == 0); text = markup_omim(text); END;
-      text = markup_linkouts(text);
       text;
     END;
 
