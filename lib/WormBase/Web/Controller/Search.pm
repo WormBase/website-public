@@ -186,10 +186,23 @@ sub search_count :Path('/search/count') :Args(3) {
 
   $c->stash->{noboiler} = 1;
   my $api = $c->model('WormBaseAPI');
+  my $cache = ($q =~ /^all|\*$/);
+
+  my $key = join('_', $species, $type, 'count');
+  my ( $cached_data, $cache_source ) = $c->check_cache($key) if $cache;
+
+  if($cached_data){
+    $c->response->status(200);
+    $c->response->body($cached_data);
+    $c->detach();
+    return;
+  }
 
   my $tmp_query = $self->_prep_query($q);
   my $count = $api->xapian->search_count($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
   $c->response->body("$count");
+
+  $c->set_cache($key => "$count") if $cache;
   return;
 }
 
