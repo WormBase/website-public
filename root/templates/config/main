@@ -341,10 +341,12 @@
     END;
 
     MACRO markup(text, omim, locus, var, link) BLOCK;
-      text = markup_linkouts(text);
-      UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
-      UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
-      UNLESS (omim == 0); text = markup_omim(text); END;
+      UNLESS(text.match(".*\\<[^>]+>.*"));
+        text = markup_linkouts(text);
+        UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
+        UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
+        UNLESS (omim == 0); text = markup_omim(text); END;
+      END;
       text;
     END;
 
