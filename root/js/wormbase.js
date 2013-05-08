@@ -235,6 +235,7 @@
       
       if(personSearch.size()>0){
           ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
+            checkSearch(personSearch);
             personSearch.delegate(".results-person .result li a", 'click', function(){
                 $jq(".ui-state-highlight").removeClass("ui-state-highlight");
                 var wbid = $jq(this).attr("href").split('/').pop();
