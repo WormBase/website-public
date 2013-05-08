@@ -773,6 +773,8 @@ sub history {
 sub _build_genetic_position {
     my ($self) = @_;
 
+    unless ($_) { return {} };
+
     my @genes = grep{ $_->Method ne 'history'}  @{$self->cds} || return {};
     my ($chromosome,$position,$error) = $self->_api->wrap($genes[0])->_get_interpolated_position();
     my $genetic_position = $self->make_genetic_position_object('Protein', $self->object, $chromosome, $position, $error, 'interpolated');
