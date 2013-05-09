@@ -773,9 +773,12 @@ sub history {
 sub _build_genetic_position {
     my ($self) = @_;
 
-    my @genes = grep{ defined blessed($_) and $_->Method ne 'history'}  @{$self->cds} || return {};
+    my @genes = grep{ defined blessed($_) and $_->Method ne 'history'}  @{$self->cds} || return {
+            description => 'No genetic position data available.',
+            data => undef
+        };
     if (scalar(@genes) == 0) {
-        return {};
+        return { description => 'No genetic position data available.', data => undef };
     }
     my ($chromosome,$position,$error) = $self->_api->wrap($genes[0])->_get_interpolated_position();
     my $genetic_position = $self->make_genetic_position_object('Protein', $self->object, $chromosome, $position, $error, 'interpolated');
@@ -803,8 +806,11 @@ sub _build__segments {
 
 sub _build_tracks {
     my ($self) = @_;
-    my @segments;
-    return \@segments;
+
+    return {
+        description => 'Protein specific tracks to display in GBrowse.',
+        data => [qw(CODING_TRANSCRIPTS MOTIFS)]
+    };
 }
 
 ############################################################
