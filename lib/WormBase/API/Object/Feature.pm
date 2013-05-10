@@ -73,6 +73,25 @@ sub flanking_sequences {
     my $self   = shift;
     my $object = $self->object;
 
+    my $fasta = $object->Sequence->asDNA;
+    my @sequences = (split "\n", $fasta);
+    shift @sequences;
+    my $sequence = join '', @sequences;
+    my $feature_accession = $object->Sequence->at("SMap.S_child.Feature_object.$object");
+    my $start_coordinate = $feature_accession->right;
+    my $end_coordinate = $start_coordinate->right;
+
+    # Translate coordinates from objects to integers:
+    $start_coordinate = int((split /\D/, $start_coordinate->asString)[0]);
+    $end_coordinate = int($end_coordinate->asString);
+
+    # Offset and sequence length within the FASTA sequence:
+    my $offset = $start_coordinate > $end_coordinate ? $end_coordinate : $start_coordinate;
+    my $length = $start_coordinate > $end_coordinate ? $start_coordinate - $offset + 1: $end_coordinate - $offset + 1;
+
+    # Actual sequence of the feature within the FASTA sequence:
+    my $feature_sequence = uc substr $sequence, $offset, $length;
+
     my ($seq, @flanks);
     if (my ($flanking_seq) = $self->object->Flanking_sequences) {
         (@flanks) = $flanking_seq->row;
@@ -85,6 +104,7 @@ sub flanking_sequences {
         data        => $seq && {
             seq    => $seq,
             flanks => @flanks ? \@flanks : undef,
+            feature_seq => $feature_sequence
         },
     };
 }
