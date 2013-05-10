@@ -1833,6 +1833,7 @@ function setupCytoscape(data, types){
     
     var Plugin = (function(){
       var plugins = new Array(),
+          css = new Array(),
           loading = false,
           pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
                         dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
@@ -1859,9 +1860,10 @@ function setupCytoscape(data, types){
       function getScript(name, url, stylesheet, callback) {
         
        function LoadJs(){
+           css[name] = true;
            loadFile(url, true, function(){
-              plugins[name] = true;
               callback();
+              plugins[name] = true;
            });
         }
         
@@ -1958,12 +1960,11 @@ function setupCytoscape(data, types){
       
       function loadPlugin(name, url, stylesheet, callback){
         if(!plugins[name]){
-          getScript(name, url, stylesheet, callback);
+          getScript(name, url, !css[name] ? stylesheet : undefined, callback);
         }else{
           if(loading){
-            return setTimeout(getPlugin(name, url, stylesheet, callback),1);
+            return setTimeout(getPlugin(name, url, stylesheet, callback),10);
           }
-          callback(); 
         }
         return;
       }
