@@ -83,12 +83,13 @@ END;
 
 
 IF (fields.human_disease_relevance.data.defined);
-'<h4>Human disease relevance:</h4>';
+   WRAPPER toggle title="Human disease relevance";
     FOREACH obj IN fields.human_disease_relevance.data;
         '<div class="text-width">';
             evidence(obj.evidence,sd, obj.text);
         '</div>';
     END;
+       END;
 END;
 
 # Structured descriptions
