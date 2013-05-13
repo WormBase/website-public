@@ -405,7 +405,7 @@ WB.getPlugin("dataTables", function(){
               "aButtons": [
                 {
                   "sExtends": "collection",
-                  "sButtonText": "Save",
+                  "sButtonText": "Save table",
                   "aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
                 }
               ],
