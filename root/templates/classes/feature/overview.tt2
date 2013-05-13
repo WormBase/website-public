@@ -12,14 +12,10 @@ END;
    markup(fields.description.data);
 '</div>';
 
+        sequence('flanking_sequences');
 
 WRAPPER $field_block title='Flanking sequence' key='flanking_sequences';
-	tag2link(fields.flanking_sequences.data.seq) _ 
-	": <pre style=\"white-space: nowrap\">5' " _ 
-	fields.flanking_sequences.data.flanks.join(
-		'<b style="font-size: 110%;">' _  fields.flanking_sequences.data.feature_seq _ '</b>'
-	) _ 
-	" 3'</pre>";
+	'<div style="white-space:nowrap;">' _ tag2link(fields.flanking_sequences.data.seq) _ '</div>';
 END;
 
 

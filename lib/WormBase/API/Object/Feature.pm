@@ -104,7 +104,13 @@ sub flanking_sequences {
         data        => $seq && {
             seq    => $seq,
             flanks => @flanks ? \@flanks : undef,
-            feature_seq => $feature_sequence
+            feature_seq => $feature_sequence,
+            sequence => $flanks[0] . $feature_sequence . $flanks[1],
+            highlight => {
+                offset => length($flanks[0]),
+                length => length($feature_sequence),
+                comment => 'upper case: feature sequence; lower case: flanking sequences'
+            }
         },
     };
 }
