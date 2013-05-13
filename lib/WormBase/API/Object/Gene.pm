@@ -282,6 +282,20 @@ sub cloned_by {
     return $datapack;
 }
 
+# parent_sequence { }
+# This method will return a data structure containing
+# the parent sequence of the gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/parent_sequence
+
+sub parent_sequence {
+    my $self      = shift;
+    my $object = $self->object;  
+    return {
+        description => 'parent sequence of this gene',
+        data        => $self->_pack_obj($object->Sequence),
+    };
+}
+
 # clone { }
 # This method will return a data structure containing
 # the parent clone of the gene
