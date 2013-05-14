@@ -72,25 +72,38 @@ http://wormbase.org/species/*/feature
 sub flanking_sequences {
     my $self   = shift;
     my $object = $self->object;
+    my $method = $object->Method;
 
-    my $fasta = $object->Sequence->asDNA;
-    my @sequences = (split "\n", $fasta);
-    shift @sequences;
-    my $sequence = join '', @sequences;
-    my $feature_accession = $object->Sequence->at("SMap.S_child.Feature_object.$object");
-    my $start_coordinate = $feature_accession->right;
-    my $end_coordinate = $start_coordinate->right;
+    # If a feature specific sequence exists, then it will be kept in
+    # $feature_sequence and $comment is set to describe the composition
+    # of the sequence.
+    my $feature_sequence = '';
+    my $comment = 'flanking sequences';
 
-    # Translate coordinates from objects to integers:
-    $start_coordinate = int((split /\D/, $start_coordinate->asString)[0]);
-    $end_coordinate = int($end_coordinate->asString);
+    # Some features have sequences associated with them that denote splice sites
+    # or other removed genomic content. In those cases, there is no sequence as
+    # such.
+    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
+        my $fasta = $object->Sequence->asDNA;
+        my @sequences = (split "\n", $fasta);
+        shift @sequences;
+        my $sequence = join '', @sequences;
+        my $feature_accession = $object->Sequence->at("SMap.S_child.Feature_object.$object");
+        my $start_coordinate = $feature_accession->right;
+        my $end_coordinate = $start_coordinate->right;
 
-    # Offset and sequence length within the FASTA sequence:
-    my $offset = $start_coordinate > $end_coordinate ? $end_coordinate : $start_coordinate;
-    my $length = $start_coordinate > $end_coordinate ? $start_coordinate - $offset + 1: $end_coordinate - $offset + 1;
+        # Translate coordinates from objects to integers:
+        $start_coordinate = int((split /\D/, $start_coordinate->asString)[0]) - 1;
+        $end_coordinate = int($end_coordinate->asString) - 1;
 
-    # Actual sequence of the feature within the FASTA sequence:
-    my $feature_sequence = uc substr $sequence, $offset, $length;
+        # Offset and sequence length within the FASTA sequence:
+        my $offset = $start_coordinate > $end_coordinate ? $end_coordinate : $start_coordinate;
+        my $length = $start_coordinate > $end_coordinate ? $start_coordinate - $offset + 1: $end_coordinate - $offset + 1;
+
+        # Actual sequence of the feature within the FASTA sequence:
+        $feature_sequence = uc substr $sequence, $offset, $length;
+        $comment = 'upper case: feature sequence; lower case: flanking sequences';
+    }
 
     my ($seq, @flanks);
     if (my ($flanking_seq) = $self->object->Flanking_sequences) {
@@ -109,7 +122,7 @@ sub flanking_sequences {
             highlight => {
                 offset => length($flanks[0]),
                 length => length($feature_sequence),
-                comment => 'upper case: feature sequence; lower case: flanking sequences'
+                comment => $comment
             }
         },
     };

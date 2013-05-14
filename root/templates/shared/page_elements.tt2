@@ -1036,7 +1036,6 @@ END;
     END;
     sequences = {};
 
-
     FOREACH obj IN sequence_list;
       IF obj.defined('sequence');
         seq = obj.sequence;  
