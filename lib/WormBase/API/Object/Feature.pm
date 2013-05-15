@@ -119,9 +119,9 @@ sub flanking_sequences {
             # Determine feature strand and whether the sequence needs to be reverse complemented:
             my $reverse = undef;
             if ($flanks[0] ne '' && length($flanks[0]) <= $offset) {
-                if (substr($sequence, $offset - length($flanks[0]), length($flanks[0])) eq $flanks[0]) {
+                if (lc(substr($sequence, $offset - length($flanks[0]), length($flanks[0]))) eq lc($flanks[0])) {
                     if (length($sequence) > $offset + ($length - 1) + length($flanks[1]) &&
-                        substr($sequence, $offset + $length, length($flanks[1])) eq $flanks[1]) {
+                        lc(substr($sequence, $offset + $length, length($flanks[1]))) eq lc($flanks[1])) {
                         # Alright, flanks match. $feature_sequence does not need modifying.
                     } else {
                         # One flank matched, but the other one did not? Okay, might happen. Reverse complement $feature_sequence.
@@ -131,8 +131,8 @@ sub flanking_sequences {
                     # Okay, first flank already mismatching. Reverse complement $feature_sequence.
                     $reverse = 1;
                 }
-            } elsif ($flanks[1] && length($sequence) > $offset + length($flanks[1])) {
-                if (substr($sequence, $offset + $length, length($flanks[1])) eq $flanks[1]) {
+            } elsif ($flanks[1] ne '' && length($sequence) > $offset + length($flanks[1])) {
+                if (lc(substr($sequence, $offset + $length, length($flanks[1]))) eq lc($flanks[1])) {
                     # Second flank matches. $feature_sequence does not need modifying.
                 } else {
                     # Okay, second flank mismatching. Reverse complement $feature_sequence.
