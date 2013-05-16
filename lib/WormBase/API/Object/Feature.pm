@@ -74,11 +74,14 @@ sub flanking_sequences {
     my $object = $self->object;
     my $method = $object->Method;
 
+    # This array holds accumulated sequences with comments and possible highlights:
+    my @sequences = ();
+
     # If a feature specific sequence exists, then it will be kept in
     # $feature_sequence and $comment is set to describe the composition
     # of the sequence.
     my $feature_sequence = '';
-    my $comment = 'flanking sequences';
+    my $comment = 'flanking sequence';
 
     # Get flanking sequences:
     my ($seq, @flanks);
@@ -94,9 +97,9 @@ sub flanking_sequences {
     # such.
     unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
         my $fasta = $object->Sequence->asDNA;
-        my @sequences = (split "\n", $fasta);
-        shift @sequences;
-        my $sequence = join '', @sequences;
+        my @fasta_sequences = (split "\n", $fasta);
+        shift @fasta_sequences;
+        my $sequence = join '', @fasta_sequences;
         my $feature_accession = $object->Sequence->at("SMap.S_child.Feature_object.$object");
         my $start_coordinate = $feature_accession->right;
 
@@ -147,7 +150,24 @@ sub flanking_sequences {
                 $feature_sequence = reverse $feature_sequence;
                 $feature_sequence =~ tr/[acgtACGT]/[tgcaTGCA]/;
             }
+
+            push(@sequences,
+                {
+                    sequence => $flanks[0] . $feature_sequence . $flanks[1],
+                    comment => $comment,
+                    highlight => {
+                        offset => length($flanks[0]),
+                        length => length($feature_sequence)
+                    }
+                }
+            );
         }
+    }
+
+    if ($feature_sequence eq '') {
+        # If there are only flanks, then have them displayed as separate FASTA sequences:
+        push(@sequences, { sequence => $flanks[0], comment => "$comment (upstream)" });
+        push(@sequences, { sequence => $flanks[1], comment => "$comment (downstream)" });
     }
 
     return {
@@ -156,13 +176,8 @@ sub flanking_sequences {
             seq    => $seq,
             flanks => @flanks ? \@flanks : undef,
             feature_seq => $feature_sequence,
-            sequence => $flanks[0] . $feature_sequence . $flanks[1],
-            highlight => {
-                offset => length($flanks[0]),
-                length => length($feature_sequence),
-                comment => $comment
-            }
-        },
+            sequences => \@sequences
+        }
     };
 }
 

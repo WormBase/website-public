@@ -1029,7 +1029,11 @@ END;
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
     IF fields.$field_key.data.defined;
-      sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
+      IF fields.$field_key.data.defined('sequences');
+        sequence_list = fields.$field_key.data.sequences;
+      ELSE;
+        sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
+      END;
     ELSIF (field_key.defined('sequence') || field_key.0.defined('sequence'));
       sequence_list = field_key.defined('sequence') ? [field_key] : field_key;
       field_key = '';
@@ -1041,13 +1045,15 @@ END;
         seq = obj.sequence;  
         NEXT IF seq.length == 0;
 
-        # If parts of the feature should be highlighted, then pass the parameters on:
-        IF obj.defined('highlight');
+        # If parts of the feature commented on and possible have a highlighted region, then pass the parameters on:
+        IF obj.defined('comment');
           header = obj.header || object.name.data.label;
-          IF obj.highlight.defined('comment');
-            header = header _ ' ' _ obj.highlight.comment;
+          header = header _ ' ' _ obj.comment;
+          IF obj.defined('highlight');
+            format_seq = format_sequence(seq, header, obj.highlight.offset, obj.highlight.length);
+          ELSE;
+            format_seq = format_sequence(seq, header);
           END;
-          format_seq = format_sequence(seq, header, obj.highlight.offset, obj.highlight.length);
         ELSE;
           format_seq = seq.match('\s') ? '>' _ object.name.data.label _ ' ' _ obj.header  _ "\n" _ seq  : format_sequence(seq, obj.header || object.name.data.label);
         END;
