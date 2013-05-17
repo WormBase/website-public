@@ -7,7 +7,8 @@ use parent 'WormBase::Web::Controller';
 sub index :Path Args(0) {
     my ($self, $c) = @_;
     $c->stash->{template} = 'tools/blast_blat/index.tt2';
-
+    $c->stash->{section} = "tools";
+    $c->stash->{class} = "Blast/Blat";
     my $api = $c->model('WormBaseAPI')->_tools->{blast_blat};
     $c->stash->{blast_databases} = $api->blast_databases;
 }
