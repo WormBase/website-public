@@ -60,7 +60,7 @@ sub _build_type {
     # should rearrange in order of probability
     my $type;
     if ($self ~~ '@Locus') {
-        $type = 'confirmed gene';
+        $type = 'WormBase CDS';
     }
     elsif ($s->Coding) {
         $type = 'predicted coding sequence';
@@ -147,7 +147,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB MOTIFS)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? [qw(PRIMARY_GENE_TRACK CG ESTB MOTIFS)] : undef,
     };
 }
 
