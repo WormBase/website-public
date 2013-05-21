@@ -209,9 +209,10 @@ sub gene_class {
 sub corresponding_gene {
     my ($self) = @_;
 
+    my @genes = map { $self->_pack_obj($_) } $self->object->Gene;
     return {
         description => 'gene in which this variation is found (if any)',
-        data        => $self->_pack_obj($self ~~ 'Gene'),
+        data        => @genes ? \@genes : undef,
     };
 }
 
