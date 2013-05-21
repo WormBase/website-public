@@ -516,7 +516,7 @@
   nematode_net = {
     description ='Nematode.NET is a ressource for assembled transcripts'
     base        ='http://nematode.net'
-    search      ='http://nematode.net/NN3_frontpage.cgi?navbar_selection=nemagene&subnav_selection=detail_report&species_for_detail_report=%s&type_for_detail_report=contig&name_for_detail_report=%s&stage_for_detail_report=none'
+    search      ='http://nematode.net/NN3_frontpage.cgi?navbar_selection=nemagene&subnav_selection=FromWB&TYPE=contig&NAME=%s'
   }
   nembase = {
     description  = 'A database resource for nematode EST datasets.'
