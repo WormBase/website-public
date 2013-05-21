@@ -48,38 +48,64 @@ has 'blast_databases' => (
 	    foreach my $species (@species) {
 		my ($g,$s)   = split('_',$species);
 		my $symbolic = uc($g) . ". $s";
-		my $blast_dir = catfile($self->pre_compile->{base},
-					$version,
-					$self->pre_compile->{blast},
-					$species);
-		if (-e "$blast_dir/genomic.fa") {
-		    $data->{"$version"}{Genome}{"$species"} = {
-			name     => join('_',$version,$species,'genomic.fa'),
-			symbolic => "$symbolic",
-			location => catfile($blast_dir, $species, 'genomic.fa'),
-		    };
-		}
-		if (-e "$blast_dir/peptide.fa") {
-		    $data->{"$version"}{Protein}{"$species"} = {
-			name     => join('_',$version,$species,'peptide.fa'),
-			symbolic => "$symbolic",
-			location => catfile($blast_dir, $species, 'peptide.fa'),
-		    };
-		}
-		# These aren't actually genes but genomic clones. Removing for now.
-#		if (-e "$blast_dir/genes.fa") {
-#		    push @{$data->{genes}},{ name     => join('_',$version,$species,'genes.fa'),
-#					     symbolic => "$symbolic ($version) genes",
-#					     location => catfile($blast_dir, 'genes.fa'),
-#		    };
-#		}
-		if (-e "$blast_dir/ests.fa") {
-		    $data->{"$version"}{ESTs}{"$species"} = {
-			name     => join('_',$version,$species,'ests.fa'),
-			symbolic => "$symbolic",
-			location => catfile($blast_dir, 'ests.fa'),
-		    };
-		}
+
+	        my @bioprojects = grep { -d "$base_dir/$version/blast/$species/$_" } read_dir("$base_dir/$version/blast/$species");
+	        push @bioprojects, ''; # Also consider old WormBase releases that did not have Bioproject IDs associated with them.
+	        foreach my $bioproject (@bioprojects) {
+		    my $blast_dir = catfile($self->pre_compile->{base},
+					    $version,
+					    $self->pre_compile->{blast},
+					    $species,
+					    $bioproject);
+                    my $filename_prefix;
+                    if ($bioproject ne '') {
+	                $filename_prefix = join('_',$version,$species,$bioproject);
+	            } else {
+                        $bioproject = 'not applicable';
+	                $filename_prefix = join('_',$version,$species);
+	            }
+print STDERR "blast_dir: $blast_dir >$filename_prefix<\n";
+		    if (-e "$blast_dir/genomic.fa") {
+		        $data->{"$version"}{Genome}{"$species"} = {
+	                    name     => "$species",
+			    symbolic => "$symbolic",
+	                    $bioproject => {
+	                        symbolic => "$bioproject",
+			        name     => join('_',$filename_prefix,'genomic.fa'),
+			        location => catfile($blast_dir, $species, 'genomic.fa'),
+	                    }
+		        };
+		    }
+		    if (-e "$blast_dir/peptide.fa") {
+		        $data->{"$version"}{Protein}{"$species"} = {
+	                    name     => "$species",
+			    symbolic => "$symbolic",
+	                    $bioproject => {
+	                        symbolic => "$bioproject",
+			        name     => join('_',$filename_prefix,'peptide.fa'),
+			        location => catfile($blast_dir, $species, 'peptide.fa'),
+	                    }
+		        };
+		    }
+		    # These aren't actually genes but genomic clones. Removing for now.
+#		    if (-e "$blast_dir/genes.fa") {
+#		        push @{$data->{genes}},{ name     => join('_',$filename_prefix,'genes.fa'),
+#					         symbolic => "$symbolic ($version) genes",
+#					         location => catfile($blast_dir, 'genes.fa'),
+#		        };
+#		    }
+		    if (-e "$blast_dir/ests.fa") {
+		        $data->{"$version"}{ESTs}{"$species"} = {
+	                    name     => "$species",
+			    symbolic => "$symbolic",
+	                    $bioproject => {
+	                        symbolic => "$bioproject",
+			        name     => join('_',$filename_prefix,'ests.fa'),
+			        location => catfile($blast_dir, 'ests.fa'),
+	                    }
+		        };
+		    }
+	        }
 	    }
 	}
 	return $data;
