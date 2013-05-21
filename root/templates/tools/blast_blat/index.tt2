@@ -32,7 +32,7 @@
 <div class="small_container">
     <font class="bold">2) Select an application (BLAST or BLAT) and parameters:</font> 
     <p/>
-    <input type="radio" checked="checked" id="search_type_blast" name="search_type" value="blast"><font class="bold">BLAST</font></input>
+    <input type="radio" checked="checked" id="search_type_blast" name="search_type" value="blast"><font class="search_type">BLAST</font></input>
 
     <select id="blast_app" name="blast_app">
         <option [% selected_blastn %] value="blastn"  query="nucl" db="nucl">blastn &nbsp;(nucleotide query vs. nucleotide database)</option>
@@ -81,21 +81,24 @@
         
     <p/>
         
-    <input type="radio" id="search_type_blat" name="search_type" value="blat"><font class="bold">BLAT</font></input>
+    <input type="radio" id="search_type_blat" name="search_type" value="blat"><font class="search_type">BLAT</font></input>
 
     <p/>
 
     <font class="bold">3) Select a database:</font>
-
-   <select id="version" name="version">
+    <p>
+    Version:
+    <select id="version" name="version">
 [%
     FOREACH version IN c.stash.blast_databases.keys.sort;
       '<option value="' _ version _'"'; IF loop.last; ' selected="1" '; END; '>' _ version _ '</option>';
     END;
 %]
-   </select>
-
-   <select id="typeBox" name="typeBox">
+    </select>
+    </p>
+    <p>
+    Type:
+    <select id="typeBox" name="typeBox">
 [%
     FOREACH version IN c.stash.blast_databases.keys.sort;
       database_types = c.stash.blast_databases.$version.keys.sort;
@@ -113,9 +116,11 @@
       END;
     END;
 %]
-   </select>
-
-   <select id="database" name="database">
+    </select>
+    </p>
+    <p>
+    Species:
+    <select id="database" name="database">
 [%
     FOREACH version IN c.stash.blast_databases.keys.sort;
       FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
@@ -129,23 +134,46 @@
 	  SWITCH database_type;
 	    CASE "Genome";
 	      IF species.name.match('c_elegans');
-		'<option selected="1" type="' _ database_type _ '" value="' _ species.name _ '_genome" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		'<option selected="1" type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '_genome" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	      ELSE;
-		'<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		'<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	      END;
-	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "Protein";
-	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "genes";
-	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "ESTs";
-	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	  END;
 	END;
       END;
     END;
 %]
     </select>
+    </p>
+    <p>
+    Bioproject:
+    <select id="bioproject" name="bioproject">
+[%
+    FOREACH version IN c.stash.blast_databases.keys.sort;
+      FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
+	specieskeys = c.stash.blast_databases.$version.$database_type.keys.sort;
+	FOREACH specieskey IN specieskeys;
+          bioprojectkeys = c.stash.blast_databases.$version.$database_type.$specieskey.keys.sort;
+          FOREACH bioprojectkey IN bioprojectkeys;
+            IF bioprojectkey == "name" || bioprojectkey == "symbolic" || bioprojectkey == "not applicable";
+            ELSE;
+              bioproject = c.stash.blast_databases.$version.$database_type.$specieskey.$bioprojectkey;
+		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';
+            END;
+          END;
+        END;
+      END;
+    END;
+%]
+    </select>
+    </p>
 
     <div id="message" class="message">
         &nbsp;
