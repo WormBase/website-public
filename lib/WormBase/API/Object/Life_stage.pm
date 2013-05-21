@@ -141,7 +141,7 @@ sub cells {
     my $self = shift;
     my $object = $self->object;
 
-    my @cells = map { "$_" } $object->Cell;
+    my @cells = map { $self->_pack_obj($_) } $object->Anatomy_term;
     return { description => 'cells at this lifestage',
 	     data        => @cells ? \@cells : undef };
 }
