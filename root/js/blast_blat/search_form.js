@@ -109,7 +109,7 @@ function updateDatabaseOptions() {
     }
 
     if (!bioprojectElement.options.length) {
-        newOption = new Option('No bioprojects available', 'not_selected', 0, 0);
+        newOption = new Option('Not applicable', 'not_selected', 0, 0);
         newOption.selected = true;
 
         bioprojectElement.options[0] = newOption;
@@ -233,6 +233,9 @@ function getParamValues() {
     var bioprojectBox = document.getElementById('bioproject');
     
     var species       = databaseBox.options[databaseBox.selectedIndex].value;
+    species = species.split('_');
+    species = species[1] + '_' + species[2];
+
     var version       = versionBox.options[versionBox.selectedIndex].value;
     var searchType    = typeBox.options[typeBox.selectedIndex].value;
     var bioproject    = bioprojectBox.options[bioprojectBox.selectedIndex].value;
