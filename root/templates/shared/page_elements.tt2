@@ -253,16 +253,18 @@ END;
     [% TRY; IF (key && !fields.$key.defined('data')) || disabled; " disabled "; END; END;%]
 
         ">
+      [% IF title; %]
          <div class="field-title">
                   <span title="[% tooltip ? tooltip : fields.$key.description %]">
-                     [% IF title ; title _ ': '; END; %]
+                     [% title _ ': ' %]
                    </span>
           </div>
-
+      [%  END; %]
           <div class="field-content">
              [% content %]
           </div>
      </div>
+
 [% END %]
 
 [% BLOCK curator_block %]

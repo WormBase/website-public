@@ -56,11 +56,11 @@ WRAPPER $field_block title="Substages" key="substages";
 END;
 
 WRAPPER $field_block title="Cells" key="cells";
-	cell_content(fields.cells.data);
+	tags2link(fields.cells.data, '<br />', 'cells');
 END;
 
 WRAPPER $field_block title="Cell Groups" key="cell_group";
-	cell_content(fields.cell_group.data);
+	tags2link(fields.cell_group.data, '<br />', 'cell groups');
 END;
 
 remarks;
