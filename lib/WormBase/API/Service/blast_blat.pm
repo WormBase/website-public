@@ -64,10 +64,9 @@ has 'blast_databases' => (
                         $bioproject = 'not applicable';
 	                $filename_prefix = join('_',$version,$species);
 	            }
-print STDERR "blast_dir: $blast_dir >$filename_prefix<\n";
 		    if (-e "$blast_dir/genomic.fa") {
 		        $data->{"$version"}{Genome}{"$species"} = {
-	                    name     => "$species",
+	                    name     => join('_',$filename_prefix,'genomic.fa'),
 			    symbolic => "$symbolic",
 	                    $bioproject => {
 	                        symbolic => "$bioproject",
@@ -78,7 +77,7 @@ print STDERR "blast_dir: $blast_dir >$filename_prefix<\n";
 		    }
 		    if (-e "$blast_dir/peptide.fa") {
 		        $data->{"$version"}{Protein}{"$species"} = {
-	                    name     => "$species",
+	                    name     => join('_',$filename_prefix,'peptide.fa'),
 			    symbolic => "$symbolic",
 	                    $bioproject => {
 	                        symbolic => "$bioproject",
@@ -96,7 +95,7 @@ print STDERR "blast_dir: $blast_dir >$filename_prefix<\n";
 #		    }
 		    if (-e "$blast_dir/ests.fa") {
 		        $data->{"$version"}{ESTs}{"$species"} = {
-	                    name     => "$species",
+	                    name     => join('_',$filename_prefix,'ests.fa'),
 			    symbolic => "$symbolic",
 	                    $bioproject => {
 	                        symbolic => "$bioproject",
@@ -176,7 +175,14 @@ sub process_input {
 #    my $out_file = ($address eq "127.0.0.1") ? 'localhost-debug' : $temp_file->filename;
     my $out_file = $temp_file->filename;
 
-    my $database = $cgi->{"database"};
+    my $database;
+    my $has_bioproject = 0;
+    if ($cgi->{"bioproject"} =~ /^not_selected$/) {
+        $database = $cgi->{"database"};
+    } else {
+        $database = $cgi->{"bioproject"};
+        $has_bioproject = 1;
+    }
 
     my $search_type = $cgi->{"search_type"};
 
@@ -185,7 +191,14 @@ sub process_input {
     my @path_parts    = split('_',$database);
     my $species = $path_parts[1] . '_' . $path_parts[2];
     my $version = $path_parts[0];
-    my $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $path_parts[3]);
+
+    my $database_location;
+    if ($has_bioproject) {
+        my $bioproject = $path_parts[3];
+        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
+    } else {
+        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $path_parts[3]);
+    }
 
     if ($search_type eq "blast") {
         my $blast_app = $cgi->{"blast_app"};
