@@ -427,7 +427,7 @@ sub corresponding_all {
     my $type = $sequences[0]->Method if @sequences;
     $type =~ s/_/ /g;
     @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
-    $data{type} = { text => "$type", evidence => { status => "$status"} };
+    $data{type} = $status ? { text => "$type", evidence => { status => "$status"} } : $type && "$type";
     $data{model}   = @sequences ? \@sequences : undef;
     $data{protein} = $self->_pack_obj($protein);
     $data{cds} = $cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0 ) : '(no CDS)';
