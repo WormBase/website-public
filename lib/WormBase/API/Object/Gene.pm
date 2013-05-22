@@ -1743,6 +1743,10 @@ sub gene_models {
         my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
+        my $status = $cds->Prediction_status if $cds;
+        $status =~ s/_/ /g if $status;
+        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+
         if ($protein) {
             my $peplen = $protein->Peptide(2);
             my $aa     = "$peplen";
@@ -1751,7 +1755,7 @@ sub gene_models {
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
         @sequences =  map {$self->_pack_obj($_)} @sequences;
-        $data{type} = "$type";
+        $data{type} = { text => "$type", evidence => { status => "$status"} };
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
