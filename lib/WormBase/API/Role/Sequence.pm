@@ -420,10 +420,14 @@ sub corresponding_all {
 
     my $gene = $cds->Gene;
 
+    my $status = $cds->Prediction_status if $cds;
+    $status =~ s/_/ /g if $status;
+    $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+
     my $type = $sequences[0]->Method if @sequences;
     $type =~ s/_/ /g;
     @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
-    $data{type} = "$type" || undef;
+    $data{type} = { text => "$type", evidence => { status => "$status"} };
     $data{model}   = @sequences ? \@sequences : undef;
     $data{protein} = $self->_pack_obj($protein);
     $data{cds} = $cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0 ) : '(no CDS)';
