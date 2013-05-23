@@ -182,6 +182,10 @@ sub corresponding_all {
         $data{length_protein} = $aa if $aa;
 
         my $gene = $cds->Gene;
+        
+        my $status = $cds->Prediction_status if $cds;
+        $status =~ s/_/ /g if $status;
+        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
 
         my $type = $sequences[0]->Method;
         $type =~ s/_/ /g;
@@ -189,7 +193,7 @@ sub corresponding_all {
         $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein, undef, style => 'font-weight:bold');
-        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)';
+        $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
         $data{gene} = $self->_pack_obj($gene);
         push @rows, \%data;
     }
