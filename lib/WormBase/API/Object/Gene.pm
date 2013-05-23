@@ -1755,10 +1755,12 @@ sub gene_models {
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
         @sequences =  map {$self->_pack_obj($_)} @sequences;
-        $data{type} = $status ? { text => "$type", evidence => { status => "$status"} } : $type && "$type";
+        $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
+        $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
+
 
         push @rows, \%data;
     }

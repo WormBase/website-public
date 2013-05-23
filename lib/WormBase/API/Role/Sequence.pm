@@ -427,10 +427,13 @@ sub corresponding_all {
     my $type = $sequences[0]->Method if @sequences;
     $type =~ s/_/ /g;
     @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
-    $data{type} = $status ? { text => "$type", evidence => { status => "$status"} } : $type && "$type";
+    $data{type} = $type && "$type";
     $data{model}   = @sequences ? \@sequences : undef;
     $data{protein} = $self->_pack_obj($protein);
     $data{cds} = $cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0 ) : '(no CDS)';
+    $cds = ($cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0) : '(no CDS)');
+    $data{cds} = $status ? { text => $cds, evidence => { status => "$status"} } : $cds;
+
     $data{gene} = $self->_pack_obj($gene);
     push @rows, \%data;
 
