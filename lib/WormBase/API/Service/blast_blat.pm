@@ -57,6 +57,7 @@ has 'blast_databases' => (
 					    $self->pre_compile->{blast},
 					    $species,
 					    $bioproject);
+
                     my $filename_prefix;
                     if ($bioproject ne '') {
 	                $filename_prefix = join('_',$version,$species,$bioproject);
@@ -64,45 +65,40 @@ has 'blast_databases' => (
                         $bioproject = 'not applicable';
 	                $filename_prefix = join('_',$version,$species);
 	            }
+
+		    my $species_entry;
 		    if (-e "$blast_dir/genomic.fa") {
-		        $data->{"$version"}{Genome}{"$species"} = {
-	                    name     => join('_',$filename_prefix,'genomic.fa'),
-			    symbolic => "$symbolic",
-	                    $bioproject => {
-	                        symbolic => "$bioproject",
-			        name     => join('_',$filename_prefix,'genomic.fa'),
-			        location => catfile($blast_dir, $species, 'genomic.fa'),
-	                    }
+		        $species_entry = $data->{"$version"}{Genome}{"$species"} || {};
+		        $species_entry->{"name"} = join('_',$filename_prefix,'genomic.fa');
+			$species_entry->{"symbolic"} = "$symbolic";
+		        $species_entry->{$bioproject} = {
+	                    symbolic => "$bioproject",
+			    name     => join('_',$filename_prefix,'genomic.fa'),
+			    location => catfile($blast_dir, $species, 'genomic.fa'),
 		        };
+		        $data->{"$version"}{Genome}{"$species"} = $species_entry;
 		    }
 		    if (-e "$blast_dir/peptide.fa") {
-		        $data->{"$version"}{Protein}{"$species"} = {
-	                    name     => join('_',$filename_prefix,'peptide.fa'),
-			    symbolic => "$symbolic",
-	                    $bioproject => {
-	                        symbolic => "$bioproject",
-			        name     => join('_',$filename_prefix,'peptide.fa'),
-			        location => catfile($blast_dir, $species, 'peptide.fa'),
-	                    }
+		        $species_entry = $data->{"$version"}{Protein}{"$species"} || {};
+		        $species_entry->{"name"} = join('_',$filename_prefix,'peptide.fa');
+			$species_entry->{"symbolic"} = "$symbolic";
+		        $species_entry->{$bioproject} = {
+	                    symbolic => "$bioproject",
+			    name     => join('_',$filename_prefix,'peptide.fa'),
+			    location => catfile($blast_dir, $species, 'peptide.fa'),
 		        };
+		        $data->{"$version"}{Protein}{"$species"} = $species_entry;
 		    }
-		    # These aren't actually genes but genomic clones. Removing for now.
-#		    if (-e "$blast_dir/genes.fa") {
-#		        push @{$data->{genes}},{ name     => join('_',$filename_prefix,'genes.fa'),
-#					         symbolic => "$symbolic ($version) genes",
-#					         location => catfile($blast_dir, 'genes.fa'),
-#		        };
-#		    }
 		    if (-e "$blast_dir/ests.fa") {
-		        $data->{"$version"}{ESTs}{"$species"} = {
-	                    name     => join('_',$filename_prefix,'ests.fa'),
-			    symbolic => "$symbolic",
-	                    $bioproject => {
-	                        symbolic => "$bioproject",
-			        name     => join('_',$filename_prefix,'ests.fa'),
-			        location => catfile($blast_dir, 'ests.fa'),
-	                    }
+		        $species_entry = $data->{"$version"}{ESTs}{"$species"} || {};
+		        $species_entry->{"name"} = join('_',$filename_prefix,'ests.fa');
+			$species_entry->{"symbolic"} = "$symbolic";
+		        $species_entry->{$bioproject} = {
+	                    symbolic => "$bioproject",
+			    name     => join('_',$filename_prefix,'ests.fa'),
+			    location => catfile($blast_dir, $species, 'ests.fa'),
 		        };
+		        $data->{"$version"}{ESTs}{"$species"} = $species_entry;
 		    }
 	        }
 	    }
