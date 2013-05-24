@@ -48,38 +48,59 @@ has 'blast_databases' => (
 	    foreach my $species (@species) {
 		my ($g,$s)   = split('_',$species);
 		my $symbolic = uc($g) . ". $s";
-		my $blast_dir = catfile($self->pre_compile->{base},
-					$version,
-					$self->pre_compile->{blast},
-					$species);
-		if (-e "$blast_dir/genomic.fa") {
-		    $data->{"$version"}{Genome}{"$species"} = {
-			name     => join('_',$version,$species,'genomic.fa'),
-			symbolic => "$symbolic",
-			location => catfile($blast_dir, $species, 'genomic.fa'),
-		    };
-		}
-		if (-e "$blast_dir/peptide.fa") {
-		    $data->{"$version"}{Protein}{"$species"} = {
-			name     => join('_',$version,$species,'peptide.fa'),
-			symbolic => "$symbolic",
-			location => catfile($blast_dir, $species, 'peptide.fa'),
-		    };
-		}
-		# These aren't actually genes but genomic clones. Removing for now.
-#		if (-e "$blast_dir/genes.fa") {
-#		    push @{$data->{genes}},{ name     => join('_',$version,$species,'genes.fa'),
-#					     symbolic => "$symbolic ($version) genes",
-#					     location => catfile($blast_dir, 'genes.fa'),
-#		    };
-#		}
-		if (-e "$blast_dir/ests.fa") {
-		    $data->{"$version"}{ESTs}{"$species"} = {
-			name     => join('_',$version,$species,'ests.fa'),
-			symbolic => "$symbolic",
-			location => catfile($blast_dir, 'ests.fa'),
-		    };
-		}
+
+	        my @bioprojects = grep { -d "$base_dir/$version/blast/$species/$_" } read_dir("$base_dir/$version/blast/$species");
+	        push @bioprojects, ''; # Also consider old WormBase releases that did not have Bioproject IDs associated with them.
+	        foreach my $bioproject (@bioprojects) {
+		    my $blast_dir = catfile($self->pre_compile->{base},
+					    $version,
+					    $self->pre_compile->{blast},
+					    $species,
+					    $bioproject);
+
+                    my $filename_prefix;
+                    if ($bioproject ne '') {
+	                $filename_prefix = join('_',$version,$species,$bioproject);
+	            } else {
+                        $bioproject = 'not applicable';
+	                $filename_prefix = join('_',$version,$species);
+	            }
+
+		    my $species_entry;
+		    if (-e "$blast_dir/genomic.fa") {
+		        $species_entry = $data->{"$version"}{Genome}{"$species"} || {};
+		        $species_entry->{"name"} = join('_',$filename_prefix,'genomic.fa');
+			$species_entry->{"symbolic"} = "$symbolic";
+		        $species_entry->{$bioproject} = {
+	                    symbolic => "$bioproject",
+			    name     => join('_',$filename_prefix,'genomic.fa'),
+			    location => catfile($blast_dir, $species, 'genomic.fa'),
+		        };
+		        $data->{"$version"}{Genome}{"$species"} = $species_entry;
+		    }
+		    if (-e "$blast_dir/peptide.fa") {
+		        $species_entry = $data->{"$version"}{Protein}{"$species"} || {};
+		        $species_entry->{"name"} = join('_',$filename_prefix,'peptide.fa');
+			$species_entry->{"symbolic"} = "$symbolic";
+		        $species_entry->{$bioproject} = {
+	                    symbolic => "$bioproject",
+			    name     => join('_',$filename_prefix,'peptide.fa'),
+			    location => catfile($blast_dir, $species, 'peptide.fa'),
+		        };
+		        $data->{"$version"}{Protein}{"$species"} = $species_entry;
+		    }
+		    if (-e "$blast_dir/ests.fa") {
+		        $species_entry = $data->{"$version"}{ESTs}{"$species"} || {};
+		        $species_entry->{"name"} = join('_',$filename_prefix,'ests.fa');
+			$species_entry->{"symbolic"} = "$symbolic";
+		        $species_entry->{$bioproject} = {
+	                    symbolic => "$bioproject",
+			    name     => join('_',$filename_prefix,'ests.fa'),
+			    location => catfile($blast_dir, $species, 'ests.fa'),
+		        };
+		        $data->{"$version"}{ESTs}{"$species"} = $species_entry;
+		    }
+	        }
 	    }
 	}
 	return $data;
@@ -150,7 +171,14 @@ sub process_input {
 #    my $out_file = ($address eq "127.0.0.1") ? 'localhost-debug' : $temp_file->filename;
     my $out_file = $temp_file->filename;
 
-    my $database = $cgi->{"database"};
+    my $database;
+    my $has_bioproject = 0;
+    if ($cgi->{"bioproject"} =~ /^not_selected$/) {
+        $database = $cgi->{"database"};
+    } else {
+        $database = $cgi->{"bioproject"};
+        $has_bioproject = 1;
+    }
 
     my $search_type = $cgi->{"search_type"};
 
@@ -159,7 +187,14 @@ sub process_input {
     my @path_parts    = split('_',$database);
     my $species = $path_parts[1] . '_' . $path_parts[2];
     my $version = $path_parts[0];
-    my $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $path_parts[3]);
+
+    my $database_location;
+    if ($has_bioproject) {
+        my $bioproject = $path_parts[3];
+        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
+    } else {
+        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $path_parts[3]);
+    }
 
     if ($search_type eq "blast") {
         my $blast_app = $cgi->{"blast_app"};
@@ -1021,6 +1056,7 @@ sub extract_hit_info {
 
         $hit->rewind;
 
+        my $on_reverse_strand = '';
         my @hsp_genome_link_parts;
         while (my $hsp = $hit->next_hsp) {
             $counter++;
@@ -1032,19 +1068,18 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
-            my $hsp_genome_link_part;
-            if ($hsp_strand == 1) {
-              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
-            } else {
-              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
+            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+
+            # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
+            if ($hsp_strand == -1) {
+                # $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
               if @hsp_genome_link_parts < $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT};
         }
 
-	my $hit_ranges = qq[add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+	my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
         $hit_genome_link = $gbrowse_root . qq[?name=${hit_name};$hit_ranges] if $gbrowse_root;
         $hit_expand_link = $expand_root . qq[?] . join(";", 'width=450', qq[name=${hit_name};$hit_ranges]) if $expand_root;
@@ -1072,6 +1107,7 @@ sub extract_hit_info {
         my $top_hsp_strand;
 
         $hit->rewind;
+        my $on_reverse_strand = '';
         my @hsp_genome_link_parts;
         while (my $hsp = $hit->next_hsp) {
             $counter++;
@@ -1083,12 +1119,11 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
-            my $hsp_genome_link_part;
-            if ($hsp_strand == 1) {
-              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
-            } else {
-              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
+            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+
+            # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
+            if ($hsp_strand == -1) {
+                # $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1112,7 +1147,7 @@ sub extract_hit_info {
 
         }
 
-	my $hit_ranges = qq[add=${chr}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+	my $hit_ranges = qq[${on_reverse_strand}add=${chr}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
         my $view_start;
         my $view_end;
@@ -1140,6 +1175,7 @@ sub extract_hit_info {
         my $top_hsp_strand;
 
         $hit->rewind;
+        my $on_reverse_strand = '';
         my @hsp_genome_link_parts;
         while (my $hsp = $hit->next_hsp) {
             $counter++;
@@ -1151,12 +1187,11 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            # If the feature is on the reverse strand, then swap start/end coordinates of the hit.
-            my $hsp_genome_link_part;
-            if ($hsp_strand == 1) {
-              $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
-            } else {
-              $hsp_genome_link_part = qq[$hsp_end-$hsp_start];
+            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
+
+            # If the feature is on the reverse strand, then flip the coordinates in GBrowse:
+            if ($hsp_strand == -1) {
+                # $on_reverse_strand = 'flip=1;';
             }
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
@@ -1180,7 +1215,7 @@ sub extract_hit_info {
 
         }
 
-	my $hit_ranges = qq[add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+	my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
         my $view_start;
         my $view_end;

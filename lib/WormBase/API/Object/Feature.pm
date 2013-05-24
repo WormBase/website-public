@@ -4,7 +4,7 @@ use Moose;
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
-with 'WormBase::API::Role::Sequence';
+with    'WormBase::API::Role::Sequence';
 
 
 has 'tracks' => (
@@ -72,12 +72,102 @@ http://wormbase.org/species/*/feature
 sub flanking_sequences {
     my $self   = shift;
     my $object = $self->object;
+    my $method = $object->Method;
 
+    # This array holds accumulated sequences with comments and possible highlights:
+    my @sequences = ();
+
+    # If a feature specific sequence exists, then it will be kept in
+    # $feature_sequence and $comment is set to describe the composition
+    # of the sequence.
+    my $feature_sequence = '';
+    my $comment = 'flanking sequence';
+
+    # Get flanking sequences:
     my ($seq, @flanks);
+    @flanks = ('', ''); # Default flanks, in case they cannot be retrieved.
     if (my ($flanking_seq) = $self->object->Flanking_sequences) {
         (@flanks) = $flanking_seq->row;
         $seq = $self->_pack_obj($object->Mapping_target);
         @flanks = map {"$_"} @flanks;
+    }
+
+    # Some features have sequences associated with them that denote splice sites
+    # or other removed genomic content. In those cases, there is no sequence as
+    # such.
+    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
+        my $fasta = $object->Sequence->asDNA;
+        my @fasta_sequences = (split "\n", $fasta);
+        shift @fasta_sequences;
+        my $sequence = join '', @fasta_sequences;
+        my $feature_accession = $object->Sequence->at("SMap.S_child.Feature_object.$object");
+        my $start_coordinate = $feature_accession->right;
+
+        # There might be no coordinates associated with the feature.
+        if ($start_coordinate) {
+            my $end_coordinate = $start_coordinate->right;
+
+            # Translate coordinates from objects to integers:
+            $start_coordinate = int((split /\D/, $start_coordinate->asString)[0]) - 1;
+            $end_coordinate = int($end_coordinate->asString) - 1;
+
+            # Offset and sequence length within the FASTA sequence:
+            my $offset = $start_coordinate > $end_coordinate ? $end_coordinate : $start_coordinate;
+            my $length = $start_coordinate > $end_coordinate ? $start_coordinate - $offset + 1: $end_coordinate - $offset + 1;
+
+            # Actual sequence of the feature within the FASTA sequence:
+            $feature_sequence = uc substr $sequence, $offset, $length;
+            $comment = 'upper case: feature sequence; lower case: flanking sequences';
+
+            # Determine feature strand and whether the sequence needs to be reverse complemented:
+            my $reverse = undef;
+            if ($flanks[0] ne '' && length($flanks[0]) <= $offset) {
+                if (lc(substr($sequence, $offset - length($flanks[0]), length($flanks[0]))) eq lc($flanks[0])) {
+                    if (length($sequence) > $offset + ($length - 1) + length($flanks[1]) &&
+                        lc(substr($sequence, $offset + $length, length($flanks[1]))) eq lc($flanks[1])) {
+                        # Alright, flanks match. $feature_sequence does not need modifying.
+                    } else {
+                        # One flank matched, but the other one did not? Okay, might happen. Reverse complement $feature_sequence.
+                        $reverse = 1;
+                     }
+                 } else {
+                    # Okay, first flank already mismatching. Reverse complement $feature_sequence.
+                    $reverse = 1;
+                }
+            } elsif ($flanks[1] ne '' && length($sequence) > $offset + length($flanks[1])) {
+                if (lc(substr($sequence, $offset + $length, length($flanks[1]))) eq lc($flanks[1])) {
+                    # Second flank matches. $feature_sequence does not need modifying.
+                } else {
+                    # Okay, second flank mismatching. Reverse complement $feature_sequence.
+                    $reverse = 1;
+                }
+            } else {
+                # Dunno. Need to have flanks to determine orientation.
+            }
+
+            # Carry out the actual reverse complement, if needed.
+            if ($reverse) {
+                $feature_sequence = reverse $feature_sequence;
+                $feature_sequence =~ tr/[acgtACGT]/[tgcaTGCA]/;
+            }
+
+            push(@sequences,
+                {
+                    sequence => $flanks[0] . $feature_sequence . $flanks[1],
+                    comment => $comment,
+                    highlight => {
+                        offset => length($flanks[0]),
+                        length => length($feature_sequence)
+                    }
+                }
+            );
+        }
+    }
+
+    if ($feature_sequence eq '') {
+        # If there are only flanks, then have them displayed as separate FASTA sequences:
+        push(@sequences, { sequence => $flanks[0], comment => "$comment (upstream)" });
+        push(@sequences, { sequence => $flanks[1], comment => "$comment (downstream)" });
     }
 
     return {
@@ -85,7 +175,9 @@ sub flanking_sequences {
         data        => $seq && {
             seq    => $seq,
             flanks => @flanks ? \@flanks : undef,
-        },
+            feature_seq => $feature_sequence,
+            sequences => \@sequences
+        }
     };
 }
 

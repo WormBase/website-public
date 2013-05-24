@@ -508,7 +508,7 @@ sub _get_evidence {
           $class = (defined $class) ? lc("$class") : undef;
           push( @evidences, $packed ? $packed : { id=> "$evidence", label => "$label", class => $class });
 	    }
-        $data{$type} = \@evidences;
+        $data{$type} = @evidences ? \@evidences : undef;
 	}
    return %data ? \%data :undef;
 }

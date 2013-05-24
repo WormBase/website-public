@@ -234,7 +234,7 @@ END;
 [% END %]
 
 [% MACRO get_star_id(id) BLOCK;
-  id.remove('[:/ &\.\[\]\+]');
+  id.remove('[^_a-zA-Z0-9-]');
   END %]
 
 [% MACRO make_star(wbid, href) BLOCK;
@@ -253,16 +253,18 @@ END;
     [% TRY; IF (key && !fields.$key.defined('data')) || disabled; " disabled "; END; END;%]
 
         ">
+      [% IF title; %]
          <div class="field-title">
                   <span title="[% tooltip ? tooltip : fields.$key.description %]">
-                     [% IF title ; title _ ': '; END; %]
+                     [% title _ ': ' %]
                    </span>
           </div>
-
+      [%  END; %]
           <div class="field-content">
              [% content %]
           </div>
      </div>
+
 [% END %]
 
 [% BLOCK curator_block %]
@@ -405,7 +407,7 @@ WB.getPlugin("dataTables", function(){
               "aButtons": [
                 {
                   "sExtends": "collection",
-                  "sButtonText": "Save",
+                  "sButtonText": "Save table",
                   "aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
                 }
               ],
@@ -1004,8 +1006,17 @@ _ '</div>';
 END;
 %]
 
-[% MACRO format_sequence(seq, header) BLOCK;
+[% MACRO format_sequence(seq, header, offset, length) BLOCK;
     format_seq = header ? ">$header\n" : "";
+    IF length;
+      prefix = seq.substr(0, offset);
+      prefix = prefix FILTER lower;
+      infix = seq.substr(offset, length);
+      infix = infix FILTER upper;
+      postfix = seq.substr(offset + length);
+      postfix = postfix FILTER lower;
+      seq = prefix _ infix _ postfix;
+    END;
     FOREACH line IN seq.chunk(80);
       format_seq = format_seq _ line;
       UNLESS loop.last;
@@ -1020,21 +1031,35 @@ END;
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
     IF fields.$field_key.data.defined;
-      sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
+      IF fields.$field_key.data.defined('sequences');
+        sequence_list = fields.$field_key.data.sequences;
+      ELSE;
+        sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
+      END;
     ELSIF (field_key.defined('sequence') || field_key.0.defined('sequence'));
       sequence_list = field_key.defined('sequence') ? [field_key] : field_key;
       field_key = '';
     END;
     sequences = {};
 
-
     FOREACH obj IN sequence_list;
       IF obj.defined('sequence');
         seq = obj.sequence;  
         NEXT IF seq.length == 0;
 
-      
-        format_seq = seq.match('\s') ? '>' _ object.name.data.label _ ' ' _ obj.header  _ "\n" _ seq  : format_sequence(seq, obj.header || object.name.data.label);
+        # If parts of the feature commented on and possible have a highlighted region, then pass the parameters on:
+        IF obj.defined('comment');
+          header = obj.header || object.name.data.label;
+          header = header _ ' ' _ obj.comment;
+          IF obj.defined('highlight');
+            format_seq = format_sequence(seq, header, obj.highlight.offset, obj.highlight.length);
+          ELSE;
+            format_seq = format_sequence(seq, header);
+          END;
+        ELSE;
+          format_seq = seq.match('\s') ? '>' _ object.name.data.label _ ' ' _ obj.header  _ "\n" _ seq  : format_sequence(seq, obj.header || object.name.data.label);
+        END;
+
         title = obj.header || 'sequence';    
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
         title_html = title | remove('(\<(/?[^\>]+)\>)');

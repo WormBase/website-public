@@ -102,8 +102,8 @@ B<Response example>
 sub sequence_type {
     my ($self) = @_;
     return {
-	description => 'the general type of the sequence',
-	data        => $self->type,
+    	description => 'the general type of the sequence',
+    	data        => $self->type,
     };
 }
 
@@ -410,7 +410,7 @@ sub corresponding_all {
 
     $data{length_spliced}   = $len_spliced;
 
-    my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
+    my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
     $data{length_unspliced} = @lengths ? \@lengths : undef;
 
 
@@ -420,13 +420,20 @@ sub corresponding_all {
 
     my $gene = $cds->Gene;
 
+    my $status = $cds->Prediction_status if $cds;
+    $status =~ s/_/ /g if $status;
+    $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+
     my $type = $sequences[0]->Method if @sequences;
     $type =~ s/_/ /g;
     @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
-    $data{type} = "$type" || undef;
+    $data{type} = $type && "$type";
     $data{model}   = @sequences ? \@sequences : undef;
     $data{protein} = $self->_pack_obj($protein);
     $data{cds} = $cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0 ) : '(no CDS)';
+    $cds = ($cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0) : '(no CDS)');
+    $data{cds} = $status ? { text => $cds, evidence => { status => "$status"} } : $cds;
+
     $data{gene} = $self->_pack_obj($gene);
     push @rows, \%data;
 

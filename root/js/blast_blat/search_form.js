@@ -6,8 +6,9 @@
 // Store dynamic options at load time
 var blastAppClone          = makeCloneArray('blast_app');
 var databaseClone          = makeCloneArray('database');
-var versionClone          = makeCloneArray('version');
-var typeClone          = makeCloneArray('typeBox');
+var versionClone           = makeCloneArray('version');
+var typeClone              = makeCloneArray('typeBox');
+var bioprojectClone        = makeCloneArray('bioproject');
 
 // Other Global Vars
 var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
@@ -77,11 +78,12 @@ function updateTypeOptions() {
 
 function updateDatabaseOptions() {
     var paramValues = getParamValues();
-    var queryType = paramValues[0];
-    var appType   = paramValues[1];
-    var queryApp  = paramValues[2];
-    var version   = paramValues[3];
-    var type      = paramValues[4];
+    var queryType  = paramValues[0];
+    var appType    = paramValues[1];
+    var queryApp   = paramValues[2];
+    var version    = paramValues[3];
+    var type       = paramValues[4];
+    var species    = paramValues[7];
 
     var copy = copyArray(databaseClone);
     var database = document.getElementById('database');
@@ -90,12 +92,27 @@ function updateDatabaseOptions() {
     updateOneOption(copy, database, type , 'type');
     copy = copyArray(database);
     updateOneOption(copy, database, queryApp, 'query-app');
+
+    var bioprojectElement = document.getElementById('bioproject');
+    copy = copyArray(bioprojectClone)
+    updateOneOption(copy, bioprojectElement, species.replace(/_genome$/, ''), 'species');
+    copy = copyArray(bioprojectElement)
+    updateOneOption(copy, bioprojectElement, type, 'type');
+    copy = copyArray(bioprojectElement)
+    updateOneOption(copy, bioprojectElement, version, 'version');
     
     if (!database.options.length) {
         var newOption = new Option('No database available', 'not_selected', 0, 0);
         newOption.selected = true;
         
         database.options[0] = newOption;
+    }
+
+    if (!bioprojectElement.options.length) {
+        newOption = new Option('Not applicable', 'not_selected', 0, 0);
+        newOption.selected = true;
+
+        bioprojectElement.options[0] = newOption;
     }
     
     return 1;
@@ -116,9 +133,7 @@ function updateOneOption(cloneArray, parentElement, optionCriterion, criterion) 
     for (var i = 0; i < cloneArray.length; i++) {
         if (cloneArray[i].value == selectedOption) {
             cloneArray[i].selected = true;
-        }    
-        
-        else {
+        } else {
             cloneArray[i].selected = false;
         }    
     }
@@ -210,13 +225,20 @@ function updateMessage() {
     
 
 function getParamValues() {
+    var databaseBox   = document.getElementById('database');
     var querySequence = document.getElementById('query_sequence');
     var blastApp      = document.getElementById('blast_app');
     var versionBox    = document.getElementById('version');
     var typeBox       = document.getElementById('typeBox');
+    var bioprojectBox = document.getElementById('bioproject');
     
+    var species       = databaseBox.options[databaseBox.selectedIndex].value;
+    species = species.split('_');
+    species = species[1] + '_' + species[2];
+
     var version       = versionBox.options[versionBox.selectedIndex].value;
     var searchType    = typeBox.options[typeBox.selectedIndex].value;
+    var bioproject    = bioprojectBox.options[bioprojectBox.selectedIndex].value;
 
     var queryType;
     var dbType;
@@ -252,9 +274,9 @@ function getParamValues() {
 	dbType = queryType;
     }
     
-    var queryApp = (queryType && appType) ? queryType + ":" + appType
-                                        : null;
-    return new Array(queryType, appType, queryApp, version, searchType, dbType);
+    var queryApp = (queryType && appType) ? queryType + ":" + appType : null;
+
+    return new Array(queryType, appType, queryApp, version, searchType, dbType, bioproject, species);
 }
 
 function typeSequence(sequence) {
@@ -284,14 +306,15 @@ function makeCloneArray(id) {
     var cloneArray = [];
     var parentElement = document.getElementById(id);
     for (var i = 0; i < parentElement.options.length; i++) {
-        var optionValue = parentElement.options[i].value;
-        var optionText  = parentElement.options[i].text;
-        var optionQuery = parentElement.options[i].getAttribute('query');
-        var optionDb    = parentElement.options[i].getAttribute('db');
-        var optionApp   = parentElement.options[i].getAttribute('query-app');
-        var optionVer   = parentElement.options[i].getAttribute('version');
-        var optionType  = parentElement.options[i].getAttribute('type');
-        var optionNuPro = parentElement.options[i].getAttribute('nucl_prot');
+        var optionValue   = parentElement.options[i].value;
+        var optionText    = parentElement.options[i].text;
+        var optionQuery   = parentElement.options[i].getAttribute('query');
+        var optionDb      = parentElement.options[i].getAttribute('db');
+        var optionApp     = parentElement.options[i].getAttribute('query-app');
+        var optionVer     = parentElement.options[i].getAttribute('version');
+        var optionType    = parentElement.options[i].getAttribute('type');
+        var optionNuPro   = parentElement.options[i].getAttribute('nucl_prot');
+        var optionSpecies = parentElement.options[i].getAttribute('species');
 	
         var newOption = new Option(optionText, optionValue, 0, 0);
         newOption.setAttribute('query',     optionQuery);
@@ -300,6 +323,7 @@ function makeCloneArray(id) {
         newOption.setAttribute('version',   optionVer);
         newOption.setAttribute('type',      optionType);	
         newOption.setAttribute('nucl_prot', optionNuPro);
+        newOption.setAttribute('species',   optionSpecies);
 	
         cloneArray.push(newOption);
     }
@@ -311,14 +335,15 @@ function copyArray(array) {
     var copyArray = [];
 //    var parentElement = document.getElementById(id);
     for (var i = 0; i < array.length; i++) {
-        var optionValue = array[i].value;
-        var optionText  = array[i].text;
-        var optionQuery = array[i].getAttribute('query');
-        var optionDb    = array[i].getAttribute('db');
-        var optionApp   = array[i].getAttribute('query-app');
-        var optionVer   = array[i].getAttribute('version');
-        var optionType  = array[i].getAttribute('type');
-        var optionNuPro = array[i].getAttribute('nucl_prot');
+        var optionValue   = array[i].value;
+        var optionText    = array[i].text;
+        var optionQuery   = array[i].getAttribute('query');
+        var optionDb      = array[i].getAttribute('db');
+        var optionApp     = array[i].getAttribute('query-app');
+        var optionVer     = array[i].getAttribute('version');
+        var optionType    = array[i].getAttribute('type');
+        var optionNuPro   = array[i].getAttribute('nucl_prot');
+        var optionSpecies = array[i].getAttribute('species');
 	
         var newOption = new Option(optionText, optionValue, 0, 0);
         newOption.setAttribute('query',     optionQuery);
@@ -326,7 +351,8 @@ function copyArray(array) {
         newOption.setAttribute('query-app', optionApp);
         newOption.setAttribute('version',   optionVer);
         newOption.setAttribute('type',      optionType);
-        newOption.setAttribute('nucl_prot', optionNuPro);	
+        newOption.setAttribute('nucl_prot', optionNuPro);
+        newOption.setAttribute('species',   optionSpecies);
 	
         copyArray.push(newOption);
     }
@@ -389,9 +415,13 @@ DOMhelp.addEvent(document.getElementById('query_type_prot'),    'click',
 
 DOMhelp.addEvent(document.getElementById('blast_app'),          'change', updateAllOptions,    false); 
 
+DOMhelp.addEvent(document.getElementById('database'),          'change', updateAllOptions,    false); 
+
 DOMhelp.addEvent(document.getElementById('version'),          'change', updateAllOptions,    false); 
 
 DOMhelp.addEvent(document.getElementById('typeBox'),          'change', updateAllOptions,    false);
+
+DOMhelp.addEvent(document.getElementById('bioproject'),          'change', updateAllOptions,    false); 
 
 // MS IE does not recognize change event on textarea if not done manually, using mouseout to supplement this
 DOMhelp.addEvent(document.getElementById('sample_peptide'),     'click',
