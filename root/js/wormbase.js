@@ -90,6 +90,14 @@
       return;
     }
    
+    function ajaxError(xhr){
+          var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '',
+              statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
+          return '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p><a href="/tools/support?url=' + location.pathname 
+                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                  + '">Let us know</a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
+    }
 
     function navBarInit(){
       searchInit();
@@ -154,11 +162,7 @@
                 location.href=data;
               },
               error: function(xhr,status,error) {
-                var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-                print.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname 
-                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p></div>');
+                print.html(ajaxError(xhr));
               }
             });
       });
@@ -231,6 +235,7 @@
       
       if(personSearch.size()>0){
           ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
+            checkSearch(personSearch);
             personSearch.delegate(".results-person .result li a", 'click', function(){
                 $jq(".ui-state-highlight").removeClass("ui-state-highlight");
                 var wbid = $jq(this).attr("href").split('/').pop();
@@ -279,11 +284,7 @@
                           }
                       },
                     error: function(xhr,status,error) {
-                        var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-                        $jq(".error").prepend('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                          + '<p><a href="/tools/support?url=' + location.pathname 
-                          + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                          + '">Let us know</a></p><p>' + error + '</p></div>');
+                        $jq(".error").prepend(ajaxError(xhr));
                       }
                 });
                 $jq(this).parent().parent().addClass("ui-state-highlight");
@@ -558,18 +559,15 @@
     function ajaxGet(ajaxPanel, $url, noLoadImg, callback) {
       $jq.ajax({
         url: $url,
-        beforeSend:function(){
+        beforeSend:function(xhr){
           if(!noLoadImg){ setLoading(ajaxPanel); }
+          xhr.requestURL = $url;
         },
         success:function(data){
           ajaxPanel.html(data);
         },
         error:function(xhr, textStatus, thrownError){
-          var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-          ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname 
-                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p></div>');
+          ajaxPanel.html(ajaxError(xhr));
         },
         complete:function(XMLHttpRequest, textStatus){
           if(callback){ callback(); }
@@ -973,7 +971,7 @@ var Layout = (function(){
         $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"), function(response, status, xhr) {
             if (status === "error") {
                 var msg = "Sorry but there was an error: ";
-                $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
+                $jq(".list-layouts").html(ajaxError(xhr));
               }
             });
           });
@@ -1366,11 +1364,7 @@ var Scrolling = (function(){
             updateCounts(url);
               },
           error: function(xhr,status,error) {
-                var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-                $jq("#comments").prepend('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname 
-                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p></div>');
+                $jq("#comments").prepend(ajaxError(xhr));
               }
         });
         var box = $jq('<div class="comment-box"><a href="/me">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
@@ -1390,11 +1384,7 @@ var Scrolling = (function(){
                       updateCounts(url);
           },
         error: function(xhr,status,error) {
-            var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-                $jq("#comments").prepend('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname 
-                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p></div>');
+                $jq("#comments").prepend(ajaxError(xhr));
             cm.innerHTML(error);
           }
       });
@@ -1440,9 +1430,7 @@ var Scrolling = (function(){
                   feed.append(data.message);
               },
           error: function(xhr,status,error) {
-                  var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-                  feed.append('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p>' + error + '</p></div>');
+                  feed.append(ajaxError(xhr));
               }
         });
         feed.children().remove();
@@ -1469,11 +1457,7 @@ var Scrolling = (function(){
                     StaticWidgets.reload(widget_id, 0, data.widget_id);
                 },
               error: function(xhr,status,error) {
-                var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-                widget.find(".content").html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname 
-                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p></div>');
+                widget.find(".content").html(ajaxError(xhr));
                 }
           }); 
     },
@@ -1512,11 +1496,7 @@ var Scrolling = (function(){
             $jq("#nav-static-widget-" + widget_id).click().hide();
           },
           error: function(xhr,status,error) {
-              var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-              $jq("li#static-widget-" + widget_id).find(".content").html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                + '<p><a href="/tools/support?url=' + location.pathname 
-                + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                + '">Let us know</a></p><p>' + error + '</p></div>');
+              $jq("li#static-widget-" + widget_id).find(".content").html(ajaxError(xhr));
           }
         }); 
       }
@@ -1853,6 +1833,7 @@ function setupCytoscape(data, types){
     
     var Plugin = (function(){
       var plugins = new Array(),
+          css = new Array(),
           loading = false,
           pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
                         dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
@@ -1879,9 +1860,10 @@ function setupCytoscape(data, types){
       function getScript(name, url, stylesheet, callback) {
         
        function LoadJs(){
+           css[name] = true;
            loadFile(url, true, function(){
-              plugins[name] = true;
               callback();
+              plugins[name] = true;
            });
         }
         
@@ -1978,12 +1960,11 @@ function setupCytoscape(data, types){
       
       function loadPlugin(name, url, stylesheet, callback){
         if(!plugins[name]){
-          getScript(name, url, stylesheet, callback);
+          getScript(name, url, !css[name] ? stylesheet : undefined, callback);
         }else{
           if(loading){
-            return setTimeout(getPlugin(name, url, stylesheet, callback),1);
+            return setTimeout(getPlugin(name, url, stylesheet, callback),10);
           }
-          callback(); 
         }
         return;
       }
@@ -2035,6 +2016,7 @@ function setupCytoscape(data, types){
 
  $jq(document).ready(function() {
       $jq.ajaxSetup( {timeout: 12e4 }); //2 minute timeout on ajax requests
+
       if(!window.WB){
         WB.init();
         window.WB = WB;

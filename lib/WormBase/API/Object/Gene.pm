@@ -121,7 +121,7 @@ sub _build__phenotypes {
 	}
     }
 
-    return \%phenotypes;
+    return %phenotypes ? \%phenotypes : undef;
 }
 
 #######################################
@@ -280,6 +280,20 @@ sub cloned_by {
     }
 
     return $datapack;
+}
+
+# parent_sequence { }
+# This method will return a data structure containing
+# the parent sequence of the gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/parent_sequence
+
+sub parent_sequence {
+    my $self      = shift;
+    my $object = $self->object;  
+    return {
+        description => 'parent sequence of this gene',
+        data        => $self->_pack_obj($object->Sequence),
+    };
 }
 
 # clone { }
@@ -827,9 +841,18 @@ sub _process_variation {
     my @effect = keys %effects;
     my @location = keys %locations;
 
+    my $method_name = $variation->Method;
+    my $method_remark = $method_name->Remark;
+
+    # Make string user friendly to read and add tooltip with description:
+    $method_name = "$method_name";
+    $method_name =~ s/_/ /g;
+    $method_name = "<a class=\"longtext\" tip=\"$method_remark\">$method_name</a>";
+
     my %data = (
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
+        method_name      => $method_name,
         molecular_change => $molecular_change && "$molecular_change",
         aa_change        => @aa_change ? join('<br />', @aa_change) : undef,
         aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
@@ -1433,7 +1456,7 @@ sub matching_cdnas {
     my %unique;
     my @mcdnas = map {$self->_pack_obj($_)} grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
     return { description => 'cDNAs matching this gene',
-	     data        => \@mcdnas };
+	     data        => @mcdnas ? \@mcdnas : undef };
 }
 
 
@@ -1497,7 +1520,9 @@ sub primer_pairs {
     my $self   = shift;
     my $object = $self->object;
     
-    return unless @{$self->sequences};
+    return {    description => "No primer pairs found",
+                data => undef
+            } unless @{$self->sequences};
     
     my @segments = @{$self->_segments};
     my @primer_pairs =  
@@ -1727,6 +1752,10 @@ sub gene_models {
         my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
+        my $status = $cds->Prediction_status if $cds;
+        $status =~ s/_/ /g if $status;
+        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+
         if ($protein) {
             my $peplen = $protein->Peptide(2);
             my $aa     = "$peplen";
@@ -1735,10 +1764,12 @@ sub gene_models {
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
         @sequences =  map {$self->_pack_obj($_)} @sequences;
-        $data{type} = "$type";
+        $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
+        $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
+
 
         push @rows, \%data;
     }

@@ -513,6 +513,11 @@
     search    = 'http://nematode.net/KEGGscan/cgi-bin/EC_Portal.cgi?EC=%s'
   }
 
+  nematode_net = {
+    description ='Nematode.NET is a ressource for assembled transcripts'
+    base        ='http://nematode.net'
+    search      ='http://nematode.net/NN3_frontpage.cgi?navbar_selection=nemagene&subnav_selection=FromWB&TYPE=contig&NAME=%s'
+  }
   nembase = {
     description  = 'A database resource for nematode EST datasets.'
     base    = 'http://www.nematodes.org/nematodeESTs/nembase.html'
@@ -562,6 +567,7 @@
   Phenobank2 = {
     base    = 'http://worm.mpi-cbg.de/phenobank2/cgi-bin/MenuPage.py'
     maintainer  = ''
+    search = 'http://www.worm.mpi-cbg.de/phenobank/cgi-bin/GenePage.py?%s'
   }
 
   phosphopep = {
@@ -728,8 +734,8 @@
     description  = 'TreeFam (Tree families database) is a database of phylogenetic trees of animal genes. It aims at developing a curated resource that gives reliable information about ortholog and paralog assignments, and evolutionary history of various gene families.'
     maintainer  = ''
     base    = 'http://www.treefam.org/'
-    search    = 'http://www.treefam.org/cgi-bin/TFinfo.pl?ac=%s'
-    image    = 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
+    search    = 'http://www.treefam.org/family/%s'
+    image    = 'http://legacy.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
   }
 
   trembl = {

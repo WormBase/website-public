@@ -224,6 +224,16 @@ sub _build_genetic_position {
         }
     }
 
+    return $self->make_genetic_position_object($class, $object, $chromosome, $position, $error, $method);
+}
+
+# Creates a label for the genetic position object and then returns its data
+# structure denoting genomic locus and method used, or error message (if applicable).
+# Class and object type have to be passed along too, which determine provenance of
+# the object's content (API class).
+sub make_genetic_position_object {
+    my ($self,$class,$object,$chromosome,$position,$error,$method) = @_;
+
     my $label;
     if ($position) {
         $label= sprintf("$chromosome:%2.2f +/- %2.3f cM",$position,$error || 0);

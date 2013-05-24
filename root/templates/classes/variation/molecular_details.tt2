@@ -133,7 +133,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
    # Mutation context
    WRAPPER $field_block title="Sequence" key="context";
-      '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.<br />';
+      '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p><p>';
 
       '<span class="sequence-container" style="background-color:#FF8080">red</span> = mutation <br />';
       '<span class="sequence-container" style="background-color:yellow">yellow</span> = flanking sequence <br />';
@@ -141,13 +141,13 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
       mutant.sequence = fields.context.data.mutant_full;
 
       IF fields.cgh_deleted_probes.data;
-      '<span class="sequence-container" style="background-color:#80FF80">green</span> = CGH deleted probe <br />';
-        wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_deleted_probes.data.left_flank, '#80FF80') IF fields.cgh_deleted_probes.data.left_flank;
-        wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_deleted_probes.data.right_flank, '#80FF80') IF fields.cgh_deleted_probes.data.right_flank;
+      '<span class="sequence-container" style="background-color:#FFAA54">orange</span> = CGH deleted probe <br />';
+        wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_deleted_probes.data.left_flank, '#FFAA54') IF fields.cgh_deleted_probes.data.left_flank;
+        wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_deleted_probes.data.right_flank, '#FFAA54') IF fields.cgh_deleted_probes.data.right_flank;
       END;
 
       IF fields.cgh_flanking_probes.data;
-      '<span class="sequence-container" style="background-color:#80FFFF">blue</span> = CGH flanking probe <br />';
+      '<span class="sequence-container" style="background-color:#80FFFF">blue</span> = CGH flanking probe <span id="fade">(if within the window of displayed sequence)</span><br />';
         IF fields.cgh_flanking_probes.data.left_flank; 
           wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_flanking_probes.data.left_flank, '#80FFFF'); 
           mutant.sequence = highlight_seq(mutant.sequence, fields.cgh_flanking_probes.data.left_flank, '#80FFFF'); 
@@ -171,9 +171,9 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
    END;
 
-  WRAPPER $field_block title="CGH Deleted Probes" key="cgh_deleted_probes";
+  WRAPPER $field_block title="CGH Flanking Probes" key="cgh_flanking_probes";
       '<div class="sequence-container">';
-        "5' flank -- " _ fields.cgh_deleted_probes.data.left_flank _ " " _ fields.cgh_deleted_probes.data.right_flank _ "-- 3' flank";
+        "5' flank -- " _ fields.cgh_flanking_probes.data.left_flank _ "<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" _ fields.cgh_flanking_probes.data.right_flank _ " -- 3' flank";
     '</div>';
   END;
 
