@@ -35,6 +35,7 @@ has 'object' => (
     default => undef,
 );
 
+
 has 'dsn' => (
     is       => 'ro',
     isa      => 'HashRef',
@@ -354,7 +355,9 @@ sub _build_best_blastp_matches {
 
     # find the best pep_homol in each category
     my %best;
-    return "" unless @pep_homol;
+    return {  description => 'no proteins found, no best blastp hits to display',
+              data        => undef,
+    } unless @pep_homol;
     for my $hit (@pep_homol) {
         # Ignore mass spec hits
         #     next if ($hit =~ /^MSP/);
@@ -394,11 +397,9 @@ sub _build_best_blastp_matches {
 
         # Try fetching the species first with the identification
         # then method then the embedded species
-        my $species = $self->id2species($hit);
-        $species ||= $self->id2species($method);
+        my $species = $best{$method}{hit}->Species || $self->id2species($hit) || $self->id2species($method);
 
         # Not all proteins are populated with the species
-        $species ||= $best{$method}{hit}->Species;
         $species =~ s/^(\w)\w* /$1. / if $species;
         my $description = $best{$method}{hit}->Description
           || $best{$method}{hit}->Gene_name;
@@ -701,7 +702,7 @@ sub _build_description {
       my @array =map {{text=>"$_",evidence=>$self->_get_evidence($_)}}  @{$self ~~ "\@$tag"} ;
       $description = @array? \@array:undef;
     }else{
-	$description = eval {join(' ', $object->$tag)} || undef;
+	$description = eval {join('<br />', $object->$tag)} || undef;
     }
     return {
         description => "description of the $class $object",
@@ -720,95 +721,6 @@ sub _build_description {
 
 }
 
-=head3 expression_patterns
-
-This method will return a data structure containing
-a list of expresion patterns associated with the object.
-
-=over
-
-=item PERL API
-
- $data = $model->expression_patterns();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A class and ID.
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/expression_patterns
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# Template: [% expression_patterns %]
-
-has 'expression_patterns' => (
-    is         => 'ro',
-    required => 1,
-    lazy     => 1,
-    builder  => '_build_expression_patterns',
-);
-
-# TODO: use hash instead; make expression_patterns macro compatibile with hash
-sub _build_expression_patterns {
-    my ($self) = @_;
-    my $object = $self->object;
-    my $class  = $object->class;
-    my @data;
-
-    foreach ($object->Expr_pattern) {
-        my $author = $_->Author;
-        my @patterns = $_->Pattern
-            || $_->Subcellular_localization
-            || $_->Remark;
-
-	my $gene      = $_->Gene;
-	my $transgene = $_->Transgene; 
-        push @data, {
-            expression_pattern => $self->_pack_obj($_),
-            description        => join("<br />", @patterns) || undef,
-            author             => $author && "$author",
-	    gene               => $self->_pack_obj($gene),
-#	    transgene          => $self->_pack_obj($transgene);
-        };
-    }
-
-    return {
-        description => "expression patterns associated with the $class:$object",
-        data        => @data ? \@data : undef
-    };
-}
 
 =head3 laboratory
 
@@ -873,7 +785,7 @@ has 'laboratory' => (
 
 # laboratory: Whenever a cross-ref to lab is needed.
 # Returns the lab as well as the current representative.
-# Used in: Person, Gene_class, Transgene
+# Used in: Person, Gene_class, transgene
 # template: shared/fields/laboratory.tt2
 sub _build_laboratory {
     my ($self) = @_;
@@ -1897,8 +1809,11 @@ sub mysql_dsn {
 sub gff_dsn {
     my ($self, $species) = @_;
     $species ||= $self->_parsed_species;
+    $species =~ s/^all$/c_elegans/;
     $self->log->debug("getting gff database species $species");
-    return $self->dsn->{"gff_" . $species};
+    my $gff = $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
+    die "Can't find gff database for $species" unless $gff;
+    return $gff;
 }
 
 sub ace_dsn {
@@ -1972,9 +1887,10 @@ sub _pack_obj {
     return undef unless $object; # this method shouldn't expect a list.
 
     my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
+    $label = $label // $self->_make_common_name($object);
     return {
         id       => "$object",
-        label    => $label // $self->_make_common_name($object),
+        label    => "$label",
         class    => $wbclass || $object->class,
         taxonomy => $self->_parsed_species($object),
         %args,
@@ -1990,7 +1906,7 @@ sub _parsed_species {
         return lc "${g}_$species";
     }
 
-    return 'c_elegans';
+    return 'all';
 }
 
 # Take a string of Genus species and return a 

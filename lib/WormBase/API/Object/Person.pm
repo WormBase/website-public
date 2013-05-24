@@ -44,31 +44,29 @@ has 'address_data' => (
 
 has 'previous_address_data' => (
     is   => 'ro',
-    isa  => 'ArrayRef',	
+    isa  => 'Maybe[ArrayRef]',
     lazy => 1,
-    default => sub {	
-	my $self = shift;
-	my $object = $self->object;
-	my @entries;
-	foreach my $entry ($object->Old_address) {
-	    my %address;
-        $entry =~ m/^(.*)\s(\S*)$/g;
-	    $address{date_modified} = "$1";
-#       $address{date_modified} = "$entry";
+    default => sub {
+            my $self = shift;
+            my $object = $self->object;
+            my @entries;
+            foreach my $entry ($object->Old_address) {
+                my %address;
+                $entry =~ m/^(.*)\s(\S*)$/g;
+                $address{date_modified} = "$1";
 
-	    foreach my $tag ($entry->col) {
-		if ($tag =~ m/street|email|office/i) {		
-		    my @data = map { $_->name } $tag->col;
-		    $address{lc($tag)} = \@data;
-		} else {
-		    $address{lc($tag)} =  $tag->right->name;
-		}
-	    }
-	    push @entries,\%address
-	}
-#	return \%address;
-	return \@entries;
-    }
+                foreach my $tag ($entry->col) {
+                    if ($tag =~ m/street|email|office/i) {
+                        my @data = map { $_->name } $tag->col;
+                        $address{lc($tag)} = \@data;
+                    } else {
+                        $address{lc($tag)} =  $tag->right->name;
+                    }
+                }
+                push @entries,\%address
+            }
+            return @entries ? \@entries : undef;
+        }
     );
 
 
@@ -334,7 +332,7 @@ sub lab_info {
 		push( @table, {
 			lab 	=> $self->_pack_obj($lab),
 			strain 	=> $self->_pack_obj($lab),
-			allele 	=> $lab->Allele_designation,
+			allele 	=> $lab->Allele_designation && $lab->Allele_designation->asString,
 			rep		=> $self->_pack_obj($lab->Representative,
 										$lab->Representative->Standard_name)
 		});

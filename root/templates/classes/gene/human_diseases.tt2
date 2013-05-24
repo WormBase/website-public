@@ -1,9 +1,21 @@
 
+
+    [% IF fields.human_diseases.data.experimental_model; %]
+    <p><h3>Curated Experimental Model</h3></p>
+      [% FOREACH item IN fields.human_diseases.data.experimental_model; 
+          text = object.name.data.label _ ' is an experimental model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
+          '<div class="description">';
+            evidence(item.ev, 0 , text);
+          '</div>';
+        END;%]
+    [% END %]
+
 [%
+
 IF (fields.human_disease_relevance.data.defined);
-'<p><h3>Curated Human disease associations</h3></p><p>';
+'<p><h3>Curated Human Disease Relevance</h3></p><p>';
     FOREACH obj IN fields.human_disease_relevance.data;
-        '<div class="text-width">';
+        '<div class="description">';
             evidence(obj.evidence,sd, obj.text);
         '</div>';
     END;
@@ -19,7 +31,7 @@ END;
     [% IF fields.human_diseases.data.potential_model; %]
       [% FOREACH item IN fields.human_diseases.data.potential_model; 
           text = object.name.data.label _ ' is a potential model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
-          item.ev ? evidence(item.ev, 0 , text) : text;
+          evidence(item.ev, 0 , text);
           '<br />';
         END;%]
     [% END %]

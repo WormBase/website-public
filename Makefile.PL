@@ -129,4 +129,5 @@ requires 'Log::Any::Adapter::Log4perl';                          # cache logging
 install_script glob('script/*.pl');
 auto_install;
 WriteAll;
-
+mkdir('logs',0775);
+mkdir('server-status',0775);

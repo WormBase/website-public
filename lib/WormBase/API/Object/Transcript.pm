@@ -67,7 +67,7 @@ sub _build_type {
         $type = 'genomic -- fosmid';
     }
     elsif ($self ~~ '@Locus') {
-        $type = 'confirmed gene';
+        $type = 'WormBase transcript';
     }
     elsif (eval { $s->Coding }) {
         $type = 'predicted coding sequence';

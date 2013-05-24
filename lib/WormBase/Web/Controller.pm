@@ -11,8 +11,10 @@ sub _setup_page {
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
     my $class = lc($c->stash->{object}{name}{data}{class});
-    $class ||= lc($c->req->path);
-    $class =~ s/[\/_]/-/g;
+    unless ($class) {
+        $class = lc($c->req->path);
+        $class =~ s/[\/_]/-/g;
+    }
 
     my @layouts = keys(%{$c->user_session->{'layout'}->{$class}});
     my %l;

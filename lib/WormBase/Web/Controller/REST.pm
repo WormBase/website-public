@@ -765,11 +765,14 @@ sub widget_GET {
             fields => $c->stash->{fields},
         }
     );
-    my $filename = join( '_', $class, $name, $widget ) . '.'
-        . $c->config->{api}->{content_type}->{$content_type};
-    $c->log->debug("$filename download in the format: $content_type");
-    $c->response->header(
-        'Content-Disposition' => 'attachment; filename=' . $filename );
+
+    if($c->req->params->{'download'}){
+      my $filename = join( '_', $class, $name, $widget ) . '.'
+          . $c->config->{api}->{content_type}->{$content_type};
+      $c->log->debug("$filename download in the format: $content_type");
+      $c->response->header(
+          'Content-Disposition' => 'attachment; filename=' . $filename );
+    }
 }
 
 
@@ -1049,7 +1052,7 @@ sub _check_user_info {
 sub _post_to_github {
   my ($self,$c,$content,$email, $name, $title, $page, $userAgent, $u) = @_;
 
-  my $url     = $c->config->{github_issues_url};
+  my $url     = "https://api.github.com/repos/" . $c->config->{github_repo} . "/issues";
 
   # Get a new authorization for the website repo,
   # curl -H "Content-Type: application/json"  -u "tharris" -X POST https://api.github.com/authorizations -d '{"scopes": [ "website" ],"note": "wormbase helpdesk cross-post" }'
@@ -1371,110 +1374,6 @@ sub _get_page {
 #
 # Admin level REST endpoints 
 # 
-
-
-# A generic webhook for receiving updates
-# from third party APIs
-# Currently, this is only used by GitHub
-# to send our app an update when there
-# has been a push to the staging branch.
-
-sub webhook :Path('/rest/admin/webhook') :Args(0) :ActionClass('REST') {}
-
-sub webhook_POST {
-    my ($self,$c) = @_;
-
-    # Assume JSON auto deserialized, but could be anything
-    my ($data) = $c->req->data;
-
-    # I can't fetch any data when called from github?
-    # This isn't a proxy misconfig, weird app behavior?
-#    if (!$data) {
-#	$c->log->debug('no data passed by webhook caller.');
-#	$c->response->status('415');
-#	return 'No payload defined';
-#     }
-   
-    # It's a request from github if there is a "payload" key. Not fool-proof.
-#    if ($data->{payload}) {
-	$c->log->debug("Calling GitHub webhook...");
-	$self->_process_github_webhook($c,$data);
-#    } else {
-	# Insert other webhooks here.
-#    }
-
-    # Send an email that the webhook has been
-    # received. This could get annoying, fast.
-#    $self->_issue_email({ c       => $c,
-#			  page    => $page,
-#			  new     => 1,
-#			  content => $content, 
-#			  change  => undef,
-#			  reporter_email   => $email, 
-#			  reporter_name    => $name, 
-#			  title   => $title,
-#			  issue_url    => $issue_url,
-#			  issue_title  => $issue_title,
-#			  issue_number => $issue_number});        
-    $self->status_ok(
-	$c,
-	entity =>  {
-	    name    => 'WormBase',
-	    msg     => "Webhook received! We'll be acting on it shortly.",
-	    payload => $data,
-	},
-	);
-}
-
-
-
-
-sub _process_github_webhook {
-    my ($self,$c,$data) = @_;
-    
-    # We only allow github to call this action.
-    # Otherwise any request to this URI with the
-    # appropriate data payload would cause this
-    # hook to fire. Perhaps more appropriately
-    # handled at the proxy level...
-    # 207.97.227.253/32
-    # 50.57.128.197/32
-    # 108.171.174.178/32
-    # 50.57.231.61/32
-    # 204.232.175.64/27
-    # 192.30.252.0/22
-    # 127.0.0.1  - allow requests from us for testing.
-#    my %allowed_addresses = map { $_ => $_ } qw/
-#                            207.97.227.253
-#	                    50.57.128.197
-#                            108.171.174.178
-#                            50.57.231.61
-#                            204.232.175.64
-#                            192.30.252.0
-#                            127.0.0.1/;
-#    my $ip = $c->req->address;
-#    next unless (defined $allowed_addresses{$ip});
-    
-    my $path = WormBase::Web->path_to('/');
-
-    # We might want to handle commits to the
-    # staging, master, or production branches
-    # differently. Unfortunately, the branch for
-    # a commit is not specified in the payload -
-    # we would need to query github for each issue.
-    # For now, we'll restart for *any* push to 
-    # WormBase/website. Not ideal.
-
-    # Note that since we are calling both the util
-    # script and the app handle the webhook on the 
-    # same server, the request will be terminated
-    # once the util script is called.
-    $c->log->debug($path);
-    system("$path/util/webhooks/update_and_restart.sh $path"); # && die "Couldn't call update script";
-}
-
-
-
 
 =head1 AUTHOR
 

@@ -121,7 +121,7 @@ sub _build__phenotypes {
 	}
     }
 
-    return \%phenotypes;
+    return %phenotypes ? \%phenotypes : undef;
 }
 
 #######################################
@@ -282,6 +282,20 @@ sub cloned_by {
     return $datapack;
 }
 
+# parent_sequence { }
+# This method will return a data structure containing
+# the parent sequence of the gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/parent_sequence
+
+sub parent_sequence {
+    my $self      = shift;
+    my $object = $self->object;  
+    return {
+        description => 'parent sequence of this gene',
+        data        => $self->_pack_obj($object->Sequence),
+    };
+}
+
 # clone { }
 # This method will return a data structure containing
 # the parent clone of the gene
@@ -334,7 +348,7 @@ sub gene_class {
     return {
     description => "The gene class for this gene",
     data        => $gene_class ? { tag => $self->_pack_obj($gene_class),
-                     description => $gene_class ? $gene_class->Description : '',
+                     description => $gene_class ? $gene_class->Description->asString : '',
     } : undef };
 }
 
@@ -457,7 +471,7 @@ sub structured_description {
 
 sub human_disease_relevance {
     my $self = shift;
-    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Human_disease_relevance;
+    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_->right) } } $self->object->Disease_relevance;
 
     return {  description => "curated description of human disease relevance",
               data        =>  @objs ? \@objs : undef };
@@ -538,26 +552,6 @@ sub anatomic_expression_patterns {
     my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
     $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
 
-    # All expression patterns except Mohlers, presented elsewhere.
-    my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
-                   $object->Expr_pattern;
-
-    foreach my $ep (@eps) {
-	my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$ep.jpg");
-        $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
-        my $pattern =  ($ep->Pattern || '') . ($ep->Subcellular_localization || '');
-		foreach($ep->Picture) {
-			 next unless($_->class eq 'Picture');
-	    	 my $pic = $self->_api->wrap($_);
-			 if( $pic->image->{data}) {
-        			$data_pack{"expr"}{"$ep"}{curated_images} = 1;
-					last;
-			 }	
-		}
-
-        $data_pack{"expr"}{"$ep"}{details} = $pattern;
-        $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
-    }
 
     return {
         description => 'expression patterns for the gene',
@@ -565,6 +559,63 @@ sub anatomic_expression_patterns {
     };
 }
 
+sub expression_patterns {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $expr ($object->Expr_pattern) {
+
+        my $author = $expr->Author;
+        my @patterns = $expr->Pattern
+            || $expr->Subcellular_localization
+            || $expr->Remark;
+        my $desc = join("<br />", @patterns) if @patterns;
+        my $type = $expr->Type;
+        $type =~ s/_/ /g if $type;
+        my $reference = $self->_pack_obj($expr->Reference);
+
+        my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
+        my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
+        my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
+        my @transgene = map { 
+                my @cs =map { "$_" } $_->Construction_summary;
+                @cs ?   {   text=>$self->_pack_obj($_), 
+                            evidence=>{'Construction summary'=> \@cs }
+                        } : $self->_pack_obj($_)
+            } $expr->Transgene;
+        my $expr_packed = $self->_pack_obj($expr, "$expr");
+
+
+        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
+        $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
+        foreach($expr->Picture) {
+            next unless($_->class eq 'Picture');
+            my $pic = $self->_api->wrap($_);
+            if( $pic->image->{data}) {
+                $expr_packed->{curated_images} = 1;
+                last;
+            }   
+        }
+        my $sub = $expr->Subcellular_localization;
+
+        push @data, {
+            expression_pattern =>  $expr_packed,
+            description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
+            type             => $type && "$type",
+            expressed_in    => @expressed_in ? \@expressed_in : undef,
+            life_stage    => @life_stage ? \@life_stage : undef,
+            go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
+            transgene => @transgene ? \@transgene : undef
+
+        };
+    }
+
+    return {
+        description => "expression patterns associated with the gene:$object",
+        data        => @data ? \@data : undef
+    };
+}
 
 
 # anatomy_terms { }
@@ -790,9 +841,18 @@ sub _process_variation {
     my @effect = keys %effects;
     my @location = keys %locations;
 
+    my $method_name = $variation->Method;
+    my $method_remark = $method_name->Remark;
+
+    # Make string user friendly to read and add tooltip with description:
+    $method_name = "$method_name";
+    $method_name =~ s/_/ /g;
+    $method_name = "<a class=\"longtext\" tip=\"$method_remark\">$method_name</a>";
+
     my %data = (
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
+        method_name      => $method_name,
         molecular_change => $molecular_change && "$molecular_change",
         aa_change        => @aa_change ? join('<br />', @aa_change) : undef,
         aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
@@ -977,7 +1037,7 @@ sub history{
 						
 						my ($action, $remark, $gene) = $event->row;
 						
-						next if $action eq 'Imported';
+						#next if $action eq 'Imported';
 						
 						# In some cases, the remark is actually a gene object
 						if (   $action eq 'Merged_into'
@@ -1025,6 +1085,29 @@ sub history{
 
 }
 
+# Subroutine for the "Historical Annotations" table 
+sub old_annot{
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+	
+	foreach (
+		$object->Corresponding_CDS_history,
+		$object->Corresponding_transcript_history,
+		$object->Corresponding_pseudogene_history
+	){
+		my %row = (
+			class => $_->class,
+			name => $self->_pack_obj($_)
+		);
+		push @data, \%row;
+	}
+	
+	return {
+		description => 'the historical annotations of this gene',
+		data		=> @data ? \@data : undef
+	};
+}
 
 #######################################
 #
@@ -1169,6 +1252,9 @@ sub human_diseases {
   if($object->Disease_info){
     my @diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Potential_model;
     $data{'potential_model'} = \@diseases;
+
+    my @exp_diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Experimental_model;
+    $data{'experimental_model'} = \@exp_diseases;
   }
 
   if($data[0]){
@@ -1370,7 +1456,7 @@ sub matching_cdnas {
     my %unique;
     my @mcdnas = map {$self->_pack_obj($_)} grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
     return { description => 'cDNAs matching this gene',
-	     data        => \@mcdnas };
+	     data        => @mcdnas ? \@mcdnas : undef };
 }
 
 
@@ -1434,7 +1520,9 @@ sub primer_pairs {
     my $self   = shift;
     my $object = $self->object;
     
-    return unless @{$self->sequences};
+    return {    description => "No primer pairs found",
+                data => undef
+            } unless @{$self->sequences};
     
     my @segments = @{$self->_segments};
     my @primer_pairs =  
@@ -1478,7 +1566,7 @@ sub transgenes {
 	my $summary = $_->Summary;
     my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => \@labs,
+		      laboratory => @labs ? \@labs : undef,
 		      summary    => "$summary",
 	};
     }
@@ -1502,7 +1590,7 @@ sub transgene_products {
 	my $summary = $_->Summary;
         my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => \@labs,
+		      laboratory => @labs ? \@labs : undef,
 		      summary    => "$summary",
 	};
     }
@@ -1664,6 +1752,10 @@ sub gene_models {
         my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
+        my $status = $cds->Prediction_status if $cds;
+        $status =~ s/_/ /g if $status;
+        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+
         if ($protein) {
             my $peplen = $protein->Peptide(2);
             my $aa     = "$peplen";
@@ -1672,10 +1764,12 @@ sub gene_models {
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
         @sequences =  map {$self->_pack_obj($_)} @sequences;
-        $data{type} = "$type";
+        $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
+        $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
+
 
         push @rows, \%data;
     }

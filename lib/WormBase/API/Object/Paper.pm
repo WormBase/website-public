@@ -315,10 +315,10 @@ sub publisher {
 sub affiliation {
     my ($self) = @_;
 
-    my $affiliations = $self ~~ '@Affiliation';
+    my @affiliations = map { "$_" } $self->object->Affiliation;
     return {
         description => 'Affiliations of the publication',
-        data => @$affiliations ? $affiliations : undef,
+        data => @affiliations ? \@affiliations : undef,
     };
 }
 
@@ -432,7 +432,7 @@ sub intext_citation {
     return {
         description => 'APA in-text citation',
         data		=> {
-            citation => $innertext,
+            citation => "$innertext",
             paper	 => $self ~~ 'name',
         },
     };

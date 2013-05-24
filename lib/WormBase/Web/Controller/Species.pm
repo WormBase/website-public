@@ -111,7 +111,7 @@ sub object_report :Path("/species") Args(3) {
     if($class eq 'species'){
       $c->res->redirect($c->uri_for('/species',"$species")->path."?redirect=1", 307);
     }
-    $c->res->redirect($c->uri_for("/species", 'c_elegans', $class, $name)->path, 307) unless $species;
+    $c->res->redirect($c->uri_for("/species", 'all', $class, $name)->path, 307) unless $species;
 
     unless ($self->_is_class($c, $class)) {
         $c->res->redirect($c->uri_for('/search',"all","$class $name")->path."?redirect=1", 307);
@@ -139,7 +139,7 @@ sub object_report :Path("/species") Args(3) {
       return;
     } else {
       $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
-      if((my $taxonomy = $c->stash->{object}->{name}{data}{taxonomy}) ne $species){
+      if((my $taxonomy = ($c->stash->{object}->{name}{data}{taxonomy} || 'all')) ne $species){
         $c->res->redirect($c->uri_for("/species", $taxonomy, $class, $name)->path, 307) if $taxonomy;
       }
     }

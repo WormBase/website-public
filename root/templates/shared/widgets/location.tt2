@@ -4,29 +4,29 @@
     # Transcripts lone class not placed on genetic map
     UNLESS class.match('transcript');
      '<div style="white-space:nowrap;"';
-     WRAPPER $field_block title="Genetic position" key="genetic_position";
+    WRAPPER $field_block title="Genetic position" key="genetic_position";
       IF fields.genetic_position.data.chromosome;
-            fields.genetic_position.data.formatted;
+             fields.genetic_position.data.formatted;
              IF fields.genetic_position.data.method;
-                ' (' _ fields.genetic_position.data.method _ ')';
+                  ' (' _ fields.genetic_position.data.method _ ')';
              END;
       ELSE;       
-              '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
+               '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
       END;
-     END;
+    END;
      '</div>';
     END;
 
-    WRAPPER $field_block title="Genomic position" key="genomic_position";
-           IF fields.genomic_position.data;
+    IF fields.genomic_position.data;
+      WRAPPER $field_block title="Genomic position" key="genomic_position";
              # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
 	     
        	       FOREACH position IN fields.genomic_position.data;
                    tag2link(position);
      	       END;
-           ELSE;       
+      END;
+    ELSE;       
                   '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the physical map or its coordinates are unknown.</div>';
-           END;
     END;
 
     '<div style="clear:both;">';

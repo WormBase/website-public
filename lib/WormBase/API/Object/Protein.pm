@@ -9,8 +9,9 @@ use Bio::Graphics::Panel;
 use Digest::MD5 'md5_hex';
 use JSON;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
  
 use vars qw(%HIT_CACHE);
 %HIT_CACHE=();
@@ -93,7 +94,7 @@ sub _build__common_name {
 	return "$object";
     } else {
 	# Otherwise use the more human friendly Gene_name.
-	return $object->Gene_name;
+	return $object->Gene_name && $object->Gene_name->asString;
     }
 }
 
@@ -181,6 +182,10 @@ sub corresponding_all {
         $data{length_protein} = $aa if $aa;
 
         my $gene = $cds->Gene;
+        
+        my $status = $cds->Prediction_status if $cds;
+        $status =~ s/_/ /g if $status;
+        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
 
         my $type = $sequences[0]->Method;
         $type =~ s/_/ /g;
@@ -188,7 +193,7 @@ sub corresponding_all {
         $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein, undef, style => 'font-weight:bold');
-        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)';
+        $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
         $data{gene} = $self->_pack_obj($gene);
         push @rows, \%data;
     }
@@ -467,6 +472,9 @@ sub pfam_graph {
     my $motif_homol = $self ~~ '@Motif_homol';
     my $hash;
     my $length = length($self->peptide);
+    my $ret = { description => "The motif graph of the protein",
+                data => undef};
+
 
     for( my $i=0;my $feature=shift @$motif_homol;$i++) {
 	    my $score = $feature->right(2);
@@ -495,7 +503,7 @@ sub pfam_graph {
     # extract the exons, then map them
     # onto the protein backbone.
     my $gene    = $self->cds->[0];
-    my $gffdb = $self->gff_dsn || return;
+    my $gffdb = $self->gff_dsn || return $ret;
     my ($seq_obj) = eval{$gffdb->segment(CDS => $gene)}; return if $@;
 
     my (@exons,@segmented_exons);
@@ -582,10 +590,8 @@ sub pfam_graph {
 	$hash->{$type} = to_json ($graph);
     }
 
-    return {
-        description => 'The motif graph of the protein',
-        data        => scalar keys %$hash ? $hash : undef,
-    };
+    $ret->{data} = scalar keys %$hash ? $hash : undef;
+    return $ret;
 }
 } # end of block for pfam_graph
 
@@ -633,11 +639,11 @@ sub motif_details {
 					push( @data, {
 						feat	=> 
 							$self->_pack_obj($motif_homol,"$motif_homol"),
-						start	=> $start,
-						stop	=> $stop,
-						score	=> $score,
-						source	=> $source,
-						desc	=> $desc
+						start	=> "$start",
+						stop	=> "$stop",
+						score	=> "$score",
+						source	=> "$source",
+						desc	=> "$desc"
 					});
 					
 					
@@ -646,12 +652,11 @@ sub motif_details {
 				push( @data, {
 					feat	=> 
 						$self->_pack_obj($motif_homol,"$motif_homol"),
-					start	=> $start,
-					stop	=> $stop,
-					score	=> 
-						(scalar @scores) == 1 ? $scores[0] : undef,
-					source	=> $source,
-					desc	=> $desc
+					start	=> "$start",
+					stop	=> "$stop",
+					score	=> (scalar @scores) == 1 ? "$scores[0]" : undef,
+					source	=> "$source",
+					desc	=> "$desc"
 				});
 				
 			}
@@ -688,11 +693,9 @@ sub blast_details {
       
       # Try fetching the species first with the identification
       # then method then the embedded species
-      my $species = $self->id2species($h);
-      $species  ||= $self->id2species($method);
+      my $species = $h->{hit}->Species || $self->id2species($h) || $self->id2species($method);
       
       # Not all proteins are populated with the species 
-      $species ||= $h->{hit}->Species;
       $species =~ s/^(\w)\w* /$1. /;
       $species =~ /(.*)\.(.*)/;
       
@@ -765,13 +768,54 @@ sub history {
 	     data        =>  @data ? \@data : undef };
 }
 
+############################################################
+#
+# Location Widget (template supplied by shared/widgets/location.tt2)
+#
+############################################################
 
+sub _build_genetic_position {
+    my ($self) = @_;
 
+    my @genes = grep{ defined blessed($_) and $_->Method ne 'history'}  @{$self->cds} || return {
+            description => 'No genetic position data available.',
+            data => undef
+        };
+    if (scalar(@genes) == 0) {
+        return { description => 'No genetic position data available.', data => undef };
+    }
+    my ($chromosome,$position,$error) = $self->_api->wrap($genes[0])->_get_interpolated_position();
+    my $genetic_position = $self->make_genetic_position_object('Protein', $self->object, $chromosome, $position, $error, 'interpolated');
 
+    return $genetic_position;
+}
 
+sub _build_genetic_position_interpolated {
+    my ($self) = @_;
 
+    return $self->_build_genetic_position();
+}
 
- 
+sub _build__segments {
+    my ($self) = @_;
+    my @segments;
+    my $gffdb = $self->gff_dsn() || return \@segments;
+    my $dbh = $gffdb->dbh || return;
+
+    my $gene = $self->cds->[0];
+    @segments = map {$dbh->segment(CDS => $gene)} $self->corresponding_transcripts()->{data}->[0];
+
+    return \@segments;
+}
+
+sub _build_tracks {
+    my ($self) = @_;
+
+    return {
+        description => 'Protein specific tracks to display in GBrowse.',
+        data => [qw(CODING_TRANSCRIPTS MOTIFS)]
+    };
+}
 
 ############################################################
 #
