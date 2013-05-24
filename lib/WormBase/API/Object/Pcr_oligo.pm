@@ -49,6 +49,19 @@ sub _build__object_class {
     return $class;
 }
 
+
+sub _build_tracks {
+    my ($self) = @_;
+    my @tracks = qw/PRIMARY_GENE_TRACK OLIGO PCR OSTP CLO/;
+
+    return {
+        description => 'tracks displayed in GBrowse',
+        data => \@tracks
+    };
+}
+
+
+
 # satisfy Role::Position requirements
 sub _build__segments {
     my $self = shift;
@@ -234,9 +247,10 @@ sub segment {
 	if (my ($segment) = @{$self->_segments}) {
 		%data = map { $_ => $segment->$_ }
 		        qw(refseq ref abs_start abs_stop start stop length dna);
-	} elsif(my $l = $self->object->get('Length')) {
-          $data{length} = $l;
-          $data{dna} = $self->object->get('Sequence');
+	} elsif(my $l = $self->object->get('Length', 1)) {
+          my $dna = $self->object->get('Sequence', 1);
+          $data{length} = "$l";
+          $data{dna} = "$dna";
     }
 
 	return {
@@ -290,10 +304,13 @@ sub SNP_loci {
 sub assay_conditions {
 	my ($self) = @_;
 	my $conditions = $self ~~ 'Assay_conditions';
+  my $text = $conditions && $conditions->right;
+  $text =~ s/^\n+// if $text;
+  $text =~ s/\n/\<br\>/g if $text;
 
 	return {
 		description => 'Assay conditions for this PCR product',
-		data		=> $conditions && $conditions->name,
+		data		=> $text && "$text",
 	};
 }
 

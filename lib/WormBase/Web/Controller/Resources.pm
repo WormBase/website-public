@@ -140,9 +140,6 @@ sub _get_report {
     $c->stash->{class}      = $class;
     $c->log->debug($name);
 
-    # get static widgets/layout info for this page
-    $self->_setup_page($c);
-
     my $api = $c->model('WormBaseAPI');
     my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
 
@@ -150,6 +147,9 @@ sub _get_report {
       if( !($object->{label}) || lc($object->{id}) ne lc($name) || lc($object->{class}) ne lc($class));
 
     $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
+
+    # get static widgets/layout info for this page
+    $self->_setup_page($c);
 }
 
 

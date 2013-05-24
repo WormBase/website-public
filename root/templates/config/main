@@ -32,6 +32,19 @@
         ELSE;
           data.label || data;
         END;
+
+        IF data.image;
+          '<a class="ui-icon ui-icon-image exprbox"  rel="expression_pattern_images" href="#' _ data.id _ '" title="expression image for ' _ data.id _ '"></a>';
+          '<div class="ui-helper-hidden">';
+            '<div id="' _ data.id _ '"><a href="' _ data.image _ '" target="_blank">' _ image(data.image) _ '</a></div>';
+          '</div>';
+        END;
+        IF data.curated_images;
+          '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ data.id _ '/curated_images"  title="curated pictures for ' _ data.id _ '"></a>';      
+        END;
+        IF data.image || data.curated_images;
+          '<small>view images</small>';
+        END;
       END;
    END;
 
@@ -70,8 +83,6 @@
           c.uri_for('/me', id).path;
         ELSIF (class == 'page');
           id;
-        ELSIF (class == 'picture');
-           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox').path;
         ELSIF (class == 'genomic_location');
 	     # In this context, uri_for() is escaping the /? in id, breaking the URL.
 	     # Would be preferable to modify creation of id, then pass it in as a query parameter perhaps?
@@ -239,7 +250,7 @@
         IF(site.external_urls.defined(link));
           desc = site.external_urls.$link.description;
           IF id;
-              USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt : site.external_urls.$link.search);
+              USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt : site.external_urls.$link.search.replace('%S', '%s'));
               IF (link == 'ensembl');
                 UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
                 array=id.split('&');
@@ -252,7 +263,6 @@
           END;
         END;
         UNLESS (ext_url.length > 1); ext_url = link; END; 
-
         "<a href=\"$ext_url\" 
             onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
             target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
@@ -276,6 +286,12 @@
       END;
     END;
 
+    # Markup link-outs to URIs given within the text.
+    MACRO markup_linkouts(text) BLOCK;
+      text = "$text";
+      text.replace('(^|\W)(http://.+?)(\s|$)', external_link('$2', '$1$2$3'));
+    END;
+
 # Markup any OMIM reference in a text
 # marks up ALL references in the format OMIM:(\d+)
 # only works for up to two references listed in a row with OMIM before only the first one
@@ -289,13 +305,19 @@
 # [A-Za-z]{3,4}-(\d){1,3}[a-z]?
     MACRO markup_locus(text, link) BLOCK;
       text = "$text";
-      text.replace('(\b([A-Z][a-z]{1,2}\-)?[a-z]{3,4}-(\d+(\.\d+)?)[a-z]*( [IVXLCDM]+|\(RNAi\))?)', span_class('$1', "locus", 'gene', link));
+      # The '(^|[^/])\K' at the beginning of the regexp denotes that the match in group $2
+      # cannot be preceeded by a '/' character. That way, substrings of URIs are not linked
+      # as locus references. (see also 'markup_var')
+      text.replace('(^|[^/])\K(\b([A-Z][a-z]{1,2}\-)?[a-z]{3,4}-(\d+(\.\d+)?)[a-z]*( [IVXLCDM]+|\(RNAi\))?)', span_class('$2', "locus", 'gene', link));
     END;
 
 # Markup any variation name in text
     MACRO markup_var(text, link) BLOCK;
       text = "$text";
-      text.replace('(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+)+)', span_class('$1', "var",'variation', link));
+      # The '(^|[^/])\K' at the beginning of the regexp denotes that the match in group $2
+      # cannot be preceeded by a '/' character. That way, substrings of URIs are not linked
+      # as variation names. (see also 'markup_locus')
+      text.replace('(^|[^/])\K(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+)+)', span_class('$2', "var",'variation', link));
     END;
 
 # format taxonomy
@@ -318,12 +340,13 @@
       END;
     END;
 
-
-#  Add params to have options on what to markup.  ie. omim, locus...
     MACRO markup(text, omim, locus, var, link) BLOCK;
-      UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
-      UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
-      UNLESS (omim == 0); text = markup_omim(text); END;
+      UNLESS(text.match(".*\\<[^>]+>.*"));
+        text = markup_linkouts(text);
+        UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
+        UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
+        UNLESS (omim == 0); text = markup_omim(text); END;
+      END;
       text;
     END;
 
@@ -332,15 +355,16 @@
            IF extsrc;
               link = extsrc.template;
               FOR match IN extsrc.template.match('\<([^>]+)\>', 'global');
+                  match_item = extsrc.template_items.$match;
                   IF extsrc.template_items.size == 1; # Person heuristic
                      IF src; # there is an internal source... tag it
                         replacement = tag2link(src);
                      ELSE; # we only have their name?
-                        replacement = extsrc.template_items.$match.text;
+                        replacement = match_item.text;
                      END;
                   ELSE;
-                     replacement = external_link(extsrc.template_items.$match.url,
-                                                extsrc.template_items.$match.text);
+                     replacement = external_link(match_item.db,
+                                                match_item.text, match_item.id);
                   END;
                   link = link.replace("\<$match\>", replacement);
               END;

@@ -21,6 +21,7 @@ div.form_container {
   clear: both;
   margin-left: 10%; 
   width: 60%;
+  line-height: 150%;
 }
 
 div.kviewer_container {
@@ -98,4 +99,9 @@ div.spacer {
 .sample {
  color: blue;
 } 
+
+.search_type {
+  font-weight: bold;
+  margin-left: 1ex;
+}
 

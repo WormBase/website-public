@@ -209,9 +209,10 @@ sub gene_class {
 sub corresponding_gene {
     my ($self) = @_;
 
+    my @genes = map { $self->_pack_obj($_) } $self->object->Gene;
     return {
         description => 'gene in which this variation is found (if any)',
-        data        => $self->_pack_obj($self ~~ 'Gene'),
+        data        => @genes ? \@genes : undef,
     };
 }
 
@@ -547,11 +548,11 @@ sub _build_tracks {
     my ($self) = @_;
     my @tracks;
     if ($self->_parsed_species eq 'c_elegans') {
-	@tracks = qw(CG Allele TRANSPOSONS SNPs MILLION_MUTATION_PROJECT);
+	@tracks = qw(PRIMARY_GENE_TRACK CLASSICAL_ALLELES HIGH_THROUGHPUT_ALLELES POLYMORPHISMS CHANGE_OF_FUNCTION_ALLELES CHANGE_OF_FUNCTION_POLYMORPHISMS TRANSPOSONS TRANSPOSON_INSERTION_SITES MILLION_MUTATION_PROJECT);
     } elsif ($self->_parsed_species eq 'c_briggsae') {
-	@tracks = qw(CG SNP);
+	@tracks = qw(PRIMARY_GENE_TRACK SNP);
     } else {
-	@tracks = qw/WBG/;
+	@tracks = qw/PRIMARY_GENE_TRACK/;
     }
 
     return {

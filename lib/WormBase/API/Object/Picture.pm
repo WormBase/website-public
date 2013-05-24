@@ -5,6 +5,7 @@ use File::Spec;
 use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
 =pod 
@@ -55,13 +56,12 @@ sub _build__common_name {
     my ($self) = @_;
 
     my $name;
-    if (my $expr_patterns = $self->expression_patterns->{data}) {
-        if (@$expr_patterns > 1) { # according to curator, this won't happen...
+    if (my @expr_patterns = $self->object->Expr_pattern) {
+        if (@expr_patterns > 1) { # according to curator, this won't happen...
             $name = "Multiple expression patterns";
         }
         else { # should be 1 item
-            my $exprname = $expr_patterns->[0]->{expression_pattern}->{label};
-            $name = "$exprname";
+            $name = $self->_pack_obj($expr_patterns[0])->{label};
         }
     }
 
@@ -159,32 +159,29 @@ sub external_source {
         foreach my $dbtag (qw(Journal_URL Publisher_URL)) {
             my $db = $obj->$dbtag or next;
             my $text = $db->Name || $db->name;
-            my $url = $db->URL;
 
             $source->{template_items}->{$dbtag} = {
                 text => $text && "$text",
-                url  => $url && "$url",
+                db => "$db",
             };
         }
 
         if (my $person_name = $obj->Person_name) {
-            $source->{template_items}->{Person_name}->{text} = $person_name;
+            $source->{template_items}->{Person_name}->{text} = "$person_name";
             # if it's a person and they are a WBPerson then... ?
         }
 
         if (my ($dbnode) = $obj->Article_URL) {
             my ($db, $field, $accessor) = $dbnode->row;
-            my $url   = $db->URL_constructor;
-            $url   =~ s/%S/$accessor/g if $accessor; # is this always the case? %S?
-            # one would imagine $url = sprintf($url, $accessor);
-            $url ||= $db->URL;
 
             my $ref = $self->reference->{data};
             my $text = $ref && $ref->{label}; # try this for now
             # what if there's no text?
             $source->{template_items}->{Article_URL} = {
                 text => $text,
-                url  => $url,
+                db => "$db",
+                id => "$accessor",
+                dbt => "$field",
             };
         }
     }
