@@ -2591,6 +2591,12 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
     visibility: hidden;
 }
 
+.longtext[tip]:after {
+    white-space: normal;
+    width: 400px;
+    height: auto;
+}
+
 .tl[tip]:after {
     left:0;
     right:auto;

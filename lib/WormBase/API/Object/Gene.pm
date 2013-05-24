@@ -841,9 +841,18 @@ sub _process_variation {
     my @effect = keys %effects;
     my @location = keys %locations;
 
+    my $method_name = $variation->Method;
+    my $method_remark = $method_name->Remark;
+
+    # Make string user friendly to read and add tooltip with description:
+    $method_name = "$method_name";
+    $method_name =~ s/_/ /g;
+    $method_name = "<a class=\"longtext\" tip=\"$method_remark\">$method_name</a>";
+
     my %data = (
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
+        method_name      => $method_name,
         molecular_change => $molecular_change && "$molecular_change",
         aa_change        => @aa_change ? join('<br />', @aa_change) : undef,
         aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
