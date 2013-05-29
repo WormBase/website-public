@@ -1031,7 +1031,7 @@ END;
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
     IF fields.$field_key.data.defined;
-      IF fields.$field_key.data.defined('sequences');
+      IF ref(fields.$field_key.data) == 'HASH' && fields.$field_key.data.defined('sequences');
         sequence_list = fields.$field_key.data.sequences;
       ELSE;
         sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
