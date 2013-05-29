@@ -62,6 +62,7 @@
 
             [% IF (title == 'species') %]
 
+
               [% genus_list = {} %]
               [% FOREACH s IN c.config.sections.species_list.keys.sort;
                 genus = c.config.sections.species_list.$s.genus;
@@ -75,6 +76,20 @@
               [% g_sort.unshift('c_elegans') %]
               [% g_sort.unshift('all') %]
               [% g_sort = g_sort.unique %]
+
+
+             
+              <li>[% text2link('genomic_location','all','<span class="ui-icon ui-icon-triangle-1-e"></span><b>Browse Genomes</b>') %]
+                <ul class="wb-dropdown">
+                  <li class="species">
+                    [% text2link('genomic_location', 'c_elegans' ,c.config.sections.species_list.c_elegans.title) %]</li>
+                  [% FOREACH option IN c.config.sections.species_list.keys.sort %]
+                    [% NEXT IF (option == 'all' || option == 'c_elegans') %] 
+                    <li class="species">
+                    [% text2link('genomic_location', option ,c.config.sections.species_list.$option.title) %]</li>
+                  [% END %]
+                </ul>
+              </li>
 
               [% FOREACH option IN g_sort %]
 
