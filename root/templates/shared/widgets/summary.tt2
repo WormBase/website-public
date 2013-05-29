@@ -30,9 +30,11 @@
   [% ELSE %]
     [% FOREACH cls IN c.config.sections.resources.keys.sort %]
         [% IF cls == 'title'; NEXT; END; %]
+        [% IF c.config.sections.resources.$cls.display_in_dropdown == 'yes' %]
         <li><a href="[% c.uri_for('/resources',cls).path %]">[% c.config.sections.resources.$cls.title %]</a>: 
           <span class="count" href="/search/count/all/[% cls %]/*"></span>
         </li>
+        [% END %]
     [% END %]
   [% END %]
 [% END %]
