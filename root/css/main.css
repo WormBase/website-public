@@ -2608,6 +2608,7 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
 
 [tip]:hover:before, [tip]:hover:after {
     visibility: visible;
+    z-index:10;
 }
 
 
