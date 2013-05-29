@@ -1964,6 +1964,8 @@ function setupCytoscape(data, types){
         }else{
           if(loading){
             return setTimeout(getPlugin(name, url, stylesheet, callback),10);
+          }else{
+            callback();
           }
         }
         return;
