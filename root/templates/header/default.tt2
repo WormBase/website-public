@@ -39,7 +39,7 @@
   </div>
 
 [% MACRO nav_species(species_name) BLOCK %]
-  <li><a href="/[% title %]/[% species_name %]" class="species"> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$species_name.title %]</a>
+  <li><a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' %] class="species" [% END %]> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$species_name.title %]</a>
               <ul class="wb-dropdown">  
                 <li>[% text2link('genomic_location',species_name,'Browse Genome') %]</li>
 
