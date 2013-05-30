@@ -12,8 +12,9 @@
              <img src="[% img.draw.class %]/[% img.draw.name %]_200.[% img.draw.format %]"
                   alt="[% img.id %] thumbnail" >
            </a><br />
-        [% cite_image(img.external_source, img.source) %]
+
         [% END %]
+        [% cite_image(img.external_source, img.source) %]
         </div>
      [% END %]
 

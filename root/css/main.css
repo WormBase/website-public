@@ -501,7 +501,6 @@ textarea {
 table {
     border-collapse: collapse;
     border-spacing: 0;
-    text-align:center;
 }
 
 
@@ -2609,6 +2608,7 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
 
 [tip]:hover:before, [tip]:hover:after {
     visibility: visible;
+    z-index:10;
 }
 
 
