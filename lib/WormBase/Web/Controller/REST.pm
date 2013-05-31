@@ -1056,14 +1056,14 @@ sub _post_to_github {
 # Obscure names and emails.
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
-        
+  my $contact = ($obscured_name && $obscured_email && "Reported by: $obscured_name ($obscured_email)  (obscured for privacy)") || "Anonymous error report";
   my $ptitle = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->title : $page;
   my $purl = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->url || $u : $u;
         
 $content .= <<END;
 
 
-Reported by: $obscured_name ($obscured_email) (obscured for privacy)
+$contact
 Submitted From: $ptitle ($purl)
 
 $userAgent
