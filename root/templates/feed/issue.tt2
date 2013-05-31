@@ -22,6 +22,8 @@
                 </td>
             </tr>
      </table>
+                 <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div>
+
 [% END %]
 
         <div>
