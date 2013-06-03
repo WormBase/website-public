@@ -551,12 +551,13 @@ END; %]
 [% MACRO empty_widget_check BLOCK;
   not_empty;
   FOREACH field IN fields.keys;
+    NEXT IF field == 'name';
     IF fields.$field.defined('data');
       not_empty = 1;
       LAST;
     END;
   END; %]
-  [% UNLESS not_empty %]
+  [% UNLESS (not_empty || (widget == 'overview')) %]
     <span class="caveat-emptor">No [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] data for [% object.name.data.label %]</span>
   [% END %]
 [% END %]
