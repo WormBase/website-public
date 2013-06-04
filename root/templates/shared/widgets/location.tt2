@@ -23,6 +23,9 @@
 	     
        	       FOREACH position IN fields.genomic_position.data;
                    tag2link(position);
+     	           UNLESS loop.last;
+     	               ',&nbsp;';
+     	           END;
      	       END;
       END;
     ELSE;       
