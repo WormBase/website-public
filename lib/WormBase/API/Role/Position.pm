@@ -57,14 +57,42 @@ has 'genetic_position_interpolated' => (
 # NOTE: genomic_picture has been superceded by genomic_image & tracks attribute
 #       see Object::Clone and respective templates for example
 
-# this is the fallback. and defaults to the first in genomic_position (i.e. only 1 pos used for image)
+# This is a fallback. Defaults to the largest genomic_position (i.e. only 1 position is used for image).
 sub _build_genomic_image { # genomic_picture_position?
     my ($self) = @_;
 
+    # Go through all positions and pick the one with the widest range:
     my $positions = $self->genomic_position->{data};
+    my $widest_span = undef;
+    for my $position (@$positions) {
+        if (defined $widest_span) {
+            # No purported widest range set yet, so pick the first best choice and
+            # iterate over that in the next rounds of the 'for' loop.
+            $widest_span = $position;
+        } else {
+          if (defined $position->{'label'}) {
+            # Positions are taken from the 'label', which look like: I:4224..5286
+            if (not defined $widest_span->{'label'}) {
+                # If the current purported widest span has no label, then pick the current
+                # position as next best choice (which may not have a 'label' either).
+                $widest_span = $position;
+            } else {
+                # Otherwise: dissect both labels and compare the start/end coordinates.
+                if ($position->{'label'} =~ /.+:[0-9]+\.+[0-9]+/ && $widest_span->{'label'} =~ /.+:[0-9]+\.+[0-9]+/) {
+                    my @purported_widest_loci = split(/:\./, $widest_span->{'label'});
+                    my @loci = split(/:\./, $position->{'label'});
+
+                    if ($purported_widest_loci[1] >= $loci[1] && $purported_widest_loci[-1] <= $loci[-1]) {
+                        $widest_span = $position;
+                    }
+                }
+            }
+          }
+        }
+    }
     return {
         description => 'The genomic location of the sequence to be displayed by GBrowse',
-        data        => $positions ? $positions->[0] : undef,
+        data        => $widest_span
     };
 }
 
