@@ -348,7 +348,7 @@ sub gene_class {
     return {
     description => "The gene class for this gene",
     data        => $gene_class ? { tag => $self->_pack_obj($gene_class),
-                     description => $gene_class ? $gene_class->Description->asString : '',
+                     description => $gene_class && $gene_class->Description ? $gene_class->Description->asString : '',
     } : undef };
 }
 
@@ -842,7 +842,7 @@ sub _process_variation {
     my @location = keys %locations;
 
     my $method_name = $variation->Method;
-    my $method_remark = $method_name->Remark;
+    my $method_remark = $method_name->Remark if $method_name;
 
     # Make string user friendly to read and add tooltip with description:
     $method_name = "$method_name";
