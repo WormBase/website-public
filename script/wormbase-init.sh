@@ -7,7 +7,7 @@
 # production servers won't have it; staging servers do.
 # We keep our env file outside of the repository to
 # so it doesn't have to be maintained across branches.
-#source /usr/local/wormbase/wormbase.env
+source /usr/local/wormbase/wormbase.env
 
 # $ENV{APP} needs to be set during build.
 
