@@ -2183,7 +2183,7 @@ sub _fetch_gff_gene {
     my ($self,$transcript) = @_;
 
     my $trans;
-    my $GFF = $self->gff_dsn() or return; # should probably log this?
+    my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database"; # should probably log this?
     eval {$GFF->fetch_group()};
     return if $@; # should probably log this
 
