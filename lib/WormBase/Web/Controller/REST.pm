@@ -642,17 +642,10 @@ sub widget_GET {
     my ( $self, $c, $class, $name, $widget ) = @_;
     $c->log->debug("        ------> we're requesting the widget $widget");
 
-# Small performance tweak.
-# Is this a widget marked in config as one that should be precached?
-# If so, set a flag to check for it's presence in the portable couchdb cache.
-#    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';
-
-    # Cache key something like "$class_$widget_$name"
-    my ( $cached_data, $cache_source );
+    # Cache key - "$class_$widget_$name"
     my $key = join( '_', $class, $widget, $name );
 
-    # Check the cache only if this is a request for HTML.
-    # check_cache will check couch first.
+    # set header and content-type
     my $headers = $c->req->headers;
     my $content_type 
         = $headers->content_type
@@ -660,108 +653,92 @@ sub widget_GET {
         || 'text/html';
     $c->response->header( 'Content-Type' => $content_type );
 
-    if ( $content_type eq 'text/html' ) {
-        # Shouldn't this be $self? Would break check_cache();
-        ( $cached_data, $cache_source ) = $c->check_cache($key);
-    }
-
-    # We're only caching rendered HTML. If it's present, return it.
-    if ($cached_data) {
-        $c->response->status(200);
-        $c->response->body($cached_data);
-        $c->detach();
-        return;
-    }
-
-    # No boiler since this is an XHR request.
-    $c->stash->{noboiler} = 1;
-    $c->stash->{colorbox} = $c->req->param('colorbox') if $c->req->param('colorbox');
-
     # references widget - no need for an object
-    # only html
     if ( $widget =~ m/references/i ) {
           $c->req->params->{widget} = $widget;
           $c->req->params->{class} = $class;
           $c->go('search', 'search');
     }
-=pod  this is going to conflict with the hash# for widgets
-    if ( $widget eq 'ontology_browser' ) {
-          $c->req->params->{widget} = 'ontology_browser';
-          $c->res->redirect("/tools/ontology_browser/run?inline=1&class=$class&name=$name");
-	  $c->detach();
-    }
-=cut
-    my $api = $c->model('WormBaseAPI');
-    my $object = ($name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty(ucfirst $class)
-               : $api->fetch({ class => ucfirst $class, name => $name }));
 
-    # Generate and cache the widget.
-    # Load the stash with the field contents for this widget.
-    # The widget itself is loaded by REST; fields are not.
-    my @fields = $c->_get_widget_fields( $class, $widget );
+    # check_cache checks couchdb
+    my ( $cached_data, $cache_source ) = $c->check_cache($key);
+    if($cached_data && (ref $cached_data eq 'HASH')){
+        $c->stash->{fields} = $cached_data;
+    } elsif ($cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
+        $c->response->status(200);
+        $c->response->body($cached_data);
+        $c->detach();
+        return;
+    }else {
+        my $api = $c->model('WormBaseAPI');
+        my $object = ($name eq '*' || $name eq 'all'
+                   ? $api->instantiate_empty(ucfirst $class)
+                   : $api->fetch({ class => ucfirst $class, name => $name }));
 
-    my $fatal_non_compliance = 0;
-    foreach my $field (@fields) {
-        unless ($field) { next; }
-        $c->log->debug("Processing field: $field");
-        my $data = $object->$field;# if $object->can($field); # for a check
-        if ( $c->config->{installation_type} eq 'development'
-            and my ( $fixed_data, @problems )
-            = $object->_check_data( $data, $class ) )
-        {
-            $data = $fixed_data;
-            $fatal_non_compliance = $c->config->{fatal_non_compliance};
-            my $log = $fatal_non_compliance ? 'fatal' : 'warn';
+        # Generate and cache the widget.
+        # Load the stash with the field contents for this widget.
+        # The widget itself is loaded by REST; fields are not.
+        my @fields = $c->_get_widget_fields( $class, $widget );
 
-            $c->log->$log("${class}::$field returns non-compliant data: ");
-            $c->log->$log("\t$_") foreach @problems;
+        my $fatal_non_compliance = 0;
+        foreach my $field (@fields) {
+            unless ($field) { next; }
+            $c->log->debug("Processing field: $field");
+            my $data = $object->$field;
+            if ( $c->config->{installation_type} eq 'development'
+                and my ( $fixed_data, @problems )
+                = $object->_check_data( $data, $class ) )
+            {
+                $data = $fixed_data;
+                $fatal_non_compliance = $c->config->{fatal_non_compliance};
+                my $log = $fatal_non_compliance ? 'fatal' : 'warn';
 
+                $c->log->$log("${class}::$field returns non-compliant data: ");
+                $c->log->$log("\t$_") foreach @problems;
+            }
+
+            # Conditionally load up the stash (for now) for HTML requests.
+            $c->stash->{fields}->{$field} = $data;
+        }
+        # Store name on all widgets - needed for display
+        $c->stash->{fields}->{name} ||= $object->name;
+
+        if ($fatal_non_compliance) {
+            die "Non-compliant data. See log for fatal error.\n";
         }
 
-        # Conditionally load up the stash (for now) for HTML requests.
-        $c->stash->{fields}->{$field} = $data;
+        $c->set_cache($key => $c->stash->{fields});
     }
 
-    # Hack for empty widgets - know what object they're on
-    $c->stash->{object}->{name} = $c->stash->{fields}->{name} || $object->name;
-
-    if ($fatal_non_compliance) {
-        die "Non-compliant data. See log for fatal error.\n";
-    }
-
-    # Save the name and class of the widget.
-    $c->stash->{class}  = $class;
-    $c->stash->{widget} = $widget;
-
-    # Set the template
-    $c->stash->{template} = 'shared/generic/rest_widget.tt2';
-    $c->stash->{child_template}
-        = $self->_select_template('widget', $class, $widget);
-
-    # Forward to the view to render HTML
+    # Forward to the view to render HTML, set stash variables
     if ( $content_type eq 'text/html' ) {
+        # No boiler since this is an XHR request.
+        $c->stash->{noboiler} = 1;
+        $c->stash->{colorbox} = $c->req->param('colorbox') if $c->req->param('colorbox');
+
+        # Hack for empty widgets - know what object they're on
+        $c->stash->{object}->{name} = $c->stash->{fields}->{name};
+
+        # Save the name and class of the widget.
+        $c->stash->{class}  = $class;
+        $c->stash->{widget} = $widget;
+
+          # Set the template
+        $c->stash->{template} = 'shared/generic/rest_widget.tt2';
+        $c->stash->{child_template}
+            = $self->_select_template('widget', $class, $widget);
+
         my $html = $c->view('TT')->render( $c, $c->{stash}->{template} );
-
-        $c->set_cache($key => $html) if $html;
-
-        $c->response->status(200);
-        $c->response->body($html);
-        $c->detach();
+        $c->forward('WormBase::Web::View::TT');
         return;
     }
 
-    # TODO: AGAIN THIS IS THE REFERENCE OBJECT
-    # PERHAPS I SHOULD INCLUDE FIELDS?
-    # Include the full uri to the *requested* object.
-    # IE the page on WormBase where this should go.
-    my $uri = $c->req->referer;   
     $self->status_ok(
         $c,
         entity => {
             class  => $class,
             name   => $name,
-            uri    => "$uri",
+            uri    => $c->req->path,
             fields => $c->stash->{fields},
         }
     );
@@ -1084,14 +1061,14 @@ sub _post_to_github {
 # Obscure names and emails.
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
-        
+  my $contact = ($obscured_name && $obscured_email && "Reported by: $obscured_name ($obscured_email)  (obscured for privacy)") || "Anonymous error report";
   my $ptitle = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->title : $page;
   my $purl = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->url || $u : $u;
         
 $content .= <<END;
 
 
-Reported by: $obscured_name ($obscured_email) (obscured for privacy)
+$contact
 Submitted From: $ptitle ($purl)
 
 $userAgent

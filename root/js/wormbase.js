@@ -1318,9 +1318,13 @@ var Scrolling = (function(){
   
   function validate_fields(email,username, password, confirm_password, wbemail){
       if( (email.val() ==="") && (!wbemail || wbemail.val() === "")){
-                email.focus().addClass("ui-state-error");return false;
+                email.focus().addClass("ui-state-error"); 
+                email.closest('#issues-new').find(".anon").removeClass("anon"); 
+                return false;
       } else if( email.val() && (validate_email(email.val(),"Not a valid email address!")===false)) {
-                email.focus().addClass("ui-state-error");return false;
+                email.focus().addClass("ui-state-error");
+                email.closest('#issues-new').find(".anon").removeClass("anon"); 
+                return false;
       } else if(password) {
           if( password.val() ===""){
                 password.focus().addClass("ui-state-error");return false;
@@ -1406,8 +1410,9 @@ var Scrolling = (function(){
             name = feed.find("#name"),
             dc = feed.find("#desc-content"),
             email = feed.find("#email"),
+            anon = feed.find("#anon").is(':checked'),
             content = feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : '');
-        if (!validate_fields(email, name))
+        if (!anon && !validate_fields(email, name))
           return;
         if(!content){
           feed.find("#issue-content").focus();
@@ -1964,6 +1969,8 @@ function setupCytoscape(data, types){
         }else{
           if(loading){
             return setTimeout(getPlugin(name, url, stylesheet, callback),10);
+          }else{
+            callback();
           }
         }
         return;

@@ -463,11 +463,11 @@ input[type="search"] {
  * Removes inner padding and search cancel button in S5, Chrome on OS X
  */
 
-input[type="search"]::-webkit-search-decoration,
+/*input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
 }
-
+*/
 /*
  * Removes inner padding and border in FF3+
  * www.sitepen.com/blog/2008/05/14/the-devils-in-the-details-fixing-dojos-toolbar-buttons/
@@ -666,13 +666,6 @@ div#create-prompt {
 }
 #load-results:hover{
   background:#CCC;
-}
-
-.author-list {
-  padding-right:0.5em;
-  width:50%;
-  float:left;
-  position:relative;
 }
 
 .paper-journal{
@@ -2608,6 +2601,7 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
 
 [tip]:hover:before, [tip]:hover:after {
     visibility: visible;
+    z-index:10;
 }
 
 
@@ -2820,6 +2814,14 @@ table.venn tr.venn-data td {
 #issue-box textarea{
   resize:vertical;
   max-height: 300px;
+}
+
+.anon{
+    display:none;
+}
+
+#issue-box input#anon {
+    width:auto;
 }
 
 .minimize #issue-box-content {
@@ -3054,25 +3056,6 @@ button::-moz-focus-inner {
     -webkit-border-radius: 3px;
     border-radius: 3px;
 }
-/*48px height*/
-.sb_48 > span,
-.sb_48 > span:before {
-    font-size: 18px;
-    height: 36px;
-    line-height: 36px;
-}
-.sb_48 > span:before {
-    width: 40px;
-}
-.sb_48 > span {
-    padding-right: 20px;
-}
-.sb_48,
-.sb_48 > span {
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-}
 
 /*icons*/
 .sb_facebook.sb_24 > span:before {
@@ -3086,18 +3069,6 @@ button::-moz-focus-inner {
 }
 .sb_google.sb_24 > span:before {
     background-position: 5px -146px;
-}
-.sb_facebook.sb_48 > span:before {
-    background-position: -40px 7px;
-}
-.sb_linkedin.sb_48 > span:before {
-    background-position: -40px -42px;
-}
-.sb_twitter.sb_48 > span:before {
-    background-position: -40px -91px;
-}
-.sb_google.sb_48 > span:before {
-    background-position: -40px -141px;
 }
 
 /*Brand colors*/
