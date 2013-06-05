@@ -662,9 +662,14 @@ sub widget_GET {
 
     # check_cache checks couchdb
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
-    if($cached_data){
+    if($cached_data && (ref $cached_data eq 'HASH')){
         $c->stash->{fields} = $cached_data;
-    } else {
+    } elsif ($cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
+        $c->response->status(200);
+        $c->response->body($cached_data);
+        $c->detach();
+        return;
+    }else {
         my $api = $c->model('WormBaseAPI');
         my $object = ($name eq '*' || $name eq 'all'
                    ? $api->instantiate_empty(ucfirst $class)
