@@ -56,7 +56,6 @@
    WRAPPER $field_block title="TreeFam" key="treefam";
        USE url= format(site.external_urls.treefam.image);
        FOREACH obj IN fields.treefam.data.unique;
-       url(obj,obj);
           WRAPPER toggle title="Treefam image (ID:"  _ external_link('treefam', obj, obj) _ ")";
               '<iframe width="680" height="500" name="treefam" src=' _ url(obj,obj) _ ' width="700" height="500" scrolling="auto"></iframe>';
           END;
