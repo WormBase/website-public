@@ -1307,16 +1307,17 @@ sub treefam {
     my $self   = shift;
     my $object = $self->object;
     
-    my @data;
+    my %data;
     foreach (@{$self->_all_proteins}) {
-	my $treefam = $self->_fetch_protein_ids($_,'treefam');
-	# Ignore proteins that lack a Treefam ID
-	next unless $treefam;
-	push @data, "$treefam";
-    }			
-    
+        my $treefam = $self->_fetch_protein_ids($_,'treefam');
+        # Ignore proteins that lack a Treefam ID
+        next unless $treefam;
+        $data{"$treefam"} = "";
+    }
+    my @data = keys %data;
+    $self->log->debug("TREEFAM: " . join(',', @data));
     return { description => 'data and IDs related to rendering Treefam trees',
-	     data        => @data ? \@data : undef,
+             data        => @data ? \@data : undef,
     };
 }
 
