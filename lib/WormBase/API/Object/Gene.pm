@@ -1755,7 +1755,8 @@ sub gene_models {
 
         my $status = $cds->Prediction_status if $cds;
         $status =~ s/_/ /g if $status;
-        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+        $status = $status . ($cds && $cds->Matching_cDNA ? ' by cDNA(s)' : '');
+#        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);
