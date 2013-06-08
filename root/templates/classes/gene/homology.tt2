@@ -55,15 +55,12 @@
 
    WRAPPER $field_block title="TreeFam" key="treefam";
        USE url= format(site.external_urls.treefam.image);
-       FOREACH obj IN fields.treefam.data;
-           'TreeFam ID: ' _ external_link('treefam', obj, obj);
-	   '<br /><br />';
-
-          WRAPPER toggle title="Treefam image";
-                        '<iframe width="680" height="500" name="treefam" src=' _ url(obj,obj) _ 'width="680" height="500" scrolling="auto"></iframe>';
+       FOREACH obj IN fields.treefam.data.unique;
+          WRAPPER toggle title="Treefam image (ID:"  _ external_link('treefam', obj, obj) _ ")";
+              '<iframe width="680" height="500" name="treefam" src=' _ url(obj,obj) _ ' width="700" height="500" scrolling="auto"></iframe>';
           END;
         END;
-        'Phylogenetic trees provided by the' _ text2link('treefam','','Treefam') _ ' project.';
+        '<br /><p>Phylogenetic trees provided by the' _ text2link('treefam','','Treefam') _ ' project.</p>';
    END;
 
 %]
