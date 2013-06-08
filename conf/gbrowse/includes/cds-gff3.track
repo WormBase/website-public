@@ -1,5 +1,6 @@
 [CDS]
 feature      = CDS:WormBase
+               CDS:WormBase_imported
 glyph        = cds
 frame0f      = cadetblue
 frame1f      = blue

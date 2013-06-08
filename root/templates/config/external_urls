@@ -735,7 +735,8 @@
     maintainer  = ''
     base    = 'http://www.treefam.org/'
     search    = 'http://www.treefam.org/family/%s'
-    image    = 'http://legacy.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
+    image    = 'http://www.treefam.org/viewtree/%s'
+#    image    = 'http://legacy.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
   }
 
   trembl = {
