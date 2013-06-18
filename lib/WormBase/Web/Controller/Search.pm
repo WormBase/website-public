@@ -48,7 +48,12 @@ sub search :Path('/search') Args {
     $c->stash->{opt_q} = $c->req->param("q");
 
     $c->response->headers->expires(time);
-    $c->response->header('Content-Type' => 'text/html');
+    my $headers = $c->req->headers;
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'text/html';
+    $c->response->header( 'Content-Type' => $content_type );
 
     my $api = $c->model('WormBaseAPI');
 
@@ -57,7 +62,7 @@ sub search :Path('/search') Args {
       
     my $search = $type unless($type=~/all/);
 
-    if($page_count>1) {
+    if($page_count>1 || $content_type ne 'text/html') {
       $c->stash->{template} = "search/result_list.tt2";
       $c->stash->{noboiler} = 1;
     }elsif($c->req->param("inline") || $c->req->param("widget")){
@@ -99,8 +104,24 @@ sub search :Path('/search') Args {
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
-    $c->forward('WormBase::Web::View::TT');
-    return;
+
+    if ( $content_type eq 'text/html' ) {
+      $c->forward('WormBase::Web::View::TT');
+      return;
+    }
+
+    $self->status_ok(
+        $c,
+        entity => {
+            page  => $c->stash->{page},
+            type   => $c->stash->{type},
+            count   => $c->stash->{count},
+            results   => $c->stash->{results},
+            query   => $c->stash->{query},
+            species   => $c->stash->{species},
+            uri    => $c->req->path,
+        }
+    );
 }
 
 sub search_git :Path('/search/issue') :Args(2) {
