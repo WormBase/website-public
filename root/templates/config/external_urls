@@ -353,7 +353,7 @@
   interpro = {
     description  = 'InterPro provides an integrated view of the commonly used signature databases'
     base    = 'http://www.ebi.ac.uk/interpro/'
-    search    = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s'
+    search  = 'http://www.ebi.ac.uk/interpro/entry/%s'
   }
 
   JournalofCellScience = {
