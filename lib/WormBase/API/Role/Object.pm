@@ -180,11 +180,10 @@ sub _make_common_name {
 
     if (!$name and
         my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$class}) {
-        if ($wbclass->meta->get_method('_build__common_name')
-            ->original_package_name ne __PACKAGE__) {
+        if ($wbclass->meta->get_method('_build__common_name')->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
 #             $self->log->debug("$class has overridden _build_common_name");
-            $name = $self->_api->wrap($object)->_common_name; 
+            $name = $self->_api->wrap($object)->_common_name if $self->_api; 
         }
     }
     $name //= eval { $self->ace_dsn->dbh->raw_fetch($object, "Public_name"); };
