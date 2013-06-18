@@ -127,6 +127,14 @@ sub search :Path('/search') Args {
 sub search_git :Path('/search/issue') :Args(2) {
   my ($self, $c, $query, $page_count) = @_;
 
+    $c->response->headers->expires(time);
+    my $headers = $c->req->headers;
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'text/html';
+    $c->response->header( 'Content-Type' => $content_type );
+
     my $state = $c->req->param("state") || 'open';
     $c->stash->{state} = $state;
 
@@ -145,35 +153,52 @@ sub search_git :Path('/search/issue') :Args(2) {
     $c->stash->{type} = 'issue';
     $c->stash->{noboiler} = 1;
 
-  my $url     = "https://api.github.com/" . ($query ? "legacy/issues/search/" . $c->config->{github_repo} . "/" . ($state || 'open') . "/$query" : "repos/" . $c->config->{github_repo} . "/issues");
-  $url .= "?page=" . ($page_count) . ($state && !$query ? '&state=' . $state : '');
-  my $path = WormBase::Web->path_to('/') . '/credentials';
-  my $token = `cat $path/github_token.txt`;
-  chomp $token;
-  return unless $token;
-  my $json         = new JSON;
-  my $data = {};
+    my $url     = "https://api.github.com/" . ($query ? "legacy/issues/search/" . $c->config->{github_repo} . "/" . ($state || 'open') . "/$query" : "repos/" . $c->config->{github_repo} . "/issues");
+    $url .= "?page=" . ($page_count) . ($state && !$query ? '&state=' . $state : '');
+    my $path = WormBase::Web->path_to('/') . '/credentials';
+    my $token = `cat $path/github_token.txt`;
+    chomp $token;
+    return unless $token;
+    my $json         = new JSON;
+    my $data = {};
 
-  my $req = HTTP::Request->new(GET => $url);
-  $req->content_type('application/json');
-  $req->header('Authorization' => "token $token");
+    my $req = HTTP::Request->new(GET => $url);
+    $req->content_type('application/json');
+    $req->header('Authorization' => "token $token");
 
-  my $request_json = $json->encode($data);
-  $req->content($request_json);
+    my $request_json = $json->encode($data);
+    $req->content($request_json);
 
-  # Send request, get response.
-  my $lwp       = LWP::UserAgent->new;
-  my $response  = $lwp->request($req) or $c->log->debug("Couldn't POST");
-  my $response_json = $response->content;
-  my $parsed    = $json->allow_nonref->utf8->relaxed->decode($response_json);
-  my $results = $query ? $parsed->{issues} : $parsed;
+    # Send request, get response.
+    my $lwp       = LWP::UserAgent->new;
+    my $response  = $lwp->request($req) or $c->log->debug("Couldn't POST");
+    my $response_json = $response->content;
+    my $parsed    = $json->allow_nonref->utf8->relaxed->decode($response_json);
+    my $results = $query ? $parsed->{issues} : $parsed;
     $c->stash->{results} = $results;
     $c->stash->{no_count} = 1;
     $c->stash->{count} = @$results > 29 ? 1000 : 0;
 
     $c->stash->{query} = $query || "*";
-    $c->forward('WormBase::Web::View::TT');
-    return;
+
+
+    if ( $content_type eq 'text/html' ) {
+      $c->forward('WormBase::Web::View::TT');
+      return;
+    }
+
+    $self->status_ok(
+        $c,
+        entity => {
+            page  => $c->stash->{page},
+            type   => $c->stash->{type},
+            count   => $c->stash->{count},
+            results   => $c->stash->{results},
+            query   => $c->stash->{query},
+            state   => $c->stash->{state},
+            uri    => $c->req->path,
+        }
+    );
 }
 
 sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
