@@ -183,7 +183,7 @@ sub _make_common_name {
         if ($wbclass->meta->get_method('_build__common_name')->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
 #             $self->log->debug("$class has overridden _build_common_name");
-            $name = $self->_api->wrap($object)->_common_name if $self->_api; 
+            $name = $self->_api->wrap($object)->_common_name if $self->can('_api'); 
         }
     }
     $name //= eval { $self->ace_dsn->dbh->raw_fetch($object, "Public_name"); };
