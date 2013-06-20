@@ -987,7 +987,33 @@ sub widget_me_GET {
 }
 
 
+# Making the configuration file available
 
+sub config :Path('/rest/config') :Args :ActionClass('REST') {}
+
+sub config_GET {
+    my ($self, $c, @path_parts) = @_;
+
+    my $headers = $c->req->headers;
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'application/json';
+    $c->response->header( 'Content-Type' => $content_type );
+
+    my $config = $c->config;
+    for my $part (@path_parts){
+      $config = $config->{$part};
+    }
+
+    $self->status_ok(
+        $c,
+        entity => {
+            uri    => $c->req->path,
+            data => $config,
+        }
+    );
+}
 
 ######################################################
 #
