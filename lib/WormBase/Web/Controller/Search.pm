@@ -268,6 +268,7 @@ sub _get_url {
 
 sub _prep_query {
   my ($self, $q, $ac) = @_;
+  return "*" unless $q;
   my $new_q = $q;
   $new_q =~ s/-/_/g;
   $new_q =~ s/\s/-/g;
