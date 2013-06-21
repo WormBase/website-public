@@ -96,20 +96,21 @@ sub targets {
 sub movies {
     my $self   = shift;
     my $object = $self->object;
+    my @tag_objects = $object->Supporting_data->col if $object->Supporting_data;
     my @movies = $object->Movie;
     my @data;
     foreach (@tag_objects) {
-	my $file = $_->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
-	my $name = $_->Remark || "$_";
-	push @data,{ file  => "$file",
-		     name  => $_,
-		     label => "$name",
-	};
+        my $file = $_->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
+        my $name = $_->Remark || "$_";
+        push @data,{ file  => "$file",
+                 name  => $_,
+                 label => "$name",
+        };
     }
-#	my @data        = map { my $label = eval {$_->Remark}; $_ = $self->_pack_obj($_,"$label" || undef) } @tag_objects if @tag_objects;
     return { data        => @data ? \@data : undef,
-	     description => 'movies documenting effect of rnai' };
+         description => 'movies documenting effect of rnai' };
 }
+
 
 
 # laboratory { }
