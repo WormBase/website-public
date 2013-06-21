@@ -989,9 +989,9 @@ sub widget_me_GET {
 
 # Making the configuration file available
 
-sub config :Path('/rest/config') :Args :ActionClass('REST') {}
+sub rest_config :Path('/rest/config') :Args :ActionClass('REST') {}
 
-sub config_GET {
+sub rest_config_GET {
     my ($self, $c, @path_parts) = @_;
 
     my $headers = $c->req->headers;
