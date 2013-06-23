@@ -1,7 +1,7 @@
 [%
 
 WRAPPER $field_block title="Gene" key="corresponding_gene";
-         tag2link(fields.corresponding_gene.data);
+         tags2link(fields.corresponding_gene.data);
 END;
 
 WRAPPER $field_block title="Reference Allele" key="reference_allele";

@@ -1084,13 +1084,14 @@ END;
             WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container" open=op;
               sequences.$obj.seq;
             END;
+            IF (sequences.$obj.title.match('UTR') && sequences.$obj.seq.match('color'));
+              '<p id="fade" style="width:55em">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next</p>'; 
+            END;
           END;
           '</div>';
         END;
         
-            UNLESS object.name.data.class.match('Protein');
-              '<p id="fade" style="width:55em">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next</p>'; 
-            END;
+
       END;
 
     ELSE;

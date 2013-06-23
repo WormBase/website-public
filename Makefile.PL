@@ -126,6 +126,9 @@ requires 'Starman';                                              #
 requires 'URI::Escape::XS';
 requires 'Log::Any::Adapter::Log4perl';                          # cache logging
 
+# Testing:
+requires 'Readonly';
+
 install_script glob('script/*.pl');
 auto_install;
 WriteAll;

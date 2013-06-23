@@ -624,7 +624,7 @@ sub motif_details {
 			my $source = $motif_homol->right ||"";
 			$source  ||= 'interpro' if $motif_homol =~ /IPR/;
 			my $label = "$motif_homol";
-			$source = "$source";
+            $source = { class=>"$source", label=>"$source", id=>"$source"} if $source;
 			my $desc = $motif_homol->Title ||$motif_homol ;
 			
 			# Are the multiple occurences of this motif_homol?
@@ -642,7 +642,7 @@ sub motif_details {
 						start	=> "$start",
 						stop	=> "$stop",
 						score	=> "$score",
-						source	=> "$source",
+						source	=> $source,
 						desc	=> "$desc"
 					});
 					
@@ -655,7 +655,7 @@ sub motif_details {
 					start	=> "$start",
 					stop	=> "$stop",
 					score	=> (scalar @scores) == 1 ? "$scores[0]" : undef,
-					source	=> "$source",
+					source	=> $source,
 					desc	=> "$desc"
 				});
 				
