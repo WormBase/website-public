@@ -1,6 +1,6 @@
 package WormBase::API::Object::Rnai;
 use Moose;
-
+use Data::Dumper;
 extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 
@@ -94,13 +94,23 @@ sub targets {
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/movies
 
 sub movies {
-    my $self        = shift;
-    my $object      = $self->object;
+    my $self   = shift;
+    my $object = $self->object;
     my @tag_objects = $object->Supporting_data->col if $object->Supporting_data;
-    my @data        = map { my $label = eval {$_->Remark}; $_ = $self->_pack_obj($_,"$label" || undef) } @tag_objects if @tag_objects;
+    my @movies = $object->Movie;
+    my @data;
+    foreach (@tag_objects) {
+        my $file = $_->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
+        my $name = $_->Remark || "$_";
+        push @data,{ file  => "$file",
+                 name  => $_,
+                 label => "$name",
+        };
+    }
     return { data        => @data ? \@data : undef,
-	     description => 'movies documenting effect of rnai' };
+         description => 'movies documenting effect of rnai' };
 }
+
 
 
 # laboratory { }

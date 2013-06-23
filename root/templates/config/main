@@ -216,7 +216,7 @@
 
   MACRO template_title BLOCK;
     IF (species && species != 'all');
-      s = (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
+      tt_s = (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
     END;
     IF object.name.data.id;
       object.name.data.label _ ' (' _  object.name.data.class _ ')';
@@ -225,9 +225,9 @@
     ELSIF query;
       query _ ' - search';
     ELSIF (class && class != 'all' && class != 'home');
-      c.config.sections.species.$class.title || c.config.sections.resources.$class.title || (section == 'tools' && class) || ( section == 'me' && (c.user.username  || 'My WormBase' _ ' ' _ s));
-    ELSIF s;
-      s;
+      c.config.sections.species.$class.title || c.config.sections.resources.$class.title || (section == 'tools' && class) || ( section == 'me' && (c.user.username  || 'My WormBase' _ ' ' _ tt_s));
+    ELSIF tt_s;
+      tt_s;
     ELSIF section;
       section FILTER ucfirst;
     END;

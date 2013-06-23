@@ -1,10 +1,5 @@
 [% 
 
-# convert motif_details.source to link
-FOREACH row IN fields.motif_details.data;
-	row.source = external_link(row.source);
-END;
-
 build_data_table(
 	order=['source','desc','feat','start','stop','score'],
 	columns={
