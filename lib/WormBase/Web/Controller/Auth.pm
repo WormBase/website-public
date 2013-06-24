@@ -172,7 +172,14 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
         .$c->req->params->{url}
         ."&redirect="
         .$c->req->params->{redirect});
-        $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
+
+        unless($c->config->{wormmine_path}){
+        # WormMine redirects to this url now after it has logged in:
+          $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
+        }else{
+          # Redirect users to WormMine openID login
+          $c->res->redirect( $c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
+        }
      }
 }
 
@@ -200,7 +207,9 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                                 'dbix_class' => { resultset => $rs }
             } ) ) {
                 $c->log->debug('Username login was successful. '. $c->user->get("username") . $c->user->get("password"));
-                $c->res->redirect($c->uri_for('/')->path);
+
+                # Send to WormMine openid login after local login
+                $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
             } else {
                 $c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
@@ -219,6 +228,8 @@ sub auth_wbid :Path('/auth/wbid')  :Args(0) {
 
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
+
+
 
      $c->user_session->{redirect} = $c->user_session->{redirect} || $c->req->params->{redirect};
      my $redirect = $c->user_session->{redirect};
@@ -498,12 +509,13 @@ sub auth_local {
     if ( $c->authenticate({ user_id=>$authid->user_id }, 'members') ) {
         $c->stash->{'status_msg'} = 'Local Login was also successful.';
         $c->log->debug('Local Login was also successful.');
-        $self->reload($c);
+        $c->res->redirect($c->uri_for('/'));
     }
     else {
         $c->log->debug('Local login failed');
         $c->stash->{'error_notice'}='Local login failed.';
     }
+
 }
 
 sub reload {
@@ -524,6 +536,13 @@ sub logout :Path("/logout") :Args(0){
     $c->stash->{noboiler} = 1;  
 
     $c->stash->{'template'}='auth/login.tt2';
+
+    if($c->config->{wormmine_path}){
+      # Send to WormMine logout after
+      $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/logout.do');
+    }
+
+    # Send to WormMine logout after
     $self->reload($c,1) ;
 }
 
