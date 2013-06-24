@@ -64,4 +64,6 @@
 
 %]
 
+<!-- WikiPathways iframe, inconsistent reliability
 <iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=WP87" width="600px" height="300px" style="overflow:hidden;"></iframe>
+-->
