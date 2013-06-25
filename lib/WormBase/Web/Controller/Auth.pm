@@ -206,10 +206,12 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
         if ( $c->authenticate( { password => $password,
                                 'dbix_class' => { resultset => $rs }
             } ) ) {
-                $c->log->debug('Username login was successful. '. $c->user->get("username") . $c->user->get("password"));
+                $c->log->debug('Username login was successful. '. $c->user->get("username"));
 
-                # Send to WormMine openid login after local login
-                $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
+                if($c->user->google_open_id && $c->config->{wormmine_path}){
+                  # Send to WormMine openid login after local login
+                  $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
+                }
             } else {
                 $c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
@@ -521,10 +523,8 @@ sub auth_local {
 sub reload {
     my ($self, $c,$logout) = @_;
     $c->stash->{operator}=0; 
-    $c->stash->{logout}=0;
+    $c->stash->{logout}= $logout ? 1 : 0;
     $c->stash->{reload}=1;
-
-    $c->stash->{logout}=1 if($logout);
     return;
 }
 
@@ -542,8 +542,7 @@ sub logout :Path("/logout") :Args(0){
       $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/logout.do');
     }
 
-    # Send to WormMine logout after
-    $self->reload($c,1) ;
+    $self->reload($c,1);
 }
 
 
