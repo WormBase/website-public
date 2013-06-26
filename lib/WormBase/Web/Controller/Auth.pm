@@ -7,8 +7,6 @@ use Net::Twitter;
 use Facebook::Graph;
 use Crypt::SaltedHash;
 use Data::GUID;
-use Net::OAuth2;
-use Moose;
 
 __PACKAGE__->config->{namespace} = '';
 
