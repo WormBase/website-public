@@ -1,4 +1,4 @@
-[% UNLESS user_exists %]
+
 <!-- Login form -->
 <div id="login-form">
   <form method="post" align="left" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;">
@@ -43,10 +43,7 @@
   [% END %] 
   window.close();
 [% END %]  
-</script>
-[% END %]
 
-<script>
 if(WB){
       WB.getPlugin("placeholder", function(){
         $jq('input, textarea').placeholder();

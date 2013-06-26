@@ -112,12 +112,28 @@
         [% ELSE %]
           [% FOREACH option IN c.config.sections.$title.keys.sort %]
             [% IF option == 'title'; NEXT; END; %]
-			[% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
             [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
-            [% IF ((option == 'epic') && (!c.check_any_user_role("admin"))); NEXT; END; %]
             <li>
               <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]"> 
-		[% IF title == 'resources'; pluralize(c.config.sections.$title.$option.title); ELSE; c.config.sections.$title.$option.title; END; %]</a></li>
+            [% IF title == 'resources'; pluralize(c.config.sections.$title.$option.title); ELSE; c.config.sections.$title.$option.title; END; %]</a></li>
+          [% END %]
+          [% IF title == 'tools' %]
+           <li>
+           <a>
+              <span class="ui-icon ui-icon-triangle-1-e"></span>More tools
+            </a>
+           <ul class="wb-dropdown">
+            [% FOREACH option IN c.config.sections.$title.keys.sort %]
+              [% IF option == 'title'; NEXT; END; %]
+              [% IF c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
+              [% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
+              [% IF ((option == 'epic') && (!c.check_any_user_role("admin"))); NEXT; END; %]
+              <li>
+                <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]"> 
+                    [% c.config.sections.$title.$option.title;%]</a></li>
+            [% END %]
+            </ul>
+            </li>
           [% END %]
         [% END %]
           </ul>
