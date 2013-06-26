@@ -17,6 +17,7 @@ source /usr/local/wormbase/wormbase.env
 if [ ! $APP ]; then
     echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
     export APP=production
+    export STARMAN_DEBUG=1
 
     # Application defaults
     export DAEMONIZE=true
