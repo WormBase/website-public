@@ -7,15 +7,24 @@ use Net::Twitter;
 use Facebook::Graph;
 use Crypt::SaltedHash;
 use Data::GUID;
+use Net::OAuth2;
+use Moose;
 
 __PACKAGE__->config->{namespace} = '';
- 
- 
+
+
 sub login :Path("/login")  :Args(0){
      my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'} = 'auth/login.tt2';
     $c->stash->{'continue'} = $c->req->params->{continue};
+}
+
+sub add_google :Path("/google") :Args(0) {
+    my ( $self, $c ) = @_;
+    $c->stash->{user_exists} = $c->user;
+    $c->stash->{google_account} = $c->user && $c->user->google_open_id;
+    $c->stash->{'template'} = 'auth/google.tt2';
 }
 
 sub password : Chained('/') PathPart('password')  CaptureArgs(0) {
@@ -207,11 +216,13 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                                 'dbix_class' => { resultset => $rs }
             } ) ) {
                 $c->log->debug('Username login was successful. '. $c->user->get("username"));
-
-                if($c->user->google_open_id && $c->config->{wormmine_path}){
+                if(($c->user->google_open_id != 0) && $c->config->{wormmine_path}){
                   # Send to WormMine openid login after local login
                   $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
+                }else{
+                  $c->res->redirect($c->stash->{'continue'} || $c->uri_for('/'));
                 }
+
             } else {
                 $c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
@@ -299,8 +310,6 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
         }
     }
 }
-
-
 
 sub connect_to_facebook {
     my ($self,$c) = @_;
@@ -527,7 +536,6 @@ sub reload {
     $c->stash->{reload}=1;
     return;
 }
-
  
 sub logout :Path("/logout") :Args(0){
     my ($self, $c) = @_;

@@ -1,43 +1,27 @@
 <!-- Register form -->
 
 [% IF noboiler %]
-  <form method="post" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 <b><center>Join the online worm community!</center></b> 
-<div style="float:left;margin-left:-1em;">
-    <div class="login-holder">
-        <input id="name" type="text" name="name" size="22" placeholder="full name" value="[% full_name %]"/>
-    </div>
-    <div class="login-holder">
-        <input id="email" type="email" name="email" size="22" placeholder="email" value="[% email %]"/>
-    </div>
-    <div class="login-holder">
-        <input id="password" type="password" name="password" placeholder="password" size="22" value="[% password %]"/>
-    </div>
-    <input id="redirect" type="text" name="redirect" size="22" style="display:none;" value=""/>
-
-    <input id="create-account" type="submit" style="position:absolute;bottom:1em;left:1em;font-weight:bold;width:7em;" class="ui-corner-large-all" value="sign up ›"/>  
-</div>
-
-<div style="float:left;border-left:1px solid #CDCDCD;font-weight:normal;font-size:10pt;padding:1em 0 1em 1em;margin-top:0.5em;">
+<div>
+ <div style="margin:1em;">
   <div class="social">
-    <span>...or sign in with</span>
-      <button class="social_buttons sb_google sb_24" onClick="openid.signin('google');return false;">
+      <center>
+    <span>...sign in with</span>
+
+      <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');return false;">
           <span>Google</span>
       </button>
-      <button class="social_buttons sb_facebook sb_24" onClick="openid.signin('facebook');return false;">
-          <span>Facebook</span>
-      </button>
+      </center>
   </div>
 </div>
 
 
 <div id="default-login" style="overflow:none">
-  <input id="create-account" type="submit" style="visibility:hidden;font-weight:bold;width:7em;" class="ui-corner-large-all" value="sign up ›"/> 
   <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login").path %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login').path %]">login</a></b></span>
 </div>
+</div>
 
-</form>
 
 
 <script>
@@ -93,10 +77,10 @@ $jq("#redirect").attr("value", window.location);
 
   <div style="font-weight:normal;font-size:10pt;clear:both;padding:2em;">
       <span>...or sign in with</span>
-      <button class="social_buttons sb_google sb_24" onClick="openid.signin('google');">
+      <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
           <span>Google</span>
       </button>
-      <button class="social_buttons sb_facebook sb_24" onClick="openid.signin('facebook');">
+      <button class="social_buttons sb_facebook sb_24" onClick="WB.openid.signin('facebook');">
           <span>Facebook</span>
       </button>
   </div>
