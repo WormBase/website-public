@@ -9,13 +9,20 @@ use Crypt::SaltedHash;
 use Data::GUID;
 
 __PACKAGE__->config->{namespace} = '';
- 
- 
+
+
 sub login :Path("/login")  :Args(0){
      my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'} = 'auth/login.tt2';
     $c->stash->{'continue'} = $c->req->params->{continue};
+}
+
+sub add_google :Path("/google") :Args(0) {
+    my ( $self, $c ) = @_;
+    $c->stash->{user_exists} = $c->user;
+    $c->stash->{google_account} = $c->user && $c->user->google_open_id;
+    $c->stash->{'template'} = 'auth/google.tt2';
 }
 
 sub password : Chained('/') PathPart('password')  CaptureArgs(0) {
@@ -172,7 +179,14 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
         .$c->req->params->{url}
         ."&redirect="
         .$c->req->params->{redirect});
-        $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
+
+        unless($c->config->{wormmine_path}){
+        # WormMine redirects to this url now after it has logged in:
+          $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
+        }else{
+          # Redirect users to WormMine openID login
+          $c->res->redirect( $c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
+        }
      }
 }
 
@@ -199,8 +213,14 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
         if ( $c->authenticate( { password => $password,
                                 'dbix_class' => { resultset => $rs }
             } ) ) {
-                $c->log->debug('Username login was successful. '. $c->user->get("username") . $c->user->get("password"));
-                $c->res->redirect($c->uri_for('/')->path);
+                $c->log->debug('Username login was successful. '. $c->user->get("username"));
+                if(($c->user->google_open_id != 0) && $c->config->{wormmine_path}){
+                  # Send to WormMine openid login after local login
+                  $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
+                }else{
+                  $c->res->redirect($c->stash->{'continue'} || $c->uri_for('/'));
+                }
+
             } else {
                 $c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
@@ -219,6 +239,8 @@ sub auth_wbid :Path('/auth/wbid')  :Args(0) {
 
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
+
+
 
      $c->user_session->{redirect} = $c->user_session->{redirect} || $c->req->params->{redirect};
      my $redirect = $c->user_session->{redirect};
@@ -286,8 +308,6 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
         }
     }
 }
-
-
 
 sub connect_to_facebook {
     my ($self,$c) = @_;
@@ -498,24 +518,22 @@ sub auth_local {
     if ( $c->authenticate({ user_id=>$authid->user_id }, 'members') ) {
         $c->stash->{'status_msg'} = 'Local Login was also successful.';
         $c->log->debug('Local Login was also successful.');
-        $self->reload($c);
+        $c->res->redirect($c->uri_for('/'));
     }
     else {
         $c->log->debug('Local login failed');
         $c->stash->{'error_notice'}='Local login failed.';
     }
+
 }
 
 sub reload {
     my ($self, $c,$logout) = @_;
     $c->stash->{operator}=0; 
-    $c->stash->{logout}=0;
+    $c->stash->{logout}= $logout ? 1 : 0;
     $c->stash->{reload}=1;
-
-    $c->stash->{logout}=1 if($logout);
     return;
 }
-
  
 sub logout :Path("/logout") :Args(0){
     my ($self, $c) = @_;
@@ -524,7 +542,13 @@ sub logout :Path("/logout") :Args(0){
     $c->stash->{noboiler} = 1;  
 
     $c->stash->{'template'}='auth/login.tt2';
-    $self->reload($c,1) ;
+
+    if($c->config->{wormmine_path}){
+      # Send to WormMine logout after
+      $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/logout.do');
+    }
+
+    $self->reload($c,1);
 }
 
 

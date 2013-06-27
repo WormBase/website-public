@@ -32,7 +32,7 @@ sub run {
 
     $ACEDB = $self->ace_dsn->dbh;
     my $version = $ACEDB->version;
-    $EPCR_DB = "/usr/local/wormbase/databases/$version/blast/c_elegans";
+    $EPCR_DB = "/usr/local/wormbase/databases/$version/blast/c_elegans/PRJNA13758";
     $file_dir = $self->tmp_dir('epcr');
     $GFFDB = $self->gff_dsn('c_elegans');
     $REF = $self;

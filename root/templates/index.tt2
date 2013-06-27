@@ -12,7 +12,7 @@
               <a id="create-account" class="ui-corner-large-all" onClick='$jq("#create-prompt").load("[% c.uri_for("/register").path  %]?inline=1").addClass("registration-form").removeClass("login-form"); return false;' id="register" href="[% c.uri_for('/register').path  %]">
                <b>   sign up ›</b>
               </a>
-             <span> Already a member? <b><a id="login" onClick='$jq("#create-prompt").load("[% c.uri_for("/login").path  %]").addClass("login-form").removeClass("registration-form"); return false;' href="[% c.uri_for('/login').path  %]">login</a></b></span>
+             <span> Already a member? <b><a id="login" onClick='$jq("#create-prompt").load("[% c.uri_for("/login").path  %]").addClass("login-form").removeClass("registration-form"); return false;' href="[% c.uri_for('/login').path  %]">log in</a></b></span>
              </div>
         </div>
     [% END %]

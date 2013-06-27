@@ -135,9 +135,12 @@
             });
           }else{
             $jq("#logout").click(function(){
-              window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
+              // window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
+              // window.location.reload();
+
+              window.location = "/logout";
             });
-          }
+          }s
         });
     }
     
@@ -1590,13 +1593,14 @@ var Scrolling = (function(){
       },
 
       popupWin: function(url) {
-        var h = 400;
-        var w = 600;
-        var screenx = (screen.width/2) - (w/2 );
-        var screeny = (screen.height/2) - (h/2);
+        // var h = 400;
+        // var w = 600;
+        // var screenx = (screen.width/2) - (w/2 );
+        // var screeny = (screen.height/2) - (h/2);
         
-        var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
-        win2.focus();
+        // var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
+        // win2.focus();
+        window.location = url;
       }
   };
   
