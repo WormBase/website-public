@@ -82,6 +82,7 @@ sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
     $c->stash->{noboiler}=1;
     $c->stash->{template} = 'header/default.tt2';
+    $c->stash->{section} = 'tools';
     $c->response->headers->expires(time);
 }
 
