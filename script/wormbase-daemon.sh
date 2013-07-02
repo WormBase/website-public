@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Server::Starter init that manages Starman.
+# Server::Starter daemon that manages Starman.
 # Based on http://j.shirley.im/tech/perl/start_server.html
 
 # Here's how to call start_server from the command line.
@@ -82,7 +82,14 @@ else
 fi
 
 # The actual path on disk to the application.
-export APP_HOME="/usr/local/wormbase/website/$APP"
+export APP_HOME=`pwd`
+
+# For dumb install environments. Not ideal.
+export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_HOME}/lib:$PERL5LIB
+export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
+export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
+export PATH="/usr/local/wormbase/extlib/bin:$PATH"
+
 
 PIDFILE="$APP_HOME/logs/wormbase.pid"
 
