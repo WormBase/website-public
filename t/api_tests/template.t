@@ -11,8 +11,7 @@
 #
 # Actual tests are implemented at the bottom of this file. Please see:
 #
-# 1. test_port_open
-# 2. test_single_gene_overview
+# 1. test_single_gene
 
 {
     # Package name is the same as the filename (sans suffix, i.e. no .t ending)
