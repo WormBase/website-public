@@ -82,8 +82,7 @@ else
 fi
 
 # The actual path on disk to the application.
-APP_HOME="/usr/local/wormbase/website/$APP"
-export $APP_HOME
+export APP_HOME="/usr/local/wormbase/website/$APP"
 
 PIDFILE="$APP_HOME/logs/wormbase.pid"
 
