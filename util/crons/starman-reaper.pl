@@ -21,6 +21,9 @@ my $size_limit_in_bytes = '524288000';
 
 
 my $processes_killed = check_processes();
+my $site_down        = check_site();
+
+
 
 # For ec2, we fetch hostnames and IPs via the rest API.
 my ($date,$external_ip,$hostname);

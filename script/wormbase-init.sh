@@ -17,17 +17,14 @@ source /usr/local/wormbase/wormbase.env
 if [ ! $APP ]; then
     echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
     export APP=production
+#    export STARMAN_DEBUG=1
 
     # Application defaults
     export DAEMONIZE=true
     export PORT=5000
     export WORKERS=10
     export MAX_REQUESTS=500
-   
-    # Set some variable that influence which configuration file we should use.
-    # This affects how the app behaves for certain cases.    
-    export WORMBASE_INSTALLATION_TYPE=$APP
-
+     
     # The suffix for the configuration file to use.
     # This will take precedence over wormbase_local.conf
     # Primarily used to override the location of the user database.
@@ -41,11 +38,6 @@ elif [ $APP == 'staging' ]; then
     export PORT=5000
     export WORKERS=5
     export MAX_REQUESTS=500
-
-    # Set some variable that influence which configuration file we should use.
-    # This affects how the app behaves for certain cases.    
-    export WORMBASE_INSTALLATION_TYPE=$APP
-#    export WORMBASE_INSTALLATION_TYPE=development
 
     # The suffix for the configuration file to use.
     # This will take precedence over wormbase_local.conf
@@ -62,10 +54,6 @@ elif [ $APP == 'qaqc' ]; then
     export WORKERS=8
     export MAX_REQUESTS=500
 
-    # Set some variable that influence which configuration file we should use.
-    # This affects how the app behaves for certain cases.    
-    export WORMBASE_INSTALLATION_TYPE=$APP
-
     # The suffix for the configuration file to use.
     # This will take precedence over wormbase_local.conf
     # Primarily used to override the location of the user database.
@@ -81,12 +69,12 @@ fi
 
 # The absolute path to our installation.
 CURR_DIR=`pwd`
-export APP_ROOT=$CURR_DIR
-echo $APP_ROOT
+export APP_HOME=$CURR_DIR
+echo $APP_HOME
 
 # Configure our GBrowse App
-export GBROWSE_CONF=$ENV{APP_ROOT}/conf/gbrowse
-export GBROWSE_HTDOCS=$ENV{APP_ROOT}/root/gbrowse
+export GBROWSE_CONF=$ENV{APP_HOME}/conf/gbrowse
+export GBROWSE_HTDOCS=$ENV{APP_HOME}/root/gbrowse
 
 # GBrowse ONLY production sites
 #    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
@@ -94,7 +82,7 @@ export GBROWSE_HTDOCS=$ENV{APP_ROOT}/root/gbrowse
 #    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
 #    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
 
-export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/lib:$PERL5LIB
+export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_HOME}/lib:$PERL5LIB
 export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
 export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
 export PATH="/usr/local/wormbase/extlib/bin:$PATH"  
@@ -103,11 +91,11 @@ export PATH="/usr/local/wormbase/extlib/bin:$PATH"
 # Fetch local defaults
 PIDDIR=/tmp
 PIDFILE=$PIDDIR/${APP}.pid
-APPLIB=$APP_ROOT/WormBase
-APPDIR=$APP_ROOT
+APPLIB=$APP_HOME/WormBase
+APPDIR=$APP_HOME
 
-if [ ! -d "$APP_ROOT" ]; then
-    echo "\$APP_ROOT does not exist"
+if [ ! -d "$APP_HOME" ]; then
+    echo "\$APP_HOME does not exist"
     exit 1
 fi
 
@@ -129,7 +117,7 @@ fi
 
 # Which starman are we running?
 STARMAN=`which starman`
-STARMAN_OPTS="-I$APPDIR/lib --errorlog $APPDIR/logs/starman_error.log --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APPDIR/wormbase.psgi"
+STARMAN_OPTS="-I$APPDIR/lib --access-log $APPDIR/logs/starman_access.log --error-log $APPDIR/logs/starman_error.log --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APPDIR/wormbase.psgi"
 
 
 check_running() {
@@ -147,28 +135,28 @@ check_compile() {
 _start() {
 
     echo "Launching WormBase app with the following parameters..."
-    echo "     appdir  : $APP_ROOT"
+    echo "     appdir  : $APP_HOME"
     echo "     pidfile : $PIDFILE"
     echo "     workers : $WORKERS"
     echo "    max_reqs : $MAX_REQUESTS"
     echo "        port : $PORT" 
     
 #  /sbin/start-stop-daemon --start --pidfile $PIDFILE \
-#  --chdir $APP_ROOT/$APP --startas $STARMAN "$STARMAN_OPTS"
+#  --chdir $APP_HOME --startas $STARMAN "$STARMAN_OPTS"
     
 #  /sbin/start-stop-daemon --start --pidfile $PIDFILE \
-#  --chdir $APP_ROOT/$APP --exec $STARMAN -- "$STARMAN_OPTS"
+#  --chdir $APP_HOME --exec $STARMAN -- "$STARMAN_OPTS"
     
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APP_ROOT --exec $STARMAN -- -I$APP_ROOT/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --error-log $APP_ROOT/logs/starman-error.log --daemonize $APP_ROOT/wormbase.psgi 
-#	    --chdir $APP_ROOT --exec $STARMAN -- -I$APP_ROOT/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/wormbase.psgi
+	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_HOME/wormbase.psgi 
+#	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_HOME/wormbase.psgi
 
 
 
     else
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APP_ROOT --exec $STARMAN -- -I$APP_ROOT/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_ROOT/wormbase.psgi --error-log $APP_ROOT/logs/starman-error.log
+	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_HOME/wormbase.psgi
     fi
     
     echo ""
@@ -186,10 +174,10 @@ _start() {
     echo "   Failed. Trying again..."
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APP_ROOT --exec $STARMAN -- -I$APP_ROOT/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/wormbase.psgi
+	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_HOME/wormbase.psgi
     else
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APP_ROOT --exec $STARMAN -- -I$APP_ROOT/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_ROOT/wormbase.psgi
+	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_HOME/wormbase.psgi
     fi
     
     for i in 1 2 3 4 ; do
