@@ -135,8 +135,10 @@
             });
           }else{
             $jq("#logout").click(function(){
-              window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
-              window.location.reload();
+              // window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
+              // window.location.reload();
+
+              window.location = "/logout";
             });
           }s
         });
