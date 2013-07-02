@@ -1,0 +1,45 @@
+This directory contains application and server specific
+log files.
+
+The following application-specific logs are created
+when you launch your app via:
+
+  ./script/wormbase_server.pl -p PORT -d -r
+
+  wormbase-catalyst-access.log
+      Catalyst access and debugging log.
+  
+  wormbase-catalyst-cache.log
+      Catalyst CHI cache log.
+
+  wormbase-catalyst-queries.log
+      Catalyst log that records queries from the AQL/WQL page.
+
+
+Several additional logs are created when the app is run under
+starman via:
+
+  ./script/wormbase-init.sh
+
+  wormbase-starman-access.log
+       Starman's apache style access log. Should be rotated.
+
+  wormbase-starman-error.log
+       Starman's error log. If STARMAN_DEBUG=1 is set in your
+       environment this log will also capture additional debug
+       messages.
+
+Finally, if the starman and the application are run from a
+start_server daemon via the startup script, two additional
+files will appear:
+
+  ./script/wormbase-daemon.sh
+
+  wormbase.status
+  Used by Server::Starter (and start_server) to monitor app processes.
+
+  wormbase.pid
+  PID of the parent process.
+
+
+

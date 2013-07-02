@@ -147,8 +147,9 @@ sub finalize_config { # overriding Plugin::ConfigLoader
 sub _setup_log4perl {
     # Specific loggers for different environments
     my $c = shift;
-    my $path = $c->path_to('conf', 'log4perl',
-                           $c->config->{installation_type} . '.conf');
+#    my $path = $c->path_to('conf', 'log4perl',
+#                           $c->config->{installation_type} . '.conf');
+    my $path = $c->path_to('conf', 'log4perl','root.conf');
     $c->log(Log::Log4perl::Catalyst->new($path->stringify));
 #    $c->log(Catalyst::Log::Log4perl->new($path->stringify));
     Log::Any::Adapter->set({ category => qr/^CHI/ }, 'Log4perl');
@@ -285,12 +286,12 @@ sub finalize_error {
     
     $c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["WormBase::Web::ErrorCatcherEmit","Catalyst::Plugin::ErrorCatcher::Email"];
     
-    if ($c->config->{installation_type} eq 'production') {
-	# Only server errors get emailed.
-	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless is_server_error($c->config->{'response_status'}); 
-    } else {
+#    if ($c->config->{installation_type} eq 'production') {
+#	# Only server errors get emailed.
+#	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless is_server_error($c->config->{'response_status'}); 
+#    } else {
 	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}}; 
-    }
+#    }
     $c->maybe::next::method;
 }
 

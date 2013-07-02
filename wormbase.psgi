@@ -16,7 +16,7 @@ use constant DEV_DEFAULT_GB => 'cgi-bin';
 
 # The symbolic name of our application, used for configuration only.
 my $app      = $ENV{APP};
-my $app_root = $ENV{APP_ROOT};
+my $app_root = $ENV{APP_HOME};
 my $app_path;
 
 if ($app_root) {
@@ -33,8 +33,6 @@ else { # no app[root] provided; use catalyst to figure it out
 #   builder {
 #       mount '/todd'     => $todds_app;
 #       mount '/abby'     => $abbys_app;
-#       mount '/xshi'     => $xshis_app;
-#       mount '/staging'  => $staging_app;
 #   }
 
 my $wormbase = WormBase::Web->psgi_app(@_);
