@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+# Unit tests regarding "Feature" instances.
 {
     # Package name is the same as the filename (sans suffix, i.e. no .t ending)
     package features;
