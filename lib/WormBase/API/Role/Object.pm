@@ -2183,8 +2183,7 @@ sub _fetch_gff_gene {
 
     my $trans;
     my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database"; # should probably log this?
-    eval {$GFF->fetch_group()};
-    return if $@; # should probably log this
+    $GFF->fetch_group();
 
 #    if ($self->object->Species =~ /briggsae/) {
     $self->log->warn("gff is: $GFF");
