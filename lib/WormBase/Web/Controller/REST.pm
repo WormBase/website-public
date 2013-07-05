@@ -673,8 +673,9 @@ sub widget_GET {
         my $api = $c->model('WormBaseAPI');
         my $object = ($name eq '*' || $name eq 'all'
                    ? $api->instantiate_empty(ucfirst $class)
-                   : $api->fetch({ class => ucfirst $class, name => $name }));
-
+                   : $api->fetch({ class => ucfirst $class, name => $name })) 
+            or die "Could not fetch object $name, $class";
+            
         # Generate and cache the widget.
         # Load the stash with the field contents for this widget.
         # The widget itself is loaded by REST; fields are not.
