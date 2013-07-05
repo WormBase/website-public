@@ -675,7 +675,7 @@ sub widget_GET {
                    ? $api->instantiate_empty(ucfirst $class)
                    : $api->fetch({ class => ucfirst $class, name => $name })) 
             or die "Could not fetch object $name, $class";
-            
+
         # Generate and cache the widget.
         # Load the stash with the field contents for this widget.
         # The widget itself is loaded by REST; fields are not.
@@ -687,8 +687,8 @@ sub widget_GET {
             $c->log->debug("Processing field: $field");
             my $data = $object->$field;
             if ( $c->config->{fatal_non_compliance}
-		 and my ( $fixed_data, @problems )
-		 = $object->_check_data( $data, $class ) )
+                and my ( $fixed_data, @problems )
+                = $object->_check_data( $data, $class ) )
             {
                 $data = $fixed_data;
                 $fatal_non_compliance = $c->config->{fatal_non_compliance};
@@ -1027,9 +1027,11 @@ sub _get_session {
     my ($self,$c) = @_;
     unless($c->user_exists){
       my $sid = $c->sessionid;
-      return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
+      return $c->model('Schema::Session')->find({session_id=>"session:$sid"})
+        or die "Unable to retrieve session information for $sid";
     }else{
-      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
+      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id})
+        or die "Unable to retrieve session information for " . $c->user->user_id;
     }
 }
 
