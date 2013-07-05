@@ -1016,11 +1016,8 @@ sub history{
 			my @versions = $history_type->col;
 			foreach my $version (@versions){
 				
-				#print "(".join(",",$version->row).")\n"; # DELETE
-				# WBGene00011256, WBGene00043702
-				
 				# NOTE: version may not contain event
-				my ($vers,   $date,   $curator, $event) 
+				my ($vers,   $date,   $curator, $event_tag) 
 					= $version->row;
 				
 				my %current_row = (
@@ -1030,12 +1027,14 @@ sub history{
 					curator => $self->_pack_obj($curator), 
 				);
 				
-				if($event){
+				if($event_tag){
 				
 					my @events = $version->right(3)->col;
+					my (@actions, $remark, $gene);
 					foreach my $event (@events){
-						
-						my ($action, $remark, $gene) = $event->row;
+					
+						my $action;
+						($action, $remark, $gene) = $event->row;
 						
 						#next if $action eq 'Imported';
 						
@@ -1045,17 +1044,21 @@ sub history{
 							|| $action eq 'Split_from'
 							|| $action eq 'Split_into' )
 						{
-							$gene   = $remark;
-							$remark = undef;
+							if( $remark ){
+								$gene   = $remark;
+								$remark = undef;
+							}
 						}
 						
-						my %final_row = ( %current_row,
-							action  => $action && "$action",
-							remark  => $remark && "$remark",
-							gene    => $self->_pack_obj($gene),
-						);
-						push @data, \%final_row;
+						push @actions, $action;
 					}
+					
+					my %final_row = ( %current_row,
+						action  => join(",", sort @actions),
+						remark  => $remark && "$remark",
+						gene    => $self->_pack_obj($gene),
+					);
+					push @data, \%final_row;
 					
 				}else{
 				
