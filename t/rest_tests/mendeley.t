@@ -1,19 +1,6 @@
 #!/usr/bin/env perl
 
-# This is a unit test template for implementing tests that work
-# with a running WormBase Website instance.
-#
-# Unit tests are called automagically, just adhere to the following:
-#
-# 1. the unit test is placed in the t/rest_tests folder
-# 2. the filename and package name coincide (sans suffix)
-# 3. unit test names have the prefix "test_"
-#
-# Actual tests are implemented at the bottom of this file. Please see:
-#
-# 1. test_port_open
-# 2. test_single_gene_overview
-
+# Testing of Mendeley related API calls.
 {
     # Package name is the same as the filename (sans suffix, i.e. no .t ending)
     package mendeley;
@@ -41,10 +28,9 @@
         $configuration = $_[0];
     }
 
-    # This is another example test that retrieves information about a gene
-    # via the RESTful API. The test demonstrates a granular testing approach
-    # that reveals the failing point to great detail, if the returned data
-    # should not adhere to the spec defined by the test.
+    # Retrieves related papers for a given publication. Checks whether:
+    # 
+    #   1. the returned result is not empty
     sub test_related_papers {
         my $host = $configuration->{'host'};
         my $port = $configuration->{'port'};
