@@ -140,11 +140,11 @@
 	      END;
 	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "Protein";
-	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx prot:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "genes";
 	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "ESTs";
-	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	  END;
 	END;
       END;
