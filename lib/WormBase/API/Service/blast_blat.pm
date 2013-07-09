@@ -245,18 +245,24 @@ sub process_input {
     elsif ($search_type eq "blat") {
 	my $db_info;
 
-        #my $database_type     = $db_info{type};
-        #my $database_port     = $db_info->{port};
+	my $database_type = $self->_get_database_type($database);
+
 	my $blat_client = $self->pre_compile->{BLAT_CLIENT};
 	$blat_client = "/usr/local/wormbase/services/blat/bin/blat";
 
-        #         if ($query_type ne $database_type) {
-        #             error("Incompatible query($query_type)/database($database_type)");
-        #         }
+	# Only supporting matching query and database types:
+	if ($query_type ne $database_type) {
+	    error("Incompatible query($query_type)/database($database_type)");
+	}
 
-        # Currently only DNA searches are supported, if expanded adjust query and db types accordingly
-	# see http://genome.ucsc.edu/goldenPath/help/blatSpec.html for param specs
-        $command_line = "$blat_client -out=blast -t=dna -q=dna $database_location $query_file $out_file >& $out_file.err ";
+	my $query_and_database_type;
+	if ($query_type eq 'nucl') {
+	    $query_and_database_type = '-t=dna -q=dna';
+	} elsif ($query_type eq 'prot') {
+	    $query_and_database_type = '-prot';
+	}
+
+        $command_line = "$blat_client -out=blast $query_and_database_type $database_location $query_file $out_file >& $out_file.err ";
 #            $blat_client . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
 	    
     }
