@@ -12,22 +12,24 @@
 [% ELSE %]
   [% view_fraction = 100 %]
 [% END %]
+<div style="display: flex; flex-direction: column;">
 [% FOREACH run IN data %]
-<div style="transform: scale(0.75, 0.75) translate(0%, -15%); -webkit-transform: scale(0.75, 0.75) translate(0%, -15%); -moz-transform: scale(0.75, 0.75) translate(0%, -15%); -ms-transform: scale(0.75, 0.75) translate(0%, -15%); -o-transform: scale(0.75, 0.75) translate(0%, -15%); float: left; width: [% view_fraction %]%;">
-<select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
-    [% offset = count %]
-    [% FOREACH obj IN run %]
-	[% count = count + 1  %]
-	<option id="[% count %]" value="#blast_result_[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>
-    [% END %] 
-</select>
+  <div style="transform: scale(0.75, 0.75) translate(0%, -15%); -webkit-transform: scale(0.75, 0.75) translate(0%, -15%); -moz-transform: scale(0.75, 0.75) translate(0%, -15%); -ms-transform: scale(0.75, 0.75) translate(0%, -15%); -o-transform: scale(0.75, 0.75) translate(0%, -15%); float: left; width: [% view_fraction %]%;">
+  <select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
+      [% offset = count %]
+      [% FOREACH obj IN run %]
+	  [% count = count + 1  %]
+	  <option id="[% count %]" value="#blast_result_[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>
+      [% END %] 
+  </select>
 
-  [% count = offset %] 
-  [% FOREACH obj IN run %]
-    [% count = count + 1  %]  
-    [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
+    [% count = offset %] 
+    [% FOREACH obj IN run %]
+      [% count = count + 1  %]  
+      [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
+    [% END %]
+  </div>
   [% END %]
 </div>
-[% END %]
 
  
