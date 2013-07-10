@@ -14,7 +14,7 @@
 [% END %]
 <div style="display: flex; flex-direction: column;">
 [% FOREACH run IN data %]
-  <div style="transform: scale(0.75, 0.75) translate(0%, -15%); -webkit-transform: scale(0.75, 0.75) translate(0%, -15%); -moz-transform: scale(0.75, 0.75) translate(0%, -15%); -ms-transform: scale(0.75, 0.75) translate(0%, -15%); -o-transform: scale(0.75, 0.75) translate(0%, -15%); float: left; width: [% view_fraction %]%;">
+  <div style="transform: scale(0.75, 0.75) translate(0%, -15%); -webkit-transform: scale(0.75, 0.75) translate(0%, -15%); -moz-transform: scale(0.75, 0.75) translate(0%, -15%); -ms-transform: scale(0.75, 0.75) translate(0%, -15%); -o-transform: scale(0.75, 0.75) translate(0%, -15%); width: [% view_fraction %]%;">
   <select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
       [% offset = count %]
       [% FOREACH obj IN run %]
