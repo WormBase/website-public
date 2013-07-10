@@ -1880,7 +1880,6 @@ sub _longest_segment {
 	= sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->abs_start}
     @{$self->_segments} if $self->_segments;
 
-    $self->log->debug("LONGEST: $longest");
     return $longest;
 }
 
