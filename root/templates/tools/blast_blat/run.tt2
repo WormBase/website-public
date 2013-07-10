@@ -5,20 +5,29 @@
  
 </head> 
 
+[% count = 0 %]
+[% link = c.uri_for('/tools', 'blast_blat', 'run').path %]
+[% IF data.size > 0 %]
+  [% view_fraction = 100 / data.size %]
+[% ELSE %]
+  [% view_fraction = 100 %]
+[% END %]
+[% FOREACH run IN data %]
+<div style="transform: scale(0.75, 0.75) translate(0%, -15%); -webkit-transform: scale(0.75, 0.75) translate(0%, -15%); -moz-transform: scale(0.75, 0.75) translate(0%, -15%); -ms-transform: scale(0.75, 0.75) translate(0%, -15%); -o-transform: scale(0.75, 0.75) translate(0%, -15%); float: left; width: [% view_fraction %]%;">
 <select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
-    [% count = 0 %]
-    [% link = c.uri_for('/tools', 'blast_blat', 'run').path %]
-    [% FOREACH obj IN data %]
+    [% offset = count %]
+    [% FOREACH obj IN run %]
 	[% count = count + 1  %]
 	<option id="[% count %]" value="#blast_result_[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>
     [% END %] 
 </select>
- 
 
-[% count = 0 %] 
-[% FOREACH obj IN data %]
-  [% count = count + 1  %]  
-  [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
+  [% count = offset %] 
+  [% FOREACH obj IN run %]
+    [% count = count + 1  %]  
+    [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
+  [% END %]
+</div>
 [% END %]
 
  

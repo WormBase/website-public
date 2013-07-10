@@ -8,7 +8,10 @@ var blastAppClone          = makeCloneArray('blast_app');
 var databaseClone          = makeCloneArray('database');
 var versionClone           = makeCloneArray('version');
 var typeClone              = makeCloneArray('typeBox');
-var bioprojectClone        = makeCloneArray('bioproject');
+var bioprojectClones       = {};
+
+bioprojectClones['bioproject']  = makeCloneArray('bioproject');
+bioprojectClones['bioproject2'] = makeCloneArray('bioproject2');
 
 // Other Global Vars
 var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
@@ -93,27 +96,34 @@ function updateDatabaseOptions() {
     copy = copyArray(database);
     updateOneOption(copy, database, queryApp, 'query-app');
 
-    var bioprojectElement = document.getElementById('bioproject');
-    copy = copyArray(bioprojectClone)
-    updateOneOption(copy, bioprojectElement, species.replace(/_genome$/, ''), 'species');
-    copy = copyArray(bioprojectElement)
-    updateOneOption(copy, bioprojectElement, type, 'type');
-    copy = copyArray(bioprojectElement)
-    updateOneOption(copy, bioprojectElement, version, 'version');
-    
-    if (!database.options.length) {
-        var newOption = new Option('No database available', 'not_selected', 0, 0);
-        newOption.selected = true;
-        
-        database.options[0] = newOption;
-    }
+    [ 'bioproject', 'bioproject2' ].forEach(function(id) {
+        var bioprojectElement = document.getElementById(id);
+        copy = copyArray(bioprojectClones[id])
+        updateOneOption(copy, bioprojectElement, species.replace(/_genome$/, ''), 'species');
+        copy = copyArray(bioprojectElement)
+        updateOneOption(copy, bioprojectElement, type, 'type');
+        copy = copyArray(bioprojectElement)
+        updateOneOption(copy, bioprojectElement, version, 'version');
 
-    if (!bioprojectElement.options.length) {
-        newOption = new Option('Not applicable', 'not_selected', 0, 0);
-        newOption.selected = true;
+        if (!database.options.length) {
+            var newOption = new Option('No database available', 'not_selected', 0, 0);
+            newOption.selected = true;
+            
+            database.options[0] = newOption;
+        }
 
-        bioprojectElement.options[0] = newOption;
-    }
+        if (!bioprojectElement.options.length) {
+            newOption = new Option('Not applicable', 'not_selected', 0, 0);
+            newOption.selected = true;
+
+            bioprojectElement.options[0] = newOption;
+        } else if (id != 'bioproject') {
+            newOption = new Option('Not selected', 'not_selected', 0, 0);
+            newOption.selected = true;
+
+            bioprojectElement.options[bioprojectElement.options.length] = newOption;
+        }
+    });
     
     return 1;
 }   

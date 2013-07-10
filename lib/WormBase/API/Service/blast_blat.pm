@@ -119,8 +119,19 @@ our %BLAST_FILTERS = ("filter" => "-F T",);
 # Belongs as part of the controller?
 sub run {
     my ($self,$param) = @_;
-    my ($query_file, $query_type, $result_file) = $self->process_input($param);
-    return $self->display_results($param, $query_file, $query_type, $result_file);
+
+    my ($query_file, $query_type, $result_file) = $self->process_input($param, '');
+    my @results = ( $self->display_results($param, $query_file, $query_type, $result_file)->{'data'} );
+
+    unless ($param->{'bioproject2'} =~ /^not_selected$/) {
+      ($query_file, $query_type, $result_file) = $self->process_input($param, '2');
+      push(@results, $self->display_results($param, $query_file, $query_type, $result_file)->{'data'});
+    }
+
+    return {
+        description => 'Alignment results of one or more BLAST/BLAT runs.',
+        data        => \@results
+    };
 }
 
 sub about_blat {
@@ -149,7 +160,7 @@ sub _get_database_type {
 
 
 sub process_input {
-    my ($self,$cgi) = @_;
+    my ($self, $cgi, $bioproject_query_number) = @_;
 
     my $query_sequence = $cgi->{"query_sequence"};
     my $query_type     = $cgi->{"query_type"};
@@ -173,10 +184,11 @@ sub process_input {
 
     my $database;
     my $has_bioproject = 0;
-    if ($cgi->{"bioproject"} =~ /^not_selected$/) {
+    my $bioproject_id = "bioproject" . $bioproject_query_number;
+    if ($cgi->{$bioproject_id} =~ /^not_selected$/) {
         $database = $cgi->{"database"};
     } else {
-        $database = $cgi->{"bioproject"};
+        $database = $cgi->{$bioproject_id};
         $has_bioproject = 1;
     }
 
