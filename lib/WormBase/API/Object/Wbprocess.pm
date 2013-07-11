@@ -5,6 +5,7 @@ use WormBase::API::Object::Gene qw/classification/;
 use Switch;
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Interaction';
 extends 'WormBase::API::Object';
 
 
@@ -102,7 +103,7 @@ sub other_name{
 		
 	return {  
 		description => "Term alias",
-		data => "$other_name"
+		data => $other_name ? "$other_name" : undef
 	};
 }
 
@@ -294,7 +295,8 @@ sub pathway{
 	my $link = $link_base.$pathway_id;
 	
 	my $data = {
-		pathway_link => $link, 
+		pathway_link 	=> $link, 
+		pathway_id		=> $pathway_id,
 	};
 	
 	return {

@@ -83,6 +83,11 @@ B<Response example>
 
 sub interactions  {
     my $self   = shift;
+    my $object = $self->object;
+    my $class = $object->class;
+    
+    print $class."\n";
+    
     my @edges = values %{$self->_interactions->{edgeVals}};
 
     my $results = $self->_get_interactions($self->_interactions, 1, 1);
@@ -96,8 +101,9 @@ sub interactions  {
                             nodes => $results->{nodes},
                             showall => $results->{showall},
                             ntypes => $results->{ntypes},
-                            edges_all => @edges_all ? \@edges_all : undef
-                       } : { edges => @edges ? \@edges :undef },
+                            edges_all => @edges_all ? \@edges_all : undef,
+                            class => $class
+                       } : { edges => \@edges },
     };
 
 }
@@ -180,11 +186,11 @@ sub _get_interactions {
     #determine object type and extract interactions accordingly
     if ($nearby){ 
       @objects = map {$_->Interaction} grep {($_->class =~ /gene/i) && ($data->{nodes}{"$_"}{predicted} == 0)} values %{$data->{nodes_obj}} 
-    } elsif ($object->class =~ /gene/i) { 
+    } elsif ($object->class =~ /gene|wbprocess/i ) { # ELSEIF PROCESS, COPY GENE FUNC
       @objects = $object->Interaction 
     } elsif ($object->class =~ /interaction/i ) { 
       @objects = ($object) 
-    }
+    } 
     if($nearby && (scalar @objects > 3000)){
         $data->{showall} = 0;
         return $data;
@@ -303,7 +309,7 @@ sub _get_interaction_info {
       foreach my $obj (@effectors, @others) {
           foreach my $obj2 (@affected) {
             next if "$obj" eq "$obj2";
-            if (!$nearby && $object->class ne 'Interaction') { 
+            if (!$nearby && $object->class ne 'Interaction' && $object->class ne 'WBProcess') { 
               next unless ("$obj" eq "$object" || "$obj2" eq "$object")
             };
             @{$results{"$obj $obj2"}} = ($type, $obj, $obj2, 'Effector->Affected', $phenotype);
