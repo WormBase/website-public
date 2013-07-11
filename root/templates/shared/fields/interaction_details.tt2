@@ -77,6 +77,5 @@
                           "[% obj %]",
                     [% END %] ]
       WB.setupCytoscape(data, types [% IF CLASSTYPE; ', "'; CLASSTYPE; '"'; END; %]);
-//      WB.setupCytoscape(data, types, [% interaction_details.data.class %]);
     })();
     </script>

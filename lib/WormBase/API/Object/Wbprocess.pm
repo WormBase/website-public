@@ -295,7 +295,8 @@ sub pathway{
 	my $link = $link_base.$pathway_id;
 	
 	my $data = {
-		pathway_link => $link, 
+		pathway_link 	=> $link, 
+		pathway_id		=> $pathway_id,
 	};
 	
 	return {
