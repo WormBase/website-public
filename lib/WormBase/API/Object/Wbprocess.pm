@@ -288,16 +288,21 @@ sub go_term{
 sub pathway{
 	my ($self) = @_;
 	my $object = $self->object;
+	my $pathway = $object->Pathway;
+	my $data;
 	
-	my @row = $object->Pathway->row;
-	my $pathway_id = $row[4];
-	my $link_base = 'http://www.wikipathways.org/index.php/Pathway:';
-	my $link = $link_base.$pathway_id;
-	
-	my $data = {
-		pathway_link 	=> $link, 
-		pathway_id		=> $pathway_id,
-	};
+	if($pathway){
+		my @row = $pathway->row;
+		my $pathway_id = $row[4];
+		my $link_base = 'http://www.wikipathways.org/index.php/Pathway:';
+		my $link = $link_base.$pathway_id;
+		
+		$data = {
+			pathway_link 	=> $link, 
+			pathway_id		=> $pathway_id,
+		};
+		
+	}
 	
 	return {
 		description => "Related wikipathway link",

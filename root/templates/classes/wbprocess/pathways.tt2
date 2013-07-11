@@ -1,0 +1,9 @@
+
+[% IF fields.pathway.data.pathway_id %]
+Link to WikiPathways: <a href="[% fields.pathway.data.pathway_link %]">[% fields.pathway.data.pathway_link %]</a>
+<br />
+<br />
+<!-- WikiPathways iframe, inconsistent reliability -->
+<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[% fields.pathway.data.pathway_id %]" width="800px" height="500px" style="overflow:hidden;"></iframe>
+[% END %]
+
