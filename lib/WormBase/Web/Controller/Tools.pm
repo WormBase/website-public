@@ -39,13 +39,13 @@ sub tools :Path Args {
     $c->log->debug("using $tool and running $action\n");
 
     if ("$tool" eq 'schema' && "$action" eq "run") {
-	$tool = 'tree';
-	$c->req->params->{'name'} = 'all';
+    	$tool = 'tree';
+    	$c->req->params->{'name'} = 'all';
     } #Since schema is identical to tree, use tree to generate content
     if ("$tool" eq 'gmap' || "$tool" eq 'epic') {
-	$c->req->params->{'class'} = 'Map' unless $c->req->params->{'class'} || "$tool" eq 'epic';
-	$c->req->params->{'tool'} = $tool;
-	$tool = 'epic';
+    	$c->req->params->{'class'} = 'Map' unless $c->req->params->{'class'} || "$tool" eq 'epic';
+    	$c->req->params->{'tool'} = $tool;
+    	$tool = 'epic';
     } #Since gmap is identical to epic, use epic to load display
 
 
@@ -76,8 +76,11 @@ sub tools :Path Args {
         $data = $api->_tools->{$tool}->$action($c, $c->req->params);
     } elsif ($tool =~ /epic/ || $tool =~ /gmap/) {
         $data = $api->_tools->{$tool}->$action($c,$c->req->params);
-    } else {
+    } elsif($api->_tools->{$tool}) {
         $data = $api->_tools->{$tool}->$action($c->req->params, $c);
+    } else {
+        $c->response->status(404);
+        return;
     }
  
     # Create different actions for different tools instead of using
