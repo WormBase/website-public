@@ -16,7 +16,12 @@ var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
 function updateAllOptions() {
     updateBlastAppOptions();
     updateTypeOptions();
+
+    // Need to update database options twice, or otherwise the BioProject
+    // select box is not updated correctly.
     updateDatabaseOptions();
+    updateDatabaseOptions();
+
     updateMessage();
 
     return 1;
@@ -108,6 +113,9 @@ function updateDatabaseOptions() {
         database.options[0] = newOption;
     }
 
+    for (var i = 0; i < bioprojectElement.options.length; i++)
+        bioprojectElement.options[i].selected = true;
+
     return 1;
 }   
 
@@ -166,7 +174,6 @@ function updateOneOption(cloneArray, parentElement, optionCriterion, criterion) 
     }
 
     // If no option is selected in the new options, select the first one
-    // This should default to C. elegans
     if (!numberOptionsSelected && parentElement.options.length > 0) {
        parentElement.options[0].selected = true;
     }
@@ -418,10 +425,10 @@ DOMhelp.addEvent(document.getElementById('bioproject'), 'mousedown', updateMessa
 
 // MS IE does not recognize change event on textarea if not done manually, using mouseout to supplement this
 DOMhelp.addEvent(document.getElementById('sample_peptide'),     'click',
-                 function(){addSamplePeptide(); queryDetermineType = 'sequence_entry';},   false);
+                 function(){addSamplePeptide(); queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
 
 DOMhelp.addEvent(document.getElementById('sample_nucleotide'),  'click',
-                 function(){addSampleNucleotide(); queryDetermineType = 'sequence_entry';},   false);
+                 function(){addSampleNucleotide(); queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
 
 DOMhelp.addEvent(document.getElementById('reset'), 'click', resetAllOptions, false);
 
