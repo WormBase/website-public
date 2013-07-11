@@ -8,10 +8,7 @@ var blastAppClone          = makeCloneArray('blast_app');
 var databaseClone          = makeCloneArray('database');
 var versionClone           = makeCloneArray('version');
 var typeClone              = makeCloneArray('typeBox');
-var bioprojectClones       = {};
-
-bioprojectClones['bioproject']  = makeCloneArray('bioproject');
-bioprojectClones['bioproject2'] = makeCloneArray('bioproject2');
+var bioprojectClone        = makeCloneArray('bioproject');
 
 // Other Global Vars
 var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
@@ -96,35 +93,21 @@ function updateDatabaseOptions() {
     copy = copyArray(database);
     updateOneOption(copy, database, queryApp, 'query-app');
 
-    [ 'bioproject', 'bioproject2' ].forEach(function(id) {
-        var bioprojectElement = document.getElementById(id);
-        copy = copyArray(bioprojectClones[id])
-        updateOneOption(copy, bioprojectElement, species.replace(/_genome$/, ''), 'species');
-        copy = copyArray(bioprojectElement)
-        updateOneOption(copy, bioprojectElement, type, 'type');
-        copy = copyArray(bioprojectElement)
-        updateOneOption(copy, bioprojectElement, version, 'version');
+    var bioprojectElement = document.getElementById('bioproject');
+    copy = copyArray(bioprojectClone)
+    updateOneOption(copy, bioprojectElement, species.replace(/_genome$/, ''), 'species');
+    copy = copyArray(bioprojectElement)
+    updateOneOption(copy, bioprojectElement, type, 'type');
+    copy = copyArray(bioprojectElement)
+    updateOneOption(copy, bioprojectElement, version, 'version');
 
-        if (!database.options.length) {
-            var newOption = new Option('No database available', 'not_selected', 0, 0);
-            newOption.selected = true;
-            
-            database.options[0] = newOption;
-        }
+    if (!database.options.length) {
+        var newOption = new Option('No database available', 'not_selected', 0, 0);
+        newOption.selected = true;
+        
+        database.options[0] = newOption;
+    }
 
-        if (!bioprojectElement.options.length) {
-            newOption = new Option('Not applicable', 'not_selected', 0, 0);
-            newOption.selected = true;
-
-            bioprojectElement.options[0] = newOption;
-        } else if (id != 'bioproject') {
-            newOption = new Option('Not selected', 'not_selected', 0, 0);
-            newOption.selected = true;
-
-            bioprojectElement.options[bioprojectElement.options.length] = newOption;
-        }
-    });
-    
     return 1;
 }   
 
@@ -215,19 +198,15 @@ function updateMessage() {
     sequence = sequence.replace(/\s+/g,              '');
     
     if (!sequence) {
-        document.getElementById("message").innerHTML = "Please enter a query sequence ...";
-    }    
-    
-    else if (sequence.length < 10) {
+        document.getElementById("message").innerHTML = "Please enter a query sequence...";
+    } else if (sequence.length < 10) {
         document.getElementById("message").innerHTML = "At least 10 residues is required to perform a search!";
-    }    
-    
-    else if (document.getElementById('database').options[0].value == "not_selected") {
+    } else if (document.getElementById('database').options[0].value == "not_selected") {
         document.getElementById("message").innerHTML = "No database is available for this query-application pair!";
-    }    
-
-    else {
-        document.getElementById("message").innerHTML = "Please click submit to perform search ...";
+    } else if (document.getElementById('bioproject').selectedIndex == -1) {
+        document.getElementById("message").innerHTML = "Please select at least one BioProject...";
+    } else {
+        document.getElementById("message").innerHTML = "Please click submit to perform search...";
     }    
     
     return 1;
@@ -248,7 +227,10 @@ function getParamValues() {
 
     var version       = versionBox.options[versionBox.selectedIndex].value;
     var searchType    = typeBox.options[typeBox.selectedIndex].value;
-    var bioproject    = bioprojectBox.options[bioprojectBox.selectedIndex].value;
+    var bioproject    = null;
+
+    if (bioprojectBox.selectedIndex >= 0)
+        bioproject = bioprojectBox.options[bioprojectBox.selectedIndex].value;
 
     var queryType;
     var dbType;
@@ -431,14 +413,15 @@ DOMhelp.addEvent(document.getElementById('version'),          'change', updateAl
 
 DOMhelp.addEvent(document.getElementById('typeBox'),          'change', updateAllOptions,    false);
 
-DOMhelp.addEvent(document.getElementById('bioproject'),          'change', updateAllOptions,    false); 
+DOMhelp.addEvent(document.getElementById('bioproject'), 'change', updateMessage, false);
+DOMhelp.addEvent(document.getElementById('bioproject'), 'mousedown', updateMessage, false);
 
 // MS IE does not recognize change event on textarea if not done manually, using mouseout to supplement this
 DOMhelp.addEvent(document.getElementById('sample_peptide'),     'click',
-                 function(){addSamplePeptide(); queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
+                 function(){addSamplePeptide(); queryDetermineType = 'sequence_entry';},   false);
 
 DOMhelp.addEvent(document.getElementById('sample_nucleotide'),  'click',
-                 function(){addSampleNucleotide(); queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
+                 function(){addSampleNucleotide(); queryDetermineType = 'sequence_entry';},   false);
 
 DOMhelp.addEvent(document.getElementById('reset'), 'click', resetAllOptions, false);
 

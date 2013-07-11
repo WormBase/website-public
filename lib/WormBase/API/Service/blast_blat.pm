@@ -120,12 +120,25 @@ our %BLAST_FILTERS = ("filter" => "-F T",);
 sub run {
     my ($self,$param) = @_;
 
-    my ($query_file, $query_type, $result_file) = $self->process_input($param, '');
-    my @results = ( $self->display_results($param, $query_file, $query_type, $result_file)->{'data'} );
+    my $bioprojects = $param->{'bioproject'};
+    $bioprojects = [ $bioprojects ] unless ref($bioprojects) eq 'ARRAY';
 
-    unless ($param->{'bioproject2'} =~ /^not_selected$/) {
-      ($query_file, $query_type, $result_file) = $self->process_input($param, '2');
-      push(@results, $self->display_results($param, $query_file, $query_type, $result_file)->{'data'});
+    if (length(@{$bioprojects}) == 1 && @{$bioprojects}[0] == undef) {
+        error("A BioProject must be selected!");
+    }
+
+    my @results = ();
+    foreach my $bioproject (@{$bioprojects}) {
+      my ($query_file, $query_type, $result_file) = $self->process_input($param, $bioproject);
+      my $data = $self->display_results($param, $query_file, $query_type, $result_file)->{'data'};
+
+      # Add BioProject identifier for display purposes.
+      my @filename_segments = split('_', $bioproject);
+      foreach my $result (@{$data}) {
+          $result->{'bioproject'} = $filename_segments[3];
+      }
+
+      push(@results, $data);
     }
 
     return {
@@ -160,13 +173,17 @@ sub _get_database_type {
 
 
 sub process_input {
-    my ($self, $cgi, $bioproject_query_number) = @_;
+    my ($self, $cgi, $database) = @_;
 
     my $query_sequence = $cgi->{"query_sequence"};
     my $query_type     = $cgi->{"query_type"};
 
+    if (!$database || $database eq '') {
+        error("A BioProject must be selected!");
+    }
+
     if (!$query_sequence) {
-        message("A query sequence is required!");
+        error("A query sequence is required!");
     }
 
     my $query_file = $self->process_query_sequence($query_sequence);
@@ -182,18 +199,7 @@ sub process_input {
 #    my $out_file = ($address eq "127.0.0.1") ? 'localhost-debug' : $temp_file->filename;
     my $out_file = $temp_file->filename;
 
-    my $database;
-    my $has_bioproject = 0;
-    my $bioproject_id = "bioproject" . $bioproject_query_number;
-    if ($cgi->{$bioproject_id} =~ /^not_selected$/) {
-        $database = $cgi->{"database"};
-    } else {
-        $database = $cgi->{$bioproject_id};
-        $has_bioproject = 1;
-    }
-
     my $search_type = $cgi->{"search_type"};
-
     my $command_line;
 
     my @path_parts    = split('_',$database);
@@ -201,12 +207,8 @@ sub process_input {
     my $version = $path_parts[0];
 
     my $database_location;
-    if ($has_bioproject) {
-        my $bioproject = $path_parts[3];
-        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
-    } else {
-        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $path_parts[3]);
-    }
+    my $bioproject = $path_parts[3];
+    $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
 
     if ($search_type eq "blast") {
         my $blast_app = $cgi->{"blast_app"};

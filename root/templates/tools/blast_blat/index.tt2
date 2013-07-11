@@ -154,7 +154,7 @@
     </p>
     <p>
     Bioproject:
-    <select id="bioproject" name="bioproject">
+    <select id="bioproject" name="bioproject" multiple="multiple" size="3" style="vertical-align: top;">
 [%
     FOREACH version IN c.stash.blast_databases.keys.sort;
       FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
@@ -165,27 +165,7 @@
             IF bioprojectkey == "name" || bioprojectkey == "symbolic" || bioprojectkey == "not applicable";
             ELSE;
               bioproject = c.stash.blast_databases.$version.$database_type.$specieskey.$bioprojectkey;
-		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';
-            END;
-          END;
-        END;
-      END;
-    END;
-%]
-    </select>
-    Optional second bioproject:
-    <select id="bioproject2" name="bioproject2">
-[%
-    FOREACH version IN c.stash.blast_databases.keys.sort;
-      FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
-	specieskeys = c.stash.blast_databases.$version.$database_type.keys.sort;
-	FOREACH specieskey IN specieskeys;
-          bioprojectkeys = c.stash.blast_databases.$version.$database_type.$specieskey.keys.sort;
-          FOREACH bioprojectkey IN bioprojectkeys;
-            IF bioprojectkey == "name" || bioprojectkey == "symbolic" || bioprojectkey == "not applicable";
-            ELSE;
-              bioproject = c.stash.blast_databases.$version.$database_type.$specieskey.$bioprojectkey;
-		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';
+		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" selected="selected" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';
             END;
           END;
         END;

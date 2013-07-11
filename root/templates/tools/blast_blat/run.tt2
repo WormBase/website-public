@@ -7,14 +7,8 @@
 
 [% count = 0 %]
 [% link = c.uri_for('/tools', 'blast_blat', 'run').path %]
-[% IF data.size > 0 %]
-  [% view_fraction = 100 / data.size %]
-[% ELSE %]
-  [% view_fraction = 100 %]
-[% END %]
-<div style="display: flex; flex-direction: column;">
 [% FOREACH run IN data %]
-  <div style="transform: scale(0.75, 0.75) translate(0%, -15%); -webkit-transform: scale(0.75, 0.75) translate(0%, -15%); -moz-transform: scale(0.75, 0.75) translate(0%, -15%); -ms-transform: scale(0.75, 0.75) translate(0%, -15%); -o-transform: scale(0.75, 0.75) translate(0%, -15%); float: left; width: [% view_fraction %]%;">
+  <div>
   <select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
       [% offset = count %]
       [% FOREACH obj IN run %]
@@ -29,7 +23,6 @@
       [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
     [% END %]
   </div>
-  [% END %]
-</div>
+[% END %]
 
  
