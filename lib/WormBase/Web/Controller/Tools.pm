@@ -22,12 +22,6 @@ sub support :Path('support') :Args(0) {
     return;
 }
 
-sub operator :Path("operator") :Args(0) {
-    my ($self, $c) = @_; 
-    $c->stash->{template} = "auth/operator.tt2";
-    $c->stash->{class} = "operator";
-}
-
 sub comment :Path("comments") :Args(0) {
     my ( $self, $c) = @_;
     $c->stash->{template} = "feed/comment_list.tt2";
