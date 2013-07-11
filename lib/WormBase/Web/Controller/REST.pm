@@ -1001,10 +1001,18 @@ sub rest_config_GET {
         || $c->req->params->{'content-type'}
         || 'application/json';
     $c->response->header( 'Content-Type' => $content_type );
-
     my $config = $c->config;
-    for my $part (@path_parts){
-      $config = $config->{$part};
+
+
+    my $class = $c->req->params->{'class'};
+    my $section = $config->{sections}->{species}->{$class} ? 'species' : 'resources' if $class;
+
+    if($class && $section) {
+        $config = $config->{sections}->{$section}->{$class};
+    }else {
+        for my $part (@path_parts){
+          $config = $config->{$part};
+        }
     }
 
     $self->status_ok(
