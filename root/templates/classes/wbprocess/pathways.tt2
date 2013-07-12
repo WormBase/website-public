@@ -1,10 +1,22 @@
-[% link_base = 'http://www.wikipathways.org/index.php/Pathway:' %]
+[% 
+link_base 	= 'http://www.wikipathways.org/index.php/Pathway:';
+wp_id		= fields.pathway.data.pathway_id;
+%]
+
 
 [% IF fields.pathway.data.pathway_id %]
-Link to WikiPathways: <a href="[% link_base _ fields.pathway.data.pathway_id %]">[% link_base _ fields.pathway.data.pathway_id %]</a>
+Link to WikiPathways: <a href="[% link_base _ wp_id %]">[% link_base _ wp_id %]</a>
 <br />
 <br />
-<!-- WikiPathways iframe, inconsistent reliability -->
-<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[% fields.pathway.data.pathway_id %]" width="800px" height="500px" style="overflow:hidden;"></iframe>
+<img class="wp-img" src="/img/wikipathway/[% wp_id %].png" width="800px" height="664px" />
+
+
+<!-- WikiPathways iframe, disabled for now 
+<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[% wp_id %]"  style="overflow:hidden;"></iframe>
+-->
+
 [% END %]
 
+<script type="text/javascript">
+	$jq('.wp-img').resizable();
+</script>
