@@ -1055,7 +1055,7 @@ sub extract_hit_info {
     }
 
     elsif ($hit_name =~ /^(CHROMOSOME_|)([IVX]+|MtDNA)/) {
-        $gbrowse_root_id = 'c_elegans';
+        $gbrowse_root_id = 'c_elegans_PRJNA13758';
     } else {
 	# Just use the species ID
 	$gbrowse_root_id = $species;
