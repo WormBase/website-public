@@ -33,19 +33,19 @@ sub comment :Path("comments") :Args(0) {
 
 sub tools :Path Args {
     my ( $self, $c, @args) = @_;
-    #  $c->stash->{noboiler} = 1;
+
     my $tool = shift @args;
     my $action= shift @args || "index";
     $c->log->debug("using $tool and running $action\n");
 
     if ("$tool" eq 'schema' && "$action" eq "run") {
-    	$tool = 'tree';
-    	$c->req->params->{'name'} = 'all';
+        $tool = 'tree';
+        $c->req->params->{'name'} = 'all';
     } #Since schema is identical to tree, use tree to generate content
     if ("$tool" eq 'gmap' || "$tool" eq 'epic') {
-    	$c->req->params->{'class'} = 'Map' unless $c->req->params->{'class'} || "$tool" eq 'epic';
-    	$c->req->params->{'tool'} = $tool;
-    	$tool = 'epic';
+        $c->req->params->{'class'} = 'Map' unless $c->req->params->{'class'} || "$tool" eq 'epic';
+        $c->req->params->{'tool'} = $tool;
+        $tool = 'epic';
     } #Since gmap is identical to epic, use epic to load display
 
 
@@ -62,27 +62,28 @@ sub tools :Path Args {
         ($data, $cache_server) = $c->check_cache($cache_id, 'filecache');
 
         unless ($data) {
-	    $c->log->debug("not in cache, run $tool\n");
+        $c->log->debug("not in cache, run $tool\n");
             $data = $api->_tools->{$tool}->$action($c, $c->req->params);
             $c->set_cache($cache_id => $data, 'filecache');
         }
         else {
             $c->stash->{cache} = $cache_server if($cache_server);
         }
-    }elsif ($action eq 'run' && (keys %{$c->req->params} < 1)){
+    } elsif ($action eq 'run' && (keys %{$c->req->params} < 1)){
           $c->res->redirect($c->uri_for('/tools', $tool)->path, 307);
           return;
-    }elsif ($tool =~/aligner/) {
+    } elsif ($tool =~/aligner/) {
         $data = $api->_tools->{$tool}->$action($c, $c->req->params);
     } elsif ($tool =~ /epic/ || $tool =~ /gmap/) {
         $data = $api->_tools->{$tool}->$action($c,$c->req->params);
     } elsif($api->_tools->{$tool}) {
         $data = $api->_tools->{$tool}->$action($c->req->params, $c);
     } else {
-        $c->response->status(404);
+        # return 404 if the tool cannot be found
+        $c->detach('/soft_404');
         return;
     }
- 
+
     # Create different actions for different tools instead of using
     #   this single catch-all action? -AD
     if($data->{redirect}){
@@ -90,15 +91,16 @@ sub tools :Path Args {
         if ($data->{redirect_as_is}) {
             $url = $data->{redirect};
         } else {
-	    $url = $c->uri_for('/search',$data->{class},$data->{name})->path."?from=".$data->{redirect}."&query=".$data->{msg};
+            $url = $c->uri_for('/search',$data->{class},$data->{name})->path."?from=".$data->{redirect}."&query=".$data->{msg};
         }
-	$c->res->redirect($url, 307);
+        $c->res->redirect($url, 307);
     }
 
-    if ($tool eq 'tree' || $tool eq 'epic') { $c->stash->{data} = $data; }
-    else {
+    if ($tool eq 'tree' || $tool eq 'epic') { 
+        $c->stash->{data} = $data; 
+    } else {
         for my $key (keys %$data) {
-	     $c->log->debug("save in stash key $key\n");
+            $c->log->debug("save in stash key $key\n");
             $c->stash->{$key}=$data->{$key};
         }
     }
