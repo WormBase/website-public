@@ -140,12 +140,25 @@
 
     MACRO gbrowselink(data, label, search) BLOCK;
       valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
-      IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-        url = c.uri_for('/tools', 'genome', 'gbrowse', data.taxonomy).path _ '?name=' _ item.name.class _ ":" _ item.name.id;
-        label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse</a>]</span>";
-      ELSIF(!search);
-        url = c.uri_for('/tools', 'genome', 'gbrowse', data.taxonomy).path;
-        data.label ? "<a href=\"$url\">" _ data.label _ "</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse</a>]</span>";
+      species = undef;
+      IF data.taxonomy;
+        known_species = false;
+        FOREACH s IN c.config.sections.species_list.keys;
+          IF s == data.taxonomy;
+            species = s;
+          END;
+        END;
+      END;
+      IF species;
+        FOREACH bioproject IN c.config.sections.species_list.$species.bioprojects.keys;
+          IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
+            url = c.uri_for('/tools', 'genome', 'gbrowse', species _ '_' _ bioproject).path _ '?name=' _ item.name.class _ ":" _ item.name.id;
+            label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse</a>]</span>";
+          ELSIF(!search);
+            url = c.uri_for('/tools', 'genome', 'gbrowse', species _ '_' _ bioproject).path;
+            data.label ? "<a href=\"$url\">" _ data.label _ "</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse</a>]</span>";
+          END;
+        END;
       END;
     END;
 
