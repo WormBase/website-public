@@ -198,25 +198,33 @@ function resetAllOptions() {
 }   
 
 function updateMessage() {
-    var sequence = document.getElementById('query_sequence').value;
+    var userInput = document.getElementById('query_sequence').value;
 
-    sequence = sequence.replace(/^>[^\n\r]*[\n\r]+/, '');
+    sequence = userInput.replace(/^>[^\n\r]*[\n\r]+/, '');
     sequence = sequence.replace(/[\n\r]/g,           '');
     sequence = sequence.replace(/\s+/g,              '');
     
+    var messageDiv = document.getElementById("message");
+
     if (!sequence) {
-        document.getElementById("message").innerHTML = "Please enter a query sequence...";
+        messageDiv.innerHTML = "Please enter a query sequence...";
+        messageDiv.className = "message message-error";
     } else if (sequence.length < 10) {
-        document.getElementById("message").innerHTML = "At least 10 residues is required to perform a search!";
+        messageDiv.innerHTML = "At least 10 residues is required to perform a search!";
+        messageDiv.className = "message message-error";
+    } else if (!is_fasta(userInput)) {
+        messageDiv.innerHTML = "Input is not in <a href=\"http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml\">FASTA format</a>...";
+        messageDiv.className = "message message-error";
     } else if (document.getElementById('database').options[0].value == "not_selected") {
-        document.getElementById("message").innerHTML = "No database is available for this query-application pair!";
+        messageDiv.innerHTML = "No database is available for this query-application pair!";
+        messageDiv.className = "message message-error";
     } else if (document.getElementById('bioproject').selectedIndex == -1) {
-        document.getElementById("message").innerHTML = "Please select at least one BioProject...";
+        messageDiv.innerHTML = "Please select at least one BioProject...";
+        messageDiv.className = "message message-error";
     } else {
-        document.getElementById("message").innerHTML = "Please click submit to perform search...";
+        messageDiv.innerHTML = "Please click submit to perform search...";
+        messageDiv.className = "message message-valid";
     }    
-    
-    return 1;
 }    
     
 
@@ -359,6 +367,39 @@ function copyArray(array) {
     return copyArray;
 }    
 
+// Input validation. Checks whether the provided user input
+// is either a raw sequence or in FASTA format. FASTA identifier
+// queries are not included here.
+is_fasta = function(userInput) {
+    var lines = userInput.split(/[\r\n]+/);
+    var state = 'init';
+    var inputOkay = true;
+
+    for (var i = 0; i < lines.length; i++) {
+        if (state == 'init' || state == 'seq_or_id') {
+            if (lines[i].match(/^[a-zA-Z*-][a-zA-Z *-]*\s*$/)) {
+                if (state == 'init')
+                    state = 'seq_only';
+            } else if (lines[i].match(/^>.+$/)) {
+                state = 'seq_multi_start';
+            } else {
+                inputOkay = false;
+            }
+        } else if (state == 'seq_only') {
+            if (lines[i].match(/^[a-zA-Z*-][a-zA-Z *-]*\s*$/) == null) {
+                inputOkay = false;
+            }
+        } else if (state == 'seq_multi_start') {
+            if (lines[i].match(/^[a-zA-Z*-][a-zA-Z *-]*\s*$/) == null) {
+                inputOkay = false;
+            }
+            state = 'seq_or_id';
+        }
+    }
+
+    return inputOkay;
+}
+
 // ------------------------------------------------
 // 
 //     addEvent function is an excerpt from:
@@ -385,11 +426,6 @@ DOMhelp={
 
 // 
 // ------------------------------------------------
-
-function debug(message) {
-    document.getElementById("message2").innerHTML += message + "<br>";    
-}    
-
 
 function addSampleNucleotide() {
     document.getElementById('query_sequence').value = sampleNucleotide;
