@@ -41,6 +41,20 @@ Running the application via Starman
 
     starman --port 8000 --workers 10 wormbase.psgi
 
+Unit Testing
+------------
+
+We provide two sets of unit tests for the REST API and WormBase Perl API respectively. The tests are based on [Test::More](http://perldoc.perl.org/Test/More.html), they run on a fully populated WormBase database backend, they autonomously start and stop a Catalyst web server (random port between 28,000 and 31,999).
+
+Running REST API tests:
+
+    perl t/rest.t
+
+
+Running WormBase Perl API tests:
+
+    API_TESTS=1 perl t/api.t
+
 Contributing
 ------------
 
