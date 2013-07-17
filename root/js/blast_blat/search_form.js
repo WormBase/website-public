@@ -438,6 +438,8 @@ function addSamplePeptide() {
 DOMhelp.addEvent(document.getElementById('query_sequence'),     'change', 
                  function(){queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
 
+DOMhelp.addEvent(document.getElementById('query_sequence'), 'keyup', updateMessage, false);
+
 // Safari does not support onchange for radios, onclick needs to be used
 DOMhelp.addEvent(document.getElementById('search_type_blast'),  'click',  updateAllOptions,    false);
 DOMhelp.addEvent(document.getElementById('search_type_blat'),   'click',  updateAllOptions,    false);
