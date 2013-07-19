@@ -2203,6 +2203,34 @@ sub _fetch_gff_gene {
     return $trans;
 }
 
+#----------------------------------------------------------------------
+# Returns count of objects to be returned with the given tag.
+# If no tag is given, it counts the amount of objects in the next column.
+# Arg[0]   : The AceDB object to interrogate.
+# Arg[1]   : The AceDB schema location to count the amount of retrievable objects;
+#
+sub _get_count{
+  my ($self, $obj, $tag) = @_;
+  $obj = $obj->fetch;
+
+  # get the first item in the tag
+  my $first_item = $tag ? $obj->get($tag, 0) && $obj->get($tag, 0)->right : $obj->right;
+
+  # get our current column location
+  my $col = $first_item->{'.col'};
+
+  # check each row to make sure they are all objects
+  foreach my $row (@{$first_item->{'.raw'}}){
+    unless(@{$row}[$col]){
+        # if a row is not an object, fetch the tag and return the count
+        # we try to avoid doing this since it breaks ace for large amts of objects
+        return scalar $obj->get($tag, 0)->col;
+    }
+  }
+
+  # just return the row counts, which should equal the amount of objects for this tag
+  return scalar @{$first_item->{'.raw'}};
+}
 
 
 1;
