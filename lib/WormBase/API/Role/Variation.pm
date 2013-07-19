@@ -29,7 +29,8 @@ sub _process_variation {
 
     my $molecular_change =  $variation->Type_of_mutation || "Not curated" ;
 
-    my @phens = $variation->Phenotype;
+    my $phen_count = $self->_get_count($variation, 'Phenotype');
+
     my %effects;
     my %locations;
     my (@aa_change,@aa_position, @isoform);
@@ -84,7 +85,7 @@ sub _process_variation {
         aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
         isoform          => @isoform ? \@isoform : undef,
         effects          => @effect ? \@effect : undef,
-        phen_count       => scalar @phens || 0,
+        phen_count       => "$phen_count",
         locations    => @location ? join(', ', map {$_=~s/_/ /g;$_} @location) : undef,
     );
     return \%data;
