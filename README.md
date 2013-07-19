@@ -55,6 +55,19 @@ Running WormBase Perl API tests:
 
     API_TESTS=1 perl t/api.t
 
+Comparative Testing
+-------------------
+
+For testing GBrowse installations, we provide a test implementation that compares `gbrowse_img` images to a reference set.
+
+Running comparative GBrowse tests:
+
+    perl t/gbrowse.t --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img
+
+Creating reference image set:
+
+    perl t/gbrowse.t --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img --reference
+
 Contributing
 ------------
 
