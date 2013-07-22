@@ -89,15 +89,18 @@ requires 'MooseX::Role::WithOverloading';                        # => '0.05';
 requires 'MRO::Compat';                                          #
 requires 'Net::Twitter';                                         #
 requires 'Net::OAuth::Simple';                                   #
-requires 'Number::Format';                                       #
+requires 'Net::Server::SS::PreFork';                             #
+requires 'Number::Format';                                       # Daemon controlling starman
 requires 'namespace::clean';                                     #
 requires 'namespace::autoclean';                                 #
 requires 'Package::DeprecationManager'           => '0.10';      #
 requires 'Package::Stash'                        => '0.21';      # 
 requires 'Package::Stash::XS'                    => '0.18';      #
 requires 'Params::Util';                                         #
+requires 'Proc::Wait3';
 requires 'Term::ReadLine';                                       #
 requires 'Search::Xapian';                                       #
+requires 'Server::Starter';                                      # Daemon running starman
 requires 'Sub::Exporter';                                        #
 requires 'Sub::Install';                                         #
 requires 'Sub::Identify';                                        #
@@ -125,6 +128,9 @@ requires 'Catalyst::Helper::PSGI';                               #
 requires 'Starman';                                              #
 requires 'URI::Escape::XS';
 requires 'Log::Any::Adapter::Log4perl';                          # cache logging
+
+# Testing:
+requires 'Readonly';
 
 install_script glob('script/*.pl');
 auto_install;

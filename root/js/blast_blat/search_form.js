@@ -16,7 +16,12 @@ var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
 function updateAllOptions() {
     updateBlastAppOptions();
     updateTypeOptions();
+
+    // Need to update database options twice, or otherwise the BioProject
+    // select box is not updated correctly.
     updateDatabaseOptions();
+    updateDatabaseOptions();
+
     updateMessage();
 
     return 1;
@@ -100,7 +105,7 @@ function updateDatabaseOptions() {
     updateOneOption(copy, bioprojectElement, type, 'type');
     copy = copyArray(bioprojectElement)
     updateOneOption(copy, bioprojectElement, version, 'version');
-    
+
     if (!database.options.length) {
         var newOption = new Option('No database available', 'not_selected', 0, 0);
         newOption.selected = true;
@@ -108,13 +113,9 @@ function updateDatabaseOptions() {
         database.options[0] = newOption;
     }
 
-    if (!bioprojectElement.options.length) {
-        newOption = new Option('Not applicable', 'not_selected', 0, 0);
-        newOption.selected = true;
+    for (var i = 0; i < bioprojectElement.options.length; i++)
+        bioprojectElement.options[i].selected = true;
 
-        bioprojectElement.options[0] = newOption;
-    }
-    
     return 1;
 }   
 
@@ -173,7 +174,6 @@ function updateOneOption(cloneArray, parentElement, optionCriterion, criterion) 
     }
 
     // If no option is selected in the new options, select the first one
-    // This should default to C. elegans
     if (!numberOptionsSelected && parentElement.options.length > 0) {
        parentElement.options[0].selected = true;
     }
@@ -198,29 +198,33 @@ function resetAllOptions() {
 }   
 
 function updateMessage() {
-    var sequence = document.getElementById('query_sequence').value;
+    var userInput = document.getElementById('query_sequence').value;
 
-    sequence = sequence.replace(/^>[^\n\r]*[\n\r]+/, '');
+    sequence = userInput.replace(/^>[^\n\r]*[\n\r]+/, '');
     sequence = sequence.replace(/[\n\r]/g,           '');
     sequence = sequence.replace(/\s+/g,              '');
     
-    if (!sequence) {
-        document.getElementById("message").innerHTML = "Please enter a query sequence ...";
-    }    
-    
-    else if (sequence.length < 10) {
-        document.getElementById("message").innerHTML = "At least 10 residues is required to perform a search!";
-    }    
-    
-    else if (document.getElementById('database').options[0].value == "not_selected") {
-        document.getElementById("message").innerHTML = "No database is available for this query-application pair!";
-    }    
+    var messageDiv = document.getElementById("message");
 
-    else {
-        document.getElementById("message").innerHTML = "Please click submit to perform search ...";
+    if (!sequence) {
+        messageDiv.innerHTML = "Please enter a query sequence...";
+        messageDiv.className = "message message-error";
+    } else if (sequence.length < 10) {
+        messageDiv.innerHTML = "At least 10 residues is required to perform a search!";
+        messageDiv.className = "message message-error";
+    } else if (!is_fasta(userInput)) {
+        messageDiv.innerHTML = "Input is not in <a href=\"http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml\">FASTA format</a>...";
+        messageDiv.className = "message message-error";
+    } else if (document.getElementById('database').options[0].value == "not_selected") {
+        messageDiv.innerHTML = "No database is available for this query-application pair!";
+        messageDiv.className = "message message-error";
+    } else if (document.getElementById('bioproject').selectedIndex == -1) {
+        messageDiv.innerHTML = "Please select at least one BioProject...";
+        messageDiv.className = "message message-error";
+    } else {
+        messageDiv.innerHTML = "Please click submit to perform search...";
+        messageDiv.className = "message message-valid";
     }    
-    
-    return 1;
 }    
     
 
@@ -238,7 +242,10 @@ function getParamValues() {
 
     var version       = versionBox.options[versionBox.selectedIndex].value;
     var searchType    = typeBox.options[typeBox.selectedIndex].value;
-    var bioproject    = bioprojectBox.options[bioprojectBox.selectedIndex].value;
+    var bioproject    = null;
+
+    if (bioprojectBox.selectedIndex >= 0)
+        bioproject = bioprojectBox.options[bioprojectBox.selectedIndex].value;
 
     var queryType;
     var dbType;
@@ -360,6 +367,39 @@ function copyArray(array) {
     return copyArray;
 }    
 
+// Input validation. Checks whether the provided user input
+// is either a raw sequence or in FASTA format. FASTA identifier
+// queries are not included here.
+is_fasta = function(userInput) {
+    var lines = userInput.split(/[\r\n]+/);
+    var state = 'init';
+    var inputOkay = true;
+
+    for (var i = 0; i < lines.length; i++) {
+        if (state == 'init' || state == 'seq_or_id') {
+            if (lines[i].match(/^[a-zA-Z*-][a-zA-Z *-]*\s*$/)) {
+                if (state == 'init')
+                    state = 'seq_only';
+            } else if (lines[i].match(/^>.+$/)) {
+                state = 'seq_multi_start';
+            } else {
+                inputOkay = false;
+            }
+        } else if (state == 'seq_only') {
+            if (lines[i].match(/^[a-zA-Z*-][a-zA-Z *-]*\s*$/) == null) {
+                inputOkay = false;
+            }
+        } else if (state == 'seq_multi_start') {
+            if (lines[i].match(/^[a-zA-Z*-][a-zA-Z *-]*\s*$/) == null) {
+                inputOkay = false;
+            }
+            state = 'seq_or_id';
+        }
+    }
+
+    return inputOkay;
+}
+
 // ------------------------------------------------
 // 
 //     addEvent function is an excerpt from:
@@ -387,11 +427,6 @@ DOMhelp={
 // 
 // ------------------------------------------------
 
-function debug(message) {
-    document.getElementById("message2").innerHTML += message + "<br>";    
-}    
-
-
 function addSampleNucleotide() {
     document.getElementById('query_sequence').value = sampleNucleotide;
 }    
@@ -402,6 +437,8 @@ function addSamplePeptide() {
 
 DOMhelp.addEvent(document.getElementById('query_sequence'),     'change', 
                  function(){queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
+
+DOMhelp.addEvent(document.getElementById('query_sequence'), 'keyup', updateMessage, false);
 
 // Safari does not support onchange for radios, onclick needs to be used
 DOMhelp.addEvent(document.getElementById('search_type_blast'),  'click',  updateAllOptions,    false);
@@ -421,7 +458,8 @@ DOMhelp.addEvent(document.getElementById('version'),          'change', updateAl
 
 DOMhelp.addEvent(document.getElementById('typeBox'),          'change', updateAllOptions,    false);
 
-DOMhelp.addEvent(document.getElementById('bioproject'),          'change', updateAllOptions,    false); 
+DOMhelp.addEvent(document.getElementById('bioproject'), 'change', updateMessage, false);
+DOMhelp.addEvent(document.getElementById('bioproject'), 'mousedown', updateMessage, false);
 
 // MS IE does not recognize change event on textarea if not done manually, using mouseout to supplement this
 DOMhelp.addEvent(document.getElementById('sample_peptide'),     'click',

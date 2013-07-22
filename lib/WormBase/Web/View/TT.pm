@@ -21,6 +21,7 @@ __PACKAGE__->config({
 		     TEMPLATE_EXTENSION => '.tt2',
 		     RECURSION    => 1,
 			 EVAL_PERL => 1,
+			 render_die => 1,
 		     # Automatically pre- and post-chomp to keep
 		     # templates simpler and output cleaner.
 		     # Might want to use "2" instead, which collapses.

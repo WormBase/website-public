@@ -9,6 +9,7 @@ extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
 with    'WormBase::API::Role::Interaction';
+with    'WormBase::API::Role::Variation';
 
 =pod 
 
@@ -795,74 +796,6 @@ sub polymorphisms {
 	     data        => @data ? \@data : undef };
 }
 
-# Private method: glean some information about a variation.
-sub _process_variation {
-    my ( $self, $variation ) = @_;
-
-    my $type = join (', ', map {$_=~s/_/ /g;$_} grep{ $_=~/^(?!Natural_variant)/; } $variation->Variation_type ) || 'unknown';
-
-    my $molecular_change =  $variation->Type_of_mutation || "Not curated" ;
-
-    my @phens = $variation->Phenotype;
-    my %effects;
-    my %locations;
-    my (@aa_change,@aa_position, @isoform);
-    my ($aa_cha,$aa_pos);
-    foreach my $type_affected ( $variation->Affects ) {
-        foreach my $item_affected ( $type_affected->col ) {    # is a subtree
-          foreach my $val ($item_affected->col){
-              if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
-              else { 
-                $effects{$val}++;
-                if ($val =~ /missense/i) {
-                  # Not specified for every allele.
-                  ($aa_pos,$aa_cha) = eval { $val->right->row };
-                  if ($aa_cha) {
-                      $aa_cha =~ /(.*)\sto\s(.*)/;
-                      $aa_cha = "$1 -> $2";
-                  }
-                }  elsif ($val =~ /nonsense/i) {
-                  # "Position" here really one of Amber, Ochre, etc.
-                    ($aa_pos,$aa_cha) = eval { $val->right->row; };
-                    $aa_cha   =~ /.*\((.*)\).*/;
-                    $aa_pos = $1 ? $1 : $aa_pos;
-                    # Strip the position from the change.
-                    $aa_cha =~ s/\($aa_pos\)//;
-                }
-                push(@aa_change, $aa_cha) if $aa_cha;
-                push(@aa_position, $aa_pos) if $aa_pos;
-                push(@isoform, $self->_pack_obj($item_affected)) if $aa_pos;
-              }
-          }
-        }
-    }
-
-    $type = "transposon insertion" if $variation->Transposon_insertion;
-    my @effect = keys %effects;
-    my @location = keys %locations;
-
-    my $method_name = $variation->Method;
-    my $method_remark = $method_name->Remark if $method_name;
-
-    # Make string user friendly to read and add tooltip with description:
-    $method_name = "$method_name";
-    $method_name =~ s/_/ /g;
-    $method_name = "<a class=\"longtext\" tip=\"$method_remark\">$method_name</a>";
-
-    my %data = (
-        variation        => $self->_pack_obj($variation),
-        type             => $type && "$type",
-        method_name      => $method_name,
-        molecular_change => $molecular_change && "$molecular_change",
-        aa_change        => @aa_change ? join('<br />', @aa_change) : undef,
-        aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
-        isoform          => @isoform ? \@isoform : undef,
-        effects          => @effect ? \@effect : undef,
-        phen_count       => scalar @phens || 0,
-        locations	 => @location ? join(', ', map {$_=~s/_/ /g;$_} @location) : undef,
-    );
-    return \%data;
-}
 
 # reference_allele { }
 # This method will return a complex data structure 
@@ -1016,11 +949,8 @@ sub history{
 			my @versions = $history_type->col;
 			foreach my $version (@versions){
 				
-				#print "(".join(",",$version->row).")\n"; # DELETE
-				# WBGene00011256, WBGene00043702
-				
 				# NOTE: version may not contain event
-				my ($vers,   $date,   $curator, $event) 
+				my ($vers,   $date,   $curator, $event_tag) 
 					= $version->row;
 				
 				my %current_row = (
@@ -1030,12 +960,14 @@ sub history{
 					curator => $self->_pack_obj($curator), 
 				);
 				
-				if($event){
+				if($event_tag){
 				
 					my @events = $version->right(3)->col;
+					my (@actions, $remark, $gene);
 					foreach my $event (@events){
-						
-						my ($action, $remark, $gene) = $event->row;
+					
+						my $action;
+						($action, $remark, $gene) = $event->row;
 						
 						#next if $action eq 'Imported';
 						
@@ -1045,17 +977,21 @@ sub history{
 							|| $action eq 'Split_from'
 							|| $action eq 'Split_into' )
 						{
-							$gene   = $remark;
-							$remark = undef;
+							if( $remark ){
+								$gene   = $remark;
+								$remark = undef;
+							}
 						}
 						
-						my %final_row = ( %current_row,
-							action  => $action && "$action",
-							remark  => $remark && "$remark",
-							gene    => $self->_pack_obj($gene),
-						);
-						push @data, \%final_row;
+						push @actions, $action;
 					}
+					
+					my %final_row = ( %current_row,
+						action  => join(",", sort @actions),
+						remark  => $remark && "$remark",
+						gene    => $self->_pack_obj($gene),
+					);
+					push @data, \%final_row;
 					
 				}else{
 				
@@ -1307,16 +1243,17 @@ sub treefam {
     my $self   = shift;
     my $object = $self->object;
     
-    my @data;
+    my %data;
     foreach (@{$self->_all_proteins}) {
-	my $treefam = $self->_fetch_protein_ids($_,'treefam');
-	# Ignore proteins that lack a Treefam ID
-	next unless $treefam;
-	push @data, "$treefam";
-    }			
-    
+        my $treefam = $self->_fetch_protein_ids($_,'treefam');
+        # Ignore proteins that lack a Treefam ID
+        next unless $treefam;
+        $data{"$treefam"} = "";
+    }
+    my @data = keys %data;
+    $self->log->debug("TREEFAM: " . join(',', @data));
     return { description => 'data and IDs related to rendering Treefam trees',
-	     data        => @data ? \@data : undef,
+             data        => @data ? \@data : undef,
     };
 }
 
@@ -1754,7 +1691,8 @@ sub gene_models {
 
         my $status = $cds->Prediction_status if $cds;
         $status =~ s/_/ /g if $status;
-        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+        $status = $status . ($cds && $cds->Matching_cDNA ? ' by cDNA(s)' : '');
+#        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);
@@ -1872,8 +1810,9 @@ sub _longest_segment {
     my ($self) = @_;
     # Uncloned genes will NOT have segments associated with them.
     my ($longest)
-	= sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->_abs_start}
+	= sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->abs_start}
     @{$self->_segments} if $self->_segments;
+
     return $longest;
 }
 

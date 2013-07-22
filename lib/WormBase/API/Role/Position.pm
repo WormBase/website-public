@@ -263,7 +263,7 @@ sub make_genetic_position_object {
     my ($self,$class,$object,$chromosome,$position,$error,$method) = @_;
 
     my $label;
-    if ($position) {
+    if (defined $position) {
         $label= sprintf("$chromosome:%2.2f +/- %2.3f cM",$position,$error || 0);
     }
     else {

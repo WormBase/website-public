@@ -5,20 +5,42 @@
  
 </head> 
 
-<select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
-    [% count = 0 %]
-    [% link = c.uri_for('/tools', 'blast_blat', 'run').path %]
-    [% FOREACH obj IN data %]
-	[% count = count + 1  %]
-	<option id="[% count %]" value="#blast_result_[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>
-    [% END %] 
-</select>
- 
+[% count = 0 %]
+[% link = c.uri_for('/tools', 'blast_blat', 'run').path %]
 
-[% count = 0 %] 
-[% FOREACH obj IN data %]
-  [% count = count + 1  %]  
-  [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
+Jump to BioProject:
+[% bioprojects = [] %]
+[% FOREACH run IN data %]
+  [% FOREACH obj IN run %]
+    [% bioprojects.push(obj.bioproject) %]
+  [% END %]
+[% END %]
+<select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
+[% FOREACH bioproject IN bioprojects.unique.sort %]
+  <option value="#bioproject_[% bioproject %]">[% bioproject %]</option>
+[% END %]
+</select>
+<hr />
+
+[% FOREACH run IN data %]
+  <div>
+  <select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
+      [% offset = count %]
+      [% FOREACH obj IN run %]
+	  [% count = count + 1  %]
+	  <option id="[% count %]" value="#blast_result_[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>
+      [% END %] 
+  </select>
+
+    [% count = offset %] 
+    [% FOREACH obj IN run %]
+      [% IF count == offset %]
+      <a name="bioproject_[% obj.bioproject %]"></a>
+      [% END %]
+      [% count = count + 1  %]  
+      [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
+    [% END %]
+  </div>
 [% END %]
 
  

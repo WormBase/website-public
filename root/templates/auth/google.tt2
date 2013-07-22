@@ -1,0 +1,66 @@
+
+
+  <!-- Place this asynchronous JavaScript just before your </body> tag -->
+  <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+
+  <style type="text/css">
+    #customBtn {
+      display: inline-block;
+      background: #dd4b39;
+      color: white;
+      width: 165px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+    #customBtn:hover {
+      background: #e74b37;
+      cursor: hand;
+    }
+    span.label {
+      font-weight: bold;
+    }
+    span.icon {
+      background: url('/img/buttons/btn_red_32.png') transparent 5px 50% no-repeat;
+      display: inline-block;
+      vertical-align: middle;
+      width: 35px;
+      height: 35px;
+      border-right: #bb3f30 1px solid;
+    }
+    span.buttonText {
+      display: inline-block;
+      vertical-align: middle;
+      padding-left: 35px;
+      padding-right: 35px;
+      font-size: 14px;
+      font-weight: bold;
+      /* Use the Roboto font that is loaded in the <head> */
+      font-family: 'Roboto',arial,sans-serif;
+    }
+  </style>
+
+
+
+
+  <div class="ui-corner-all" style="padding:2em; border:1px solid #CCC; background:#EEE;">
+
+[% IF user_exists %]
+    <h2>WormBase wants to connect to your Google account</h2>
+    <br />
+    <p>
+      This will let you use many features in WormBase.
+    </p>
+[% ELSE %]
+<h2>Sign in to WormBase with your Google account</h2>
+[% END %]
+<br />
+      <!-- In the callback, you would hide the gSignInWrapper element on a
+  successful sign in -->
+  <div id="gSignInWrapper">
+    <div id="customBtn" class="customGPlusSignIn" onClick="WB.openid.signin('google');">
+      <span class="icon"></span>
+      <span class="buttonText">Google</span>
+    </div>
+  </div>
+
+</div>

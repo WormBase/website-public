@@ -92,7 +92,7 @@ sub fetch_mendeley_id {
     
     my $json = JSON::Any->new();
     my $data = $json->jsonToObj( $response->content );
-    return $data->{key};
+    return $data->{key} if ref($data) eq 'HASH';
 }
 
 

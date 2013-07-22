@@ -135,9 +135,12 @@
             });
           }else{
             $jq("#logout").click(function(){
-              window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
+              // window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
+              // window.location.reload();
+
+              window.location = "/logout";
             });
-          }
+          }s
         });
     }
     
@@ -1590,20 +1593,22 @@ var Scrolling = (function(){
       },
 
       popupWin: function(url) {
-        var h = 400;
-        var w = 600;
-        var screenx = (screen.width/2) - (w/2 );
-        var screeny = (screen.height/2) - (h/2);
+        // var h = 400;
+        // var w = 600;
+        // var screenx = (screen.width/2) - (w/2 );
+        // var screeny = (screen.height/2) - (h/2);
         
-        var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
-        win2.focus();
+        // var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
+        // win2.focus();
+        window.location = url;
       }
   };
   
   
 
   
-function setupCytoscape(data, types){
+function setupCytoscape(data, types, clazz){
+    
           var edgeColor = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E" ],
               edgeColorMapper = {
                 attrName: "type",
@@ -1730,8 +1735,13 @@ function setupCytoscape(data, types){
                 function resetChecked(){
                   legend.find('input:checkbox').map(function(){
                     var t = $jq(this);
-                    if (t.attr('name') == 'type'){ t.prop('checked', (!t.val().match('Predicted')));}
-                    else { t.prop('checked', true);}
+                    if (t.attr('name') == 'type'){ 
+                        t.prop('checked', (!t.val().match('Predicted')));
+                    }else if(clazz === 'WBProcess' && t.val().match('nearby')){
+                        // don't check nearby if process page
+                    }else { 
+                        t.prop('checked', true);
+                    }
                   });
                 }
                 

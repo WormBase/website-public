@@ -7,6 +7,12 @@ use Hash::Merge;
 use Log::Log4perl::Catalyst;
 use Log::Any::Adapter;
 use HTTP::Status qw(:constants :is status_message);
+use Env 'API_TESTS';
+
+# Required for API unit tests:
+use File::Basename;
+use Test::More;
+use threads;
 
 use Catalyst qw/
       ConfigLoader
@@ -141,8 +147,9 @@ sub finalize_config { # overriding Plugin::ConfigLoader
 sub _setup_log4perl {
     # Specific loggers for different environments
     my $c = shift;
-    my $path = $c->path_to('conf', 'log4perl',
-                           $c->config->{installation_type} . '.conf');
+#    my $path = $c->path_to('conf', 'log4perl',
+#                           $c->config->{installation_type} . '.conf');
+    my $path = $c->path_to('conf', 'log4perl','root.conf');
     $c->log(Log::Log4perl::Catalyst->new($path->stringify));
 #    $c->log(Catalyst::Log::Log4perl->new($path->stringify));
     Log::Any::Adapter->set({ category => qr/^CHI/ }, 'Log4perl');
@@ -279,12 +286,12 @@ sub finalize_error {
     
     $c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["WormBase::Web::ErrorCatcherEmit","Catalyst::Plugin::ErrorCatcher::Email"];
     
-    if ($c->config->{installation_type} eq 'production') {
-	# Only server errors get emailed.
-	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless is_server_error($c->config->{'response_status'}); 
-    } else {
+#    if ($c->config->{installation_type} eq 'production') {
+#	# Only server errors get emailed.
+#	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless is_server_error($c->config->{'response_status'}); 
+#    } else {
 	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}}; 
-    }
+#    }
     $c->maybe::next::method;
 }
 
@@ -489,6 +496,45 @@ sub _widget_is_precached {
     unless(defined $section->{widgets}{$widget}){ return (); }
     return 1 if defined $section->{widgets}{$widget}{precache};
     return 0;
+}
+
+#######################################################
+#
+#    UNIT TEST SECTION
+#
+#######################################################
+
+sub BUILD {
+    my $self = shift;
+
+    return unless $API_TESTS;
+
+    threads->create('api_tests', $self);
+}
+
+sub api_tests {
+    # Don't be strict on references, so that we can call subs below.
+    no strict 'refs';
+
+    # Don't check "uninitialized" variables. All variables below are initialized.
+    # Perl is just claiming that $pkg has not been set, which is a lie.
+    no warnings 'uninitialized';
+
+    my $self = shift;
+    my $api = $self->model('WormBaseAPI');
+    my @tests = <t/api_tests/*.t>;
+    foreach my $test (@tests) {
+        require_ok($test);
+        my $pkg = basename($test, '.t') . '::';
+        &{%$pkg->{'config'}}($api);
+        for my $sub (keys %$pkg) {
+            subtest("$pkg::$sub", \&{%$pkg->{$sub}}) if $sub =~ /^test_/;
+        }
+    }
+
+    done_testing();
+
+    exit 0;
 }
 
 =head1 NAME

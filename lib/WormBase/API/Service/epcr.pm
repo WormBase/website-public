@@ -11,7 +11,7 @@ use File::Temp qw(tempfile);
 #use Bio::DB::GFF;
 
 use constant EPCR       => '/usr/local/wormbase/services/e-PCR';
-use constant BROWSER    => 'http://www.wormbase.org/tools/genome/gbrowse/c_elegans?name=%s;add=%s';
+use constant BROWSER    => 'http://www.wormbase.org/tools/genome/gbrowse/c_elegans_PRJNA13758?name=%s;add=%s';
 use constant GENBANK    => 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s';
 use vars qw/$GFFDB $ACEDB $REF $EPCR_DB $data $format $entry_type $M $N $file_dir/;
 
@@ -32,7 +32,7 @@ sub run {
 
     $ACEDB = $self->ace_dsn->dbh;
     my $version = $ACEDB->version;
-    $EPCR_DB = "/usr/local/wormbase/databases/$version/blast/c_elegans";
+    $EPCR_DB = "/usr/local/wormbase/databases/$version/blast/c_elegans/PRJNA13758";
     $file_dir = $self->tmp_dir('epcr');
     $GFFDB = $self->gff_dsn('c_elegans');
     $REF = $self;

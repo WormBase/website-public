@@ -157,6 +157,7 @@ sub reconnect {
     }
 
     $self->log->error("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
+    die "Could not connect to database ".$self->symbolic_name;
     return 0;
 }
 

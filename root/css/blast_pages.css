@@ -92,8 +92,17 @@ div.spacer {
 
 .message {
  font-weight: bold;
- color: #005300;
  font-style: italic;
+} 
+
+.message-valid {
+ font-weight: bold;
+ color: #22a022;
+ font-style: italic;
+} 
+
+.message-error {
+ color: #f03300;
 } 
 
 .sample {

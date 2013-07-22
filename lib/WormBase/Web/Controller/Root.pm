@@ -3,8 +3,21 @@ package WormBase::Web::Controller::Root;
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
+use parent 'Catalyst::Controller::REST';
+use JSON;
 use File::Spec;
 use namespace::autoclean -except => 'meta';
+
+__PACKAGE__->config(
+    'default'          => 'text/x-yaml',
+    'stash_key'        => 'rest',
+    'map'              => {
+        'text/x-yaml'      => 'YAML',
+        'text/html'        => [ 'View', 'TT' ], #'YAML::HTML',
+        'text/xml'         => 'XML::Simple',
+        'application/json' => 'JSON',
+    }
+);
 
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in WormBase.pm
@@ -72,9 +85,20 @@ sub default :Path {
 sub soft_404 :Path('/soft_404') {
     my ($self,$c) = @_;
     # 404: Page not found...
+
+    my $headers = $c->req->headers;
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'text/html';
+    $c->response->header( 'Content-Type' => $content_type );
+
     $c->stash->{template} = 'status/404.tt2';
-    $c->error('page not found');
-    $c->response->status(404);
+
+    $self->status_not_found(
+      $c,
+      message => "Page not found"
+    );
 }
     
 
@@ -82,6 +106,7 @@ sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
     $c->stash->{noboiler}=1;
     $c->stash->{template} = 'header/default.tt2';
+    $c->stash->{section} = 'tools';
     $c->response->headers->expires(time);
 }
 

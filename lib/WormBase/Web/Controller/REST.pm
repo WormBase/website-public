@@ -673,7 +673,8 @@ sub widget_GET {
         my $api = $c->model('WormBaseAPI');
         my $object = ($name eq '*' || $name eq 'all'
                    ? $api->instantiate_empty(ucfirst $class)
-                   : $api->fetch({ class => ucfirst $class, name => $name }));
+                   : $api->fetch({ class => ucfirst $class, name => $name })) 
+            or die "Could not fetch object $name, $class";
 
         # Generate and cache the widget.
         # Load the stash with the field contents for this widget.
@@ -685,7 +686,7 @@ sub widget_GET {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
             my $data = $object->$field;
-            if ( $c->config->{installation_type} eq 'development'
+            if ( $c->config->{fatal_non_compliance}
                 and my ( $fixed_data, @problems )
                 = $object->_check_data( $data, $class ) )
             {
@@ -987,7 +988,41 @@ sub widget_me_GET {
 }
 
 
+# Making the configuration file available
 
+sub rest_config :Path('/rest/config') :Args :ActionClass('REST') {}
+
+sub rest_config_GET {
+    my ($self, $c, @path_parts) = @_;
+
+    my $headers = $c->req->headers;
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'application/json';
+    $c->response->header( 'Content-Type' => $content_type );
+    my $config = $c->config;
+
+
+    my $class = $c->req->params->{'class'};
+    my $section = $config->{sections}->{species}->{$class} ? 'species' : 'resources' if $class;
+
+    if($class && $section) {
+        $config = $config->{sections}->{$section}->{$class};
+    }else {
+        for my $part (@path_parts){
+          $config = $config->{$part};
+        }
+    }
+
+    $self->status_ok(
+        $c,
+        entity => {
+            uri    => $c->req->path,
+            data => $config,
+        }
+    );
+}
 
 ######################################################
 #
@@ -1000,9 +1035,11 @@ sub _get_session {
     my ($self,$c) = @_;
     unless($c->user_exists){
       my $sid = $c->sessionid;
-      return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
+      return $c->model('Schema::Session')->find({session_id=>"session:$sid"})
+        or die "Unable to retrieve session information for $sid";
     }else{
-      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
+      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id})
+        or die "Unable to retrieve session information for " . $c->user->user_id;
     }
 }
 

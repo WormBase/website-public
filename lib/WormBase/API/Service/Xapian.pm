@@ -52,6 +52,11 @@ sub search {
     $q =~ s/\s/\* /g;
     $q = "$q*";
 
+    if($page eq 'all'){
+      $page_size = $class->_doccount;
+      $page = 1;
+    }
+
     if($type){
       $q = $class->_add_type_range($c, $q, $type);
       if(($type =~ m/paper/) && ($species)){
@@ -286,6 +291,10 @@ sub _get_tag_info {
 
 # why is species sometimes getting stored weird in xapian? 
 # eg. c_caenorhabditis_elegans instead of c_elegans
+#
+# Snips of possible BioProject suffix. For example,
+# 'c_elegans_PRJNA13758' becomes 'c_elegans'. This
+# is (probably) the right behaviour for this sub.
 sub _get_taxonomy {
   my ($self, $doc) = @_;
   my $taxonomy = $doc->get_value(5);

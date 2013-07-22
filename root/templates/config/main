@@ -140,12 +140,27 @@
 
     MACRO gbrowselink(data, label, search) BLOCK;
       valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
-      IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-        url = c.uri_for('/tools', 'genome', 'gbrowse', data.taxonomy).path _ '?name=' _ item.name.class _ ":" _ item.name.id;
-        label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse</a>]</span>";
-      ELSIF(!search);
-        url = c.uri_for('/tools', 'genome', 'gbrowse', data.taxonomy).path;
-        data.label ? "<a href=\"$url\">" _ data.label _ "</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse</a>]</span>";
+      species = undef;
+      IF data.taxonomy;
+        known_species = false;
+        FOREACH s IN c.config.sections.species_list.keys;
+          IF s == data.taxonomy;
+            species = s;
+          END;
+        END;
+      END;
+      IF species;
+        linkouts = [];
+        FOREACH bioproject IN c.config.sections.species_list.$species.bioprojects.keys;
+          IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
+            url = c.uri_for('/tools', 'genome', 'gbrowse', species _ '_' _ bioproject).path _ '?name=' _ item.name.class _ ":" _ item.name.id;
+            linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
+          ELSIF(!search);
+            url = c.uri_for('/tools', 'genome', 'gbrowse', species _ '_' _ bioproject).path;
+            linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
+          END;
+        END;
+        linkouts.join(' ');
       END;
     END;
 
@@ -216,7 +231,7 @@
 
   MACRO template_title BLOCK;
     IF (species && species != 'all');
-      s = (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
+      tt_s = (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
     END;
     IF object.name.data.id;
       object.name.data.label _ ' (' _  object.name.data.class _ ')';
@@ -225,9 +240,9 @@
     ELSIF query;
       query _ ' - search';
     ELSIF (class && class != 'all' && class != 'home');
-      c.config.sections.species.$class.title || c.config.sections.resources.$class.title || (section == 'tools' && class) || ( section == 'me' && (c.user.username  || 'My WormBase' _ ' ' _ s));
-    ELSIF s;
-      s;
+      c.config.sections.species.$class.title || c.config.sections.resources.$class.title || (section == 'tools' && class) || ( section == 'me' && (c.user.username  || 'My WormBase' _ ' ' _ tt_s));
+    ELSIF tt_s;
+      tt_s;
     ELSIF section;
       section FILTER ucfirst;
     END;

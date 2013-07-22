@@ -3,6 +3,7 @@ use Moose;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with    'WormBase::API::Role::Variation';
 
 =pod 
 
@@ -112,7 +113,7 @@ sub genes {
 }
 
 # alleles { }
-# This method will return a data structure 
+# This method will return a complex data structure 
 # containing alleles contained in this strain.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/alleles
 
@@ -120,15 +121,18 @@ sub alleles {
     my $self   = shift;
     my $object = $self->object;
 
+    my $count = $self->_get_count($object, 'Variation');
+
     my @alleles;
-    if ($object eq 'CB4856') {  # hack. duh.
-    } else {
-      @alleles = map { $self->_pack_obj($_) } $object->Variation;
+    unless ($count > 5000) { 
+      @alleles = $object->Variation;
+      @alleles = ($count < 1000) ? map {$self->_process_variation($_)} @alleles : map {$self->_pack_obj($_)} @alleles ;
     }
     return { description => 'alleles contained in the strain',
-	     data        => @alleles ? \@alleles : undef };
+         data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef };
     
 }
+
 
 # rearrangements { }
 # This method will return a data structure 
@@ -173,7 +177,7 @@ sub transgenes {
     return { description => 'transgenes carried by the strain',
 	     data        => @transgenes ? \@transgenes : undef };
 
-}
+} 
 
 
 # mutagen { }

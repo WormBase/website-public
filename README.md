@@ -41,6 +41,33 @@ Running the application via Starman
 
     starman --port 8000 --workers 10 wormbase.psgi
 
+Unit Testing
+------------
+
+We provide two sets of unit tests for the REST API and WormBase Perl API respectively. The tests are based on [Test::More](http://perldoc.perl.org/Test/More.html), they run on a fully populated WormBase database backend, they autonomously start and stop a Catalyst web server (random port between 28,000 and 31,999).
+
+Running REST API tests:
+
+    perl t/rest.t
+
+
+Running WormBase Perl API tests:
+
+    API_TESTS=1 perl t/api.t
+
+Comparative Testing
+-------------------
+
+For testing GBrowse installations, we provide a test implementation that compares `gbrowse_img` images to a reference set.
+
+Running comparative GBrowse tests:
+
+    perl t/gbrowse.t --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img
+
+Creating reference image set:
+
+    perl t/gbrowse.t --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img --reference
+
 Contributing
 ------------
 
@@ -49,3 +76,4 @@ Our development workflow can be found here:
 [wiki.wormbase.org/index.php/Development_workflow_-_webdev](wiki.wormbase.org/index.php/Development_workflow_-_webdev)
 
 Todd Harris (todd@wormbase.org)
+
