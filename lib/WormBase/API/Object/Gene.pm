@@ -221,7 +221,7 @@ sub classification {
 
     my $data;
 
-    $data->{defined_by_mutation} = $object->Allele ? 1 : 0;
+    $data->{defined_by_mutation} = $self->_get_count($object, 'Allele') ? 1 : 0;
 
     # General type: coding gene, pseudogene, or RNA
     $data->{type} = 'pseudogene' if $object->Corresponding_pseudogene;
