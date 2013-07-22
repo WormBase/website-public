@@ -52,6 +52,11 @@ sub search {
     $q =~ s/\s/\* /g;
     $q = "$q*";
 
+    if($page eq 'all'){
+      $page_size = $class->_doccount;
+      $page = 1;
+    }
+
     if($type){
       $q = $class->_add_type_range($c, $q, $type);
       if(($type =~ m/paper/) && ($species)){

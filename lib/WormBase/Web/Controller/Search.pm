@@ -37,7 +37,7 @@ sub search :Path('/search') Args {
     $type = 'all' unless $query;
    
     # hack for references widget
-    if($page_count =~ m/\D/){
+    unless($page_count =~ m/\d|^all$/){
       $type = $page_count =~ m/references/ ? 'paper' : $page_count;
       $page_count = 1;
     }
@@ -62,7 +62,7 @@ sub search :Path('/search') Args {
       
     my $search = $type unless($type=~/all/);
 
-    if($page_count>1 || $content_type ne 'text/html') {
+    if($page_count>1 || $page_count eq 'all' || $content_type ne 'text/html') {
       $c->stash->{template} = "search/result_list.tt2";
       $c->stash->{noboiler} = 1;
     }elsif($c->req->param("inline") || $c->req->param("widget")){

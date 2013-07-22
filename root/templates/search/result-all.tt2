@@ -120,6 +120,20 @@
                 END;%]
         </div>
         <ul>
+      <li class="title toggle">
+        Download all
+        (<span class="count" href="/search/count/[% species %]/[% type %]/[% query | uri %]"></span>)
+        <span class="ui-icon ui-icon-triangle-1-e"></span>
+      </li>
+      <div class="ui-helper-hidden">
+        [% FOREACH format IN c.config.api.content_type.keys.sort %]
+        [% d_url = "/search/$type/$query/all?" _ ( species ? "species=$species&" : "" ) _ "content-type=" _ format %]
+        <li class>
+          <a href="[% d_url %]" target="_blank">[% c.config.api.content_type.$format %]</a> 
+          <span class="ui-icon ui-icon-close"></span>
+        </li>
+        [% END %]
+      </div>
       [% IF type == 'all' %]
              <li class="title toggle ui-helper-hidden">Classes<span class="ui-icon ui-icon-triangle-1-s"></span></li><div>
         [% FOREACH sec IN ['species', 'resources'] %]
