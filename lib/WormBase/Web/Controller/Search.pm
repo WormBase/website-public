@@ -5,6 +5,7 @@ use warnings;
 use Moose;
 use JSON::XS;
 use URI::Escape;
+use Text::CSV;
 # use String::Escape qw( printable unprintable );
 
 BEGIN { extends 'Catalyst::Controller::REST' }
@@ -18,6 +19,7 @@ __PACKAGE__->config(
     'text/html'        => 'YAML::HTML',
     'text/xml'         => 'XML::Simple',
     'application/json' => 'JSON',
+    'text/csv'         => [ 'View', 'CSV' ],
     }
     );
 
@@ -108,6 +110,31 @@ sub search :Path('/search') Args {
     if ( $content_type eq 'text/html' ) {
       $c->forward('WormBase::Web::View::TT');
       return;
+    }
+
+    # Change the data structure a bit so the CSV converter can read it
+    if ( $content_type eq 'text/csv' ) {
+      my %seen;
+      @ret = map { 
+          my $ret = { id => $_->{name}->{id}, 
+                      label => $_->{name}->{label},
+                      class => $_->{name}->{class},
+                      taxonomy => $_->{taxonomy}->{genus} . ' ' . $_->{taxonomy}->{species}};
+          foreach my $key (keys %{$_}){
+            if (ref($_->{$key}) eq 'ARRAY'){
+              $ret->{$key} = join(', ', map { if(ref($_) eq 'HASH'){$_->{label}}else{$_}} @{$_->{$key}});
+              $seen{$key} = 1;
+            }
+          }
+          $ret;
+        } @ret;
+
+      my @columns = keys %seen;
+      unshift(@columns, ('id', 'label', 'class', 'taxonomy'));
+      $c->stash ( data => \@ret, 
+                  columns => \@columns, 
+                  filename => "$query\_$type\_" . $c->stash->{species} . $api->version . ".csv" 
+                  );
     }
 
     $self->status_ok(
