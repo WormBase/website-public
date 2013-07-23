@@ -22,11 +22,11 @@
 
     # Tests nucleotide change method
     sub test_nucleotide_change {
-        my $gene = $api->fetch({ class => 'Variation', name => 'WBVar00068686' });
+        my $var = $api->fetch({ class => 'Variation', name => 'WBVar00068686' });
 
         can_ok('WormBase::API::Object::Variation', ('nucleotide_change'));
 
-        my $ntc = $gene->nucleotide_change();
+        my $ntc = $var->nucleotide_change();
 
         isnt($ntc->{data}, undef, 'data returned');
         is  ($ntc->{data}[0]->{wildtype_label}, 'reference', 'correct wildtype label');
