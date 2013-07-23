@@ -66,7 +66,7 @@ sub start_catalyst {
 }
 
 sub stop_catalyst {
-    $catalyst_thread->detach();
+    $catalyst_thread->detach() if $catalyst_thread;
 }
 
 sub wait_for_catalyst {
