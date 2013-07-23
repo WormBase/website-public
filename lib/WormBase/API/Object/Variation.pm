@@ -1351,7 +1351,7 @@ sub _compile_nucleotide_changes {
 
         # Set wt and mutant labels
         if ($object->SNP(0) || $object->RFLP(0)) {
-            $wt_label = 'bristol';
+            $wt_label = 'reference';
             $mut_label = $object->Strain; # CB4856, 4857, etc
         }
         else {
