@@ -1,6 +1,7 @@
 [% 
 link_base 	= 'http://www.wikipathways.org/index.php/Pathway:';
 wp_id		= fields.pathway.data.pathway_id;
+img_path	= '/img-static/wikipathways/';
 %]
 
 
@@ -8,7 +9,7 @@ wp_id		= fields.pathway.data.pathway_id;
 Link to WikiPathways: <a href="[% link_base _ wp_id %]">[% link_base _ wp_id %]</a>
 <br />
 <br />
-<img class="wp-img" src="/img/wikipathway/[% wp_id %].png" width="800px" height="664px" />
+<img class="wp-img" src="[% img_path %][% wp_id %].png" width="800px" height="664px" />
 
 
 <!-- WikiPathways iframe, disabled for now 
