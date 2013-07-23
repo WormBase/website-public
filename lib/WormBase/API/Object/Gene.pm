@@ -80,6 +80,43 @@ has '_phenotypes' => (
     builder => '_build__phenotypes',
 );
 
+has '_alleles' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__alleles',
+);
+
+sub _build__alleles {
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my $count = $self->_get_count($object, 'Allele');
+    my @alleles;
+    my @polymorphisms;
+    unless ($count > 5000) { 
+      my @all = $object->Allele;
+
+      if($count < 1000){
+          foreach my $allele (@all) {
+              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
+                    push(@polymorphisms, $self->_process_variation($allele)) : 
+                    push(@alleles, $self->_process_variation($allele));
+          }
+      }else{
+          foreach my $allele (@all) {
+              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
+                    push(@polymorphisms, $self->_pack_obj($allele)) : 
+                    push(@alleles, $self->_pack_obj($allele));
+          }
+      }
+    }
+
+    return {
+        alleles        => @alleles ? \@alleles : $count,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : $count,
+    };
+
+}
 sub _build__phenotypes {
     my ($self) = @_;
     my $object = $self->object;
@@ -184,7 +221,7 @@ sub classification {
 
     my $data;
 
-    $data->{defined_by_mutation} = $object->Allele ? 1 : 0;
+    $data->{defined_by_mutation} = $self->_get_count($object, 'Allele') ? 1 : 0;
 
     # General type: coding gene, pseudogene, or RNA
     $data->{type} = 'pseudogene' if $object->Corresponding_pseudogene;
@@ -763,16 +800,14 @@ sub anatomy_function {
 sub alleles {
     my $self   = shift;
     my $object = $self->object;
-    my @alleles = $object->Allele;
 
-    my @data;
-    foreach my $allele (@alleles) {
-      next if grep {/SNP|RFLP/} $allele->Variation_type;
-      push @data,$self->_process_variation($allele);       
-    }
-    
-    return { description => 'alleles found within this gene',
-	     data        => @data ? \@data : undef };
+    my $count = $self->_alleles->{alleles};
+    my @alleles = @{$count} if(ref($count) eq 'ARRAY');
+
+    return { 
+        description => 'alleles contained in the strain',
+        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef 
+    };
 }
 
 # polymorphisms { }
@@ -784,16 +819,14 @@ sub alleles {
 sub polymorphisms {
     my $self    = shift;
     my $object  = $self->object;
-    my @alleles = $object->Allele;
     
-    my @data;
-    foreach my $allele (@alleles) {
-      next unless grep {/SNP|RFLP/} $allele->Variation_type;
-      push @data,$self->_process_variation($allele);
-    }
-    
-    return { description => 'polymorphisms and natural variations found within this gene',
-	     data        => @data ? \@data : undef };
+    my $count = $self->_alleles->{polymorphisms};
+    my @polymorphisms = @{$count} if(ref($count) eq 'ARRAY');
+
+    return { 
+        description => 'polymorphisms and natural variations found within this gene',
+        data        => @polymorphisms ? \@polymorphisms : $count > 0 ? "$count found" : undef 
+    };
 }
 
 
@@ -809,7 +842,7 @@ sub reference_allele {
     
     my @array = map { $self->_pack_obj($_) } @$ref_alleles;
     return { description => 'the reference allele of the gene',
-	     data        => @array ? \@array : undef };
+             data        => @array ? \@array : undef };
 }
 
 # strains { }
