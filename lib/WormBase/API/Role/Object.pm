@@ -2219,17 +2219,8 @@ sub _get_count{
   # get our current column location
   my $col = $first_item->{'.col'};
 
-  # check each row to make sure they are all objects
-  foreach my $row (@{$first_item->{'.raw'}}){
-    unless(@{$row}[$col]){
-        # if a row is not an object, fetch the tag and return the count
-        # we try to avoid doing this since it breaks ace for large amts of objects
-        return scalar $obj->get($tag, 0)->col;
-    }
-  }
-
-  # just return the row counts, which should equal the amount of objects for this tag
-  return scalar @{$first_item->{'.raw'}};
+  # grep for rows that are objects
+  return scalar ( grep { @{$_}[$col] } @{$first_item->{'.raw'}} );
 }
 
 
