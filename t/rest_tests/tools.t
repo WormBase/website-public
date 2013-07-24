@@ -35,7 +35,7 @@
         my $url = "http://$host:$port/tools/foo?content-type=application/json";
         my $response = getprint($url);
 
-        is($response, '405', '404 returned for tool "foo"');
+        is($response, '404', '404 returned for tool "foo"');
     }
 
 }
