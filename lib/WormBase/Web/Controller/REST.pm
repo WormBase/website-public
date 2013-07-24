@@ -669,7 +669,7 @@ sub widget_GET {
         $c->response->body($cached_data);
         $c->detach();
         return;
-    }else {
+    } else {
         my $api = $c->model('WormBaseAPI');
         my $object = ($name eq '*' || $name eq 'all'
                    ? $api->instantiate_empty(ucfirst $class)
@@ -1318,6 +1318,9 @@ sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 sub field_GET {
     my ( $self, $c, $class, $name, $field ) = @_;
 
+    # Cache key - "$class_$field_$name"
+    my $key = join( '_', $class, $field, $name );
+
     my $headers = $c->req->headers;
     $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
@@ -1325,29 +1328,38 @@ sub field_GET {
         = $headers->content_type
         || $c->req->params->{'content-type'}
         || 'text/html';
-    my $api = $c->model('WormBaseAPI');
-    my $object = $name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty(ucfirst $class)
-               : $api->fetch({ class => ucfirst $class, name => $name });
 
-    # Supress boilerplate wrapping.
-    $c->stash->{noboiler} = 1;
+    my ( $cached_data, $cache_source ) = $c->check_cache($key);
+    if($cached_data && (ref $cached_data eq 'HASH')){
+        $c->stash->{$key} = $cached_data;
+    } else {
+      my $api = $c->model('WormBaseAPI');
+      my $object = $name eq '*' || $name eq 'all'
+                 ? $api->instantiate_empty(ucfirst $class)
+                 : $api->fetch({ class => ucfirst $class, name => $name });
 
-    my $data   = $object->$field();
+      # Supress boilerplate wrapping.
+      $c->stash->{noboiler} = 1;
 
-    # Include the full uri to the *requested* object.
-    # IE the page on WormBase where this should go.
-    # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
+      my $data   = $object->$field();
+      $c->stash->{$field} = $data;
+
+      # Include the full uri to the *requested* object.
+      # IE the page on WormBase where this should go.
+      # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
+
+      $c->set_cache($key => $data);
+    }
+
     my $uri = $c->uri_for( "/species", $class, $name )->path;
 
     $c->response->header( 'Content-Type' => $content_type );
     if ( $content_type eq 'text/html' ) {
-       $c->stash->{template} = $self->_select_template( 'field', $class, $field );
-      $c->stash->{$field} = $data;
+      $c->stash->{template} = $self->_select_template( 'field', $class, $field );
       $c->forward('WormBase::Web::View::TT');
     }elsif($content_type =~ m/image/i) {
       
-      $c->res->body($data);
+      $c->res->body($c->stash->{$field});
     }
     $self->status_ok(
         $c,
@@ -1355,7 +1367,7 @@ sub field_GET {
             class  => $class,
             name   => $name,
             uri    => "$uri",
-            $field => $data
+            $field => $c->stash->{$field}
         }
     );
 }
