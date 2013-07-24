@@ -154,13 +154,3 @@ if [ $? -gt 0 ]; then
 #                --chdir $APP_HOME --exec $START_SERVER_DAEMON -- $START_SERVER_DAEMON_OPTS
 fi
 
-if [ "$APP" == 'staging' ] && [ "$API_TESTS" == '1' ] ; then
-    sleep 5
-    curl http://staging.wormbase.org
-    while [ $? -eq 0 ] ; do
-        echo "Waiting for WormBase API unit tests to finish..."
-        sleep 5
-        curl http://staging.wormbase.org
-    done
-fi
-
