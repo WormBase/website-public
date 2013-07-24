@@ -124,39 +124,39 @@ sub _build__phenotypes {
     my %phenotypes;
 
     foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
-	my $type_name; #label that shows in the evidence column above each list of that object type
-	if ($type =~ /Transgene/) { $type_name = 'Transgene:'; } 
-	elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
-	else { $type_name = $type . ':'; }
+        my $type_name; #label that shows in the evidence column above each list of that object type
+        if ($type =~ /Transgene/) { $type_name = 'Transgene:'; } 
+        elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
+        else { $type_name = $type . ':'; }
 
-	foreach my $obj ($object->$type){
+        foreach my $obj ($object->$type){
 
-	    # Don't include phenotypes that result from
-	    # the current gene driving overexpression of another gene.
-	    # These are displayed in the overexpression phenotypes table.
-	    if ($type eq 'Drives_Transgene') {
-		my $gene = $obj->Gene;
-		next unless ($gene && "$gene" eq "$object");
-	    }
+            # Don't include phenotypes that result from
+            # the current gene driving overexpression of another gene.
+            # These are displayed in the overexpression phenotypes table.
+            if ($type eq 'Drives_Transgene') {
+                my $gene = $obj->Gene;
+                next unless ($gene && "$gene" eq "$object");
+            }
 
-	    my $seq_status = eval { $obj->SeqStatus };
-	    my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
-	    my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
-	    
-	    foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
-		foreach ($obj->$obs){
-		    $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
-		    my $evidence = $self->_get_evidence($_);
-		    # add some additional information for RNAis
-		    if ($type eq 'RNAi_result') {
-			$evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
-			my $genotype = $obj->Genotype;	
-			$evidence->{Genotype} = "$genotype" if $genotype;
-		    }
-		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
-		}
-	    }
-	}
+            my $seq_status = eval { $obj->SeqStatus };
+            my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
+            my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
+
+            foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
+                foreach ($obj->$obs){
+                $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
+                my $evidence = $self->_get_evidence($_);
+                # add some additional information for RNAis
+                if ($type eq 'RNAi_result') {
+                $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
+                my $genotype = $obj->Genotype;	
+                $evidence->{Genotype} = "$genotype" if $genotype;
+                }
+                push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
+                }
+            }
+        }
     }
 
     return %phenotypes ? \%phenotypes : undef;

@@ -124,9 +124,9 @@ sub alleles {
     my $count = $self->_get_count($object, 'Variation');
 
     my @alleles;
-    unless ($count > 5000) { 
+    unless ($count > 1000) { 
       @alleles = $object->Variation;
-      @alleles = ($count < 1000) ? map {$self->_process_variation($_)} @alleles : map {$self->_pack_obj($_)} @alleles ;
+      @alleles = map {$self->_process_variation($_)} @alleles;
     }
     return { description => 'alleles contained in the strain',
          data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef };

@@ -129,8 +129,8 @@ sub search :Path('/search') Args {
           $ret;
         } @ret;
 
-      my @columns = keys %seen;
-      unshift(@columns, ('id', 'label', 'class', 'taxonomy'));
+      my @columns = (('id', 'label', 'class', 'taxonomy'), keys %seen);
+      # unshift(@columns, ('id', 'label', 'class', 'taxonomy'));
       $c->stash ( data => \@ret, 
                   columns => \@columns, 
                   filename => "$query\_$type\_" . $c->stash->{species} . $api->version . ".csv" 
