@@ -85,9 +85,7 @@ sub interactions  {
     my $self   = shift;
     my $object = $self->object;
     my $class = $object->class;
-    
-    print $class."\n";
-    
+
     my @edges = values %{$self->_interactions->{edgeVals}};
 
     my $results = $self->_get_interactions($self->_interactions, 1, 1);
