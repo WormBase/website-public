@@ -31,7 +31,7 @@
 
         isnt($longest, undef, 'data returned');
         # this might change overtime?
-        is  ($longest, 'XXXCBG05938a:1,16939', 'correct segment');
+        is  ($longest, 'CBG05938a:1,16939', 'correct segment');
     }
 
 }
