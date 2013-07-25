@@ -829,7 +829,7 @@ sub widget_static_POST {
     if($c->check_any_user_role(qw/admin curator editor/)){ 
 
       #only admins can delete
-      if($c->req->params->{delete} && $c->check_user_roles("admin")){ 
+      if($c->req->params->{delete} && $c->check_any_user_role("admin", "curator")){ 
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->delete();
         $widget->update();
