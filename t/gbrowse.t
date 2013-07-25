@@ -9,6 +9,8 @@ use File::Compare;
 use Getopt::Long;
 use LWP::Simple qw(get);
 use Test::More;
+use POSIX qw(strftime);
+use AnyEvent::CouchDB;
 
 use Data::Dumper;
 
@@ -23,17 +25,27 @@ use constant {
     VERIFY               => 'Verify'
 };
 
-# Log the progress during reference set creation in this file:
-my $log_path = 'logs/gbrowse_test.log';
+# Current time. Used for logging and report generation.
+my $now = strftime "%Y%m%d_%H%M", localtime;
+
+# Log the progress:
+my $log_path = "logs/gbrowse_test.log";
 open(my $log, ">$log_path") or die "Unable to open $log_path for writing";
 $log->autoflush(1);
+
+print $log "\nNew run $now. Successful completion will terminate with the line \"Done $now.\"\n";
+
+# NOTE Test connection to CouchDB... will write reports to there...
+my $couchdb = couch('http://dev.wormbase.org:5984/');
+print Dumper($couchdb->all_dbs->recv);
 
 # Creates a reference image set, or verifies images, of one species GBrowse configuration.
 sub test_config {
     # server : base URL of the GBrowse instance
     # path   : path to the GBrowse configuration file
+    # cutoff : ratio of broken URLs to total URLs at which testing a config is aborted
     # mode   : either CREATE_REFERENCE_SET or VERIFY (see above)
-    my ($server, $path, $mode) = @_;
+    my ($server, $path, $cutoff, $mode) = @_;
 
     # Load the GBrowse configuration as a hash ref.
     my $provenance = basename($path, ".conf");
@@ -57,9 +69,6 @@ sub test_config {
 
     # Calculated below: ratio of broken URLs to total URLs.
     my $ratio_broken_urls;
-
-    # Cutoff ratio for broken URLs to total URLs at which the loop below is aborted.
-    my $cutoff = 0.1;
 
     TRACK_LOOP: for my $track (@tracks) {
         # Make track name suitable for use with Unix file paths:
@@ -133,13 +142,19 @@ sub test_config {
 # Boolean variable: are we creating a reference image set?
 my $reference;
 
+# Cutoff ratio for broken URLs to total URLs at which the loop below is aborted.
+my $cutoff;
+
 # Base URL of the GBrowse instance, e.g. http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img/
 my $base_url;
 
-GetOptions("reference" => \$reference, "base=s" => \$base_url);
+GetOptions("reference" => \$reference,
+           "cutoff=f" => \$cutoff,
+           "base=s" => \$base_url);
 
 die "No '--base URL' provided. Example: --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img/" unless $base_url;
 
+$cutoff = 0.1 unless defined undef;
 $base_url = "$base_url/" unless $base_url =~ m/\/$/;
 
 my $mode;
@@ -155,15 +170,20 @@ if ($reference) {
     $mode = VERIFY;
 }
 
+# Archive in which mode we are operating:
+print $log "Mode: $mode";
+
 # Go through all GBrowse configurations.
 my @gbrowse_configs = <conf/gbrowse/?_*_P*.conf>;
 foreach my $gbrowse_config (@gbrowse_configs) {
-    test_config($base_url, getcwd . '/' . $gbrowse_config, $mode);
+    test_config($base_url, getcwd . '/' . $gbrowse_config, $cutoff, $mode);
 }
 
 if ($mode eq VERIFY) {
     done_testing();
 }
+
+print $log "Done $now.\n";
 
 close($log);
 
