@@ -305,7 +305,7 @@ END;
 
       local_data = passed_data ? passed_data : fields.$key.data;
 
-      UNLESS local_data.0.defined(order.0); 
+      UNLESS local_data.0.exists(order.0); 
         IF ref(local_data) == 'ARRAY';
           # just print the list of objects
           cell_content(local_data);
