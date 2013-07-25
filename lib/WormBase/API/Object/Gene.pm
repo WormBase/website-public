@@ -537,7 +537,7 @@ sub merged_into {
 	my $gene_merged_into = $object->Merged_into;
 	return {
 		description => 'the gene this one has merged into',
-		data		=> $self->_pack_obj($gene_merged_into)
+		data		=> $gene_merged_into ? $self->_pack_obj($gene_merged_into) : undef
 	};
 }
 
@@ -1031,7 +1031,6 @@ sub history{
 					my %final_row;
 					if( $object->Merged_into ){
 						my $gene = $object->Merged_into;
-						print "FLAG!\n";
 						%final_row = ( %current_row,
 							action  => "Merged_into",
 							gene    => $self->_pack_obj($gene),
