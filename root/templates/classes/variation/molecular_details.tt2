@@ -91,7 +91,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                 fields.polymorphism_type.data;
        END;
 
-       WRAPPER $field_block title="Reference strain" key ="reference_strain";
+       WRAPPER $field_block title="Strain" key ="reference_strain";
                 tag2link(fields.reference_strain.data);
        END;
 
