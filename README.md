@@ -64,9 +64,11 @@ Running comparative GBrowse tests:
 
     perl t/gbrowse.t --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img
 
-Creating reference image set:
+Creating a reference image set that is used for the comparative tests:
 
     perl t/gbrowse.t --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img --reference
+
+A summary log and a full disclosure of broken URLs is written to the logfile `logs/gbrowse_test.log`.
 
 Contributing
 ------------
