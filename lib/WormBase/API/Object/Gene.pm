@@ -1019,27 +1019,23 @@ sub history{
                         push @actions, $action;
                     }
                     
-                    my %final_row = ( %current_row,
+                    push @data, { %current_row,
                         action  => join(",", sort @actions),
                         remark  => $remark && "$remark",
                         gene    => $self->_pack_obj($gene),
-                    );
-                    push @data, \%final_row;
+                    };
                     
                 }else{
                 
-                    my %final_row;
                     if( $object->Merged_into ){
                         my $gene = $object->Merged_into;
-                        %final_row = ( %current_row,
+                        %current_row = ( %current_row,
                             action  => "Merged_into",
                             gene    => $self->_pack_obj($gene),
                         );
-                    }else{
-                        %final_row = %current_row;
                     } 
                     
-                    push @data, \%final_row;
+                    push @data, \%current_row;
                 }
                 
             }
