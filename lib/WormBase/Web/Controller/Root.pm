@@ -206,17 +206,17 @@ sub get :Local Args(0) {
 
     # Wow. Legacy of legacy of legacy. Incroyable.  The once mighty Cell_group class before
     # all the confusion began.
-    if (($requested_class eq 'Anatomy_term' || $requested_class eq 'Cell_group' || $requested_class eq 'Cell') && $name !~ /^WBbt/) {
-	my $api = $c->model('WormBaseAPI');
-	my $temp_object = $api->fetch({
-	    class => 'Anatomy_name',
-	    name  => $name,
-				      }) or warn "Couldn't fetch an Anatomy_name object: $!";
-	if ($temp_object) {
-	    $name = $temp_object->Synonym_for_anatomy_term || $temp_object->Name_for_anatomy_term;
-	}
-	# Reset the class for Cell_group and Cell searches; unknown to API.
-	$requested_class = 'Anatomy_term';
+    if (($requested_class eq 'Anatomy_term' || $requested_class eq 'Anatomy_name' || $requested_class eq 'Cell_group' || $requested_class eq 'Cell') && $name !~ /^WBbt/) {
+      my $api = $c->model('WormBaseAPI');
+      my $temp_object = $api->fetch({
+          class => 'Anatomy_name',
+          name  => $name,
+        }) or warn "Couldn't fetch an Anatomy_name object: $!";
+      if ($temp_object) {
+        $name = $temp_object->Synonym_for_anatomy_term || $temp_object->Name_for_anatomy_term;
+      }
+      # Reset the class for Cell_group and Cell searches; unknown to API.
+      $requested_class = 'Anatomy_term';
     }
 
 
