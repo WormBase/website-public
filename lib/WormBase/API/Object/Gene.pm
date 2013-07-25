@@ -145,15 +145,15 @@ sub _build__phenotypes {
 
             foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
                 foreach ($obj->$obs){
-                $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
-                my $evidence = $self->_get_evidence($_);
-                # add some additional information for RNAis
-                if ($type eq 'RNAi_result') {
-                $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
-                my $genotype = $obj->Genotype;	
-                $evidence->{Genotype} = "$genotype" if $genotype;
-                }
-                push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
+                    $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
+                    my $evidence = $self->_get_evidence($_);
+                    # add some additional information for RNAis
+                    if ($type eq 'RNAi_result') {
+                        $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
+                        my $genotype = $obj->Genotype;	
+                        $evidence->{Genotype} = "$genotype" if $genotype;
+                    }
+                    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
                 }
             }
         }
