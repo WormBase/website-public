@@ -1399,10 +1399,11 @@ sub _build_references {
     my $self   = shift;
     my $object = $self->object;
     # Could also use ModelMap...
-    my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
-    my $data = $self->_pack_objects($object->$tag);
+    my $tag = $object->at('Reference') || $object->at('Paper');
+    my @references = $object->$tag;
+    @references = map { $self->_api->xapian->_get_tag_info(undef, "$_", 'paper', 1) } @references;
     return { description => 'references associated with this object',
-	     data        => %$data ? $data : undef };
+             data        => @references ? \@references : undef };
 }
 
 =head3 remarks

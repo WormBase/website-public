@@ -654,7 +654,7 @@ sub widget_GET {
     $c->response->header( 'Content-Type' => $content_type );
 
     # references widget - no need for an object
-    if ( $widget =~ m/references/i ) {
+    if ( $widget =~ m/references/i && $name =~ m/^WB/ ) {
           $c->req->params->{widget} = $widget;
           $c->req->params->{class} = $class;
           $c->go('search', 'search');
