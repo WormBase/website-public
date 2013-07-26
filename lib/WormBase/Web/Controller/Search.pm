@@ -49,6 +49,8 @@ sub search :Path('/search') Args {
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
     $c->stash->{opt_q} = $c->req->param("q");
 
+    $page_count = 'all' if($c->req->param("download"));
+
     $c->response->headers->expires(time);
     my $headers = $c->req->headers;
     my $content_type 
