@@ -1,6 +1,6 @@
 
 [% results = fields.references.data %]
-
+[% IF results; %]
 <!-- begin result list -->
 <div id="results"
 data-search='{"query": "[% object.name.id %]","type": "paper", "species": "", "widget": "references", "nostar": "0", "count": "[% results.size %]" }'
@@ -27,3 +27,4 @@ data-search='{"query": "[% object.name.id %]","type": "paper", "species": "", "w
   WB.checkSearch($jq("#results"));
 </script>
 <!-- End result list -->
+[% END %]
