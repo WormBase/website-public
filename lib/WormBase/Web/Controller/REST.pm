@@ -349,7 +349,6 @@ sub download_POST {
      
     my $filename=$c->req->body_parameters->{filename};
     $filename =~ s/\s/_/g;
-        my $csv = "test";
     $c->response->header('Content-Type' => 'text/html');
     $c->res->header('Content-Disposition', qq[attachment; filename="$filename"]);
     $c->response->body($c->req->body_parameters->{content});
@@ -497,8 +496,12 @@ sub feed_GET {
       my $wbid = shift @args;
       my $widget = shift @args;
       my $name = shift @args;
+      $c->stash->{search} = 1 if ($widget eq 'references' && $wbid =~ m/^WB/);
       if($widget=~m/^static-widget-([\d]+)/){
         $c->stash->{url} = $c->uri_for('widget/static', $1)->path;
+      }elsif ($widget=~m/browse/){
+        $c->stash->{search} = 1;
+        $c->stash->{url} = $c->uri_for("/search", $class, "*")->path;
       }else{
         $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget)->path;
       }
