@@ -87,14 +87,25 @@ sub synonym {
     };
 }
 
-sub genes {
+sub genes_orthology {
     my ($self) = @_;
     my @genes = map { $self->_pack_obj($_) } $self->object->Gene_by_orthology;
     return {
-        description => 'Elegans genes by orthology to human disease gene',
+        description => 'Genes by orthology to human disease gene',
         data        => @genes ? \@genes : undef ,
     };
 }
+
+sub genes_biology {
+    my ($self) = @_;
+    my @genes = map { $self->_pack_obj($_) } $self->object->Gene_by_biology;
+    return {
+        description => 'Genes used as experimental models',
+        data        => @genes ? \@genes : undef ,
+    };
+}
+
+
 
 
 __PACKAGE__->meta->make_immutable;
