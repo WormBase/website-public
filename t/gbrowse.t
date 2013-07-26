@@ -10,6 +10,9 @@ use Getopt::Long;
 use LWP::Simple qw(get);
 use Test::More;
 use POSIX qw(strftime);
+use Config::Simple;
+use MIME::Base64;
+use boolean;
 use AnyEvent::CouchDB;
 
 use Data::Dumper;
@@ -25,19 +28,51 @@ use constant {
     VERIFY               => 'Verify'
 };
 
+# Will hold a reference to the log file:
+my $log;
+
+# Will hold a reference to the "reports" CouchDB database:
+my $reportdb;
+
 # Current time. Used for logging and report generation.
-my $now = strftime "%Y%m%d_%H%M", localtime;
+my $now = strftime "%Y%m%d_%S%M%H", localtime;
 
-# Log the progress:
-my $log_path = "logs/gbrowse_test.log";
-open(my $log, ">$log_path") or die "Unable to open $log_path for writing";
-$log->autoflush(1);
+# Create a unique ID for the report:
+my $reportid = "$now\_gbrowse_" . sprintf("%08x", rand(2147483648));
 
-print $log "\nNew run $now. Successful completion will terminate with the line \"Done $now.\"\n";
+# Add report content that gets archived in CouchDB:
+sub report_test_status {
+    my ($test_status) = @_;
 
-# NOTE Test connection to CouchDB... will write reports to there...
-my $couchdb = couch('http://dev.wormbase.org:5984/');
-print Dumper($couchdb->all_dbs->recv);
+    my $reportdoc = $reportdb->open_doc($reportid)->recv;
+
+    my %updateddoc = ( %$reportdoc, %$test_status );
+
+    $reportdb->save_doc(\%updateddoc)->recv;
+}
+
+# Sets up a file where logging output can be written to. Preserves previous log file contents.
+sub init_logging {
+    # log_path : path (including filename) that determines where log output is written to
+    my ($log_path) = @_;
+
+    open(my $log, ">>$log_path") or die "Unable to open $log_path for writing";
+    $log->autoflush(1);
+
+    return $log;
+}
+
+# Sets up a connection to CouchDB where a report of the rest is going to be deposited.
+sub init_reporting {
+    # host : hostname where CouchDB resides
+    # port : the port that is occupied by CouchDB
+    # username : username to use for credentials
+    # password : password for user authentication
+    # database : name of the database where reports are stored
+    my ($host, $port, $username, $password, $database) = @_;
+
+    $database = couchdb("http://$username:$password\@$host:$port/$database");
+}
 
 # Creates a reference image set, or verifies images, of one species GBrowse configuration.
 sub test_config {
@@ -63,6 +98,16 @@ sub test_config {
     my $images = 0;
     # ...number of URLs for which no image was returned.
     my $broken_urls = 0;
+    # ...list of broken URLs.
+    my @broken_url_links = ();
+    # ...number of missing references.
+    my $missing_references = 0;
+    # ...list of URLs whose references are missing.
+    my @missing_reference_links = ();
+    # ...number of mismatching images.
+    my $mismatches = 0;
+    # ...list of mismatching URLs.
+    my @mismatch_links = ();
 
     # Number of all URLs to process:
     my $total_urls = (scalar @tracks) * (scalar @examples);
@@ -88,6 +133,7 @@ sub test_config {
             # If there was no image returned, then treat it as a broken URL.
             if (!defined $image) {
                 $broken_urls++;
+                push(@broken_url_links, $url);
 
                 $ratio_broken_urls = $broken_urls / $total_urls;
                 if ($ratio_broken_urls >= $cutoff) {
@@ -115,16 +161,45 @@ sub test_config {
                         print $png_path $image;
                         close $png_path;
 
+                        unless (compare($tempfile, $reference_path) == 0) {
+                            $mismatches++;
+                            push(@mismatch_links, $url);
+                        }
+
                         ok(compare($tempfile, $reference_path) == 0, $testname . ' (image comparison)');
 
                         unlink($tempfile);
                     } else {
+                        $missing_references++;
+                        push(@missing_reference_links, $url);
                         fail($testname . ' (reference image does not exist)');
                     }
                 }
             }
         }
     }
+
+    my $test_status ={
+        $provenance => {
+            aborted              => ($ratio_broken_urls >= $cutoff),
+            broken_urls          => $broken_urls,
+            broken_urls_evidence => @broken_url_links,
+            cutoff               => $cutoff,
+            example_landmarks    => (scalar @examples),
+            total_urls           => $total_urls,
+            tracks               => (scalar @tracks)
+        }
+    };
+
+    if ($mode eq VERIFY) {
+        $test_status->{$provenance}->{image_mismatches} = $mismatches;
+        $test_status->{$provenance}->{image_mismatches_evidence} = @mismatch_links;
+        $test_status->{$provenance}->{missing_references} = $missing_references;
+        $test_status->{$provenance}->{missing_references_evidence} = @missing_reference_links;
+    }
+
+    # Report test results:
+    report_test_status($test_status);
 
     # Output some summary information.
     print "Configuration        : $provenance\n";
@@ -170,11 +245,34 @@ if ($reference) {
     $mode = VERIFY;
 }
 
+# Load configuration setting from file:
+my $configuration = new Config::Simple('conf/t/config.ini');
+
+# Log the progress:
+$log = init_logging($configuration->param('LogFile'));
+
+print $log "\nNew run $now. Successful completion will terminate with the line \"Done $now.\"\n";
+
+# Connect to CouchDB, which will hold the final report.
+$reportdb = init_reporting($configuration->param('CouchHost'),
+                           $configuration->param('CouchPort'),
+                           $configuration->param('CouchUsername'),
+                           $configuration->param('CouchPassword'),
+                           'reports');
+
+# Record that testing has started, but has not finished yet ("completed" is null):
+$reportdb->save_doc({
+    _id       => $reportid,
+    completed => undef,
+    mode      => $mode,
+    type      => 'gbrowse'
+})->recv;
+
 # Archive in which mode we are operating:
 print $log "Mode: $mode";
 
 # Go through all GBrowse configurations.
-my @gbrowse_configs = <conf/gbrowse/?_*_P*.conf>;
+my @gbrowse_configs = <conf/gbrowse/?_*_PRJNA62057*.conf>;
 foreach my $gbrowse_config (@gbrowse_configs) {
     test_config($base_url, getcwd . '/' . $gbrowse_config, $cutoff, $mode);
 }
@@ -182,6 +280,9 @@ foreach my $gbrowse_config (@gbrowse_configs) {
 if ($mode eq VERIFY) {
     done_testing();
 }
+
+# Record that testing is complete:
+report_test_status({ completed => 1 });
 
 print $log "Done $now.\n";
 
