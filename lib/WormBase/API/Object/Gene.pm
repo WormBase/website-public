@@ -200,7 +200,7 @@ sub also_refers_to {
 sub named_by {
     my $self   = shift;
     my $object = $self->object;
-    my $name = $self->_get_evidence($object->CGC_name);
+    my $name = $self->_get_evidence($object->CGC_name, ['Person_evidence']);
     return {
         description => 'the person who named this gene',
         data        => $name ? @{$name->{Person_evidence}}[0] : undef,

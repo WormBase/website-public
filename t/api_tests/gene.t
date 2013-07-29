@@ -34,6 +34,24 @@
         is  ($longest, 'CBG05938a:1,16939', 'correct segment');
     }
 
+
+    # Tests the concise_description method of Gene
+    sub test_concise_description {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00000846' });
+
+        can_ok('WormBase::API::Object::Gene', ('concise_description'));
+
+        my $c_desc = $gene->concise_description();
+
+        isnt($c_desc, undef, 'data returned');
+        isnt($c_desc->{data}, undef, 'data structure returned');
+        isnt($c_desc->{data}->{evidence}, undef, 'evidence returned');
+
+        # issue #346 - rename Curator_confirmed to Curator
+        isnt($c_desc->{data}->{evidence}->{Curator}, undef, 'Curator evidence returned');
+        is($c_desc->{data}->{evidence}->{Curator_confirmed}, undef, 'no Curator_confirmed evidence returned');
+    }
+
 }
 
 1;
