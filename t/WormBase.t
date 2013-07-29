@@ -12,7 +12,7 @@ use WormBase;
 ok ( 
     ( my $wormbase = WormBase->new(
     {mysql_user => 'root',
-    mysql_pass  => '3l3g@nz',
+    mysql_pass  => '-----',
     data_sources => { c_elegans => { adaptor => 'dbi::mysqlace',
     		      	        aggregator => 'wormbase_gene' },
 				},
