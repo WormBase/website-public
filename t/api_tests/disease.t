@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 
-
+# API unit tests for the disease class
 {
     # Package name is the same as the filename (sans suffix, i.e. no .t ending)
     package disease;
@@ -21,7 +21,8 @@
         $api = $_[0];
     }
 
-    sub test_disease_genes_by_biology {
+    # genes_by_biology method unit test
+    sub test_genes_by_biology {
         my $disease = $api->fetch({ class => 'Disease', name => 'DOID:9970' });
         
         # Test if the object contains this method
