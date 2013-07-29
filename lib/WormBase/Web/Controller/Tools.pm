@@ -13,6 +13,13 @@ sub index :Path :Args(0) {
     $self->_setup_page($c);
 }
 
+sub metric_viewer :Path('metric_viewer') :Args(0) {
+    my ($self, $c) = @_; 
+    $c->stash->{template} = "tools/metric_viewer/index.tt2";
+    $c->stash->{url} = $c->req->params->{url} || "/";
+    return;
+}
+
 sub support :Path('support') :Args(0) {
     my ($self, $c) = @_; 
     $c->stash->{section}  = "tools";
@@ -105,6 +112,5 @@ sub tools :Path Args {
         }
     }
 }
-
 
 1;
