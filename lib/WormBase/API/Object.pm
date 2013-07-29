@@ -430,29 +430,32 @@ sub _parse_year {
     my $year = $1 || $date;
     return $year;
 }
- 
 
-# NOTE: the standarded evidence method, returns a hash ref, in the template call macro evidence(hash ref, index)
-# index is needed when multiple evidence on the same page.
+
+# sub _get_evidence
+# Standard evidence method - handles the evidence hash in AceDB
+# Arg[0] : The acedb node containing an evidence hash
+# Arg[1] (optional) : The type of evidence to fetch (default: all evidence)
+# Returns: A hash ref containing the evidence requested
+#
 sub _get_evidence {
     my ($self,$node,$evidence_type)=@_;
     my @nodes = eval{$node->col} ;
     return undef unless(@nodes);
     my %data;
 
-   
-	foreach my $type (@nodes) {
-	     
-	    next if ($type eq 'CGC_data_submission') ;
-	     #if only extracting one/more specific evidence types
-	    if(defined $evidence_type) {
-		next unless(grep /^$type$/ , @$evidence_type);
-	    }
+    foreach my $type (@nodes) {
 
-        my @evidences;
+      next if ($type eq 'CGC_data_submission');
+       #if only extracting one/more specific evidence types
+      if(defined $evidence_type) {
+        next unless(grep /^$type$/ , @$evidence_type);
+      }
 
-	    #the goal is to deal label and link seperately?
-	    foreach my $evidence ($type->col) {
+      my @evidences;
+
+      #the goal is to deal label and link seperately?
+      foreach my $evidence ($type->col) {
           my $label = $evidence;
           my $packed;
           my $class = eval { $evidence->class } ;
@@ -507,10 +510,11 @@ sub _get_evidence {
 
           $class = (defined $class) ? lc("$class") : undef;
           push( @evidences, $packed ? $packed : { id=> "$evidence", label => "$label", class => $class });
-	    }
-        $data{$type} = @evidences ? \@evidences : undef;
-	}
-   return %data ? \%data :undef;
+      }
+      $type =~ s/(Curator)_confirmed/$1/;
+      $data{$type} = @evidences ? \@evidences : undef;
+    }
+    return %data ? \%data :undef;
 }
 
 
