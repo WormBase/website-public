@@ -35,7 +35,9 @@ my $log;
 my $reportdb;
 
 # Current time. Used for logging and report generation.
-my $now = strftime "%Y%m%d_%S%M%H", localtime;
+my $seconds_since_epoch = time;
+my $now = strftime "%Y%m%d_%S%M%H", localtime($seconds_since_epoch);
+my $human_readable_now = strftime "%Y-%m-%dT%H:%M:%S", localtime($seconds_since_epoch);
 
 # Create a unique ID for the report:
 my $reportid = "$now\_gbrowse_" . sprintf("%08x", rand(2147483648));
@@ -78,7 +80,7 @@ sub init_reporting {
 sub test_config {
     # server : base URL of the GBrowse instance
     # path   : path to the GBrowse configuration file
-    # cutoff : ratio of broken URLs to total URLs at which testing a config is aborted
+    # cutoff : ratio of broken URLs to total URLs; test is aborted if ratio goes over the cutoff
     # mode   : either CREATE_REFERENCE_SET or VERIFY (see above)
     my ($server, $path, $cutoff, $mode) = @_;
 
@@ -136,7 +138,7 @@ sub test_config {
                 push(@broken_url_links, $url);
 
                 $ratio_broken_urls = $broken_urls / $total_urls;
-                if ($ratio_broken_urls >= $cutoff) {
+                if ($ratio_broken_urls > $cutoff) {
                     last TRACK_LOOP;
                 }
 
@@ -179,11 +181,14 @@ sub test_config {
         }
     }
 
+    my $test_aborted = undef;
+    $test_aborted = 1 if ($ratio_broken_urls > $cutoff);
+
     my $test_status ={
         $provenance => {
-            aborted              => ($ratio_broken_urls >= $cutoff),
+            aborted              => $test_aborted,
             broken_urls          => $broken_urls,
-            broken_urls_evidence => @broken_url_links,
+            broken_urls_evidence => \@broken_url_links,
             cutoff               => $cutoff,
             example_landmarks    => (scalar @examples),
             total_urls           => $total_urls,
@@ -203,7 +208,7 @@ sub test_config {
 
     # Output some summary information.
     print "Configuration        : $provenance\n";
-    if ($ratio_broken_urls >= $cutoff) {
+    if ($test_aborted) {
         my $percentage_broken_urls = $ratio_broken_urls * 100;
         print "    ABORTED: too many broken URLs (>= $percentage_broken_urls%)\n";
         print $log "ABORTED: too many broken URLs (>= $percentage_broken_urls%) for $provenance\n";
@@ -217,7 +222,7 @@ sub test_config {
 # Boolean variable: are we creating a reference image set?
 my $reference;
 
-# Cutoff ratio for broken URLs to total URLs at which the loop below is aborted.
+# Cutoff ratio for broken URLs; loop is aborted if the ratio of broken URLs exceeds the cutoff.
 my $cutoff;
 
 # Base URL of the GBrowse instance, e.g. http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img/
@@ -229,7 +234,9 @@ GetOptions("reference" => \$reference,
 
 die "No '--base URL' provided. Example: --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img/" unless $base_url;
 
-$cutoff = 0.1 unless defined undef;
+$cutoff = 0.1 unless defined $cutoff;
+$cutoff = $cutoff * 1; # Ensure that the cutoff is a number.
+
 $base_url = "$base_url/" unless $base_url =~ m/\/$/;
 
 my $mode;
@@ -262,10 +269,12 @@ $reportdb = init_reporting($configuration->param('CouchHost'),
 
 # Record that testing has started, but has not finished yet ("completed" is null):
 $reportdb->save_doc({
-    _id       => $reportid,
-    completed => undef,
-    mode      => $mode,
-    type      => 'gbrowse'
+    _id                 => $reportid,
+    completed           => undef,
+    mode                => $mode,
+    type                => 'gbrowse',
+    started             => $human_readable_now,
+    started_since_epoch => $seconds_since_epoch
 })->recv;
 
 # Archive in which mode we are operating:
