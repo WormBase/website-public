@@ -198,9 +198,9 @@ sub test_config {
 
     if ($mode eq VERIFY) {
         $test_status->{$provenance}->{image_mismatches} = $mismatches;
-        $test_status->{$provenance}->{image_mismatches_evidence} = @mismatch_links;
+        $test_status->{$provenance}->{image_mismatches_evidence} = \@mismatch_links;
         $test_status->{$provenance}->{missing_references} = $missing_references;
-        $test_status->{$provenance}->{missing_references_evidence} = @missing_reference_links;
+        $test_status->{$provenance}->{missing_references_evidence} = \@missing_reference_links;
     }
 
     # Report test results:
@@ -267,6 +267,13 @@ $reportdb = init_reporting($configuration->param('CouchHost'),
                            $configuration->param('CouchPassword'),
                            'reports');
 
+# Get all GBrowse configs and create a track listing:
+my @gbrowse_configs = <conf/gbrowse/?_*_PRJNA62057*.conf>;
+my @config_names = ();
+foreach my $gbrowse_config (@gbrowse_configs) {
+    push(@config_names, basename($gbrowse_config, ".conf"));
+}
+
 # Record that testing has started, but has not finished yet ("completed" is null):
 $reportdb->save_doc({
     _id                 => $reportid,
@@ -274,14 +281,14 @@ $reportdb->save_doc({
     mode                => $mode,
     type                => 'gbrowse',
     started             => $human_readable_now,
-    started_since_epoch => $seconds_since_epoch
+    started_since_epoch => $seconds_since_epoch,
+    configurations      => \@config_names
 })->recv;
 
 # Archive in which mode we are operating:
 print $log "Mode: $mode";
 
 # Go through all GBrowse configurations.
-my @gbrowse_configs = <conf/gbrowse/?_*_PRJNA62057*.conf>;
 foreach my $gbrowse_config (@gbrowse_configs) {
     test_config($base_url, getcwd . '/' . $gbrowse_config, $cutoff, $mode);
 }
