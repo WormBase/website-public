@@ -9,7 +9,10 @@ WRAPPER $field_block title="Method" key='method';
         ": ";
         fields.method.data.details;
     END;
-END;
+    END;
+WRAPPER $field_block title="Associated feature" key="feature";
+        tag2link(fields.feature.data);
+    END;
 
 END;
 

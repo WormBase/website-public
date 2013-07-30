@@ -141,6 +141,19 @@ sub _build_type {
 # corresponding_all { }
 # Supplied by Role
 
+sub feature {
+    my ($self) = @_;
+    my $obj = $self->object;
+    
+    my $feature = $obj->Associated_feature;
+    
+    return {
+        description => 'feature associated with this transcript',
+        data => $feature ? $self->_pack_obj($feature, $feature->Description) : undef
+    };
+    
+}
+
 ############################################################
 #
 # The External Links widget
