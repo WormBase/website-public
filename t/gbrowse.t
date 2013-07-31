@@ -268,7 +268,7 @@ $reportdb = init_reporting($configuration->param('CouchHost'),
                            'reports');
 
 # Get all GBrowse configs and create a track listing:
-my @gbrowse_configs = <conf/gbrowse/?_*_PRJNA62057*.conf>;
+my @gbrowse_configs = <conf/gbrowse/?_*_P*.conf>;
 my @config_names = ();
 foreach my $gbrowse_config (@gbrowse_configs) {
     push(@config_names, basename($gbrowse_config, ".conf"));
