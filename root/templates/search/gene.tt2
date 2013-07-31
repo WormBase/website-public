@@ -3,6 +3,14 @@
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
+    [% IF item.dead %]
+        <br />
+        <span class="highlight">This gene is dead.</span> 
+        [% IF item.merged_into %]
+        Merged into: [% tags2link(item.merged_into) %]
+        [% END %]
+    [% END %]
+
      [% text = [ ];
         text.push(item.concise_description.join("<br />"))               IF item.concise_description;
         text.push(item.title.join(", "))                    IF item.title;
