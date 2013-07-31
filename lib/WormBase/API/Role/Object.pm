@@ -379,11 +379,6 @@ sub _build_best_blastp_matches {
         $_->{covered} = $covered;
     }
 
-    # NOT HANDLED YET
-    # my $links = Configuration->Protein_links;
-
-    my %seen;  # Display only one hit / species
-
     # I think the perl glitch on x86_64 actually resides *here*
     # in sorting hash values.  But I can't replicate this outside of a
     # mod_perl environment
@@ -423,7 +418,7 @@ sub _build_best_blastp_matches {
         $species =~ /(.*)\.(.*)/;
         my $taxonomy = {genus => $1, species => $2};
 
-        #     next if ($seen{$species}++);
+
         my $id;
         if ($hit =~ /(\w+):(.+)/) {
             my $prefix    = $1;
@@ -433,7 +428,10 @@ sub _build_best_blastp_matches {
         }
         push @hits, {
             taxonomy => $taxonomy,
-            hit      => $self->_pack_obj($hit),
+            # custom packing for linking out to external sources
+            hit      => {   class => "$class", 
+                            id => "$id" || "$hit", 
+                            label => "$hit"},
             description => $description && "$description",
             evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
             percent     => $length == 0 ? '0' : sprintf("%2.1f%%", 100 * ($best{$_}{covered}) / $length),

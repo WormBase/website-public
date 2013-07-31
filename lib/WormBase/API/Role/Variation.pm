@@ -23,7 +23,7 @@ use Moose::Role;
 
 # Private method: glean some information about a variation.
 sub _process_variation {
-    my ( $self, $variation ) = @_;
+    my ( $self, $variation, $get_gene ) = @_;
 
     my $type = join (', ', map {$_=~s/_/ /g;$_} grep{ $_=~/^(?!Natural_variant)/; } $variation->Variation_type ) || 'unknown';
 
@@ -71,6 +71,8 @@ sub _process_variation {
     my $method_name = $variation->Method;
     my $method_remark = $method_name->Remark if $method_name;
 
+    my $gene = $self->_pack_obj($variation->Gene) if $get_gene;
+
     # Make string user friendly to read and add tooltip with description:
     $method_name = "$method_name";
     $method_name =~ s/_/ /g;
@@ -80,6 +82,7 @@ sub _process_variation {
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
         method_name      => $method_name,
+        gene             => $gene,
         molecular_change => $molecular_change && "$molecular_change",
         aa_change        => @aa_change ? join('<br />', @aa_change) : undef,
         aa_position      => @aa_position ? join('<br />', @aa_position) : undef,
