@@ -145,11 +145,15 @@ sub feature {
     my ($self) = @_;
     my $obj = $self->object;
     
-    my $feature = $obj->Associated_feature;
+    my @features = $obj->Associated_feature;
+    my @data;
+    foreach my $feature (@features){
+        push @data, $self->_pack_obj($feature, $feature->Description);
+    }
     
     return {
         description => 'feature associated with this transcript',
-        data => $feature ? $self->_pack_obj($feature, $feature->Description) : undef
+        data => scalar @data > 0 ? {map {$_ => $self->_pack_obj($_, $_->Description)} @features} : undef 
     };
     
 }
