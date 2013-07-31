@@ -10,9 +10,6 @@ WRAPPER $field_block title="Method" key='method';
         fields.method.data.details;
     END;
     END;
-WRAPPER $field_block title="Associated feature" key="feature";
-        tag2link(fields.feature.data);
-    END;
 
 title = "Associated feature";
 IF fields.feature.data.size > 1;
