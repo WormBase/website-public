@@ -60,10 +60,12 @@
             result.push(tag2link(data.$key));
           END;
         END;
-      ELSE;
+      ELSIF ref(data) == 'ARRAY';
         FOREACH item IN data;
           result.push(tag2link(item));
         END;
+      ELSE;
+        data;
       END;
       IF (expandable_title && (result.size > 10));
         WRAPPER toggle title=result.size _ ' ' _ expandable_title;
