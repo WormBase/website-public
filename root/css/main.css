@@ -3204,3 +3204,10 @@ button::-moz-focus-inner {
 .align-alcohol {
   color: #0099ff;
 }
+
+/* Minimum size requirements for flot plots */
+
+.flotplot {
+  min-width: 300px;
+  min-height: 300px
+}

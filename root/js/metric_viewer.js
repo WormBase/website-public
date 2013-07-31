@@ -2,9 +2,13 @@
 // CouchDB: URL and report database
 var couchBaseUri = 'http://dev.wormbase.org:5984';
 var couchReportDB = 'reports';
+var couchBrowsePath = '_utils/document.html?' + couchReportDB;
 
-var overviewGraph = null;
-var overviewData = {
+// Number of GBrowse detailed view columns ("#gbrowsedetails0", "#gbrowsedetails1", ...):
+var gbrowseDetailsColumns = 2;
+
+var gbrowseOverviewGraph = null;
+var gbrowseOverviewData = {
   totalUrls: [],
   brokenUrls: [],
   imageMismatches: [],
@@ -12,6 +16,11 @@ var overviewData = {
   tracks: [],
   landmarks: []
 };
+
+var gbrowseDetailGraphs = {};
+var gbrowseDetailData = {};
+
+var epoch2URL = {};
 
 function couchRequest(request, callback) {
   jQuery.ajax({
@@ -27,6 +36,12 @@ function couchRequest(request, callback) {
       callback(null, textStatus);
     }
   });
+}
+
+function configuration2Title(configuration) {
+  var chunks = configuration.split("_");
+
+  return chunks[0].toUpperCase() + ". " + chunks[1] + " (BioProject " + chunks[2] + ")";
 }
 
 function getReportListing(callback) {
@@ -55,23 +70,34 @@ function getReportOverview(data, error) {
     missingReferences += data[data["configurations"][i]]["missing_references"];
     tracks += data[data["configurations"][i]]["tracks"];
     landmarks += data[data["configurations"][i]]["example_landmarks"];
-  }
-  overviewData["totalUrls"].push([ data["started_since_epoch"] * 1000, totalUrls ]);
-  overviewData["brokenUrls"].push([ data["started_since_epoch"] * 1000, brokenUrls ]);
-  overviewData["imageMismatches"].push([ data["started_since_epoch"] * 1000, imageMismatches ]);
-  overviewData["missingReferences"].push([ data["started_since_epoch"] * 1000, missingReferences ]);
-  overviewData["tracks"].push([ data["started_since_epoch"] * 1000, tracks ]);
-  overviewData["landmarks"].push([ data["started_since_epoch"] * 1000, landmarks ]);
 
-  if (!overviewGraph) {
-    overviewGraph = $.plot($("#overviewgraph"), [], {
+    updateReportDetails(data["configurations"][i], i % gbrowseDetailsColumns, {
+      "_id": data["_id"],
+      "started_since_epoch": data["started_since_epoch"],
+      "totalUrls": data[data["configurations"][i]]["total_urls"],
+      "brokenUrls": data[data["configurations"][i]]["broken_urls"],
+      "imageMismatches": data[data["configurations"][i]]["image_mismatches"],
+      "missingReferences": data[data["configurations"][i]]["missing_references"],
+      "tracks": data[data["configurations"][i]]["tracks"],
+      "landmarks": data[data["configurations"][i]]["example_landmarks"]
+    });
+  }
+  gbrowseOverviewData["totalUrls"].push([ data["started_since_epoch"] * 1000, totalUrls ]);
+  gbrowseOverviewData["brokenUrls"].push([ data["started_since_epoch"] * 1000, brokenUrls ]);
+  gbrowseOverviewData["imageMismatches"].push([ data["started_since_epoch"] * 1000, imageMismatches ]);
+  gbrowseOverviewData["missingReferences"].push([ data["started_since_epoch"] * 1000, missingReferences ]);
+  gbrowseOverviewData["tracks"].push([ data["started_since_epoch"] * 1000, tracks ]);
+  gbrowseOverviewData["landmarks"].push([ data["started_since_epoch"] * 1000, landmarks ]);
+
+  if (!gbrowseOverviewGraph) {
+    gbrowseOverviewGraph = $.plot($("#gbrowseoverviewgraph"), [], {
       series: {
         lines: { show: true },
         points: { show: true }
       },
       xaxis: {
         mode: "time",
-        timeformat: "%Y-%m-%dT%H:%M:%S"
+        timeformat: "%m/%d/%Y, %H:%M"
       },
       yaxis: {
         min: 0
@@ -79,16 +105,76 @@ function getReportOverview(data, error) {
     });
   }
 
-  overviewGraph.setData([
-    { label: "URLs in configuration files", data: overviewData["totalUrls"] },
-    { label: "Tested URLs that were broken", data: overviewData["brokenUrls"] },
-    { label: "Mismatching images (reference vs. actual)", data: overviewData["imageMismatches"] },
-    { label: "URLs that lack a reference image", data: overviewData["missingReferences"] },
-    { label: "Tracks", data: overviewData["tracks"] },
-    { label: "Example landmarks", data: overviewData["landmarks"] }
+  gbrowseOverviewGraph.setData([
+    { label: "URLs in configuration files", data: gbrowseOverviewData["totalUrls"] },
+    { label: "Tested URLs that were broken", data: gbrowseOverviewData["brokenUrls"] },
+    { label: "Mismatching images (reference vs. actual)", data: gbrowseOverviewData["imageMismatches"] },
+    { label: "URLs that lack a reference image", data: gbrowseOverviewData["missingReferences"] },
+    { label: "Tracks", data: gbrowseOverviewData["tracks"] },
+    { label: "Example landmarks", data: gbrowseOverviewData["landmarks"] }
   ]);
-  overviewGraph.setupGrid();
-  overviewGraph.draw();
+  gbrowseOverviewGraph.setupGrid();
+  gbrowseOverviewGraph.draw();
+}
+
+function updateReportDetails(configuration, column, couchData) {
+  var data = gbrowseDetailData[configuration] ? gbrowseDetailData[configuration] : {
+    totalUrls: [],
+    brokenUrls: [],
+    imageMismatches: [],
+    missingReferences: [],
+    tracks: [],
+    landmarks: []
+  };
+
+  data["totalUrls"].push([ couchData["started_since_epoch"] * 1000, couchData['totalUrls'] ]);
+  data["brokenUrls"].push([ couchData["started_since_epoch"] * 1000, couchData['brokenUrls'] ]);
+  data["imageMismatches"].push([ couchData["started_since_epoch"] * 1000, couchData['imageMismatches'] ]);
+  data["missingReferences"].push([ couchData["started_since_epoch"] * 1000, couchData['missingReferences'] ]);
+  data["tracks"].push([ couchData["started_since_epoch"] * 1000, couchData['tracks'] ]);
+  data["landmarks"].push([ couchData["started_since_epoch"] * 1000, couchData['landmarks'] ]);
+  gbrowseDetailData[configuration] = data;
+
+  var gbrowseDetailGraph = gbrowseDetailGraphs[configuration];
+  if (!gbrowseDetailGraph) {
+    $("#gbrowsedetailslist").append('<option value="' + configuration + '">' + configuration2Title(configuration) + '</option>');
+    $("#gbrowsedetails" + column).append('<h4>' + configuration2Title(configuration) + '</h4><div id="gbrowsedetailgraph_' + configuration + '" class="flotplot"></div>');
+    gbrowseDetailGraph = $.plot($("#gbrowsedetailgraph_" + configuration), [], {
+      series: {
+        lines: { show: true },
+        points: { show: true }
+      },
+      xaxis: {
+        mode: "time",
+        timeformat: "%m/%d/%Y, %H:%M"
+      },
+      yaxis: { min: 0 },
+      grid: { clickable: true }
+    });
+
+    $("#gbrowsedetailgraph_" + configuration).bind("plotclick", function (event, pos, item) {
+      if (item) {
+          var started_since_epoch = item.datapoint[0];
+
+          window.open(couchBaseUri + "/" + couchBrowsePath + "/" + epoch2URL[configuration + "@" + started_since_epoch]);
+      }
+    });
+
+    gbrowseDetailGraphs[configuration] = gbrowseDetailGraph;
+  }
+
+  epoch2URL[configuration + "@" + (couchData["started_since_epoch"] * 1000)] = couchData["_id"];
+
+  gbrowseDetailGraph.setData([
+    { label: "URLs in configuration files", data: data["totalUrls"] },
+    { label: "Tested URLs that were broken", data: data["brokenUrls"] },
+    { label: "Mismatching images (reference vs. actual)", data: data["imageMismatches"] },
+    { label: "URLs that lack a reference image", data: data["missingReferences"] },
+    { label: "Tracks", data: data["tracks"] },
+    { label: "Example landmarks", data: data["landmarks"] }
+  ]);
+  gbrowseDetailGraph.setupGrid();
+  gbrowseDetailGraph.draw();
 }
 
 function createOverviewGraph(data, error) {
