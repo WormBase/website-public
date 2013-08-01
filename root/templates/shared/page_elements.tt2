@@ -981,10 +981,10 @@ END;
 [% MACRO error BLOCK; %]
   [% IF c.stash.error %]
   <br />
-  <div class="ui-state-error ui-corner-all description">
-    <p>
+  <div class="ui-state-error ui-corner-all">
+
     <span class="ui-state-error-text">[% c.stash.error %]</span>
-    </p>
+
   </div>
   [% END %]
 [% END;

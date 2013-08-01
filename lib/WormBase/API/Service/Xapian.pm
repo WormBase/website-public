@@ -71,7 +71,7 @@ sub search {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->_setup_query($q, $class->qp, 512|16); 
+    my ($query, $error) =$class->_setup_query($q, $class->qp, 512|16); 
     my $enq       = $class->db->enquire ( $query );
 
     if($type && $type =~ /paper/){
@@ -79,13 +79,12 @@ sub search {
     }
     my $mset      = $enq->get_mset( ($page-1)*$page_size,
                                      $page_size );
-
     # $c->log->debug("Parsed query is: " . $query->get_description());
 
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
-    return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
-        search=>$class,query=>$q,query_obj=>$query,querytime=>$time,page=>$page,page_size=>$page_size });
+    return (Catalyst::Model::Xapian::Result->new({ mset=>$mset,
+        search=>$class,query=>$q,query_obj=>$query,querytime=>$time,page=>$page,page_size=>$page_size }), $error);
 }
 
 sub search_autocomplete {
@@ -305,10 +304,12 @@ sub _get_taxonomy {
 sub _setup_query {
   my($self, $q, $qp, $opts) = @_;
   my $query=$qp->parse_query( $q, $opts );
+  my $error;
   if($query->get_length() > 1000){
     $query = $qp->parse_query($q);
+    $error = "Query too large: wildcard, synonym and phrase search disabled. Please try a more specific search term.";
   }
-  return $query;
+  return wantarray ? ($query, $error) : $query;
 }
 
 sub _pack_search_obj {
