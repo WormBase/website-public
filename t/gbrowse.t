@@ -31,7 +31,7 @@ use constant {
 # Will hold a reference to the log file:
 my $log;
 
-# Will hold a reference to the "reports" CouchDB database:
+# Will hold a reference to the "reports" CouchDB database -- if "--report" is specified on the CLI:
 my $reportdb;
 
 # Current time. Used for logging and report generation.
@@ -45,6 +45,9 @@ my $reportid = "$now\_gbrowse_" . sprintf("%08x", rand(2147483648));
 # Add report content that gets archived in CouchDB:
 sub report_test_status {
     my ($test_status) = @_;
+
+    # If reporting is not turned on, then do not interact with CouchDB.
+    return unless ($reportdb);
 
     my $reportdoc = $reportdb->open_doc($reportid)->recv;
 
@@ -219,6 +222,9 @@ sub test_config {
     }
 }
 
+# Boolean variable: should a report be generated and deposited in CouchDB?
+my $create_report;
+
 # Boolean variable: are we creating a reference image set?
 my $reference;
 
@@ -228,7 +234,8 @@ my $cutoff;
 # Base URL of the GBrowse instance, e.g. http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img/
 my $base_url;
 
-GetOptions("reference" => \$reference,
+GetOptions("report" => \$create_report,
+           "reference" => \$reference,
            "cutoff=f" => \$cutoff,
            "base=s" => \$base_url);
 
@@ -260,12 +267,14 @@ $log = init_logging($configuration->param('LogFile'));
 
 print $log "\nNew run $now. Successful completion will terminate with the line \"Done $now.\"\n";
 
-# Connect to CouchDB, which will hold the final report.
-$reportdb = init_reporting($configuration->param('CouchHost'),
-                           $configuration->param('CouchPort'),
-                           $configuration->param('CouchUsername'),
-                           $configuration->param('CouchPassword'),
-                           'reports');
+# If a report should be created: connect to CouchDB, which will hold the final report.
+if ($create_report) {
+    $reportdb = init_reporting($configuration->param('CouchHost'),
+                               $configuration->param('CouchPort'),
+                               $configuration->param('CouchUsername'),
+                               $configuration->param('CouchPassword'),
+                               'reports');
+}
 
 # Get all GBrowse configs and create a track listing:
 my @gbrowse_configs = <conf/gbrowse/?_*_P*.conf>;
@@ -275,15 +284,17 @@ foreach my $gbrowse_config (@gbrowse_configs) {
 }
 
 # Record that testing has started, but has not finished yet ("completed" is null):
-$reportdb->save_doc({
-    _id                 => $reportid,
-    completed           => undef,
-    mode                => $mode,
-    type                => 'gbrowse',
-    started             => $human_readable_now,
-    started_since_epoch => $seconds_since_epoch,
-    configurations      => \@config_names
-})->recv;
+if ($create_report) {
+   $reportdb->save_doc({
+       _id                 => $reportid,
+       completed           => undef,
+       mode                => $mode,
+       type                => 'gbrowse',
+       started             => $human_readable_now,
+       started_since_epoch => $seconds_since_epoch,
+       configurations      => \@config_names
+   })->recv;
+}
 
 # Archive in which mode we are operating:
 print $log "Mode: $mode";
