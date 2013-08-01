@@ -124,7 +124,7 @@ sub search :Path('/search') Args {
                       taxonomy => $_->{taxonomy}->{genus} . ' ' . $_->{taxonomy}->{species}};
           foreach my $key (keys %{$_}){
             if (ref($_->{$key}) eq 'ARRAY'){
-              $ret->{$key} = join(', ', map { if(ref($_) eq 'HASH'){$_->{label}}else{$_}} @{$_->{$key}});
+              $ret->{$key} = join(', ', map { if(ref($_) eq 'HASH'){$_->{label}}else{$_ || 1}} @{$_->{$key}});
               $seen{$key} = 1;
             }
           }
