@@ -99,11 +99,12 @@ sub search :Path('/search') Args {
     }
 
     # this is the actual search
-    my $it= $api->xapian->search($c, $tmp_query, $page_count, $search, $c->stash->{species});
+    my ($it, $error) = $api->xapian->search($c, $tmp_query, $page_count, $search, $c->stash->{species});
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $api->xapian->search_count($c, $tmp_query, $search, $c->stash->{species});
+    $c->stash->{error} = $error;
     my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
@@ -124,7 +125,7 @@ sub search :Path('/search') Args {
                       taxonomy => $_->{taxonomy}->{genus} . ' ' . $_->{taxonomy}->{species}};
           foreach my $key (keys %{$_}){
             if (ref($_->{$key}) eq 'ARRAY'){
-              $ret->{$key} = join(', ', map { if(ref($_) eq 'HASH'){$_->{label}}else{$_}} @{$_->{$key}});
+              $ret->{$key} = join(', ', map { if(ref($_) eq 'HASH'){$_->{label}}else{$_ || 1}} @{$_->{$key}});
               $seen{$key} = 1;
             }
           }

@@ -1,4 +1,4 @@
-
+[% IF c.stash.error; error; END; %]
 [% IF (widget == 'references') && results.size > 0%]
 <ul class="navigation ui-corner-all" id="search-count-summary">
 
