@@ -414,7 +414,7 @@ WB.getPlugin("dataTables", function(){
             "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
             "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
             "oTableTools": {
-              "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_cvs_xls_pdf.swf",
+              "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_csv_xls_pdf.swf",
               "aButtons": [
                 {
                   "sExtends": "collection",
