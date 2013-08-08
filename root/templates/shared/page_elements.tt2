@@ -404,6 +404,17 @@ END;
     [% END %]
     <script type="text/javascript" >
 WB.getPlugin("dataTables", function(){
+        $jq.extend( $jq.fn.dataTableExt.oSort, {
+          "scientific-pre": function ( a ) {
+            return parseFloat(a);
+          },
+          "scientific-asc": function ( a, b ) {
+            return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+          },
+          "scientific-desc": function ( a, b ) {
+            return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+          }
+        });
         WB.getPlugin("tabletools", function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
@@ -421,9 +432,9 @@ WB.getPlugin("dataTables", function(){
                   "sButtonText": "Save table",
                   "aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
                 }
-              ],
-              [% style %]
-            }
+              ]
+            },
+            [% style %]
 
           });
 
@@ -734,7 +745,7 @@ END;
                                 },
                        key='best_blastp_matches',
                        passed_data=matches.hits,
-                       style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
+                       style = '"aoColumns": [ { "sSortDataType": "dom-text", "sType": "scientific" },null,null,null,null]');
            '<div id="blast_details">';
     WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details').path id="blast_details_toggle";
     END;
