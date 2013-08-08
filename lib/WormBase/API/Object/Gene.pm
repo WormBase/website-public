@@ -1682,7 +1682,7 @@ sub gene_models {
             = ( $sequence->class eq 'CDS' )
             ? $sequence
             : eval { $sequence->Corresponding_CDS };
-        next if $seen{$cds}++;
+        next if defined $cds && $seen{$cds}++;
 
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
@@ -1735,7 +1735,6 @@ sub gene_models {
         $data{protein} = $self->_pack_obj($protein) if $coding;
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
         $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
-
 
         push @rows, \%data;
     }
