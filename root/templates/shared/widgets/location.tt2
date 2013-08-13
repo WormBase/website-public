@@ -2,14 +2,20 @@
 
     class = object.name.data.class FILTER lower;
     # Transcripts lone class not placed on genetic map
-    UNLESS class.match('transcript');
+    UNLESS class.match('transcript') || fields.genomic_position.data;
      '<div style="white-space:nowrap;"';
     WRAPPER $field_block title="Genetic position" key="genetic_position";
-      IF fields.genetic_position.data.chromosome;
-             fields.genetic_position.data.formatted;
-             IF fields.genetic_position.data.method;
-                  ' (' _ fields.genetic_position.data.method _ ')';
-             END;
+      IF fields.genetic_position.data;
+        FOREACH position IN fields.genetic_position.data;
+          IF position.chromosome;
+                 position.formatted;
+                 IF position.method;
+                      ' (' _ position.method _ ')';
+                 END;
+          ELSE;       
+               '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
+          END;
+        END;
       ELSE;       
                '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
       END;
@@ -18,22 +24,66 @@
     END;
 
     IF fields.genomic_position.data;
-      WRAPPER $field_block title="Genomic position" key="genomic_position";
              # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
 	     
        	       FOREACH position IN fields.genomic_position.data;
+                 idx = loop.index();
+
+                 IF idx > 0;
+                   '<hr />';
+                 END;
+
+                 # Transcripts lone class not placed on genetic map
+                 UNLESS class.match('transcript');
+                   '<div style="white-space:nowrap;"';
+                 WRAPPER $field_block title="Genetic position" key="genetic_position";
+                   genetic_position = fields.genetic_position.data.$idx;
+                   UNLESS genetic_position;
+                     genetic_position = fields.genetic_position.data;
+                   END;
+                   IF genetic_position;
+                     IF genetic_position.chromosome;
+                       genetic_position.formatted;
+                       IF genetic_position.method;
+                         ' (' _ genetic_position.method _ ')';
+                       END;
+                     ELSE;       
+                       '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
+                     END;
+                   ELSE;
+                       '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
+                   END;
+                 END;
+                 '</div>';
+                 END;
+
+                 WRAPPER $field_block title="Genomic position" key="genomic_position";
+
                    tag2link(position);
-     	           UNLESS loop.last;
-     	               ',&nbsp;';
-     	           END;
-     	       END;
-      END;
+                   UNLESS loop.last;
+     	                 ',&nbsp;';
+                   END;
+     	         END;
+
+                 '<div style="clear:both;">';
+                 genomic_image = fields.genomic_image.data.$idx;
+                 UNLESS genomic_image;
+                   genomic_image = fields.genomic_image.data;
+                 END;
+                 img_url = site.external_urls.gbrowse_image.base _ genomic_image.id;
+                 IF fields.tracks.data;
+                   img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
+                 END;
+                 '<br><br>';
+                 tag2link(genomic_image, image(img_url));
+                 '</div>';
+               END;
     ELSE;       
                   '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the physical map or its coordinates are unknown.</div>';
     END;
 
     '<div style="clear:both;">';
-    IF fields.genomic_image.data;
+    IF fields.genomic_image.data && !fields.genomic_position.data;
              # setting vars up
 	     # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
              img_url = site.external_urls.gbrowse_image.base _ fields.genomic_image.data.id;

@@ -774,20 +774,51 @@ sub history {
 #
 ############################################################
 
+# Overridden from 'Position'. Returns true, so that a genomic image
+# is returned for each genomic position recorded for this feature.
+sub _make_multiple_genomic_images {
+    return 1;
+}
+
+sub _build_genomic_position {
+    my ($self) = @_;
+
+    my @genes = grep{ defined blessed($_) and $_->Method ne 'history'} @{$self->cds};
+    if (not @genes || scalar(@genes) == 0) {
+        return { description => 'No genomic position data available.', data => undef };
+    }
+
+    my @positions = ();
+    foreach my $gene (@genes) {
+        my $position = $self->_api->wrap($gene)->_build_genomic_position;
+        push(@positions, $position->{'data'}[0]);
+    }
+
+    return {
+        description => "Genomic position of the genes that are coding the protein",
+        data => \@positions
+    };
+}
+
 sub _build_genetic_position {
     my ($self) = @_;
 
-    my @genes = grep{ defined blessed($_) and $_->Method ne 'history'}  @{$self->cds} || return {
-            description => 'No genetic position data available.',
-            data => undef
-        };
-    if (scalar(@genes) == 0) {
+    my @genes = grep{ defined blessed($_) and $_->Method ne 'history'}  @{$self->cds};
+    if (not @genes || scalar(@genes) == 0) {
         return { description => 'No genetic position data available.', data => undef };
     }
-    my ($chromosome,$position,$error) = $self->_api->wrap($genes[0])->_get_interpolated_position();
-    my $genetic_position = $self->make_genetic_position_object('Protein', $self->object, $chromosome, $position, $error, 'interpolated');
 
-    return $genetic_position;
+    my @positions = ();
+    foreach my $gene (@genes) {
+        my ($chromosome,$position,$error) = $self->_api->wrap($gene)->_get_interpolated_position();
+        my $genetic_position = $self->make_genetic_position_object('Protein', $self->object, $chromosome, $position, $error, 'interpolated');
+        push(@positions, $genetic_position->{'data'});
+    }
+
+    return {
+        description => "Genetic positions of the genes that are coding the protein",
+        data => \@positions
+    };
 }
 
 sub _build_genetic_position_interpolated {
