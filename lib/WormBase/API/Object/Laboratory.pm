@@ -323,7 +323,7 @@ sub alleles {
 	my $gene = $_->Gene;
 	my $type = $_->Type_of_mutation;
 	my $allele_name = $_->Public_name;
-	my $gene_name = $gene->Public_name;
+	my $gene_name = $gene->Public_name if $gene;
 	push @data,{ allele    => $self->_pack_obj($_, $allele_name && "$allele_name"),
 		     gene      => $self->_pack_obj($gene, $gene_name && "$gene_name"),
 		     type      => $type && "$type",
