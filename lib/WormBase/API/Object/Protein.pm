@@ -68,7 +68,6 @@ has 'cds' => (
 #
 #######################################
 
-
 ############################################################
 #
 # The Overview widget
@@ -90,12 +89,16 @@ sub _build__common_name {
     # More than one corresponding CDS? Can't be sure of which CDS we're looking at
     # so to avoid ambiguity, use the actual object identifier.
     my @corresponding_cds = $object->Corresponding_CDS;
+    my $name;
     if (@corresponding_cds >= 2) {
-	return "$object";
+        $name = "$object";
+        $name =~ s/\n//g;
     } else {
 	# Otherwise use the more human friendly Gene_name.
-	return $object->Gene_name && $object->Gene_name->asString;
+        $name = $object->Gene_name && $object->Gene_name->asString;
     }
+    $name =~ s/\n//g; # get rid of possible newlines that may/may not be lingering around
+    return $name;
 }
 
 # corresponding_gene { }
