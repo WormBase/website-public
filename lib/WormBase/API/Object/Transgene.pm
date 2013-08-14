@@ -72,12 +72,10 @@ http://wormbase.org/species/*/transgene
             data        => [
                 map {
 		    my $summary      = $_->Summary;
-		    my $reporter_tag = $_->Reporter;
+		    my $reporter_tag = $_->Reporter_product;
 		    my $reporter;
-		    if ($reporter_tag && ($reporter_tag eq 'Gene')) {
-			$reporter = $self->_pack_obj($reporter_tag->Public_name);
-		    } elsif ($reporter_tag) {
-			$reporter = $reporter_tag->col;
+		    if ($reporter_tag) {
+			$reporter = join(', ', $reporter_tag);
 		    } else {
 			$reporter = 'unknown';
 		    }
