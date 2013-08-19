@@ -25,7 +25,7 @@
             IF expr_pattern.reference == 'WBPaper00040986';
     END;
     
-    WRAPPER $field_block title="Expression patterns from " 
+    WRAPPER $field_block title="Inferred expression patterns from " 
         _ text2link('Paper','WBPaper00040986','Murray JI et al.','Murray JI et al.','all');
         build_data_table(
             order=['expression_pattern','gene','description', 'certainty'],

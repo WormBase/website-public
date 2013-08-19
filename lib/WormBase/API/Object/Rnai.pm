@@ -156,19 +156,19 @@ sub sequence {
     my $self        = shift;
     my $object      = $self->object;
 
-    my @tag_objects = map {{ sequence=> "$_", header=> $_->right && $_->right->asString }} $object->Sequence || $object->DNA_text;
+    my @tag_objects = map {{ sequence=> "$_", header=> $_->right && $_->right->asString }} $object->DNA_text || $object->Sequence;
     if (!@tag_objects  && $object->PCR_product) {
         @tag_objects = map {    {   header=>"$_", 
                                     sequence=> $self->_api->wrap($_)->segment->{data}->{dna} 
                                 }} $object->PCR_product;
     }
     my @data   = map { {sequence=> $_->{sequence},
-            			length=>length($_->{sequence}),
+                        length=>length($_->{sequence}),
                         header => $_->{header}
-        		      } 
-        		} @tag_objects;
+                      }
+                } @tag_objects;
     return { data        => @data ? \@data : undef,
-	     description => 'rnai sequence'
+             description => 'rnai sequence'
     };
 }
 
