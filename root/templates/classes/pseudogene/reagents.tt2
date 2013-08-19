@@ -1,0 +1,12 @@
+
+[%
+    WRAPPER $field_block title="Matching cDNAs" key="matching_cdnas";
+    tags2link(fields.matching_cdnas.data, '<br />', "matching cDNAs");
+    END;
+
+    WRAPPER $field_block title="SAGE tags" key="sage_tags";
+    tags2link(fields.sage_tags.data, '<br />', "SAGE tags");
+    END;
+
+%]
+    
