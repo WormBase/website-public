@@ -287,9 +287,9 @@
     END;
 
     MACRO match_link(link) BLOCK;
-      IF !site.external_urls.defined(link);;
-        link = link FILTER lower;
-        IF link.match('^(sw|sptrembl|tr)$'); link = 'uniprot'; END;
+      IF !site.external_urls.defined(link);
+        llink = link FILTER lower;
+        IF llink.match('^(sw|sptrembl|tr)$'); link = 'uniprot'; END;
       END;
       link;
     END;
