@@ -1993,38 +1993,55 @@ function setupCytoscape(data, types, clazz){
     })();
     
     return{
+      // initiate page
       init: init,                                   // initiate all js on wormbase page
-      ajaxGet: ajaxGet,                             // load data via ajax request
-      goToAnchor: Scrolling.goToAnchor,             // Scroll page to certain anchor
-      setLoading: setLoading,                       // add the loading image to a certain div
-      resetLayout: Layout.resetLayout,              // change page layout
-      openAllWidgets: Layout.openAllWidgets,        // open all widgets on the page
-      displayNotification: displayNotification,     // display notification at the top of the page
+
+      // searching
+      search: search,                               // run search using current filters
+      search_change: search_change,                 // change the class search filter
+      search_species_change: search_species_change, // change the species search filter
+      checkSearch: checkSearch,                     // check search results - post-format if needed
+      allResults: allResults,                       // setup search all page
+
+      // static widgets
+      getMarkItUp: getMarkItUp,                     // get markup language for static widgets
+      StaticWidgets: StaticWidgets,                 // modify static widgets (edit/update)
+
+      // layouts
       deleteLayout: Layout.deleteLayout,            // delete saved layout
       columns: Layout.columns,                      // get column configuration from layout
       setLayout: Layout.setLayout,                  // save a layout
       resetPageLayout: Layout.resetPageLayout,      // reset page to default widget layout
-      search: search,                               // run search using current filters
-      search_change: search_change,                 // change the class search filter
-      search_species_change: search_species_change, // change the species search filter
+      resetLayout: Layout.resetLayout,              // change page layout
+      openAllWidgets: Layout.openAllWidgets,        // open all widgets on the page
+      newLayout: Layout.newLayout,                  // create a new layout
+      resize: Layout.resize,                        // resize the page
+
+      // scrolling
+      goToAnchor: Scrolling.goToAnchor,             // Scroll page to certain anchor
+      scrollToTop: scrollToTop,                     // scroll to the top of the page
+
+      // loading - ajax/plugins/files/RSS
+      ajaxGet: ajaxGet,                             // load data via ajax request
+      setLoading: setLoading,                       // add the loading image to a certain div
+      loadRSS: loadRSS,                             // load RSS (homepage)
+      loadFile: Plugin.loadFile,                    // load a file dynamically
+      getPlugin: Plugin.getPlugin,                  // load plugin
+
+      // notifications
+      displayNotification: displayNotification,     // display notification at the top of the page
+
+      // user session, comments/issues
       openid: openid,                               // login via openid
-      validate_fields: validate_fields,             // validate form fields
-      StaticWidgets: StaticWidgets,                 // modify static widgets (edit/update)
-      recordOutboundLink: recordOutboundLink,       // record external links
+      historyOn: historyOn,                         // turn on history
       comment: comment,                             // add comment to a page
       issue: issue,                                 // submit an issue
-      getMarkItUp: getMarkItUp,                     // get markup language for static widgets
-      checkSearch: checkSearch,                     // check search results - post-format if needed
-      scrollToTop: scrollToTop,                     // scroll to the top of the page
-      historyOn: historyOn,                         // turn on history
-      allResults: allResults,                       // setup search all page
-      loadRSS: loadRSS,                             // load RSS (homepage)
-      newLayout: Layout.newLayout,                  // create a new layout
+
+      // miscellaneous 
+      validate_fields: validate_fields,             // validate form fields
+      recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
-      getPlugin: Plugin.getPlugin,                  // load plugin
       reloadWidget: reloadWidget,                   // refresh a widget
-      resize: Layout.resize,                        // resize the page
-      loadFile: Plugin.loadFile                     // load a file dynamically
     }
   })();
 
