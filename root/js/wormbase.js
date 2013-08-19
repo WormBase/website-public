@@ -1993,38 +1993,38 @@ function setupCytoscape(data, types, clazz){
     })();
     
     return{
-      init: init,
-      ajaxGet: ajaxGet,
-      goToAnchor: Scrolling.goToAnchor,
-      setLoading: setLoading,
-      resetLayout: Layout.resetLayout,
-      openAllWidgets: Layout.openAllWidgets,
-      displayNotification: displayNotification,
-      deleteLayout: Layout.deleteLayout,
-      columns: Layout.columns,
-      setLayout: Layout.setLayout,
-      resetPageLayout: Layout.resetPageLayout,
-      search: search,
-      search_change: search_change,
-      search_species_change: search_species_change,
-      openid: openid,
-      validate_fields: validate_fields,
-      StaticWidgets: StaticWidgets,
-      recordOutboundLink: recordOutboundLink,
-      comment: comment,
-      issue: issue,
-      getMarkItUp: getMarkItUp,
-      checkSearch: checkSearch,
-      scrollToTop: scrollToTop,
-      historyOn: historyOn,
-      allResults: allResults,
-      loadRSS: loadRSS,
-      newLayout: Layout.newLayout,
-      setupCytoscape: setupCytoscape,
-      getPlugin: Plugin.getPlugin,
-      reloadWidget: reloadWidget,
-      resize: Layout.resize,
-      loadFile: Plugin.loadFile
+      init: init,                                   // initiate all js on wormbase page
+      ajaxGet: ajaxGet,                             // load data via ajax request
+      goToAnchor: Scrolling.goToAnchor,             // Scroll page to certain anchor
+      setLoading: setLoading,                       // add the loading image to a certain div
+      resetLayout: Layout.resetLayout,              // change page layout
+      openAllWidgets: Layout.openAllWidgets,        // open all widgets on the page
+      displayNotification: displayNotification,     // display notification at the top of the page
+      deleteLayout: Layout.deleteLayout,            // delete saved layout
+      columns: Layout.columns,                      // get column configuration from layout
+      setLayout: Layout.setLayout,                  // save a layout
+      resetPageLayout: Layout.resetPageLayout,      // reset page to default widget layout
+      search: search,                               // run search using current filters
+      search_change: search_change,                 // change the class search filter
+      search_species_change: search_species_change, // change the species search filter
+      openid: openid,                               // login via openid
+      validate_fields: validate_fields,             // validate form fields
+      StaticWidgets: StaticWidgets,                 // modify static widgets (edit/update)
+      recordOutboundLink: recordOutboundLink,       // record external links
+      comment: comment,                             // add comment to a page
+      issue: issue,                                 // submit an issue
+      getMarkItUp: getMarkItUp,                     // get markup language for static widgets
+      checkSearch: checkSearch,                     // check search results - post-format if needed
+      scrollToTop: scrollToTop,                     // scroll to the top of the page
+      historyOn: historyOn,                         // turn on history
+      allResults: allResults,                       // setup search all page
+      loadRSS: loadRSS,                             // load RSS (homepage)
+      newLayout: Layout.newLayout,                  // create a new layout
+      setupCytoscape: setupCytoscape,               // setup cytoscape for use
+      getPlugin: Plugin.getPlugin,                  // load plugin
+      reloadWidget: reloadWidget,                   // refresh a widget
+      resize: Layout.resize,                        // resize the page
+      loadFile: Plugin.loadFile                     // load a file dynamically
     }
   })();
 
