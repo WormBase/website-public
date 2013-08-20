@@ -1,17 +1,31 @@
 [%
+
+# convert name like 'Caenorhabditis elegans' into c_elegans
+tokens = fields.name.data.id.split('\s');
+first_char = tokens.0.substr(0,1) | lower;
+species = first_char _ '_' _ tokens.1;
+
+# Insert appropriate bioprojectid into the data structure
+bioprojectid = c.config.sections.species_list.$species.bioprojects.keys;
+FOR row IN fields.current_assemblies.data.merge( fields.previous_assemblies.data );
+    row.bioproject = bioprojectid.join(',');
+END;
+
+
 '<p><span class="species">' _ fields.name.data.label _ '</span>';
 IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; END;
 
       '<p><div class="caveat-emptor">Current Assemblies</div></p>';
    
-      build_data_table(order=['name','sequenced_strain','wb_release_range','xrefs','reference'],
-                        columns={ name    => 'Name',
-                        sequenced_strain  => 'Sequenced strain',
-                        wb_release_range  => 'WormBase releases',
-			xrefs             => 'Links',
-                        reference         => 'Origin',
-                               },
-                         key='current_assemblies');
+      build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference'],
+                        columns={ 
+                            name              => 'Name',
+                            sequenced_strain  => 'Sequenced strain',
+                            wb_release_range  => 'WormBase releases',
+                            reference         => 'Origin',
+                            bioproject        => 'Bioproject ID',
+                        },
+                        key='current_assemblies');
 
       UNLESS fields.current_assemblies.data;
          '<p class="caveat-emptor">No current assemblies curated for this species</p>';
@@ -19,14 +33,15 @@ IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; 
 
       '<p><div class="caveat-emptor">Prior Assemblies</div></p>';
 
-      build_data_table(order=['name','sequenced_strain','wb_release_range','xrefs','reference'],
-                        columns={ name         => 'Name',
-                        sequenced_strain  => 'Sequenced strain',
-                        wb_release_range  => 'WormBase releases',
-			xrefs             => 'Links',
-                        reference         => 'Origin',
-                               },
-                         key='previous_assemblies');
+      build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference'],
+                        columns={ 
+                            name              => 'Name',
+                            sequenced_strain  => 'Sequenced strain',
+                            wb_release_range  => 'WormBase releases',
+                            reference         => 'Origin',
+                            bioproject        => 'Bioproject ID',
+                        },
+                        key='previous_assemblies');
 
 
       UNLESS fields.previous_assemblies.data;

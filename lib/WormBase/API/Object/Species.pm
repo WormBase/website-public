@@ -98,15 +98,15 @@ sub _get_assemblies {
     my @assemblies = $object->Assembly;
     my @data;
     foreach (@assemblies) {
-	next if $_->Status eq 'Dead' || $_->Status eq 'Suppressed';
+        next if $_->Status eq 'Dead' || $_->Status eq 'Suppressed';
 
-	# Starting from live and working backwards.
-	if (($type eq 'previous') && ($_->Supercedes)) {
-	    push @assemblies,$_->Supercedes;
-	}
+        # Starting from live and working backwards.
+        if (($type eq 'previous') && ($_->Supercedes)) {
+            push @assemblies,$_->Supercedes;
+        }
 
-	push @data,$self->_process_assembly($_)
-	   unless ($_->Status eq 'Live' && $type eq 'previous');
+        push @data,$self->_process_assembly($_)
+        unless ($_->Status eq 'Live' && $type eq 'previous');
 
     }
     
@@ -134,30 +134,8 @@ sub _process_assembly {
 		 wb_release_range  => $wb_range,
 		 reference         => $self->_pack_obj($ref),
 		 status            => $status,
-		 xrefs             => $self->_get_xrefs($assembly),
     };
     return $data;
-}
-
-
-sub _get_xrefs {
-    my ($self,$object) = @_;
-
-    my @databases = $object->Database;
-    my %dbs;
-
-    foreach my $db (@databases) {
-	$dbs{xrefs}{"$db"}{name} = "$db";
-	foreach my $key ($db->col) {
-	    my @types = $key->col;	    
-	    my %types;
-	    foreach my $val (@types) {
-		$types{$key} = "$val";
-		$dbs{xrefs}{"$db"}{"$key"} = "$val";
-	    }
-	}
-    }
-    return \%dbs;
 }
 
 
