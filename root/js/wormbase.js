@@ -1994,7 +1994,7 @@ function setupCytoscape(data, types, clazz){
     
     return{
       // initiate page
-      init: init,                                   // initiate all js on wormbase page
+      init: init,                                   // initiate all js on any wormbase page
 
       // searching
       search: search,                               // run search using current filters
@@ -2004,15 +2004,15 @@ function setupCytoscape(data, types, clazz){
       allResults: allResults,                       // setup search all page
 
       // static widgets
-      getMarkItUp: getMarkItUp,                     // get markup language for static widgets
+      getMarkItUp: getMarkItUp,                     // get markup plugin for static widgets
       StaticWidgets: StaticWidgets,                 // modify static widgets (edit/update)
 
       // layouts
       deleteLayout: Layout.deleteLayout,            // delete saved layout
       columns: Layout.columns,                      // get column configuration from layout
-      setLayout: Layout.setLayout,                  // save a layout
+      setLayout: Layout.setLayout,                  // save current layout as a saved layout
       resetPageLayout: Layout.resetPageLayout,      // reset page to default widget layout
-      resetLayout: Layout.resetLayout,              // change page layout
+      resetLayout: Layout.resetLayout,              // apply page layout
       openAllWidgets: Layout.openAllWidgets,        // open all widgets on the page
       newLayout: Layout.newLayout,                  // create a new layout
       resize: Layout.resize,                        // resize the page
@@ -2041,7 +2041,7 @@ function setupCytoscape(data, types, clazz){
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
-      reloadWidget: reloadWidget,                   // refresh a widget
+      reloadWidget: reloadWidget                    // reload a widget
     }
   })();
 
@@ -2060,6 +2060,9 @@ function setupCytoscape(data, types, clazz){
  
 }(this,document);
 
+
+
+// Polyfills
 
 if(typeof String.prototype.trim !== 'function') {
   String.prototype.trim = function() {
