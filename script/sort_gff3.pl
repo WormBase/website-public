@@ -105,12 +105,12 @@ while(<>) {
                 }
                 if ($parents_serialized == scalar(@$parents)) {
                     # Parents have been serialized. Get stashed feature out too.
+                    $offset = tell($semisorted_gff3);
                     index_feature($semisorted_gff3, $feature_index, $feature_id, $offset);
                     print $semisorted_gff3 $feature_stash->{$feature_id} . "\n";
                     $serialized_ids->{$feature_id} = 1;
                     push(@serialized_features, $feature_id);
                     $feature_serialized = 1;
-                    $offset = tell($semisorted_gff3);
                 }
             }
             foreach my $feature_id (@serialized_features) {
