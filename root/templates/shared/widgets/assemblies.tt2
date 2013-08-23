@@ -11,7 +11,6 @@ FOR row IN fields.current_assemblies.data.merge( fields.previous_assemblies.data
     row.bioproject = bioprojectid.join(',');
 END;
 
-
 '<p><span class="species">' _ fields.name.data.label _ '</span>';
 IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; END;
 

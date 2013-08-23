@@ -67,9 +67,11 @@ sub current_assemblies {
     # represented by linking from the live Sequence_collection
     # to others.
     my $data = $self->_get_assemblies('current');  
+    use Data::Dumper;
+    Dumper($data);
     return {
-	description => "current genomic assemblies",
-	data => @$data ? $data : undef
+        description => "current genomic assemblies",
+        data => @$data ? $data : undef
     }
 }
 
@@ -86,8 +88,8 @@ sub previous_assemblies {
     # to others.
     my $data = $self->_get_assemblies('previous');  
     return {
-	description => "previous genomic assemblies",
-	data => @$data ? $data : undef
+        description => "previous genomic assemblies",
+        data => @$data ? $data : undef
     }
 }
 
@@ -127,13 +129,14 @@ sub _process_assembly {
 	"WS" . $assembly->First_WS_release . ' - '
 	. ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
 	
-    my $data = { name => $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 }),
-		 sequenced_strain  => $self->_pack_obj($assembly->Strain),
-		 first_wb_release  => "WS" . $assembly->First_WS_release,
-		 latest_wb_release => "WS" . $assembly->Latest_WS_release,
-		 wb_release_range  => $wb_range,
-		 reference         => $self->_pack_obj($ref),
-		 status            => $status,
+    my $data = { 
+        name => $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 }),
+        sequenced_strain  => $self->_pack_obj($assembly->Strain),
+        first_wb_release  => "WS" . $assembly->First_WS_release,
+        latest_wb_release => "WS" . $assembly->Latest_WS_release,
+        wb_release_range  => $wb_range,
+        reference         => $self->_pack_obj($ref),
+        status            => $status,
     };
     return $data;
 }
