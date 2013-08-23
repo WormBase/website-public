@@ -58,6 +58,7 @@
       
       navBarInit();
       pageInit();
+
       if(searchAll.size()>0) { 
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
@@ -704,7 +705,7 @@
         page = 1.0,
         total = t,
         resultDiv = container.find((widget ? "." + widget + "-widget " : '') + ".load-results"),
-        queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
+        queryList = query ? query.replace(/[,\.\*]|%22|%27/g, ' ').split(' ') : [];
 
     function init(){
       container.find("#results").find(".load-star").each(function(){
@@ -727,7 +728,7 @@
     formatResults(container.find("div#results"));
     init();
     
-    if(total > 10){
+    if(total > 10 || !total){
       if(container.find(".lazyload-widget").size() > 0){ Scrolling.search(); }
       resultDiv.click(function(){
         var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '') + (nostar ? "&nostar=" + nostar : '');

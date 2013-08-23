@@ -1,3 +1,6 @@
+[% query_uri = query | uri %]
+[% query_uri = query_uri.replace("\'", "%27").replace('\"', '%22') %]
+
 [% IF (!species && (!type || type == 'all') && (query == '*')) %]
       [% query = opt_q %]
       <div id="page-title" class="search-bg" style="margin:0;">
@@ -84,10 +87,9 @@
 
       <div id="page-title" class="search-bg">
       <h2>  
-
    <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">
     <div id="searchBody" class="ui-corner-all">
-      <input class="text" id="SearchResult" name="query" type="text" value="[% query %]"> 
+      <input class="text" id="SearchResult" name="query" type="text" value='[% query.replace("\'", "&#39;") %]'> 
     </div>
     <div class="searchIcon ui-corner-all" onclick="WB.search('SearchResult'); return false;">
       <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search('SearchResult'); return false;" value="">
@@ -97,7 +99,7 @@
   [% IF type == 'issue' %]
       <a href="[% c.uri_for("/tools/support").path %]">create an issue</a>
   [% ELSE %]
-  <a href="[% c.uri_for("/search").path %][% IF query; "?q=$query"; END; %]">more options</a>
+  <a href="[% c.uri_for("/search").path %][% IF query; "?q=$query_uri"; END; %]">more options</a>
   [% END %]
 </span>
 <br style="clear:both" />
@@ -122,12 +124,12 @@
         <ul>
       <li class="title toggle">
         Download all
-        (<span class="count" href="/search/count/[% species %]/[% type %]/[% query | uri %]"></span>)
+        (<span class="count" href="/search/count/[% species %]/[% type %]/[% query_uri %]"></span>)
         <span class="ui-icon ui-icon-triangle-1-e"></span>
       </li>
       <div class="ui-helper-hidden">
         [% FOREACH format IN c.config.api.content_type.keys.sort %]
-        [% d_url = "/search/$type/$query/all?" _ ( species ? "species=$species&" : "" ) _ "content-type=" _ format %]
+        [% d_url = "/search/$type/$query_uri/all?" _ ( species ? "species=$species&" : "" ) _ "content-type=" _ format %]
         <li class>
           <a href="[% d_url %]" target="_blank">[% c.config.api.content_type.$format %]</a> 
           <span class="ui-icon ui-icon-close"></span>
@@ -139,11 +141,11 @@
         [% FOREACH sec IN ['species', 'resources'] %]
           [% FOREACH cls IN c.config.sections.$sec.keys.sort  %]
               [% IF cls == 'title'; NEXT; END; %]
-              [% searchurl = "/search/" _ cls _ "/" _ query _ "?inline=1" %]
+              [% searchurl = "/search/" _ cls _ "/" _ query_uri _ "?inline=1" %]
               [% IF species; searchurl = searchurl _ "&species=" _ species; END; %]
               <li class="load-results ui-helper-hidden" href="[% searchurl %]">
                 <a href="[% searchurl %]">[% c.config.sections.$sec.$cls.title %]</a>: 
-                <span class="count" href="/search/count/[% species %]/[% cls %]/[% query | uri %]"></span>
+                <span class="count" href="/search/count/[% species %]/[% cls %]/[% query_uri %]"></span>
               <span class="ui-icon ui-icon-close"></span>
               </li>
           [% END %]
@@ -154,10 +156,10 @@
        <li class="title toggle ui-helper-hidden">Paper types<span class="ui-icon ui-icon-triangle-1-s"></span></li><div>
 
         [% FOREACH s IN c.config.sections.resources.paper.paper_types.sort %]
-            [% searchurl = "/search/paper/" _ query _ "?inline=1&species=" _ s %]
+            [% searchurl = "/search/paper/" _ query_uri _ "?inline=1&species=" _ s %]
             <li class="load-results ui-helper-hidden" href="[% searchurl %]">
               <a href="[% searchurl %]">[% s.replace('[/_]', ' ');%]</a>: 
-              <span class="count" href="/search/count/[% s %]/paper/[% query | uri %]"></span>
+              <span class="count" href="/search/count/[% s %]/paper/[% query_uri %]"></span>
               <span class="ui-icon ui-icon-close"></span>
             </li>
         [% END %]
@@ -165,7 +167,7 @@
       [% END %]
       [% IF type == 'issue' %]
         [% FOREACH s IN ['open', 'closed'] %]
-            [% searchurl = "/search/issue/" _ query _ "/1?inline=1&state=" _ s %]
+            [% searchurl = "/search/issue/" _ query_uri _ "/1?inline=1&state=" _ s %]
             <li class="load-results [%IF s=='open'; 'ui-selected'; END; %]" href="[% searchurl %]">
               <a href="[% searchurl %]">[% s %] issues</a> 
               <span class="ui-icon ui-icon-close"></span>
@@ -181,10 +183,10 @@
         [% FOREACH s IN c.config.sections.species_list.keys.sort %]
           [% IF s == 'all'; NEXT; END; %]
           [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
-            [% searchurl = "/search/" _ type _ "/" _ query _ "?inline=1&species=" _ s %]
+            [% searchurl = "/search/" _ type _ "/" _ query_uri _ "?inline=1&species=" _ s %]
             <li class="load-results ui-helper-hidden" href="[% searchurl %]">
               <a class="species" href="[% searchurl %]">[% c.config.sections.species_list.$s.title %]</a>: 
-              <span class="count" href="/search/count/[% s %]/[% type %]/[% query | uri %]"></span>
+              <span class="count" href="/search/count/[% s %]/[% type %]/[% query_uri %]"></span>
               <span class="ui-icon ui-icon-close"></span>
             </li>
           [% END %]
@@ -197,6 +199,6 @@
 </div>
 </div>
 <div id="widget-holder">
-<div id="all-search-results" data-search='{"type": "[% type %]", "query": "[% query %]", "species": "[% IF species; species; END;%]" }'></div>
+<div id="all-search-results" data-search='{"type": "[% type %]", "query": "[% query_uri %]", "species": "[% IF species; species; END;%]" }'></div>
 </div>
 </div>
