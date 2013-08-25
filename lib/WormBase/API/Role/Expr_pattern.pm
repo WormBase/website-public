@@ -106,6 +106,7 @@ sub _build_expression_patterns {
             author             => $author && "$author",
             gene               => $gene,
             certainty          => $c_ev ? { evidence => $c_ev, text => "$certainty"} : ($certainty && "$certainty"),
+            reference          => $_->Reference
         };
     }
 

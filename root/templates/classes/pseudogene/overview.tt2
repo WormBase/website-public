@@ -1,0 +1,61 @@
+<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;"> 
+</span></h2> 
+
+[%
+
+WRAPPER $field_block title="Brief identification" key="brief_id";
+    fields.brief_id.data;
+END;
+
+WRAPPER highlight_box;
+
+    WRAPPER $field_block title="Sequence" key="sequence_name";
+        fields.sequence_name.data;
+    END;
+
+    WRAPPER $field_block title="Parent seq" key="parent_sequence";
+        tag2link(fields.parent_sequence.data);
+    END;
+
+    WRAPPER $field_block title="Named by" key="named_by";
+        tag2link(fields.named_by.data);
+    END;
+
+    WRAPPER $field_block title="From laboratory" key="from_lab";
+        tag2link(fields.from_lab.data);
+    END;
+
+    WRAPPER $field_block title="Gene" key="gene";
+        tag2link(fields.gene.data);
+    END;
+
+    WRAPPER $field_block title="Corresponding Transposon" key="transposon";
+        tag2link(fields.transposon.data);
+    END;
+
+     WRAPPER $field_block title="Type" key="type";
+        fields.type.data;
+    END;
+   
+
+END;
+
+remarks;
+
+
+%]
+
+[%
+
+        build_data_table( order = ['gene', 'model', 'length_unspliced','type', 'cds', 'length_spliced','protein','length_protein'],
+                          columns = { gene => 'Gene',
+                                      model => 'Transcript',
+                                      type => 'Type',
+                                      length_spliced   => 'Coding<br />Sequence<br />Length (nt)',
+                                      length_unspliced => 'Transcript<br />Length (nt)',
+                                      cds => 'Coding<br />Sequence<br />(CDS)',
+                                      protein => 'Protein',
+                                      length_protein => 'Protein<br />Length (aa)'},
+                          passed_data = fields.corresponding_all.data,
+                          key = 'gene_models_constructed' );
+%]

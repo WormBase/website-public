@@ -61,7 +61,7 @@ sub search :Path('/search') Args {
 
     my $api = $c->model('WormBaseAPI');
 
-    my $tmp_query = $self->_prep_query($query);
+    my ($tmp_query, $query_error) = $self->_prep_query($query);
     $c->log->debug("search $tmp_query");
       
     my $search = $type unless($type=~/all/);
@@ -104,7 +104,7 @@ sub search :Path('/search') Args {
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $api->xapian->search_count($c, $tmp_query, $search, $c->stash->{species});
-    $c->stash->{error} = $error;
+    $c->stash->{error} = $query_error . $error;
     my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
@@ -298,12 +298,26 @@ sub _get_url {
 
 sub _prep_query {
   my ($self, $q, $ac) = @_;
-  return "*" unless $q;
+  my $error;
+  $q ||= "*";
+
+  my $phrase = $q =~ m/\"|\'/;
+
   my $new_q = $q;
-  $new_q =~ s/-/_/g;
-  $new_q =~ s/\s/-/g;
-  $new_q .= " $q" unless( $new_q eq $q || $ac);
-  return $new_q;
+  $new_q =~ s/-/_/g unless $phrase;
+
+  map { $new_q .= " $_"; } (my @hyphens = $q =~ m/(\S+\-\S+)/g) unless ($ac || $phrase);
+
+  my @words = split(/\s/, $new_q);
+
+
+  if(@words > 8) {
+    @words = grep { $phrase ||length($_) > 3 } @words;
+    $new_q = join(' ', @words[0..5]);
+    $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
+  } 
+
+  return wantarray ? ($new_q, $error) : $new_q;
 }
 
 

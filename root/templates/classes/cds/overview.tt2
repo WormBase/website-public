@@ -13,6 +13,7 @@ WRAPPER highlight_box;
 
 END;
 
+
 '<div class="description">';
 	 markup(fields.description.data);
 

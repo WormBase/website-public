@@ -71,7 +71,7 @@ sub search {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my ($query, $error) =$class->_setup_query($q, $class->qp, 512|16); 
+    my ($query, $error) =$class->_setup_query($q, $class->qp, 2|512|16); 
     my $enq       = $class->db->enquire ( $query );
 
     if($type && $type =~ /paper/){
@@ -174,7 +174,7 @@ sub search_count {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->_setup_query($q, $class->qp, 512|16);
+    my $query=$class->_setup_query($q, $class->qp, 2|512|16);
     my $enq       = $class->db->enquire ( $query );
     # $c->log->debug("query count:" . $query->get_description());
 
@@ -303,11 +303,13 @@ sub _get_taxonomy {
 
 sub _setup_query {
   my($self, $q, $qp, $opts) = @_;
-  my $query=$qp->parse_query( $q, $opts );
   my $error;
+
+  my $query=$qp->parse_query( $q, $opts );
+
   if($query->get_length() > 1000){
     $query = $qp->parse_query($q);
-    $error = "Query too large: wildcard, synonym and phrase search disabled. Please try a more specific search term.";
+    $error .= "Query too large: wildcard, synonym and phrase search disabled. Please try a more specific search term.";
   }
   return wantarray ? ($query, $error) : $query;
 }

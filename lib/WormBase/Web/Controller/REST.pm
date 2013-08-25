@@ -486,7 +486,7 @@ sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
 sub feed_GET {
     my ($self,$c,@args) = @_;
-    $c->stash->{noboiler} = 1;
+
     $c->stash->{current_time}=time();
 
     my $type = shift @args;
@@ -518,28 +518,16 @@ sub feed_GET {
           return;
         }
         $c->stash->{comments} = \@comments if(@comments);  
-      }elsif($type eq "issue"){
-        my @issues;
-        if($page) {
-          @issues = $page->issues;
-          $c->stash->{issue_type} = 'page';
-        }else {
-          @issues= $c->user->issues_reported if $c->user;
-          push(@issues, $c->user->issues_responsible) if $c->user;
-          $c->stash->{issue_type} = 'user';
-        }
-        if($c->req->params->{count}){
-          $c->response->body(scalar(@issues));
-          return;
-        }
-        $c->stash->{issues} = \@issues if(@issues);  
+      }else{
+        # return 404 if the feed cannot be found
+        $c->detach('/soft_404');
+        return;
       }
     }
-      
-     $c->stash->{template} = "feed/$type.tt2"; 
-     $c->forward('WormBase::Web::View::TT') ;
-      $c->response->headers->expires(time);
-     #$self->status_ok($c,entity => {});
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = "feed/$type.tt2"; 
+    $c->forward('WormBase::Web::View::TT') ;
+    $c->response->headers->expires(time);
 }
 
 sub feed_POST {
@@ -1121,7 +1109,7 @@ END
 # Create a more informative title
   my $pseudo_title = substr($content,0,35) . '...';
   my $data = { title => $title . ': ' . $pseudo_title,
-	       body  => $content,
+	       body  => "$content",
 	       labels => [ 'HelpDesk' ],
   };
 

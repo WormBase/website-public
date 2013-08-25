@@ -58,6 +58,7 @@
       
       navBarInit();
       pageInit();
+
       if(searchAll.size()>0) { 
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
@@ -704,7 +705,7 @@
         page = 1.0,
         total = t,
         resultDiv = container.find((widget ? "." + widget + "-widget " : '') + ".load-results"),
-        queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
+        queryList = query ? query.replace(/[,\.\*]|%22|%27/g, ' ').split(' ') : [];
 
     function init(){
       container.find("#results").find(".load-star").each(function(){
@@ -727,7 +728,7 @@
     formatResults(container.find("div#results"));
     init();
     
-    if(total > 10){
+    if(total > 10 || !total){
       if(container.find(".lazyload-widget").size() > 0){ Scrolling.search(); }
       resultDiv.click(function(){
         var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '') + (nostar ? "&nostar=" + nostar : '');
@@ -1993,38 +1994,55 @@ function setupCytoscape(data, types, clazz){
     })();
     
     return{
-      init: init,
-      ajaxGet: ajaxGet,
-      goToAnchor: Scrolling.goToAnchor,
-      setLoading: setLoading,
-      resetLayout: Layout.resetLayout,
-      openAllWidgets: Layout.openAllWidgets,
-      displayNotification: displayNotification,
-      deleteLayout: Layout.deleteLayout,
-      columns: Layout.columns,
-      setLayout: Layout.setLayout,
-      resetPageLayout: Layout.resetPageLayout,
-      search: search,
-      search_change: search_change,
-      search_species_change: search_species_change,
-      openid: openid,
-      validate_fields: validate_fields,
-      StaticWidgets: StaticWidgets,
-      recordOutboundLink: recordOutboundLink,
-      comment: comment,
-      issue: issue,
-      getMarkItUp: getMarkItUp,
-      checkSearch: checkSearch,
-      scrollToTop: scrollToTop,
-      historyOn: historyOn,
-      allResults: allResults,
-      loadRSS: loadRSS,
-      newLayout: Layout.newLayout,
-      setupCytoscape: setupCytoscape,
-      getPlugin: Plugin.getPlugin,
-      reloadWidget: reloadWidget,
-      resize: Layout.resize,
-      loadFile: Plugin.loadFile
+      // initiate page
+      init: init,                                   // initiate all js on any wormbase page
+
+      // searching
+      search: search,                               // run search using current filters
+      search_change: search_change,                 // change the class search filter
+      search_species_change: search_species_change, // change the species search filter
+      checkSearch: checkSearch,                     // check search results - post-format if needed
+      allResults: allResults,                       // setup search all page
+
+      // static widgets
+      getMarkItUp: getMarkItUp,                     // get markup plugin for static widgets
+      StaticWidgets: StaticWidgets,                 // modify static widgets (edit/update)
+
+      // layouts
+      deleteLayout: Layout.deleteLayout,            // delete saved layout
+      columns: Layout.columns,                      // get column configuration from layout
+      setLayout: Layout.setLayout,                  // save current layout as a saved layout
+      resetPageLayout: Layout.resetPageLayout,      // reset page to default widget layout
+      resetLayout: Layout.resetLayout,              // apply page layout
+      openAllWidgets: Layout.openAllWidgets,        // open all widgets on the page
+      newLayout: Layout.newLayout,                  // create a new layout
+      resize: Layout.resize,                        // resize the page
+
+      // scrolling
+      goToAnchor: Scrolling.goToAnchor,             // Scroll page to certain anchor
+      scrollToTop: scrollToTop,                     // scroll to the top of the page
+
+      // loading - ajax/plugins/files/RSS
+      ajaxGet: ajaxGet,                             // load data via ajax request
+      setLoading: setLoading,                       // add the loading image to a certain div
+      loadRSS: loadRSS,                             // load RSS (homepage)
+      loadFile: Plugin.loadFile,                    // load a file dynamically
+      getPlugin: Plugin.getPlugin,                  // load plugin
+
+      // notifications
+      displayNotification: displayNotification,     // display notification at the top of the page
+
+      // user session, comments/issues
+      openid: openid,                               // login via openid
+      historyOn: historyOn,                         // turn on history
+      comment: comment,                             // add comment to a page
+      issue: issue,                                 // submit an issue
+
+      // miscellaneous 
+      validate_fields: validate_fields,             // validate form fields
+      recordOutboundLink: recordOutboundLink,       // record external links
+      setupCytoscape: setupCytoscape,               // setup cytoscape for use
+      reloadWidget: reloadWidget                    // reload a widget
     }
   })();
 
@@ -2043,6 +2061,9 @@ function setupCytoscape(data, types, clazz){
  
 }(this,document);
 
+
+
+// Polyfills
 
 if(typeof String.prototype.trim !== 'function') {
   String.prototype.trim = function() {

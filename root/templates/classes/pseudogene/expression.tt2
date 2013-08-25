@@ -1,0 +1,8 @@
+
+[% 
+
+WRAPPER $field_block title="Microarray results" key="microarray_results";
+     tags2link(fields.microarray_results.data);
+END;
+
+%]

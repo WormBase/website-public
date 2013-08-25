@@ -27,7 +27,7 @@
           ELSE;
             breadcrumbs.push('<a href="' _ c.uri_for('/species',species,class).path _ '">'
                     _ class_title _ '</a>');
-            breadcrumbs.push('<span>' _ markup(object.name.data.label, 0, 1, 1, 1) _ '</span>');
+            breadcrumbs.push('<span>' _ markup(object.name.data.id, 0, 1, 1, 1) _ '</span>');
           END;
         END;
       END;

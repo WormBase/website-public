@@ -20,6 +20,21 @@
         $api = $_[0];
     }
 
+    # Test that the returned information of a gene model contains a pre-determined
+    # number of rows.
+    sub test__gene_models {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00003328' });
+
+        can_ok('WormBase::API::Object::Gene', ('gene_models'));
+
+        my $models = $gene->gene_models();
+
+        isnt($models, undef, 'data returned');
+        isnt($models->{data}, undef, 'data structure returned');
+        $models = $models->{data};
+        is  (scalar @$models, 2, 'two models returned');
+    }
+
     # Tests whether the _longest_segment method works - particularly
     # in non-elegans genes
     sub test__longest_segment {
