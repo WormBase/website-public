@@ -97,7 +97,7 @@ sub _build__common_name {
 	# Otherwise use the more human friendly Gene_name.
         $name = $object->Gene_name && $object->Gene_name->asString;
     }
-    $name =~ s/\n//g; # get rid of possible newlines that may/may not be lingering around
+    $name =~ s/\n//g if $name; # get rid of possible newlines that may/may not be lingering around
     return $name;
 }
 
