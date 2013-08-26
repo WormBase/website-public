@@ -24,6 +24,7 @@ if ($options->{'host'} && $options->{'port'}) {
 
 my @tests = <t/rest_tests/*.t>;
 foreach my $test (@tests) {
+    next if $options->{'test'} && $options->{'test'} ne basename($test, '.t');
     require_ok($test);
     my $pkg = basename($test, '.t') . '::';
     &{%$pkg->{'config'}}($configuration);

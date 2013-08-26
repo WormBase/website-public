@@ -524,6 +524,7 @@ sub api_tests {
     my $api = $self->model('WormBaseAPI');
     my @tests = <t/api_tests/*.t>;
     foreach my $test (@tests) {
+        next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t');
         require_ok($test);
         my $pkg = basename($test, '.t') . '::';
         &{%$pkg->{'config'}}($api);
