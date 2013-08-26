@@ -430,7 +430,7 @@ sub _build_best_blastp_matches {
             taxonomy => $taxonomy,
             # custom packing for linking out to external sources
             hit      => {   class => "$class", 
-                            id => "$id" || "$hit", 
+                            id => $id || "$hit", 
                             label => "$hit"},
             description => $description && "$description",
             evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
