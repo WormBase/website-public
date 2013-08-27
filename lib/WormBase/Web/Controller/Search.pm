@@ -301,7 +301,7 @@ sub _prep_query {
   my $error;
   $q ||= "*";
 
-  my $phrase = $q =~ m/\"|\'/;
+  my $phrase = $q =~ m/\"/;
 
   my $new_q = $q;
   $new_q =~ s/-/_/g unless $phrase;
