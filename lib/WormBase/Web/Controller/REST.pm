@@ -715,6 +715,8 @@ sub widget_GET {
         $c->stash->{class}  = $class;
         $c->stash->{widget} = $widget;
 
+        $c->stash->{species} = $c->req->params->{species};
+
           # Set the template
         $c->stash->{template} = 'shared/generic/rest_widget.tt2';
         $c->stash->{child_template}
@@ -901,7 +903,7 @@ sub widget_class_index_GET {
     if($widget=~m/browse|basic_search|summary|downloads|assemblies|data_unavailable/){
       $c->stash->{template}="shared/widgets/$widget.tt2";
     }else{
-      $c->res->redirect($c->uri_for('widget', $class, 'all', $widget), 307);
+      $c->res->redirect($c->uri_for('widget', $class, 'all', $widget) . '?species=' . $species, 307);
       return;
     }
     $c->detach('WormBase::Web::View::TT'); 

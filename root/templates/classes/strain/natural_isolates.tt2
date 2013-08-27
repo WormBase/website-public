@@ -10,9 +10,17 @@
 
 [% END %]
 
+[% IF species && (species != 'all') %]
+[% strains = []; %]
 
+[% FOREACH strain IN fields.natural_isolates.data %]
+    [% curr_sp = strain.species.substr(0,1) _ '_' _ strain.species.split('\s').1 | lower %]
+    [% IF curr_sp == species; strains.push(strain); END; %]
+[% END %]
 
+[% fields.natural_isolates.data = strains; %]
 
+[% END %]
 
 [% 
 
