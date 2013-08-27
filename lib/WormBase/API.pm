@@ -119,12 +119,15 @@ sub _build_xapian {
   return $xapian;
 }
 
-# Version should be provided by the default datasource or set explicitly.
+
+# Version is provided by looking up the default datasource (acedb) and reading the
+# symlink target. This enables us to get the version even if acedb is down.
 sub version {
     my $self = shift;
-    # Fetch the dbh for the default datasource
-    my $service = $self->_services->{$self->default_datasource};
-    return $service->version;
+
+    my $version = readlink ($self->database->{$self->default_datasource}->{root});
+    $version =~ s/.*\_(WS\d\d\d)$/$1/g;
+    return $version; 
 }
 
 # Build a hashref of services, including things like the
