@@ -253,27 +253,30 @@ sub _get_tag_info {
                 || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($class)};
       $aceclass = $class unless $aceclass;
   }
+  if($class ne 'protein'){ # this is a hack to deal with the Protein labels
+                           # we can remove this if Protein?Gene_name is updated to 
+                           # contain the display name for the protein
+    if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
+      foreach my $ace (@$aceclass) {
+        my ($it,$res)= $self->search_exact($c, $id, lc($ace));
+        if($it->{pager}->{total_entries} > 0 ){
+          my $doc = @{$it->{struct}}[0]->get_document();
+          return $self->_get_obj($c, $doc, $footer) if $fill;
 
-  if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
-    foreach my $ace (@$aceclass) {
-      my ($it,$res)= $self->search_exact($c, $id, lc($ace));
+          my $ret = $self->_pack_search_obj($c, $doc);
+          $ret->{class} = $class;
+          return $ret;
+        }
+      }
+    }else{
+      my ($it,$res)= $self->search_exact($c, $id, lc($aceclass));
       if($it->{pager}->{total_entries} > 0 ){
         my $doc = @{$it->{struct}}[0]->get_document();
-        return $self->_get_obj($c, $doc, $footer) if $fill;
-
-        my $ret = $self->_pack_search_obj($c, $doc);
-        $ret->{class} = $class;
-        return $ret;
+          if($fill){
+            return $self->_get_obj($c, $doc, $footer);
+          }
+          return $self->_pack_search_obj($c, $doc);
       }
-    }
-  }else{
-    my ($it,$res)= $self->search_exact($c, $id, lc($aceclass));
-    if($it->{pager}->{total_entries} > 0 ){
-      my $doc = @{$it->{struct}}[0]->get_document();
-        if($fill){
-          return $self->_get_obj($c, $doc, $footer);
-        }
-        return $self->_pack_search_obj($c, $doc);
     }
   }
 

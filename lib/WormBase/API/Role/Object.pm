@@ -1889,7 +1889,7 @@ sub _pack_obj {
     return {
         id       => "$object",
         label    => "$label",
-        class    => $wbclass || $object->class,
+        class    => lc($wbclass || $object->class),
         taxonomy => $self->_parsed_species($object),
         %args,
     };
