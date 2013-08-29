@@ -64,6 +64,25 @@ sub _build__alleles {
 
 }
 
+has '_length' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__length',
+);
+
+sub _build__length{
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my $length = 0;
+    my @exons = $object->Source_exons;
+    foreach my $exon (@exons){
+        my $start =  $exon;
+        my $end = $exon->right;
+        $length += $end - $start + 1;
+    }
+    return $length;
+}
 
 #######################################
 #
@@ -189,6 +208,33 @@ sub type{
     return {
         description => "The type of the pseudogene",
         data => "$type" ? "$type" : undef
+    };
+}
+
+sub related_seqs{
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my @rows = ();
+    
+    my @genes = $object->Gene;
+    foreach my $gene (@genes){
+        foreach my $pg ($gene->Corresponding_pseudogene){
+            my %data = ();
+            my $gff   = $self->_fetch_gff_gene($gene) or next;
+            
+            push( @rows, {
+                gene_len    => $gff->stop - $gff->start + 1,
+                pg_len      => $self->_length,
+                gene        => $self->_pack_obj($gene),
+                pseudogene  => $self->_pack_obj($pg)
+            } );
+        }
+    }
+    
+    return {
+        description => "Sequences related to this pseudogene",
+        data => @rows ? \@rows : undef
     };
 }
 

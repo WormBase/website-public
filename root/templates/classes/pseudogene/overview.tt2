@@ -45,17 +45,16 @@ remarks;
 
 %]
 
+
 [%
 
-        build_data_table( order = ['gene', 'model', 'length_unspliced','type', 'cds', 'length_spliced','protein','length_protein'],
-                          columns = { gene => 'Gene',
-                                      model => 'Transcript',
-                                      type => 'Type',
-                                      length_spliced   => 'Coding<br />Sequence<br />Length (nt)',
-                                      length_unspliced => 'Transcript<br />Length (nt)',
-                                      cds => 'Coding<br />Sequence<br />(CDS)',
-                                      protein => 'Protein',
-                                      length_protein => 'Protein<br />Length (aa)'},
-                          passed_data = fields.corresponding_all.data,
-                          key = 'gene_models_constructed' );
+        build_data_table( order = ['gene', 'gene_len', 'pseudogene', 'pg_len'],
+                          columns = { 
+                                        gene => 'Gene',
+                                        gene_len => 'Gene length (nt)',
+                                        pseudogene => 'Pseudogene',
+                                        pg_len  => 'Pseudogene length (nt)'
+                                    },
+                          passed_data = fields.related_seqs.data
+                          );
 %]
