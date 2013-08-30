@@ -1,0 +1,22 @@
+# file: /etc/xinetd.d/acedb-wormbase
+# default: on
+# description: wormbase acedb database
+
+# This is the default xinetd configuration file
+# for acedb running under xinetd.
+# It should be copied to /etc/xinetd.d/acedb-wormbase
+
+service acedb-wormbase
+ {
+        protocol                = tcp
+        socket_type             = stream
+        port                    = 2005
+        flags                   = REUSE
+        wait                    = yes
+        user                    = acedb
+        group                   = acedb
+        log_on_success          += USERID DURATION
+        log_on_failure          += USERID HOST
+        server                  = /usr/local/wormbase/acedb/bin/sgifaceserver
+        server_args             = /usr/local/wormbase/acedb/wormbase 1200:1200:0
+ }

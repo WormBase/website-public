@@ -19,7 +19,7 @@
       [% PROCESS "search/issue.tt2" %]
 [% ELSE %]
 
- <div class="result result-[% type %] [% UNLESS nostar %]tip-simple star" tip="save"[% ELSE %]"[% END %]>
+ <div class="result result-[% type %] [% IF item.dead; 'caveat-emptor'; END; %] [% UNLESS nostar %]tip-simple star" tip="save"[% ELSE %]"[% END %]>
  [% class = item.name.class || 'page' %]
  [% class = (ACE2WB_MAP.$class || class) FILTER lower; %]
  [% result_class = (c.config.sections.species.$class.title || c.config.sections.resources.$class.title || 'page') FILTER lower %]

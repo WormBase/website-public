@@ -381,10 +381,14 @@ sub corresponding_all {
     my $object = $self->object;
     my @rows;
 
-    my $cds
-        = ( $object->class eq 'CDS' )
-        ? $object
-        : eval { $object->Corresponding_CDS };
+    my $cds;
+    if($object->class eq 'CDS'){
+        $cds = $object;
+    }elsif($object->class eq 'Pseudogene'){
+        $cds = eval { $object->Gene->Corresponding_CDS };
+    }else{
+        $cds = eval { $object->Corresponding_CDS };
+    }
 
     my %data  = ();
     my $gff   = $self->_fetch_gff_gene($cds) or next;

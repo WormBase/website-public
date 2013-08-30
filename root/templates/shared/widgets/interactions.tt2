@@ -26,6 +26,7 @@
       [% NTYPES = fields.interactions.data.ntypes %]
       [% NODES = fields.interactions.data.nodes %]
       [% EDGES = fields.interactions.data.edges_all %]
+      [% CLASSTYPE = fields.interactions.data.class %]
       [% WRAPPER shared/fields/interaction_details.tt2; 
            #this is in a wrapper so the js will execute at the bottom of the widget and prevent blocking
            interaction_table;

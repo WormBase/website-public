@@ -4,6 +4,7 @@
         <tr>
             <td colspan="2" align="center">
                 <h1>BLAST/BLAT RESULTS</h1>
+                <h2>BioProject [% obj.bioproject %]</h2>
             </td>
 
             <td>

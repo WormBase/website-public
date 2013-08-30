@@ -1,11 +1,12 @@
 
 <center>
   <p>
-    <h1 style="font-size:10em;">:(</h1>
-  </p>
-  <p>
     <h1>404 - Page not found</h1>
   </p>
+  <p>
+    <img src="/img/sadworm.png">
+  </p>
+
   <p>
     Why not go to the WormBase <a href="[% c.uri_for("/").path %]">home page </a> or <a href = "javascript:history.back()">go back</a>?
   </p>

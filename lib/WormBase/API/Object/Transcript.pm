@@ -141,6 +141,23 @@ sub _build_type {
 # corresponding_all { }
 # Supplied by Role
 
+sub feature {
+    my ($self) = @_;
+    my $obj = $self->object;
+    
+    my @features = $obj->Associated_feature;
+    my @data;
+    foreach my $feature (@features){
+        push @data, $self->_pack_obj($feature, $feature->Description);
+    }
+    
+    return {
+        description => 'feature associated with this transcript',
+        data => scalar @data > 0 ? {map {$_ => $self->_pack_obj($_, $_->Description)} @features} : undef 
+    };
+    
+}
+
 ############################################################
 #
 # The External Links widget
@@ -284,11 +301,15 @@ sub predicted_exon_structure {
     my $s = $self->object;
 
     my $index = 1;
-    my @exons = map { my ($es,$ee) = $_->row; 
-                      { no=>$index++,
-                        start=>"$es",
-                        end=>"$ee",}; 
-                    } $s->get('Source_Exons');
+    my @exons = map {
+		my ($es,$ee) = $_->row; 
+		{ 
+			no		=> $index++,
+			start	=> "$es" || undef,
+			end		=> "$ee" || undef,
+			len 	=> "$es" && "$ee" ? $ee-$es+1 : undef
+		}; 
+	} $s->get('Source_Exons');
 
     return { description => 'predicted exon structure within the sequence',
              data        => @exons ? \@exons : undef };

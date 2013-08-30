@@ -162,6 +162,37 @@ sub _build_type {
 # analysis { }
 # Supplied by Role
 
+sub cdss{
+    my ($self) = @_;
+    my $obj = $self->object;
+    my @cdss = $obj->Matching_CDS;
+    return {
+        description => "Matching CDSs",
+        data => @cdss ? $self->_pack_objects(\@cdss) : undef
+    }
+}
+
+sub transcripts{
+    my ($self) = @_;
+    my $obj = $self->object;
+    my @transcripts = $obj->Matching_transcript;
+    return {
+        description => "Matching Transcripts",
+        data => @transcripts ? $self->_pack_objects(\@transcripts) : undef
+    }
+}
+
+sub pseudogenes{
+    my ($self) = @_;
+    my $obj = $self->object;
+    my @pgs = $obj->Matching_pseudogene;
+    return {
+        description => "Matching Pseudogenes",
+        data => @pgs ? $self->_pack_objects(\@pgs) : undef
+    }
+}
+
+
 ############################################################
 #
 # The External Links widget

@@ -52,6 +52,11 @@ sub search {
     $q =~ s/\s/\* /g;
     $q = "$q*";
 
+    if($page eq 'all'){
+      $page_size = $class->_doccount;
+      $page = 1;
+    }
+
     if($type){
       $q = $class->_add_type_range($c, $q, $type);
       if(($type =~ m/paper/) && ($species)){
@@ -66,7 +71,7 @@ sub search {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->_setup_query($q, $class->qp, 512|16); 
+    my ($query, $error) =$class->_setup_query($q, $class->qp, 2|512|16); 
     my $enq       = $class->db->enquire ( $query );
 
     if($type && $type =~ /paper/){
@@ -74,13 +79,12 @@ sub search {
     }
     my $mset      = $enq->get_mset( ($page-1)*$page_size,
                                      $page_size );
-
     # $c->log->debug("Parsed query is: " . $query->get_description());
 
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
-    return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
-        search=>$class,query=>$q,query_obj=>$query,querytime=>$time,page=>$page,page_size=>$page_size });
+    return (Catalyst::Model::Xapian::Result->new({ mset=>$mset,
+        search=>$class,query=>$q,query_obj=>$query,querytime=>$time,page=>$page,page_size=>$page_size }), $error);
 }
 
 sub search_autocomplete {
@@ -170,7 +174,7 @@ sub search_count {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->_setup_query($q, $class->qp, 512|16);
+    my $query=$class->_setup_query($q, $class->qp, 2|512|16);
     my $enq       = $class->db->enquire ( $query );
     # $c->log->debug("query count:" . $query->get_description());
 
@@ -224,7 +228,7 @@ sub _split_fields {
     $data = $3;
     
     if($d =~ m/^WB/){
-     $d = $self->_get_tag_info($c, $d, $label);
+      $d = $self->_get_tag_info($c, $d, $self->modelmap->WB2ACE_MAP->{$label} ? $label : undef);
     }elsif($label =~ m/^author$/){
       my ($id, $l);
       if($d =~ m/^(.*)\s(WBPerson\S*)$/){
@@ -249,27 +253,30 @@ sub _get_tag_info {
                 || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($class)};
       $aceclass = $class unless $aceclass;
   }
+  if($class ne 'protein'){ # this is a hack to deal with the Protein labels
+                           # we can remove this if Protein?Gene_name is updated to 
+                           # contain the display name for the protein
+    if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
+      foreach my $ace (@$aceclass) {
+        my ($it,$res)= $self->search_exact($c, $id, lc($ace));
+        if($it->{pager}->{total_entries} > 0 ){
+          my $doc = @{$it->{struct}}[0]->get_document();
+          return $self->_get_obj($c, $doc, $footer) if $fill;
 
-  if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
-    foreach my $ace (@$aceclass) {
-      my ($it,$res)= $self->search_exact($c, $id, lc($ace));
+          my $ret = $self->_pack_search_obj($c, $doc);
+          $ret->{class} = $class;
+          return $ret;
+        }
+      }
+    }else{
+      my ($it,$res)= $self->search_exact($c, $id, lc($aceclass));
       if($it->{pager}->{total_entries} > 0 ){
         my $doc = @{$it->{struct}}[0]->get_document();
-        return $self->_get_obj($c, $doc, $footer) if $fill;
-
-        my $ret = $self->_pack_search_obj($c, $doc);
-        $ret->{class} = $class;
-        return $ret;
+          if($fill){
+            return $self->_get_obj($c, $doc, $footer);
+          }
+          return $self->_pack_search_obj($c, $doc);
       }
-    }
-  }else{
-    my ($it,$res)= $self->search_exact($c, $id, lc($aceclass));
-    if($it->{pager}->{total_entries} > 0 ){
-      my $doc = @{$it->{struct}}[0]->get_document();
-        if($fill){
-          return $self->_get_obj($c, $doc, $footer);
-        }
-        return $self->_pack_search_obj($c, $doc);
     }
   }
 
@@ -286,6 +293,10 @@ sub _get_tag_info {
 
 # why is species sometimes getting stored weird in xapian? 
 # eg. c_caenorhabditis_elegans instead of c_elegans
+#
+# Snips of possible BioProject suffix. For example,
+# 'c_elegans_PRJNA13758' becomes 'c_elegans'. This
+# is (probably) the right behaviour for this sub.
 sub _get_taxonomy {
   my ($self, $doc) = @_;
   my $taxonomy = $doc->get_value(5);
@@ -295,11 +306,15 @@ sub _get_taxonomy {
 
 sub _setup_query {
   my($self, $q, $qp, $opts) = @_;
+  my $error;
+
   my $query=$qp->parse_query( $q, $opts );
+
   if($query->get_length() > 1000){
     $query = $qp->parse_query($q);
+    $error .= "Query too large: wildcard, synonym and phrase search disabled. Please try a more specific search term.";
   }
-  return $query;
+  return wantarray ? ($query, $error) : $query;
 }
 
 sub _pack_search_obj {

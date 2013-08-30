@@ -349,7 +349,6 @@ sub download_POST {
      
     my $filename=$c->req->body_parameters->{filename};
     $filename =~ s/\s/_/g;
-        my $csv = "test";
     $c->response->header('Content-Type' => 'text/html');
     $c->res->header('Content-Disposition', qq[attachment; filename="$filename"]);
     $c->response->body($c->req->body_parameters->{content});
@@ -487,7 +486,7 @@ sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
 sub feed_GET {
     my ($self,$c,@args) = @_;
-    $c->stash->{noboiler} = 1;
+
     $c->stash->{current_time}=time();
 
     my $type = shift @args;
@@ -497,8 +496,12 @@ sub feed_GET {
       my $wbid = shift @args;
       my $widget = shift @args;
       my $name = shift @args;
+      $c->stash->{search} = 1 if ($widget eq 'references' && $wbid =~ m/^WB/);
       if($widget=~m/^static-widget-([\d]+)/){
         $c->stash->{url} = $c->uri_for('widget/static', $1)->path;
+      }elsif ($widget=~m/browse/){
+        $c->stash->{search} = 1;
+        $c->stash->{url} = $c->uri_for("/search", $class, "*")->path;
       }else{
         $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget)->path;
       }
@@ -515,28 +518,16 @@ sub feed_GET {
           return;
         }
         $c->stash->{comments} = \@comments if(@comments);  
-      }elsif($type eq "issue"){
-        my @issues;
-        if($page) {
-          @issues = $page->issues;
-          $c->stash->{issue_type} = 'page';
-        }else {
-          @issues= $c->user->issues_reported if $c->user;
-          push(@issues, $c->user->issues_responsible) if $c->user;
-          $c->stash->{issue_type} = 'user';
-        }
-        if($c->req->params->{count}){
-          $c->response->body(scalar(@issues));
-          return;
-        }
-        $c->stash->{issues} = \@issues if(@issues);  
+      }else{
+        # return 404 if the feed cannot be found
+        $c->detach('/soft_404');
+        return;
       }
     }
-      
-     $c->stash->{template} = "feed/$type.tt2"; 
-     $c->forward('WormBase::Web::View::TT') ;
-      $c->response->headers->expires(time);
-     #$self->status_ok($c,entity => {});
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = "feed/$type.tt2"; 
+    $c->forward('WormBase::Web::View::TT') ;
+    $c->response->headers->expires(time);
 }
 
 sub feed_POST {
@@ -654,7 +645,7 @@ sub widget_GET {
     $c->response->header( 'Content-Type' => $content_type );
 
     # references widget - no need for an object
-    if ( $widget =~ m/references/i ) {
+    if ( $widget =~ m/references/i && $name =~ m/^WB/ ) {
           $c->req->params->{widget} = $widget;
           $c->req->params->{class} = $class;
           $c->go('search', 'search');
@@ -669,11 +660,12 @@ sub widget_GET {
         $c->response->body($cached_data);
         $c->detach();
         return;
-    }else {
+    } else {
         my $api = $c->model('WormBaseAPI');
         my $object = ($name eq '*' || $name eq 'all'
                    ? $api->instantiate_empty(ucfirst $class)
-                   : $api->fetch({ class => ucfirst $class, name => $name }));
+                   : $api->fetch({ class => ucfirst $class, name => $name })) 
+            or die "Could not fetch object $name, $class";
 
         # Generate and cache the widget.
         # Load the stash with the field contents for this widget.
@@ -686,8 +678,8 @@ sub widget_GET {
             $c->log->debug("Processing field: $field");
             my $data = $object->$field;
             if ( $c->config->{fatal_non_compliance}
-		 and my ( $fixed_data, @problems )
-		 = $object->_check_data( $data, $class ) )
+                and my ( $fixed_data, @problems )
+                = $object->_check_data( $data, $class ) )
             {
                 $data = $fixed_data;
                 $fatal_non_compliance = $c->config->{fatal_non_compliance};
@@ -722,6 +714,8 @@ sub widget_GET {
         # Save the name and class of the widget.
         $c->stash->{class}  = $class;
         $c->stash->{widget} = $widget;
+
+        $c->stash->{species} = $c->req->params->{species};
 
           # Set the template
         $c->stash->{template} = 'shared/generic/rest_widget.tt2';
@@ -828,7 +822,7 @@ sub widget_static_POST {
     if($c->check_any_user_role(qw/admin curator editor/)){ 
 
       #only admins can delete
-      if($c->req->params->{delete} && $c->check_user_roles("admin")){ 
+      if($c->req->params->{delete} && $c->check_any_user_role("admin", "curator")){ 
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->delete();
         $widget->update();
@@ -909,7 +903,7 @@ sub widget_class_index_GET {
     if($widget=~m/browse|basic_search|summary|downloads|assemblies|data_unavailable/){
       $c->stash->{template}="shared/widgets/$widget.tt2";
     }else{
-      $c->res->redirect($c->uri_for('widget', $class, 'all', $widget), 307);
+      $c->res->redirect($c->uri_for('widget', $class, 'all', $widget) . '?species=' . $species, 307);
       return;
     }
     $c->detach('WormBase::Web::View::TT'); 
@@ -1000,10 +994,18 @@ sub rest_config_GET {
         || $c->req->params->{'content-type'}
         || 'application/json';
     $c->response->header( 'Content-Type' => $content_type );
-
     my $config = $c->config;
-    for my $part (@path_parts){
-      $config = $config->{$part};
+
+
+    my $class = $c->req->params->{'class'};
+    my $section = $config->{sections}->{species}->{$class} ? 'species' : 'resources' if $class;
+
+    if($class && $section) {
+        $config = $config->{sections}->{$section}->{$class};
+    }else {
+        for my $part (@path_parts){
+          $config = $config->{$part};
+        }
     }
 
     $self->status_ok(
@@ -1026,9 +1028,11 @@ sub _get_session {
     my ($self,$c) = @_;
     unless($c->user_exists){
       my $sid = $c->sessionid;
-      return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
+      return $c->model('Schema::Session')->find({session_id=>"session:$sid"})
+        or die "Unable to retrieve session information for $sid";
     }else{
-      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
+      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id})
+        or die "Unable to retrieve session information for " . $c->user->user_id;
     }
 }
 
@@ -1107,7 +1111,7 @@ END
 # Create a more informative title
   my $pseudo_title = substr($content,0,35) . '...';
   my $data = { title => $title . ': ' . $pseudo_title,
-	       body  => $content,
+	       body  => "$content",
 	       labels => [ 'HelpDesk' ],
   };
 
@@ -1307,6 +1311,9 @@ sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 sub field_GET {
     my ( $self, $c, $class, $name, $field ) = @_;
 
+    # Cache key - "$class_$field_$name"
+    my $key = join( '_', $class, $field, $name );
+
     my $headers = $c->req->headers;
     $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
@@ -1314,29 +1321,38 @@ sub field_GET {
         = $headers->content_type
         || $c->req->params->{'content-type'}
         || 'text/html';
-    my $api = $c->model('WormBaseAPI');
-    my $object = $name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty(ucfirst $class)
-               : $api->fetch({ class => ucfirst $class, name => $name });
 
-    # Supress boilerplate wrapping.
-    $c->stash->{noboiler} = 1;
+    my ( $cached_data, $cache_source ) = $c->check_cache($key);
+    if($cached_data && (ref $cached_data eq 'HASH')){
+        $c->stash->{$key} = $cached_data;
+    } else {
+      my $api = $c->model('WormBaseAPI');
+      my $object = $name eq '*' || $name eq 'all'
+                 ? $api->instantiate_empty(ucfirst $class)
+                 : $api->fetch({ class => ucfirst $class, name => $name });
 
-    my $data   = $object->$field();
+      # Supress boilerplate wrapping.
+      $c->stash->{noboiler} = 1;
 
-    # Include the full uri to the *requested* object.
-    # IE the page on WormBase where this should go.
-    # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
+      my $data   = $object->$field();
+      $c->stash->{$field} = $data;
+
+      # Include the full uri to the *requested* object.
+      # IE the page on WormBase where this should go.
+      # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
+
+      $c->set_cache($key => $data);
+    }
+
     my $uri = $c->uri_for( "/species", $class, $name )->path;
 
     $c->response->header( 'Content-Type' => $content_type );
     if ( $content_type eq 'text/html' ) {
-       $c->stash->{template} = $self->_select_template( 'field', $class, $field );
-      $c->stash->{$field} = $data;
+      $c->stash->{template} = $self->_select_template( 'field', $class, $field );
       $c->forward('WormBase::Web::View::TT');
     }elsif($content_type =~ m/image/i) {
       
-      $c->res->body($data);
+      $c->res->body($c->stash->{$field});
     }
     $self->status_ok(
         $c,
@@ -1344,7 +1360,7 @@ sub field_GET {
             class  => $class,
             name   => $name,
             uri    => "$uri",
-            $field => $data
+            $field => $c->stash->{$field}
         }
     );
 }

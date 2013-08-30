@@ -477,7 +477,7 @@ sub _get_widget_fields {
     # this is here to prevent a widget section from getting added to config
     unless(defined $section->{widgets}{$widget}){ return (); }
 
-    my $fields = $section->{widgets}{$widget}{fields};
+    my $fields = $section->{widgets}{$widget}{fields} || [lc($widget)];
     my @fields = ref $fields eq 'ARRAY' ? @$fields : $fields // ();
 
     $self->log->debug("The $widget widget is composed of: " . join(", ",@fields));
@@ -524,6 +524,7 @@ sub api_tests {
     my $api = $self->model('WormBaseAPI');
     my @tests = <t/api_tests/*.t>;
     foreach my $test (@tests) {
+        next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t');
         require_ok($test);
         my $pkg = basename($test, '.t') . '::';
         &{%$pkg->{'config'}}($api);

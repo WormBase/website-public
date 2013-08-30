@@ -1294,7 +1294,8 @@ div#error-box {
 }
 
 div.ui-state-error {
-  padding:0 1em;
+  padding:1em;
+  margin-bottom:1em;
 }
 
 
@@ -1494,11 +1495,18 @@ ul.nav-bar ul.wb-dropdown ul.wb-dropdown {
   position:absolute;
   top:0em;
   left:100%;
-  width:10em;
   z-index:9999;
   font-size:1.1em;
 }
 
+ul.nav-bar ul.wb-dropdown ul.wb-dropdown ul.wb-dropdown {
+  position:absolute;
+  top:0em;
+  left:100%;
+  width:27em;
+  z-index:9999;
+  font-size:1.1em;
+}
 
 ul.nav-bar ul.wb-dropdown li a span.ui-icon{
   position:absolute;
@@ -3196,4 +3204,11 @@ button::-moz-focus-inner {
 
 .align-alcohol {
   color: #0099ff;
+}
+
+/* Minimum size requirements for flot plots */
+
+.flotplot {
+  min-width: 300px;
+  min-height: 300px
 }
