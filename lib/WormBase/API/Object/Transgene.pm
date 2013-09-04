@@ -235,6 +235,23 @@ sub strains {
     }
 }
 
+
+# historical_gene { }
+# This mehtod will return a data structure containing the 
+# historical reocrd of the dead gene originally associated with this transgene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/historical_gene
+
+sub historical_gene {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $historical_gene = $object->Historical_gene;
+    return { description => 'Historical record of the dead genes originally associated with this transgene',
+             data        => $historical_gene ? { text => $self->_pack_obj($historical_gene), 
+                              evidence => $self->_get_evidence($object->Historical_gene)
+                            } : undef,
+    };
+}
 #######################################
 #
 # The Isolation Widget
