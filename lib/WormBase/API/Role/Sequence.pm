@@ -384,63 +384,82 @@ sub corresponding_all {
     my $cds;
     if($object->class eq 'CDS'){
         $cds = $object;
-    }elsif($object->class eq 'Pseudogene'){
-        $cds = eval { $object->Gene->Corresponding_CDS };
     }else{
         $cds = eval { $object->Corresponding_CDS };
     }
-
+    
     my %data  = ();
-    my $gff   = $self->_fetch_gff_gene($cds) or next;
-    my $protein = $cds->Corresponding_protein if $cds;
-    my @sequences = $cds->Corresponding_transcript;
-    my $len_spliced   = 0;
+    
+    if( defined($cds) ){
+        my $gff   = $self->_fetch_gff_gene($cds) or next;
+        my $protein = $cds->Corresponding_protein if $cds;
+        my @sequences = $cds->Corresponding_transcript;
+        my $len_spliced   = 0;
 
-    for ( $gff->features('coding_exon') ) {
-	# Not all CDSs (history objects mainly) have proteins.
-        if ( $protein && $protein->Species =~ /elegans/ ) {
-            next unless $_->source eq 'Coding_transcript';
+        for ( $gff->features('coding_exon') ) {
+        # Not all CDSs (history objects mainly) have proteins.
+            if ( $protein && $protein->Species =~ /elegans/ ) {
+                next unless $_->source eq 'Coding_transcript';
+            }
+            else {
+                next
+                    unless $_->method =~ /coding_exon/
+                        && $_->source eq 'Coding_transcript';
+            }
+            next unless $_->name eq $sequences[0];
+            $len_spliced += $_->length;
         }
-        else {
-            next
-                unless $_->method =~ /coding_exon/
-                    && $_->source eq 'Coding_transcript';
+
+        $len_spliced ||= '-';
+
+        $data{length_spliced}   = $len_spliced;
+
+        my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
+        $data{length_unspliced} = @lengths ? \@lengths : undef;
+
+
+        my $peplen = $protein->Peptide(2) if $protein;
+        my $aa     = "$peplen";
+        $data{length_protein} = $aa if $aa;
+
+        my $gene = $cds->Gene;
+
+        my $status = $cds->Prediction_status if $cds;
+        $status =~ s/_/ /g if $status;
+        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
+
+        my $type = $sequences[0]->Method if @sequences;
+        $type =~ s/_/ /g;
+        @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
+        $data{type} = $type && "$type";
+        $data{model}   = @sequences ? \@sequences : undef;
+        $data{protein} = $self->_pack_obj($protein);
+        $data{cds} = $cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0 ) : '(no CDS)';
+        $cds = ($cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0) : '(no CDS)');
+        $data{cds} = $status ? { text => $cds, evidence => { status => "$status"} } : $cds;
+
+        $data{gene} = $self->_pack_obj($gene);
+        push @rows, \%data;
+    }else{
+        if($object->class eq 'Transcript'){ # if caller is an ncRNA
+            my $gene = $object->Gene;
+            $data{gene} = $self->_pack_obj($gene);
+            my @sequences = $gene->Corresponding_transcript;
+            $data{model}   = @sequences ? 
+                [ map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences ] 
+                : undef;
+            my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
+            $data{length_unspliced} = @lengths ? \@lengths : undef;
+            $data{cds} = '(no CDS)';
+            my $type = $sequences[0]->Method if @sequences;
+            $type =~ s/_/ /g;
+            $data{type} = $type && "$type";
+            
+            push @rows, \%data;
         }
-        next unless $_->name eq $sequences[0];
-        $len_spliced += $_->length;
+        
     }
-
-    $len_spliced ||= '-';
-
-    $data{length_spliced}   = $len_spliced;
-
-    my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
-    $data{length_unspliced} = @lengths ? \@lengths : undef;
-
-
-    my $peplen = $protein->Peptide(2) if $protein;
-    my $aa     = "$peplen";
-    $data{length_protein} = $aa if $aa;
-
-    my $gene = $cds->Gene;
-
-    my $status = $cds->Prediction_status if $cds;
-    $status =~ s/_/ /g if $status;
-    $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
-
-    my $type = $sequences[0]->Method if @sequences;
-    $type =~ s/_/ /g;
-    @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
-    $data{type} = $type && "$type";
-    $data{model}   = @sequences ? \@sequences : undef;
-    $data{protein} = $self->_pack_obj($protein);
-    $data{cds} = $cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0 ) : '(no CDS)';
-    $cds = ($cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0) : '(no CDS)');
-    $data{cds} = $status ? { text => $cds, evidence => { status => "$status"} } : $cds;
-
-    $data{gene} = $self->_pack_obj($gene);
-    push @rows, \%data;
-
+    
     return {
         description => 'corresponding cds, transcripts, gene for this protein',
         data        => @rows ? \@rows : undef

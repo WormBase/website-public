@@ -1668,6 +1668,9 @@ sub gene_models {
     my %seen;
     my @rows;
 
+    use Data::Dumper; # DELETE
+    
+    
     my $coding =  $self->object->Corresponding_CDS ? 1 : 0;
 
     # $sequence could potentially be a Transcript, CDS, Pseudogene - but
@@ -1682,8 +1685,9 @@ sub gene_models {
             = ( $sequence->class eq 'CDS' )
             ? $sequence
             : eval { $sequence->Corresponding_CDS };
+            
         next if defined $cds && $seen{$cds}++;
-
+        
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
         my $len_spliced   = 0;
@@ -1714,7 +1718,15 @@ sub gene_models {
 
         $data{length_spliced}   = $len_spliced if $coding;
 
-        my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
+        use WormBase::API::Object::Pseudogene '_build__length';
+        my @lengths;
+        foreach my $sequence (@sequences){
+            if( $sequence->class eq "Pseudogene" ){
+                push @lengths, WormBase::API::Object::Pseudogene->_build__length($sequence);
+            }else{
+                push @lengths, $self->_fetch_gff_gene($sequence)->length . "<br />";
+            }
+        }
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
         my $status = $cds->Prediction_status if $cds;
