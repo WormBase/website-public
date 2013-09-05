@@ -11,6 +11,10 @@ WRAPPER highlight_box;
       END;
   END;
 
+  WRAPPER $field_block title="Partial CDS" key="partial";
+    fields.partial.data;
+  END;
+  
 END;
 
 
