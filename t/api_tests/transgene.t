@@ -34,6 +34,21 @@
         is  (keys %$products, 1, 'has a reporter product');
     }
 
+
+    # Test the historical gene method
+    sub test_historical_gene {
+        my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00002161' });
+
+        can_ok('WormBase::API::Object::Transgene', ('historical_gene'));
+
+        my $gene = $transgene->historical_gene();
+
+        isnt($gene->{'data'}, undef, 'data returned');
+        isnt($gene->{'data'}[0], undef, 'historcal gene returned');
+        isnt($gene->{'data'}[0]->{'text'}, undef, 'historcal gene data returned');
+        is  ($gene->{'data'}[0]->{'text'}->{'id'}, 'WBGene00043320', 'correct historcal gene returned');
+    }
+
 }
 
 1;

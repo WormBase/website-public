@@ -112,15 +112,15 @@ sub other_name{
 # This mehtod will return a data structure containing the 
 # historical reocrd of the dead gene originally associated with this Process
 
+
 sub historical_gene {
     my $self = shift;
     my $object = $self->object;
 
-    my $historical_gene = $object->Historical_gene;
+    my @historical_gene = map { {text => $self->_pack_obj($_), 
+                              evidence => $self->_get_evidence($_)} } $object->Historical_gene;
     return { description => 'Historical record of the dead genes originally associated with this process',
-             data        => $historical_gene ? { text => $self->_pack_obj($historical_gene), 
-                              evidence => $self->_get_evidence($object->Historical_gene)
-                            } : undef,
+             data        => @historical_gene ? \@historical_gene : undef,
     };
 }
 
