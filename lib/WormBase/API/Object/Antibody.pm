@@ -89,6 +89,24 @@ sub antigen {
     };
 }
 
+
+# historical_gene { }
+# This mehtod will return a data structure containing the 
+# historical reocrd of the dead gene originally associated with this
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/historical_gene
+
+
+sub historical_gene {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @historical_gene = map { {text => $self->_pack_obj($_), 
+                              evidence => $self->_get_evidence($_)} } $object->Historical_gene;
+    return { description => 'Historical record of the dead genes originally associated with this antibody',
+             data        => @historical_gene ? \@historical_gene : undef,
+    };
+}
+
 # animal { }
 # This method will return a data structure containing
 # the animal the antibody was generated.

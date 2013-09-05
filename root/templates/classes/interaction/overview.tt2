@@ -40,6 +40,9 @@ WRAPPER $field_block title="RNAi" key="rnai";
     cell_content(fields.rnai.data);
 END;
 
+
+
+
 WRAPPER $field_block title="Interactors" key="interactor";
     build_data_table( order=['interactor_type', 'interactor', 'role', 'variation', 'transgene'],
 	columns={
@@ -64,5 +67,9 @@ WRAPPER $field_block title="Regulation Results" key="regulation_result";
 END;
 
 remarks;
+
+WRAPPER $field_block title="Historical gene" key="historical_gene";
+    cell_content(fields.historical_gene.data);
+END;
 
 %]

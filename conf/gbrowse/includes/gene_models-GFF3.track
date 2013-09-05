@@ -3,6 +3,7 @@
 #glyph    = transcript2     # or gene, but it lacks callbacks
 feature      = gene:WormBase_imported
                gene:WormBase
+               CDS:WormBase
 glyph        = gene
 category     = Genes
 key          = Gene Models

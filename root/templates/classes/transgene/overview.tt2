@@ -45,6 +45,10 @@ WRAPPER $field_block title="Strains" key='strains';
   tags2link(fields.strains.data, '<br />', 'Strains');
 END;
 
+  WRAPPER $field_block title="Historical gene" key="historical_gene";
+    cell_content(fields.historical_gene.data);
+  END;
+
 remarks;
 '</div>';
 %]

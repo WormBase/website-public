@@ -42,6 +42,10 @@
        END;
    END;
 
+WRAPPER $field_block title="Historical gene" key="historical_gene";
+    cell_content(fields.historical_gene.data);
+END;
+
    remarks();
 
 %]
