@@ -67,9 +67,11 @@ sub current_assemblies {
     # represented by linking from the live Sequence_collection
     # to others.
     my $data = $self->_get_assemblies('current');  
+    use Data::Dumper;
+    Dumper($data);
     return {
-	description => "current genomic assemblies",
-	data => @$data ? $data : undef
+        description => "current genomic assemblies",
+        data => @$data ? $data : undef
     }
 }
 
@@ -86,8 +88,8 @@ sub previous_assemblies {
     # to others.
     my $data = $self->_get_assemblies('previous');  
     return {
-	description => "previous genomic assemblies",
-	data => @$data ? $data : undef
+        description => "previous genomic assemblies",
+        data => @$data ? $data : undef
     }
 }
 
@@ -98,15 +100,15 @@ sub _get_assemblies {
     my @assemblies = $object->Assembly;
     my @data;
     foreach (@assemblies) {
-	next if $_->Status eq 'Dead' || $_->Status eq 'Suppressed';
+        next if $_->Status eq 'Dead' || $_->Status eq 'Suppressed';
 
-	# Starting from live and working backwards.
-	if (($type eq 'previous') && ($_->Supercedes)) {
-	    push @assemblies,$_->Supercedes;
-	}
+        # Starting from live and working backwards.
+        if (($type eq 'previous') && ($_->Supercedes)) {
+            push @assemblies,$_->Supercedes;
+        }
 
-	push @data,$self->_process_assembly($_)
-	   unless ($_->Status eq 'Live' && $type eq 'previous');
+        push @data,$self->_process_assembly($_)
+        unless ($_->Status eq 'Live' && $type eq 'previous');
 
     }
     
@@ -127,37 +129,16 @@ sub _process_assembly {
 	"WS" . $assembly->First_WS_release . ' - '
 	. ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
 	
-    my $data = { name => $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 }),
-		 sequenced_strain  => $self->_pack_obj($assembly->Strain),
-		 first_wb_release  => "WS" . $assembly->First_WS_release,
-		 latest_wb_release => "WS" . $assembly->Latest_WS_release,
-		 wb_release_range  => $wb_range,
-		 reference         => $self->_pack_obj($ref),
-		 status            => $status,
-		 xrefs             => $self->_get_xrefs($assembly),
+    my $data = { 
+        name => $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 }),
+        sequenced_strain  => $self->_pack_obj($assembly->Strain),
+        first_wb_release  => "WS" . $assembly->First_WS_release,
+        latest_wb_release => "WS" . $assembly->Latest_WS_release,
+        wb_release_range  => $wb_range,
+        reference         => $self->_pack_obj($ref),
+        status            => $status,
     };
     return $data;
-}
-
-
-sub _get_xrefs {
-    my ($self,$object) = @_;
-
-    my @databases = $object->Database;
-    my %dbs;
-
-    foreach my $db (@databases) {
-	$dbs{xrefs}{"$db"}{name} = "$db";
-	foreach my $key ($db->col) {
-	    my @types = $key->col;	    
-	    my %types;
-	    foreach my $val (@types) {
-		$types{$key} = "$val";
-		$dbs{xrefs}{"$db"}{"$key"} = "$val";
-	    }
-	}
-    }
-    return \%dbs;
 }
 
 

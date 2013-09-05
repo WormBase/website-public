@@ -10,7 +10,7 @@ use Data::Dumper;
 
 require 't/catalyst_startup.pm';
 
-my $configuration = start_catalyst();
+start_catalyst();
 
 wait_for_catalyst();
 

@@ -57,12 +57,27 @@ has 'genetic_position_interpolated' => (
 # NOTE: genomic_picture has been superceded by genomic_image & tracks attribute
 #       see Object::Clone and respective templates for example
 
+# Should be overridden by implementations that would like to have
+# images generated (via '_build_genomic_image') for each of their
+# genomic positions.
+sub _make_multiple_genomic_images {
+    return undef;
+}
+
 # This is a fallback. Defaults to the largest genomic_position (i.e. only 1 position is used for image).
 sub _build_genomic_image { # genomic_picture_position?
     my ($self) = @_;
 
-    # Go through all positions and pick the one with the widest range:
     my $positions = $self->genomic_position->{data};
+
+    if ($self->_make_multiple_genomic_images()) {
+      return {
+          description => 'The genomic locations of the sequences to be displayed by GBrowse',
+          data        => $positions
+      };
+    }
+
+    # Go through all positions and pick the one with the widest range:
     my $widest_span = undef;
     for my $position (@$positions) {
         if (defined $widest_span) {
@@ -252,7 +267,10 @@ sub _build_genetic_position {
         }
     }
 
-    return $self->make_genetic_position_object($class, $object, $chromosome, $position, $error, $method);
+    return {
+        description => "Genetic position of $class:$object",
+        data => ( $self->make_genetic_position_object($class, $object, $chromosome, $position, $error, $method)->{'data'} )
+    };
 }
 
 # Creates a label for the genetic position object and then returns its data

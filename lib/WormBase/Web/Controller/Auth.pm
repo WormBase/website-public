@@ -529,7 +529,6 @@ sub auth_local {
 
 sub reload {
     my ($self, $c,$logout) = @_;
-    $c->stash->{operator}=0; 
     $c->stash->{logout}= $logout ? 1 : 0;
     $c->stash->{reload}=1;
     return;
@@ -611,25 +610,6 @@ sub profile_update :Path("/profile_update")  :Args(0) {
     $c->stash->{redirect} = $c->uri_for("me")->path;
     $c->forward('WormBase::Web::View::TT');
 }
-
-
-sub add_operator :Path("/add_operator")  :Args(0) {
-    my ($self, $c) = @_;
-    $c->stash->{template} = "auth/operator.tt2";
-    if($c->req->params->{content}){
-        (my $key= $c->req->params->{content})=~ s/.*\?tk=//;
-        $key =~ s/\&amp.*//;
-        $c->log->debug("get the $key");
-        my $role=$c->model('Schema::Role')->find({role=>"operator"});
-        $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->user_id,role_id=>$role->role_id});
-        $c->user->set_columns({"gtalk_key"=>$key});
-        $c->user->update();
-        $c->res->redirect($c->uri_for("me")->path);
-    }else {
-        $c->stash->{error_msg} = "Adding Google Talk chatback badge not successful!";
-    }
-}
-
 
 
 # Has the current user linked their account to Twitter?

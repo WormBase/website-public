@@ -1274,8 +1274,10 @@ sub _compile_amino_acid_changes {
 		    $aa_change = "$1$aa_position$2";
 		}  elsif ($change_type eq 'Nonsense') {
 		    # "Position" here really one of Amber, Ochre, etc.
-		    my ($aa_position,$aa_change_string) = $change_type->right->row;
-		    $aa_change = "$aa_change";
+		    if($change_type->right){
+                my ($aa_position,$aa_change_string) = $change_type->right->row;
+                $aa_change = "$aa_change";
+		    }
 		}
 		if ($aa_change) {
 		    push @data,{ transcript => $self->_pack_obj($item_affected),
@@ -1351,7 +1353,7 @@ sub _compile_nucleotide_changes {
 
         # Set wt and mutant labels
         if ($object->SNP(0) || $object->RFLP(0)) {
-            $wt_label = 'bristol';
+            $wt_label = 'reference';
             $mut_label = $object->Strain; # CB4856, 4857, etc
         }
         else {

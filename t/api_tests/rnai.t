@@ -1,0 +1,54 @@
+#!/usr/bin/env perl
+
+# Unit tests regarding "Rnai" instances.
+{
+    # Package name is the same as the filename (sans suffix, i.e. no .t ending)
+    package rnai;
+
+    # Limit the use of unsafe Perl constructs.
+    use strict;
+
+    # We use Test::More for all tests, so include that here.
+    use Test::More;
+
+    # This variable will hold a reference to a WormBase API object.
+    my $api;
+
+    # A setter method for passing on a WormBase API object from t/api.t to
+    # the subs of this package.
+    sub config {
+        $api = $_[0];
+    }
+
+
+    # Unit test for sequence() - ensures correct retrieval from both DNA_text and PCR_product
+    sub test_sequence {
+        # testing fetching sequence from DNA_text
+        my $rnai = $api->fetch({ class => 'Rnai', name => 'WBRNAi00000176' });
+
+        can_ok('WormBase::API::Object::Rnai', ('sequence'));
+
+        my $sequence = $rnai->sequence();
+
+        isnt($sequence->{'data'}, undef, 'data returned');
+        isnt($sequence->{'data'}[0]->{'sequence'}, undef, 'sequence data returned');
+        is  ($sequence->{'data'}[0]->{'sequence'}, 'cgcgcagattcaatgcaaccagtttgtattgacaggtaaattatatttcaaatttcatatttcaattttattttacagaatggttgattggttcagtttccatctttctaatttccaatatcgatacacctggacagattggaaggattgtttgaatgtatgtttttattttctattgttcataacattgcacggtaatatttgcagaaagatgcattttccggcagtcaaatctttgtacgagaagtcatagaaaagtgtcgtcgttttggatcttatgagaaaattatcgctgcattgccccaagattttgtcaagattcatccatgctctccagaagttcgatatctcattgatgaaggtaaataactactttttggaaaaatcaaaacttgtaatttcagaagacactgcactagttcaacgagcggaaacattcactcaaatgttccaagaacgtcagccagctgaagcattcctcaatgagcttaaatcaaatgatgaaaatgacgaattgccatataacattaatgaattcggtcttttcgtaatggttatgctcaaaatggcatcgaagacttattcacacaacttctcagctctattcagg', 'sequence data correct');
+
+
+        # testing fetching sequence from PCR_product
+        my $rnai_pcr = $api->fetch({ class => 'Rnai', name => 'WBRNAi00088157' });
+
+        my $sequence_pcr = $rnai_pcr->sequence();
+
+        isnt($sequence_pcr->{'data'}, undef, 'data returned');
+        isnt($sequence_pcr->{'data'}[0]->{'sequence'}, undef, 'sequence data returned');
+        is  ($sequence_pcr->{'data'}[0]->{'sequence'}, 
+            'tggacgacagtcaagagtcgagtttttcggtttccaaatatgaaacgtaagtcgaatagagtacggtattcggaaaatctgaaatttaaatttttagaaatgatgatggatctatgggccaattcatttcaataaatgtaagttaaacttccattaacagtttttcaaaagtctgagaaggtagatcaatataattcattagagcgcatttgctcgccttggatcaaaaacttggaaatctataataataatttgaaggaatgtgaacgggaaattcaaatgttagaacgtgacattcgtcaacagaaagagtccagtgcaaatgcgaaaacagcgataacattcgatcaacttcggaaaattcatacgtacgttccgggccgtccgatcagttttcccgtcggcctcaatagctcacacaggtaaagcgccaagtgtgaaaaatggctgaatagtgggtgaaggggcgctggcgggtgaacgatgggggaaaaatgggcgaaggaccgcaaaaagacgaagcaatgggtgaataaattgaccaatccgaaaatcaaaaaagaagtaaaaaaggagcatagcaaagtatttccgaagtattcatgcataactagtatacgtgtttatggaagtgtttattgttaacaatgttacaatcaattgattgttgtaatgttcacttcatttccgaacatctactattagagtcatctgttgttgaataatgtgaaaaacattttgttacttttttaagggttatatttatagaaaaaataccaatttgttatttcccacaagtttggacattcatattacattctcagtcgaacaatcacctatataagagttgattgagcatatagacgtcttactttaaaagactcataactctgttggcatttgaattaataaaatgtggccaactgaaaagttgttgacaataatgtgaaaaacattttgttagttggtaactttttgttatctttagtgactgcggagatgtgggcttcaaaagataaccaaaatattctagatttgtacttaaatatatctcagttctcgataaagatgaagagatacttacaactatcaatatgtttattgttttaaacttaacaacgttgtagttgataactttttgatatcttgcctctagaattagatacatccattttaatacaggaggttttaattttcagagctccaaggaatgtcggtttgacttatcgaaagcaccgaacttagcaaaaaaacttatagaaacaaacaattcaacatatttctacaatacctgataaaaatttgataatttttgaaaaaaaattttttttgatttttgaaaaaaaaatccaaagggtccccccttacaaaatttttcaaaattttttttttggaaactttttataatatgattagatgttatagaaaaatccaatgtttgtaattatttctagtttgtatgttctgaacacgatttcggacgaaaacctgaggtgtagtagaacaactaagttcaaaaaacgcgttcactttggatgcgtatatctccgtggaaaaatttttgatggcaaagtgatcaactacaaagttgtttatcttaatctgaagtacaactttgtagtttattgtttcttgtcaaaaaaattgttggtcgagataaagttgtgttcattttggcaacttcatgcttgaattttcttcttctttttctattcctgtctcaatcaacaatttttttgacaagaaacaataaactacaaagttgtacttcagattaagatgaacaactttgtagttgatcactttgccatcaaaaatttttccacggagatatacgcatccaaagtgaacgcgttttttgaacttagttgttctactacacctcaggtcttcttccgaaatcgtgttcagaacatacaaactagaaataattacaaacattgcatttttctatagcatctaatcatattataaaaagtttccaaaaactttttttttcaacaattttttttcaacaattttcatcataaggggggacccttatgatcaaagtaatgatttatcaaattggatgaagagggtcatatttagaatttttatcgaaatttcattcgaaactcttaaagttgaaacggaaatatcttacttagtactattcgatctatttttcagcgtttcaatgcgttttttaacaccaataaatcatttcaattcaacgcttactctcattatgagtttcatagcaacgacactccgaaataaccctagcgcgccctctttagcgaaaattttattcaatttttttttgctttttttgcaatttttctcgttttttttcacgattaccgctaattttgcgtgattttgtgagcaacatatttttctttttcacatttttataatttgcagataaaaatcgagaaaatcaacgaaaaggatccttcaaaacgacggaataggaaaaagatgccaaaaatcaggtattttcagaaatattgagaaactctgcgtctattcttctgttaactaattataattggtttcttattcgaaaaatataaatttttgtcacgaaaaaaagcgagaaataatcttcgaattcagatatttcgtcccgacgcaacttcgccggcttcgacgaggaatcctgcagcgagggacacgattatgagctgttaaagtgagttttaaagttttaaaatgtattctcccgaaagaaaaatcgtcaaactaactctaaagcatgataatttttacaggagtgtcgccggcaccgactccgaacgagaaaagctccgacgaccgcaaacgagagccgaaggaatctggaaagcgaaggtaatattttattttcaaatatcgatacttgtttctaacgagcgaaaatgtataatgtaatgtaataatgattaatcttctttattaaacttctttaaaattaatcatttgaatttttcagaaaatggatcgataaaatcgcttactggaggaagacaaaaggaagaaaagcggaaacgagtcaattgccgatgacaccagaggacgattcatcgaaatcatcaaaagatgaaataaattattttgtttttttttcgatttaaaataaacgataatactataatatactcgttttatgaatattattcttcactgaaaagcaaaaggaggggaatggaaacgatagccttcacccatcgctcacccatcgctcacccattagcgagccgctaacatgcgaacggcggcccaccggtgtgcgcgctgttcgtgtgtcggcggttcccccctcgcctatatgcggtcccccctcgcctatatgcggtcccccctcgcctatatgcggtccaccggtgggccgccgctcgcacttggcgctttacctgtgcagttgggagagcgtacgactgaagatcgtaaggtcaccagttcgatcctggtttggggcaatctatttttacttttttggtattcttatataaacttggtaattttaagactctctacattgcttggaccacacaaagagctattctttgataggatatgtcgggcagccgatatacaaagggcatctttgaaaaatcgtttgaaatcaaatataaatgtaggatattttttaaattcaattttccaatatttttgactaatagtaagattgcaattttccagaaattcgagcccagcacacctctgtcgtttcaaccgggattcgattctcagagctctctttcaacgacttcagagagccaaaattttgtggtgaccccaacaactcttagcagtttattgaacaatcacacagtaagtttttatgagattgtcgtagtaggtaggcccgtgcccatattatcataacaagtctacctgacctacctgactattacacattttctgcattttgaggccactttagatgataactttagatgtagatgtaaacctttagatgtaaaccaactgagataataacaaataagtaggtcttgtagtgtagcagtaggtaggcacaaggaaggtattatatgcctacgtcgatgttatactggtttaattatcaaatcttttaattttcaataaataatttaagcggaagaatcacattgaaatgctggctccactagcgtccgaagaggagttgatgagatttcctgcggaacgacagtttgatctaatgcaaattggatttagttacgatgaagtgaagcagttgctggaaatgtttgaaaaattcaagaatgacgttcaagagattaacaggcttcatacattgacacaggtgaggaataacggttactgcagagaaacgagagtgtatgtattctttggatttggttgaaggcacctaattcagattctctggattaattgttcctaaaaaatatttttgagatcctgaatcaattttgcaactacatctcaatgtacgcaccacccaatctgaaaatgatatcatcggcgttcaatttgctagaacttggaaactcagctcatgaagtgaaaagggttttactgaaagcggtaatctaaatattccatcaaaaaatataactaaatgaaatttttatagcgtcgtcgtgaagaatcagaagaatcagatgtttcattttccaaaaagccacgtccttcttctagatctcctgcatctccaaatcgagatgatctattgttgggactcgatcgttctccgcccagcgatgatggaactcagaaagttt', 
+            'sequence data from pcr product correct');
+
+    }
+
+}
+
+1;
+

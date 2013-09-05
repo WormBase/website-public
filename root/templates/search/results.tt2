@@ -1,20 +1,22 @@
+[% query_uri = query.replace("\'", "%27").replace('\"', '%22') | uri %]
 
+[% IF c.stash.error; error; END; %]
 [% IF (widget == 'references') && results.size > 0%]
 <ul class="navigation ui-corner-all" id="search-count-summary">
 
   <li> <span id="current-ref" class="ui-helper-hidden ui-selected"><span id="curr-ref-text">All publications</span><span class="ui-icon ui-icon-triangle-1-s" style="float:right;"></span></span>
   <ul>
-            [% searchurl = "/search/paper/" _ query _ "?inline=1&widget=1" %]
+            [% searchurl = "/search/paper/" _ query_uri _ "?inline=1&widget=1" %]
             <li class="load-results ui-selected" href="[% searchurl %]">
               <a href="[% searchurl %]">All publications</a>: 
-              <span class="count" href="/search/count/all/paper/[% query | uri %]"></span>
+              <span class="count" href="/search/count/all/paper/[% query_uri %]"></span>
             </li>
 
         [% FOREACH s IN c.config.sections.resources.paper.paper_types.sort %]
-            [% searchurl = "/search/paper/" _ query _ "?inline=1&species=" _ s _ "&widget=1" %]
+            [% searchurl = "/search/paper/" _ query_uri _ "?inline=1&species=" _ s _ "&widget=1" %]
             <li class="load-results ui-helper-hidden" href="[% searchurl %]">
               <a href="[% searchurl %]">[% s.replace('[/_]', ' ');%]</a>: 
-              <span class="count" href="/search/count/[% s %]/paper/[% query | uri %]"></span>
+              <span class="count" href="/search/count/[% s %]/paper/[% query_uri %]"></span>
             </li>
         [% END %]
 
@@ -37,10 +39,9 @@
 [% IF search_guide %]
 <h4>can't find the object [% search_guide %], maybe you are looking for:</h4>
 [% END %]
-
 <!-- begin result list -->
 <div id="results" class="[% widget || 'lazyload' %]-widget" 
-    data-search='{"query": "[% query %]","type": "[% type %]", "species": "[% species %]", "widget": "[% widget %]", "nostar": "[% nostar || 0 %]", "count": "[% count %]" }'>
+    data-search='{"query": "[% query_uri %]","type": "[% type %]", "species": "[% species %]", "widget": "[% widget %]", "nostar": "[% nostar || 0 %]", "count": "[% count %]" }'>
   [% UNLESS no_count %]
     [% IF results.size > 0 %]
     [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title FILTER lcfirst %]
@@ -61,11 +62,10 @@
     [% PROCESS "search/result_list.tt2" %]
   </ul>
 
-  [% PROCESS timer IF noboiler %]   
+  [% PROCESS timer IF noboiler %]
     [% IF (count && count > 10) %]
     [% UNLESS searchLink %]
-      [% query = query | uri %]
-      [% searchLink = "/search/" _ type _"/" _ query _ "/" %]
+      [% searchLink = "/search/" _ type _"/" _ query_uri _ "/" %]
     [% END %]
     <div id="load-results" class='load-results' href="[% searchLink %]">load 10 more results</div>
     [% END %]
@@ -75,7 +75,7 @@
 </div>
 
 <script>
-  WB.allResults('paper', '', '[% query %]', '[% widget %]');
+  WB.allResults('paper', '', '[% query_uri %]', '[% widget %]');
 </script>
 [% END %]
 <!-- End result list -->

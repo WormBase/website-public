@@ -38,10 +38,12 @@
       </p>
   </div>
 
-[% MACRO nav_species(species_name) BLOCK %]
+[% MACRO nav_species(species_name,display_title) BLOCK %]
   <li><a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' %] class="species" [% END %]> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$species_name.title %]</a>
               <ul class="wb-dropdown">  
-                <li>[% text2link('genomic_location',species_name,'Browse Genome') %]</li>
+                [% FOREACH bioproject IN c.config.sections.species_list.$species_name.bioprojects.keys %]
+			<li>[% text2link('genomic_location',species_name _ '_' _ bioproject,'Browse Genome: ' _ c.config.sections.species_list.$species_name.bioprojects.$bioproject.title) %]</li>
+                [% END %]
 
               [% FOREACH class IN c.config.sections.species_list.$species_name.available_classes.class %]
                 <li><a href="[% c.uri_for('/species',species_name,class).path  %]">[% pluralize(c.config.sections.species.$class.title || c.config.sections.resources.$class.title) %]</a></li>

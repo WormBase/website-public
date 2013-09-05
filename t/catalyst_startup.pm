@@ -42,7 +42,8 @@ sub start_catalyst {
     my $retry_wait = 2; # number of seconds to wait between checks
 
     my $open;
-    while ($retries > 0) {
+    my $retry = $retries;
+    while ($retry > 0) {
         sleep $retry_wait;
 
         check_ports($WEBSITE_HOST, $timeout, \%ports);
@@ -50,7 +51,7 @@ sub start_catalyst {
         last if $open == 1;
 
         print STDERR "Waiting for server to start...\n";
-        $retries--;
+        $retry--;
     }
 
     unless ($open == 1) {
@@ -66,7 +67,7 @@ sub start_catalyst {
 }
 
 sub stop_catalyst {
-    $catalyst_thread->detach();
+    $catalyst_thread->detach() if $catalyst_thread;
 }
 
 sub wait_for_catalyst {

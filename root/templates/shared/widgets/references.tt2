@@ -1,0 +1,30 @@
+
+[% results = fields.references.data %]
+[% IF results; %]
+<!-- begin result list -->
+<div id="results"
+data-search='{"query": "[% object.name.id %]","type": "paper", "species": "", "widget": "references", "nostar": "0", "count": "[% results.size %]" }'
+>
+
+    [% IF results.size > 0 %]
+        [% lowerClass = 'reference' %]
+      <div id="fade"><span id="count">[% results.size %]</span> 
+        [% UNLESS type == 'all'; pluralize(lowerClass, results.size) _ ' found'; ELSE; 'results'; END; %]
+        [% IF querytime; "(" _ querytime _ " seconds)"; END %]
+      </div>
+    [% ELSE %]
+      Sorry, <span id="count">[% results.size %]</span> results found for this object
+    [% END %]
+
+  <ul class="results-paper">
+    [% PROCESS "search/result_list.tt2" %]
+  </ul>
+
+  [% PROCESS timer IF noboiler %]   
+</div>
+
+<script>
+  WB.checkSearch($jq("#results"));
+</script>
+<!-- End result list -->
+[% END %]

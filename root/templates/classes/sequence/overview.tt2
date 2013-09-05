@@ -8,9 +8,22 @@
 
 WRAPPER highlight_box;
 
-WRAPPER $field_block title="Paired read" key="paired_read";
-    tag2link(fields.paired_read.data);
-END;
+    WRAPPER $field_block title="Paired read" key="paired_read";
+        tag2link(fields.paired_read.data);
+    END;
+    
+    WRAPPER $field_block title="Matching CDSs" key="cdss";
+        tags2link(fields.cdss.data);
+    END;
+    
+    WRAPPER $field_block title="Matching transcripts" key="transcripts";
+        tags2link(fields.transcripts.data);
+    END;
+    
+    WRAPPER $field_block title="Matching pseudogenes" key="pseudogenes";
+        tags2link(fields.pseudogenes.data);
+    END;
+    
 END;
 
 '<div class="description">';

@@ -89,7 +89,7 @@ export PATH="/usr/local/wormbase/extlib/bin:$PATH"
 
 
 # Fetch local defaults
-PIDDIR=/tmp
+PIDDIR=$APP_HOME/logs
 PIDFILE=$PIDDIR/${APP}.pid
 APPLIB=$APP_HOME/WormBase
 APPDIR=$APP_HOME

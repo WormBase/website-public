@@ -40,6 +40,7 @@ requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::View::JSON';
 requires 'Catalyst::View::Email';
+requires 'Catalyst::View::CSV'                    => '1.3';      # Export as CSV. Kinda hard to install. Sorry.
 #requires 'Catalyst::View::GD';
 
 # Application dependencies

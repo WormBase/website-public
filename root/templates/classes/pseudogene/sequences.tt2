@@ -1,0 +1,25 @@
+[% 
+
+sequence('print_sequence');
+
+WRAPPER $field_block title="Strand" key='strand';
+    '(' _ c.stash.fields.strand.data _ ')';
+END;
+
+WRAPPER $field_block title="Predicted Exon Structure" key="predicted_exon_structure";
+
+    build_data_table( order = ['no','start','end','len'],
+                        columns = { 
+                                    no     => 'Exon #',
+                                    start  => 'Start',
+                                    end    => 'End',
+                                    len => 'Length'
+                                },
+                        passed_data = fields.predicted_exon_structure.data,
+                        key = 'predicted_exon_structure');
+
+END;
+
+
+
+%] 

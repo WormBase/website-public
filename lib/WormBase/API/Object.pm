@@ -430,29 +430,32 @@ sub _parse_year {
     my $year = $1 || $date;
     return $year;
 }
- 
 
-# NOTE: the standarded evidence method, returns a hash ref, in the template call macro evidence(hash ref, index)
-# index is needed when multiple evidence on the same page.
+
+# sub _get_evidence
+# Standard evidence method - handles the evidence hash in AceDB
+# Arg[0] : The acedb node containing an evidence hash
+# Arg[1] (optional) : The type of evidence to fetch (default: all evidence)
+# Returns: A hash ref containing the evidence requested
+#
 sub _get_evidence {
     my ($self,$node,$evidence_type)=@_;
     my @nodes = eval{$node->col} ;
     return undef unless(@nodes);
     my %data;
 
-   
-	foreach my $type (@nodes) {
-	     
-	    next if ($type eq 'CGC_data_submission') ;
-	     #if only extracting one/more specific evidence types
-	    if(defined $evidence_type) {
-		next unless(grep /^$type$/ , @$evidence_type);
-	    }
+    foreach my $type (@nodes) {
 
-        my @evidences;
+      next if ($type eq 'CGC_data_submission');
+       #if only extracting one/more specific evidence types
+      if(defined $evidence_type) {
+        next unless(grep /^$type$/ , @$evidence_type);
+      }
 
-	    #the goal is to deal label and link seperately?
-	    foreach my $evidence ($type->col) {
+      my @evidences;
+
+      #the goal is to deal label and link seperately?
+      foreach my $evidence ($type->col) {
           my $label = $evidence;
           my $packed;
           my $class = eval { $evidence->class } ;
@@ -507,10 +510,11 @@ sub _get_evidence {
 
           $class = (defined $class) ? lc("$class") : undef;
           push( @evidences, $packed ? $packed : { id=> "$evidence", label => "$label", class => $class });
-	    }
-        $data{$type} = @evidences ? \@evidences : undef;
-	}
-   return %data ? \%data :undef;
+      }
+      $type =~ s/(Curator)_confirmed/$1/;
+      $data{$type} = @evidences ? \@evidences : undef;
+    }
+    return %data ? \%data :undef;
 }
 
 
@@ -537,157 +541,6 @@ sub _parse_hash {
   return $data;
 }
 
-# DEPRECATED by using _get_evidence
-
-# NOT DONE YET!
-sub _parse_evidence_hash {
-  my @p = @_;
-  my ($data,$format,$display_tag,$link_tag,$display_label,$detail) =
-    rearrange([qw/DATA FORMAT DISPLAY_TAG LINK_TAG DISPLAY_LABEL DETAIL/],@p);
-  
-  my @rows;    # Each row in the table corresponds to an object (each row is stringified)
-  my $join = ($format eq 'table') ? '<br>' : ', ';
-  my $all_evidence = {};
-  
-  foreach my $entry (@$data) {
-    my $hash  = $entry->{hash};
-    my $node  = $entry->{node};
-    
-    # Conditionally format the data for each type of evidence
-    foreach my $key (keys %$hash) {
-      my $type = $hash->{$key};
-      
-      # Suppress the display of Curator_confirmed
-      next if $type eq 'Curator_confirmed';
-      
-      # Just grab the first level entries for each.
-      # For the evidence hash, Accession_evidence and Author_evidence 
-      # have additional information
-      my @sources = eval { $type->col };
-      
-      # Add appropriate markup for each type of Evidence seen
-      # Lots of redundancy here - first we parse the data, then add primary formatting
-      # then secondary formatting (ie table, etc)
-      # This could all be much cleaner (albeit less flexible) with templates
-      if ($type eq 'Paper_evidence') {
-	#!!	      my @papers = _format_paper_evidence(\@sources);
-	#!!	      $data = join($join,@papers);
-      } elsif ($type eq 'Published_as') {
-	#!!	      $data = join($join,map { ObjectLink($_,undef,'_blank') } @sources);
-      } elsif  ($type eq 'Person_evidence' || $type eq 'Curator_confirmed') {
-	#!!	      $data = join($join,map {ObjectLink($_->Standard_name,undef,'_blank')} @sources);
-      } elsif  ($type eq 'Author_evidence')   {
-	#!!	      $data = join($join,map { a({-href=>'/db/misc/author?name='.$_,-target=>'_blank'},$_) } @sources);
-      } elsif ($type eq 'Accession_evidence') {
-	foreach my $entry (@sources) {
-	  my ($database,$accession) = $entry->row;
-	  #!!		  my $accession_links   ||= Configuration->Protein_links;  # misnomer
-	  #!!		  my $link_rule = $accession_links->{$database};
-	  #!!		  $data = $link_rule ? a({-href=>sprintf($link_rule,$accession),
-	  #!!					  -target=>'_blank'},"$database:$accession")
-	  #!!		      : ObjectLink($accession,"$database:$accession");
-	}	
-      } elsif ($type eq 'Protein_id_evidence') {
-	#!!	      $data = join($join,map { a({-href=>Configuration->Entrezp},$_) } @sources);
-	
-	# Lots of generic entries that just need to be linked
-      } elsif ($type eq 'GO_term_evidence' || $type eq 'Laboratory_evidence') {
-	#!!	$data = join($join,map {ObjectLink($_) } @sources);
-      } elsif ($type eq 'Expr_pattern_evidence') {
-	#!!	$data = join($join,map {ObjectLink($_) } @sources);
-      } elsif ($type eq 'Microarray_results_evidence') {
-	#!!	$data = join($join,map {ObjectLink($_) } @sources);
-      } elsif ($type eq 'RNAi_evidence') {
-	#!!	$data = join($join,map {ObjectLink($_,$_->History_name ? $_ . ' (' . $_->History_name . ')' : $_) } @sources);
-      } elsif ($type eq 'Gene_regulation_evidence') {
-	#!!	$data = join($join,map {ObjectLink($_) } @sources);
-      } elsif ($type eq 'CGC_data_submission') {
-      } elsif ($type =~ /Inferred_automatically/i) {
-	#!!	$data = join($join,map { $_ } @sources);
-      } elsif ($type eq 'Date_last_updated') {
-	#!!	($data) = @sources;
-	#!!	$data =~ s/\s00:00:00//;
-      }
-      
-      $type =~ s/_/ /g;
-      
-      # Retain $node again since this is an object
-      push @{$all_evidence->{$type}},
-	{ type => $type,
-	  data => $data,
-	  node => $node,
-	};
-    }
-  }
-  
-  # Format the evidence as requested
-  my $return;
-  if ($format eq 'table') {
-    foreach my $tag (keys %$all_evidence) {
-      
-      my @evidence = @{$all_evidence->{$tag}};
-      my $table =
-	start_table()
-	  . TR(th('Evidence type')
-	       . th('Source'));
-      
-      my $count = 0;
-      foreach (@evidence) {
-	my $node = $_->{node};
-	
-	# Only need to do this for the first iteration
-	if ($count == 0) {
-	  if ($display_tag) {
-	    $link_tag = 1 if $node eq 'Evidence'; # hack for cases in which evidence is attached
-	    #!!		      my $description = $link_tag ? $node :
-	    #!!			  ref $node && $node->class eq 'Gene_name' ?
-	    #!!			  a({-href=>Object2URL(GeneName2Gene($node))},$node)
-	    #!!			  : ObjectLink($node);
-	    #!!		      $return .= $description;
-	  }
-	  $count++;
-	  $return .= h3('Supported by:');
-	}
-	
-	my $type = $_->{type};
-	my $data = $_->{data};
-	#!!	      $table .= TR(td({-valign=>'top'},$type),
-	#!!			   td($data));
-      }
-      #!!	  $table .= end_table();
-      #!!	  $return .= $table;
-    }
-  } else {
-    # Returning stringified form of evidence
-    my @entries;
-    foreach my $tag (keys %$all_evidence) {	
-      my @evidence = @{$all_evidence->{$tag}};
-      
-      my $count = 0;	
-      foreach (@evidence) {
-	my $node = $_->{node};
-	if ($count == 0) { # necessary on first iteration only. stoopid, I know
-	  if ($display_tag) {
-	    $link_tag = 1 if $node eq 'Evidence'; # hack for cases in which evidence is attached
-	    #!!		    my $description = $link_tag ? $node :
-	    #!!			ref $node && $node->class eq 'Gene_name' ?
-	    #!!			a({-href=>Object2URL(GeneName2Gene($node))},$node)
-	    #!!			: ObjectLink($node);
-	    #!!		    $return .= $description;
-	  }
-	  $count++;
-	}
-	my $type = $_->{type};
-	my $data = $_->{data};
-	push @entries,($display_label) ? "via " . lc($type) . ': ' . $data : $data;
-      }
-    }
-    $return .= join('; ',@entries);
-  }
-  return undef unless $return;
-  return $return;
-}
- 
 
 ## Data is a collection of one or more phenotype
 ## hashes with top-level tags already extracted
@@ -959,18 +812,6 @@ sub _covered {
     $total += $merged->[1]-$merged->[0]+1;
   }
   $total;
-}
-
-
-
-
-# Sometimes, calling a tag on an Ace object will crash
-# the app. This gets the count of everything right of the passed tag
-sub _get_count{
-  my $self = shift;
-  my $obj = shift;
-  my $first_item = $obj->right;
-  return ($first_item->{'.end_row'} || return -1) - ($first_item->{'.start_row'} || 0) + 1;
 }
 
 

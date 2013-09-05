@@ -119,8 +119,32 @@ our %BLAST_FILTERS = ("filter" => "-F T",);
 # Belongs as part of the controller?
 sub run {
     my ($self,$param) = @_;
-    my ($query_file, $query_type, $result_file) = $self->process_input($param);
-    return $self->display_results($param, $query_file, $query_type, $result_file);
+
+    my $bioprojects = $param->{'bioproject'};
+    $bioprojects = [ $bioprojects ] unless ref($bioprojects) eq 'ARRAY';
+
+    if (length(@{$bioprojects}) == 1 && @{$bioprojects}[0] == undef) {
+        error("A BioProject must be selected!");
+    }
+
+    my @results = ();
+    foreach my $bioproject (@{$bioprojects}) {
+      my ($query_file, $query_type, $result_file) = $self->process_input($param, $bioproject);
+      my $data = $self->display_results($param, $query_file, $query_type, $result_file)->{'data'};
+
+      # Add BioProject identifier for display purposes.
+      my @filename_segments = split('_', $bioproject);
+      foreach my $result (@{$data}) {
+          $result->{'bioproject'} = $filename_segments[3];
+      }
+
+      push(@results, $data);
+    }
+
+    return {
+        description => 'Alignment results of one or more BLAST/BLAT runs.',
+        data        => \@results
+    };
 }
 
 sub about_blat {
@@ -149,13 +173,17 @@ sub _get_database_type {
 
 
 sub process_input {
-    my ($self,$cgi) = @_;
+    my ($self, $cgi, $database) = @_;
 
     my $query_sequence = $cgi->{"query_sequence"};
     my $query_type     = $cgi->{"query_type"};
 
+    if (!$database || $database eq '') {
+        error("A BioProject must be selected!");
+    }
+
     if (!$query_sequence) {
-        message("A query sequence is required!");
+        error("A query sequence is required!");
     }
 
     my $query_file = $self->process_query_sequence($query_sequence);
@@ -171,17 +199,7 @@ sub process_input {
 #    my $out_file = ($address eq "127.0.0.1") ? 'localhost-debug' : $temp_file->filename;
     my $out_file = $temp_file->filename;
 
-    my $database;
-    my $has_bioproject = 0;
-    if ($cgi->{"bioproject"} =~ /^not_selected$/) {
-        $database = $cgi->{"database"};
-    } else {
-        $database = $cgi->{"bioproject"};
-        $has_bioproject = 1;
-    }
-
     my $search_type = $cgi->{"search_type"};
-
     my $command_line;
 
     my @path_parts    = split('_',$database);
@@ -189,12 +207,8 @@ sub process_input {
     my $version = $path_parts[0];
 
     my $database_location;
-    if ($has_bioproject) {
-        my $bioproject = $path_parts[3];
-        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
-    } else {
-        $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $path_parts[3]);
-    }
+    my $bioproject = $path_parts[3];
+    $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
 
     if ($search_type eq "blast") {
         my $blast_app = $cgi->{"blast_app"};
@@ -245,18 +259,24 @@ sub process_input {
     elsif ($search_type eq "blat") {
 	my $db_info;
 
-        #my $database_type     = $db_info{type};
-        #my $database_port     = $db_info->{port};
+	my $database_type = $self->_get_database_type($database);
+
 	my $blat_client = $self->pre_compile->{BLAT_CLIENT};
 	$blat_client = "/usr/local/wormbase/services/blat/bin/blat";
 
-        #         if ($query_type ne $database_type) {
-        #             error("Incompatible query($query_type)/database($database_type)");
-        #         }
+	# Only supporting matching query and database types:
+	if ($query_type ne $database_type) {
+	    error("Incompatible query($query_type)/database($database_type)");
+	}
 
-        # Currently only DNA searches are supported, if expanded adjust query and db types accordingly
-	# see http://genome.ucsc.edu/goldenPath/help/blatSpec.html for param specs
-        $command_line = "$blat_client -out=blast -t=dna -q=dna $database_location $query_file $out_file >& $out_file.err ";
+	my $query_and_database_type;
+	if ($query_type eq 'nucl') {
+	    $query_and_database_type = '-t=dna -q=dna';
+	} elsif ($query_type eq 'prot') {
+	    $query_and_database_type = '-prot';
+	}
+
+        $command_line = "$blat_client -out=blast $query_and_database_type $database_location $query_file $out_file >& $out_file.err ";
 #            $blat_client . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
 	    
     }
@@ -1035,7 +1055,7 @@ sub extract_hit_info {
     }
 
     elsif ($hit_name =~ /^(CHROMOSOME_|)([IVX]+|MtDNA)/) {
-        $gbrowse_root_id = 'c_elegans';
+        $gbrowse_root_id = 'c_elegans_PRJNA13758';
     } else {
 	# Just use the species ID
 	$gbrowse_root_id = $species;

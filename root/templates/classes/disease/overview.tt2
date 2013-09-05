@@ -40,8 +40,12 @@
    END; 
 
 
-   WRAPPER $field_block title="<i>C. elegans</i> genes by orthology to human disease gene" key="genes";
-     tags2link(fields.genes.data);
+   WRAPPER $field_block title="Genes by orthology to human disease gene" key="genes_orthology";
+     tags2link(fields.genes_orthology.data);
+   END; 
+
+   WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
+     tags2link(fields.genes_biology.data);
    END; 
   '</div>';
   remarks;

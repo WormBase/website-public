@@ -5,6 +5,7 @@ use WormBase::API::Object::Gene qw/classification/;
 use Switch;
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Interaction';
 extends 'WormBase::API::Object';
 
 
@@ -102,7 +103,7 @@ sub other_name{
 		
 	return {  
 		description => "Term alias",
-		data => "$other_name"
+		data => $other_name ? "$other_name" : undef
 	};
 }
 
@@ -287,15 +288,18 @@ sub go_term{
 sub pathway{
 	my ($self) = @_;
 	my $object = $self->object;
+	my $pathway = $object->Pathway;
+	my $data;
 	
-	my @row = $object->Pathway->row;
-	my $pathway_id = $row[4];
-	my $link_base = 'http://www.wikipathways.org/index.php/Pathway:';
-	my $link = $link_base.$pathway_id;
-	
-	my $data = {
-		pathway_link => $link, 
-	};
+	if($pathway){
+		my @row = $pathway->row;
+		my $pathway_id = $row[4];
+		
+		$data = {
+			pathway_id		=> $pathway_id,
+		};
+		
+	}
 	
 	return {
 		description => "Related wikipathway link",

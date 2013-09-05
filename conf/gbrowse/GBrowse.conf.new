@@ -97,7 +97,7 @@ truecolor     =  1   # better appearance at the expense of larger image files
 
 balloon tips        = 1
 titles are balloons = 1
-plugins             = FastaDumper RestrictionAnnotator SequenceDumper TrackDumper
+plugins             = RestrictionAnnotator SequenceDumper TrackDumper
 overview grid       = 0
 region grid         = 0
 detail grid         = 1

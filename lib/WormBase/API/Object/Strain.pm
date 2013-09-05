@@ -3,6 +3,7 @@ use Moose;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with    'WormBase::API::Role::Variation';
 
 =pod 
 
@@ -59,7 +60,7 @@ sub natural_isolates {
     }
     
     return { description => 'a list of wild isolates of strains contained in WormBase',
-	     data        => @data ? \@data : undef };
+             data        => @data ? \@data : undef };
 }
 
 
@@ -91,7 +92,7 @@ sub genotype {
 
     my $data = $self->_get_genotype($self->object);
     return { description => 'the genotype of the strain',
-	     data        => $data };
+             data        => $data };
 }
 
 # genes { }
@@ -102,17 +103,16 @@ sub genotype {
 sub genes {
     my $self   = shift;
     my $object = $self->object;
-    my @genes;
-    if ($object eq 'CB4856') {  # hack. duh.
-    } else {
-	@genes = map { $self->_pack_obj($_)} $object->Gene;
-    }
+
+    my $count = $self->_get_count($object, 'Gene');
+
+    my @genes = map { $self->_pack_obj($_)} $object->Gene;
     return { description => 'genes contained in the strain',
-	     data        => @genes ? \@genes : undef };
+             data        => @genes ? \@genes : $count > 0 ? "$count found" : undef };
 }
 
 # alleles { }
-# This method will return a data structure 
+# This method will return a complex data structure 
 # containing alleles contained in this strain.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/alleles
 
@@ -120,15 +120,13 @@ sub alleles {
     my $self   = shift;
     my $object = $self->object;
 
-    my @alleles;
-    if ($object eq 'CB4856') {  # hack. duh.
-    } else {
-      @alleles = map { $self->_pack_obj($_) } $object->Variation;
-    }
+    my $count = $self->_get_count($object, 'Variation');
+    my @alleles = map {$self->_process_variation($_, 1)} $object->Variation if $count < 650;
+
     return { description => 'alleles contained in the strain',
-	     data        => @alleles ? \@alleles : undef };
-    
+             data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef };
 }
+
 
 # rearrangements { }
 # This method will return a data structure 
@@ -141,7 +139,7 @@ sub rearrangements {
 
     my @rearrange = map { $self->_pack_obj($_) } $object->Rearrangement;
     return { description => 'rearrangements contained in the strain',
-	     data        => @rearrange ? \@rearrange : undef };
+             data        => @rearrange ? \@rearrange : undef };
 
 }
 
@@ -156,7 +154,7 @@ sub clones {
 
     my @clone = map { $self->_pack_obj($_) } $object->Clone;
     return { description => 'clones contained in the strain',
-	     data        => @clone ? \@clone : undef };
+             data        => @clone ? \@clone : undef };
 
 }
 
@@ -171,9 +169,9 @@ sub transgenes {
 
     my @transgenes = map { $self->_pack_obj($_) } $object->Transgene;
     return { description => 'transgenes carried by the strain',
-	     data        => @transgenes ? \@transgenes : undef };
+             data        => @transgenes ? \@transgenes : undef };
 
-}
+} 
 
 
 # mutagen { }
@@ -187,7 +185,7 @@ sub mutagen {
     my $mutagen = $object->Mutagen;
 
     return { description => 'the mutagen used to generate this stain',
-	     data        => $mutagen && "$mutagen"};
+             data        => $mutagen && "$mutagen"};
 
 }
 
@@ -201,7 +199,7 @@ sub outcrossed {
     my $object = $self->object;
     my $outcrossed = $object->Outcrossed;
     return { description => 'extent to which the strain has been outcrossed',
-	     data        => $outcrossed && "$outcrossed" };
+             data        => $outcrossed && "$outcrossed" };
 
 }
 
@@ -235,7 +233,7 @@ sub made_by {
     my $object = $self->object;
     my $made_by = $object->Made_by;
     return { description => 'the person who built the strain',
-	     data        => $made_by ? $self->_pack_obj($made_by) : undef };
+             data        => $made_by ? $self->_pack_obj($made_by) : undef };
 }
 
 # contact { }
@@ -248,7 +246,7 @@ sub contact {
     my $object = $self->object;
     my $made_by = $object->Contact;
     return { description => 'the person who built the strain, or who to contact about it',
-	     data        => $made_by ? $self->_pack_obj($made_by) : undef };
+             data        => $made_by ? $self->_pack_obj($made_by) : undef };
 }
 
 # date_received { }
@@ -263,7 +261,7 @@ sub date_received {
     my $date = $object->CGC_received;
     $date =~ s/ 00:00:00$//;
     return { description => 'date the strain was received at the CGC',
-	     data        => $date || undef,
+             data        => $date || undef,
     };
 }
     
@@ -277,9 +275,9 @@ sub gps_coordinates {
     my $object = $self->object;
     my ($lat,$lon) = $object->GPS->row if $object->GPS;
     return { description => 'GPS coordinates of where the strain was isolated',
-	     data        => { latitude    => $lat && "$lat",
-			      longitude   => $lon && "$lon",
-	     },
+             data        => { latitude    => $lat && "$lat",
+                              longitude   => $lon && "$lon",
+             },
     };    
 }
 
@@ -293,7 +291,7 @@ sub place {
     my $self = shift;
     my $place  = $self->object->Place;
     return { description => 'the place where the strain was isolated',
-	     data        => $place && "$place",
+             data        => $place && "$place",
     };
 }
 
@@ -307,7 +305,7 @@ sub landscape {
     my $landscape  = $self->object->Landscape;
     $landscape =~ s/_/ /g;
     return { description => 'the general landscape where the strain was isolated',
-	     data        => $landscape && "$landscape",
+             data        => $landscape && "$landscape",
     };
 }
 
@@ -321,7 +319,7 @@ sub substrate {
     my $substrate  = $self->object->Substrate;
     $substrate =~ s/_/ /g;
     return { description => 'the substrate the strain was isolated on',
-	     data        => $substrate && "$substrate",
+             data        => $substrate && "$substrate",
     };
 }
 
@@ -335,7 +333,7 @@ sub associated_organisms {
     my $object = $self->object;
     my @orgs  = map { "$_" } $object->Associated_organisms;
     return { description => 'the place where the strain was isolated',
-	     data        => @orgs ? \@orgs : undef };
+             data        => @orgs ? \@orgs : undef };
 }
 
 # life_stage { }
@@ -348,7 +346,7 @@ sub life_stage {
     my $object = $self->object;
     my $life_stage  = $object->Life_stage;
     return { description => 'the life stage the strain was in when isolated',
-	     data        => $life_stage ? $self->_pack_obj($life_stage) : undef,
+             data        => $life_stage ? $self->_pack_obj($life_stage) : undef,
     };   
 }
 
@@ -362,7 +360,7 @@ sub log_size_of_population {
     my $object = $self->object;
     my $size   = $object->Log_size_of_population;
     return { description => 'the log size of the population when isolated',
-	     data        => $size && "$size",
+             data        => $size && "$size",
     };
 }
 
@@ -376,7 +374,7 @@ sub sampled_by {
     my $object   = $self->object;
     my $sampled  = $object->Sampled_by;
     return { description => 'the person who sampled the strain',
-	     data        => $sampled && "$sampled",
+             data        => $sampled && "$sampled",
     };
 }
 
@@ -390,7 +388,7 @@ sub isolated_by {
     my $object  = $self->object;
     my $person  = $object->Isolated_by;
     return { description => 'the person who isolated the strain',
-	     data        => $person ? $self->_pack_obj($person) : undef };
+             data        => $person ? $self->_pack_obj($person) : undef };
 }
 
 # date_isolated { }
@@ -404,7 +402,7 @@ sub date_isolated {
     my $date   = $object->Date;
     $date =~ s/ \d\d:\d\d:\d\d// if $date;
     return { description => 'the date the strain was isolated',
-	     data        => $date && "$date",
+             data        => $date && "$date",
     };
 }
 

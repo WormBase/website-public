@@ -304,13 +304,24 @@ END;
 [% MACRO build_data_table BLOCK;
 
       local_data = passed_data ? passed_data : fields.$key.data;
-      key = key || widget;
-      headers = [];
-      FOREACH o IN order; headers.push(columns.$o); END;
 
-      # generate table
-      jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order);   
+      UNLESS local_data.0.exists(order.0); 
+        IF ref(local_data) == 'ARRAY';
+          # just print the list of objects
+          cell_content(local_data);
+        ELSE;
+          # link to search results if classsearch provided, and only string returned
+          # this will happen on very large tables
+          classsearch ? searchlink(classsearch, object.name.data.id, local_data): local_data;
+        END;
+      ELSE;
+        key = key || widget;
+        headers = [];
+        FOREACH o IN order; headers.push(columns.$o); END;
 
+        # generate table
+        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order);   
+      END;
     END; # END of MACRO
 %]
 
@@ -325,7 +336,7 @@ END;
 %]
      
 [% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns) BLOCK %]
-
+  
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
        IF rows.size < 11 || (rows.size < 31 && table_headers.size < 3);
@@ -393,6 +404,17 @@ END;
     [% END %]
     <script type="text/javascript" >
 WB.getPlugin("dataTables", function(){
+        $jq.extend( $jq.fn.dataTableExt.oSort, {
+          "scientific-pre": function ( a ) {
+            return parseFloat(a);
+          },
+          "scientific-asc": function ( a, b ) {
+            return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+          },
+          "scientific-desc": function ( a, b ) {
+            return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+          }
+        });
         WB.getPlugin("tabletools", function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
@@ -403,16 +425,16 @@ WB.getPlugin("dataTables", function(){
             "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
             "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
             "oTableTools": {
-              "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_cvs_xls_pdf.swf",
+              "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_csv_xls_pdf.swf",
               "aButtons": [
                 {
                   "sExtends": "collection",
                   "sButtonText": "Save table",
                   "aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
                 }
-              ],
-              [% style %]
-            }
+              ]
+            },
+            [% style %]
 
           });
 
@@ -589,7 +611,7 @@ END; %]
                 </div>
          
                 <div id="widget-footer" class="ui-helper-hidden">
-[% UNLESS type.match('(tool)|(me)') %]
+[% UNLESS (type.match('(tool)|(me)') || id == 'basic_search' ) %]
                     <a   onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,is_class_index? 'all': this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
 [% END %] 
 [% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
@@ -723,7 +745,7 @@ END;
                                 },
                        key='best_blastp_matches',
                        passed_data=matches.hits,
-                       style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
+                       style = '"aoColumns": [ { "sSortDataType": "dom-text", "sType": "scientific" },null,null,null,null]');
            '<div id="blast_details">';
     WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details').path id="blast_details_toggle";
     END;
@@ -970,10 +992,10 @@ END;
 [% MACRO error BLOCK; %]
   [% IF c.stash.error %]
   <br />
-  <div class="ui-state-error ui-corner-all description">
-    <p>
+  <div class="ui-state-error ui-corner-all">
+
     <span class="ui-state-error-text">[% c.stash.error %]</span>
-    </p>
+
   </div>
   [% END %]
 [% END;

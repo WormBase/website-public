@@ -379,11 +379,6 @@ sub _build_best_blastp_matches {
         $_->{covered} = $covered;
     }
 
-    # NOT HANDLED YET
-    # my $links = Configuration->Protein_links;
-
-    my %seen;  # Display only one hit / species
-
     # I think the perl glitch on x86_64 actually resides *here*
     # in sorting hash values.  But I can't replicate this outside of a
     # mod_perl environment
@@ -423,7 +418,7 @@ sub _build_best_blastp_matches {
         $species =~ /(.*)\.(.*)/;
         my $taxonomy = {genus => $1, species => $2};
 
-        #     next if ($seen{$species}++);
+
         my $id;
         if ($hit =~ /(\w+):(.+)/) {
             my $prefix    = $1;
@@ -433,7 +428,10 @@ sub _build_best_blastp_matches {
         }
         push @hits, {
             taxonomy => $taxonomy,
-            hit      => $self->_pack_obj($hit),
+            # custom packing for linking out to external sources
+            hit      => {   class => "$class", 
+                            id => $id || "$hit", 
+                            label => "$hit"},
             description => $description && "$description",
             evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
             percent     => $length == 0 ? '0' : sprintf("%2.1f%%", 100 * ($best{$_}{covered}) / $length),
@@ -1399,10 +1397,11 @@ sub _build_references {
     my $self   = shift;
     my $object = $self->object;
     # Could also use ModelMap...
-    my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
-    my $data = $self->_pack_objects($object->$tag);
+    my $tag = $object->at('Reference') || $object->at('Paper') || '';
+    my @references = $object->$tag if $tag;
+    @references = map { $self->_api->xapian->_get_tag_info(undef, "$_", 'paper', 1) } @references;
     return { description => 'references associated with this object',
-	     data        => %$data ? $data : undef };
+             data        => @references ? \@references : undef };
 }
 
 =head3 remarks
@@ -1890,7 +1889,7 @@ sub _pack_obj {
     return {
         id       => "$object",
         label    => "$label",
-        class    => $wbclass || $object->class,
+        class    => lc($wbclass || $object->class),
         taxonomy => $self->_parsed_species($object),
         %args,
     };
@@ -2183,8 +2182,7 @@ sub _fetch_gff_gene {
 
     my $trans;
     my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database"; # should probably log this?
-    eval {$GFF->fetch_group()};
-    return if $@; # should probably log this
+    $GFF->fetch_group();
 
 #    if ($self->object->Species =~ /briggsae/) {
     $self->log->warn("gff is: $GFF");
@@ -2204,6 +2202,25 @@ sub _fetch_gff_gene {
     return $trans;
 }
 
+#----------------------------------------------------------------------
+# Returns count of objects to be returned with the given tag.
+# If no tag is given, it counts the amount of objects in the next column.
+# Arg[0]   : The AceDB object to interrogate.
+# Arg[1]   : The AceDB schema location to count the amount of retrievable objects;
+#
+sub _get_count{
+  my ($self, $obj, $tag) = @_;
+  $obj = $obj->fetch;
+
+  # get the first item in the tag
+  my $first_item = $tag ? $obj->get($tag, 0) && $obj->get($tag, 0)->right : $obj->right;
+
+  # get our current column location
+  my $col = $first_item->{'.col'};
+
+  # grep for rows that are objects
+  return scalar ( grep { @{$_}[$col] } @{$first_item->{'.raw'}} );
+}
 
 
 1;

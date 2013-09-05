@@ -2,6 +2,7 @@
 [% NODES = NODES || interaction_details.data.nodes %]
 [% EDGES = EDGES || interaction_details.data.edges %]
 [% NTYPES = NTYPES || interaction_details.data.ntypes %]
+[% CLASSTYPE = CLASSTYPE || undef %]
 
       <div id="cyto_legend" style="width:15em;position:absolute;right:0;z-index:5" class="detail-box ui-corner-all">
         <p><center><h3>Legend</h3></center></p>
@@ -75,6 +76,6 @@
         types = [ [% FOREACH obj IN TYPES.keys.sort %]
                           "[% obj %]",
                     [% END %] ]
-      WB.setupCytoscape(data, types);
+      WB.setupCytoscape(data, types [% IF CLASSTYPE; ', "'; CLASSTYPE; '"'; END; %]);
     })();
     </script>

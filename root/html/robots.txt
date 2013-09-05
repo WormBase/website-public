@@ -1,6 +1,8 @@
-# No crawling, for now.
+User-agent: Googlebot
+Disallow: 
+
+# No crawling for others (for now).
 User-agent: *
 Disallow: /
 
-User-agent: Googlebot
-Allow: /
+

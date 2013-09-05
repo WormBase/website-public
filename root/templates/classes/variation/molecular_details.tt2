@@ -91,7 +91,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                 fields.polymorphism_type.data;
        END;
 
-       WRAPPER $field_block title="Reference strain" key ="reference_strain";
+       WRAPPER $field_block title="Strain" key ="reference_strain";
                 tag2link(fields.reference_strain.data);
        END;
 
@@ -185,11 +185,27 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
 
         features = fields.features_affected.data;
-       IF features.Chromosome; 'Chromosome: ' _  features.Chromosome.0.label _ '<br />'; END;
+       IF features.Chromosome;
+          'Chromosome: ';
+          features.Chromosome.0.label;
+          '&ndash;' IF features.Chromosome.0.label == '';
+          '<br />';
+       END;
 
-       IF features.Gene; 'Gene: ' _ tags2link(features.Gene, '<br />', 'genes') _ '<br />'; END;
+       IF features.Gene;
+          IF features.Gene.size > 1; 'Genes: '; ELSE; 'Gene: '; END;
+          tags2link(features.Gene, ', ', 'genes') _ '<br />';
+       END;
 
-       FOREACH feature_type IN ['Predicted_CDS', 'Transcript', 'Pseudogene', 'Feature', 'Interactor', 'Clone'];
+       IF fields.features_affected.data.Interactor;
+          IF fields.features_affected.data.Interactor.size > 1; 'Interactors: '; ELSE; 'Interactor: '; END;
+          FOREACH interactor IN fields.features_affected.data.Interactor.sort;
+             tags2link(interactor.item, '', 'interactors');
+             ', ' UNLESS loop.last;
+          END;
+       END;
+
+       FOREACH feature_type IN ['Predicted_CDS', 'Transcript', 'Pseudogene', 'Feature', 'Clone'];
           NEXT UNLESS fields.features_affected.data.$feature_type;
           t =  pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) _ ' (' _ fields.features_affected.data.$feature_type.size _ ')';
           WRAPPER toggle title=t;

@@ -5,16 +5,40 @@
        END;
     END;
 
-    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
-       build_data_table(order=['expression_pattern','gene','description', 'certainty'],
-                        columns={ expression_pattern     => 'Expression Pattern',
-	      	              gene      => 'Gene',
-		                 description   => 'Description',
-                     certainty => 'Certainty',
-                               },
-                        key='expression_patterns');
-    END;
+    '<br />';
 
+    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
+        build_data_table(
+            order=['expression_pattern','gene','description', 'certainty'],
+            columns={ 
+                expression_pattern  => 'Expression Pattern',
+                gene                => 'Gene',
+                description         => 'Description',
+                certainty           => 'Certainty',
+            },
+            key='expression_patterns');
+    END;
+    
+    murray_records = [];
+    FOREACH expr_pattern IN fields.expression_patterns.data;
+        murray_records.push(expr_pattern) 
+            IF expr_pattern.reference == 'WBPaper00040986';
+    END;
+    
+    WRAPPER $field_block title="Inferred expression patterns from " 
+        _ text2link('Paper','WBPaper00040986','Murray JI et al.','Murray JI et al.','all');
+        build_data_table(
+            order=['expression_pattern','gene','description', 'certainty'],
+            columns={ 
+                expression_pattern  => 'Expression Pattern',
+                gene                => 'Gene',
+                description         => 'Description',
+                certainty           => 'Certainty',
+            },
+            passed_data = murray_records
+        );
+    END;
+    
     WRAPPER $field_block title="Gene ontology" key="gene_ontology";
        FOREACH data IN fields.gene_ontology.data;
         tag2link(data.term) _ '<br />';

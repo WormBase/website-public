@@ -140,11 +140,11 @@
 	      END;
 	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "Protein";
-	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx prot:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "genes";
 	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	    CASE "ESTs";
-	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      '<option type="' _ database_type _ '" species="' _ specieskey _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	  END;
 	END;
       END;
@@ -154,7 +154,7 @@
     </p>
     <p>
     Bioproject:
-    <select id="bioproject" name="bioproject">
+    <select id="bioproject" name="bioproject" multiple="multiple" size="3" style="vertical-align: top;">
 [%
     FOREACH version IN c.stash.blast_databases.keys.sort;
       FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
@@ -165,7 +165,7 @@
             IF bioprojectkey == "name" || bioprojectkey == "symbolic" || bioprojectkey == "not applicable";
             ELSE;
               bioproject = c.stash.blast_databases.$version.$database_type.$specieskey.$bioprojectkey;
-		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';
+		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" selected="selected" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';
             END;
           END;
         END;
