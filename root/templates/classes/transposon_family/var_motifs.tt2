@@ -1,0 +1,20 @@
+[% 
+
+WRAPPER $field_block title="Motifs" key="motifs";
+    tags2link(fields.motifs.data);
+END;
+
+
+build_data_table(
+    order = ['id', 'gene', 'species'],
+    columns = {
+        id => 'Variation',
+        gene => 'Gene',
+        species => 'Species'
+    },
+    key = 'variations'
+);
+
+
+
+%]
