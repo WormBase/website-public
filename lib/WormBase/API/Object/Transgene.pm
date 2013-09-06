@@ -203,20 +203,72 @@ sub reporter_construct {
     my $object = $self->object;
     my %reporters;
     foreach ($object->Reporter_product) {
-	if ($_ eq 'Gene') {
-	    $reporters{gene} = $self->_pack_obj($_);
-	} elsif ($_ eq 'Other_reporter') {
-	    my $val = $_->right;
-	    $reporters{'other reporter'} = "$val";
-	} else {
-	    $reporters{$_} = "$_";
-	}
+        if ($_ eq 'Gene') {
+            $reporters{gene} = $self->_pack_obj($_);
+        } elsif ($_ eq 'Other_reporter') {
+            my $val = $_->right;
+            $reporters{'other reporter'} = "$val";
+        } else {
+            $reporters{$_} = "$_";
+        }
     }
     
     return { description => 'reporter construct for this transgene',
 	     data        => %reporters ? \%reporters : undef };
 }
 
+# gene_product { }
+# This method will return a data structure of all
+# gene products for this transgene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/gene_product
+
+sub gene_product {
+    my $self = shift;
+    my $object = $self->object;
+    my @genes = map { $self->_pack_obj($_); } $object->Gene;
+    return { description => 'gene products for this transgene',
+             data        => @genes ? \@genes : undef };
+}
+
+# utr { }
+# This method will return a data structure of all
+# 3' UTR for this transgene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/utr
+
+sub utr {
+    my $self = shift;
+    my $object = $self->object;
+    my @utr = map { $self->_pack_obj($_); } $object->get('3_UTR'); #$object->get('3_UTR')->fetch();
+    return { description => '3\' UTR for this transgene',
+             data        => @utr ? \@utr : undef };
+}
+
+# coinjection_marker { }
+# This method will return a data structure of all
+# coinjection markers for this transgene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/coinjection_marker
+
+sub coinjection_marker {
+    my $self = shift;
+    my $object = $self->object;
+    my @marker = map { $self->_pack_obj($_); } $object->Coinjection_marker;
+    return { description => 'Coinjection marker for this transgene',
+             data        => @marker ? \@marker : undef };
+}
+
+# construction_summary { }
+# This method will return a data structure with
+# the construction summary for this transgene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/construction_summary
+
+sub construction_summary {
+    my $self = shift;
+    my $object = $self->object;
+    
+    my $summary = $object->Construction_summary;
+    return { description => 'Construction details for the transgene',
+         data        => $summary && "$summary"};
+}
 
 # strains { }
 # This method will return a data structure of all
