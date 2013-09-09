@@ -3,13 +3,13 @@
 # as the various constants formerly scattered amongst scripts and libraries
 
 [GENERAL]
-config_base            = /usr/local/wormbase/website/tharris/conf/gbrowse   # overridden by environment variable GBROWSE_CONF
-htdocs_base            = /usr/local/wormbase/website/tharris/root/gbrowse
+config_base            = /usr/local/wormbase/website/production/conf/gbrowse   # overridden by environment variable GBROWSE_CONF
+htdocs_base            = /usr/local/wormbase/website/production/root/gbrowse
 url_base               = /gbrowse2
-tmp_base               = /usr/local/wormbase/tmp/gbrowse2
-persistent_base        = /usr/local/wormbase/tmp/gbrowse2/persistent
-userdata_base          = /usr/local/wormbase/tmp/gbrowse2/persistent/userdata
-db_base                = /usr/local/wormbase/tmp/gbrowse2/persistent/databases
+tmp_base               = /usr/local/wormbase/tmp/gbrowse
+persistent_base        = /usr/local/wormbase/tmp/gbrowse
+userdata_base          = /usr/local/wormbase/tmp/gbrowse/userdata
+db_base                = /usr/local/wormbase/tmp/gbrowse
 
 # These paths are relative to the url base
 buttons       = images/buttons
@@ -33,12 +33,12 @@ session lock type = default
 # Override driver guessing by setting these options
 # The safest, but slowest session driver...
 #session driver    = driver:file;serializer:default
-#session args      = Directory /var/lib/gbrowse2/sessions
+#session args      = Directory /usr/local/wormbase/tmp/gbrowse/sessions
 
 # to use the berkeley DB driver comment out the previous
 # line and uncomment these two
 #session driver = driver:db_file;serializer:default
-#session args   = FileName /var/lib/gbrowse2/sessions.db
+#session args   = FileName /usr/local/wormbase/tmp/gbrowse/sessions.db
 
 # DBI backend to use for uploaded userdata.
 # The SQLite option is the easiest to use and the best tested.
@@ -73,11 +73,13 @@ debug_external         = 0
 debug_plugins          = 0
 
 # Performance settings
-renderfarm             = 1
 slave_timeout          = 45
 global_timeout         = 60
 search_timeout         = 15
 max_render_processes   = 4   # try double number of CPU/cores
+
+# Renderfarm settings
+#include renderfarm.conf
 
 # Clean up settings (used by the gbrowse_clean script)
 expire session  = 1M  # expire unused sessions after a month
@@ -86,6 +88,7 @@ expire uploads  = 6w  # expire uploaded data if unused for >6 weeks
 
 # Appearance settings
 truecolor     =  1   # better appearance at the expense of larger image files
+# truetype    =  1   # turn on vector fonts in tracks. Requires Bio::Graphics 2.33 or higher, and truetype support on the server.
 
 # The #include line following this one defines a transparent theme.
 # Replace "transparent_colors" with "solid_gray_colors" 
@@ -97,7 +100,7 @@ truecolor     =  1   # better appearance at the expense of larger image files
 
 balloon tips        = 1
 titles are balloons = 1
-plugins             = RestrictionAnnotator SequenceDumper TrackDumper
+plugins             = FastaDumper RestrictionAnnotator SequenceDumper TrackDumper
 overview grid       = 0
 region grid         = 0
 detail grid         = 1
@@ -168,10 +171,10 @@ user_accounts_openid        = 1
 # Path to the database -- you will need to create this database and grant all
 # privileges on it to the indicated user.
 
-user_account_db          = DBI:SQLite:/var/lib/gbrowse2/databases/users.sqlite
+user_account_db          = DBI:SQLite:/usr/local/wormbase/tmp/gbrowse/users.sqlite
 
 # For SQLite
-# user_account_db        = DBI:SQLite:/var/lib/gbrowse2/databases/users.sqlite
+# user_account_db        = DBI:SQLite:/usr/local/wormbase/tmp/gbrowse/users.sqlite
 
 # For MySQL
 # user_account_db        = DBI:mysql:gbrowse_login;user=gbrowse;password=gbrowse
@@ -203,7 +206,7 @@ email_address          = noreply@gmod.org
 
 # name of the "superuser" who can add public tracks
 admin_account          = admin
-admin_dbs              = /var/lib/gbrowse2/databases/admin_uploads
+admin_dbs              = /usr/local/wormbase/tmp/gbrowse/admin_uploads
 
 
 ######## DEFAULT DATASOURCE #########
