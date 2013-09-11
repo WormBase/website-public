@@ -12,7 +12,7 @@ fields.summary.data;
 '<br /><br />';
 w = [];
 IF fields.driven_by_gene.data.defined;
-    w.push(tag2link(fields.driven_by_gene.data));
+    w.push(tags2link(fields.driven_by_gene.data, ', '));
 END; 
   
 IF fields.driven_by_construct.data.defined;
