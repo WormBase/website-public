@@ -32,7 +32,10 @@ END;
 
 remarks;
  
- 
 PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_images;
+
+WRAPPER $field_block title="Historical gene" key="historical_gene";
+    cell_content(fields.historical_gene.data);
+END;
 
 %]

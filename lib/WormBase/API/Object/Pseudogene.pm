@@ -71,8 +71,8 @@ has '_length' => (
 );
 
 sub _build__length{
-    my ($self) = @_;
-    my $object = $self->object;
+    my ($self) = shift;
+    my $object = shift || $self->object;
 
     my $length = 0;
     my @exons = $object->Source_exons;
@@ -225,7 +225,7 @@ sub related_seqs{
             
             push( @rows, {
                 gene_len    => $gff->stop - $gff->start + 1,
-                pg_len      => $self->_length,
+                pg_len      => $self->_build__length($pg),
                 gene        => $self->_pack_obj($gene),
                 pseudogene  => $self->_pack_obj($pg)
             } );

@@ -1,0 +1,12 @@
+[% 
+
+build_data_table(
+    order = ['id','copy_status'],
+    columns = {
+        id => 'Transposon',
+        copy_status => 'Copy Status'
+    },
+    key = 'family_members'
+);
+
+%]

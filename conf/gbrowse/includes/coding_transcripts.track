@@ -27,7 +27,7 @@ link = sub {
 	my $name = $f->attributes('Gene') || $f->name;
 	return "/get?name=$name;class=Gene";
 	}
-feature = full_transcript:Coding_transcript 
+feature = CDS:WormBase
 glyph    = sub { 
 	 my $f = shift;
 	 my ($source) = $f->source;

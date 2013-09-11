@@ -4,9 +4,6 @@
 
 WRAPPER highlight_box;
 
-   WRAPPER $field_block title="Synonym" key="synonym";
-        fields.synonym.data;
-   END;
 
 END;
 
@@ -15,23 +12,24 @@ fields.summary.data;
 '<br /><br />';
 w = [];
 IF fields.driven_by_gene.data.defined;
-    w.push(tag2link(fields.driven_by_gene.data));
+    w.push(tags2link(fields.driven_by_gene.data, ', '));
 END; 
   
 IF fields.driven_by_construct.data.defined;
     w.push(fields.driven_by_construct.data);
 END;
 
-WRAPPER $field_block title=pluralize('Promoter') key="driven_by_construct";
-    w.join(', ');
+IF (fields.driven_by_gene.data.defined || fields.driven_by_construct.data.defined);
+  WRAPPER $field_block title=pluralize('Promoter', w.size);
+      w.join(', ');
+  END;
 END;
 
-WRAPPER $field_block title="Driven by gene" key="driven_by_gene";
-    tag2link(fields.driven_by_gene.data);
+WRAPPER $field_block title=pluralize('Gene product', fields.gene_product.data.size) key="gene_product";
+  tags2link(fields.gene_product.data);
 END;
 
-
-WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct";
+WRAPPER $field_block title=pluralize('Reporter product', fields.reporter_construct.data.keys.size) key="reporter_construct";
    FOREACH reporter IN fields.reporter_construct.data.keys;   
        IF reporter == "gene";
           tag2link(fields.reporter_construct.data.$reporter);
@@ -41,8 +39,28 @@ WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct
    END;
 END;
 
-WRAPPER $field_block title="Strains" key='strains';
+WRAPPER $field_block title=pluralize("3'UTR", fields.utr.data.size) key="utr";
+  tags2link(fields.utr.data);
+END;
+
+WRAPPER $field_block title=pluralize("Coinjection marker", fields.coinjection_marker.data.size) key="coinjection_marker";
+  tags2link(fields.coinjection_marker.data);
+END;
+
+WRAPPER $field_block title="Construction details" key="construction_summary";
+  fields.construction_summary.data;
+END;
+
+WRAPPER $field_block title="Also published as" key="synonym";
+  fields.synonym.data | html;
+END;
+
+WRAPPER $field_block title=pluralize("Strain", fields.strains.data.size) key='strains';
   tags2link(fields.strains.data, '<br />', 'Strains');
+END;
+
+WRAPPER $field_block title="Historical gene" key="historical_gene";
+  cell_content(fields.historical_gene.data);
 END;
 
 remarks;

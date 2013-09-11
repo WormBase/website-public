@@ -35,7 +35,6 @@ BEGIN {
         class => {     # HAS DEFAULT
             Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
             Person    => [qw(Person Author)],
-            Transcript => [qw(Transcript Pseudogene)],
             Cds       => [qw(CDS cds)],
             Rnai      => 'RNAi',
             Disease   => [qw(DO_term Do_term do_term)],
