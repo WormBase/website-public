@@ -105,7 +105,7 @@
     base =	'http://www.degruyter.com/view/j/bchm'
     search =	'http://www.degruyter.com/view/j/%s'
   }
-  
+  
   cell = {
     base    = 'http://www.cell.com/'
     search    = 'http://www.sciencedirect.com/science/article/pii/%s'
@@ -174,7 +174,7 @@
     base =	'http://www.cell.com/developmental-cell/'
     search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
-  
+  
   do = {
     description  = 'Disease Ontology'
     base    = 'http://disease-ontology.org'
@@ -203,7 +203,7 @@
     base    = 'http://www.ebi.ac.uk/embl/'
     search    = 'http://www.ebi.ac.uk/ena/data/view/%s'
   }
-  
+  
   ensembl = {
     description  = 'Ensembl produces and maintains automatic annotation on selected eukaryotic genomes'
     search    = 'http://www.ensembl.org/%s/protview?peptide=%s'
@@ -655,7 +655,7 @@
     base =     'http://www.sciencemag.org/'
     search =	'http://www.sciencemag.org/content/%s'
   }
-  
+  
   secsg = {
     description  = 'The Southeast Collaboratory for Structural Genomics'
     base    = 'http://www.secsg.org/'
