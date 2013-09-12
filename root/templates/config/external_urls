@@ -112,43 +112,43 @@
   }
   
   BMCBiology = {
-    description = 	'BMC Biology'
+    description = 'BMC Biology'
     base =	'http://www.biomedcentral.com/bmcbiol'
     search =	'http://www.biomedcentral.com/%s'
   }
   
   BMCCellBiology = {
-    description = 	'BMC Cell Biology'
+    description = 'BMC Cell Biology'
     base =	'http://www.biomedcentral.com/bmccellbiol'
     search =	'http://www.biomedcentral.com/%s'
   }
   
   BMCDevelopmentalBiology = {
-    description = 	'BMC Developmental Biology'
+    description = 'BMC Developmental Biology'
     base =	'http://www.biomedcentral.com/bmcdevbiol'
     search =	'http://www.biomedcentral.com/%s'
   }
   
   BMCEvolutionaryBiology = {
-    description = 	'BMC Evolutionary Biology'
+    description = 'BMC Evolutionary Biology'
     base =	'http://www.biomedcentral.com/bmcevolbiol'
     search =	'http://www.biomedcentral.com/%s'
   }
   
   BMCGenomics = {
-    description = 	'BMC Genomics'
+    description = 'BMC Genomics'
     base =	'http://www.biomedcentral.com/bmcgenomics'
     search =	'http://www.biomedcentral.com/%s'
   }
   
   BMCNeuroscience = {
-    description = 	'BMC Neuroscience'
+    description = 'BMC Neuroscience'
     base =	'http://www.biomedcentral.com/bmcneurosci'
     search =	'http://www.biomedcentral.com/%s'
   }
   
   BMCPhysiology = {
-    description = 	'BMC Physiology'
+    description = 'BMC Physiology'
     base =	'http://www.biomedcentral.com/bmcphysiol'
     search =	'http://www.biomedcentral.com/%s'
   }
@@ -258,7 +258,7 @@
   }
 
   Endocrinology = {
-    description = 	'Endocrinology'
+    description = 'Endocrinology'
     base =	'http://endo.endojournals.org/'
     search =	'http://endo.endojournals.org/content/%s'
   }
@@ -352,7 +352,7 @@
   }
 
   GenomeBiology = {
-    description = 	'Genome Biology'
+    description = 'Genome Biology'
     base =	'http://genomebiology.com/'
     search =	'http://genomebiology.com/content/%s'
   }
@@ -422,7 +422,7 @@
   }
 
   JournalofBiology = {
-    description = 	'Journal of Biology'
+    description = 'Journal of Biology'
     base =	'http://jbiol.com/'
     search =	'http://www.biomedcentral.com/%s'
   }
@@ -596,7 +596,7 @@
   }
 
   NeuralDevelopment = {
-    description = 	'Neural Development'
+    description = 'Neural Development'
     base =	'http://www.neuraldevelopment.com/'
     search =	'http://www.neuraldevelopment.com/content/%s'
   }
