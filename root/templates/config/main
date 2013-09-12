@@ -129,8 +129,10 @@
    END;
 
     MACRO searchlink(class, id, text) BLOCK;
-       url = c.uri_for('/search', class, id).path ;
-       "<a href=\"$url\" class=\"$class-link\">$text</a>";
+        IF c.config.sections.species_list.defined( c.stash.object.name.data.taxonomy ); # Don't link out for non-wormbase species
+            url = c.uri_for('/search', class, id).path ;
+            "<a href=\"$url\" class=\"$class-link\">$text</a>";
+        END;
     END;
 
     # return true for a downloadable object
