@@ -12,7 +12,7 @@ fields.summary.data;
 '<br /><br />';
 w = [];
 IF fields.driven_by_gene.data.defined;
-    w.push(tag2link(fields.driven_by_gene.data));
+    w.push(tags2link(fields.driven_by_gene.data, ', '));
 END; 
   
 IF fields.driven_by_construct.data.defined;
@@ -30,13 +30,15 @@ WRAPPER $field_block title=pluralize('Gene product', fields.gene_product.data.si
 END;
 
 WRAPPER $field_block title=pluralize('Reporter product', fields.reporter_construct.data.keys.size) key="reporter_construct";
+   rp = [];
    FOREACH reporter IN fields.reporter_construct.data.keys;   
        IF reporter == "gene";
-          tag2link(fields.reporter_construct.data.$reporter);
+          rp.push(tag2link(fields.reporter_construct.data.$reporter));
        ELSE;
-           fields.reporter_construct.data.$reporter;
+          rp.push(fields.reporter_construct.data.$reporter);
        END;
    END;
+   rp.join(', ');
 END;
 
 WRAPPER $field_block title=pluralize("3'UTR", fields.utr.data.size) key="utr";

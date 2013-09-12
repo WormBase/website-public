@@ -74,10 +74,10 @@ sub old_name {
 
 sub member_of {
     my ($self) = @_;
-    my $oname = $self ~~ 'Member_of';
+    my $tf = $self ~~ 'Member_of';
     return {
         description => 'The transposon family this transposon belongs to',
-        data        => $oname && "$oname",
+        data        => $tf ? $self->_pack_obj($tf) : undef,
     };
 }
 

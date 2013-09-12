@@ -7,7 +7,6 @@
   END;
 
 
-
   '<div class="description">';
    WRAPPER $field_block title="Genotype";
         show_genotype(fields.genotype.data);
