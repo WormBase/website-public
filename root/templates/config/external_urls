@@ -106,53 +106,6 @@
     search =	'http://www.degruyter.com/view/j/%s'
   }
   
-  BiomedCentralLTD = {
-    description = 'Biomed Central LTD'
-    base = 'http://www.biomedcentral.com/'
-  }
-  
-  BMCBiology = {
-    description = 'BMC Biology'
-    base =	'http://www.biomedcentral.com/bmcbiol'
-    search =	'http://www.biomedcentral.com/%s'
-  }
-  
-  BMCCellBiology = {
-    description = 'BMC Cell Biology'
-    base =	'http://www.biomedcentral.com/bmccellbiol'
-    search =	'http://www.biomedcentral.com/%s'
-  }
-  
-  BMCDevelopmentalBiology = {
-    description = 'BMC Developmental Biology'
-    base =	'http://www.biomedcentral.com/bmcdevbiol'
-    search =	'http://www.biomedcentral.com/%s'
-  }
-  
-  BMCEvolutionaryBiology = {
-    description = 'BMC Evolutionary Biology'
-    base =	'http://www.biomedcentral.com/bmcevolbiol'
-    search =	'http://www.biomedcentral.com/%s'
-  }
-  
-  BMCGenomics = {
-    description = 'BMC Genomics'
-    base =	'http://www.biomedcentral.com/bmcgenomics'
-    search =	'http://www.biomedcentral.com/%s'
-  }
-  
-  BMCNeuroscience = {
-    description = 'BMC Neuroscience'
-    base =	'http://www.biomedcentral.com/bmcneurosci'
-    search =	'http://www.biomedcentral.com/%s'
-  }
-  
-  BMCPhysiology = {
-    description = 'BMC Physiology'
-    base =	'http://www.biomedcentral.com/bmcphysiol'
-    search =	'http://www.biomedcentral.com/%s'
-  }
-  
   cell = {
     base    = 'http://www.cell.com/'
     search    = 'http://www.sciencedirect.com/science/article/pii/%s'
@@ -221,12 +174,6 @@
     base =	'http://www.cell.com/developmental-cell/'
     search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
-  
-  'DiseaseModels&Mechanisms' = {
-    description = 	'Disease Models & Mechanisms'
-    base =	'http://dmm.biologists.org/'
-    search =	'http://dmm.biologists.org/content/%s'
-  }
   
   do = {
     description  = 'Disease Ontology'
@@ -256,12 +203,6 @@
     base    = 'http://www.ebi.ac.uk/embl/'
     search    = 'http://www.ebi.ac.uk/ena/data/view/%s'
   }
-
-  Endocrinology = {
-    description = 'Endocrinology'
-    base =	'http://endo.endojournals.org/'
-    search =	'http://endo.endojournals.org/content/%s'
-  }
   
   ensembl = {
     description  = 'Ensembl produces and maintains automatic annotation on selected eukaryotic genomes'
@@ -351,12 +292,6 @@
     search =	'http://genesdev.cshlp.org/content/%s'
   }
 
-  GenomeBiology = {
-    description = 'Genome Biology'
-    base =	'http://genomebiology.com/'
-    search =	'http://genomebiology.com/content/%s'
-  }
-
   GenomeResearch = {
     description = 'Genome Research'
     base =     'http://genome.cshlp.org/'
@@ -420,12 +355,6 @@
     base    = 'http://www.ebi.ac.uk/interpro/'
     search  = 'http://www.ebi.ac.uk/interpro/entry/%s'
   }
-
-  JournalofBiology = {
-    description = 'Journal of Biology'
-    base =	'http://jbiol.com/'
-    search =	'http://www.biomedcentral.com/%s'
-  }
 
   JournalofCellScience = {
     description = 'Journal of Cell Science'
@@ -594,12 +523,6 @@
     base    = 'http://www.nematodes.org/nematodeESTs/nembase.html'
     search    = 'http://www.nematodes.org/nembase3/cluster.php?cluster=%s'
   }
-
-  NeuralDevelopment = {
-    description = 'Neural Development'
-    base =	'http://www.neuraldevelopment.com/'
-    search =	'http://www.neuraldevelopment.com/content/%s'
-  }
 
   neuralnet = {
     description  = 'A C. elegans neural network browser by Nikhil Bhatla'
