@@ -105,6 +105,59 @@
     base =	'http://www.degruyter.com/view/j/bchm'
     search =	'http://www.degruyter.com/view/j/%s'
   }
+
+  BiologyoftheCell = {
+    description = 	'Biology of the Cell'
+    base =	'http://www.biolcell.org'
+    search =	'http://www.biolcell.org/boc/101/0599/boc1010599.htm'
+  }
+  
+  BiomedCentralLTD = {
+    description = 'Biomed Central LTD'
+    base = 'http://www.biomedcentral.com/'
+  }
+  
+  BMCBiology = {
+    description = 	'BMC Biology'
+    base =	'http://www.biomedcentral.com/bmcbiol'
+    search =	'http://www.biomedcentral.com/%s'
+  }
+  
+  BMCCellBiology = {
+    description = 	'BMC Cell Biology'
+    base =	'http://www.biomedcentral.com/bmccellbiol'
+    search =	'http://www.biomedcentral.com/%s'
+  }
+  
+  BMCDevelopmentalBiology = {
+    description = 	'BMC Developmental Biology'
+    base =	'http://www.biomedcentral.com/bmcdevbiol'
+    search =	'http://www.biomedcentral.com/%s'
+  }
+  
+  BMCEvolutionaryBiology = {
+    description = 	'BMC Evolutionary Biology'
+    base =	'http://www.biomedcentral.com/bmcevolbiol'
+    search =	'http://www.biomedcentral.com/%s'
+  }
+  
+  BMCGenomics = {
+    description = 	'BMC Genomics'
+    base =	'http://www.biomedcentral.com/bmcgenomics'
+    search =	'http://www.biomedcentral.com/%s'
+  }
+  
+  BMCNeuroscience = {
+    description = 	'BMC Neuroscience'
+    base =	'http://www.biomedcentral.com/bmcneurosci'
+    search =	'http://www.biomedcentral.com/%s'
+  }
+  
+  BMCPhysiology = {
+    description = 	'BMC Physiology'
+    base =	'http://www.biomedcentral.com/bmcphysiol'
+    search =	'http://www.biomedcentral.com/%s'
+  }
   
   cell = {
     base    = 'http://www.cell.com/'
@@ -175,6 +228,12 @@
     search =	'http://www.sciencedirect.com/science/article/pii/%s'
   }
   
+  'DiseaseModels&Mechanisms' = {
+    description = 	'Disease Models & Mechanisms'
+    base =	'http://dmm.biologists.org/'
+    search =	'http://dmm.biologists.org/content/%s'
+  }
+  
   do = {
     description  = 'Disease Ontology'
     base    = 'http://disease-ontology.org'
@@ -202,6 +261,12 @@
     description  = 'The EMBL Nucleotide Sequence Database constitutes Europe\'s primary nucleotide sequence resource'
     base    = 'http://www.ebi.ac.uk/embl/'
     search    = 'http://www.ebi.ac.uk/ena/data/view/%s'
+  }
+
+  Endocrinology = {
+    description = 	'Endocrinology'
+    base =	'http://endo.endojournals.org/'
+    search =	'http://endo.endojournals.org/content/%s'
   }
   
   ensembl = {
@@ -292,6 +357,12 @@
     search =	'http://genesdev.cshlp.org/content/%s'
   }
 
+  GenomeBiology = {
+    description = 	'Genome Biology'
+    base =	'http://genomebiology.com/'
+    search =	'http://genomebiology.com/content/%s'
+  }
+
   GenomeResearch = {
     description = 'Genome Research'
     base =     'http://genome.cshlp.org/'
@@ -354,6 +425,12 @@
     description  = 'InterPro provides an integrated view of the commonly used signature databases'
     base    = 'http://www.ebi.ac.uk/interpro/'
     search  = 'http://www.ebi.ac.uk/interpro/entry/%s'
+  }
+
+  JournalofBiology = {
+    description = 	'Journal of Biology'
+    base =	'http://jbiol.com/'
+    search =	'http://www.biomedcentral.com/%s'
   }
 
   JournalofCellScience = {
@@ -524,6 +601,12 @@
     search    = 'http://www.nematodes.org/nembase3/cluster.php?cluster=%s'
   }
 
+  NeuralDevelopment = {
+    description = 	'Neural Development'
+    base =	'http://www.neuraldevelopment.com/'
+    search =	'http://www.neuraldevelopment.com/content/%s'
+  }
+
   neuralnet = {
     description  = 'A C. elegans neural network browser by Nikhil Bhatla'
     base    = 'http://wormweb.org/neuralnet'
@@ -654,6 +737,12 @@
     description = 'Science'
     base =     'http://www.sciencemag.org/'
     search =	'http://www.sciencemag.org/content/%s'
+  }
+
+  ScienceSignaling = {
+    description = 	'Science Signaling'
+    base =	'http://stke.sciencemag.org/'
+    search =	'http://stke.sciencemag.org/cgi/content/full/sigtrans;%s'
   }
   
   secsg = {
