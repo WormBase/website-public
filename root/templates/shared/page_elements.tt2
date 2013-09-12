@@ -512,7 +512,8 @@ END; %]
 
 [% MACRO show_genotype(obj) BLOCK;
     genstr = obj.str;
-    IF c.config.sections.species_list.defined( c.stash.object.name.data.taxonomy ); # Don't link out for non-wormbase species
+    IF  c.stash.object.name.data.defined('taxonomy') &&
+        c.config.sections.species_list.defined( c.stash.object.name.data.taxonomy ); # Don't link out for non-wormbase species
         FOREACH key IN obj.data.keys.sort;
             lnk = tag2link(obj.data.$key);
             genstr = genstr.replace(key.replace('\-', '\-'), lnk);
