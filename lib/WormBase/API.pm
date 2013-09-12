@@ -155,16 +155,13 @@ sub _build__services {
 
 
         foreach my $source (@sources) {
-
-            # fetch the bioproject (canonical if defined) for the species
-            my $bp;
-            my %all_bp = $conf->{species_list}->{$source}->{bioprojects};
-            map { $bp = "$_" if($all_bp{$_}->{cannonical} || !$bp ) } keys %all_bp;
+            # fetch the bioproject id from the config
+            my $bp = $conf->{data_sources}->{$source}->{bioproject} unless ($conf->{data_sources}->{$source} eq "1");
  
             my $service = $service_class->new({
                 conf          => $conf,
                 log           => $self->log,
-                source        => $bp ? join('_', [$source, $bp, $self->version]) : $source,
+                source        => join('_', $bp ? ($source, $bp, $self->version) : ($source, $self->version)),
                 species       => $source,
                 symbolic_name => $db_type,
                 tmp_base      => $db_confs->{tmp},
