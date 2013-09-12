@@ -738,12 +738,6 @@
     base =     'http://www.sciencemag.org/'
     search =	'http://www.sciencemag.org/content/%s'
   }
-  
-  ScienceSignaling = {
-    description = 	'Science Signaling'
-    base =	'http://stke.sciencemag.org/'
-    search =	'http://stke.sciencemag.org/cgi/content/full/sigtrans;%s'
-  }
   
   secsg = {
     description  = 'The Southeast Collaboratory for Structural Genomics'
