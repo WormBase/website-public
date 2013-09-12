@@ -112,6 +112,11 @@
     search =	'http://www.biolcell.org/boc/101/0599/boc1010599.htm'
   }
   
+  BiomedCentralLTD = {
+    description = 'Biomed Central LTD'
+    base = 'http://www.biomedcentral.com/'
+  }
+  
   BMCBiology = {
     description = 	'BMC Biology'
     base =	'http://www.biomedcentral.com/bmcbiol'
