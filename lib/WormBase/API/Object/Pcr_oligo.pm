@@ -138,7 +138,7 @@ sub oligos {
 
 sub overlapping_genes {
 	my ($self) = @_;
-    my @results = map { $self->_pack_obj($_) } $self->object->Overlaps_CDS->Gene;
+    my @results = map { $self->_pack_obj($_) } map {$_->Gene} $self->object->Overlaps_CDS;
     
 	return {
 		description => 'Overlapping genes of this ' . $self->_object_class,
