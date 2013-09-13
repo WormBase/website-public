@@ -85,7 +85,7 @@ fi
 export APP_HOME=`pwd`
 
 # For dumb install environments. Not ideal.
-export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_HOME}/lib:$PERL5LIB
+export PERL5LIB="/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_HOME}/lib:$PERL5LIB"
 export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
 export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
 export PATH="/usr/local/wormbase/extlib/bin:$PATH"
