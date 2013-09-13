@@ -10,6 +10,12 @@ END;
 '<div class="description">';
 fields.summary.data;
 '<br /><br />';
+
+
+WRAPPER $field_block title="Also published as" key="synonym";
+  fields.synonym.data.join(', ') | html;
+END;
+
 w = [];
 IF fields.driven_by_gene.data.defined;
     w.push(tags2link(fields.driven_by_gene.data, ', '));
@@ -51,10 +57,6 @@ END;
 
 WRAPPER $field_block title="Construction details" key="construction_summary";
   fields.construction_summary.data;
-END;
-
-WRAPPER $field_block title="Also published as" key="synonym";
-  fields.synonym.data | html;
 END;
 
 WRAPPER $field_block title=pluralize("Strain", fields.strains.data.size) key='strains';
