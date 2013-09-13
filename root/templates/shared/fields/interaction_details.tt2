@@ -1,34 +1,68 @@
+<style>
+	#cy {
+        width: 750px;
+        height: 750px;
+        margin:0 auto;
+        position: absolute;
+    }	
+    
+</style>
+
+[%# If these values are asserted, they are given by Interaction->interactions, 
+otherwise find them in Interaction->interaction_details %]
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
 [% EDGES = EDGES || interaction_details.data.edges %]
 [% NTYPES = NTYPES || interaction_details.data.ntypes %]
 [% CLASSTYPE = CLASSTYPE || undef %]
+[% PHENOTYPES = PHENOTYPES || interaction_details.data.phenotypes %]
 
-      <div id="cyto_legend" style="width:15em;position:absolute;right:0;z-index:5" class="detail-box ui-corner-all">
+      <h6>Click, hold for 1 second, and drag to pan</h6>
+      <h6>Use the scroll wheel to zoom</h6>
+
+      <div id="cyto_legend" style="width:15em;position:absolute;right:0;z-index:1001" class="detail-box ui-corner-all">
         <p><center><h3>Legend</h3></center></p>
         [% IF TYPES.keys %]
-          <h4>Interaction types</h4>
+            
+            <h4> Interaction types</h4>
             [% edgeColors = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E"] %]
-          <p>
+            <p>
+            <input type="checkbox" name="interactionToggle">  <span style="font-weight:bold">All ON/OFF</span><br />
             [% FOREACH obj IN TYPES.keys.sort %]
-              [% ind = loop.index %]
-              <input type="checkbox" name="type" value="[% obj %]" [% IF obj == 'Predicted'; 'class="cyto_predict"'; END; %]>
-              <span style="color:[% obj == 'Predicted' ? '#888"><small><b>- -</b></small>' : edgeColors.$ind _ '"><b>&ndash;</b>' %] [% obj %] </span><br />
+                [% ind = loop.index %]
+                <input type="checkbox" name="type" value="[% obj %]" [% IF obj == 'Predicted'; 'class="cyto_predict"'; END; %]>
+                <span style="color:[% obj == 'Predicted' ? '#888"><small><b>- -</b></small>' : edgeColors.$ind _ '"><b>&ndash;</b>' %] [% obj %] </span><br />
             [% END %]
-          </p>
+            </p>
         [% END %]
-
+        [% IF PHENOTYPES.keys %]
+            <h4> Phenotypes</h4>
+            <p>
+            <input type="checkbox" name="phenotypeToggle">  <span style="font-weight:bold">All ON/OFF</span><br />
+            [% FOREACH phenotype IN PHENOTYPES.keys.sort %]
+                <input type="checkbox" name="phenotype" value="[% PHENOTYPES.$phenotype.label %]">
+                <span><b>&ndash;</b> [% PHENOTYPES.$phenotype.label %] </span><br />
+                
+            [% END %]
+            </p>
+        [% END %]
+        
+        
         <h4>Directions</h4>
         <p>
           <input type="checkbox" name="direction" value="Effector->Affected"> <b>&#8594;</b> Effector -> Affected<br />
-          <input type="checkbox" name="direction" value="non-directional|Other"> <b>&ndash;</b> Non-directional<br />
+          <input type="checkbox" name="direction" value="non-directional"> <b>&ndash;</b> Non-directional<br />
         </p>
 
         [% IF NTYPES.keys.size > 1 %]
         <h4>Interactor types</h4>
         <p>
             [% FOREACH obj IN NTYPES.keys.sort %]
-            <input type="checkbox" name="nodes" value="[% obj %]"> [% val = obj.replace('_', ' '); IF val == 'Text'; val = 'Other'; END; val; %] <br />
+            <input type="checkbox" name="nodes" value="[% obj %]"> [% 
+                val = obj.replace('_', ' '); 
+                IF val == 'Text'; val = 'Other'; END; 
+                val; %] 
+            <br />
             [% END %]
         </p>
         [% END %]
@@ -41,41 +75,82 @@
         [% END %]
       </div>
 
+
+      
       <div id="resizable" class="ui-widget-content" style="float:left">
-          <div id="cytoscapeweb">
-              Unable to load the CytoscapeWeb image. Please try again in a few minutes.
+      
+          <div id="cy" >
+			
           </div>
+      
       </div>
+      
 
       <br style="clear:both"/>
 
 [%- content -%]
-
+    [%# Must implement arbor.js here, it uses web workers and 
+    will not work when combined with other JS %]
+    <script src="/js/jquery/plugins/cytoscapejs/arbor.js"></script>
     <script type="text/javascript">
     (function(){
       var data = {
-            nodes: [  [% FOREACH node IN NODES.keys.sort %]
-                          { id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]", number:[% loop.index %],
-                            ntype: "[%  NODES.$node.class.replace('_', ' ') %]",
-                            link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
-                            predicted: [% NODES.$node.predicted %],
-                          },
-                      [% END %]
-                  ],
-            edges:[ [% FOREACH obj IN EDGES %]
-                          { id: "e[% loop.count %]", label: "[% obj.interaction.id %]" ,
-                            source: "[% obj.effector.label %]", target: "[% obj.affected.label %]",
-                            type: "[% obj.type %]", direction:"[% obj.direction %]",
-                            width: [% obj.interactions.size %],
-                            phenotype: "[% obj.phenotype.label %]",
-                            nearby: [% obj.nearby %],
-                          },
-                    [% END %]
-                  ],
+            nodes: [  
+                [% FOREACH node IN NODES.keys.sort %]
+                    { data: { 
+                        id: "[% NODES.$node.label %]", 
+                        name: "[% NODES.$node.label %]", 
+                        number:[% loop.index %],
+                        ntype: "[%  NODES.$node.class.replace('_', ' ') %]",
+                        link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
+                        predicted: [% NODES.$node.predicted %],
+                        [% IF NODES.$node.main %]
+                        mainNode: true
+                        [% END %]
+                    }},
+                [% END %]
+            ],
+            edges:[ 
+                [% FOREACH obj IN EDGES %]
+                    { data: { 
+                    id: "e[% loop.count %]", 
+                    label: "[% obj.interaction.id %]" ,
+                    source: "[% obj.effector.label %]", 
+                    target: "[% obj.affected.label %]",
+                    type: "[% obj.type %]", 
+                    direction:"[% obj.direction %]",
+                    width: [% obj.interactions.size %],
+                    phenotype: "[% obj.phenotype.label %]",
+                    nearby: [% obj.nearby %],
+                    }},
+                [% END %]
+            ],
+            [%# 
+                = Custom cytoscape mappers =
+                * elementType: nodes or edges
+                * attr: some key under data[elementType][i].data
+                * mapping: obj mapping oldVal: newVal for attr
+                * (toType): new values will be put into this attr, if attr
+                *   itself shouldn't be touched
+            %]
+            mappers:[
+                {
+                    elementType: 'nodes',
+                    attribute: 'ntype',
+                    toType: 'shape',
+                    mapping: {
+                        Rearrangement: "hexagon",
+                        Gene: "octagon",
+                        Molecule: "triangle",
+                        other: "ellipse"
+                    }
+                }
+            ],
         },
         types = [ [% FOREACH obj IN TYPES.keys.sort %]
                           "[% obj %]",
                     [% END %] ]
-      WB.setupCytoscape(data, types [% IF CLASSTYPE; ', "'; CLASSTYPE; '"'; END; %]);
+        WB.setupCytoscape(data, types [% IF CLASSTYPE; ', "'; CLASSTYPE; '"'; END; %]);
+      
     })();
     </script>
