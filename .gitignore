@@ -3,3 +3,8 @@ extlib/
 *~
 *.sav
 *.save
+
+*.log
+xx
+wormbase_local.conf
+

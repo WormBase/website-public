@@ -1604,137 +1604,151 @@ var Scrolling = (function(){
         window.location = url;
       }
   };
-  
-  
 
-  
-function setupCytoscape(data, types, clazz){
     
-          var edgeColor = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E" ],
-              edgeColorMapper = {
-                attrName: "type",
-                entries: []
-              },
-              edgeSourceArrowMapper = {
-                attrName: "direction",
-                entries: [ { attrValue: "Effector->Affected", value: "T" },]
-              },
-              edgeTargetArrowMapper = {
-                attrName: "direction",
-                entries: [ { attrValue: "Effector->Affected", value: "ARROW" },]
-              },
-            nodeShapeMapper = {
-                attrName: "ntype",
-                entries: [
-                  { attrValue: 'Rearrangement', value: "HEXAGON" },
-                  { attrValue: 'Gene', value: "OCTAGON" },
-                  { attrValue: 'Molecule', value: "TRIANGLE" },
-                  { attrValue: 'Other', value: "ELLIPSE" },]
-              },
-              styleMapper = {
-                  attrName: "type",
-                  entries: [{ attrValue: "Predicted", value: "DOT" },]
-              },
-              edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 },
-              nodeColorMapper = { attrName: "number", minValue: "#04043D", maxValue: "#6FA2D9" },
-              toolTipMapper = {
-                attrName: "phenotype",
-                entries:[{attrValue: "", value: "<b>${type}<br />${direction}<br />${source} --- ${target}<br />${width} citation(s)</b>"},]
-              },
-                // you could also use other formats (e.g. GraphML) or grab the network data via AJAX
-              networ_json = {
-                dataSchema: {
-                  nodes: [{ name: "label", type: "string" },
-                      { name: "number", type: "int" },
-                      { name: "color", type: "string" },
-                      { name: "ntype", type: "string" },
-                      { name: "link", type: "string" },
-                      { name: "predicted", type: "int" },
-                  ],
-                      
-                  edges: [ { name: "label", type: "string" },
-                      { name: "type", type: "string" },
-                      { name: "direction", type: "string" },
-                      { name: "width", type: "int" },
-                      { name: "phenotype", type: "string" },
-                      { name: "nearby", type: "int" },
-                      //{ name: "link", type: "string" },
-                  ]
-                },
-                data: data
-              },
-            // visual style we will use
-              visual_style = {
-                global: {
-                  backgroundColor: "#ffffff",
-                  tooltipDelay: 0
-                },
-                nodes: {
-                  opacity: 0.7,
-                  borderWidth: 0,
-                  hoverGlowOpacity: 0.8,
-                  size: 30,
-                  tooltipText: "<b>${label} (${ntype})</b>",
-                  tooltipBackgroundColor: "#fafafa",
-                  shape: { defaultValue: "OCTAGON", discreteMapper: nodeShapeMapper },
-                  color: { continuousMapper: nodeColorMapper },
-                  hoverGlowColor: "#aae6ff",
-                  labelGlowOpacity: 1,
-                  labelHorizontalAnchor: "center"
-                },
-                edges: {
-                  width: { defaultValue: 0.5, continuousMapper: edgeWidthMapper },
-                  color: { defaultValue: "#999999", discreteMapper: edgeColorMapper },
-                  opacity:0.4,
-                  hoverOpacity: 1,
-                  style: { defaultVAlue: "SOLID", discreteMapper: styleMapper},
-                  sourceArrowShape: { defaultValue: "NONE", discreteMapper: edgeSourceArrowMapper },
-                  targetArrowShape: { defaultValue: "NONE", discreteMapper: edgeTargetArrowMapper },
-                  labelHorizontalAnchor: "center",
-                  label: { passthroughMapper: { attrName: "type" } },
-                  tooltipText: { defaultValue:"<b>${type}<br />${direction}<br />${source} --- ${target}<br />${phenotype}<br />${width} citation(s)</b>", discreteMapper: toolTipMapper },
-                  tooltipBackgroundColor: "#fafafa"
+	function setupCytoscape(data, types, clazz){
+        
+        /* Converts element attributes to their appropriate mapped values
+         * Any non-matching attributes will be matched to the "other" mapping
+         *     if exists
+            * data: data
+            * elementType: nodes or edges
+            * attr: some key under data[elementType][i].data
+            * mapping: obj mapping oldVal: newVal for attr
+            * (toType): new values will be put into this attr, if attr 
+            *   shouldn't be touched
+        */
+        function mapAttr(elementType, attr, mapping, toType){
+            for(var i=0; i < data[elementType].length; i++){
+                element = data[elementType][i]['data'][attr];
+                toType = toType ? toType : attr;
+                if( mapping[element] ){
+                    data[elementType][i]['data'][toType] = mapping[element];
+                }else if(mapping['other']){
+                    data[elementType][i]['data'][toType] = mapping['other'];
                 }
-              },
+            }
+        }
+        
+        // Execute custom mappers
+        for(var i=0; i < data.mappers.length; i++){
+            var m = data.mappers[i];
+            mapAttr(m.elementType, m.attribute, m.mapping, m.toType);
+        }
+        
+        // Color of each type, in order.  Matches legend.  See interaction_details.tt2
+        var edgeColor = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E" ];
+        var typeColorMapper = function(){
+            var map = {};
+            for(var i=0; i < types.length; i++){
+                // Predicted always black
+                map[ types[i] ] = 
+                    (types[i] == 'Predicted') ? '#999' : edgeColor[i];
+            }
+            return map;
+        }();
+        mapAttr('edges', 'type', typeColorMapper, 'color');
+        
+        +function increaseBaseWidth(baseWidth){
+            for(var i=0; i < data['edges'].length; i++){
+                data['edges'][i]['data']['width'] += baseWidth;
+            }
+        }(1);
+        
+        Plugin.getPlugin('cytoscape_js',function(){
             
-            // initialization options
-              options = {
-                // where you have the Cytoscape Web SWF
-                swfPath: "/js/jquery/plugins/cytoscapeweb/swf/CytoscapeWeb",
-                // where you have the Flash installer SWF
-                flashInstallerPath: "/swf/playerProductInstall"
-              };
+            var legend = $jq('#cyto_legend');
             
-              for(var i=-1, type; (type = types[++i]);){
-                visual_style.edges.color.discreteMapper.entries[i] = { attrValue: type,  value: (type == 'Predicted') ? '#999' : edgeColor[i] };
-              }
-
-          
-              Plugin.getPlugin("cytoscape_web", function(){ 
-                // init and draw
-                var vis = new org.cytoscapeweb.Visualization("cytoscapeweb", options),
-                    legend = $jq('#cyto_legend'),
-                    node_size = (legend.find('input[name=nodes]').size() > 0);
+            $jq( "#cy" ).cytoscape({
                 
-                vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true });
-                vis.ready(function() {
-                    vis.filter("nodes", function(node) { return node.data.predicted != 1; })
-                    // add a listener for when nodes and edges are clicked
-                    vis.addListener("click", "nodes", function(event) {
-                        window.open(event.target.data.link);
-                    });
+            style: cytoscape.stylesheet()
+                .selector('node')
+                .css({
+                    'opacity': 0.7,
+                    'border-width': 0,
+                    'shape': 'data(shape)',
+                    'content': 'data(name)',
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'text-outline-color': 'white',
+                    'text-outline-width': 2
+                })
+                .selector('edge')
+                .css({
+                    'width': 'data(width)',
+                    'opacity':0.4,
+                    'line-color': 'data(color)',
+                    'line-style': 'solid'
                     
-                    resetChecked();
+                })
+                .selector('edge[type="Predicted"]')
+                .css({
+                    'line-style': 'dotted'
+                })
+                .selector('edge[direction="Effector->Affected"]')
+                .css({
+                    'target-arrow-shape': 'triangle',
+                    'target-arrow-color': 'data(color)',
+                    'source-arrow-color': 'data(color)'
+                })
+                .selector('node[mainNode]')
+                .css({
+                    'height': '40px',
+                    'width': '40px',
+                    'background-color': 'red'
+                })
+                .selector(':selected')
+                .css({
+                    'opacity': 1,
+                    'border-color': 'black',
+                    'border-width': 2,
+                }),
+            
+            elements: data,
+            
+            layout: {
+                name: 'arbor',
+            },
+
+            ready: function(){
+                window.cy = this;
+                
+                resetChecked();
+                updateEdgeFilter();
+                updateNodeFilter();
+                
+                legend.find('input:checkbox').click(function(){
+                    if(this.name == 'interactionToggle'){
+                        if(this.checked){
+                            legend.find('input:checkbox[name="type"]').prop('checked',true);
+                        }else{
+                            legend.find('input:checkbox[name="type"]').prop('checked',false);
+                        }
+                    }
+                    if(this.name == 'phenotypeToggle'){
+                        if(this.checked){
+                            legend.find('input:checkbox[name="phenotype"]').prop('checked',true);
+                        }else{
+                            legend.find('input:checkbox[name="phenotype"]').prop('checked',false);
+                        }
+                    }
+                    
                     updateEdgeFilter();
-                    
-                  /* Should be disabled until interactions are merged
-                    vis.addListener("click", "edges", function(event) {
-                    window.open(event.target.data.link);
-                    }); */ 
+                    updateNodeFilter();
                 });
                 
-                function resetChecked(){
-                  legend.find('input:checkbox').map(function(){
+                cy.on('tap', 'node', function(e){ 
+                    window.open(e.cyTarget.data().link); });
+                
+                cy.on('tap', '', function(e){
+                    console.log(e.cyTarget.data());
+                });
+            }
+                
+            });
+            
+            function resetChecked(){
+                legend.find('input:checkbox').map(function(){
                     var t = $jq(this);
                     if (t.attr('name') == 'type'){ 
                         t.prop('checked', (!t.val().match('Predicted')));
@@ -1743,104 +1757,87 @@ function setupCytoscape(data, types, clazz){
                     }else { 
                         t.prop('checked', true);
                     }
-                  });
-                }
-                
-                legend.find('input:checkbox').click(function(){
-                  if($jq(this).val().match('Predicted')){
-                    updateEdgeFilter();
-                    updateNodeFilter();
-                    return;
-                  }
-                  $jq(this).attr('name').match('nodes') ? updateNodeFilter() : updateEdgeFilter();
                 });
-
-                function updateNodeFilter(){
-                  var nodes_regex = getRegexFilter('nodes'),
-                      predict = (legend.find('input.cyto_predict').is(':checked'));
-                  vis.filter("nodes", function(node) {
-                    return (nodes_regex || !node_size) ? (node.data.ntype.match(nodes_regex) && (predict ? true : node.data.predicted != 1)) : false;
-                  });
-                }
                 
-                function getRegexFilter(type){
-                    return legend.find('input[name=' + type + ']:checked').map(function(){ return this.getAttribute('value'); }).get().join('|');
-                }
+            }
+            
+            // Hide all edges, show a subset, then hide all visible members of 
+            // each non-asserted subset thereafter
+            function updateEdgeFilter(){
+                /* for all elements: 
+                 * make true those which 
+                 *  edge "type" value match the values of "type" checkboxes
+                 *  edge "direction" value match the values of "direction" checkboxes
+                 * 
+                 * NOTE: Can use cy.filter( function(i, ele) ) instead
+                 */
                 
-                function updateEdgeFilter(){
-                  var types_regex = getRegexFilter('type'),
-                      direction_regex = getRegexFilter('direction'),
-                      nearby = (legend.find('input[name=nearby]').is(':checked'));
-                  
-                  vis.filter("edges", function(edge) {
-                            return (types_regex && direction_regex) ? 
-                                          (edge.data.type.match(types_regex) 
-                                       && edge.data.direction.match(direction_regex) 
-                                       && (nearby || edge.data.nearby == 0)) : false;
-                        }, true);
-                }
+                cy.elements('edge').hide(); 
                 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  //BEGIN OLD CODE FOR CACHED WIDGETS -- DELETE IN WS236
-              $jq('.cyto_panel').change(function(){
-                  var direction = $jq("#cyto_panel_direction option:selected").val();
-                  var inter_type = $jq("#cyto_panel_type option:selected").val();
-                  var nearby = $jq("#cyto_panel_nearby option:selected").val();
-          var nodetype = $jq("#cyto_panel_nodetype option:selected").val();
-
-          if(nodetype ===0){
-              vis.removeFilter("nodes", true);
-          } else {
-              vis.filter("nodes", function(node) { return node.data.ntype === nodetype });
-          }
-
-                  if(direction ===0 && inter_type===0 && nearby===0){
-                    //vis.removeFilter("edges",true);
-                    vis.filter("edges", function(edge){return edge.data.type !== "No_interaction"}, true);
-                  }else{
-                  vis.filter("edges", function(edge) {
-                    if(direction !==0 && inter_type!==0 && nearby!==0) {
-                        return edge.data.type === inter_type && edge.data.direction == direction && edge.data.nearby == 0;
-                    }else if(direction !==0 && nearby!==0){
-                        return edge.data.direction == direction && edge.data.nearby == 0  && edge.data.type !== "No_interaction";
-                    }else if(direction !==0 && inter_type!==0){
-                        return edge.data.type === inter_type;
-                    }else if(direction !==0){
-                        return edge.data.direction === direction && edge.data.type !== "No_interaction";
-                    }else if(inter_type !==0 && nearby!==0){
-                        return  edge.data.type === inter_type && edge.data.nearby === 0;
-                    }else if(nearby !== 0){
-                        return edge.data.nearby === 0 && edge.data.type !== "No_interaction";
+                // Get arrays of valid edge types
+                var edgeTypes = legend.find('input[name="type"]:checked')
+                    .map(function(){ return this.getAttribute('value'); }).get()
+                var edgeDirs = legend.find('input[name="direction"]:checked')
+                    .map(function(){ return this.getAttribute('value'); }).get();
+                var edgePhens = legend.find('input[name="phenotype"]:checked')
+                    .map(function(){ return this.getAttribute('value'); }).get();
+                
+                var nearbyExists = legend.find('input[name=nearby]').size() > 0 ? 
+                    true : false;
+                var nearbyChecked = 
+                    legend.find('input[name=nearby]:checked').size() > 0 ? 
+                    true : false;
+                
+                // restore checked edge types
+                cy.elements('edge').filter(function(i, ele){
+                    /**console.log({
+                        inEdgePhens: $jq.inArray(ele.data().phenotype, edgePhens),
+                        inEdgeTypes: $jq.inArray(ele.data().type,      edgeTypes),
+                        inEdgeDirs:  $jq.inArray(ele.data().direction, edgeDirs )
+                    });**/
+                    if(
+                        (!ele.data().phenotype || $jq.inArray(ele.data().phenotype, edgePhens) > -1) &&
+                        (!ele.data().type      || $jq.inArray(ele.data().type,      edgeTypes) > -1) &&
+                        (!ele.data().direction || $jq.inArray(ele.data().direction, edgeDirs ) > -1) &&
+                        (   
+                            !nearbyExists || // is nearby asserted?
+                            ele.data().nearby == 0 || // non-nearby edges will show regardless
+                            (nearbyChecked && ele.data().nearby == 1) 
+                        ) 
+                    ){
+                        return true;
                     }else{
-                        return edge.data.type === inter_type;
+                        return false;
                     }
-                    }, true);
-                  }
-            });
-            //END OLD CODE FOR CACHED INTERACTION WIDGETS
-  
-  
-  
-  
-  
-  
+                }).show();
+            }
+            
+            // Show all nodes then hide all non-connected
+            function updateNodeFilter(){
+                cy.elements('node').show();
                 
-              });
-              $jq( "#resizable" ).resizable();
-    }
+                // Interactor types
+                var intTypes = legend.find('input[name=nodes]:not(:checked)')
+                    .map(function(){ return this.getAttribute('value'); }).get();
+                
+                for (var i=0; i < intTypes.length; i++){
+                    var type = intTypes[i]; 
+                    cy.elements('node[^mainNode][ntype = "'+ type +'"]').hide();
+                }
+                
+                // Hide nodes with no visible edges
+                cy.elements('node[^mainNode]').filter(function(i, ele){
+                    return ele.edgesWith('').allAre(':hidden');
+                }).hide();
 
-    function getMarkItUp(callback){
+            }
+    
+        });
+        
+		
+	}
+	
+	function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
         Plugin.getPlugin("markitup-wiki", callback);
       });
@@ -1859,9 +1856,9 @@ function setupCytoscape(data, types, clazz){
                         pfam: "/js/pfam/domain_graphics.min.js",
                         markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
-                        cytoscape_web: "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb_all.min.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
-                        placeholder: "/js/jquery/plugins/jquery.placeholder.min.js"
+                        placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",

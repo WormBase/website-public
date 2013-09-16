@@ -154,9 +154,9 @@ http://wormbase.org/species/*/transgene
 sub synonym {
     my $self    = shift;
     my $object  = $self->object;
-    my $synonym = $object->Synonym;
+    my @synonym = map {"$_"} $object->Synonym;
     return { description => 'a synonym for the transgene',
-	     data        =>  $synonym && "$synonym"};
+	     data        =>  @synonym ? \@synonym : undef};
 }
 
 # summary { }
