@@ -12,6 +12,11 @@ category     = Genes
 description  = 0
 require_subparts = 1
 height       = 13
-label        = sub { my $feature = shift; return "Frame usage for " . $feature->name  }
+label        = sub {
+		my $feature = shift;
+		my $ids = join(", ", $feature->get_tag_values('load_id'));
+		$ids =~ s/CDS://g;
+		return "Frame usage for " . $ids;
+	}
 key          = Coding Segments
 citation     = This track shows the reading frames of coding segments (also known as "CDS" features).  
