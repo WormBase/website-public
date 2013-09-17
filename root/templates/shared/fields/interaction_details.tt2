@@ -8,7 +8,7 @@
     
 </style>
 
-[%# If these values are asserted, they are given by Interaction->interactions, 
+[%# If these values are asserted, they are given by Interaction->interactions,  
 otherwise find them in Interaction->interaction_details %]
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
