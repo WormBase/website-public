@@ -1608,6 +1608,16 @@ var Scrolling = (function(){
     
 	function setupCytoscape(data, types, clazz){
         
+        data.edges.map(function(){
+            var edgeTypes = [];
+            
+            return function(edge){
+                edgeTypes[ edge.data['type'] ] = 1;
+                console.log(edgeTypes);
+                return edge.data['type'];
+            };
+        }()) ;
+        
         /* Converts element attributes to their appropriate mapped values
          * Any non-matching attributes will be matched to the "other" mapping
          *     if exists
@@ -1647,7 +1657,7 @@ var Scrolling = (function(){
             }
             return map;
         }();
-        mapAttr('edges', 'type', typeColorMapper, 'color');
+        //mapAttr('edges', 'type', typeColorMapper, 'color');
         
         +function increaseBaseWidth(baseWidth){
             for(var i=0; i < data['edges'].length; i++){

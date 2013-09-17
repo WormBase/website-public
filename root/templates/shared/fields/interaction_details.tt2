@@ -17,6 +17,52 @@ otherwise find them in Interaction->interaction_details %]
 [% CLASSTYPE = CLASSTYPE || undef %]
 [% PHENOTYPES = PHENOTYPES || interaction_details.data.phenotypes %]
 
+[% 
+    # Legend supertypes specification #
+    master = [
+        {Predicted => 1},
+        {Regulatory => [
+            {'Change of localization' => 1},
+            {'Change of expression level' => 1},
+            {'Positively Regulates' => 1},
+            {'Negatively Regulates' => 1},
+            {'Mutual Enhancement' => 1},
+            {'Epistasis' => 1},
+            {'Suppression' => 1},
+            {'Enhancement' => 1},
+            {'Mutual enhancement' => 1}
+        ]},
+        {'Genetic interaction' => 1}
+    ];
+    
+    edgeHash = {}; # keys are edge types 
+    FOREACH obj IN EDGES;
+        type = obj.type;
+        edgeHash.$type = 1; 
+    END;
+    edgeColors = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E"];
+    colorBinding = {};
+    FOREACH key IN edgeHash.keys;
+        ind = loop.index;
+        colorBinding.$key = key == 'Predicted' ? '#888' : edgeColors.$ind;
+    END;
+    
+%]
+
+[%  
+colorIndex = 0;
+
+# Expects: name, value, color
+BLOCK cyto_checkbox;
+color = value == 'Predicted' ? '#888' : color;
+colorBinding.$value = color;
+%]
+<input type="checkbox" name="[% name %]" value="[% value %]" [% IF value == 'Predicted'; 'class="cyto_predict"'; END; %]>
+<span style="color:[% color %]"> 
+[% value == 'Predicted' ? '<small><b>- -</b></small>' : '<b>&ndash;</b>' %][% value %] 
+</span><br />
+[% END %]
+
       <h6>Click, hold for 1 second, and drag to pan</h6>
       <h6>Use the scroll wheel to zoom</h6>
 
@@ -25,16 +71,41 @@ otherwise find them in Interaction->interaction_details %]
         [% IF TYPES.keys %]
             
             <h4> Interaction types</h4>
-            [% edgeColors = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E"] %]
-            <p>
+            <p style="margin:0px">
+            
             <input type="checkbox" name="interactionToggle">  <span style="font-weight:bold">All ON/OFF</span><br />
-            [% FOREACH obj IN TYPES.keys.sort %]
-                [% ind = loop.index %]
-                <input type="checkbox" name="type" value="[% obj %]" [% IF obj == 'Predicted'; 'class="cyto_predict"'; END; %]>
-                <span style="color:[% obj == 'Predicted' ? '#888"><small><b>- -</b></small>' : edgeColors.$ind _ '"><b>&ndash;</b>' %] [% obj %] </span><br />
-            [% END %]
-            </p>
+            [% 
+            'Changes applied here:<br />';
+            FOREACH type1 IN master;
+                key = type1.keys.0;
+                IF type1.$key == 1 && edgeHash.$key == 1;
+                    INCLUDE cyto_checkbox
+                        name    = 'type'
+                        value   = key
+                        color   = edgeColors.$colorIndex;
+                    colorIndex = colorIndex + 1;
+                ELSE;
+                    key;
+                    '<div style="display:inline-block;margin-left:14px" >';
+                    FOREACH type2 IN type1.$key;
+                        key = type2.keys.0;
+                        IF edgeHash.$key == 1;
+                            INCLUDE cyto_checkbox
+                                name    = 'type'
+                                value   = key
+                                color   = edgeColors.$colorIndex;
+                            colorIndex = colorIndex + 1;
+                        END;
+                    END;
+                    '</div>';
+                END;
+            END;
+            %]
+            
+            
         [% END %]
+        </p>
+        
         [% IF PHENOTYPES.keys %]
             <h4> Phenotypes</h4>
             <p>
@@ -122,6 +193,7 @@ otherwise find them in Interaction->interaction_details %]
                     width: [% obj.interactions.size %],
                     phenotype: "[% obj.phenotype.label %]",
                     nearby: [% obj.nearby %],
+                    color: "[% type = obj.type; colorBinding.$type.defined ? colorBinding.$type : '#000000' %]"
                     }},
                 [% END %]
             ],
