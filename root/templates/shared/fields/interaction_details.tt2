@@ -22,7 +22,7 @@ otherwise find them in Interaction->interaction_details %]
     master = [
         {Predicted => 1},
         {Regulatory => [
-            {'Change of localization' => 1},
+            {'Change of localization' => 1}, 
             {'Change of expression level' => 1},
             {'Positively Regulates' => 1},
             {'Negatively Regulates' => 1},
