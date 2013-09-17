@@ -79,6 +79,7 @@ colorBinding.$value = color;
             FOREACH type1 IN master;
                 key = type1.keys.0;
                 IF type1.$key == 1 && edgeHash.$key == 1;
+                    edgeHash.$key = 0;
                     INCLUDE cyto_checkbox
                         name    = 'type'
                         value   = key
@@ -90,6 +91,7 @@ colorBinding.$value = color;
                     FOREACH type2 IN type1.$key;
                         key = type2.keys.0;
                         IF edgeHash.$key == 1;
+                            edgeHash.$key = 0;
                             INCLUDE cyto_checkbox
                                 name    = 'type'
                                 value   = key
@@ -97,13 +99,22 @@ colorBinding.$value = color;
                             colorIndex = colorIndex + 1;
                         END;
                     END;
-                    '</div>';
+                    '</div><br />';
                 END;
             END;
-            %]
             
+            FOREACH type IN edgeHash.keys;
+                IF edgeHash.$type == 1;
+                    INCLUDE cyto_checkbox
+                        name    = 'type'
+                        value   = type
+                        color   = edgeColors.$colorIndex;
+                    colorIndex = colorIndex + 1;
+                END;
+            END;
             
-        [% END %]
+        END; 
+        %]
         </p>
         
         [% IF PHENOTYPES.keys %]

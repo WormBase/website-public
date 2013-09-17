@@ -1608,16 +1608,6 @@ var Scrolling = (function(){
     
 	function setupCytoscape(data, types, clazz){
         
-        data.edges.map(function(){
-            var edgeTypes = [];
-            
-            return function(edge){
-                edgeTypes[ edge.data['type'] ] = 1;
-                console.log(edgeTypes);
-                return edge.data['type'];
-            };
-        }()) ;
-        
         /* Converts element attributes to their appropriate mapped values
          * Any non-matching attributes will be matched to the "other" mapping
          *     if exists
@@ -1750,9 +1740,6 @@ var Scrolling = (function(){
                 cy.on('tap', 'node', function(e){ 
                     window.open(e.cyTarget.data().link); });
                 
-                cy.on('tap', '', function(e){
-                    console.log(e.cyTarget.data());
-                });
             }
                 
             });
