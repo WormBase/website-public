@@ -933,7 +933,7 @@ sub print_sequence {
 		# We will fetch from acedb below
 	    } else {
 		($seq_obj) = sort {$b->length<=>$a->length}
-		grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
+		grep {$_->method eq 'full_transcript'} $gff->get_features_by_name(Transcript => $s);
 # 		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
 		
 		# BLECH!  If provided with a gene ID and alt splices are present just guess
@@ -941,15 +941,15 @@ sub print_sequence {
 		# We really should display a list for all of these.
 
 		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		  	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
+		  	grep {$_->method eq 'full_transcript'} $gff->get_features_by_name(Transcript => "$s.a");
 # 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
 		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
+		 	grep {$_->method eq 'full_transcript'} $gff->get_features_by_name(Transcript => "$s.1");
 # 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
 	    }
 	}
     
-    ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
+    ($seq_obj) ||= $gff->get_features_by_name(Pseudogene => $s);
     # Haven't fetched a GFF segment? Try Ace.
     if (!$seq_obj || eval{ length($seq_obj->dna) } < 2) { # miserable broken workaround
 		# try to use acedb
