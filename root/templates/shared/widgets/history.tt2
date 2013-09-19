@@ -7,7 +7,7 @@ IF object.name.data.class == 'protein';
             columns={ 
                 prediction => 'Predicted gene',
                 event      => 'Event',
-                version    => 'Version',
+                version    => 'Release',
             },
             key='history'
         );
