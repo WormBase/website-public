@@ -14,7 +14,7 @@ require_subparts = 1
 height       = 13
 label        = sub {
 		my $feature = shift;
-		my $ids = join(", ", $feature->get_tag_values('load_id'));
+		my $ids = join(", ", $feature->load_id);
 		$ids =~ s/CDS://g;
 		return "Frame usage for " . $ids;
 	}
