@@ -26,7 +26,6 @@
 
     IF fields.genomic_position.data;
              # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
-	     
        	       FOREACH position IN fields.genomic_position.data;
                  idx = loop.index();
 

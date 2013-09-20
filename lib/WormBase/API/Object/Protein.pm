@@ -158,19 +158,11 @@ sub corresponding_all {
         my @sequences = $cds->Corresponding_transcript;
         my $len_spliced   = 0;
 
-        for ( $gff->features('coding_exon') ) {
-
-            if ( $protein->Species =~ /elegans/ ) {
-                next unless $_->source eq 'Coding_transcript';
-            }
-            else {
-                next
-                    unless $_->method =~ /coding_exon/
-                        && $_->source eq 'Coding_transcript';
-            }
-            next unless $_->name eq $sequences[0];
-            $len_spliced += $_->length;
-        }
+        # TODO: update in WS240
+        # note from Kevin - WormBase may be splitting to 
+        # WormBase_protein_coding, WormBase_ncRNA, etc in WS240
+        # Also: WHY ARE THE NUMBERS DIFFERENT FROM GFF2 ??!?
+        map { $len_spliced += $_->length } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 
@@ -507,7 +499,7 @@ sub pfam_graph {
     # onto the protein backbone.
     my $gene    = $self->cds->[0];
     my $gffdb = $self->gff_dsn || return $ret;
-    my ($seq_obj) = eval{$gffdb->segment(CDS => $gene)}; return if $@;
+    my ($seq_obj) = eval{$gffdb->segment($gene)}; return if $@;
 
     my (@exons,@segmented_exons);
     # Translate the bp start and stop positions into the approximate amino acid
@@ -792,7 +784,6 @@ sub _make_multiple_genomic_images {
 
 sub _build_genomic_position {
     my ($self) = @_;
-
     my @genes = grep{ defined blessed($_) and $_->Method ne 'history'} @{$self->cds};
     if (not @genes || scalar(@genes) == 0) {
         return { description => 'No genomic position data available.', data => undef };
@@ -840,11 +831,22 @@ sub _build_genetic_position_interpolated {
 sub _build__segments {
     my ($self) = @_;
     my @segments;
-    my $gffdb = $self->gff_dsn() || return \@segments;
-    my $dbh = $gffdb->dbh || return;
+    # my $gffdb = $self->gff_dsn() || return \@segments;
+    # my $dbh = $gffdb->dbh || return;
+    $self->log->debug("HELLo??");
 
-    my $gene = $self->cds->[0];
-    @segments = map {$dbh->segment(CDS => $gene)} $self->corresponding_transcripts()->{data}->[0];
+    my $dbh = $self->gff_dsn() || return \@segments;
+$self->log->debug("HELLo??aa");
+
+    # my $gene = $self->cds->[0];
+    # @segments = map {$dbh->segment(CDS => $gene)} $self->corresponding_transcripts()->{data}->[0];
+    if (@segments = $dbh->segment($self->object)
+        or @segments = map {$dbh->segment($_)} $self->cds
+        or @segments = map { $dbh->segment( $_) } $self->corresponding_transcripts()->{data} # RNA transcripts (lin-4, sup-5)
+    ) {
+        $self->log->debug("SEGMENTS:" . @segments);
+        return \@segments;
+    }
 
     return \@segments;
 }
@@ -891,7 +893,7 @@ sub _draw_image {
   my $gffdb = $self->gff_dsn($self->_parsed_species) || return;
 # print $gffdb;
   my $dbh = $gffdb->dbh || return;
-  my ($seq_obj) = $dbh->segment(CDS => $gene);
+  my ($seq_obj) = $dbh->segment($gene);
 
   my (@exons,@segmented_exons);
 
