@@ -1,14 +1,17 @@
 [%
-IF object.name.data.class == 'Protein';
+IF object.name.data.class == 'protein';
 
-   WRAPPER $field_block title="Curatorial History" key="history";
-       build_data_table(order=['prediction','event','version'],
-                         columns={ prediction => 'Predicted gene',
-		                   event      => 'Event',
-			           version    => 'Version',
-                                 },
-                         key='history');
-   END;
+    WRAPPER $field_block title="Curatorial History" key="history";
+        build_data_table(
+            order=['version','event','prediction'],
+            columns={ 
+                prediction => 'Predicted gene',
+                event      => 'Event',
+                version    => 'Release',
+            },
+            key='history'
+        );
+    END;
 
 ELSIF fields.history.data.size > 0;
     '<h4>Curatorial history</h4><br />';

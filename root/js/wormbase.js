@@ -1647,7 +1647,7 @@ var Scrolling = (function(){
             }
             return map;
         }();
-        mapAttr('edges', 'type', typeColorMapper, 'color');
+        //mapAttr('edges', 'type', typeColorMapper, 'color');
         
         +function increaseBaseWidth(baseWidth){
             for(var i=0; i < data['edges'].length; i++){
@@ -1740,9 +1740,6 @@ var Scrolling = (function(){
                 cy.on('tap', 'node', function(e){ 
                     window.open(e.cyTarget.data().link); });
                 
-                cy.on('tap', '', function(e){
-                    console.log(e.cyTarget.data());
-                });
             }
                 
             });
