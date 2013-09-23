@@ -1671,7 +1671,7 @@ sub gene_models {
     use Data::Dumper; # DELETE
     
     
-    my $coding =  $self->object->Corresponding_CDS ? 1 : 0;
+    my $coding = $self->object->Corresponding_CDS ? 1 : 0;
 
     # $sequence could potentially be a Transcript, CDS, Pseudogene - but
     # I still need to fetch some details from sequence
@@ -1681,6 +1681,7 @@ sub gene_models {
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
         my $gff   = $self->_fetch_gff_gene($sequence) or next;
+
         my $cds
             = ( $sequence->class eq 'CDS' )
             ? $sequence
@@ -1692,47 +1693,32 @@ sub gene_models {
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
         my $len_spliced   = 0;
 
-        for ( $gff->features('coding_exon') ) {
+        # TODO: update in WS240
+        # note from Kevin - WormBase may be splitting to 
+        # WormBase_protein_coding, WormBase_ncRNA, etc in WS240
+        # Also: WHY ARE THE NUMBERS DIFFERENT FROM GFF2 ??!?
+        map { $len_spliced += $_->length } $gff->get_SeqFeatures('CDS:WormBase');
 
-            if ( $object->Species =~ /elegans/ ) {
-                next unless $_->source eq 'Coding_transcript';
-            }
-            else {
-                next
-                    unless $_->method =~ /coding_exon/
-                        && $_->source eq 'Coding_transcript';
-            }
-            next unless $_->name eq $sequence;
-            $len_spliced += $_->length;
-        }
-
-        #     Try calculating the spliced length for pseudogenes
-        if ( !$len_spliced ) {
-            my $flag = eval { $object->Corresponding_Pseudogene } || $cds;
-            for ( $gff->features('exon:Pseudogene') ) {
-                next unless ( $_->name eq $flag );
-                $len_spliced += $_->length;
-            }
-        }
         $len_spliced ||= '-';
 
         $data{length_spliced}   = $len_spliced if $coding;
 
-        use WormBase::API::Object::Pseudogene '_build__length';
         my @lengths;
         foreach my $sequence (@sequences){
             if( $sequence->class eq "Pseudogene" ){
-                push @lengths, WormBase::API::Object::Pseudogene->_build__length($sequence);
+                my $l;
+                map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
+                push @lengths, $l . "<br />";
             }else{
                 push @lengths, $self->_fetch_gff_gene($sequence)->length . "<br />";
             }
         }
+
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
         my $status = $cds->Prediction_status if $cds;
         $status =~ s/_/ /g if $status;
         $status = $status . ($cds && $cds->Matching_cDNA ? ' by cDNA(s)' : '');
-#        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);
@@ -1745,7 +1731,6 @@ sub gene_models {
         $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
-        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
         $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
 
         push @rows, \%data;
@@ -1816,26 +1801,16 @@ sub _build__segments {
     my ($self) = @_;
     my $sequences = $self->sequences;
     my @segments;
+
     my $dbh = $self->gff_dsn() || return \@segments;
 
     my $object = $self->object;
     my $species = $object->Species;
 
-    eval {$dbh->segment()}; return \@segments if $@;
-
-    # Yuck. Still have some species specific stuff here.
-
-    if (@$sequences and $species =~ /briggsae/) {
-        if (@segments = map {$dbh->segment(CDS => "$_")} @$sequences
-            or @segments = map {$dbh->segment(Pseudogene => "$_")} @$sequences) {
-            return \@segments;
-        }
-    }
-
-    if (@segments = $dbh->segment(Gene => $object)
-        or @segments = map {$dbh->segment(CDS => $_)} @$sequences
-        or @segments = map { $dbh->segment(Pseudogene => $_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
-        or @segments = map { $dbh->segment(Transcript => $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
+    if (@segments = $dbh->segment($object)
+        or @segments = map {$dbh->segment($_)} @$sequences
+        or @segments = map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
+        or @segments = map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
     ) {
         return \@segments;
     }

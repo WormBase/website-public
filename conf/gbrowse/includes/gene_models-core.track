@@ -14,6 +14,7 @@ font2color   = blue
 height  = sub {
 	my $feature = shift;
 	return $feature->type =~ /transcript|UTR|CDS/i ? 10 : 6;
+
 	}
 # This only applies to C. elegans, C. briggsae, C. japonica, C. remanei, and C. brenneri.
 # All others that include this config file will need to override.
