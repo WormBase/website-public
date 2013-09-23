@@ -13,10 +13,7 @@ utr_color    = gray
 font2color   = blue
 height  = sub {
 	my $feature = shift;
-# GFF2
-#	return $feature->method =~  /transcript|UTR|coding_exon/i ? 10 : 6;
-# GFF3
-	return $feature->source =~  /transcript|UTR|coding_exon/i ? 10 : 6;
+	return $feature->method =~  /transcript|UTR|coding_exon/i ? 10 : 6;
 	}
 # This only applies to C. elegans, C. briggsae, C. japonica, C. remanei, and C. brenneri.
 # All others that include this config file will need to override.
