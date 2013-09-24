@@ -128,6 +128,21 @@ sub expression_image {
 	};
 }
 
+sub ep_movies{
+    my ($self) = @_;
+    my $object = $self->object;
+    
+    my @movies = $object->Movie;
+    my @filenames = map { my $name = $_->Name; "$name" } @movies;
+    
+    #print $_,"\n" foreach @filenames; # DELETE
+    
+    return {
+        description => 'Movies showcasing this expression pattern',
+        data        => @filenames ? \@filenames : undef
+    };
+}
+
 # remarks {}
 # Supplied by Role
 
