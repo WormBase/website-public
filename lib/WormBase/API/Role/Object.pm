@@ -188,6 +188,7 @@ sub _make_common_name {
     }
     $name //= eval { $self->ace_dsn->dbh->raw_fetch($object, "Public_name"); };
 	$name //= $object->name;
+    $name =~ s/\\(.)/$1/g;
     return $name; # caution: $name should be a string!
 }
 
