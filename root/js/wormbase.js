@@ -18,11 +18,10 @@
  */
 
 
-
 +function(window, document, undefined){ 
   var location = window.location,
       $jq = jQuery.noConflict();
-     
+
   var WB = (function(){
     var timer,
         notifyTimer,
@@ -2043,16 +2042,16 @@ var Scrolling = (function(){
 
 
 
- $jq(document).ready(function() {
+  $jq(document).ready(function() {
       $jq.ajaxSetup( {timeout: 12e4 }); //2 minute timeout on ajax requests
 
-      if(!window.WB){
+      if(!window.$jq){
         WB.init();
-        window.WB = WB;
         window.$jq = $jq;
       }
- });
- 
+  });
+  
+  window.WB = WB;
 }(this,document);
 
 
