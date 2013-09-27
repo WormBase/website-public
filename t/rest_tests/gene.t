@@ -28,7 +28,7 @@
         $configuration = $_[0];
     }
 
-    # This test checks if the non-existant tool 'foo' returns a 404
+    # This test checks the links in the blastp matches in the homology widget
     sub test_homology_blastp_matches {
         my $host = $configuration->{'host'};
         my $port = $configuration->{'port'};
