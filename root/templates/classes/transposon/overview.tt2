@@ -13,7 +13,7 @@ WRAPPER highlight_box;
    END;
 
   WRAPPER $field_block title="Type" key="member_of";
-    fields.member_of.data;
+    tag2link(fields.member_of.data);
   END;
 
   WRAPPER $field_block title="Copy status" key="copy_status";

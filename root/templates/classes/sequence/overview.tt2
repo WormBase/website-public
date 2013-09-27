@@ -12,15 +12,15 @@ WRAPPER highlight_box;
         tag2link(fields.paired_read.data);
     END;
     
-    WRAPPER $field_block title="Matching CDSs" key="cdss";
+    WRAPPER $field_block title="CDSs" key="cdss";
         tags2link(fields.cdss.data);
     END;
     
-    WRAPPER $field_block title="Matching transcripts" key="transcripts";
+    WRAPPER $field_block title="Transcripts" key="transcripts";
         tags2link(fields.transcripts.data);
     END;
     
-    WRAPPER $field_block title="Matching pseudogenes" key="pseudogenes";
+    WRAPPER $field_block title="Pseudogenes" key="pseudogenes";
         tags2link(fields.pseudogenes.data);
     END;
     

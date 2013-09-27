@@ -125,6 +125,10 @@ sub _build_xapian {
 sub version {
     my $self = shift;
 
+    $self->log->error("No default data-source specified.") unless $self->default_datasource;
+    $self->log->error("Configuration does not contain a <database> entry.") unless $self->database;
+    $self->log->error("\"root\" key not defined in <database> entry of the configuration.") unless $self->database->{$self->default_datasource}->{root};
+
     my $version = readlink ($self->database->{$self->default_datasource}->{root});
     $version =~ s/.*\_(WS\d\d\d)$/$1/g;
     return $version; 
@@ -149,11 +153,16 @@ sub _build__services {
         # we'd still like to set them up below
         @sources = '' unless @sources;
 
+
         foreach my $source (@sources) {
+            # fetch the bioproject id from the config
+            my $bp = $conf->{data_sources}->{$source}->{bioproject} unless ($conf->{data_sources}->{$source} eq "1");
+ 
             my $service = $service_class->new({
                 conf          => $conf,
                 log           => $self->log,
-                source        => $source,
+                source        => join('_', $bp ? ($source, $bp, $self->version) : ($source, $self->version)),
+                species       => $source,
                 symbolic_name => $db_type,
                 tmp_base      => $db_confs->{tmp},
             });

@@ -1,0 +1,39 @@
+<h2>[% fields.name.data.label %] </h2>
+[%
+
+USE Dumper;
+
+WRAPPER highlight_box;
+
+    WRAPPER $field_block title="Title" key="title";
+        fields.title.data;
+    END;
+
+      
+END;
+
+'<div class="description">';
+    fields.description.data;
+'</div>';
+
+remarks();
+
+
+%][%#
+
+'<div class="description">';
+     # Turn uppercase into boldface
+     desc = fields.description.data;
+     desc.replace('([A-Z])','<b>$1</b>');
+'</div>';
+
+WRAPPER $field_block title="Other names" key="other_names";
+
+       FOREACH name IN fields.other_names.data;
+           name _ '<br />';
+       END;
+END;
+
+
+
+%]

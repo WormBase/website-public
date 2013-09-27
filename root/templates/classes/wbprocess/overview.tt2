@@ -21,6 +21,11 @@
 	WRAPPER $field_block title="Related processes" key="related_process";
 		tags2link( fields.related_process.data );
 	END;
+
+  WRAPPER $field_block title="Historical gene" key="historical_gene";
+    cell_content(fields.historical_gene.data);
+  END;
+
 %]
 
 [%## 

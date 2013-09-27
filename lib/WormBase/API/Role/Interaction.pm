@@ -91,6 +91,7 @@ sub interactions  {
     my $results = $self->_get_interactions($self->_interactions, 1, 1);
     my @edges_all = values %{$results->{edgeVals}};
 
+
     return {
         description => 'genetic and predicted interactions',
         data        => $results->{showall} ? {    
@@ -100,7 +101,8 @@ sub interactions  {
                             showall => $results->{showall},
                             ntypes => $results->{ntypes},
                             edges_all => @edges_all ? \@edges_all : undef,
-                            class => $class
+                            class => $class,
+                            phenotypes => $results->{phenotypes}
                        } : { edges => \@edges },
     };
 
@@ -167,6 +169,7 @@ sub interaction_details {
                             nodes => $results->{nodes},
                             ntypes => $results->{ntypes},
                             showall => $results->{showall},
+                            phenotypes => $results->{phenotypes}
                        },
     };
 }
@@ -256,6 +259,13 @@ sub _get_interactions {
       }
     }
     $data->{showall} = scalar keys %{$data->{edgeVals}} < 100 || $nearby;
+    
+    # Annotate node for this object with main = 1.  Handled downstream.
+    foreach my $geneID (keys %{ $data->{nodes} }){
+        if ($geneID eq "$object"){
+            $data->{nodes}->{$geneID}->{main} = 1;
+        }
+    }
     return $data;
 }
 

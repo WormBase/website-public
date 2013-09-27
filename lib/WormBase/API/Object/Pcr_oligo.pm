@@ -138,18 +138,11 @@ sub oligos {
 
 sub overlapping_genes {
 	my ($self) = @_;
-	my %gene_info = map {
-        my $name = $_->info->name;
-        $name => {
-            id    => $name,
-            label => $name,
-            class => 'Gene',
-        }
-    } map { $_->features('CDS:curated') } @{$self->_segments};
-
+    my @results = map { $self->_pack_obj($_) } map {$_->Gene} $self->object->Overlaps_CDS;
+    
 	return {
 		description => 'Overlapping genes of this ' . $self->_object_class,
-		data		=> %gene_info ? \%gene_info : undef,
+		data		=> @results ? \@results : undef,
 	};
 }
 
