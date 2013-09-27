@@ -90,22 +90,6 @@ WRAPPER $field_block title="Transcripts" key="transcript";
 
 END;
 
-WRAPPER $field_block title="Pseudogenes" key="pseudogene";
- 
-   build_data_table (
-		order = [ 
-			'data',
-			'description',
-			'evidence_code'
-			],
-		columns = {
-			data => 'Pseudogene',
-			description => 'Description',
-			evidence_code => 'Evidence Code'
-			},
-		key = 'pseudogene');
-END;
-
 WRAPPER $field_block title="Homology Groups" key="homology_group";
     build_data_table (
 		order = [ 

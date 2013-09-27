@@ -6,7 +6,7 @@ db_args       = -adaptor memory
 
 
 # Web site configuration info
-tmpimages   = /synteny/images
+tmpimages   = /tmp/gbrowse2
 
 ################## TRACK CONFIGURATION ####################
 # the remainder of the sections configure individual tracks

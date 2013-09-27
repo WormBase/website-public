@@ -121,6 +121,26 @@ sub _build_type {
 # laboratory { }
 # Supplied by Role
 
+sub partial{
+    my ($self) = @_;
+    my $cds = $self->object;
+    
+    my $data = defined $cds->get('Start_not_found') || defined $cds->get('End_not_found') ?
+        sprintf("%s%s%s not found", 
+            defined $cds->get('Start_not_found') ? "start" : "",
+            defined $cds->get('Start_not_found') && defined $cds->get('End_not_found') ? " and " : "",
+            defined $cds->get('End_not_found') ? "end" : ""
+        ) : undef;
+    
+    print "start not found\n" if defined $cds->get('Start_not_found') ;
+    print "end not found\n" if defined $cds->get('End_not_found');
+    
+    return {
+        description => "Whether the start or end of the CDS is found",
+        data => $data
+    };
+}
+
 ############################################################
 #
 # The External Links widget

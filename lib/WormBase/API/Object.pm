@@ -504,6 +504,8 @@ sub _get_evidence {
               push(@evidences, map {$self->_pack_obj($_)} $ev->col);
             }
             next;
+          } elsif ($type eq 'Remark'){
+              $packed = "$evidence";
           } else {
               $packed = $self->_pack_obj($evidence);
           } 

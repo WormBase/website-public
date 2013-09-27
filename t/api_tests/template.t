@@ -48,7 +48,7 @@
         isnt($locus_name->{'data'}->{'id'}, undef, 'id specified');
         isnt($locus_name->{'data'}->{'label'}, undef, 'label specified');
         isnt($locus_name->{'data'}->{'taxonomy'}, undef, 'taxonomy specified');
-        is  ($locus_name->{'data'}->{'class'}, 'Gene', 'correct class fetched');
+        is  ($locus_name->{'data'}->{'class'}, 'gene', 'correct class fetched');
         is  ($locus_name->{'data'}->{'id'}, 'WBGene00006763', 'correct gene fetched');
         is  ($locus_name->{'data'}->{'taxonomy'}, 'c_elegans', 'species with associated gene correct');
     }

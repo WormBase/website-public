@@ -761,11 +761,18 @@ sub history {
 
     my @data;    
     foreach my $version ($object->History) {
-	my ($event,$prediction)  = $version->row(1);
-	push @data, { version    => "$version" || undef,
-		      event      => "$event" || undef,
-		      prediction => $prediction ? {id=>"$prediction", class=>'gene'} : undef, };
+        my $event  = $version->right;
+        
+        my @genes = $version->right->col;
+        foreach my $gene (@genes){
+            push @data, { 
+                version    => "$version" || undef,
+                event      => "$event" || undef,
+                prediction => $gene ? {id=>"$gene", class=>'gene'} : undef, 
+            };
+        }
     }
+    
     
     return { description => 'curatorial history of the protein',
 	     data        =>  @data ? \@data : undef };

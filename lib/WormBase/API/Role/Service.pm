@@ -114,6 +114,13 @@ has 'source' => (
     default  => 'c_elegans',
 );
 
+has 'species' => (
+    is       => 'rw',
+    isa      => 'Str',
+    required => 1,
+    default  => 'c_elegans',
+);
+
 around 'dbh' => sub {
     my $orig = shift;
     my $self = shift;

@@ -201,19 +201,6 @@ sub transcript {
     };
 }
 
-# pseudogene { }
-# This method will return a data structure with the pseudogenes annotated with the go_term.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/pseudogene
-
-sub pseudogene {
-    my $self      = shift;
-    my $data_pack = $self->_get_tag_data('Pseudogene');
-    return {
-        data        => $data_pack,
-        description => 'pseudogenes annotated with this term'
-    };
-}
-
 # anatomy_term { }
 # This method will return a data structure with the anatomy_terms annotated with the go_term.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term/GO:0032502/anatomy_term

@@ -24,7 +24,7 @@ has 'adaptor' => (
     lazy => 1,
     default => sub {
         my $self = shift;
-        return $self->conf->{data_sources}->{$self->source}->{adaptor};
+        return $self->conf->{data_sources}->{$self->species}->{adaptor};
     }
 );
 
@@ -35,7 +35,7 @@ has 'aggregators' => (
     default => sub {
         my $self = shift;
         my @array;
-        my $ret = $self->conf->{data_sources}->{$self->source}->{aggregator};
+        my $ret = $self->conf->{data_sources}->{$self->species}->{aggregator};
 
 	if ($ret =~ /ARRAY/) {
 	    push(@array, @$ret);
