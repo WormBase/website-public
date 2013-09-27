@@ -51,8 +51,8 @@ WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
 END;
 
 
-WRAPPER $field_block title="Microarray Expression Data";
-     '<a href="' _ site.external_urls.spell_wormbase.base _ '/spell/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
+WRAPPER $field_block title="Microarray, Tiling Array and RNAseq";
+     '<a href="' _ site.external_urls.spell_wormbase.base _ '/spell/search/">Perform Clustering Analysis in SPELL</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
 END;
 
 
