@@ -469,7 +469,7 @@ sub refers_to {
     my %data;
     foreach my $ref_type ($self->object->Refers_to) {
       # modified to just get count - breaking on large amounts of xrefs - AC
-      $data{$ref_type} = $self->_get_count($ref_type);
+      $data{$ref_type} = $self->_get_count($self->object, $ref_type);
 
       $data{$ref_type} = $self->_pack_objects([$ref_type->col]) if $data{$ref_type} < 10000;
         # Or build some data tables for different object types
