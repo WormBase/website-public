@@ -140,7 +140,7 @@
 
               window.location = "/logout";
             });
-          }s
+          }
         });
     }
     
