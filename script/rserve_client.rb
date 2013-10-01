@@ -11,10 +11,12 @@ rserve = Rserve::Connection.new
 STDIN.each { |line|
   begin
     # Feed the line to R and output the result.
-    puts rserve.eval(line).to_ruby
+    puts line
+    rserve.eval(line)
   rescue => error
     # If there was an error (a.k.a. "exception"), then print this instead
     # and exit this script with an error code of 1.
+    puts "WOOPS"
     puts "#{error}"
     exit 1
   end

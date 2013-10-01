@@ -548,11 +548,36 @@ sub merged_into {
 #
 #######################################
 
+sub fpkm_expression {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $rserve = $self->_api->_tools->{rserve};
+    print STDERR "rserve: $rserve\n";
+    my @fpkm_map = map { 
+        my @fpkm_table = $_->col;
+        map {
+            my @fpkm_entry = $_->row;
+            my $label = $fpkm_entry[2];
+            my $value = $fpkm_entry[0];
+            { label => "$label", value => "$value" }
+        } @fpkm_table;
+    } $object->RNASeq_FPKM;
+    return {
+        description => 'plot of Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
+        data        => $rserve->barchart(\@fpkm_map, {
+                                            xlabel => "Measurement",
+                                            ylabel => "FPKM",
+                                            width  => 900,
+                                            height => 1024
+                                        })->{uri}
+    };
+}
+
 # fourd_expression_movies { }
 # This method will return a data structure containing
 # links to four-dimensional expression movies.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
-
 sub fourd_expression_movies {
     my $self   = shift;
 
