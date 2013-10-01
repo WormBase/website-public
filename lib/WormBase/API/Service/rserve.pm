@@ -51,7 +51,7 @@ sub barchart {
     my $ylabel = $customization->{ylabel};
     my $width  = $customization->{width};
     my $height = $customization->{height};
-
+    my $rotate = $customization->{rotate} ? " + coord_flip()" : "";
 
     # Run the R program that plots the barchart:
     my $r_program = <<EOP
@@ -64,7 +64,7 @@ labels = c($label_list);
 values = c($value_list);
 data = data.frame(labels, values);
 $format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(labels, values, fill = values)) + geom_bar(stat="identity") + coord_flip() + labs(x = "$xlabel", y = "$ylabel"));
+print(ggplot(data, aes(labels, values, fill = values)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel"));
 dev.off();
 EOP
 ;

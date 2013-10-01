@@ -553,7 +553,6 @@ sub fpkm_expression {
     my $object = $self->object;
 
     my $rserve = $self->_api->_tools->{rserve};
-    print STDERR "rserve: $rserve\n";
     my @fpkm_map = map { 
         my @fpkm_table = $_->col;
         map {
@@ -563,13 +562,15 @@ sub fpkm_expression {
             { label => "$label", value => "$value" }
         } @fpkm_table;
     } $object->RNASeq_FPKM;
+
     return {
         description => 'plot of Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
         data        => $rserve->barchart(\@fpkm_map, {
-                                            xlabel => "Measurement",
-                                            ylabel => "FPKM",
-                                            width  => 900,
-                                            height => 1024
+                                            xlabel => WormBase::Web->config->{fpkm_expression_barchart_xlabel},
+                                            ylabel => WormBase::Web->config->{fpkm_expression_barchart_ylabel},
+                                            width  => WormBase::Web->config->{fpkm_expression_barchart_width},
+                                            height => WormBase::Web->config->{fpkm_expression_barchart_height},
+                                            rotate => WormBase::Web->config->{fpkm_expression_barchart_rotate}
                                         })->{uri}
     };
 }
