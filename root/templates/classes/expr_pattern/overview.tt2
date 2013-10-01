@@ -37,7 +37,7 @@ PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_i
 '<br />';
 
 IF fields.ep_movies.data.size > 0;
-    WRAPPER toggle title="<b>View Curated Movies</b>" ;
+    WRAPPER toggle title="<b>View Movies</b>" ;
 
         FOR movie IN fields.ep_movies.data;
             movie_path = c.config.static_movie_base _ '/' _ movie;
