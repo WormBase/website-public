@@ -63,8 +63,12 @@ library("ggplot2");
 labels = c($label_list);
 values = c($value_list);
 data = data.frame(labels, values);
+
+# Preserve ordering:
+data\$labels = factor(labels, levels = labels, ordered = TRUE)
+
 $format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(labels, values, fill = values)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel"));
+print(ggplot(data, aes(labels, values, fill = values)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 17), axis.text = element_text(colour = 'black')));
 dev.off();
 EOP
 ;

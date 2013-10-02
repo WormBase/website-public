@@ -563,6 +563,51 @@ sub fpkm_expression {
         } @fpkm_table;
     } $object->RNASeq_FPKM;
 
+    # Sort by developmental stage:
+    @fpkm_map = sort {
+        my @sides = ($a, $b);
+        my @label_value = (50, 50); # Entries that cannot be matched to the regexps will go to the bottom of the barchart.
+        for my $i (0 .. 1) {
+            # UNAPPLIED
+            # Possible keywords? Not seen in data yet (browsing only).
+            #$label_value[$i] =  0 if ($sides[$i]->{label} =~ m/gastrula/i);
+            #$label_value[$i] =  1 if ($sides[$i]->{label} =~ m/comma/i);
+            #$label_value[$i] =  2 if ($sides[$i]->{label} =~ m/15_fold/i);
+            #$label_value[$i] =  3 if ($sides[$i]->{label} =~ m/2_fold/i);
+            #$label_value[$i] =  4 if ($sides[$i]->{label} =~ m/3_fold/i);
+
+            # EMBRYO STAGES
+            $label_value[$i] = 30 if ($sides[$i]->{label} =~ m/embryo/i); # May be overwritten by the next two rules.
+            if ($sides[$i]->{label} =~ m/\.([0-9]+)-cell_embryo/) {
+                # Assuming an upper bound of 40 cells (for ordering below).
+                $sides[$i]->{label} =~ /\.([0-9]+)-cell_embryo/;
+                $label_value[$i] = "$1";
+            }
+            $label_value[$i] =  0 if ($sides[$i]->{label} =~ m/early_embryo/i);
+            $label_value[$i] = 40 if ($sides[$i]->{label} =~ m/late_embryo/i);
+
+            # LARVA STAGES
+            $label_value[$i] = 41 if ($sides[$i]->{label} =~ m/L1_(l|L)arva/);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L2_(l|L)arva/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/L2d_(l|L)arva/i);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L3_(l|L)arva/);
+            $label_value[$i] = 45 if ($sides[$i]->{label} =~ m/L4_(l|L)arva/);
+
+            # DAUER STAGES
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/dauer/i); # May be overwritten by the next two rules.
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/dauer_entry/);
+            $label_value[$i] = 44 if ($sides[$i]->{label} =~ m/dauer_exit/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/predauer/i);
+
+            # ADULTHOOD
+            $label_value[$i] = 10 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
+            $label_value[$i] =  9 if ($sides[$i]->{label} =~ m/young_adult/);
+        }
+
+        # Reversed comparison, so that early stages appear at the top of the barchart.
+        return $label_value[1] <=> $label_value[0];
+    } @fpkm_map;
+
     return {
         description => 'plot of Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
         data        => $rserve->barchart(\@fpkm_map, {
