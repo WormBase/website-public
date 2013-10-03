@@ -29,7 +29,6 @@ with 'WormBase::API::Role::Object';
 sub barchart {
     my ($self, $data, $customization) = @_;
 
-
     # Setup output file:
     my $format = "png";
     my $uuid_generator = new Data::UUID;
@@ -39,12 +38,15 @@ sub barchart {
 
     my @labels = ();
     my @values = ();
+    my @projects = ();
     foreach my $datum (@$data) {
         push(@labels, '"' . $datum->{label} . '"');
         push(@values, $datum->{value});
+        push(@projects, '"' . $datum->{project} . '"');
     }
     my $label_list = join(", ", @labels);
     my $value_list = join(", ", @values);
+    my $project_list = join(", ", @projects);
 
     # Pretty-ization:
     my $xlabel = $customization->{xlabel};
@@ -62,13 +64,14 @@ useDefaults(q);
 library("ggplot2");
 labels = c($label_list);
 values = c($value_list);
-data = data.frame(labels, values);
+projects = c($project_list);
+data = data.frame(labels, values, projects);
 
 # Preserve ordering:
 data\$labels = factor(labels, levels = labels, ordered = TRUE)
 
 $format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(labels, values, fill = values)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 17), axis.text = element_text(colour = 'black')));
+print(ggplot(data, aes(x = labels, y = values, fill = projects)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 17), axis.text = element_text(colour = 'black')) + scale_fill_brewer(palette = "Dark2"));
 dev.off();
 EOP
 ;

@@ -559,12 +559,18 @@ sub fpkm_expression {
             my @fpkm_entry = $_->row;
             my $label = $fpkm_entry[2];
             my $value = $fpkm_entry[0];
-            { label => "$label", value => "$value" }
+            my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
+            { label => "$label", value => "$value", project => "$project" }
         } @fpkm_table;
     } $object->RNASeq_FPKM;
 
-    # Sort by developmental stage:
+    # Sort by project (primary order) and developmental stage (secondary order):
     @fpkm_map = sort {
+        # Primary sorting order: project
+        # Reverse comparison, so that projects that come first in the alphabet appear at the top of the barchart.
+        return $b->{project} cmp $a->{project} if $a->{project} ne $b->{project};
+
+        # Secondary sorting order: developmental stage
         my @sides = ($a, $b);
         my @label_value = (50, 50); # Entries that cannot be matched to the regexps will go to the bottom of the barchart.
         for my $i (0 .. 1) {
