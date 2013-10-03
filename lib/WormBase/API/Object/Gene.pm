@@ -606,8 +606,8 @@ sub fpkm_expression {
             $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/predauer/i);
 
             # ADULTHOOD
-            $label_value[$i] = 10 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
-            $label_value[$i] =  9 if ($sides[$i]->{label} =~ m/young_adult/);
+            $label_value[$i] = 47 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
+            $label_value[$i] = 46 if ($sides[$i]->{label} =~ m/young_adult/);
         }
 
         # Reversed comparison, so that early stages appear at the top of the barchart.
