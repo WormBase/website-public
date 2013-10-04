@@ -333,8 +333,7 @@ sub lab_info {
 			lab 	=> $self->_pack_obj($lab),
 			strain 	=> $self->_pack_obj($lab),
 			allele 	=> $lab->Allele_designation && $lab->Allele_designation->asString,
-			rep		=> $self->_pack_obj($lab->Representative,
-										$lab->Representative->Standard_name)
+			rep		=> $self->_pack_obj($lab->Representative)
 		});
 	}
 	
