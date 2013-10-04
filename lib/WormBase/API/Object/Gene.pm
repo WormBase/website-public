@@ -554,13 +554,19 @@ sub fpkm_expression {
 
     my $rserve = $self->_api->_tools->{rserve};
     my @fpkm_map = map { 
+        my $life_stage = "$_";
         my @fpkm_table = $_->col;
         map {
             my @fpkm_entry = $_->row;
             my $label = $fpkm_entry[2];
             my $value = $fpkm_entry[0];
             my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
-            { label => "$label", value => "$value", project => "$project" }
+            {
+                label => "$label",
+                value => "$value",
+                project => "$project",
+                life_stage => $life_stage
+            }
         } @fpkm_table;
     } $object->RNASeq_FPKM;
 
