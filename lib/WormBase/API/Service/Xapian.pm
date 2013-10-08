@@ -222,7 +222,7 @@ sub _split_fields {
   my ($self, $c, $ret, $data) = @_;
 
   $data =~ s/\\([\;\/\\%\"])/$1/g;
-  while($data =~ m/^([\S]*)[=](.*)[\n]([\s\S]*)$/){
+  while($data =~ m/^([^=\s]*)[=](.*)[\n]([\s\S]*)$/){
     my ($d, $label) = ($2, $1);
     my $array = $ret->{$label} || ();
     $data = $3;
