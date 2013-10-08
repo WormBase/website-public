@@ -167,10 +167,10 @@
         species = species == 'all' ? 'c_elegans' : species;
         FOREACH bioproject IN c.config.sections.species_list.$species.bioprojects.keys;
           IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-              gbrowse_url(species, item.name.class _ ":" _ item.name.id, bioproject);
+              url = gbrowse_url(species, item.name.class _ ":" _ item.name.id, bioproject);
               linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
           ELSIF(!search);
-              gbrowse_url(species, '', bioproject);
+              url = gbrowse_url(species, '', bioproject);
               linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
           END;
         END;
