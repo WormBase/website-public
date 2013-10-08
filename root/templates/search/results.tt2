@@ -44,7 +44,7 @@
     data-search='{"query": "[% query_uri %]","type": "[% type %]", "species": "[% species %]", "widget": "[% widget %]", "nostar": "[% nostar || 0 %]", "count": "[% count %]" }'>
   [% UNLESS no_count %]
     [% IF results.size > 0 %]
-    [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title FILTER lcfirst %]
+    [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title %]
 
       <div id="fade">about <span id="count">[% c.stash.count %]</span> 
         [% UNLESS type == 'all'; pluralize(lowerClass, results.size) _ ' found'; ELSE; 'results'; END; %]
