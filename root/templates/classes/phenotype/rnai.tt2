@@ -4,7 +4,7 @@ IF fields.rnai.data.defined;
 
     WRAPPER $field_block  title="" key="rnai";
        '<span class="caveat-emptor">Gene knockdown via RNAi results in the ' 
-               _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
+               _ tag2link(object.name.data) _ ' phenotype in these experiments.</span><br />';
 
 	build_data_table (
 		order = [ 
@@ -23,7 +23,8 @@ IF fields.rnai.data.defined;
 			genotype => 'Genotype',
 			treatment => 'Treatment'
 			},
-		key = 'rnai');
+		key = 'rnai',
+		classsearch='rnai');
     END;	
 
 ELSE;
@@ -35,7 +36,7 @@ END;
 IF fields.rnai_not.data.defined;
 
     WRAPPER $field_block  title="" key="rnai_not";
-       '<span class="caveat-emptor">Gene knockdown via RNAi DOES NOT result in the ' _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
+       '<span class="caveat-emptor">Gene knockdown via RNAi DOES NOT result in the ' _ tag2link(object.name.data) _ ' phenotype in these experiments.</span><br />';
 	
 	build_data_table (
 		order = [ 
