@@ -621,14 +621,17 @@ sub fpkm_expression {
     } @fpkm_map;
 
     return {
-        description => 'plot of Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
-        data        => $rserve->barchart(\@fpkm_map, {
-                                            xlabel => WormBase::Web->config->{fpkm_expression_barchart_xlabel},
-                                            ylabel => WormBase::Web->config->{fpkm_expression_barchart_ylabel},
-                                            width  => WormBase::Web->config->{fpkm_expression_barchart_width},
-                                            height => WormBase::Web->config->{fpkm_expression_barchart_height},
-                                            rotate => WormBase::Web->config->{fpkm_expression_barchart_rotate}
-                                        })->{uri}
+        description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
+        data        => {
+            plot => $rserve->barchart(\@fpkm_map, {
+                                                    xlabel => WormBase::Web->config->{fpkm_expression_barchart_xlabel},
+                                                    ylabel => WormBase::Web->config->{fpkm_expression_barchart_ylabel},
+                                                    width  => WormBase::Web->config->{fpkm_expression_barchart_width},
+                                                    height => WormBase::Web->config->{fpkm_expression_barchart_height},
+                                                    rotate => WormBase::Web->config->{fpkm_expression_barchart_rotate}
+                                     })->{uri},
+            table => { fpkm => { data => \@fpkm_map } }
+        }
     };
 }
 

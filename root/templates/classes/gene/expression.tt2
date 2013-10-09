@@ -70,7 +70,15 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
 END;
 
 WRAPPER $field_block title="FPKM expression data" key="fpkm_expression";
-    '<img width="100%" src="' _ fields.fpkm_expression.data _ '" alt="FPKM expression data plot"></img>';
+    '<img width="100%" src="' _ fields.fpkm_expression.data.plot _ '" alt="FPKM expression data plot"></img>';
+    build_data_table(order = ['label', 'project', 'life_stage', 'value'],
+                     columns = {
+                         label => 'Name',
+                         project => 'Project',
+                         life_stage => 'Life Stage',
+                         value => 'FPKM value'
+                     },
+                     passed_data = fields.fpkm_expression.data.table.fpkm.data);
 END;
 %]
 <script type="text/javascript" >
