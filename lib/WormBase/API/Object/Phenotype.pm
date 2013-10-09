@@ -151,7 +151,7 @@ sub rnai {
     my $object    = $self->object;
     my $data_pack = $self->_rnai('RNAi');
     return {
-        'data'        => @$data_pack ? $data_pack : undef,
+        'data'        => $data_pack,
         'description' => 'RNAi experiments associated with this phenotype'
     };
 }
@@ -165,7 +165,7 @@ sub rnai_not {
     my $object    = $self->object;
     my $data_pack = $self->_rnai('Not_in_RNAi');
     return {
-        data        => @$data_pack ? $data_pack : undef,
+        data        => $data_pack,
         description => 'rnais not associated with this phenotype'
     };
 }
@@ -481,16 +481,15 @@ sub _rnai {
     my $tag    = shift;
     my $object = $self->object;
     my @data_pack;
-    my @tag_objects = $object->$tag;
-    
+    my $count = $self->_get_count($object, $tag);
+
+    my @tag_objects = $object->$tag if $count < 650;
+
     foreach my $tag_object (@tag_objects) {
         my $tag_info      = $self->_pack_obj($tag_object);
-
-
-#	my @genes    = map { $self->_pack_obj($_,$_->Public_name) } $tag_object->Gene;
-	my @genes = $tag_object->Gene;
-	my $strain   = $tag_object->Strain;
-	$strain = $strain ? $self->_pack_obj($strain) : undef;
+        my @genes = $tag_object->Gene;
+        my $strain   = $tag_object->Strain;
+        $strain = $strain ? $self->_pack_obj($strain) : undef;
         my $sequence      = $tag_object->Sequence;
         my $sequence_info = $self->_pack_obj( $tag_object->Sequence )
           if $tag_object->Sequence;
@@ -499,22 +498,18 @@ sub _rnai {
         my $genotype =   $tag_object->Genotype;
         my $treatment = $tag_object->Treatment;
         push @data_pack,
-#	{
-#            experiment     => $tag_info,
-#	    genotype       => "$genotype",
-#	    genes          => join(", ",@genes),
-#	    strain         => $strain,
-#	};
-	{
-	    rnai     => $tag_info,
+
+        {
+            rnai     => $tag_info,
             sequence => $sequence_info,
             species  => $species_info,
             genotype => $genotype && "$genotype",
             treatment => $treatment && "$treatment",
-	    strain    => $strain,		
-	};
+            strain    => $strain,
+        };
     }
-    return \@data_pack;
+
+    return @data_pack ? \@data_pack : $count ? "$count found" : undef;
 }
 
 sub _get_json_data {

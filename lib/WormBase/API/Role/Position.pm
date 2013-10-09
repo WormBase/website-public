@@ -141,11 +141,11 @@ sub _seg2posURLpart {
 
     # Create padded coordinates suitable for generating a GBrowse image
     my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $stop, pad_for_gbrowse => 1);
-
     # Use the ACTUAL feature coordinates for the label, not the GBrowse coordinates.
     return {
-	label      => $self->_format_coordinates(ref => $ref, start => $start, stop => $stop),
-        id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
+        label      => $self->_format_coordinates(ref => $ref, start => $start, stop => $stop),
+        id         =>  $position,
+        taxonomy    => $self->_parsed_species,
         class      => 'genomic_location',
         pos_string => $position, # independent from label -- label may change in the future
     };

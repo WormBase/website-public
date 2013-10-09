@@ -86,10 +86,7 @@
         ELSIF (class == 'page');
           id;
         ELSIF (class == 'genomic_location');
-	     # In this context, uri_for() is escaping the /? in id, breaking the URL.
-	     # Would be preferable to modify creation of id, then pass it in as a query parameter perhaps?
-#           c.uri_for('/tools', 'genome', 'gbrowse', id).path;
-	    '/tools/genome/gbrowse/' _ id;
+          gbrowse_url(taxonomy, id);
         ELSIF (class == 'txt');
           '';
         ELSIF !(c.config.sections.resources.$class.defined);
@@ -142,6 +139,17 @@
       cls.match('sequence|protein|transcript|cds|clone');
     END;
 
+    # generate the gbrowse url. Figure out which bioproject (cannonical) to use if none supplied
+    # generates the gbrowse_img link if image = 1
+    MACRO gbrowse_url(taxonomy, id, bioproject, image) BLOCK;
+      IF !bioproject && c.config.sections.species_list.$taxonomy;
+        FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
+          bioproject = bp IF (!bioproject || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+        END;
+      END;
+      c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), (bioproject ? taxonomy _ '_' _ bioproject : taxonomy)).path _ (id ? '?name=' _ id : '');
+    END;
+
 
     MACRO gbrowselink(data, label, search) BLOCK;
       valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
@@ -158,13 +166,13 @@
         linkouts = [];
         species = species == 'all' ? 'c_elegans' : species;
         FOREACH bioproject IN c.config.sections.species_list.$species.bioprojects.keys;
-        IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-            url = c.uri_for('/tools', 'genome', 'gbrowse', species _ '_' _ bioproject).path _ '?name=' _ item.name.class _ ":" _ item.name.id;
-            linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
-        ELSIF(!search);
-            url = c.uri_for('/tools', 'genome', 'gbrowse', species _ '_' _ bioproject).path;
-            linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
-        END;
+          IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
+              url = gbrowse_url(species, item.name.class _ ":" _ item.name.id, bioproject);
+              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
+          ELSIF(!search);
+              url = gbrowse_url(species, '', bioproject);
+              linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
+          END;
         END;
         linkouts.join(' ');
       END;
