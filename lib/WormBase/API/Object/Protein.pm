@@ -582,7 +582,10 @@ sub pfam_graph {
 		$graph_hash->{end} = $obj->{end};
 		$graph_hash->{startStyle} = "straight";
 		$graph_hash->{endStyle} = "straight";
-		$graph_hash->{text} = ucfirst(substr($desc,0,3));
+        
+        # if the description begins with the word 'Major' generate and acronym
+        # otherwise, use first three letters 
+		$graph_hash->{text} = $desc =~ m/^major/i ? uc(join('', $desc =~ m/\b([A-Za-z])/g)) : ucfirst(substr($desc,0,3));
 		$graph_hash->{metadata}->{end} = $obj->{end};
 	    }
 
