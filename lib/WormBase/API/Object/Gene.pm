@@ -548,8 +548,14 @@ sub merged_into {
 #
 #######################################
 
+sub fpkm_expression_summary_ls {
+    my $self = shift;
+    return $self->fpkm_expression('summary_ls');
+}
+
 sub fpkm_expression {
     my $self = shift;
+    my $mode = shift;
     my $object = $self->object;
 
     my $rserve = $self->_api->_tools->{rserve};
