@@ -560,7 +560,7 @@ sub fpkm_expression {
 
     my $rserve = $self->_api->_tools->{rserve};
     my @fpkm_map = map { 
-        my $life_stage = "$_";
+        my $life_stage = $_->Public_name;
         my @fpkm_table = $_->col;
         map {
             my @fpkm_entry = $_->row;
@@ -626,16 +626,29 @@ sub fpkm_expression {
         return $label_value[1] <=> $label_value[0];
     } @fpkm_map;
 
+    my $plot;
+    if ($mode eq 'summary_ls') {
+        $plot = $rserve->boxplot(\@fpkm_map, {
+                                    xlabel => WormBase::Web->config->{fpkm_expression_barchart_xlabel},
+                                    ylabel => WormBase::Web->config->{fpkm_expression_barchart_ylabel},
+                                    width  => WormBase::Web->config->{fpkm_expression_barchart_width},
+                                    height => WormBase::Web->config->{fpkm_expression_barchart_height},
+                                    rotate => WormBase::Web->config->{fpkm_expression_barchart_rotate}
+                                 })->{uri};
+    } else {
+        $plot = $rserve->barchart(\@fpkm_map, {
+                                    xlabel => WormBase::Web->config->{fpkm_expression_barchart_xlabel},
+                                    ylabel => WormBase::Web->config->{fpkm_expression_barchart_ylabel},
+                                    width  => WormBase::Web->config->{fpkm_expression_barchart_width},
+                                    height => WormBase::Web->config->{fpkm_expression_barchart_height},
+                                    rotate => WormBase::Web->config->{fpkm_expression_barchart_rotate}
+                                 })->{uri};
+    }
+
     return {
         description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
         data        => {
-            plot => $rserve->barchart(\@fpkm_map, {
-                                                    xlabel => WormBase::Web->config->{fpkm_expression_barchart_xlabel},
-                                                    ylabel => WormBase::Web->config->{fpkm_expression_barchart_ylabel},
-                                                    width  => WormBase::Web->config->{fpkm_expression_barchart_width},
-                                                    height => WormBase::Web->config->{fpkm_expression_barchart_height},
-                                                    rotate => WormBase::Web->config->{fpkm_expression_barchart_rotate}
-                                     })->{uri},
+            plot => $plot,
             table => { fpkm => { data => \@fpkm_map } }
         }
     };
