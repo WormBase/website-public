@@ -67,8 +67,6 @@ sub current_assemblies {
     # represented by linking from the live Sequence_collection
     # to others.
     my $data = $self->_get_assemblies('current');  
-    use Data::Dumper;
-    Dumper($data);
     return {
         description => "current genomic assemblies",
         data => @$data ? $data : undef
@@ -100,16 +98,14 @@ sub _get_assemblies {
     my @assemblies = $object->Assembly;
     my @data;
     foreach (@assemblies) {
-        next if $_->Status eq 'Dead' || $_->Status eq 'Suppressed';
+        next if ($type eq 'current' && ($_->Status eq 'Dead' || $_->Status eq 'Suppressed'));
 
         # Starting from live and working backwards.
         if (($type eq 'previous') && ($_->Supercedes)) {
             push @assemblies,$_->Supercedes;
         }
 
-        push @data,$self->_process_assembly($_)
-        unless ($_->Status eq 'Live' && $type eq 'previous');
-
+        push @data,$self->_process_assembly($_) unless ($_->Status eq 'Live' && $type eq 'previous');
     }
     
     return \@data;   
