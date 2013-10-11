@@ -126,11 +126,16 @@ sub _process_assembly {
     my $status        = $superceded_by ? 'superceded' : 'current';
 
     my $wb_range      = 
-	"WS" . $assembly->First_WS_release . ' - '
-	. ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
-	
+    "WS" . $assembly->First_WS_release . ' - '
+    . ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
+
+    my $label = $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 });
+    my $object = $self->object;
+    my ($g, $species) = $object =~ /(.).*[ _](.+)/o;
+    $label->{taxonomy} = lc "${g}_$species";
+
     my $data = { 
-        name => $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 }),
+        name => $label,
         sequenced_strain  => $self->_pack_obj($assembly->Strain),
         first_wb_release  => "WS" . $assembly->First_WS_release,
         latest_wb_release => "WS" . $assembly->Latest_WS_release,
