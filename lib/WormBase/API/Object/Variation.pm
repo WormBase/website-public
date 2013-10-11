@@ -645,6 +645,7 @@ sub nucleotide_change {
     
     # Nucleotide change details (from ace)
     my $variations = $self->_compile_nucleotide_changes($self->object);
+
     return {
         description => 'raw nucleotide changes for this variation',
         data        => @$variations ? $variations : undef,
@@ -1678,6 +1679,18 @@ sub _build_sequence_strings {
         $mutation_length = length($wt_plus);
     }
 
+    # test if the wildtype seq matches its location in the dna
+    my $dna_span = substr($dna, $mutation_start, $mutation_length);
+    if( uc($wt_plus) ne uc($dna_span) ){
+        my $rc_wt_plus = &reverse_complement($wt_plus);
+        if( uc($rc_wt_plus) eq uc($dna_span) ){
+            $wt_plus = $rc_wt_plus;
+            $mut_plus = &reverse_complement($mut_plus);
+        }else{
+            die "Neither wild type sequence [".$wt_plus."] nor reverse complment matches DNA [".$dna_span."]";
+        }
+    }
+
     # TODO: Make the snippet length configurable.
     my $SNIPPET_LENGTH = 100;
     $flank ||= $SNIPPET_LENGTH;
@@ -1724,10 +1737,22 @@ sub _build_sequence_strings {
     # else {
     my $wt_seq  = lc join('',$left_flank,$wt_plus,$right_flank);
     my $mut_seq = lc join('',$left_flank,$mut_plus,$right_flank);
+
+
     return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
     # }
 }
 
+sub reverse_complement {
+        my $dna = shift;
+
+    # reverse the DNA sequence
+        my $revcomp = reverse($dna);
+
+    # complement the reversed DNA sequence
+        $revcomp =~ tr/ACGTacgt/TGCAtgca/;
+        return $revcomp;
+}
 
 __PACKAGE__->meta->make_immutable;
 

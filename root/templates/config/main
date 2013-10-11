@@ -370,7 +370,7 @@
     END;
 
     MACRO markup(text, omim, locus, var, link) BLOCK;
-      UNLESS(text.match(".*\\<[^>]+>.*"));
+      UNLESS(text.match(".*\\<[^>]+>.*")); # don't markup html... only text
         text = markup_linkouts(text);
         UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
         UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
