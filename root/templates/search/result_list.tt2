@@ -56,15 +56,16 @@
         # Lots of variations of something that might be a description.
         text.push(item.title.join(", "))                    IF item.title;
         text.push(item.type.join(", "))                     IF item.type;
-        text.push(item.description.join("<br />"))          IF item.description;
-        text.push(item.definition.join("<br />"))           IF item.definition;
-        text.push(item.remark.join("<br />"))               IF item.remark;
-        text.push(item.summary.join("<br />"))              IF item.summary;
-        mystring = text.join("<br>");
+        # use &#13; as a placeholder for linebreak so we can markup the html
+        text.push(item.description.join(' &#13; '))          IF item.description;
+        text.push(item.definition.join(' &#13; '))           IF item.definition;
+        text.push(item.remark.join(' &#13; '))               IF item.remark;
+        text.push(item.summary.join(' &#13; '))              IF item.summary;
+        mystring = markup(text.join(' &#13; ')).replace('&#13;', '<br />');
 
         IF mystring %]
         <div class="text-min">
-           [% mystring %]    
+           [% mystring %]
         </div>
         [% END; %]
      <span id="fade">[% item.footer %]</span>

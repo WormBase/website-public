@@ -920,34 +920,26 @@ sub print_sequence {
     my @data;
     my $gff = $self->gff || goto END;
     my $seq_obj;
-    if ($self->_parsed_species =~ /briggsae/) {
-		($seq_obj) = sort {$b->length<=>$a->length}
-		$self->type =~ /^(genomic|confirmed gene|predicted coding sequence)$/i
-		? grep {$_->method eq 'wormbase_cds'} $gff->fetch_group(Transcript => $s),
-	    : '';
-    }
-	else {
 
-	    # Genomic clones need to be fetched a bit differently.	    
-	    if ($s->class =~ /Sequence|Clone/i) {
-		# We will fetch from acedb below
-	    } else {
-		($seq_obj) = sort {$b->length<=>$a->length}
-		grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
+    # Genomic clones need to be fetched a bit differently.	    
+    if ($s->class =~ /Sequence|Clone/i) {
+	# We will fetch from acedb below
+    } else {
+	($seq_obj) = sort {$b->length<=>$a->length}
+	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
 # 		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
-		
-		# BLECH!  If provided with a gene ID and alt splices are present just guess
-		# and fetch the first CDS or Transcript
-		# We really should display a list for all of these.
+	
+	# BLECH!  If provided with a gene ID and alt splices are present just guess
+	# and fetch the first CDS or Transcript
+	# We really should display a list for all of these.
 
-		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		  	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
+	($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+	  	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
 # 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
-		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
+	($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+	 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
 # 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
-	    }
-	}
+    }
     
     ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
     # Haven't fetched a GFF segment? Try Ace.
