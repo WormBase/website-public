@@ -181,6 +181,12 @@
     search    = 'http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=%s'
   }
 
+  ChemIDplus = {
+    description  = 'ChemIDplus is a free, web-based search system that provides access to structure and nomenclature authority files used for the identification of chemical substances cited in National Library of Medicine (NLM) databases, including the TOXNET system. ChemIDplus also provides structure searching and direct links to many biomedical resources at NLM and on the Internet for chemicals of interest. The database contains over 388,000 chemical records, of which over 295,000 include chemical structures, and is searchable by Name, Synonym, CAS Registry Number, Molecular Formula, Classification Code, Locator Code, Structure, Toxicity, and/or Physical properties.'
+    base    = 'http://chem.sis.nlm.nih.gov/chemidplus/chemidlite.jsp'
+    search    = 'http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=%s'
+  }
+  
   ColdSpringHarborLabPress = {
     description = 'Cold Spring Harbor Lab Press'
     base =     'http://www.cshlpress.com/'
@@ -475,6 +481,12 @@
     search    = 'http://www.genome.jp/dbget-bin/www_bget?%s'
   }
 
+  KEGG Compound = {
+    description  = 'The KEGG Compound Database contains chemical compounds that are manually entered from published materials.  This database is one of many main databases part of the KEGG integrated database resource.'
+    base    = 'http://www.genome.jp/kegg'
+    search    = 'http://www.genome.jp/dbget-bin/www_bget?cpd:%s'
+  }
+  
   MaryAnnLiebertInc = {
     description = 'Mary Ann Liebert Inc'
     base =     'http://www.liebertpub.com/'
@@ -757,6 +769,12 @@
     base    = 'http://genome-www4.stanford.edu'
   }
 
+  SMID-DB = {
+    description = 'This database assigns unique Small Molecule IDentifiers to small molecules that are newly identified from an organism or a biological environment. These IDs refer to the general structural class of the compound, which permit database searching for small molecule metabolites in the same manner as for genes.'
+    base =     'http://smid-db.org'
+    search = 'http://smid-db.org/search?term=%s'
+  }
+  
   SocietyofNeuroscience = {
     description = 'Society of Neuroscience'
     base =     'www.sfn.org'
