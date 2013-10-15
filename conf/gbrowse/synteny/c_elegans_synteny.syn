@@ -48,12 +48,12 @@ glyph        = generic
 strand_arrow = 1
 feature      = CDS
 
-[GERP]
-feature      = microarray_oligo
-glyph        = wiggle_xyplot
-description  = 1
-label        = 1
-height       = 10
-graph_type   = line
-bgcolor      = black
-bicolor_pivot = 1
+#[GERP]
+#feature      = microarray_oligo
+#glyph        = wiggle_xyplot
+#description  = 1
+#label        = 1
+#height       = 10
+#graph_type   = line
+#bgcolor      = black
+#bicolor_pivot = 1
