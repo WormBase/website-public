@@ -170,7 +170,7 @@ data = data.frame(labels, values, projects, life_stages);
 data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE)
 
 $format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(factor(life_stages), y = values, fill = projects)) + geom_boxplot()$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 17), axis.text = element_text(colour = 'black')) + scale_fill_brewer(palette = "Dark2"));
+print(ggplot(data, aes(factor(life_stages), y = values, fill = projects)) + geom_boxplot()$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 19), axis.text = element_text(colour = 'black')) + scale_fill_brewer(palette = "Dark2"));
 dev.off();
 EOP
 ;
