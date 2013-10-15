@@ -481,7 +481,7 @@
     search    = 'http://www.genome.jp/dbget-bin/www_bget?%s'
   }
 
-  KEGG Compound = {
+  'KEGG Compound' = {
     description  = 'The KEGG Compound Database contains chemical compounds that are manually entered from published materials.  This database is one of many main databases part of the KEGG integrated database resource.'
     base    = 'http://www.genome.jp/kegg'
     search    = 'http://www.genome.jp/dbget-bin/www_bget?cpd:%s'
@@ -769,7 +769,7 @@
     base    = 'http://genome-www4.stanford.edu'
   }
 
-  SMID-DB = {
+  'SMID-DB' = {
     description = 'This database assigns unique Small Molecule IDentifiers to small molecules that are newly identified from an organism or a biological environment. These IDs refer to the general structural class of the compound, which permit database searching for small molecule metabolites in the same manner as for genes.'
     base =     'http://smid-db.org'
     search = 'http://smid-db.org/search?term=%s'
