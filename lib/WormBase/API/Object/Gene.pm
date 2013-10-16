@@ -124,6 +124,7 @@ sub _build__phenotypes {
     my %phenotypes;
 
     foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
+
         my $type_name; #label that shows in the evidence column above each list of that object type
         if ($type =~ /Transgene/) { $type_name = 'Transgene:'; } 
         elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
@@ -144,7 +145,9 @@ sub _build__phenotypes {
             my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
 
             foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
+
                 foreach ($obj->$obs){
+
                     $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
                     my $evidence = $self->_get_evidence($_);
                     # add some additional information for RNAis
@@ -152,6 +155,8 @@ sub _build__phenotypes {
                         $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
                         my $genotype = $obj->Genotype;	
                         $evidence->{Genotype} = "$genotype" if $genotype;
+                        my $strain = $obj->Strain;
+                        $evidence->{Strain} = "$strain" if $strain;
                     }
                     push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
                 }
