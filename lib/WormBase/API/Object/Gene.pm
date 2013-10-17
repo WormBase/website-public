@@ -1826,7 +1826,7 @@ sub _build__segments {
     my $object = $self->object;
     my $species = $object->Species;
 
-    eval {$dbh->segment()}; return \@segments if $@;
+    $dbh->segment();
 
     # Yuck. Still have some species specific stuff here.
 
