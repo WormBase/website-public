@@ -19,6 +19,9 @@ WRAPPER $field_block title="Identity" key='identity';
 END;
 
 
+WRAPPER $field_block title="Gene history" key="gene_history";
+    tags2link(fields.gene_history.data);
+END;
 
 remarks;
 
@@ -38,4 +41,9 @@ remarks;
                                       length_protein => 'Protein<br />Length (aa)'},
                           passed_data = fields.corresponding_all.data,
                           key = 'gene_models_constructed' );
+
+
+
 %]
+
+
