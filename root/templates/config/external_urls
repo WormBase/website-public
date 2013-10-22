@@ -444,7 +444,7 @@
 	search      = 'http://jgp.rupress.org/content/%s'
 	}
 
- JournalofHistochemistry&Cytochemistry = {
+ 'JournalofHistochemistry&Cytochemistry' = {
 	description = 'Journal of Histochemistry & Cytochemistry'
 	base        = 'http://jhc.sagepub.com/'
 	search      = 'http://jhc.sagepub.com/content/%s'
