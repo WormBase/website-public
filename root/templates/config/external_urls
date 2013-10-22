@@ -227,7 +227,7 @@
 	search      = 'http://www.sciencedirect.com/science/article/pii/%s'
 	}
  
- DiseaseModels&Mechanisms = {
+ 'DiseaseModels&Mechanisms' = {
 	description = 'Disease Models & Mechanisms'
 	base        = 'http://dmm.biologists.org/'
 	search      = 'http://dmm.biologists.org/content/%s'
