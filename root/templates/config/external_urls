@@ -945,3 +945,13 @@
 # The DOI resolver for WormBook chapters
 $DOI             = 'http://dx.doi.org/';
 %]
+
+[% 
+	#lowercase all the entries for case-insensitive lookup
+	FOREACH key IN site.external_urls.keys;
+		lkey = key.lower;
+		site.external_urls.$lkey = site.external_urls.$key;
+		site.external_urls.delete($key);
+	END;
+
+%]
