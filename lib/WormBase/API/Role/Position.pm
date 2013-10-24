@@ -269,7 +269,7 @@ sub _build_genetic_position {
 
     return {
         description => "Genetic position of $class:$object",
-        data => ( $self->make_genetic_position_object($class, $object, $chromosome, $position, $error, $method)->{'data'} )
+        data => [ $self->make_genetic_position_object($class, $object, $chromosome, $position, $error, $method)->{'data'} ]
     };
 }
 
