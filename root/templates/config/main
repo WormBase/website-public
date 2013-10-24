@@ -104,8 +104,8 @@
       IF site.external_urls.$class.defined; 
           external_link(class, text, id);
       ELSIF id.match('CHROMOSOME');
-	  text;
-       ELSE;
+        text;
+      ELSE;
         url = get_url(class, id, taxonomy);
 
         IF class =='gene';
@@ -301,6 +301,7 @@
     MACRO match_link(link) BLOCK;
       IF !site.external_urls.defined(link);
         llink = link FILTER lower;
+        IF site.external_urls.defined(llink); link = llink; END;
         IF llink.match('^(sw|sptrembl|tr)$'); link = 'uniprot'; END;
       END;
       link;
