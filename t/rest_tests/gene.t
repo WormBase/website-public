@@ -48,6 +48,18 @@
         isnt($response->{'fields'}->{'best_blastp_matches'}->{'data'}->{'hits'}[5]->{'class'}, 'ENSEMBLE', 'Use the ENSEMBLE class - external linking in table');
     }
 
+    # Test if wormbase id/all fields with no key specified are being displayed
+    sub test_id_field {
+        my $host = $configuration->{'host'};
+        my $port = $configuration->{'port'};
+
+        my $url_html = "http://$host:$port/rest/widget/gene/WBGene00006763/overview";
+        my $response_html = get($url_html);
+
+        # I'm trying to make sure the WormBase ID field does not have the 'disabled' class.
+        isnt($response_html =~ /<div class\=\"field\s+\"\>  \<div class\=\"field-title\"\>\s+\<span title\=\"\"\> WormBase ID/, '', 'WormBase ID field displayed');
+    }
+
 }
 
 1;

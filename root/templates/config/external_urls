@@ -948,10 +948,10 @@ $DOI             = 'http://dx.doi.org/';
 
 [% 
 	#lowercase all the entries for case-insensitive lookup
-	FOREACH key IN site.external_urls.keys;
-		lkey = key.lower;
-		site.external_urls.$lkey = site.external_urls.$key;
-		site.external_urls.delete($key);
+	FOREACH k IN site.external_urls.keys;
+		lkey = k.lower;
+		site.external_urls.$lkey = site.external_urls.$k;
+		site.external_urls.delete($k);
 	END;
 
 %]
