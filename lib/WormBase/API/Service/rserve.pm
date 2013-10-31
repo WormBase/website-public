@@ -4,6 +4,7 @@ use File::Basename;
 use File::Copy;
 use IPC::Run3;
 use Data::UUID;
+use Digest::MD5::File qw(file_md5_hex);
 
 use Moose;
 with 'WormBase::API::Role::Object';
@@ -41,11 +42,13 @@ sub execute_r_program {
     run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
 
     # Relocate the plot into an accessible directory of the web-server:
-    copy($image_tmp_path, "/usr/local/wormbase/website-shared-files/html/img-static/rplots/" . $image_filename);
+    my ($format) = $image_filename =~ /(\.[^.]+)$/; # Includes the dot of the suffix.
+    my $permanent_image_filename = file_md5_hex($image_tmp_path) . $format;
+    copy($image_tmp_path, "/usr/local/wormbase/website-shared-files/html/img-static/rplots/" . $permanent_image_filename);
 
     # Return the absolute URI (relative to the server) of the generated image:
     return {
-        uri => "/img-static/rplots/" . $image_filename
+        uri => "/img-static/rplots/" . $permanent_image_filename
     };
 }
 
@@ -64,13 +67,13 @@ sub execute_r_program {
 #    },
 #    {
 #      'value'      => '1e-10',
-#      'label'      => 'RNASeq.elegans.SRP015688.L4.linker-cells.nhr-67.4'
+#      'label'      => 'RNASeq.elegans.SRP015688.L4.linker-cells.nhr-67.4',
 #      'project'    => 'RNASeq_Hillier',
 #      'life_stage' => 'WBls:0000024'
 #    },
 #    {
 #      'value'      => '5.7759',
-#      'label'      => 'RNASeq_Hillier.L4_Larva_Replicate1'
+#      'label'      => 'RNASeq_Hillier.L4_Larva_Replicate1',
 #      'project'    => 'RNASeq_Hillier',
 #      'life_stage' => 'WBls:0000024'
 #    },
@@ -129,13 +132,13 @@ EOP
 #    },
 #    {
 #      'value'      => '1e-10',
-#      'label'      => 'RNASeq.elegans.SRP015688.L4.linker-cells.nhr-67.4'
+#      'label'      => 'RNASeq.elegans.SRP015688.L4.linker-cells.nhr-67.4',
 #      'project'    => 'RNASeq_Hillier',
 #      'life_stage' => 'WBls:0000024'
 #    },
 #    {
 #      'value'      => '5.7759',
-#      'label'      => 'RNASeq_Hillier.L4_Larva_Replicate1'
+#      'label'      => 'RNASeq_Hillier.L4_Larva_Replicate1',
 #      'project'    => 'RNASeq_Hillier',
 #      'life_stage' => 'WBls:0000024'
 #    },
@@ -178,8 +181,6 @@ EOP
     # Return the absolute URI (relative to the server) of the generated image:
     return $self->execute_r_program($r_program, $image_tmp_path, $image_filename);
 }
-
-
 
 1;
 
