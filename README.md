@@ -11,7 +11,7 @@ Execute the following commands in a BASH terminal:
     git clone git://github.com/WormBase/website.git wormbase
     cd wormbase
     git submodule init
-    git submodule checkout
+    git submodule update
     export approot=`pwd`
     perl Makefile.PL
     make installdeps
