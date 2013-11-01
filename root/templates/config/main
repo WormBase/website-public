@@ -99,13 +99,13 @@
 # Like tag2link, but for cases where we only have text and no object.
 # You must provide both the id and text.
 # URLs
-    MACRO text2link(class,id,text,title,taxonomy) BLOCK;  
-      class = (ACE2WB_MAP.$class || class) FILTER lower;
-      IF site.external_urls.$class.defined; 
+    MACRO text2link(class,id,text,title,taxonomy) BLOCK;
+      IF (site.external_urls.$class.defined); 
           external_link(class, text, id);
       ELSIF id.match('CHROMOSOME');
         text;
       ELSE;
+        class = (ACE2WB_MAP.$class || class) FILTER lower;
         url = get_url(class, id, taxonomy);
 
         IF class =='gene';

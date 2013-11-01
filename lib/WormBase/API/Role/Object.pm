@@ -398,7 +398,7 @@ sub _build_best_blastp_matches {
         $species =~ s/^(\w)\w* /$1. / if $species;
         my $description = $best{$method}{hit}->Description
           || $best{$method}{hit}->Gene_name;
-        my $class;
+        my ($class, $id);
 
        # this doesn't seem optimal... maybe there should be something in config?
         if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
@@ -414,19 +414,21 @@ sub _build_best_blastp_matches {
                 }
             }
             $class = 'protein';
+        } elsif($hit =~ /(\w+):(.+)/ && $hit->Database) { #try to link out to database
+            my $accession = $2;
+            my @databases = $hit->Database;
+            foreach my $db (@databases) {
+              foreach my $dbt ($db->col){
+                 map {if($_ =~ "$accession"){$class = $db; $id = $accession}} $dbt->col;
+              }
+            }
+            $self->log->debug("DATABASE: $class");
+
         }
         next if ($hit =~ /^MSP/);
         $species =~ /(.*)\.(.*)/;
         my $taxonomy = {genus => $1, species => $2};
 
-
-        my $id;
-        if ($hit =~ /(\w+):(.+)/) {
-            my $prefix    = $1;
-            my $accession = $2;
-            $id    = $accession unless $class;
-            $class = $prefix    unless $class;
-        }
         push @hits, {
             taxonomy => $taxonomy,
             # custom packing for linking out to external sources
