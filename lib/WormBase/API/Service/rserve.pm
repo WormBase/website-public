@@ -62,6 +62,7 @@ sub barboxchart_parameters {
             $customization->{width},
             $customization->{height},
             $customization->{rotate} ? " + coord_flip()" : "",
+            $customization->{bw} ? "scale_fill_manual(values = rep(\"white\", length(projects))" : "scale_fill_brewer(palette = \"Dark2\"",
             $customization->{facets} ? ", guide = FALSE" : "",
             $customization->{facets} ? " + facet_grid(projects ~ .)" : "");
 }
@@ -99,7 +100,7 @@ sub barchart {
     my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($data, $format);
 
     # Pretty-ization:
-    my ($xlabel, $ylabel, $width, $height, $rotate, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
+    my ($xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
 
     # Run the R program that plots the barchart:
     my $r_program = <<EOP
@@ -118,7 +119,7 @@ data = data.frame(labels, values, projects, life_stages);
 data\$labels = factor(labels, levels = labels, ordered = TRUE)
 
 $format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(x = labels, y = values, fill = projects)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + scale_fill_brewer(palette = "Dark2")$facets_guides)$facets_grid;
+print(ggplot(data, aes(x = labels, y = values, fill = projects)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + $coloring$facets_guides)$facets_grid);
 dev.off();
 EOP
 ;
@@ -160,7 +161,7 @@ sub boxplot {
     my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($data, $format);
 
     # Pretty-ization:
-    my ($xlabel, $ylabel, $width, $height, $rotate, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
+    my ($xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
 
     # Run the R program that plots the barchart:
     my $r_program = <<EOP
@@ -179,7 +180,7 @@ data = data.frame(labels, values, projects, life_stages);
 data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE)
 
 $format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(factor(life_stages), y = values, fill = projects)) + geom_boxplot()$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + scale_fill_brewer(palette = "Dark2"$facets_guides)$facets_grid);
+print(ggplot(data, aes(factor(life_stages), y = values, fill = projects)) + geom_boxplot()$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + $coloring$facets_guides)$facets_grid);
 dev.off();
 EOP
 ;

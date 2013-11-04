@@ -634,6 +634,7 @@ sub fpkm_expression {
                                     width  => WormBase::Web->config->{fpkm_expression_chart_width},
                                     height => WormBase::Web->config->{fpkm_expression_chart_height},
                                     rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
                                     facets => WormBase::Web->config->{fpkm_expression_chart_facets}
                                  })->{uri};
     } else {
@@ -643,6 +644,7 @@ sub fpkm_expression {
                                     width  => WormBase::Web->config->{fpkm_expression_chart_width},
                                     height => WormBase::Web->config->{fpkm_expression_chart_height},
                                     rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
                                     facets => WormBase::Web->config->{fpkm_expression_chart_facets}
                                  })->{uri};
     }
