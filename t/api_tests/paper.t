@@ -44,10 +44,24 @@
 
         # Please keep test names/descriptions all lower case.
         isnt($parsed_authors, undef, 'data returned');
-        isnt($parsed_authors->{'van der Voet M'}, undef, 'van der Voet M found');
-          is($parsed_authors->{'van der Voet M'}[0], "M", 'van der Voet M first name correctly parsed to M');
-          is($parsed_authors->{'van der Voet M'}[1], " van der Voet", 'van der Voet M last name correctly parsed to van der Voet');
+        isnt($parsed_authors->{'van der Voet M'}, undef, 'van der voet m found');
+          is($parsed_authors->{'van der Voet M'}[0], "M", 'van der voet m first name correctly parsed to m');
+          is($parsed_authors->{'van der Voet M'}[1], " van der Voet", 'van der voet m last name correctly parsed to van der voet');
 
+    }
+
+    #test doi - some environments were giving it a false value
+    sub test_doi {
+        my $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00023007' });
+
+        can_ok('WormBase::API::Object::Paper', ('doi'));
+
+        my $doi = $paper->doi();
+
+        isnt($doi, undef, 'data returned');
+          is($doi->{'data'}, undef, 'no doi for this paper');
+
+        
     }
 
 }
