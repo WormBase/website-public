@@ -44,7 +44,14 @@ sub execute_r_program {
     # Relocate the plot into an accessible directory of the web-server:
     my ($format) = $image_filename =~ /(\.[^.]+)$/; # Includes the dot of the suffix.
     my $permanent_image_filename = file_md5_hex($image_tmp_path) . $format;
-    copy($image_tmp_path, "/usr/local/wormbase/website-shared-files/html/img-static/rplots/" . $permanent_image_filename);
+    # Assumption: the MD5 checksum is good enough to avoid collisions between filenames of
+    #             images with distinct contents.
+    my $destination = "/usr/local/wormbase/website-shared-files/html/img-static/rplots/" . $permanent_image_filename;
+    unless (-e $destination) {
+        move($image_tmp_path, $destination);
+    } else {
+        unlink $image_tmp_path;
+    }
 
     # Return the absolute URI (relative to the server) of the generated image:
     return {
@@ -56,11 +63,17 @@ sub execute_r_program {
 sub barboxchart_parameters {
     my ($self, $customization) = @_;
 
+    my $height = $customization->{height};
+    if ($customization->{adjust_height_for_less_than_X_facets}) {
+        my $normally_assumed_facets = $customization->{adjust_height_for_less_than_X_facets};
+        $height = "$height / ($normally_assumed_facets - length(levels(factor(projects))) + 1)";
+    }
+
     # Pretty-ization:
     return ($customization->{xlabel},
             $customization->{ylabel},
             $customization->{width},
-            $customization->{height},
+            $height,
             $customization->{rotate} ? " + coord_flip()" : "",
             $customization->{bw} ? "scale_fill_manual(values = rep(\"white\", length(projects))" : "scale_fill_brewer(palette = \"Dark2\"",
             $customization->{facets} ? ", guide = FALSE" : "",

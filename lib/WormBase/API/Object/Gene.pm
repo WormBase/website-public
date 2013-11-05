@@ -635,7 +635,8 @@ sub fpkm_expression {
                                     height => WormBase::Web->config->{fpkm_expression_chart_height},
                                     rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
                                     bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets}
+                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
                                  })->{uri};
     } else {
         $plot = $rserve->barchart(\@fpkm_map, {
@@ -645,7 +646,8 @@ sub fpkm_expression {
                                     height => WormBase::Web->config->{fpkm_expression_chart_height},
                                     rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
                                     bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets}
+                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
                                  })->{uri};
     }
 
