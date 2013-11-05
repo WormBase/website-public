@@ -553,11 +553,122 @@ sub merged_into {
 #
 #######################################
 
+sub fpkm_expression_summary_ls {
+    my $self = shift;
+    return $self->fpkm_expression('summary_ls');
+}
+
+sub fpkm_expression {
+    my $self = shift;
+    my $mode = shift;
+    my $object = $self->object;
+
+    my $rserve = $self->_api->_tools->{rserve};
+    my @fpkm_map = map { 
+        my $life_stage = $_->Public_name;
+        my @fpkm_table = $_->col;
+        map {
+            my @fpkm_entry = $_->row;
+            my $label = $fpkm_entry[2];
+            my $value = $fpkm_entry[0];
+            my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
+            {
+                label => "$label",
+                value => "$value",
+                project => "$project",
+                life_stage => $life_stage
+            }
+        } @fpkm_table;
+    } $object->RNASeq_FPKM;
+
+    # Sort by project (primary order) and developmental stage (secondary order):
+    @fpkm_map = sort {
+        # Primary sorting order: project
+        # Reverse comparison, so that projects that come first in the alphabet appear at the top of the barchart.
+        return $b->{project} cmp $a->{project} if $a->{project} ne $b->{project};
+
+        # Secondary sorting order: developmental stage
+        my @sides = ($a, $b);
+        my @label_value = (50, 50); # Entries that cannot be matched to the regexps will go to the bottom of the barchart.
+        for my $i (0 .. 1) {
+            # UNAPPLIED
+            # Possible keywords? Not seen in data yet (browsing only).
+            #$label_value[$i] =  0 if ($sides[$i]->{label} =~ m/gastrula/i);
+            #$label_value[$i] =  1 if ($sides[$i]->{label} =~ m/comma/i);
+            #$label_value[$i] =  2 if ($sides[$i]->{label} =~ m/15_fold/i);
+            #$label_value[$i] =  3 if ($sides[$i]->{label} =~ m/2_fold/i);
+            #$label_value[$i] =  4 if ($sides[$i]->{label} =~ m/3_fold/i);
+
+            # EMBRYO STAGES
+            $label_value[$i] = 30 if ($sides[$i]->{label} =~ m/embryo/i); # May be overwritten by the next two rules.
+            if ($sides[$i]->{label} =~ m/\.([0-9]+)-cell_embryo/) {
+                # Assuming an upper bound of 40 cells (for ordering below).
+                $sides[$i]->{label} =~ /\.([0-9]+)-cell_embryo/;
+                $label_value[$i] = "$1";
+            }
+            $label_value[$i] =  0 if ($sides[$i]->{label} =~ m/early_embryo/i);
+            $label_value[$i] = 40 if ($sides[$i]->{label} =~ m/late_embryo/i);
+
+            # LARVA STAGES
+            $label_value[$i] = 41 if ($sides[$i]->{label} =~ m/L1_(l|L)arva/);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L2_(l|L)arva/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/L2d_(l|L)arva/i);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L3_(l|L)arva/);
+            $label_value[$i] = 45 if ($sides[$i]->{label} =~ m/L4_(l|L)arva/);
+
+            # DAUER STAGES
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/dauer/i); # May be overwritten by the next two rules.
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/dauer_entry/);
+            $label_value[$i] = 44 if ($sides[$i]->{label} =~ m/dauer_exit/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/predauer/i);
+
+            # ADULTHOOD
+            $label_value[$i] = 47 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
+            $label_value[$i] = 46 if ($sides[$i]->{label} =~ m/young_adult/);
+        }
+
+        # Reversed comparison, so that early stages appear at the top of the barchart.
+        return $label_value[1] <=> $label_value[0];
+    } @fpkm_map;
+
+    my $plot;
+    if ($mode eq 'summary_ls') {
+        $plot = $rserve->boxplot(\@fpkm_map, {
+                                    xlabel => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width  => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
+                                 })->{uri};
+    } else {
+        $plot = $rserve->barchart(\@fpkm_map, {
+                                    xlabel => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width  => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
+                                 })->{uri};
+    }
+
+    return {
+        description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
+        data        => {
+            plot => $plot,
+            table => { fpkm => { data => \@fpkm_map } }
+        }
+    };
+}
+
 # fourd_expression_movies { }
 # This method will return a data structure containing
 # links to four-dimensional expression movies.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
-
 sub fourd_expression_movies {
     my $self   = shift;
 
