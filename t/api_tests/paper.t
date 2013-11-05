@@ -31,7 +31,24 @@
 
         # Please keep test names/descriptions all lower case.
         isnt($refers_to->{'data'}, undef, 'data returned');
-        isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');    }
+        isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');
+    }
+
+    #tests the name parsing algorithm - does it work for multi-word names?
+    sub test__parsed_authors {
+        my $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00032910' });
+
+        can_ok('WormBase::API::Object::Paper', ('_parsed_authors'));
+
+        my $parsed_authors = $paper->_parsed_authors();
+
+        # Please keep test names/descriptions all lower case.
+        isnt($parsed_authors, undef, 'data returned');
+        isnt($parsed_authors->{'van der Voet M'}, undef, 'van der Voet M found');
+          is($parsed_authors->{'van der Voet M'}[0], "M", 'van der Voet M first name correctly parsed to M');
+          is($parsed_authors->{'van der Voet M'}[1], " van der Voet", 'van der Voet M last name correctly parsed to van der Voet');
+
+    }
 
 }
 

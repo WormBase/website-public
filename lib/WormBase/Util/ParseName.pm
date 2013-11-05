@@ -9,7 +9,7 @@ our @EXPORT_OK = qw(parse_name parse_name_initials);
 sub parse_name_initials {
 	my ($obj) = @_;
 	my @nameparts = parse_name($obj);
-	return @nameparts;# if @nameparts < 2;
+	return @nameparts if @nameparts < 2;
 	my $last = pop @nameparts;
 	return map({uc substr $_, 0, 1} @nameparts), $last;
 }
