@@ -9,7 +9,7 @@ our @EXPORT_OK = qw(parse_name parse_name_initials);
 sub parse_name_initials {
 	my ($obj) = @_;
 	my @nameparts = parse_name($obj);
-	return @nameparts if @nameparts < 2;
+	return @nameparts;# if @nameparts < 2;
 	my $last = pop @nameparts;
 	return map({uc substr $_, 0, 1} @nameparts), $last;
 }
@@ -81,7 +81,12 @@ sub _parse_name {
 
 	# initials without periods or no initials at all
 	if ($name =~ / [A-Z]$/) { # likely separate initial(s) at end
-		my $lastname = shift @tokens;
+		my $lastname;
+		my $initials = join('', @tokens);
+		while(uc $initials ne $initials){
+			$lastname .= ' ' . shift @tokens;
+			$initials = join('', @tokens);
+		}
 		return @tokens, $lastname;
 	}
 
