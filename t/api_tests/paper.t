@@ -61,7 +61,11 @@
         isnt($doi, undef, 'data returned');
           is($doi->{'data'}, undef, 'no doi for this paper');
 
-        
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00027286' });
+        $doi = $paper->doi();
+
+        isnt($doi, undef, 'data returned');
+          is($doi->{'data'}, "10.1895/wormbook.1.1.1", 'correct doi returned');
     }
 
 }
