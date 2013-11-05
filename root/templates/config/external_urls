@@ -742,6 +742,7 @@
  	description = 'RNAiDB'
  	base        = 'http://www.rnai.org/'
  	search      = 'http://www.rnai.org/movies/%s'
+ 	}
  	
  Science = {
 	description = 'Science'
