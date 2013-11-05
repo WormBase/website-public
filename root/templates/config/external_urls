@@ -738,6 +738,11 @@
 	search      = 'http://rnajournal.cshlp.org/content/%s'
 	}
 
+ RNAi = {
+ 	description = 'RNAiDB'
+ 	base        = 'http://www.rnai.org/'
+ 	search      = 'http://www.rnai.org/movies/%s'
+ 	
  Science = {
 	description = 'Science'
 	base        = 'http://www.sciencemag.org/'
@@ -910,6 +915,12 @@
 	search      = 'http://www.wormqtl.org/molgenis.do?__target=QtlFinderPublic2&select=QtlFinderPublic2&p=%s'
 	}
 
+ Wormviz = {
+        description = 'Wormviz'
+ 	base	    = 'http://www.vanderbilt.edu/wormdoc/wormmap/Welcome.html'
+ 	search 	    = 'http://jsp.weigelworld.org/wormviz/tileviz.jsp?experiment=wormviz&normalization=absolute&probesetcsv=%s'
+ 	}
+ 	
  SignaLink = {
 	description = 'SignaLink 2.0: An integrated resource to analyze signaling pathway cross-talks, transcription factors, miRNAs and regulatory enzymes'
 	base        = 'http://www.signalink.org'
