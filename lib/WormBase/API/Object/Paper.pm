@@ -330,10 +330,11 @@ sub affiliation {
 sub doi {
     my ($self) = @_;
     my $object = $self->object;
-    $object->Name =~ m{^(?:doi.*)?(10\.[^/]+.+)$};
+    my $doi = ($object->Name =~ m{^(?:doi.*)?(10\.[^/]+.+)$}) ? $1 : undef;
+    
     return {
         description => 'DOI of publication',
-        data		=> $1,
+        data		=> $doi,
     };
 }
 
