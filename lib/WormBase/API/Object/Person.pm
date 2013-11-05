@@ -50,7 +50,7 @@ has 'previous_address_data' => (
             my $self = shift;
             my $object = $self->object;
             my @entries;
-            foreach my $entry ($object->Old_address) {
+            foreach my $entry ($object->get('Old_address')) {
                 my %address;
                 $entry =~ m/^(.*)\s(\S*)$/g;
                 $address{date_modified} = "$1";
