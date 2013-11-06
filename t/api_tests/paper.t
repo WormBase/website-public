@@ -32,6 +32,15 @@
         # Please keep test names/descriptions all lower case.
         isnt($refers_to->{'data'}, undef, 'data returned');
         isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');
+
+        # test for count accuracy
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00041190' });
+        $refers_to = $paper->refers_to();
+
+        # Please keep test names/descriptions all lower case.
+        isnt($refers_to->{'data'}, undef, 'data returned');
+          is($refers_to->{'data'}->{'Expr_pattern'}, '19052', 'correct amount of expression patterns found');
+
     }
 
     #tests the name parsing algorithm - does it work for multi-word names?

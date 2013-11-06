@@ -2212,17 +2212,20 @@ sub _fetch_gff_gene {
 # Arg[1]   : The AceDB schema location to count the amount of retrievable objects;
 #
 sub _get_count{
-  my ($self, $obj, $tag) = @_;
-  $obj = $obj->fetch;
+    my ($self, $obj, $tag) = @_;
+    $obj = $obj->fetch;
 
-  # get the first item in the tag
-  my $first_item = $tag ? $obj->get($tag, 0) && $obj->get($tag, 0)->right : $obj->right;
+    # get the first item in the tag
+    my $first_item = $tag ? $obj->get($tag, 0) && $obj->get($tag, 0)->right : $obj->right;
 
-  # get our current column location
-  my $col = $first_item->{'.col'};
+    # get our current column location
+    my $col = $first_item->{'.col'};
 
-  # grep for rows that are objects
-  return scalar ( grep { @{$_}[$col] } @{$first_item->{'.raw'}} );
+    # grep for rows that are objects
+    my $curr;
+    return scalar(  grep {  $curr = @{$_}[$col-1] if (@{$_}[$col-1]);
+                            (@{$_}[$col] && ($curr eq "?tag?$tag?")); 
+                    } @{$first_item->{'.raw'}} );
 }
 
 
