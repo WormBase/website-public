@@ -248,7 +248,6 @@ sub run {
     my $content = get $plugin_url;
     return {msg=>"Couldn't get $plugin_url" } unless defined $content;
 
-    $self->log->debug($content);
     if($content =~ m/\<title\>Not Found\<\/title\>|class="error"/){
       $content = "Couldn't fetch alignment";
     }
