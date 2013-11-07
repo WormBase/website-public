@@ -16,18 +16,22 @@ height  = sub {
 	my $feature = shift;
 	return $feature->method =~  /transcript|UTR|coding_exon/i ? 10 : 6;
 	}
-balloon hover  = sub {my $f = shift;
-	              my $name = $f->name; 
-                      my $class = $f->class;
-    		      "url:/gbrowse_popup?name=$name;class=$class;type=PRIMARY_GENE_TRACK";
-	} 
+# Balloon not working; something wrong with either 'name' assignment or 'type' setting.
+#balloon hover  = sub {
+#		my $f = shift;
+#		my $name = join(", ", $f->get_tag_values('gene')) || $f->load_id;
+#		$name =~ s/^[a-zA-Z]+://;
+#		my $class = $f->class;
+#		return "url:/gbrowse_popup?name=$name;class=$class;type=PRIMARY_GENE_TRACK";
+#	} 
 link = sub {
-	my $f = shift;
-	return if $f->method eq 'RNAz';
-	my $name = $f->attributes('Gene') || $f->name;
-	return "/get?name=$name;class=Gene";
+		my $f = shift;
+		return if $f->type eq 'ncRNA:RNAz';
+		my $name = join(", ", $f->get_tag_values('gene')) || $f->load_id;
+		$name =~ s/^[a-zA-Z]+://;
+		return "/get?name=$name;class=Gene";
 	}
-feature = full_transcript:Coding_transcript 
+feature = CDS:WormBase
 glyph    = sub { 
 	 my $f = shift;
 	 my ($source) = $f->source;

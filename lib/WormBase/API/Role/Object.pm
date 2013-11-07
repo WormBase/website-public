@@ -546,8 +546,8 @@ sub _build_central_dogma {
 #	my ($seq_obj) = sort {$b->length<=>$a->length}
 #	grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $transcript);
 	
-    eval {$gff->fetch_group()}; return if $@;
-	my ($seq_obj) = $gff->fetch_group(Transcript => $transcript);
+    # eval {$gff->get_features_by_name()}; return if $@;
+	my ($seq_obj) = $gff->get_features_by_name(Transcript => $transcript);
 	
 #	$self->log->debug("seq obj: " . $seq_obj);
 	$seq_obj->ref($seq_obj); # local coordinates
@@ -1886,6 +1886,7 @@ sub _pack_objects {
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return undef unless $object; # this method shouldn't expect a list.
+    return $object unless ref($object) eq 'Ace::Object';
 
     my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
     $label = $label // $self->_make_common_name($object);
@@ -2185,23 +2186,8 @@ sub _fetch_gff_gene {
 
     my $trans;
     my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database"; # should probably log this?
-    $GFF->fetch_group();
 
-#    if ($self->object->Species =~ /briggsae/) {
-    $self->log->warn("gff is: $GFF");
-        ($trans) = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript)
-            and return $trans;
-#    }
-
-    ($trans) = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript)
-        and return $trans;
-
-    # Now pseudogenes
-    ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript)
-        and return $trans;
-
-    # RNA transcripts - this is getting out of hand
-    ($trans) = $GFF->segment(Transcript => $transcript);
+    ($trans) = $GFF->get_features_by_name("$transcript");
     return $trans;
 }
 
