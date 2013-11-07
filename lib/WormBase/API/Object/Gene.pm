@@ -581,6 +581,15 @@ sub fpkm_expression {
         } @fpkm_table;
     } $object->RNASeq_FPKM;
 
+    # Return if no expression data is available.
+    # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
+    if (length(keys @fpkm_map) <= 1) {
+        return {
+            description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data -- no data returned.',
+            data        => undef
+        };
+    }
+
     # Sort by project (primary order) and developmental stage (secondary order):
     @fpkm_map = sort {
         # Primary sorting order: project

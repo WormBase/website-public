@@ -582,7 +582,7 @@ END; %]
       LAST;
     END;
   END; %]
-  [% UNLESS (not_empty || (widget == 'overview')) %]
+  [% UNLESS (not_empty || (widget == 'overview') || (widget == 'expression')) %]
     <span class="caveat-emptor">No [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] data for [% object.name.data.label %]</span>
   [% END %]
 [% END %]
