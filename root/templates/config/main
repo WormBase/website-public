@@ -144,7 +144,8 @@
     MACRO gbrowse_url(taxonomy, id, bioproject, image) BLOCK;
       IF !bioproject && c.config.sections.species_list.$taxonomy;
         FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
-          bioproject = bp IF (!bioproject || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          bioproject = bp;
         END;
       END;
       c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), (bioproject ? taxonomy _ '_' _ bioproject : taxonomy)).path _ (id ? '?name=' _ id : '');

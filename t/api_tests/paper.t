@@ -32,6 +32,15 @@
         # Please keep test names/descriptions all lower case.
         isnt($refers_to->{'data'}, undef, 'data returned');
         isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');
+
+        # test for count accuracy
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00041190' });
+        $refers_to = $paper->refers_to();
+
+        # Please keep test names/descriptions all lower case.
+        isnt($refers_to->{'data'}, undef, 'data returned');
+          is($refers_to->{'data'}->{'Expr_pattern'}, '19052', 'correct amount of expression patterns found');
+
     }
 
     #tests the name parsing algorithm - does it work for multi-word names?
@@ -61,11 +70,19 @@
         isnt($doi, undef, 'data returned');
           is($doi->{'data'}, undef, 'no doi for this paper');
 
+        # test on paper with doi
         $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00027286' });
         $doi = $paper->doi();
 
         isnt($doi, undef, 'data returned');
-          is($doi->{'data'}, "10.1895/wormbook.1.1.1", 'correct doi returned');
+          is($doi->{'data'}, "10.1895/wormbook.1.1.1", 'correct doi returned (doi exists)');
+
+        # test on paper with multiple names
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00000802' });
+        $doi = $paper->doi();
+
+        isnt($doi, undef, 'data returned');
+          is($doi->{'data'}, "10.1007/BF01024112", 'correct doi returned (multiple names)');
     }
 
 }

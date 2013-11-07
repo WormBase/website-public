@@ -116,6 +116,7 @@ sub _build_genomic_position {
     my ($self) = @_;
 
     my @positions = $self->_genomic_position($self->_segments);
+
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
@@ -134,7 +135,7 @@ sub _genomic_position {
 sub _seg2posURLpart {
     my ($self, $segment, $adjust_coords) = @_;
 
-    my ($ref, $start, $stop) = map { $segment->$_ } qw(abs_ref abs_start abs_stop);
+    my ($ref, $start, $stop) = map { $segment->$_ } qw(seq_id start end);
     # return if abs($stop - $start) == 0; # why ?
 
     ($start, $stop) = $adjust_coords->($start, $stop) if $adjust_coords;
@@ -144,8 +145,7 @@ sub _seg2posURLpart {
     # Use the ACTUAL feature coordinates for the label, not the GBrowse coordinates.
     return {
         label      => $self->_format_coordinates(ref => $ref, start => $start, stop => $stop),
-        id         =>  $position,
-        taxonomy    => $self->_parsed_species,
+        id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
         class      => 'genomic_location',
         pos_string => $position, # independent from label -- label may change in the future
     };

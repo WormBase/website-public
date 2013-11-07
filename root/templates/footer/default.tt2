@@ -44,6 +44,7 @@
           <li>[% external_link("http://forums.wormbase.org", 'Forum') %]</li>
           <li>[% external_link("http://blog.wormbase.org", 'Blog') %]</li>
           <li>[% external_link("http://twitter.com/wormbase", 'Twitter') %]</li>
+          <li><a href="[% c.uri_for('/species', 'c_elegans').path  _ '#1--10' %]">Key Papers</a></li>
         </ul>
 
         <ul>
