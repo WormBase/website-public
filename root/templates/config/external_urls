@@ -645,6 +645,12 @@
 	search      = 'http://omim.org/entry/%s'
 	}
 
+ ORCID = {
+        description = 'ORCID (Open Researcher and Contributor ID) is a nonproprietary alphanumeric code to uniquely identify scientific and other academic authors.'
+        base = 'http://orcid.org/'
+        search = 'http://orcid.org/%s'
+        }
+
  Pfam = {
 	description = 'Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains and families'
 	base        = 'http://pfam.sanger.ac.uk/'
