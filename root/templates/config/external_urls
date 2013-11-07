@@ -647,8 +647,8 @@
 
  ORCID = {
         description = 'ORCID (Open Researcher and Contributor ID) is a nonproprietary alphanumeric code to uniquely identify scientific and other academic authors.'
-        base = 'http://orcid.org/'
-        search = 'http://orcid.org/%s'
+        base        = 'http://orcid.org/'
+        search      = 'http://orcid.org/%s'
         }
 
  Pfam = {
