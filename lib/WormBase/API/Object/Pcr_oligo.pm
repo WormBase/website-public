@@ -70,7 +70,7 @@ sub _build__segments {
     
     $class .= ':reagent' if $class eq 'Oligo_set';
 
-    my @segments = $self->gff_dsn->segment($class => $object);
+    my @segments = $self->gff_dsn->segment($object);
 
     return \@segments;
 }

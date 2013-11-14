@@ -122,6 +122,7 @@ sub run {
       $hash->{long}=1;
       return;
     }
+    # TODO: make sure this works with GFF3 - AC
     my ($seq) = $dbgff->segment(-name => $sequence,
                 $user_override ? (-start    =>    $user_start,
                                   -stop    =>    $user_end) : ());
@@ -194,6 +195,7 @@ sub run {
     # The catch here is that if the cDNAs extend beyond the boundary of the
     # gene, we want to extend the genomic sequence, so we refetch the DNA
     ($align_start,$align_end) = ($align_end,$align_start) if($align_start > $align_end);
+    # TODO: make sure works with GFF3 - AC
     my ($genomic) = $dbgff->segment(-name  => $sequence,
                     -start => $align_start,
                     -end   => $align_end);

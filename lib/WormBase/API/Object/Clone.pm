@@ -130,7 +130,7 @@ sub _seq2coords {
     
     return map {[$_->abs_ref, $_->abs_start, $_->abs_stop]}
     map {my $db = $self->gff_dsn($self->_parsed_species($_));
-	 $db->segment($_->class => $_)}
+	 $db->segment($_)}
     @seqs;
 }
 
@@ -388,7 +388,7 @@ sub _build__segments {
 
     my $dsn = $self->gff_dsn;
     my $object = $self->object;
-    my @segs = $dsn->segment(-name => "$object");
+    my @segs = $dsn->segment($object);
     return \@segs;
 }
 

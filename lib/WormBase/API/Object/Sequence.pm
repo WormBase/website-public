@@ -253,7 +253,7 @@ sub _build_genomic_image {
     my @segments;
     if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
         my $gene = $seq->Gene || $seq;
-        @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
+        @segments = $self->gff->segment($gene);
         @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
             unless @segments;	# CB discontinuity
     }

@@ -124,15 +124,14 @@ sub _build__segments {
     # Yuck. Still have some species specific stuff here.
 
     if ($sequences and $species =~ /briggsae/) {
-        if (@segments = map {$dbh->segment(CDS => "$_")} @$sequences
-            or @segments = map {$dbh->segment(Pseudogene => "$_")} @$sequences) {
+        if (@segments = map {$dbh->segment("$_")} @$sequences) {
             return \@segments;
         }
     }
 
-    if (@segments = $dbh->segment(Gene => $object)
-        or @segments = map {$dbh->segment(CDS => $_)} @$sequences
-        or @segments = map { $dbh->segment(Pseudogene => $_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
+    if (@segments = $dbh->segment($object)
+        or @segments = map {$dbh->segment($_)} @$sequences
+        or @segments = map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
     ) {
         return \@segments;
     }
