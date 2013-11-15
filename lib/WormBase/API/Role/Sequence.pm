@@ -913,96 +913,69 @@ sub print_sequence {
     my $gff = $self->gff || goto END;
     my $seq_obj;
 
-    # Genomic clones need to be fetched a bit differently.	    
+    # Genomic clones need to be fetched a bit differently.
     if ($s->class =~ /Sequence|Clone/i) {
-	# We will fetch from acedb below
+        # We will fetch from acedb below
     } else {
-	($seq_obj) = sort {$b->length<=>$a->length}
-	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
-     $gff->get_features_by_name($s);
-# 		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
-	
-	# BLECH!  If provided with a gene ID and alt splices are present just guess
-	# and fetch the first CDS or Transcript
-	# We really should display a list for all of these.
+        ($seq_obj) = sort {$b->length<=>$a->length}
+                        grep {$_->primary_tag eq 'full_transcript'} $gff->segment($s);
 
 
-		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		  	 $gff->get_features_by_name("$s.a");
-# 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
-		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		 	 $gff->get_features_by_name("$s.1");
-# 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
-	    }
-    $self->log->debug("SEQ OBJ: " . $seq_obj);
-my @f = $seq_obj->get_SeqFeatures();
-    $self->log->debug("            " . @f);
+        # BLECH!  If provided with a gene ID and alt splices are present just guess
+        # and fetch the first CDS or Transcript
+        # We really should display a list for all of these.
 
-    ($seq_obj) ||= $gff->get_features_by_name($s);
-    # Haven't fetched a GFF segment? Try Ace.
-    if (!$seq_obj || eval{ length($seq_obj->dna) } < 2) { # miserable broken workaround
-		# try to use acedb
-		if (my $fasta = $s->asDNA) {
-            $fasta =~ s/^\s?>(.*)\n//;
-            $fasta =~ s/\s//g;
-            my $len = length($fasta);
-            if($len > 0){
-              push @data,{ 	header=>"Sequence",
-                      sequence=>"$fasta",
-                      length=>$len,
-                            };
-            }
-		}
-		else {
-			push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
-		}
-		goto END;
+
+        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+                $gff->segment("$s.a");
+        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+                $gff->segment("$s.1");
+        ($seq_obj) ||= $gff->segment($s);
     }
 
-#print est alignments, maybe put into view directly
-	#     print_genomic_position($s,$type);
-#     $hash{est} = "name=$s;class=CDS";
-
-
-    if (eval { $s->Properties eq 'cDNA'} ) {
-		# try to use acedb
+    # Haven't fetched a GFF segment? Try Ace.
+    # miserable broken workaround
+    if (!$seq_obj || eval{ length($seq_obj->dna) } < 2 || eval { $s->Properties eq 'cDNA'}) {
+        # try to use acedb
         if (my $fasta = $s->asDNA) {
             $fasta =~ s/^\s?>(.*)\n//;
             $fasta =~ s/\s//g;
             my $len = length($fasta);
             if($len > 0){
-              push @data,{  header=>"Sequence",
-                      sequence=>"$fasta",
-                      length=>$len,
-                            };
+                push @data,{
+                    header=>"Sequence",
+                    sequence=>"$fasta",
+                    length=>$len,
+                };
             }
+        } else {
+            push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
         }
-		goto END;
+        goto END;
     }
 
     my $unspliced = lc $seq_obj->dna;
     my $length = length($unspliced);
     if (eval { $s->Coding_pseudogene } || eval {$s->Coding} || eval {$s->Corresponding_CDS}) {
-		my $markup = Bio::Graphics::Browser2::Markup->new;
-		$markup->add_style('utr'  => 'FGCOLOR gray');
-		$markup->add_style('cds'  => 'BGCOLOR cyan');
-		$markup->add_style('cds0' => 'BGCOLOR yellow');
-		$markup->add_style('cds1' => 'BGCOLOR orange');
-		$markup->add_style('uc'   => 'UPPERCASE');
-		$markup->add_style('newline' => "\n");
-		$markup->add_style('space'   => '');
-		my %seenit;
+        my $markup = Bio::Graphics::Browser2::Markup->new;
+        $markup->add_style('utr'  => 'FGCOLOR gray');
+        $markup->add_style('cds'  => 'BGCOLOR cyan');
+        $markup->add_style('cds0' => 'BGCOLOR yellow');
+        $markup->add_style('cds1' => 'BGCOLOR orange');
+        $markup->add_style('uc'   => 'UPPERCASE');
+        $markup->add_style('newline' => "\n");
+        $markup->add_style('space'   => '');
+        my %seenit;
 
-		my @features;
-		if ($s->Species =~ /briggsae/) {
-			$seq_obj->ref($seq_obj); # local coordinates
-			@features = sort {$a->start <=> $b->start}
-			grep { $_->info eq $s && !$seenit{$_->start}++ }
-			# $seq_obj->features('coding_exon:curated','UTR');
-                        $seq_obj->get_SeqFeatures();
+        my @features;
+        if ($s->Species =~ /briggsae/) {
+            $seq_obj->ref($seq_obj); # local coordinates
+            @features = sort {$a->start <=> $b->start}
+            grep { $_->info eq $s && !$seenit{$_->start}++ }
+            # $seq_obj->features('coding_exon:curated','UTR');
+            $seq_obj->get_SeqFeatures();
 
-		}
-		else {
+        } else {
 			$seq_obj->ref($seq_obj); # local coordinates
 			# Is the genefinder specific formatting cruft?
 			@features =
@@ -1014,8 +987,6 @@ my @f = $seq_obj->get_SeqFeatures();
 			# :
             # $seq_obj->features(qw/five_prime_UTR:Coding_transcript exon:Pseudogene coding_exon:Coding_transcript three_prime_UTR:Coding_transcript/);
             $seq_obj->get_SeqFeatures();
-
-            $self->log->debug("FEATUREs:  @features");
 		}
 		my $test = _print_unspliced($markup,$seq_obj,$unspliced,@features);
 		 
@@ -1532,7 +1503,7 @@ sub _build__segments {
 
 sub _print_unspliced {
     my ($markup,$seq_obj,$unspliced,@features) = @_;
-    my $name = $seq_obj->info . ' (' . $seq_obj->start . '-' . $seq_obj->stop . ')';
+    my $name = $seq_obj . ' (' . $seq_obj->start . '-' . $seq_obj->stop . ')';
 
     my $length   = length $unspliced;
     if ($length > 0) {
