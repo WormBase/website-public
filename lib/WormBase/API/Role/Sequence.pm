@@ -914,23 +914,18 @@ sub print_sequence {
     my $seq_obj;
 
     # Genomic clones need to be fetched a bit differently.
-    if ($s->class =~ /Sequence|Clone/i) {
-        # We will fetch from acedb below
-    } else {
+    unless ($s->class =~ /Sequence|Clone/i) {
         ($seq_obj) = sort {$b->length<=>$a->length}
-                        grep {$_->primary_tag eq 'full_transcript'} $gff->segment($s);
-
+                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($s);
 
         # BLECH!  If provided with a gene ID and alt splices are present just guess
         # and fetch the first CDS or Transcript
         # We really should display a list for all of these.
 
-
         ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-                $gff->segment("$s.a");
+                $gff->get_features_by_name("$s.a");
         ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-                $gff->segment("$s.1");
-        ($seq_obj) ||= $gff->segment($s);
+                $gff->get_features_by_name("$s.1");
     }
 
     # Haven't fetched a GFF segment? Try Ace.
@@ -968,46 +963,38 @@ sub print_sequence {
         my %seenit;
 
         my @features;
-        if ($s->Species =~ /briggsae/) {
-            $seq_obj->ref($seq_obj); # local coordinates
-            @features = sort {$a->start <=> $b->start}
-            grep { $_->info eq $s && !$seenit{$_->start}++ }
-            # $seq_obj->features('coding_exon:curated','UTR');
-            $seq_obj->get_SeqFeatures();
 
+        # Do we still need the different species code?? - AC
+        if ($s->Species =~ /briggsae/) {
+            # local coordinates
+            $seq_obj->ref($seq_obj);
+            @features = sort {$a->start <=> $b->start}
+                grep { $_->info eq $s && !$seenit{$_->start}++ }
+                $seq_obj->get_SeqFeatures();
         } else {
-			$seq_obj->ref($seq_obj); # local coordinates
-			# Is the genefinder specific formatting cruft?
-			@features =
-			sort {$a->start <=> $b->start}
-			# grep { $_->info eq $s && !$seenit{$_->start}++ }
-			# ($s->Method eq 'Genefinder') ?
-   #          # $seq_obj->features('coding_exon:' . $s->Method,'five_prime_UTR','three_prime_UTR')
-   #          $seq_obj->get_SeqFeatures(qw/exon five_prime_UTR three_prime_UTR/)
-			# :
-            # $seq_obj->features(qw/five_prime_UTR:Coding_transcript exon:Pseudogene coding_exon:Coding_transcript three_prime_UTR:Coding_transcript/);
+            # local coordinates
+            $seq_obj->ref($seq_obj);
+            @features = sort {$a->start <=> $b->start}
             $seq_obj->get_SeqFeatures();
-		}
-		my $test = _print_unspliced($markup,$seq_obj,$unspliced,@features);
-		 
-		push @data, $test;
-		push @data, _print_spliced($markup,@features);
-		push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
-    }
-	else {
-		# Otherwise we've got genomic DNA here
-# 		$hash{dna} =  _to_fasta($s,$unspliced);
-		push @data, { 	
-			header => "Genomic Sequence",
-	     		sequence => "$unspliced",
-			length => $length,
-			   };
+        }
+        my $test = _print_unspliced($markup,$seq_obj,$unspliced,@features);
+
+        push @data, $test;
+        push @data, _print_spliced($markup,@features);
+        push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
+    } else {
+        # Otherwise we've got genomic DNA here
+        push @data, {
+            header => "Genomic Sequence",
+            sequence => "$unspliced",
+            length => $length,
+        };
     }
     $self->length($length);
 
-  END:
+    END:
     return { description => 'the sequence of the sequence',
-	     data        => @data ? \@data : undef };
+             data        => @data ? \@data : undef };
 }
 
 =head3 print_homologies
