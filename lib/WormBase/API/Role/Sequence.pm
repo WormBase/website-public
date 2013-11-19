@@ -961,29 +961,21 @@ sub print_sequence {
         $markup->add_style('newline' => "\n");
         $markup->add_style('space'   => '');
         my %seenit;
-        my $strand = ($seq_obj > 0);
-        my @features;
+        my $strand = ($seq_obj->strand > 0);
+        $self->log->debug("STRAND: $strand");
+        # local coordinates
+        $seq_obj->ref($seq_obj);
+
+        # sort by stop if on -ve strand
+        my @features = sort {($strand ? $a->start : $b->stop) <=> $strand ? $b->start : $a->stop}
+            grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
+            map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
+            $seq_obj->get_SeqFeatures();
 
         # Do we still need the different species code?? - AC
         if ($s->Species =~ /briggsae/) {
-            # local coordinates
-            $seq_obj->ref($seq_obj);
-            @features = sort {$strand ? $a->start : $a->stop <=> $strand ? $b->start : $b->stop}
-                grep { $_->info eq $s && !$seenit{$_->start}++ }
-                grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
-                map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
-                $seq_obj->get_SeqFeatures();
-        } else {
-            # local coordinates
-            $seq_obj->ref($seq_obj);
-            @features = sort {$strand ? $a->start : $a->stop <=> $strand ? $b->start : $b->stop}
-                grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
-                map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
-                $seq_obj->get_SeqFeatures();
+            @features = grep { $_->info eq $s && !$seenit{$_->start}++ } @features;
         }
-
-        # debugging features
-        map { $self->log->debug($_->primary_tag . ", " . $_->seq_id . " " . $_->start . " " . $_->end)} @features;
 
         push @data, _print_unspliced($markup,$seq_obj,$unspliced,@features);
         push @data, _print_spliced($markup,@features);
@@ -1548,7 +1540,6 @@ sub _print_spliced {
     push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
     push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
     $markup->markup(\$spliced,\@markup);
-     
     return {
         header=>"spliced + UTR",
         sequence=>$spliced,
