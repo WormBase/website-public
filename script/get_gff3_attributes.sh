@@ -3,8 +3,8 @@
 release=$1
 
 if [ $# -ne 1 ] ; then
-  echo "Usage: get_all_gff3.sh WORMBASEVERSION"
-  echo "Example: get_all_gff3.sh WS240"
+  echo "Usage: get_gff3_attributes.sh WORMBASEVERSION"
+  echo "Example: get_gff3_attributes.sh WS240"
   exit 1
 fi
 
