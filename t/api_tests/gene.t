@@ -45,7 +45,7 @@
         my $longest = $gene->_longest_segment();
 
         isnt($longest, undef, 'data returned');
-        # this might change overtime?
+        # this might change over time?
         is  ($longest, 'IV:7499433..7516371', 'correct segment');
     }
 
