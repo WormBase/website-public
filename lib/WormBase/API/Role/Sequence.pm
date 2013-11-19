@@ -916,7 +916,7 @@ sub print_sequence {
     # Genomic clones need to be fetched a bit differently.
     unless ($s->class =~ /Sequence|Clone/i) {
         ($seq_obj) = sort {$b->length<=>$a->length}
-                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($s);
+                        grep {$_->primary_tag ne 'CDS'} $gff->get_features_by_name($s);
 
         # BLECH!  If provided with a gene ID and alt splices are present just guess
         # and fetch the first CDS or Transcript
@@ -961,25 +961,31 @@ sub print_sequence {
         $markup->add_style('newline' => "\n");
         $markup->add_style('space'   => '');
         my %seenit;
-
+        my $strand = ($seq_obj > 0);
         my @features;
 
         # Do we still need the different species code?? - AC
         if ($s->Species =~ /briggsae/) {
             # local coordinates
             $seq_obj->ref($seq_obj);
-            @features = sort {$a->start <=> $b->start}
+            @features = sort {$strand ? $a->start : $a->stop <=> $strand ? $b->start : $b->stop}
                 grep { $_->info eq $s && !$seenit{$_->start}++ }
+                grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
+                map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
                 $seq_obj->get_SeqFeatures();
         } else {
             # local coordinates
             $seq_obj->ref($seq_obj);
-            @features = sort {$a->start <=> $b->start}
-            $seq_obj->get_SeqFeatures();
+            @features = sort {$strand ? $a->start : $a->stop <=> $strand ? $b->start : $b->stop}
+                grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
+                map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
+                $seq_obj->get_SeqFeatures();
         }
-        my $test = _print_unspliced($markup,$seq_obj,$unspliced,@features);
 
-        push @data, $test;
+        # debugging features
+        map { $self->log->debug($_->primary_tag . ", " . $_->seq_id . " " . $_->start . " " . $_->end)} @features;
+
+        push @data, _print_unspliced($markup,$seq_obj,$unspliced,@features);
         push @data, _print_spliced($markup,@features);
         push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
     } else {
@@ -1491,34 +1497,30 @@ sub _build__segments {
 sub _print_unspliced {
     my ($markup,$seq_obj,$unspliced,@features) = @_;
     my $name = $seq_obj . ' (' . $seq_obj->start . '-' . $seq_obj->stop . ')';
-
-    my $length   = length $unspliced;
-    if ($length > 0) {
+    my $length_all   = length $unspliced;
+    if ($length_all > 0) {
         # mark up the feature locations
-
         my @markup;
         my $offset = $seq_obj->start;
         my $counter = 0;
         for my $feature (@features) {
-            my $start    = $feature->start - $offset;
-            my $length   = $feature->length;
-            my $style = $feature->method eq 'CDS'  ? 'cds'.$counter++%2
-            : $feature->method =~ /exon/ ? 'cds'.$counter++%2
-            : $feature->method =~ 'UTR' ? 'utr' : '';
+            my $start    = $seq_obj->strand > 0 ? $feature->start - $offset : $length_all - ($feature->stop - $offset + 1);
+            my $length   = abs($feature->stop - $feature->start) + 1;
+            my $style = $feature->primary_tag eq 'CDS'  ? 'cds'.$counter++%2
+                : $feature->primary_tag =~ /exon/ ? 'cds'.$counter++%2
+                : $feature->primary_tag =~ 'UTR' ? 'utr' : '';
+            # print ("\n   " . $feature->primary_tag  . " " . $feature->start . " " . $feature->stop . " $style $start $length");
             push @markup,[$style,$start,$start+$length];
             push @markup,['uc',$start,$start+$length] unless $style eq 'utr';
         }
         push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
         push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
-#       my $download = _to_fasta("$name|unspliced + UTR - $length bp",$unspliced);
         $markup->markup(\$unspliced,\@markup);
         return {
-            #download => $download,
             header=>"unspliced + UTR",
             sequence=>$unspliced,
-            length => $length,
+            length => $length_all,
             style=> 1,
-            
         };
     }
 }
@@ -1534,21 +1536,20 @@ sub _print_spliced {
     my @markup  = ();
     my $prefasta = $spliced;
     for my $feature (@features) {
-        print ("\n   $feature, primary_tag:" . $feature->primary_tag . ", source: " . $feature->source);
-        my $length = $feature->stop - $feature->start + 1;
+        # print ("\n   $feature, primary_tag:" . $feature->primary_tag . ", source: " . $feature->source . ", strand:" . $feature->strand);
+        my $length = abs($feature->stop - $feature->start) + 1;
         my $style  = $feature->primary_tag =~ /UTR/i ? 'utr' : 'cds' . $counter++ %2;
         my $end = $last + $length;
         push @markup,[$style,$last,$end];
-        push @markup,['uc',$last,$end] if $feature->primary_tag =~ /exon/;
+        push @markup,['uc',$last,$end] unless $style eq 'utr';
         $last += $length;
     }
 
     push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
     push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
-#   my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
     $markup->markup(\$spliced,\@markup);
      
-    return {                    # download => $download ,
+    return {
         header=>"spliced + UTR",
         sequence=>$spliced,
         length=> $splen,
@@ -1569,11 +1570,10 @@ sub _print_protein {
 #   @markup = map {['space',10*$_]}      (1..length($peptide)/10);
 #   push @markup,map {['newline',80*$_]} (1..length($peptide)/80);
     my $name = eval { $features->[0]->refseq->name };
-#   my $download=_to_fasta("$name|conceptual translation - $plen aa",$peptide);
 #   $markup->markup(\$peptide,\@markup);
     $peptide =~ s/^\s+//;
 
-    return {                    # download => $download,
+    return {
         header=>"conceptual translation",
         sequence=>$peptide,
         type => "aa",
