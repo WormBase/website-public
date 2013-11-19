@@ -916,16 +916,16 @@ sub print_sequence {
     # Genomic clones need to be fetched a bit differently.
     unless ($s->class =~ /Sequence|Clone/i) {
         ($seq_obj) = sort {$b->length<=>$a->length}
-                        grep {$_->primary_tag ne 'CDS'} $gff->get_features_by_name($s);
+                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($s);
 
         # BLECH!  If provided with a gene ID and alt splices are present just guess
         # and fetch the first CDS or Transcript
         # We really should display a list for all of these.
 
         ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-                $gff->get_features_by_name("$s.a");
+                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.a");
         ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-                $gff->get_features_by_name("$s.1");
+                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.1");
     }
 
     # Haven't fetched a GFF segment? Try Ace.
@@ -961,8 +961,7 @@ sub print_sequence {
         $markup->add_style('newline' => "\n");
         $markup->add_style('space'   => '');
         my %seenit;
-        my $strand = ($seq_obj->strand > 0);
-        $self->log->debug("STRAND: $strand");
+
         # local coordinates
         $seq_obj->ref($seq_obj);
 

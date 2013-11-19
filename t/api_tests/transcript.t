@@ -104,6 +104,15 @@
                 is($seq->{'sequence'}, "MIMFTEAEVMSFSYAVDFGVPEWLKLYYHVISVVSTVISFFSMYIILFQSGKMDGYRFYLFYMQFAGWLMDLHLSTFMQFIPLFPVFGGYCTGLLTQIFRIDDSFQTTYTAFTICLVASALNSCFVRKHQAISKISSKYLLDNVTYCIVIFLLNIYPVIAASLLYLSMLNKSEQVELVKSVYPNLVDKFASLPNYVVFDSNIWAIVFFAFIFFGCTYTLVLIVTTTYQMFKILDDNRKHISASNYAKHRATLRSLLAQFTTCFLIVGPASLFSLLVVIRYEHSQVATHWTIVALTLHSSANAIVMVITYPPYRHFVMLWKTNRSFHFASSQYQRSTLPNTRIQTERSIAVTITTH*", 'correct protein sequence returned +ve strand');
             }
         }
+
+
+        # non-coding test
+        $transcript = $api->fetch({ class => 'Transcript', name => 'B0379.1b' });
+
+        $sequence = $transcript->print_sequence();
+        isnt($sequence->{'data'}, undef, 'data returned');
+        is (scalar @{$sequence->{'data'}}, 1, 'correct amount of sequences returned nc transcript');
+        is ($sequence->{'data'}[0]->{'sequence'}, "atgggcgccttcgatcgcgtgaaagctcaagttgcatccgactcaaaatggacatcagctccttacaagggatttgtggccggaagcccatcaaacacgtatattgatattgtttccactgcgtgagttttcaacatgcaacctatcctgaagctttttaaaattaattctttgaagacgccactaacacgatgaattttgctcgtcactcgaaatacgatgaaatgtattctccttatctcggatcattccgcgaacgacacaattatacttcaattgctccaagcttgtgtattaacaaaacaaaccgtgccatcgagtatgacctggcaccacacaaggcttacaatccacgacaatccgaatggcttcttgaaaaagacaagaaatatagagttcgtggtgctcgtaatttaatttacacaaaaagcgcatcggatatcagtttgcctccactgacacgtcgcacattcacagttccaacagatactcttcgtcatcagaatcaatttctctactggaatggtcgtgcacttggtcttgactatgttgctccattccttcgtcgtgaagattattctcgtcacgaggatcgccgttatcagagaatttactggtctccacatttcattgatttgcttccatcttgccgtcattctgcacatcttatgctttccgcttattaa", 'correct sequence returned nc transcript' )
     }
 
 }
