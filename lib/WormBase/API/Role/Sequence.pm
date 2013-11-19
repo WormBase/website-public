@@ -967,8 +967,7 @@ sub print_sequence {
         $seq_obj->ref($seq_obj);
 
         # sort by stop if on -ve strand
-        my @features = sort {($strand ? $a->start : $b->stop) <=> $strand ? $b->start : $a->stop}
-            grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
+        my @features = grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
             map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
             $seq_obj->get_SeqFeatures();
 
@@ -976,6 +975,8 @@ sub print_sequence {
         if ($s->Species =~ /briggsae/) {
             @features = grep { $_->info eq $s && !$seenit{$_->start}++ } @features;
         }
+
+        @features = ($seq_obj->strand > 0) ? sort { $a->start <=> $b->start } @features : sort { $b->stop <=> $a->stop } @features;
 
         push @data, _print_unspliced($markup,$seq_obj,$unspliced,@features);
         push @data, _print_spliced($markup,@features);
