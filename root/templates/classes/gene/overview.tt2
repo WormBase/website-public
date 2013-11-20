@@ -133,15 +133,10 @@ IF fields.also_refers_to.data;
 END;
 
 
-# curator section
-   WRAPPER curator_block title="Old website";
-      '<a target="_blank" href="http://www.wormbase.org/db/gene/gene?name=' _ fields.name.data.id _ '">' _ fields.name.data.id _ '</a>';
-   END;
-
-'<div class="description">';
-IF fields.status.data == 'Dead'; no_toggle = 1; END;
-remarks;
-'</div>';
+   '<div class="description">';
+   IF fields.status.data == 'Dead'; no_toggle = 1; END;
+      remarks;
+   '</div>';
 
 %]
 
