@@ -67,11 +67,6 @@ sub connect {
 				  $self->ace ? (-acedb=>$self->ace):()
     );
 
-#    $db->freshen_ace if $db;
-	if($db && $self->ace) {
-		$self->log->debug("freshen ace");
-		$db->freshen_ace ;
-	}
     return $db;
 }
 
