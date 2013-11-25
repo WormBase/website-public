@@ -162,7 +162,7 @@
 	FOREACH specieskey IN specieskeys;
           bioprojectkeys = c.stash.blast_databases.$version.$database_type.$specieskey.keys.sort;
           FOREACH bioprojectkey IN bioprojectkeys;
-            IF bioprojectkey == "name" || bioprojectkey == "symbolic" || bioprojectkey == "not applicable";
+            IF bioprojectkey == "name" || bioprojectkey == "symbolic";
             ELSE;
               bioproject = c.stash.blast_databases.$version.$database_type.$specieskey.$bioprojectkey;
 		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" selected="selected" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';

@@ -209,6 +209,7 @@ sub process_input {
     my $database_location;
     my $bioproject = $path_parts[3];
     $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
+    $database_location = $1 if ($database_location =~ /(.*)\/$/); # Remove trailing slash, which is present when no BioProject ID was provided.
 
     if ($search_type eq "blast") {
         my $blast_app = $cgi->{"blast_app"};
