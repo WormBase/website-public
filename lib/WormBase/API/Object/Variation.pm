@@ -586,7 +586,6 @@ sub _build_genomic_image {
         }
 
         my $split  = $UNMAPPED_SPAN / 2;
-        # TODO: make sure this works with GFF3 - AC
         ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
 
         ($position) = $self->_genomic_position([$segment || ()]);
@@ -600,9 +599,9 @@ sub _build_genomic_image {
 
 sub _build__segments {
     my ($self) = @_;
-    my $obj    = $self->object;
-
-    return [$self->gff_dsn->segment($obj)];
+    my $object = $self->object;
+    my @segments = $self->gff_dsn->get_features_by_attribute( variation => $object);
+    return \@segments;
 }
 
 
@@ -724,9 +723,7 @@ sub cgh_flanking_probes {
     
     my $left_flank  = $object->CGH_flanking_probes(1);
     my $right_flank = $object->CGH_flanking_probes(2);
-    
-$self->log->debug("LEFT FLANK: $left_flank");
-$self->log->debug("RIGHT FLANK: $right_flank");
+
     return {
         description => 'probes used for CGH of deletion alleles',
         data        => ($left_flank || $right_flank) ? {
@@ -837,7 +834,7 @@ sub features_affected {
             # Get the coordinates in absolute coordinates
             # the coordinates of the containing feature,
             # and the coordinates of the variation WITHIN the feature.
-            @{$affected_hash}{qw(abs_start abs_stop fstart fstop start stop)}
+            @{$affected_hash}{qw(start stop fstart fstop start stop)}
                  = $self->_fetch_coords_in_feature($type_affected,$item_affected);
             push(@rows, $affected_hash);
         }
@@ -854,7 +851,7 @@ $affects->{$type_affected} = \@rows;
             next unless $_;
             my $hash = $affects->{$type_affected}->{$_} = $self->_pack_obj($_);
 # $affects->{$type_affected}->{$_}
-            @{$hash}{qw(abs_start abs_stop fstart fstop start stop)}
+            @{$hash}{qw(start stop fstart fstop start stop)}
                 = $self->_fetch_coords_in_feature($type_affected,$_);
             $hash->{item} = $self->_pack_obj($_);
             push(@rows, $hash);
@@ -1347,6 +1344,7 @@ sub _compile_nucleotide_changes {
             my $change = $type->right;
             ($wt,$mut) = eval { $change->row };
 
+
             # How to know if ntides need to be revcomped?  
             # copy code from below, big ugly mess.  
             # Maybe we should store strand info for substitutions in ace?
@@ -1355,21 +1353,16 @@ sub _compile_nucleotide_changes {
             my $db      = $db_obj->dbh;
 
             my $segment    = $self->_segments->[0];
-            return unless $segment;
 
-            my $sourceseq  = $segment->sourceseq;
+            return unless $segment;
+            my $sourceseq  = $segment->seq_id;
             my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
-            # TODO: make sure this works with GFF3. -AC
-            my ($full_segment) = $db->segment(-class => 'Sequence',
-                                              -name  => $sourceseq,
-                                              -start => $abs_start,
-                                              -stop  => $abs_stop);
-            my $plus_strand_dna = $full_segment->dna;
-            print $plus_strand_dna,"\n";
+            my ($full_segment) = $db->segment($sourceseq,$abs_start,$abs_stop);
+            my $plus_strand_dna = $full_segment->seq->seq;
 
             # test if the wildtype seq matches its location in the dna
-            if( uc($wt) ne uc($plus_strand_dna) ){
+            if( $plus_strand_dna && (uc($wt) ne uc($plus_strand_dna)) ){
                 my $rc_wt = &reverse_complement($wt);
                 if( uc($rc_wt) eq uc($plus_strand_dna) ){
                     $wt = $rc_wt;
@@ -1378,9 +1371,7 @@ sub _compile_nucleotide_changes {
                     die "Neither wild type sequence [".$wt."] nor reverse complment matches DNA [".$plus_strand_dna."]";
                 }
             }
-            
 
-            
 
             # Ack. Some of the alleles are still stored as A/G.
             unless ($wt && $mut) {
@@ -1575,18 +1566,14 @@ sub _build_sequence_strings {
     my $segment    = $self->_segments->[0];
     return unless $segment;
 
-    my $sourceseq  = $segment->sourceseq;
+    my $sourceseq  = $segment->seq_id;
     my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
     my $debug;
 
     # Coordinates are sometimes reported on the minus strand
     # We will report all sequence strings on the plus strand instead.
-    my $strand = '+';
-    if ($abs_start > $abs_stop) {
-        ($abs_start,$abs_stop) = ($abs_stop,$abs_start);
-        $strand = '-';          # Set $strand - used for tracking
-    }
+    my $strand = ($segment->strand > 0) ? '+' : '-';
 
     # Fetch a segment that spans the mutation with the appropriate flank
     # on the plus strand
@@ -1594,15 +1581,12 @@ sub _build_sequence_strings {
     # The amount of flanking sequence to recover should be configurable
     # Right now, it is hardcoded for 500 bp
     my $offset = 500;
-    # TODO: make sure this works with GFF3. -AC
-    my ($full_segment) = $db->segment(-class => 'Sequence',
-                                      -name  => $sourceseq,
-                                      -start => $abs_start - $offset,
-                                      -stop  => $abs_stop  + $offset);
+    my ($full_segment) = $db->segment($sourceseq, $abs_start - $offset, $abs_stop  + $offset);
     my $dna = $full_segment->dna;
+     $dna = $db->fetch_sequence($sourceseq, $abs_start - $offset, $abs_stop  + $offset);
+
     # MOVE INTO TEST
     # $debug .= "WT SNIPPET DNA FROM GFF: $dna" . br if DEBUG_ADVANCED;
-
     # Visit each variation and create a formatted string
     my ($wt_fragment,$mut_fragment,$wt_plus,$mut_plus);
     my $variations = $self->_compile_nucleotide_changes($object);
@@ -1617,11 +1601,7 @@ sub _build_sequence_strings {
         }
         else {
 
-            # TODO: make sure this works with GFF3 - AC
-            my ($seg) = $db->segment(-class => 'Sequence',
-                                     -name  => $sourceseq,
-                                     -start => $abs_start,
-                                     -stop  => $abs_stop);
+            my ($seg) = $db->segment($sourceseq,$abs_start,$abs_stop);
             $extracted_wt = $seg->dna;
         }
 
@@ -1721,7 +1701,7 @@ sub _build_sequence_strings {
 
     # test if the wildtype seq matches its location in the dna
     my $dna_span = substr($dna, $mutation_start, $mutation_length);
-    if( uc($wt_plus) ne uc($dna_span) ){
+    if( $dna_span && (uc($wt_plus) ne uc($dna_span)) ){
         my $rc_wt_plus = &reverse_complement($wt_plus);
         if( uc($rc_wt_plus) eq uc($dna_span) ){
             $wt_plus = $rc_wt_plus;
