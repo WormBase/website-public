@@ -165,7 +165,7 @@
             IF bioprojectkey == "name" || bioprojectkey == "symbolic";
             ELSE;
               bioproject = c.stash.blast_databases.$version.$database_type.$specieskey.$bioprojectkey;
-		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" selected="selected" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.symbolic _ '</option>';
+		'<option type="' _ database_type _ '" value="' _ bioproject.name _ '" selected="selected" species="' _ specieskey _ '" version="' _ version _ '">' _ bioproject.description _ ' (' _ bioproject.symbolic _ ')</option>';
             END;
           END;
         END;
