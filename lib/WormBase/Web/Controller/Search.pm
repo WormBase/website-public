@@ -36,7 +36,9 @@ sub search :Path('/search') Args {
     my $query = shift @args;
     my $page_count = shift @args || 1;
 
-    $type = 'all' unless $query;
+    # set search to 'all' if there's not query, OR if current search type is 'basic'
+    #   (for forwarding from /db/searches/basic)
+    $type = 'all' if (!$query || ($type eq 'basic'));
    
     # hack for references widget
     unless($page_count =~ m/\d|^all$/){

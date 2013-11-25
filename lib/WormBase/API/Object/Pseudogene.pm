@@ -422,8 +422,8 @@ sub _build__segments {
     if ($self->type =~ /EST/) {
         if ($object =~ /(.+)\.[35]$/) {
             my $base = $1;
-            my ($seg_start) = $self->gff->segment(Sequence => "$base.3");
-            my ($seg_stop)  = $self->gff->segment(Sequence => "$base.5");
+            my ($seg_start) = $self->gff->segment("$base.3");
+            my ($seg_stop)  = $self->gff->segment("$base.5");
             if ($seg_start && $seg_stop) {
                 my $union = $seg_start->union($seg_stop);
                 return [$union] if $union;

@@ -586,6 +586,7 @@ sub _build_genomic_image {
         }
 
         my $split  = $UNMAPPED_SPAN / 2;
+        # TODO: make sure this works with GFF3 - AC
         ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
 
         ($position) = $self->_genomic_position([$segment || ()]);
@@ -601,7 +602,7 @@ sub _build__segments {
     my ($self) = @_;
     my $obj    = $self->object;
 
-    return [$self->gff_dsn->segment($obj->class => $obj)];
+    return [$self->gff_dsn->segment($obj)];
 }
 
 
@@ -1066,6 +1067,7 @@ sub polymorphism_assays {
         if ($sequence && (my $pcr_node = first {$_ eq $pcr_product} $sequence->PCR_product)) {
             my ($start, $stop) = $pcr_node->row or last;
             my $gffdb = $self->gff_dsn or last;
+            # TODO: make sure this works with GFF3 - AC
             my ($segment) = eval { $gffdb->segment(
                 -name   => $sequence,
                 -offset => $start,
@@ -1358,6 +1360,7 @@ sub _compile_nucleotide_changes {
             my $sourceseq  = $segment->sourceseq;
             my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
+            # TODO: make sure this works with GFF3. -AC
             my ($full_segment) = $db->segment(-class => 'Sequence',
                                               -name  => $sourceseq,
                                               -start => $abs_start,
@@ -1420,7 +1423,7 @@ sub _fetch_coords_in_feature {
     # Kludge for chromosomes
     my $class = $tag eq 'Chromosome' ? 'Sequence' : $entry->class;
     # is it really okay to ignore multiple results and arbitarily use the first one?
-    my ($containing_segment) = $db->segment(-name  => $entry, -class => $class) or return;
+    my ($containing_segment) = $db->segment($entry) or return;
     # consider caching results?
 
     # Set the refseq of the variation to the containing segment
@@ -1591,6 +1594,7 @@ sub _build_sequence_strings {
     # The amount of flanking sequence to recover should be configurable
     # Right now, it is hardcoded for 500 bp
     my $offset = 500;
+    # TODO: make sure this works with GFF3. -AC
     my ($full_segment) = $db->segment(-class => 'Sequence',
                                       -name  => $sourceseq,
                                       -start => $abs_start - $offset,
@@ -1612,6 +1616,8 @@ sub _build_sequence_strings {
             $extracted_wt = '-';
         }
         else {
+
+            # TODO: make sure this works with GFF3 - AC
             my ($seg) = $db->segment(-class => 'Sequence',
                                      -name  => $sourceseq,
                                      -start => $abs_start,

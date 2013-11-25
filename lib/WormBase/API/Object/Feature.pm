@@ -319,7 +319,7 @@ sub _build__segments {
     my ($self) = @_;
     my $object = $self->object;
     return [] unless $self->gff;
-    return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object)];
+    return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object)];
 }
 
 

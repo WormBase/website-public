@@ -44,6 +44,77 @@
         is  ( scalar keys %{$features->{'data'}}, 3, "correct number of features returned");
     }
 
+    sub test_print_sequence {
+
+        # -ve strand test
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'B0041.11.1' });
+        can_ok('WormBase::API::Object::Transcript', ('print_sequence'));
+
+        my $sequence = $transcript->print_sequence();
+        isnt($sequence->{'data'}, undef, 'data returned');
+        is (scalar @{$sequence->{'data'}}, 3, 'correct amount of sequences returned -ve strand');
+
+        foreach my $seq (@{$sequence->{'data'}}) {
+            if($seq->{'header'} eq "unspliced + UTR"){
+                is($seq->{'length'}, 1059, 'correct unspliced length returned -ve strand');
+            } elsif ($seq->{'header'} eq "spliced + UTR") {
+                is($seq->{'length'}, 427, 'correct spliced length returned -ve strand');
+                my $spliced = '<span style="Color: #808080">aggatcggatgg</span><span style="Background-color: #FFFF00">ATGGATGGATCAACGACGATCGGGATGGATAGATCCGGGACAGATCGAGATGGACTG</span><span style="Background-color: #FFA500">ATCTCTAGCAA' . "\n" .
+                    'ACGACGAAGGATGGATGGTAGGAAAGGATGGATGGTTGGAACAATGGAAATAGAAAATCCAAAGGG</span><span style="Background-color: #FFFF00">ATGTTGA</span><span style="Color: #808080">aagctga' . "\n" .
+                    'ttgaagaaattctggacaatcggttgaatgggccgaccaatcaggatggatggatcgggacgagacgacgacgacgacaa' . "\n" .
+                    'acaataaggatggacggatggattgggacgatcgaaagggatttgggacaaaatgacgacgacaaaggatggatgaattc' . "\n" .
+                    'gggacggatcgggatggacg</span><span style="Color: #808080">cgatcgatggatggatggacgaggcaacaacgaccacgaacgattaggatggatggatgg' . "\n" .
+                    'aaggatcgatcg</span><span style="Color: #808080">gatctcaagcaaaca</span>';
+                is($seq->{'sequence'}, $spliced, "correct spliced sequence returned -ve strand");
+            } elsif ($seq->{'header'} eq "conceptual translation") {
+                is($seq->{'length'}, 46, 'correct protein length returned -ve strand');
+                is($seq->{'sequence'}, "MDGSTTIGMDRSGTDRDGLISSKRRRMDGRKGWMVGTMEIENPKGC*", 'correct protein sequence returned -ve strand');
+            }
+        }
+
+        # +ve strand test
+        $transcript = $api->fetch({ class => 'Transcript', name => 'AC3.1' });
+
+        $sequence = $transcript->print_sequence();
+        isnt($sequence->{'data'}, undef, 'data returned');
+        is (scalar @{$sequence->{'data'}}, 3, 'correct amount of sequences returned +ve strand');
+
+        foreach my $seq (@{$sequence->{'data'}}) {
+            if($seq->{'header'} eq "unspliced + UTR"){
+                is($seq->{'length'}, 1313, 'correct unspliced length returned +ve strand');
+            } elsif ($seq->{'header'} eq "spliced + UTR") {
+                is($seq->{'length'}, 1068, 'correct spliced length returned +ve strand');
+                my $spliced = '<span style="Background-color: #FFFF00">ATGATCATGTTCACAGAAGCTGAAGTTATGAGTTTTTCATACGCCGTTGATTTTGGAGTTCCCGAATGGCTCAAACTTTA' . "\n" .
+                    'CTATCACGTCATTTCCGTGGTGTCAACTGTTATTTCATTTTTCTCAATGTACATAATTTTGTTTCAAAGTGGGAAAATGG' . "\n" .
+                    'ATGGATATCGATTCTATCTATTTTATATGCAG</span><span style="Background-color: #FFA500">TTTGCTGGATGGTTGATGGATCTTCATCTATCTACTTTTATGCAGTTC' . "\n" .
+                    'ATTCCATTATTCCCAGTTTTTGGAGGATATTGTACTGGACTCTTGACTCAAATTTTCAGAATTGACGATTCATTTCAAAC' . "\n" .
+                    'G</span><span style="Background-color: #FFFF00">ACATATACTGCATTTACCATTTGCTTGGTAGCCAGTGCTTTGAATAGTTGCTTTGTTCGGAAGCATCAAGCAATTTCTA' . "\n" .
+                    'AAATCAGCTCTAAATATCTTCTCGATAATGTTACATACTGCATTGTTATATTTCTACTCAATATATATCCAGTTATTGCT' . "\n" .
+                    'GCATCTTTACTTTATTTGAGCATGCTCAATAAGTCCGAACAAGTTGAATTGGTGAAATCG</span><span style="Background-color: #FFA500">GTTTACCCAAATCTCGTTGA' . "\n" .
+                    'TAAATTTGCAAGTCTACCAAACTACGTGGTATTTGATTCCAATATATGGGCAATTGTATTCTTTGCATTCATATTTTTTG' . "\n" .
+                    'GTTGTACATATACACTTGTTTTGATTGTCACAACTACTTATCAAATGTTCAAAATATTAGACGATAATCGAAAACATATC' . "\n" .
+                    'AGTGCTTCAAACTATGCAAAGCATCGAGCCACTTTGAGAAGTCTTTTAGCTCAGTTTACAACGTGTTTCTTGATTGTTGG' . "\n" .
+                    'TCCAGCGTCTTTGTTCTCTTTACTGGTAGTTATAAGATATGAACATAGTCAAG</span><span style="Background-color: #FFFF00">TAGCAACACATTGGACCATTGTTGCTC' . "\n" .
+                    'TAACTCTCCATTCCAGTGCAAATGCAATTGTAATGGTTATCACATATCCTCCATACAGACATTTTGTAATGCTATGGAAA' . "\n" .
+                    'ACGAACAG</span><span style="Background-color: #FFA500">ATCATTCCACTTCGCATCATCTCAATATCAACGGTCTACTCTCCCGAATACAAGAATTCAAACGGAGCGAAG' . "\n" .
+                    'TATTGCAGTAACAATAACAACCCATTAA</span>';
+                is($seq->{'sequence'}, $spliced, "correct spliced sequence returned +ve strand");
+            } elsif ($seq->{'header'} eq "conceptual translation") {
+                is($seq->{'length'}, 355, 'correct protein length returned +ve strand');
+                is($seq->{'sequence'}, "MIMFTEAEVMSFSYAVDFGVPEWLKLYYHVISVVSTVISFFSMYIILFQSGKMDGYRFYLFYMQFAGWLMDLHLSTFMQFIPLFPVFGGYCTGLLTQIFRIDDSFQTTYTAFTICLVASALNSCFVRKHQAISKISSKYLLDNVTYCIVIFLLNIYPVIAASLLYLSMLNKSEQVELVKSVYPNLVDKFASLPNYVVFDSNIWAIVFFAFIFFGCTYTLVLIVTTTYQMFKILDDNRKHISASNYAKHRATLRSLLAQFTTCFLIVGPASLFSLLVVIRYEHSQVATHWTIVALTLHSSANAIVMVITYPPYRHFVMLWKTNRSFHFASSQYQRSTLPNTRIQTERSIAVTITTH*", 'correct protein sequence returned +ve strand');
+            }
+        }
+
+
+        # non-coding test
+        $transcript = $api->fetch({ class => 'Transcript', name => 'B0379.1b' });
+
+        $sequence = $transcript->print_sequence();
+        isnt($sequence->{'data'}, undef, 'data returned');
+        is (scalar @{$sequence->{'data'}}, 1, 'correct amount of sequences returned nc transcript');
+        is ($sequence->{'data'}[0]->{'sequence'}, "atgggcgccttcgatcgcgtgaaagctcaagttgcatccgactcaaaatggacatcagctccttacaagggatttgtggccggaagcccatcaaacacgtatattgatattgtttccactgcgtgagttttcaacatgcaacctatcctgaagctttttaaaattaattctttgaagacgccactaacacgatgaattttgctcgtcactcgaaatacgatgaaatgtattctccttatctcggatcattccgcgaacgacacaattatacttcaattgctccaagcttgtgtattaacaaaacaaaccgtgccatcgagtatgacctggcaccacacaaggcttacaatccacgacaatccgaatggcttcttgaaaaagacaagaaatatagagttcgtggtgctcgtaatttaatttacacaaaaagcgcatcggatatcagtttgcctccactgacacgtcgcacattcacagttccaacagatactcttcgtcatcagaatcaatttctctactggaatggtcgtgcacttggtcttgactatgttgctccattccttcgtcgtgaagattattctcgtcacgaggatcgccgttatcagagaatttactggtctccacatttcattgatttgcttccatcttgccgtcattctgcacatcttatgctttccgcttattaa", 'correct sequence returned nc transcript' )
+    }
+
 }
 
 1;

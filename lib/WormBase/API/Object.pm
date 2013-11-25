@@ -192,6 +192,7 @@ sub build_gbrowse_img {
   my $stop  = int($absend   + 0.1*$length);
   my $db    = $segment->factory;
 
+  # TODO: does this work with GFF3?? Need to check. AC
   my ($new_segment) = $db->segment(-name=>$absref,
 				   -start=>$start,
 				   -stop=>$stop);

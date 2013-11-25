@@ -834,20 +834,13 @@ sub _build_genetic_position_interpolated {
 sub _build__segments {
     my ($self) = @_;
     my @segments;
-    # my $gffdb = $self->gff_dsn() || return \@segments;
-    # my $dbh = $gffdb->dbh || return;
-    $self->log->debug("HELLo??");
 
     my $dbh = $self->gff_dsn() || return \@segments;
-$self->log->debug("HELLo??aa");
 
-    # my $gene = $self->cds->[0];
-    # @segments = map {$dbh->segment(CDS => $gene)} $self->corresponding_transcripts()->{data}->[0];
     if (@segments = $dbh->segment($self->object)
         or @segments = map {$dbh->segment($_)} $self->cds
         or @segments = map { $dbh->segment( $_) } $self->corresponding_transcripts()->{data} # RNA transcripts (lin-4, sup-5)
     ) {
-        $self->log->debug("SEGMENTS:" . @segments);
         return \@segments;
     }
 

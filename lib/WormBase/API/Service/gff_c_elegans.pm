@@ -37,7 +37,7 @@ sub fetch_gff_gene {
     ($trans) = grep {$_->method eq 'pseudo'} $dbh->fetch_group(Pseudogene => $transcript) unless ($trans);
     
     # RNA transcripts - this is getting out of hand
-    ($trans) = $dbh->segment(Transcript => $transcript) unless ($trans);
+    ($trans) = $dbh->segment($transcript) unless ($trans);
     return $trans;
 }
 

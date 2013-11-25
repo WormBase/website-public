@@ -150,6 +150,16 @@ sub _build_name {
     };
 }
 
+has 'host' => (
+    is          => 'ro',
+    required    => 1,
+    lazy        => 1,
+    default => sub {
+        my ($self) = @_;
+        return `hostname`;
+    },
+);
+
 has '_common_name' => (
     is       => 'ro',
     required => 1,
@@ -1813,7 +1823,7 @@ sub gff_dsn {
     $species =~ s/^all$/c_elegans/;
     $self->log->debug("getting gff database species $species");
     my $gff = $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
-    die "Can't find gff database for $species" unless $gff;
+    die "Can't find gff database for $species, host:" . $self->host unless $gff;
     return $gff;
 }
 
@@ -2185,7 +2195,7 @@ sub _fetch_gff_gene {
     my ($self,$transcript) = @_;
 
     my $trans;
-    my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database"; # should probably log this?
+    my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database, host:" . $self->host; # should probably log this?
 
     ($trans) = $GFF->get_features_by_name("$transcript");
     return $trans;
