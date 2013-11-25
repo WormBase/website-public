@@ -254,7 +254,7 @@ sub process_input {
         }
 
         $command_line = catfile($self->pre_compile->{BLAST_EXEC_DIR}, '/bin/blastall')
-                      . qq[ -p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file >& $out_file.err];
+                      . qq[ -p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file 2> $out_file.err];
     }
 
     elsif ($search_type eq "blat") {
@@ -277,7 +277,7 @@ sub process_input {
 	    $query_and_database_type = '-prot';
 	}
 
-        $command_line = "$blat_client -out=blast $query_and_database_type $database_location $query_file $out_file >& $out_file.err ";
+        $command_line = "$blat_client -out=blast $query_and_database_type $database_location $query_file $out_file 2> $out_file.err ";
 #            $blat_client . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
 	    
     }
