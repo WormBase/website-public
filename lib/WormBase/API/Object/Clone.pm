@@ -128,7 +128,7 @@ sub genomic_positions {
 sub _seq2coords {
     my ($self, @seqs) = @_;
     
-    return map {[$_->abs_ref, $_->abs_start, $_->abs_stop]}
+    return map {[$_->abs_ref, $_->start, $_->stop]}
     map {my $db = $self->gff_dsn($self->_parsed_species($_));
 	 $db->segment($_)}
     @seqs;

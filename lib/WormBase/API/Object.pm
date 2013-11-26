@@ -182,8 +182,8 @@ sub build_gbrowse_img {
   $BROWSER->config->set('general','keystyle'     => 'none');
   
   my $absref   = $segment->abs_ref;
-  my $absstart = $segment->abs_start;
-  my $absend   = $segment->abs_end;
+  my $absstart = $segment->start;
+  my $absend   = $segment->stop;
   ($absstart,$absend) = ($absend,$absstart) if $absstart>$absend;
   my $length = $segment->length;
   
