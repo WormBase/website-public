@@ -1355,14 +1355,15 @@ sub _compile_nucleotide_changes {
             my $segment    = $self->_segments->[0];
 
             return unless $segment;
+
             my $sourceseq  = $segment->seq_id;
             my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
             my ($full_segment) = $db->segment($sourceseq,$abs_start,$abs_stop);
-            my $plus_strand_dna = $full_segment->seq->seq;
+            my $plus_strand_dna = $full_segment->dna;
 
             # test if the wildtype seq matches its location in the dna
-            if( $plus_strand_dna && (uc($wt) ne uc($plus_strand_dna)) ){
+            if( uc($wt) ne uc($plus_strand_dna) ){
                 my $rc_wt = &reverse_complement($wt);
                 if( uc($rc_wt) eq uc($plus_strand_dna) ){
                     $wt = $rc_wt;
@@ -1701,7 +1702,7 @@ sub _build_sequence_strings {
 
     # test if the wildtype seq matches its location in the dna
     my $dna_span = substr($dna, $mutation_start, $mutation_length);
-    if( $dna_span && (uc($wt_plus) ne uc($dna_span)) ){
+    if( uc($wt_plus) ne uc($dna_span) ){
         my $rc_wt_plus = &reverse_complement($wt_plus);
         if( uc($rc_wt_plus) eq uc($dna_span) ){
             $wt_plus = $rc_wt_plus;
