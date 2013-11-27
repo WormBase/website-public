@@ -53,7 +53,7 @@
 
 
    WRAPPER $field_block title="TreeFam" key="treefam";
-       USE url= format(site.external_urls.treefam.image);
+       USE url= format(site.external_urls.TREEFAM.image);
        FOREACH obj IN fields.treefam.data.unique;
           '<h4>Treefam (ID:' _ external_link('treefam', obj, obj) _  ')</h4>';
           WRAPPER toggle title="View image" open=1;
