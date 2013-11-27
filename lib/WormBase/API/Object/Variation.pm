@@ -410,7 +410,7 @@ sub mutagen {
     my $evidence = $self->_get_evidence($mutagen);
     return {
         description => 'mutagen used to generate the variation',
-        data        => $evidence && %$evidence ? {text => "$mutagen", evidence => $evidence} : "$mutagen" || undef,
+        data        => $evidence && %$evidence ? {text => $mutagen && "$mutagen", evidence => $evidence} : $mutagen && "$mutagen" || undef,
     };
 }
 
@@ -426,7 +426,7 @@ sub isolated_via_forward_genetics {
     my $evidence = $self->_get_evidence($forward);
     return {
         description => 'was the mutation isolated by forward genetics?',
-        data        => $evidence && %$evidence ? {text => "$forward", evidence => $evidence} : "$forward" || undef,
+        data        => $evidence && %$evidence ? {text => $forward && "$forward", evidence => $evidence} : $forward && "$forward" || undef,
     };
 }
 
@@ -442,7 +442,7 @@ sub isolated_via_reverse_genetics {
     my $evidence = $self->_get_evidence($reverse);
     return {
         description => 'was the mutation isolated by reverse genetics?',
-        data        => $evidence && %$evidence ? {text => "$reverse", evidence => $evidence} : "$reverse" || undef,
+        data        => $evidence && %$evidence ? {text => $reverse && "$reverse", evidence => $evidence} : $reverse && "$reverse" || undef,
     };
 }
 
@@ -773,7 +773,7 @@ sub deletion_verification {
     my $evidence = $self->_get_evidence($deletion);
     return {
         description => 'the method used to verify deletion alleles',
-        data        => $evidence ? {text => "$deletion", evidence => $evidence } : "$deletion" || undef,
+        data        => $evidence ? {text => "$deletion", evidence => $evidence } : $deletion && "$deletion" || undef,
     };
 }
 
