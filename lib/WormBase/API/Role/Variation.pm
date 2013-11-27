@@ -89,6 +89,7 @@ sub _process_variation {
         isoform          => @isoform ? \@isoform : undef,
         effects          => @effect ? \@effect : undef,
         phen_count       => "$phen_count",
+        strain           => $self->_pack_obj($variation->Strain),
         locations    => @location ? join(', ', map {$_=~s/_/ /g;$_} @location) : undef,
     );
     return \%data;
