@@ -1816,13 +1816,9 @@ sub gene_models {
         
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
-        my $len_spliced   = 0;
 
-        # TODO: update in WS240
-        # note from Kevin - WormBase may be splitting to 
-        # WormBase_protein_coding, WormBase_ncRNA, etc in WS240
-        # Also: WHY ARE THE NUMBERS DIFFERENT FROM GFF2 ??!?
-        map { $len_spliced += $_->length } $gff->get_SeqFeatures('CDS:WormBase');
+        my $len_spliced   = 0;
+        map { $len_spliced += $_->length } map { $_->get_SeqFeatures } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 
