@@ -93,10 +93,10 @@ sub _build__alleles {
     my $count = $self->_get_count($object, 'Allele');
     my @alleles;
     my @polymorphisms;
-    unless ($count > 5000) { 
+    unless ($count > 1000) { 
       my @all = $object->Allele;
 
-      if($count < 1000){
+      if($count < 500){
           foreach my $allele (@all) {
               (grep {/SNP|RFLP/} $allele->Variation_type) ? 
                     push(@polymorphisms, $self->_process_variation($allele)) : 
