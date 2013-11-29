@@ -1276,7 +1276,7 @@ sub _compile_amino_acid_changes {
 		    # "Position" here really one of Amber, Ochre, etc.
 		    if($change_type->right){
                 my ($aa_position,$aa_change_string) = $change_type->right->row;
-                $aa_change = "$aa_change";
+                $aa_change = $aa_change && "$aa_change";
 		    }
 		}
 		if ($aa_change) {
@@ -1361,8 +1361,7 @@ sub _compile_nucleotide_changes {
 
             my ($full_segment) = $db->segment($sourceseq,$abs_start,$abs_stop);
             my $plus_strand_dna = $full_segment->dna;
-
-            # test if the wildtype seq matches its location in the dna
+            # # test if the wildtype seq matches its location in the dna
             if( uc($wt) ne uc($plus_strand_dna) ){
                 my $rc_wt = &reverse_complement($wt);
                 if( uc($rc_wt) eq uc($plus_strand_dna) ){
@@ -1498,7 +1497,7 @@ sub _do_markup {
     $markup->add_style('cds0'  => 'BGCOLOR yellow');
     $markup->add_style('cds1'  => 'BGCOLOR orange');
     $markup->add_style('space' => ' ');
-    $markup->add_style('substitution' => 'text-transform:uppercase; background-color: #FF8080;');
+    $markup->add_style('substitution'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('deletion'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('insertion'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('deletion_with_insertion'  => 'background-color: #FF8080; text-transform:uppercase');
@@ -1575,7 +1574,6 @@ sub _build_sequence_strings {
     # Coordinates are sometimes reported on the minus strand
     # We will report all sequence strings on the plus strand instead.
     my $strand = ($segment->strand > 0) ? '+' : '-';
-
     # Fetch a segment that spans the mutation with the appropriate flank
     # on the plus strand
 
@@ -1701,6 +1699,7 @@ sub _build_sequence_strings {
     }
 
     # test if the wildtype seq matches its location in the dna
+
     my $dna_span = substr($dna, $mutation_start, $mutation_length);
     if( uc($wt_plus) ne uc($dna_span) ){
         my $rc_wt_plus = &reverse_complement($wt_plus);
