@@ -30,8 +30,8 @@
 
         isnt($ntc->{data}, undef, 'data returned');
         is  ($ntc->{data}[0]->{wildtype_label}, 'reference', 'correct wildtype label');
-        is  ($ntc->{data}[0]->{wildtype}, 'T', 'correct wildtype');
-        is  ($ntc->{data}[0]->{mutant}, 'G', 'correct mutant');
+        is  ($ntc->{data}[0]->{wildtype}, 'A', 'correct wildtype');
+        is  ($ntc->{data}[0]->{mutant}, 'C', 'correct mutant');
         is  ($ntc->{data}[0]->{mutant_label}, 'HK104', 'correct mutant label');
     }
 

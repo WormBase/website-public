@@ -93,10 +93,10 @@ sub _build__alleles {
     my $count = $self->_get_count($object, 'Allele');
     my @alleles;
     my @polymorphisms;
-    unless ($count > 5000) { 
+    unless ($count > 1000) { 
       my @all = $object->Allele;
 
-      if($count < 1000){
+      if($count < 500){
           foreach my $allele (@all) {
               (grep {/SNP|RFLP/} $allele->Variation_type) ? 
                     push(@polymorphisms, $self->_process_variation($allele)) : 
@@ -1816,13 +1816,9 @@ sub gene_models {
         
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
-        my $len_spliced   = 0;
 
-        # TODO: update in WS240
-        # note from Kevin - WormBase may be splitting to 
-        # WormBase_protein_coding, WormBase_ncRNA, etc in WS240
-        # Also: WHY ARE THE NUMBERS DIFFERENT FROM GFF2 ??!?
-        map { $len_spliced += $_->length } $gff->get_SeqFeatures('CDS:WormBase');
+        my $len_spliced   = 0;
+        map { $len_spliced += $_->length } map { $_->get_SeqFeatures } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 
@@ -1951,7 +1947,7 @@ sub _longest_segment {
     my ($self) = @_;
     # Uncloned genes will NOT have segments associated with them.
     my ($longest)
-        = sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->abs_start}
+        = sort { $b->stop - $b->start <=> $a->stop - $a->start}
     @{$self->_segments} if $self->_segments;
 
     return $longest;

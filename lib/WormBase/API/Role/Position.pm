@@ -156,7 +156,7 @@ sub _format_coordinates {
     my ($self,%args) = @_;
     
     my ($ref, $start, $stop, $pad_for_gbrowse)
-	= $args{sequence} ? map { $args{sequence}->$_ } qw(abs_ref abs_start abs_stop pad_for_gbrowse)
+	= $args{sequence} ? map { $args{sequence}->$_ } qw(abs_ref start stop pad_for_gbrowse)
 	: @args{qw(ref start stop pad_for_gbrowse)};
     
     if (defined $start && defined $stop && $ref) { # definedness sufficient?
@@ -313,10 +313,9 @@ sub _seg2coords {
     my $stop      = $segment->stop;
 
     $segment->absolute($prev_abs); # reset relativity
-
     my $abs_ref   = $segment->abs_ref;
-    my $abs_start = $segment->abs_start;
-    my $abs_stop  = $segment->abs_stop;
+    my $abs_start = $segment->start;
+    my $abs_stop  = $segment->stop;
     ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
 
     return ($abs_ref,$abs_start,$abs_stop,$start,$stop); # what about $ref?

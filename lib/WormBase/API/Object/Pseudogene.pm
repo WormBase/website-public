@@ -438,7 +438,7 @@ sub _longest_segment {
     my ($self) = @_;
     # Uncloned genes will NOT have segments associated with them.
     my ($longest)
-        = sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->abs_start}
+        = sort { $b->stop - $b->start <=> $a->stop - $a->start}
     @{$self->_segments} if $self->_segments;
 
     return $longest;

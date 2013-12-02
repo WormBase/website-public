@@ -125,7 +125,7 @@ sub _process_assembly {
     "WS" . $assembly->First_WS_release . ' - '
     . ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
 
-    my $label = $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 });
+    $label = $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 });
     my $object = $self->object;
     my ($g, $species) = $object =~ /(.).*[ _](.+)/o;
     $label->{taxonomy} = lc "${g}_$species";

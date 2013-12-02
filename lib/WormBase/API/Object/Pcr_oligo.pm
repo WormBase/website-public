@@ -211,9 +211,10 @@ sub overlaps_variation {
 # classic site note: MRC Genesevice and Open Biosystems links are invalid now
 sub on_orfeome_project {
 	my ($self) = @_;
-
-	$self->object->name =~ /^mv_(.*)/;
-	my $data = $1;
+    my $data;
+	if($self->object->name =~ /^mv_(.*)/){
+	   $data = $1;
+    }
 
 	return {
 		description => 'Finding this ' . $self->_object_class . ' on the ORFeome project',

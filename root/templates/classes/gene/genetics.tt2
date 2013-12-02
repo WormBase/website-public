@@ -10,7 +10,7 @@
    # Alleles
    WRAPPER $field_block title="Alleles" key="alleles";
        build_data_table(
-            order=['variation','molecular_change','locations','effects','aa_change','aa_position','isoform', 'phen_count', 'method_name'],
+            order=['variation','molecular_change','locations','effects','aa_change','aa_position','isoform', 'phen_count', 'method_name', 'strain'],
             columns={ variation         => 'Allele',
                       molecular_change  => 'Molecular<br /> change',
                       effects           => 'Protein<br /> effects',
@@ -19,7 +19,8 @@
                       aa_change         => 'Protein<br /> change',
                       aa_position       => 'Amino acid<br />position',
                       isoform           => 'Isoform',
-                      method_name       => 'Method'
+                      method_name       => 'Method',
+                      strain            => 'Strain',
             },
             key='alleles',
             classsearch='variation');
@@ -28,7 +29,7 @@
    # Polymorphisms
    WRAPPER $field_block title="Polymorphisms & Natural variants" key="polymorphisms";
         build_data_table(
-            order=['variation','type','molecular_change','locations', 'effects','aa_change','aa_position','phen_count'],
+            order=['variation','type','molecular_change','locations', 'effects','aa_change','aa_position','phen_count', 'strain'],
             columns={ variation         => 'Polymorphism',
                       type              => 'Type',
                       molecular_change  => 'Molecular<br /> change',
@@ -37,6 +38,7 @@
                       phen_count        => '# of<br /> Phenotypes',
                       aa_change         => 'Protein<br /> change',
                       aa_position       => 'Amino acid<br />position',
+                      strain            => 'Strain',
             },
             key='polymorphisms',
             classsearch='variation');
