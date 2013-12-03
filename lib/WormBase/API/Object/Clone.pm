@@ -90,41 +90,6 @@ sub sequences {
     }
 }
 
-# genomic_positions { }
-# This method will return a data structure containing
-# genomic positions for features on this clone.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/genomic_positions
-
-sub genomic_positions {
-    my ($self) = @_;
-    
-    # this part looks suspiciously like it overlaps with _build__segments below...
-    my @positions;
-    foreach my $seq (@{$self ~~ '@Sequence'}) {
-        my $chrom = $self->_pack_obj($seq->Interpolated_map_position);
-        my $map   = $seq->Interpolated_map_position(2);
-    
-        my ($ref, $start, $end);
-        if (my ($coords) = $self->_seq2coords($seq)) {
-            ($ref, $start, $end) = @$coords;
-        }
-        my $label    = $self->_format_coordinates(ref => $ref, start => $start, stop => $end);
-        my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $end, pad_for_gbrowse => 1);
-        next unless $position;
-        push(@positions, {
-            label      => $position,
-            id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
-            class      => 'genomic_location',
-            pos_string => $position, # independent from label -- label may change in the future
-        });
-    }
-    
-    return {
-        description => 'genomic positions of the sequences associated with this clone',
-        data        => (@positions > 0) ? \@positions : undef,
-    }
-}
-
 sub _seq2coords {
     my ($self, @seqs) = @_;
     
