@@ -28,7 +28,7 @@
         $configuration = $_[0];
     }
 
-    # This test checks if the non-existant tool 'foo' returns a 404
+    # This test checks the links in the blastp matches in the homology widget
     sub test_homology_blastp_matches {
         my $host = $configuration->{'host'};
         my $port = $configuration->{'port'};
@@ -46,6 +46,18 @@
         isnt($response->{'fields'}->{'best_blastp_matches'}->{'data'}, undef, '"best_blastp_matches" data field has data attached to it');
         isnt($response->{'fields'}->{'best_blastp_matches'}->{'data'}->{'hits'}, undef, '"best_blastp_matches" data has hits!');
         isnt($response->{'fields'}->{'best_blastp_matches'}->{'data'}->{'hits'}[5]->{'class'}, 'ENSEMBLE', 'Use the ENSEMBLE class - external linking in table');
+    }
+
+    # Test if wormbase id/all fields with no key specified are being displayed
+    sub test_id_field {
+        my $host = $configuration->{'host'};
+        my $port = $configuration->{'port'};
+
+        my $url_html = "http://$host:$port/rest/widget/gene/WBGene00006763/overview";
+        my $response_html = get($url_html);
+
+        # I'm trying to make sure the WormBase ID field does not have the 'disabled' class.
+        isnt($response_html =~ /<div class\=\"field\s+\"\>  \<div class\=\"field-title\"\>\s+\<span title\=\"\"\> WormBase ID/, '', 'WormBase ID field displayed');
     }
 
 }

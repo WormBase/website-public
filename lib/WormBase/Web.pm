@@ -527,9 +527,9 @@ sub api_tests {
         next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t');
         require_ok($test);
         my $pkg = basename($test, '.t') . '::';
-        &{%$pkg->{'config'}}($api);
+        &{$pkg->{'config'}}($api);
         for my $sub (keys %$pkg) {
-            subtest("$pkg::$sub", \&{%$pkg->{$sub}}) if $sub =~ /^test_/;
+            subtest("$pkg::$sub", \&{$pkg->{$sub}}) if $sub =~ /^test_/;
         }
     }
 

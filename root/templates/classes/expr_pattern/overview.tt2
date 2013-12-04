@@ -34,6 +34,36 @@ remarks;
  
 PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_images;
 
+'<br />';
+
+IF fields.ep_movies.data.size > 0;
+    WRAPPER toggle title="<b>View Movies</b>" ;
+
+        FOR movie IN fields.ep_movies.data;
+            movie_path = c.config.static_movie_base _ '/' _ movie;
+            %]
+            <div class="embeddedVideo">
+                <object classid='clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B'
+                    width="600" height="400"
+                    codebase='http://www.apple.com/qtactivex/qtplugin.cab'>
+                    <param name='src' value="[% movie_path %]">
+                    <param name='autoplay' value="false">
+                    <param name='controller' value="true">
+                    <param name='loop' value="false">
+                    
+                    <embed src="[% movie_path %]" width="600" height="400"
+                    scale="tofit" autoplay="false"
+                    controller="true" loop="false" bgcolor="#000000"
+                    pluginspage='http://www.apple.com/quicktime/download/'>
+                    </embed>
+                </object>     
+            </div>
+            <a href="[% movie_path %]">download movie</a>
+            [%
+        END;
+    END;
+END;
+
 WRAPPER $field_block title="Historical gene" key="historical_gene";
     cell_content(fields.historical_gene.data);
 END;

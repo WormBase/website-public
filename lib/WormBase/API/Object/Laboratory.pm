@@ -256,15 +256,15 @@ sub _get_lineage_data {
 	($level, $start, $end) = $relationship->right->row;       
 
 	my @end_date;
-	if ($end !~ m/present/i) {	    
+	if ($end && ($end !~ m/present/i)) {	    
 	    @end_date = split /\ /,$end; 
 	    $end = $end_date[2];
 	}
 	
-	my @start_date = split /\ /,$start; 
+	my @start_date = split /\ /,$start if $start;
 	$start = $start_date[2];
 	
-	$duration = "$start_date[2]\ \-\ $end_date[2]"; 
+    $duration = ($start_date[2] || "") .  " - " . ($end_date[2] || ""); 
     }
     my $name = $member->Standard_name;
     

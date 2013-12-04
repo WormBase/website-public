@@ -35,9 +35,6 @@ sub _build_method {
     my ($self) = @_;
     my $class = $self->object->class;
     my $method = $self ~~ 'Method';
-    if($self->object->Corresponding_transcript) {
-	$method = $self->object->Corresponding_transcript->Method;
-    }
     my $details = $method->Remark if $method;
     return {
         description => "the method used to describe the $class",
@@ -141,6 +138,23 @@ sub partial{
     };
 }
 
+# gene_history { }
+# This mehtod will return a data structure containing the 
+# historical record of the dead gene originally associated with this
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/gene_history
+
+
+sub gene_history {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @historical_gene = map { $self->_pack_obj($_) } $object->Gene_history;
+    return { description => 'Historical record of the genes originally associated with this CDS',
+             data        => @historical_gene ? \@historical_gene : undef,
+    };
+}
+
+
 ############################################################
 #
 # The External Links widget
@@ -223,6 +237,8 @@ sub _build_genomic_image {
 
 # genetic_position {}
 # Supplied by Role
+
+
 
 ############################################################
 #

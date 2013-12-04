@@ -142,11 +142,11 @@ sub _seg2posURLpart {
 
     # Create padded coordinates suitable for generating a GBrowse image
     my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $stop, pad_for_gbrowse => 1);
-
     # Use the ACTUAL feature coordinates for the label, not the GBrowse coordinates.
     return {
         label      => $self->_format_coordinates(ref => $ref, start => $start, stop => $stop),
-        id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
+        id         => $position,
+        taxonomy   => $self->_parsed_species,
         class      => 'genomic_location',
         pos_string => $position, # independent from label -- label may change in the future
     };
@@ -156,7 +156,7 @@ sub _format_coordinates {
     my ($self,%args) = @_;
     
     my ($ref, $start, $stop, $pad_for_gbrowse)
-	= $args{sequence} ? map { $args{sequence}->$_ } qw(abs_ref abs_start abs_stop pad_for_gbrowse)
+	= $args{sequence} ? map { $args{sequence}->$_ } qw(abs_ref start stop pad_for_gbrowse)
 	: @args{qw(ref start stop pad_for_gbrowse)};
     
     if (defined $start && defined $stop && $ref) { # definedness sufficient?
@@ -270,7 +270,7 @@ sub _build_genetic_position {
 
     return {
         description => "Genetic position of $class:$object",
-        data => ( $self->make_genetic_position_object($class, $object, $chromosome, $position, $error, $method)->{'data'} )
+        data => [ $self->make_genetic_position_object($class, $object, $chromosome, $position, $error, $method)->{'data'} ]
     };
 }
 
@@ -313,10 +313,9 @@ sub _seg2coords {
     my $stop      = $segment->stop;
 
     $segment->absolute($prev_abs); # reset relativity
-
     my $abs_ref   = $segment->abs_ref;
-    my $abs_start = $segment->abs_start;
-    my $abs_stop  = $segment->abs_stop;
+    my $abs_start = $segment->start;
+    my $abs_stop  = $segment->stop;
     ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
 
     return ($abs_ref,$abs_start,$abs_stop,$start,$stop); # what about $ref?

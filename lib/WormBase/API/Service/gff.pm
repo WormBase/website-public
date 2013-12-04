@@ -8,7 +8,7 @@ has 'dbh' => (
     isa       => 'Bio::DB::SeqFeature::Store',   # Could also be a seq feature store, eh?
     predicate => 'has_dbh',
     writer    => 'set_dbh',
-    handles   => [qw/search_notes get_features_by_name/],
+    handles   => [qw/search_notes get_features_by_name get_features_by_attribute/],
 );
 
 with 'WormBase::API::Role::Service';
@@ -73,11 +73,6 @@ sub connect {
 				  $self->ace ? (-acedb=>$self->ace):()
     );
 
-#    $db->freshen_ace if $db;
-	if($db && $self->ace) {
-		$self->log->debug("freshen ace");
-		$db->freshen_ace ;
-	}
     return $db;
 }
 1;

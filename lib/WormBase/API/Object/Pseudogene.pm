@@ -368,6 +368,31 @@ sub predicted_exon_structure {
 }
 
 
+#######################################
+#
+# The Location Widget
+#
+#######################################
+
+# genomic_position { }
+# Supplied by Role
+
+sub _build_genomic_position {
+    my ($self) = @_;
+    my @pos = $self->_genomic_position([ $self->_longest_segment || () ]);
+    return {
+        description => 'The genomic location of the sequence',
+        data        => @pos ? \@pos : undef,
+    };
+}
+
+# genetic_position { }
+# Supplied by Role
+
+# sub genomic_image { }
+# Supplied by Role
+
+
 # Sample wrapper function to copy
 # replace the xxx's with stuff
 0 if <<'SAMPLE_FUNC';
@@ -397,8 +422,8 @@ sub _build__segments {
     if ($self->type =~ /EST/) {
         if ($object =~ /(.+)\.[35]$/) {
             my $base = $1;
-            my ($seg_start) = $self->gff->segment(Sequence => "$base.3");
-            my ($seg_stop)  = $self->gff->segment(Sequence => "$base.5");
+            my ($seg_start) = $self->gff->segment("$base.3");
+            my ($seg_stop)  = $self->gff->segment("$base.5");
             if ($seg_start && $seg_stop) {
                 my $union = $seg_start->union($seg_stop);
                 return [$union] if $union;
@@ -406,6 +431,28 @@ sub _build__segments {
         }
     }
     return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object)];
+}
+
+# Find the longest GFF segment
+sub _longest_segment {
+    my ($self) = @_;
+    # Uncloned genes will NOT have segments associated with them.
+    my ($longest)
+        = sort { $b->stop - $b->start <=> $a->stop - $a->start}
+    @{$self->_segments} if $self->_segments;
+
+    return $longest;
+}
+
+sub _build_tracks {
+    my ($self) = @_;
+
+    print $self->_parsed_species,"\n"; # DELETE
+
+    return {
+        description => 'tracks to display in GBrowse',
+        data => $self->_parsed_species =~ /elegans/ ? [qw(PRIMARY_GENE_TRACK)] : undef,
+    };
 }
 
 

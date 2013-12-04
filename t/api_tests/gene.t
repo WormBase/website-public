@@ -32,7 +32,7 @@
         isnt($models, undef, 'data returned');
         isnt($models->{data}, undef, 'data structure returned');
         $models = $models->{data};
-        is  (scalar @$models, 2, 'two models returned');
+        is  (scalar @$models, 3, 'two models returned');
     }
 
     # Tests whether the _longest_segment method works - particularly
@@ -45,8 +45,8 @@
         my $longest = $gene->_longest_segment();
 
         isnt($longest, undef, 'data returned');
-        # this might change overtime?
-        is  ($longest, 'CBG05938a:1,16939', 'correct segment');
+        # this might change over time?
+        is  ($longest, 'IV:7499433..7516371', 'correct segment');
     }
 
 

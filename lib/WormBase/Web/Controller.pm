@@ -10,7 +10,7 @@ sub _setup_page {
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
-    my $class = lc($c->stash->{object}{name}{data}{class});
+    my $class = lc($c->stash->{object}{name}{data}{class}) if $c->stash->{object}{name}{data}{class};
     unless ($class) {
         $class = lc($c->req->path);
         $class =~ s/[\/_]/-/g;

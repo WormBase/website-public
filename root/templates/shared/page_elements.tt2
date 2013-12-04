@@ -582,7 +582,7 @@ END; %]
       LAST;
     END;
   END; %]
-  [% UNLESS (not_empty || (widget == 'overview')) %]
+  [% UNLESS (not_empty || (widget == 'overview') || (widget == 'expression')) %]
     <span class="caveat-emptor">No [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] data for [% object.name.data.label %]</span>
   [% END %]
 [% END %]
@@ -863,39 +863,35 @@ END;
 
 
 [% MACRO laboratory BLOCK ;
-     # The Laboratory field
-     # Expects the stash to contain the "laboratory" key.
-     WRAPPER $field_block title="$title"||'Laboratory' key="laboratory";
-         FOREACH index IN [0..fields.laboratory.data.max];
-         
-			lab = fields.laboratory.data.$index;
-			'<div style="white-space:nowrap;">';
-			tag2link(lab.laboratory);
-			'</div>';
-			
-			# Include the lab representative, if one exists         
-			IF lab.representative;
-				"(" ; 
-				tag2link(lab.representative); 
-				")" ; 
-			END;
-			
-			IF index != fields.laboratory.data.max;
-				'<br /><br />';
-			END;
+    # The Laboratory field
+    # Expects the stash to contain the "laboratory" key.
+    WRAPPER $field_block title="$title"||'Laboratory' key="laboratory";
+        FOREACH lab IN fields.laboratory.data;
 
-		 END;
-         
- 
-		 # HACK! On strain pages, link directly to the CGC
-		 IF title == "Available From";
-			IF	fields.laboratory.data.0.laboratory.label.match('CGC');
-				'<br /><a href="http://www.cbs.umn.edu/CGC/" target="_blank">Visit the CGC home page</a>.';
-			END;
-		 END;	 
-     END;
-  END;
-  
+            '<div style="white-space:nowrap;">';
+                tag2link(lab.laboratory);
+            '</div>';
+
+            # Include the lab representative, if one exists         
+            IF lab.representative;
+              "(" _ tag2link(lab.representative) _ ")" ; 
+            END;
+
+            IF !loop.last;
+              '<br /><br />';
+            END;
+
+        END;
+
+
+        # HACK! On strain pages, link directly to the CGC
+        IF title == "Available From";
+            IF fields.laboratory.data.0.laboratory.label.match('CGC');
+            '<br /><a href="http://www.cbs.umn.edu/CGC/" target="_blank">Visit the CGC home page</a>.';
+            END;
+        END;
+    END;
+END;
 %]
 
 [%# 

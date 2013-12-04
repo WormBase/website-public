@@ -222,7 +222,7 @@ sub _split_fields {
   my ($self, $c, $ret, $data) = @_;
 
   $data =~ s/\\([\;\/\\%\"])/$1/g;
-  while($data =~ m/^([\S]*)[=](.*)[\n]([\s\S]*)$/){
+  while($data =~ m/^([^=\s]*)[=](.*)[\n]([\s\S]*)$/){
     my ($d, $label) = ($2, $1);
     my $array = $ret->{$label} || ();
     $data = $3;
@@ -322,8 +322,10 @@ sub _pack_search_obj {
   my $id = $doc->get_value(1);
   my $class = $doc->get_value(2);
   $class = $self->modelmap->ACE2WB_MAP->{class}->{$class} || $self->modelmap->ACE2WB_MAP->{fullclass}->{$class};
+  $label ||= $doc->get_value(6) || $id;
+  $label =~ s/\\(.)/$1/g;
   return {  id => $id,
-            label => $label || $doc->get_value(6) || $id,
+            label => $label,
             class => lc($class),
             taxonomy => $self->_get_taxonomy($doc),
             coord => { start => $doc->get_value(9),

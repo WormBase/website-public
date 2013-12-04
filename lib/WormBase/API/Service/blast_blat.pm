@@ -12,6 +12,7 @@ use File::Slurp qw(slurp read_dir);
 use File::Spec::Functions qw(catfile);
 use GD::Simple;
 use namespace::autoclean -except => 'meta';
+use JSON::Parse qw(json_file_to_perl);
 
 use Moose;
 with 'WormBase::API::Role::Object'; 
@@ -41,6 +42,22 @@ has 'blast_databases' => (
         my $data;
 	my $base_dir = catfile($self->pre_compile->{base});
 	
+        my $assemblies_info = catfile(WormBase::Web->config->{metadata_path}, "ASSEMBLIES." . WormBase::Web->config->{wormbase_release} . ".json");
+        unless (-e $assemblies_info) {
+            error("Misconfigured set-up. Cannot find metadata file that describes assemblies.");
+        }
+        my $assemblies = json_file_to_perl($assemblies_info);
+        my $bioproject_metadata = {};
+                $bioproject_metadata->{"sdfsdfsdf"} = "";
+
+        foreach my $species (keys $assemblies) {
+            foreach my $bioprojects ($assemblies->{$species}->{assemblies}) {
+                foreach my $bioproject (@$bioprojects) {
+                    $bioproject_metadata->{$bioproject->{bioproject}} = $bioproject;
+                }
+            }
+        }
+
         # Discover available BLAST databases
 	my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
 	foreach my $version (@versions) {
@@ -72,9 +89,10 @@ has 'blast_databases' => (
 		        $species_entry->{"name"} = join('_',$filename_prefix,'genomic.fa');
 			$species_entry->{"symbolic"} = "$symbolic";
 		        $species_entry->{$bioproject} = {
-	                    symbolic => "$bioproject",
-			    name     => join('_',$filename_prefix,'genomic.fa'),
-			    location => catfile($blast_dir, $species, 'genomic.fa'),
+	                    symbolic    => "$bioproject",
+                            description => $bioproject_metadata->{$bioproject}->{bioproject_description},
+			    name        => join('_',$filename_prefix,'genomic.fa'),
+			    location    => catfile($blast_dir, $species, 'genomic.fa'),
 		        };
 		        $data->{"$version"}{Genome}{"$species"} = $species_entry;
 		    }
@@ -83,9 +101,10 @@ has 'blast_databases' => (
 		        $species_entry->{"name"} = join('_',$filename_prefix,'peptide.fa');
 			$species_entry->{"symbolic"} = "$symbolic";
 		        $species_entry->{$bioproject} = {
-	                    symbolic => "$bioproject",
-			    name     => join('_',$filename_prefix,'peptide.fa'),
-			    location => catfile($blast_dir, $species, 'peptide.fa'),
+	                    symbolic    => "$bioproject",
+                            description => $bioproject_metadata->{$bioproject}->{bioproject_description},
+			    name        => join('_',$filename_prefix,'peptide.fa'),
+			    location    => catfile($blast_dir, $species, 'peptide.fa'),
 		        };
 		        $data->{"$version"}{Protein}{"$species"} = $species_entry;
 		    }
@@ -94,9 +113,10 @@ has 'blast_databases' => (
 		        $species_entry->{"name"} = join('_',$filename_prefix,'ests.fa');
 			$species_entry->{"symbolic"} = "$symbolic";
 		        $species_entry->{$bioproject} = {
-	                    symbolic => "$bioproject",
-			    name     => join('_',$filename_prefix,'ests.fa'),
-			    location => catfile($blast_dir, $species, 'ests.fa'),
+	                    symbolic    => "$bioproject",
+                            description => $bioproject_metadata->{$bioproject}->{bioproject_description},
+			    name        => join('_',$filename_prefix,'ests.fa'),
+			    location    => catfile($blast_dir, $species, 'ests.fa'),
 		        };
 		        $data->{"$version"}{ESTs}{"$species"} = $species_entry;
 		    }
@@ -209,6 +229,7 @@ sub process_input {
     my $database_location;
     my $bioproject = $path_parts[3];
     $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $bioproject, $path_parts[4]);
+    $database_location = $1 if ($database_location =~ /(.*)\/$/); # Remove trailing slash, which is present when no BioProject ID was provided.
 
     if ($search_type eq "blast") {
         my $blast_app = $cgi->{"blast_app"};
@@ -253,7 +274,7 @@ sub process_input {
         }
 
         $command_line = catfile($self->pre_compile->{BLAST_EXEC_DIR}, '/bin/blastall')
-                      . qq[ -p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file >& $out_file.err];
+                      . qq[ -p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file 2> $out_file.err];
     }
 
     elsif ($search_type eq "blat") {
@@ -276,7 +297,7 @@ sub process_input {
 	    $query_and_database_type = '-prot';
 	}
 
-        $command_line = "$blat_client -out=blast $query_and_database_type $database_location $query_file $out_file >& $out_file.err ";
+        $command_line = "$blat_client -out=blast $query_and_database_type $database_location $query_file $out_file 2> $out_file.err ";
 #            $blat_client . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
 	    
     }

@@ -51,8 +51,8 @@ WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
 END;
 
 
-WRAPPER $field_block title="Microarray Expression Data";
-     '<a href="' _ site.external_urls.spell_wormbase.base _ '/spell/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
+WRAPPER $field_block title="Microarray, Tiling Array and RNAseq";
+     '<a href="' _ site.external_urls.spell_wormbase.base _ '/spell/search/">Perform Clustering Analysis in SPELL</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
 END;
 
 
@@ -67,7 +67,19 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
                       'phenotype'   => 'Phenotype',
                       'reference' => 'Reference'},
               key = 'anatomy_function');
-    END;
+END;
+
+WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
+    '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
+    build_data_table(order = ['label', 'project', 'life_stage', 'value'],
+                     columns = {
+                         label => 'Name',
+                         project => 'Project',
+                         life_stage => 'Life Stage',
+                         value => 'FPKM value'
+                     },
+                     passed_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data);
+END;
 %]
 <script type="text/javascript" >
 WB.getPlugin("colorbox", function(){

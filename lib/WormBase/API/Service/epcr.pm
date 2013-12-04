@@ -296,7 +296,7 @@ sub segment2goodstuff {
     my ($full_gene) = grep {$_->name eq $partial_gene->name} $partial_gene->features('CDS');
      $segment->ref($full_gene);
 
-    my $full_cds = $GFFDB->segment(-name=>$full_gene,-class=>'CDS');    
+    my $full_cds = $GFFDB->segment($full_gene);    
 
     my @exons = $full_cds->features('coding_exon:curated');
 
