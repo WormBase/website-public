@@ -643,24 +643,26 @@ sub fpkm_expression {
     my $plot;
     if ($mode eq 'summary_ls') {
         $plot = $rserve->boxplot(\@fpkm_map, {
-                                    xlabel => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-                                    ylabel => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-                                    width  => WormBase::Web->config->{fpkm_expression_chart_width},
-                                    height => WormBase::Web->config->{fpkm_expression_chart_height},
-                                    rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
-                                    bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
                                     adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
                                  })->{uri};
     } else {
         $plot = $rserve->barchart(\@fpkm_map, {
-                                    xlabel => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-                                    ylabel => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-                                    width  => WormBase::Web->config->{fpkm_expression_chart_width},
-                                    height => WormBase::Web->config->{fpkm_expression_chart_height},
-                                    rotate => WormBase::Web->config->{fpkm_expression_chart_rotate},
-                                    bw     => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                    facets => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
                                     adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
                                  })->{uri};
     }

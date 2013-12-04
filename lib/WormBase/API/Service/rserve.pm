@@ -4,18 +4,22 @@ use File::Basename;
 use File::Copy;
 use IPC::Run3;
 use Data::UUID;
-use Digest::MD5::File qw(file_md5_hex);
 
 use Moose;
 with 'WormBase::API::Role::Object';
 
 sub init_chart {
-    my ($self, $data, $format) = @_;
+    my ($self, $filename, $data, $format) = @_;
 
     # Setup output file:
-    my $uuid_generator = new Data::UUID;
-    my $image_basename = $uuid_generator->create_str();
-    my $image_tmp_path = "/tmp/" . $image_basename . "." . $format;
+    my $image_tmp_path = undef;
+    if (defined $filename) {
+        $image_tmp_path = "/tmp/" . $filename;
+    } else  {
+        my $uuid_generator = new Data::UUID;
+        my $image_basename = $uuid_generator->create_str();
+        $image_tmp_path = "/tmp/" . $image_basename . "." . $format;
+    }
     my $image_filename = basename($image_tmp_path);
 
     my @labels = ();
@@ -42,20 +46,14 @@ sub execute_r_program {
     run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
 
     # Relocate the plot into an accessible directory of the web-server:
-    my ($format) = $image_filename =~ /(\.[^.]+)$/; # Includes the dot of the suffix.
-    my $permanent_image_filename = file_md5_hex($image_tmp_path) . $format;
-    # Assumption: the MD5 checksum is good enough to avoid collisions between filenames of
-    #             images with distinct contents.
-    my $destination = "/usr/local/wormbase/website-shared-files/html/img-static/rplots/" . $permanent_image_filename;
-    unless (-e $destination) {
-        move($image_tmp_path, $destination);
-    } else {
-        unlink $image_tmp_path;
-    }
+    my $destination = WormBase::Web->config->{rplots} . $image_filename;
+    # TODO: figure out why `move($image_tmp_path, $destination);` does not work anymore!
+    system('mv', $image_tmp_path, $destination);
 
     # Return the absolute URI (relative to the server) of the generated image:
+print STDOUT "--> $image_filename\n";
     return {
-        uri => "/img-static/rplots/" . $permanent_image_filename
+        uri => WormBase::Web->config->{rplots_url_suffix} . $image_filename
     };
 }
 
@@ -70,7 +68,8 @@ sub barboxchart_parameters {
     }
 
     # Pretty-ization:
-    return ($customization->{xlabel},
+    return ($customization->{filename},
+            $customization->{xlabel},
             $customization->{ylabel},
             $customization->{width},
             $height,
@@ -109,11 +108,14 @@ sub barboxchart_parameters {
 sub barchart {
     my ($self, $data, $customization) = @_;
 
-    my $format = "png";
-    my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($data, $format);
-
     # Pretty-ization:
-    my ($xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
+    my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
+
+    # If a filename is provided and the plot exists already: do not generate it again!
+    return { uri => "/img-static/rplots/" . $filename } if (WormBase::Web->config->{installation_type} ne 'development' && defined $filename && -e (WormBase::Web->config->{rplots} . $filename));
+
+    my $format = "png";
+    my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);
 
     # Run the R program that plots the barchart:
     my $r_program = <<EOP
@@ -170,11 +172,14 @@ EOP
 sub boxplot {
     my ($self, $data, $customization) = @_;
 
-    my $format = "png";
-    my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($data, $format);
-
     # Pretty-ization:
-    my ($xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
+    my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
+
+    # If a filename is provided and the plot exists already: do not generate it again!
+    return { uri => "/img-static/rplots/" . $filename } if (WormBase::Web->config->{installation_type} ne 'development' && defined $filename && -e (WormBase::Web->config->{rplots} . $filename));
+
+    my $format = "png";
+    my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);
 
     # Run the R program that plots the barchart:
     my $r_program = <<EOP
