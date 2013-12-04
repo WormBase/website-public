@@ -32,13 +32,13 @@ automatic classes = Symbol Gene Clone
 [scaffolds:database]
 db_adaptor    = Bio::DB::SeqFeature::Store
 db_args       = -adaptor memory
-                -dir    /usr/local/wormbase/tmp/gbrowse/yeast_scaffolds
+                -dir    /usr/local/wormbase/databases/yeast_scaffolds
 search options = default +autocomplete
 
 [annotations:database]
 db_adaptor    = Bio::DB::SeqFeature::Store
 db_args       = -adaptor memory
-                -dir    /usr/local/wormbase/tmp/gbrowse/yeast_chr1+2
+                -dir    /usr/local/wormbase/databases/yeast_chr1+2
 search options = default +autocomplete
 
 # Default glyph settings

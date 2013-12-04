@@ -1,12 +1,9 @@
-# use this to preload one or more databases into slave memory
-# see the examples below
+[yeast12]
+db_adaptor    = Bio::DB::SeqFeature::Store
+db_args       = -adaptor memory
+                -dir    /usr/local/wormbase/tmp/gbrowse/sessions/databases/yeast_chr1+2
 
-#[yeast12]
-#db_adaptor    = Bio::DB::SeqFeature::Store
-#db_args       = -adaptor memory
-#                -dir    /usr/local/wormbase/tmp/gbrowse/databases/yeast_chr1+2
-
-#[scaffolds]
-#db_adaptor    = Bio::DB::SeqFeature::Store
-#db_args       = -adaptor memory
-#                -dir    /usr/local/wormbase/tmp/gbrowse/databases/yeast_scaffolds
+[scaffolds]
+db_adaptor    = Bio::DB::SeqFeature::Store
+db_args       = -adaptor memory
+                -dir    /usr/local/wormbase/tmp/gbrowse/sessions/databases/yeast_scaffolds
