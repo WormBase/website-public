@@ -8,6 +8,8 @@ use Bio::Graphics::Browser2::Markup;
 
 use Moose;
 with 'WormBase::API::Role::Object'; 
+extends 'WormBase::API::Object';
+
 
 has 'algorithms' => (
     is         => 'rw',
@@ -28,7 +30,7 @@ use constant SRC_END   => 2;
 use constant TGT_START => 3;
 use constant TGT_END   => 4;
 
-our %TYPES    = (BLAT_EST_BEST  => [qw(alignment:BLAT_EST_BEST)],
+our %TYPES    = (BLAT_EST_BEST  => [qw(expressed_sequence_match:BLAT_EST_BEST)],
         BLAT_EST_OTHER  => [qw(alignment:BLAT_EST_OTHER)],
         BLAT_mRNA_BEST => [qw(alignment:BLAT_mRNA_BEST)],
         BRIGGSAE   => [qw(waba_alignment)]
@@ -89,12 +91,7 @@ sub run {
 
     $self->object($sequence);
     $sequence->db->class('Ace::Object::Wormbase');
-    my $gff_dsn= $self->gff_dsn || return undef;
-    $gff_dsn->ace($sequence->db);
-    $gff_dsn->reconnect();
-    my $dbgff =  $gff_dsn->dbh || return undef;
-    $self->log->debug("GFF database:",$dbgff);
-    $dbgff->add_aggregator('waba_alignment') if ($dbgff); 
+    my $gff_dsn = $self->gff_dsn || return undef;
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
     return {msg=>"Sequence is not a transcript."} unless ($is_transcript) ;
     
@@ -122,43 +119,8 @@ sub run {
       $hash->{long}=1;
       return;
     }
-    # TODO: make sure this works with GFF3 - AC
-    my ($seq) = $dbgff->segment(-name => $sequence,
-                $user_override ? (-start    =>    $user_start,
-                                  -stop    =>    $user_end) : ());
 
-    my  @alignments;
-
-    foreach (sort keys %{$self->algorithms}){
-      $self->log->debug("using algorithm:".$_);
-      push @alignments,$seq->features(@{$TYPES{$_}});
-    }
-
-    # get the DNA for each of the alignment targets
-    my %dna;
-    my @missing;
-    foreach (@alignments) {
-      my $target = $_->target;
-      next if $dna{$target};  # already got it or some reasn
-      my $dna = $target->asDNA;
-
-      unless ($dna) {
-        $self->log->debug( "ALIGNER missing target = $target" );
-        $dna = $dbgff->dna($target->name);
-      }
-
-      unless ($dna) {
-        push @missing,$target;
-  #     print p({-class=>'error'},"The DNA sequence is missing for $target.\n");
-        next;
-      }
-      $dna{$target} = $dna;
-      clean_fasta(\$dna{$target});
-    }
-    $hash->{missing_target} = \@missing;
-
-    # sort the alignments by their start position -- this looks nicer
-    @alignments = sort { $a->start <=> $b->start } @alignments;
+    my ($seq) = $gff_dsn->segment($sequence);
 
     # the coding sequence is going to begin at nucleotide 1, but one or
     # more of the alignments may start at an earlier position.
@@ -168,15 +130,8 @@ sub run {
     if ($user_override) {
       ($align_start,$align_end) = ($user_start,$user_end);
     } else {
-      $align_start    =  $seq->start;
-      $align_start    =  $alignments[0]->start
-      if $alignments[0] && $alignments[0]->start < $seq->start;
-
-      # the same thing applies to the end of the aligned area
-      my @reversed_alignments = sort { $b->end <=> $a->end } @alignments;
-      $align_end           = $seq->end;
-      $align_end = $reversed_alignments[0]->end
-      if $reversed_alignments[0] && $reversed_alignments[0]->end > $seq->end;
+      $align_start    = $seq->start;
+      $align_end      = $seq->end;
     }
 
     $self->log->debug("ALIGNER: $align_start, ...now\n");
@@ -196,14 +151,15 @@ sub run {
     # gene, we want to extend the genomic sequence, so we refetch the DNA
     ($align_start,$align_end) = ($align_end,$align_start) if($align_start > $align_end);
     # TODO: make sure works with GFF3 - AC
-    my ($genomic) = $dbgff->segment(-name  => $sequence,
-                    -start => $align_start,
-                    -end   => $align_end);
+    my ($genomic) = $gff_dsn->segment($sequence);
+    $self->log->debug("GENOMIC: $genomic $sequence");
+          # $self->log->debug("GDNA:".$genomic->dna);
+
     ##eval{$genomic->absolute(1)};
     # WHAT IS THIS BEING USED FOR?
-    my @dnas   = ($genomic->display_name => $genomic->dna);
+    # my @dnas   = ($genomic->display_name => $genomic->dna);
     # Determine if the plugin should flip the alignment
-    my $calculated_flip = $genomic->abs_strand == -1 ? 1 : 0; 
+    my $calculated_flip = $genomic->strand == -1 ? 1 : 0; 
      
     # Flip it by default if genomic sequence is on neg strand and request comes from outside of the page
     $calculated_flip = $flip_user if $param->{override_flip};
@@ -216,32 +172,24 @@ sub run {
     $hash->{end} = $align_end;
     $hash->{flip}=$calculated_flip;
 
-    # experimental -- do an image
-    my @align_types;
-    foreach (sort keys %{$self->algorithms}){
-      push @align_types,$LABELS{$_};
-    }
-
-  # Link into gbrowse image using the sequence object (a gene object)
+    # Link into gbrowse image using the sequence object (a gene object)
     $self->log->debug("ALIGNER: before print_image: $align_start $align_end\n");
     my $gene = $api->fetch({aceclass=> $o->get_document->get_value(0),
                           name => $o->get_document->get_value(1)}) or die "$!";
 
-#     $hash->{picture}= $self->genomic_picture($sequence, $align_start, $align_end);
     $hash->{picture} = $gene->genomic_image;
 
     ##################################################
     my ($start,$end) = $align_start < $align_end ? ($align_start,$align_end) : ($align_end,$align_start);
     my $name = $genomic->ref .":$start..$end";
     my $flip_format = "Aligner.flip=" . $calculated_flip;
-    my $ragged = "Aligner.ragged=". $user_ragged || "Aligner.ragged=BLUMENTHAL_FACTOR";
-    my $test =  "$sequence:$start..$end";
+    my $ragged = "Aligner.ragged=". ($user_ragged || "BLUMENTHAL_FACTOR");
 
     my @db = split('_', "" . $gff_dsn->source);
     my $source = join('_', @db[0..@db-2]);
 
     my $plugin_url = "http://www.wormbase.org/tools/genome/gbrowse/" . $source . "/?";
-    $plugin_url .= "name=$test;plugin=Aligner;plugin_action=Go;label=ESTB;Aligner.upcase=CDS;Aligner.align=ESTB;";
+    $plugin_url .= "name=$name;plugin=Aligner;plugin_action=Go;label=ESTB;Aligner.upcase=CDS;Aligner.align=ESTB;";
    
     $plugin_url .= 'Aligner.align=ESTO;' if $self->algorithms->{BLAT_EST_OTHER};
     $plugin_url .= $ragged . ";" . $flip_format;
