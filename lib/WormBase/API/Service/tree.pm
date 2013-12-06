@@ -1,6 +1,7 @@
 package WormBase::API::Service::tree;
 
 use Moose;
+use WormBase::API::ModelMap;
 
 with 'WormBase::API::Role::Object';
 
@@ -192,9 +193,12 @@ sub to_href {
     return i($title) if $obj->isComment;
     
     if ($obj->isObject) {
-#	return (a({-href=>url(-relative=>1,-path_info=>1) 
-	$name =~ s/^#/?/ if $class eq 'Model';
-	return (a({-href=>"/tools/tree/run?name=$name;class=$class", -target=>$target},$title), 0);
+        $name =~ s/^#/?/ if $class eq 'Model';
+        if (WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$class}){
+            return (a({-href=>"/tools/tree/run?name=$name;class=$class", -target=>$target},$title), 0);
+        }else{
+            return ("$name");
+        }
     }
     
     if ($obj->isTag) {

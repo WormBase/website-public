@@ -182,8 +182,8 @@ sub build_gbrowse_img {
   $BROWSER->config->set('general','keystyle'     => 'none');
   
   my $absref   = $segment->abs_ref;
-  my $absstart = $segment->abs_start;
-  my $absend   = $segment->abs_end;
+  my $absstart = $segment->start;
+  my $absend   = $segment->stop;
   ($absstart,$absend) = ($absend,$absstart) if $absstart>$absend;
   my $length = $segment->length;
   
@@ -192,6 +192,7 @@ sub build_gbrowse_img {
   my $stop  = int($absend   + 0.1*$length);
   my $db    = $segment->factory;
 
+  # TODO: does this work with GFF3?? Need to check. AC
   my ($new_segment) = $db->segment(-name=>$absref,
 				   -start=>$start,
 				   -stop=>$stop);

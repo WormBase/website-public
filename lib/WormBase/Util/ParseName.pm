@@ -81,7 +81,12 @@ sub _parse_name {
 
 	# initials without periods or no initials at all
 	if ($name =~ / [A-Z]$/) { # likely separate initial(s) at end
-		my $lastname = shift @tokens;
+		my $lastname;
+		my $initials = join('', @tokens);
+		while(uc $initials ne $initials){
+			$lastname .= ' ' . shift @tokens;
+			$initials = join('', @tokens);
+		}
 		return @tokens, $lastname;
 	}
 

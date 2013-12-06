@@ -93,10 +93,10 @@ sub _build__alleles {
     my $count = $self->_get_count($object, 'Allele');
     my @alleles;
     my @polymorphisms;
-    unless ($count > 5000) { 
+    unless ($count > 1000) { 
       my @all = $object->Allele;
 
-      if($count < 1000){
+      if($count < 500){
           foreach my $allele (@all) {
               (grep {/SNP|RFLP/} $allele->Variation_type) ? 
                     push(@polymorphisms, $self->_process_variation($allele)) : 
@@ -124,6 +124,7 @@ sub _build__phenotypes {
     my %phenotypes;
 
     foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
+
         my $type_name; #label that shows in the evidence column above each list of that object type
         if ($type =~ /Transgene/) { $type_name = 'Transgene:'; } 
         elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
@@ -144,7 +145,9 @@ sub _build__phenotypes {
             my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
 
             foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
+
                 foreach ($obj->$obs){
+
                     $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
                     my $evidence = $self->_get_evidence($_);
                     # add some additional information for RNAis
@@ -152,6 +155,8 @@ sub _build__phenotypes {
                         $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
                         my $genotype = $obj->Genotype;	
                         $evidence->{Genotype} = "$genotype" if $genotype;
+                        my $strain = $obj->Strain;
+                        $evidence->{Strain} = "$strain" if $strain;
                     }
                     push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
                 }
@@ -548,11 +553,133 @@ sub merged_into {
 #
 #######################################
 
+sub fpkm_expression_summary_ls {
+    my $self = shift;
+    return $self->fpkm_expression('summary_ls');
+}
+
+sub fpkm_expression {
+    my $self = shift;
+    my $mode = shift;
+    my $object = $self->object;
+
+    my $rserve = $self->_api->_tools->{rserve};
+    my @fpkm_map = map { 
+        my $life_stage = $_->Public_name;
+        my @fpkm_table = $_->col;
+        map {
+            my @fpkm_entry = $_->row;
+            my $label = $fpkm_entry[2];
+            my $value = $fpkm_entry[0];
+            my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
+            {
+                label => "$label",
+                value => "$value",
+                project => "$project",
+                life_stage => $life_stage
+            }
+        } @fpkm_table;
+    } $object->RNASeq_FPKM;
+
+    # Return if no expression data is available.
+    # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
+    if (length(keys @fpkm_map) <= 1) {
+        return {
+            description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data -- no data returned.',
+            data        => undef
+        };
+    }
+
+    # Sort by project (primary order) and developmental stage (secondary order):
+    @fpkm_map = sort {
+        # Primary sorting order: project
+        # Reverse comparison, so that projects that come first in the alphabet appear at the top of the barchart.
+        return $b->{project} cmp $a->{project} if $a->{project} ne $b->{project};
+
+        # Secondary sorting order: developmental stage
+        my @sides = ($a, $b);
+        my @label_value = (50, 50); # Entries that cannot be matched to the regexps will go to the bottom of the barchart.
+        for my $i (0 .. 1) {
+            # UNAPPLIED
+            # Possible keywords? Not seen in data yet (browsing only).
+            #$label_value[$i] =  0 if ($sides[$i]->{label} =~ m/gastrula/i);
+            #$label_value[$i] =  1 if ($sides[$i]->{label} =~ m/comma/i);
+            #$label_value[$i] =  2 if ($sides[$i]->{label} =~ m/15_fold/i);
+            #$label_value[$i] =  3 if ($sides[$i]->{label} =~ m/2_fold/i);
+            #$label_value[$i] =  4 if ($sides[$i]->{label} =~ m/3_fold/i);
+
+            # EMBRYO STAGES
+            $label_value[$i] = 30 if ($sides[$i]->{label} =~ m/embryo/i); # May be overwritten by the next two rules.
+            if ($sides[$i]->{label} =~ m/\.([0-9]+)-cell_embryo/) {
+                # Assuming an upper bound of 40 cells (for ordering below).
+                $sides[$i]->{label} =~ /\.([0-9]+)-cell_embryo/;
+                $label_value[$i] = "$1";
+            }
+            $label_value[$i] =  0 if ($sides[$i]->{label} =~ m/early_embryo/i);
+            $label_value[$i] = 40 if ($sides[$i]->{label} =~ m/late_embryo/i);
+
+            # LARVA STAGES
+            $label_value[$i] = 41 if ($sides[$i]->{label} =~ m/L1_(l|L)arva/);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L2_(l|L)arva/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/L2d_(l|L)arva/i);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L3_(l|L)arva/);
+            $label_value[$i] = 45 if ($sides[$i]->{label} =~ m/L4_(l|L)arva/);
+
+            # DAUER STAGES
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/dauer/i); # May be overwritten by the next two rules.
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/dauer_entry/);
+            $label_value[$i] = 44 if ($sides[$i]->{label} =~ m/dauer_exit/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/predauer/i);
+
+            # ADULTHOOD
+            $label_value[$i] = 47 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
+            $label_value[$i] = 46 if ($sides[$i]->{label} =~ m/young_adult/);
+        }
+
+        # Reversed comparison, so that early stages appear at the top of the barchart.
+        return $label_value[1] <=> $label_value[0];
+    } @fpkm_map;
+
+    my $plot;
+    if ($mode eq 'summary_ls') {
+        $plot = $rserve->boxplot(\@fpkm_map, {
+                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
+                                 })->{uri};
+    } else {
+        $plot = $rserve->barchart(\@fpkm_map, {
+                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
+                                 })->{uri};
+    }
+
+    return {
+        description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
+        data        => {
+            plot => $plot,
+            table => { fpkm => { data => \@fpkm_map } }
+        }
+    };
+}
+
 # fourd_expression_movies { }
 # This method will return a data structure containing
 # links to four-dimensional expression movies.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
-
 sub fourd_expression_movies {
     my $self   = shift;
 
@@ -1671,7 +1798,7 @@ sub gene_models {
     use Data::Dumper; # DELETE
     
     
-    my $coding =  $self->object->Corresponding_CDS ? 1 : 0;
+    my $coding = $self->object->Corresponding_CDS ? 1 : 0;
 
     # $sequence could potentially be a Transcript, CDS, Pseudogene - but
     # I still need to fetch some details from sequence
@@ -1681,6 +1808,7 @@ sub gene_models {
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
         my $gff   = $self->_fetch_gff_gene($sequence) or next;
+
         my $cds
             = ( $sequence->class eq 'CDS' )
             ? $sequence
@@ -1690,49 +1818,30 @@ sub gene_models {
         
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
+
         my $len_spliced   = 0;
+        map { $len_spliced += $_->length } map { $_->get_SeqFeatures } $gff->get_SeqFeatures('CDS:WormBase');
 
-        for ( $gff->features('coding_exon') ) {
-
-            if ( $object->Species =~ /elegans/ ) {
-                next unless $_->source eq 'Coding_transcript';
-            }
-            else {
-                next
-                    unless $_->method =~ /coding_exon/
-                        && $_->source eq 'Coding_transcript';
-            }
-            next unless $_->name eq $sequence;
-            $len_spliced += $_->length;
-        }
-
-        #     Try calculating the spliced length for pseudogenes
-        if ( !$len_spliced ) {
-            my $flag = eval { $object->Corresponding_Pseudogene } || $cds;
-            for ( $gff->features('exon:Pseudogene') ) {
-                next unless ( $_->name eq $flag );
-                $len_spliced += $_->length;
-            }
-        }
         $len_spliced ||= '-';
 
         $data{length_spliced}   = $len_spliced if $coding;
 
-        use WormBase::API::Object::Pseudogene '_build__length';
         my @lengths;
         foreach my $sequence (@sequences){
             if( $sequence->class eq "Pseudogene" ){
-                push @lengths, WormBase::API::Object::Pseudogene->_build__length($sequence);
+                my $l;
+                map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
+                push @lengths, $l . "<br />";
             }else{
                 push @lengths, $self->_fetch_gff_gene($sequence)->length . "<br />";
             }
         }
+
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
         my $status = $cds->Prediction_status if $cds;
         $status =~ s/_/ /g if $status;
         $status = $status . ($cds && $cds->Matching_cDNA ? ' by cDNA(s)' : '');
-#        $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);
@@ -1745,7 +1854,6 @@ sub gene_models {
         $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
-        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
         $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
 
         push @rows, \%data;
@@ -1816,26 +1924,18 @@ sub _build__segments {
     my ($self) = @_;
     my $sequences = $self->sequences;
     my @segments;
+
     my $dbh = $self->gff_dsn() || return \@segments;
 
     my $object = $self->object;
     my $species = $object->Species;
 
-    eval {$dbh->segment()}; return \@segments if $@;
 
-    # Yuck. Still have some species specific stuff here.
+    if (@segments = $dbh->segment($object)
+        or @segments = map {$dbh->segment($_)} @$sequences
+        or @segments = map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
+        or @segments = map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
 
-    if (@$sequences and $species =~ /briggsae/) {
-        if (@segments = map {$dbh->segment(CDS => "$_")} @$sequences
-            or @segments = map {$dbh->segment(Pseudogene => "$_")} @$sequences) {
-            return \@segments;
-        }
-    }
-
-    if (@segments = $dbh->segment(Gene => $object)
-        or @segments = map {$dbh->segment(CDS => $_)} @$sequences
-        or @segments = map { $dbh->segment(Pseudogene => $_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
-        or @segments = map { $dbh->segment(Transcript => $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
     ) {
         return \@segments;
     }
@@ -1849,7 +1949,7 @@ sub _longest_segment {
     my ($self) = @_;
     # Uncloned genes will NOT have segments associated with them.
     my ($longest)
-        = sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->abs_start}
+        = sort { $b->stop - $b->start <=> $a->stop - $a->start}
     @{$self->_segments} if $self->_segments;
 
     return $longest;

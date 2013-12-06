@@ -394,21 +394,9 @@ sub corresponding_all {
         my $gff   = $self->_fetch_gff_gene($cds) or next;
         my $protein = $cds->Corresponding_protein if $cds;
         my @sequences = $cds->Corresponding_transcript;
-        my $len_spliced   = 0;
 
-        for ( $gff->features('coding_exon') ) {
-        # Not all CDSs (history objects mainly) have proteins.
-            if ( $protein && $protein->Species =~ /elegans/ ) {
-                next unless $_->source eq 'Coding_transcript';
-            }
-            else {
-                next
-                    unless $_->method =~ /coding_exon/
-                        && $_->source eq 'Coding_transcript';
-            }
-            next unless $_->name eq $sequences[0];
-            $len_spliced += $_->length;
-        }
+        my $len_spliced   = 0;
+        map { $len_spliced += $_->length } map { $_->get_SeqFeatures } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 
@@ -921,119 +909,86 @@ sub print_sequence {
     my $gff = $self->gff || goto END;
     my $seq_obj;
 
-    # Genomic clones need to be fetched a bit differently.	    
-    if ($s->class =~ /Sequence|Clone/i) {
-	# We will fetch from acedb below
-    } else {
-	($seq_obj) = sort {$b->length<=>$a->length}
-	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
-# 		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
-	
-	# BLECH!  If provided with a gene ID and alt splices are present just guess
-	# and fetch the first CDS or Transcript
-	# We really should display a list for all of these.
+    # Genomic clones need to be fetched a bit differently.
+    unless ($s->class =~ /Sequence|Clone/i) {
+        ($seq_obj) = sort {$b->length<=>$a->length}
+                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($s);
 
-	($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-	  	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
-# 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
-	($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-	 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
-# 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
+        # BLECH!  If provided with a gene ID and alt splices are present just guess
+        # and fetch the first CDS or Transcript
+        # We really should display a list for all of these.
+
+        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.a");
+        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.1");
     }
-    
-    ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
+
     # Haven't fetched a GFF segment? Try Ace.
-    if (!$seq_obj || eval{ length($seq_obj->dna) } < 2) { # miserable broken workaround
-		# try to use acedb
-		if (my $fasta = $s->asDNA) {
-            $fasta =~ s/^\s?>(.*)\n//;
-            $fasta =~ s/\s//g;
-            my $len = length($fasta);
-            if($len > 0){
-              push @data,{ 	header=>"Sequence",
-                      sequence=>"$fasta",
-                      length=>$len,
-                            };
-            }
-		}
-		else {
-			push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
-		}
-		goto END;
-    }
-
-#print est alignments, maybe put into view directly
-	#     print_genomic_position($s,$type);
-#     $hash{est} = "name=$s;class=CDS";
-
-
-    if (eval { $s->Properties eq 'cDNA'} ) {
-		# try to use acedb
+    # miserable broken workaround
+    if (!$seq_obj || eval{ length($seq_obj->dna) } < 2 || eval { $s->Properties eq 'cDNA'}) {
+        # try to use acedb
         if (my $fasta = $s->asDNA) {
             $fasta =~ s/^\s?>(.*)\n//;
             $fasta =~ s/\s//g;
             my $len = length($fasta);
             if($len > 0){
-              push @data,{  header=>"Sequence",
-                      sequence=>"$fasta",
-                      length=>$len,
-                            };
+                push @data,{
+                    header=>"Sequence",
+                    sequence=>"$fasta",
+                    length=>$len,
+                };
             }
+        } else {
+            push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
         }
-		goto END;
+        goto END;
     }
 
     my $unspliced = lc $seq_obj->dna;
     my $length = length($unspliced);
     if (eval { $s->Coding_pseudogene } || eval {$s->Coding} || eval {$s->Corresponding_CDS}) {
-		my $markup = Bio::Graphics::Browser2::Markup->new;
-		$markup->add_style('utr'  => 'FGCOLOR gray');
-		$markup->add_style('cds'  => 'BGCOLOR cyan');
-		$markup->add_style('cds0' => 'BGCOLOR yellow');
-		$markup->add_style('cds1' => 'BGCOLOR orange');
-		$markup->add_style('uc'   => 'UPPERCASE');
-		$markup->add_style('newline' => "\n");
-		$markup->add_style('space'   => '');
-		my %seenit;
+        my $markup = Bio::Graphics::Browser2::Markup->new;
+        $markup->add_style('utr'  => 'FGCOLOR gray');
+        $markup->add_style('cds'  => 'BGCOLOR cyan');
+        $markup->add_style('cds0' => 'BGCOLOR yellow');
+        $markup->add_style('cds1' => 'BGCOLOR orange');
+        $markup->add_style('uc'   => 'UPPERCASE');
+        $markup->add_style('newline' => "\n");
+        $markup->add_style('space'   => '');
+        my %seenit;
 
-		my @features;
-		if ($s->Species =~ /briggsae/) {
-			$seq_obj->ref($seq_obj); # local coordinates
-			@features = sort {$a->start <=> $b->start}
-			grep { $_->info eq $s && !$seenit{$_->start}++ }
-			$seq_obj->features('coding_exon:curated','UTR');
-		}
-		else {
-			$seq_obj->ref($seq_obj); # local coordinates
-			# Is the genefinder specific formatting cruft?
-			@features =
-			sort {$a->start <=> $b->start}
-			grep { $_->info eq $s && !$seenit{$_->start}++ }
-			($s->Method eq 'Genefinder') ?
-			$seq_obj->features('coding_exon:' . $s->Method,'five_prime_UTR','three_prime_UTR')
-			:
-		    $seq_obj->features(qw/five_prime_UTR:Coding_transcript exon:Pseudogene coding_exon:Coding_transcript three_prime_UTR:Coding_transcript/);
-		}
-		my $test = _print_unspliced($markup,$seq_obj,$unspliced,@features);
-		 
-		push @data, $test;
-		push @data, _print_spliced($markup,@features);
-		push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
-    }
-	else {
-		# Otherwise we've got genomic DNA here
-# 		$hash{dna} =  _to_fasta($s,$unspliced);
-		push @data, { 	
-			header => "Genomic Sequence",
-	     		sequence => "$unspliced",
-			length => $length,
-			   };
+        # local coordinates
+        $seq_obj->ref($seq_obj);
+
+        # sort by stop if on -ve strand
+        my @features = grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
+            map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
+            $seq_obj->get_SeqFeatures();
+
+        # Do we still need the different species code?? - AC
+        if ($s->Species =~ /briggsae/) {
+            @features = grep { $_->info eq $s && !$seenit{$_->start}++ } @features;
+        }
+
+        @features = ($seq_obj->strand > 0) ? sort { $a->start <=> $b->start } @features : sort { $b->stop <=> $a->stop } @features;
+
+        push @data, _print_unspliced($markup,$seq_obj,$unspliced,@features);
+        push @data, _print_spliced($markup,@features);
+        push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
+    } else {
+        # Otherwise we've got genomic DNA here
+        push @data, {
+            header => "Genomic Sequence",
+            sequence => "$unspliced",
+            length => $length,
+        };
     }
     $self->length($length);
 
-  END:
+    END:
     return { description => 'the sequence of the sequence',
-	     data        => @data ? \@data : undef };
+             data        => @data ? \@data : undef };
 }
 
 =head3 print_homologies
@@ -1516,48 +1471,44 @@ sub _build__segments {
     if ($self->type =~ /EST/) {
         if ($object =~ /(.+)\.[35]$/) {
             my $base = $1;
-            my ($seg_start) = $self->gff->segment(Sequence => "$base.3");
-            my ($seg_stop)  = $self->gff->segment(Sequence => "$base.5");
+            my ($seg_start) = $self->gff->segment("$base.3");
+            my ($seg_stop)  = $self->gff->segment("$base.5");
             if ($seg_start && $seg_stop) {
                 my $union = $seg_start->union($seg_stop);
                 return [$union] if $union;
             }
         }
     }
-    return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object)];
+    return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object)];
 }
 
 sub _print_unspliced {
     my ($markup,$seq_obj,$unspliced,@features) = @_;
-    my $name = $seq_obj->info . ' (' . $seq_obj->start . '-' . $seq_obj->stop . ')';
-
-    my $length   = length $unspliced;
-    if ($length > 0) {
+    my $name = $seq_obj . ' (' . $seq_obj->start . '-' . $seq_obj->stop . ')';
+    my $length_all   = length $unspliced;
+    if ($length_all > 0) {
         # mark up the feature locations
-
         my @markup;
         my $offset = $seq_obj->start;
         my $counter = 0;
         for my $feature (@features) {
-            my $start    = $feature->start - $offset;
-            my $length   = $feature->length;
-            my $style = $feature->method eq 'CDS'  ? 'cds'.$counter++%2
-            : $feature->method =~ /exon/ ? 'cds'.$counter++%2
-            : $feature->method =~ 'UTR' ? 'utr' : '';
+            my $start    = $seq_obj->strand > 0 ? $feature->start - $offset : $length_all - ($feature->stop - $offset + 1);
+            my $length   = abs($feature->stop - $feature->start) + 1;
+            my $style = $feature->primary_tag eq 'CDS'  ? 'cds'.$counter++%2
+                : $feature->primary_tag =~ /exon/ ? 'cds'.$counter++%2
+                : $feature->primary_tag =~ 'UTR' ? 'utr' : '';
+            # print ("\n   " . $feature->primary_tag  . " " . $feature->start . " " . $feature->stop . " $style $start $length");
             push @markup,[$style,$start,$start+$length];
             push @markup,['uc',$start,$start+$length] unless $style eq 'utr';
         }
         push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
         push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
-#       my $download = _to_fasta("$name|unspliced + UTR - $length bp",$unspliced);
         $markup->markup(\$unspliced,\@markup);
         return {
-            #download => $download,
             header=>"unspliced + UTR",
             sequence=>$unspliced,
-            length => $length,
+            length => $length_all,
             style=> 1,
-            
         };
     }
 }
@@ -1573,33 +1524,31 @@ sub _print_spliced {
     my @markup  = ();
     my $prefasta = $spliced;
     for my $feature (@features) {
-        my $length = $feature->stop - $feature->start + 1;
-        my $style  = $feature->method =~ /UTR/i ? 'utr' : 'cds' . $counter++ %2;
+        # print ("\n   $feature, primary_tag:" . $feature->primary_tag . ", source: " . $feature->source . ", strand:" . $feature->strand);
+        my $length = abs($feature->stop - $feature->start) + 1;
+        my $style  = $feature->primary_tag =~ /UTR/i ? 'utr' : 'cds' . $counter++ %2;
         my $end = $last + $length;
         push @markup,[$style,$last,$end];
-        push @markup,['uc',$last,$end] if $feature->method =~ /exon/;
+        push @markup,['uc',$last,$end] unless $style eq 'utr';
         $last += $length;
     }
 
     push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
     push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
-    my $name = eval { $features[0]->refseq->name } ;
-#   my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
     $markup->markup(\$spliced,\@markup);
-     
-    return {                    # download => $download ,
+    return {
         header=>"spliced + UTR",
         sequence=>$spliced,
         length=> $splen,
         style=> 1,
-    } if $name;
+    };
 
 }
 
 sub _print_protein {
     my ($markup,$features,$genetic_code) = @_;
 #   my @markup;
-    my $trimmed = join('',map {$_->dna} grep {$_->method eq 'coding_exon'} @$features);
+    my $trimmed = join('',map {$_->dna} grep {$_->primary_tag eq 'CDS'} @$features);
     return unless $trimmed;     # Hack for mRNA
     my $peptide = Bio::Seq->new(-seq=>$trimmed)->translate->seq;
     my $change  = $peptide =~/\w+\*$/ ? 1 : 0;
@@ -1608,11 +1557,10 @@ sub _print_protein {
 #   @markup = map {['space',10*$_]}      (1..length($peptide)/10);
 #   push @markup,map {['newline',80*$_]} (1..length($peptide)/80);
     my $name = eval { $features->[0]->refseq->name };
-#   my $download=_to_fasta("$name|conceptual translation - $plen aa",$peptide);
 #   $markup->markup(\$peptide,\@markup);
     $peptide =~ s/^\s+//;
 
-    return {                    # download => $download,
+    return {
         header=>"conceptual translation",
         sequence=>$peptide,
         type => "aa",

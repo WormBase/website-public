@@ -2,7 +2,7 @@
 description =  PECAN alignments (WS204)
 
 # The synteny database
-join        = dbi:mysql:database=gbrowse_syn_join_pecan;host=localhost;user=www-data
+join        = dbi:mysql:database=gbrowse_syn_join_pecan_WS204;host=mysql.wormbase.org;user=wormbase;pass=sea3l3ganz
 
 #     symbolic src   config file (without the ".conf")  Description
 source_map =      Cele      c_elegans_synteny     "C. elegans"

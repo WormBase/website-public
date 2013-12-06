@@ -22,7 +22,7 @@ __PACKAGE__->table("email");
 
 __PACKAGE__->add_columns(
   "user_id",
-  { data_type => "integer", default_value => 0, is_nullable => 1 },
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
   "email",
   { data_type => "char(255)", default_value => "", is_nullable => 0 },
   "validated",

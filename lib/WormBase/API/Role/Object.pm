@@ -150,6 +150,16 @@ sub _build_name {
     };
 }
 
+has 'host' => (
+    is          => 'ro',
+    required    => 1,
+    lazy        => 1,
+    default => sub {
+        my ($self) = @_;
+        return `hostname`;
+    },
+);
+
 has '_common_name' => (
     is       => 'ro',
     required => 1,
@@ -398,7 +408,7 @@ sub _build_best_blastp_matches {
         $species =~ s/^(\w)\w* /$1. / if $species;
         my $description = $best{$method}{hit}->Description
           || $best{$method}{hit}->Gene_name;
-        my $class;
+        my ($class, $id);
 
        # this doesn't seem optimal... maybe there should be something in config?
         if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
@@ -414,19 +424,21 @@ sub _build_best_blastp_matches {
                 }
             }
             $class = 'protein';
+        } elsif($hit =~ /(\w+):(.+)/ && $hit->Database) { #try to link out to database
+            my $accession = $2;
+            my @databases = $hit->Database;
+            foreach my $db (@databases) {
+              foreach my $dbt ($db->col){
+                 map {if($_ =~ "$accession"){$class = $db; $id = $accession}} $dbt->col;
+              }
+            }
+            $self->log->debug("DATABASE: $class");
+
         }
         next if ($hit =~ /^MSP/);
         $species =~ /(.*)\.(.*)/;
         my $taxonomy = {genus => $1, species => $2};
 
-
-        my $id;
-        if ($hit =~ /(\w+):(.+)/) {
-            my $prefix    = $1;
-            my $accession = $2;
-            $id    = $accession unless $class;
-            $class = $prefix    unless $class;
-        }
         push @hits, {
             taxonomy => $taxonomy,
             # custom packing for linking out to external sources
@@ -544,8 +556,8 @@ sub _build_central_dogma {
 #	my ($seq_obj) = sort {$b->length<=>$a->length}
 #	grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $transcript);
 	
-    eval {$gff->fetch_group()}; return if $@;
-	my ($seq_obj) = $gff->fetch_group(Transcript => $transcript);
+    # eval {$gff->get_features_by_name()}; return if $@;
+	my ($seq_obj) = $gff->get_features_by_name(Transcript => $transcript);
 	
 #	$self->log->debug("seq obj: " . $seq_obj);
 	$seq_obj->ref($seq_obj); # local coordinates
@@ -1811,7 +1823,7 @@ sub gff_dsn {
     $species =~ s/^all$/c_elegans/;
     $self->log->debug("getting gff database species $species");
     my $gff = $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
-    die "Can't find gff database for $species" unless $gff;
+    die "Can't find gff database for $species, host:" . $self->host unless $gff;
     return $gff;
 }
 
@@ -1884,6 +1896,7 @@ sub _pack_objects {
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return undef unless $object; # this method shouldn't expect a list.
+    return $object unless ref($object) eq 'Ace::Object';
 
     my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
     $label = $label // $self->_make_common_name($object);
@@ -2182,24 +2195,9 @@ sub _fetch_gff_gene {
     my ($self,$transcript) = @_;
 
     my $trans;
-    my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database"; # should probably log this?
-    $GFF->fetch_group();
+    my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database, host:" . $self->host; # should probably log this?
 
-#    if ($self->object->Species =~ /briggsae/) {
-    $self->log->warn("gff is: $GFF");
-        ($trans) = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript)
-            and return $trans;
-#    }
-
-    ($trans) = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript)
-        and return $trans;
-
-    # Now pseudogenes
-    ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript)
-        and return $trans;
-
-    # RNA transcripts - this is getting out of hand
-    ($trans) = $GFF->segment(Transcript => $transcript);
+    ($trans) = $GFF->get_features_by_name("$transcript");
     return $trans;
 }
 
@@ -2210,17 +2208,20 @@ sub _fetch_gff_gene {
 # Arg[1]   : The AceDB schema location to count the amount of retrievable objects;
 #
 sub _get_count{
-  my ($self, $obj, $tag) = @_;
-  $obj = $obj->fetch;
+    my ($self, $obj, $tag) = @_;
+    $obj = $obj->fetch;
 
-  # get the first item in the tag
-  my $first_item = $tag ? $obj->get($tag, 0) && $obj->get($tag, 0)->right : $obj->right;
+    # get the first item in the tag
+    my $first_item = $tag ? $obj->get($tag, 0) && $obj->get($tag, 0)->right : $obj->right;
 
-  # get our current column location
-  my $col = $first_item->{'.col'};
+    # get our current column location
+    my $col = $first_item->{'.col'};
 
-  # grep for rows that are objects
-  return scalar ( grep { @{$_}[$col] } @{$first_item->{'.raw'}} );
+    # grep for rows that are objects
+    my $curr;
+    return scalar(  grep {  $curr = @{$_}[$col-1] if (@{$_}[$col-1]);
+                            (@{$_}[$col] && ($curr eq "?tag?$tag?")); 
+                    } @{$first_item->{'.raw'}} );
 }
 
 
