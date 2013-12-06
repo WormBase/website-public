@@ -31,7 +31,59 @@
 
         # Please keep test names/descriptions all lower case.
         isnt($refers_to->{'data'}, undef, 'data returned');
-        isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');    }
+        isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');
+
+        # test for count accuracy
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00041190' });
+        $refers_to = $paper->refers_to();
+
+        # Please keep test names/descriptions all lower case.
+        isnt($refers_to->{'data'}, undef, 'data returned');
+          is($refers_to->{'data'}->{'Expr_pattern'}, '19052', 'correct amount of expression patterns found');
+
+    }
+
+    #tests the name parsing algorithm - does it work for multi-word names?
+    sub test__parsed_authors {
+        my $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00032910' });
+
+        can_ok('WormBase::API::Object::Paper', ('_parsed_authors'));
+
+        my $parsed_authors = $paper->_parsed_authors();
+
+        # Please keep test names/descriptions all lower case.
+        isnt($parsed_authors, undef, 'data returned');
+        isnt($parsed_authors->{'van der Voet M'}, undef, 'van der voet m found');
+          is($parsed_authors->{'van der Voet M'}[0], "M", 'van der voet m first name correctly parsed to m');
+          is($parsed_authors->{'van der Voet M'}[1], " van der Voet", 'van der voet m last name correctly parsed to van der voet');
+
+    }
+
+    #test doi - some environments were giving it a false value
+    sub test_doi {
+        my $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00023007' });
+
+        can_ok('WormBase::API::Object::Paper', ('doi'));
+
+        my $doi = $paper->doi();
+
+        isnt($doi, undef, 'data returned');
+          is($doi->{'data'}, undef, 'no doi for this paper');
+
+        # test on paper with doi
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00027286' });
+        $doi = $paper->doi();
+
+        isnt($doi, undef, 'data returned');
+          is($doi->{'data'}, "10.1895/wormbook.1.1.1", 'correct doi returned (doi exists)');
+
+        # test on paper with multiple names
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00000802' });
+        $doi = $paper->doi();
+
+        isnt($doi, undef, 'data returned');
+          is($doi->{'data'}, "10.1007/BF01024112", 'correct doi returned (multiple names)');
+    }
 
 }
 

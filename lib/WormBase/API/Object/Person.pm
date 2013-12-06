@@ -50,7 +50,7 @@ has 'previous_address_data' => (
             my $self = shift;
             my $object = $self->object;
             my @entries;
-            foreach my $entry ($object->Old_address) {
+            foreach my $entry ($object->get('Old_address')) {
                 my %address;
                 $entry =~ m/^(.*)\s(\S*)$/g;
                 $address{date_modified} = "$1";
@@ -573,13 +573,13 @@ sub _get_lineage_data {
 	my ($level, $start, $end) = $relation->right->row if $relation->right;
 	my @end_date;
 	
-	if (!($end =~ m/present/i)) {
+	if ($end && !($end =~ m/present/i)) {
 	    @end_date = split /\ /,$end; 
 	}
 	
-	my @start_date = split /\ /,$start; 
+	my @start_date = split /\ /,$start if $start;
 	
-	my $duration = "$start_date[2]\ \-\ $end_date[2]"; 
+	my $duration = ($start_date[2] || "") .  " - " . ($end_date[2] || ""); 
 	
 	push @data, {
 	    'name'       => $self->_pack_obj($relation, $name && "$name"),

@@ -36,7 +36,9 @@ sub search :Path('/search') Args {
     my $query = shift @args;
     my $page_count = shift @args || 1;
 
-    $type = 'all' unless $query;
+    # set search to 'all' if there's not query, OR if current search type is 'basic'
+    #   (for forwarding from /db/searches/basic)
+    $type = 'all' if (!$query || ($type eq 'basic'));
    
     # hack for references widget
     unless($page_count =~ m/\d|^all$/){
@@ -104,7 +106,7 @@ sub search :Path('/search') Args {
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $api->xapian->search_count($c, $tmp_query, $search, $c->stash->{species});
-    $c->stash->{error} = $query_error . $error;
+    $c->stash->{error} = ($query_error || "") . ($error || "");
     my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};

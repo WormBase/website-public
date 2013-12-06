@@ -36,7 +36,7 @@
         my $url_html = "http://$host:$port/rest/widget/person/WBPerson15014/overview";
         my $response_html = get($url_html);
 
-        isnt($response_html =~ /href\=\"http\:\/\/www\.bact\.wisc\.edu\/faculty\.php\?init\=HGB\&show\=LAB\"/, '', 'lab link is case sensitive');
+       isnt($response_html =~ /href\=\"http\:\/\/www\.bact\.wisc\.edu\/faculty\/goodrichblair"/, '', 'lab link is case sensitive');
 
     }
 

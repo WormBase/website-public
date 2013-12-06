@@ -156,7 +156,7 @@ sub _build__services {
 
         foreach my $source (@sources) {
             # fetch the bioproject id from the config
-            my $bp = $conf->{data_sources}->{$source}->{bioproject} unless ($conf->{data_sources}->{$source} eq "1");
+            my $bp = $conf->{data_sources}->{$source}->{bioproject} unless ($conf->{data_sources}->{$source} && $conf->{data_sources}->{$source} eq "1");
  
             my $service = $service_class->new({
                 conf          => $conf,

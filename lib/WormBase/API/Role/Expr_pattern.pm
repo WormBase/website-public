@@ -98,7 +98,7 @@ sub _build_expression_patterns {
             $certainty = $_->fetch()->at("Expressed_in.$class.$object");
             $certainty = $certainty->right if $certainty;
             $c_ev = $self->_get_evidence($certainty);
-            $c_ev->{$certainty} = $gene->{label} . $self->certainty_ev->{$certainty} . $obj_label if $certainty;
+            $c_ev->{$certainty} = $gene->{label} . ($self->certainty_ev->{$certainty} || "") . ($obj_label || "") if $certainty;
         }
         push @data, {
             expression_pattern => $self->_pack_obj($_),

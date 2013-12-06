@@ -72,6 +72,7 @@ sub _process_variation {
     my $method_remark = $method_name->Remark if $method_name;
 
     my $gene = $self->_pack_obj($variation->Gene) if $get_gene;
+    my @strains = map { $self->_pack_obj($_) } $variation->Strain;
 
     # Make string user friendly to read and add tooltip with description:
     $method_name = "$method_name";
@@ -89,6 +90,7 @@ sub _process_variation {
         isoform          => @isoform ? \@isoform : undef,
         effects          => @effect ? \@effect : undef,
         phen_count       => "$phen_count",
+        strain           => @strains ? \@strains : undef,
         locations    => @location ? join(', ', map {$_=~s/_/ /g;$_} @location) : undef,
     );
     return \%data;

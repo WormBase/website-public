@@ -3,13 +3,6 @@
 [%
 
 WRAPPER highlight_box;
-  WRAPPER $field_block title="Method" key='method';
-          fields.method.data.method;
-      IF fields.method.data.details.defined;
-          ": ";
-          fields.method.data.details;
-      END;
-  END;
 
   WRAPPER $field_block title="Partial CDS" key="partial";
     fields.partial.data;
@@ -26,6 +19,9 @@ WRAPPER $field_block title="Identity" key='identity';
 END;
 
 
+WRAPPER $field_block title="Gene history" key="gene_history";
+    tags2link(fields.gene_history.data);
+END;
 
 remarks;
 
@@ -45,4 +41,9 @@ remarks;
                                       length_protein => 'Protein<br />Length (aa)'},
                           passed_data = fields.corresponding_all.data,
                           key = 'gene_models_constructed' );
+
+
+
 %]
+
+

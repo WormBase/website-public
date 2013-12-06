@@ -66,11 +66,13 @@ sub _build_tracks {
 sub _build__segments {
     my $self = shift;
     my $object = $self->object;
-    my $class = $object->class;
-    
-    $class .= ':reagent' if $class eq 'Oligo_set';
+    # my $class = $object->class;
 
-    my @segments = $self->gff_dsn->segment($class => $object);
+    my $dbh = $self->gff_dsn();
+    
+    # $class .= ':reagent' if $class eq 'Oligo_set';
+
+    my @segments = $dbh->segment($object);
 
     return \@segments;
 }
@@ -209,9 +211,10 @@ sub overlaps_variation {
 # classic site note: MRC Genesevice and Open Biosystems links are invalid now
 sub on_orfeome_project {
 	my ($self) = @_;
-
-	$self->object->name =~ /^mv_(.*)/;
-	my $data = $1;
+    my $data;
+	if($self->object->name =~ /^mv_(.*)/){
+	   $data = $1;
+    }
 
 	return {
 		description => 'Finding this ' . $self->_object_class . ' on the ORFeome project',
@@ -243,7 +246,7 @@ sub segment {
 	my %data;
 	if (my ($segment) = @{$self->_segments}) {
 		%data = map { $_ => $segment->$_ }
-		        qw(refseq ref abs_start abs_stop start stop length dna);
+		        qw(refseq ref start end start stop length dna);
 	} elsif(my $l = $self->object->get('Length', 1)) {
           my $dna = $self->object->get('Sequence', 1);
           $data{length} = "$l";

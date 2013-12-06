@@ -35,9 +35,6 @@ sub _build_method {
     my ($self) = @_;
     my $class = $self->object->class;
     my $method = $self ~~ 'Method';
-    if($self->object->Corresponding_transcript) {
-	$method = $self->object->Corresponding_transcript->Method;
-    }
     my $details = $method->Remark if $method;
     return {
         description => "the method used to describe the $class",
@@ -141,6 +138,23 @@ sub partial{
     };
 }
 
+# gene_history { }
+# This mehtod will return a data structure containing the 
+# historical record of the dead gene originally associated with this
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/gene_history
+
+
+sub gene_history {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @historical_gene = map { $self->_pack_obj($_) } $object->Gene_history;
+    return { description => 'Historical record of the genes originally associated with this CDS',
+             data        => @historical_gene ? \@historical_gene : undef,
+    };
+}
+
+
 ############################################################
 #
 # The External Links widget
@@ -197,7 +211,7 @@ sub _build_genomic_image {
     $stop  = int($stop  + 0.1*($stop-$start));
     my @segments;
     my $gene = eval { $seq->Gene;} || $seq;
-    @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
+    @segments = $self->gff->segment($gene);
     @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
 	unless @segments;   # CB discontinuity
     # In cases where more than one segment is retrieved
@@ -223,6 +237,8 @@ sub _build_genomic_image {
 
 # genetic_position {}
 # Supplied by Role
+
+
 
 ############################################################
 #
@@ -318,15 +334,15 @@ sub _build__segments {
     if ($self->type =~ /EST/) {
         if ($object =~ /(.+)\.[35]$/) {
             my $base = $1;
-            my ($seg_start) = $self->gff->segment(Sequence => "$base.3");
-            my ($seg_stop)  = $self->gff->segment(Sequence => "$base.5");
+            my ($seg_start) = $self->gff->segment("$base.3");
+            my ($seg_stop)  = $self->gff->segment("$base.5");
             if ($seg_start && $seg_stop) {
                 my $union = $seg_start->union($seg_stop);
                 return [$union] if $union;
             }
         }
     }
-    return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object)];
+    return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object)];
 }
 
 

@@ -99,13 +99,13 @@
 # Like tag2link, but for cases where we only have text and no object.
 # You must provide both the id and text.
 # URLs
-    MACRO text2link(class,id,text,title,taxonomy) BLOCK;  
-      class = (ACE2WB_MAP.$class || class) FILTER lower;
-      IF site.external_urls.$class.defined; 
+    MACRO text2link(class,id,text,title,taxonomy) BLOCK;
+      IF (site.external_urls.$class.defined); 
           external_link(class, text, id);
       ELSIF id.match('CHROMOSOME');
-	  text;
-       ELSE;
+        text;
+      ELSE;
+        class = (ACE2WB_MAP.$class || class) FILTER lower;
         url = get_url(class, id, taxonomy);
 
         IF class =='gene';
@@ -144,7 +144,8 @@
     MACRO gbrowse_url(taxonomy, id, bioproject, image) BLOCK;
       IF !bioproject && c.config.sections.species_list.$taxonomy;
         FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
-          bioproject = bp IF (!bioproject || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          bioproject = bp;
         END;
       END;
       c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), (bioproject ? taxonomy _ '_' _ bioproject : taxonomy)).path _ (id ? '?name=' _ id : '');
@@ -301,6 +302,7 @@
     MACRO match_link(link) BLOCK;
       IF !site.external_urls.defined(link);
         llink = link FILTER lower;
+        IF site.external_urls.defined(llink); link = llink; END;
         IF llink.match('^(sw|sptrembl|tr)$'); link = 'uniprot'; END;
       END;
       link;
