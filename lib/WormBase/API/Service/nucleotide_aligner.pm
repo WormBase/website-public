@@ -122,16 +122,54 @@ sub run {
 
     my ($seq) = $gff_dsn->segment($sequence);
 
-    # the coding sequence is going to begin at nucleotide 1, but one or
-    # more of the alignments may start at an earlier position.
-    # calculate an offset, which when subtracted from the first alignment,
-    # puts the first nucleotide at string position 0
 
-    if ($user_override) {
+
+    if($user_override){
       ($align_start,$align_end) = ($user_start,$user_end);
     } else {
-      $align_start    = $seq->start;
-      $align_end      = $seq->end;
+      my  @alignments;
+
+      foreach (sort keys %{$self->algorithms}){
+        $self->log->debug("using algorithm:".$_);
+        push @alignments,$seq->features(@{$TYPES{$_}});
+      }
+
+      # get the DNA for each of the alignment targets
+      my %dna;
+      my @missing;
+      foreach (@alignments) {
+        my $target = $_->target;
+        next if $dna{$target};  # already got it or some reasn
+        my ($segment) = $gff_dsn->segment($target->{seqid}, $target->start, $target->end);
+        my $dna = $segment->dna;
+        
+        unless ($dna) {
+          $self->log->debug( "ALIGNER missing target = $target" );
+          push @missing,$target;
+          next;
+        }
+        $dna{$target} = $dna;
+        clean_fasta(\$dna{$target});
+      }
+      $hash->{missing_target} = \@missing;
+
+      # sort the alignments by their start position -- this looks nicer
+      @alignments = sort { $a->start <=> $b->start } @alignments;
+
+      # the coding sequence is going to begin at nucleotide 1, but one or
+      # more of the alignments may start at an earlier position.
+      # calculate an offset, which when subtracted from the first alignment,
+      # puts the first nucleotide at string position 0
+
+      $align_start    =  $seq->start;
+      $align_start    =  $alignments[0]->start
+        if $alignments[0] && $alignments[0]->start < $seq->start;
+
+      # the same thing applies to the end of the aligned area
+      my @reversed_alignments = sort { $b->end <=> $a->end } @alignments;
+      $align_end           = $seq->end;
+      $align_end = $reversed_alignments[0]->end
+        if $reversed_alignments[0] && $reversed_alignments[0]->end > $seq->end;
     }
 
     $self->log->debug("ALIGNER: $align_start, ...now\n");
