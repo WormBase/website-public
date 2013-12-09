@@ -1265,26 +1265,28 @@ sub _compile_amino_acid_changes {
     my @data;
     foreach my $type_affected ($object->Affects) {
         foreach my $item_affected ($type_affected->col) { # is a subtree	    
-	    foreach my $change_type ($item_affected->col) {		
-		# This should be handled by change_data above. Oh well.
-		my $aa_change;
-		if ($change_type eq 'Missense') {
-		    my ($aa_position,$aa_change_string) = $change_type->right->row if $change_type->right;
-		    $aa_change_string =~ /(.*)\sto\s(.*)/;
-		    $aa_change = "$1$aa_position$2";
-		}  elsif ($change_type eq 'Nonsense') {
-		    # "Position" here really one of Amber, Ochre, etc.
-		    if($change_type->right){
-                my ($aa_position,$aa_change_string) = $change_type->right->row if $change_type->right;
-                $aa_change = $aa_change && "$aa_change";
-		    }
-		}
-		if ($aa_change) {
-		    push @data,{ transcript => $self->_pack_obj($item_affected),
-				 amino_acid_change => "$aa_change" };
-		}
-	    }
-	}
+            foreach my $change_type ($item_affected->col) {
+                # This should be handled by change_data above. Oh well.
+                my $aa_change;
+                if($change_type->right){
+                    if ($change_type eq 'Missense') {
+                        my ($aa_position,$aa_change_string) = $change_type->right->row;
+                        $aa_change_string =~ /(.*)\sto\s(.*)/;
+                        $aa_change = "$1$aa_position$2";
+                    }  elsif ($change_type eq 'Nonsense') {
+                        # "Position" here really one of Amber, Ochre, etc.
+                        if($change_type->right){
+                            my ($aa_position,$aa_change_string) = $change_type->right->row;
+                            $aa_change = $aa_change && "$aa_change";
+                        }
+                    }
+                }
+                if ($aa_change) {
+                    push @data,{ transcript => $self->_pack_obj($item_affected),
+                    amino_acid_change => "$aa_change" };
+                }
+            }
+        }
     }
     return \@data;
 }
