@@ -1269,13 +1269,13 @@ sub _compile_amino_acid_changes {
 		# This should be handled by change_data above. Oh well.
 		my $aa_change;
 		if ($change_type eq 'Missense') {
-		    my ($aa_position,$aa_change_string) = $change_type->right->row;
+		    my ($aa_position,$aa_change_string) = $change_type->right->row if $change_type->right;
 		    $aa_change_string =~ /(.*)\sto\s(.*)/;
 		    $aa_change = "$1$aa_position$2";
 		}  elsif ($change_type eq 'Nonsense') {
 		    # "Position" here really one of Amber, Ochre, etc.
 		    if($change_type->right){
-                my ($aa_position,$aa_change_string) = $change_type->right->row;
+                my ($aa_position,$aa_change_string) = $change_type->right->row if $change_type->right;
                 $aa_change = $aa_change && "$aa_change";
 		    }
 		}
