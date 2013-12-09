@@ -253,7 +253,7 @@ sub _get_tag_info {
                 || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($class)};
       $aceclass = $class unless $aceclass;
   }
-  if($class ne 'protein'){ # this is a hack to deal with the Protein labels
+  if(!$class || ($class ne 'protein')){ # this is a hack to deal with the Protein labels
                            # we can remove this if Protein?Gene_name is updated to 
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
@@ -269,7 +269,7 @@ sub _get_tag_info {
         }
       }
     }else{
-      my ($it,$res)= $self->search_exact($c, $id, lc($aceclass));
+      my ($it,$res)= $self->search_exact($c, $id, $aceclass ? lc($aceclass) : undef);
       if($it->{pager}->{total_entries} > 0 ){
         my $doc = @{$it->{struct}}[0]->get_document();
           if($fill){
