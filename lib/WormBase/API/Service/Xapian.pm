@@ -5,9 +5,8 @@ use Moose;
 
 use strict;
 
-use Catalyst::Model::Xapian::Result;
 use Encode qw/from_to/;
-use Search::Xapian qw/:all/;
+use Search::Xapian;
 use Storable;
 use MRO::Compat;
 use Time::HiRes qw/gettimeofday tv_interval/;
@@ -77,14 +76,18 @@ sub search {
     if($type && $type =~ /paper/){
           $enq->set_sort_by_value(4);
     }
-    my $mset      = $enq->get_mset( ($page-1)*$page_size,
+    my @mset      = $enq->matches( ($page-1)*$page_size,
                                      $page_size );
-    # $c->log->debug("Parsed query is: " . $query->get_description());
 
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
-    return (Catalyst::Model::Xapian::Result->new({ mset=>$mset,
-        search=>$class,query=>$q,query_obj=>$query,querytime=>$time,page=>$page,page_size=>$page_size }), $error);
+    return ({ struct=>\@mset,
+              search=>$class,
+              query=>$q,
+              query_obj=>$query,
+              querytime=>$time,
+              page=>$page,
+              page_size=>$page_size }, $error);
 }
 
 sub search_autocomplete {
@@ -93,60 +96,62 @@ sub search_autocomplete {
 
     my $query=$class->_setup_query($q, $class->syn_qp,64|16);
     my $enq       = $class->syn_db->enquire ( $query );
-    # $c->log->debug("query auto:" . $query->get_description());
-    my $mset      = $enq->get_mset( 0, 10 );
+    my @mset      = $enq->matches( 0, 10 );
 
-    if($mset->empty()){
+    if($mset[0]){
       $query=$class->_setup_query($q, $class->qp,64|16);
       $enq       = $class->db->enquire ( $query );
-      # $c->log->debug("query auto2:" . $query->get_description());
-      $mset      = $enq->get_mset( 0, 10 );
+      @mset      = $enq->matches( 0, 10 );
     }
 
-    return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
-        search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>10 });
+    return ({ struct=>\@mset,
+              search=>$class,
+              query=>$q,
+              query_obj=>$query,
+              page=>1,
+              page_size=>10 });
 }
 
 sub search_exact {
     my ($class, $c, $q, $type) = @_;
-    my ($query, $enq, $mset);
+    my ($query, $enq, @mset);
     if( $type ){
       $query=$class->_setup_query("\"$type$q\" $type..$type", $class->qp,1|2);
       $enq       = $class->db->enquire ( $query );
-      # $c->log->debug("query exacta:" . $query->get_description());
-      $mset = $enq->get_mset( 0,2 ) if $enq;
+      @mset = $enq->matches( 0,2 ) if $enq;
 
-      if ($mset->size() != 1){
+      if (!$mset[0]){
         $query=$class->_setup_query($class->_uniquify($q, $type) . "* $type..$type", $class->qp,1|2);
         $enq       = $class->db->enquire ( $query );
-        # $c->log->debug("query exactaa:" . $query->get_description());
-        $mset = $enq->get_mset( 0,2 ) if $enq;
+        @mset = $enq->matches( 0,2 ) if $enq;
       }
-      $mset = undef if ($mset->size() != 1);
+      @mset = undef if (@mset != 1);
     }
 
-    if((!$mset || $mset->empty() || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
+    if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
         my $qu = "$q";
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/));
         $qu = $class->_add_type_range($c, "$qu", $type);
         $query=$class->_setup_query($qu, $class->syn_qp,16|2|256);
         $enq       = $class->syn_db->enquire ( $query );
-        # $c->log->debug("query exactb:" . $query->get_description());
-        $mset      = $enq->get_mset( 0,2 ) if $enq;
+        @mset      = $enq->matches( 0,2 ) if $enq;
     }
 
-    if(!$mset || $mset->empty()){
+    if(!$mset[0]){
       $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/_/));
       $q =~ s/\s/\* /g;
       $q = $class->_add_type_range($c, "$q", $type);
       $query=$class->_setup_query($q, $class->qp, 2|16|256|512);
       $enq       = $class->db->enquire ( $query );
-      # $c->log->debug("query exactc:" . $query->get_description());
-      $mset      = $enq->get_mset( 0,2 );
+      @mset      = $enq->matches( 0,2 );
     }
 
-    return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
-        search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
+    return ({ struct=>\@mset,
+              search=>$class,
+              query=>$q,
+              query_obj=>$query,
+              page=>1,
+              page_size=>1 });
 }
 
 sub random {
@@ -176,7 +181,6 @@ sub search_count {
 
     my $query=$class->_setup_query($q, $class->qp, 2|512|16);
     my $enq       = $class->db->enquire ( $query );
-    # $c->log->debug("query count:" . $query->get_description());
 
     my $mset      = $enq->get_mset( 0, 500000 );
     return $mset->get_matches_estimated();
