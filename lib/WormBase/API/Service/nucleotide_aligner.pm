@@ -81,9 +81,8 @@ sub run {
     my $api = $c->model('WormBaseAPI');
 
     my ($it,$res)= $api->xapian->search_exact($c, $sequence_id, 'gene');
-    unless ($it->{pager}->{total_entries} == 1 ){ return; }
     my $o = @{$it->{struct}}[0] || return;
-    my $service_dbh = $api->_services->{$api->default_datasource}->dbh || return 0;
+    my $service_dbh = $api->_services->{$api->default_datasource}->dbh;
     my $sequence = $service_dbh->fetch(-class => $o->get_document->get_value(0), -name => $o->get_document->get_value(1));
 
 
@@ -91,7 +90,7 @@ sub run {
 
     $self->object($sequence);
     $sequence->db->class('Ace::Object::Wormbase');
-    my $gff_dsn = $self->gff_dsn || return undef;
+    my $gff_dsn = $self->gff_dsn;
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
     return {msg=>"Sequence is not a transcript."} unless ($is_transcript) ;
     
