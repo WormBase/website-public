@@ -185,7 +185,38 @@ sub search_count {
     my $mset      = $enq->get_mset( 0, 500000 );
     return $mset->get_matches_estimated();
 }
- 
+
+
+sub search_count_estimate {
+ my ( $class, $c, $q, $type, $species) = @_;
+    $q =~ s/\s/\* /g;
+    $q = "$q*";
+
+    if($type){
+      $q = $class->_add_type_range($c, $q, $type);
+
+      if(($type =~ m/paper/) && ($species)){
+        my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
+        $q .= " ptype:$s..$s" if defined $s;
+        $species = undef;
+      }
+    }
+
+    if($species){
+        my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        $q .= " species:$s..$s" if defined $s;
+    }
+
+    my $query=$class->_setup_query($q, $class->qp, 2|512|16);
+    my $enq       = $class->db->enquire ( $query );
+
+    my $mset      = $enq->get_mset( 0, 500 );
+
+    my $amt = $mset->get_matches_estimated();
+    # $amt = ($amt > 500) ? "500+" : "$amt";
+    return $amt;
+}
+
  
 =item extract_data <item> <query>
 

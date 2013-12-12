@@ -803,33 +803,39 @@
       search_change(type);
       ajaxGet(allSearch, url, undefined, function(){
         checkSearch(allSearch);
+
+        var dl = searchSummary.find(".dl-search");
+        dl.load(dl.attr("href"), function(){
+          if((parseInt(dl.text().replace(/K/g,'000').replace(/\D/g, ''), 10)) < 100000){
+            searchSummary.find(".count").each(function() {
+              $jq(this).load($jq(this).attr("href"), function(){
+                if($jq(this).text() === '0'){
+                  $jq(this).parent().remove();
+                }else {
+                  $jq(this).parent().show().parent().prev(".title").show();
+                }
+              });
+            });
+            
+            searchSummary.find(".ui-icon-close").click(function(){
+              loadResults(url);
+              searchSummary.find(".ui-selected").removeClass("ui-selected");
+              return false;
+            });
+            
+            searchSummary.find(".load-results").click(function(){
+              var button = $jq(this);
+              loadResults(button.attr("href"));
+              searchSummary.find(".ui-selected:not('#current-ref')").removeClass("ui-selected");
+              button.addClass("ui-selected");
+              curr.html(button.html());
+              return false;
+            });
+          }
+        });
       });
     }
 
-    searchSummary.find(".count").each(function() {
-      $jq(this).load($jq(this).attr("href"), function(){
-        if($jq(this).text() === '0'){
-          $jq(this).parent().remove();
-        }else {
-          $jq(this).parent().show().parent().prev(".title").show();
-        }
-      });
-    });
-    
-    searchSummary.find(".ui-icon-close").click(function(){
-      loadResults(url);
-      searchSummary.find(".ui-selected").removeClass("ui-selected");
-      return false;
-    });
-    
-    searchSummary.find(".load-results").click(function(){
-      var button = $jq(this);
-      loadResults(button.attr("href"));
-      searchSummary.find(".ui-selected:not('#current-ref')").removeClass("ui-selected");
-      button.addClass("ui-selected");
-      curr.html(button.html());
-      return false;
-    });
   }
 
 

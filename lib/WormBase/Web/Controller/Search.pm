@@ -6,6 +6,7 @@ use Moose;
 use JSON::XS;
 use URI::Escape;
 use Text::CSV;
+use POSIX;
 # use String::Escape qw( printable unprintable );
 
 BEGIN { extends 'Catalyst::Controller::REST' }
@@ -259,7 +260,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   return;
 }
 
-sub search_count :Path('/search/count') :Args(3) {
+sub search_count_estimate :Path('/search/count') :Args(3) {
   my ($self, $c, $species, $type, $q) = @_;
 
   $c->stash->{noboiler} = 1;
@@ -278,6 +279,18 @@ sub search_count :Path('/search/count') :Args(3) {
 
   my $tmp_query = $self->_prep_query($q);
   my $count = $api->xapian->search_count($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
+
+  # $count = "$count+" if ($count > 500);
+
+  if($count > 500){
+    $count = int($count/100+1)*100; 
+    if($count > 1000){
+      $count = int($count/1000) . "K";
+    }else{
+      $count = "$count+";
+    }
+  }
+
   $c->response->body("$count");
 
   $c->set_cache($key => "$count") if $cache;
