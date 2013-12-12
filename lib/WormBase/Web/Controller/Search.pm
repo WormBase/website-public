@@ -283,12 +283,8 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
   # $count = "$count+" if ($count > 500);
 
   if($count > 500){
-    $count = int($count/100+1)*100; 
-    if($count > 1000){
-      $count = int($count/1000) . "K";
-    }else{
-      $count = "$count+";
-    }
+    $count = int($count/100)*100; 
+    ($count >= 1000) ? $count = int($count/1000) . "K" : $count = "$count+";
   }
 
   $c->response->body("$count");
