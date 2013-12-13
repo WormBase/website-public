@@ -278,13 +278,11 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
   }
 
   my $tmp_query = $self->_prep_query($q);
-  my $count = $api->xapian->search_count($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
-
-  # $count = "$count+" if ($count > 500);
+  my $count = $api->xapian->search_count_estimate($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
 
   if($count > 500){
     $count = int($count/100)*100; 
-    ($count >= 1000) ? $count = int($count/1000) . "K" : $count = "$count+";
+    $count = ($count >= 1000) ? int($count/1000) . "K" : "$count+";
   }
 
   $c->response->body("$count");

@@ -182,7 +182,7 @@ sub search_count {
     my $query=$class->_setup_query($q, $class->qp, 2|512|16);
     my $enq       = $class->db->enquire ( $query );
 
-    my $mset      = $enq->get_mset( 0, 500000 );
+    my $mset      = $enq->get_mset( 0, 0, 500000 );
     return $mset->get_matches_estimated();
 }
 
@@ -210,7 +210,7 @@ sub search_count_estimate {
     my $query=$class->_setup_query($q, $class->qp, 2|512|16);
     my $enq       = $class->db->enquire ( $query );
 
-    my $mset      = $enq->get_mset( 0, 1, 500 );
+    my $mset      = $enq->get_mset( 0, 0, 500 );
 
     my $amt = $mset->get_matches_estimated();
     # $amt = ($amt > 500) ? "500+" : "$amt";
