@@ -106,7 +106,7 @@ sub search :Path('/search') Args {
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
-    $c->stash->{count} = $api->xapian->search_count($c, $tmp_query, $search, $c->stash->{species});
+    $c->stash->{count} = $api->xapian->search_count_estimate($c, $tmp_query, $search, $c->stash->{species});
     $c->stash->{error} = ($query_error || "") . ($error || "");
     my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
