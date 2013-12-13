@@ -280,15 +280,31 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
   my $tmp_query = $self->_prep_query($q);
   my $count = $api->xapian->search_count_estimate($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
 
-  if($count > 500){
-    $count = int($count/100)*100; 
-    $count = ($count >= 1000) ? int($count/1000) . "K" : "$count+";
+  if( $count > 500) {
+    my @scale_array = ("+", "K", "M", "G", "T", "P");
+    my $scale_counter = 0;
+
+    while($count >= 1000){
+      $count = int($count/1000);
+      $scale_counter++;
+    }
+    $count = $self->_round_down($count) . $scale_array[$scale_counter];
   }
-
   $c->response->body("$count");
-
   $c->set_cache($key => "$count") if $cache;
   return;
+}
+
+# Round a number down
+# @param: $int - number we are rounding
+#         $min - only round if it's larger than this amt
+#         $acc - rounding accuracy
+sub _round_down {
+  my ($self, $int, $min, $acc) = @_;
+  $min ||= 10;
+  $acc ||= ($int < 100) ? 10 : 100;
+
+  return ($int > $min) ? int($int/$acc)*$acc : $int;
 }
 
 sub _get_url {

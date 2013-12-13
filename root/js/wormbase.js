@@ -806,7 +806,7 @@
 
         var dl = searchSummary.find(".dl-search");
         dl.load(dl.attr("href"), function(){
-          if((parseInt(dl.text().replace(/K/g,'000').replace(/\D/g, ''), 10)) < 100000){
+          if((parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10)) < 100000){
             searchSummary.find(".count").each(function() {
               $jq(this).load($jq(this).attr("href"), function(){
                 if($jq(this).text() === '0'){
