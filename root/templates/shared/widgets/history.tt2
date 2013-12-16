@@ -28,7 +28,7 @@ ELSIF fields.history.data.size > 0;
 			key='history'
 		);
 
-	IF object.name.data.class == 'Gene';
+	IF object.name.data.class == 'gene';
 	
 		'<br /><h4>Historical annotations:</h4><br />';
 		build_data_table(
