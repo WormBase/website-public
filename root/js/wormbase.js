@@ -1078,7 +1078,7 @@ var Layout = (function(){
 
     function getLeftWidth(holder){
       var leftWidth = sColumns ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/(parseFloat(holder.outerWidth())))*100;
-      return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
+      return Math.round((isNaN(leftWidth) ? 100 : leftWidth)/10) * 10; //if you don't round, the slightest change causes an update
     }
 
     function resetLayout(leftList, rightList, leftWidth, hash, minimized, sidebar){
