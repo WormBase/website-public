@@ -1,10 +1,72 @@
+[PRIMARY_GENE_TRACK]
+# Include appropriate configuration. These MUST come first.
+# Override any option by supplying it after the include.
+# Core gene model configuration:
+#   category, key, bgcolor, fgcolor, utr_color, font2color, height, citation
+# include includes/gene_models-core.track
+
+# Two different types of ncRNA transcript: Non_coding_transcript:nc_primary_transcript
+
+# ncRNA: F02A9.9          - needs nc_primary_transcript handling
+# miRNA: WBGene00003278   - needs preMRNA handling
+# pseuodgene : WBGene00023295
+
+feature = CDS:WormBase
+	  ncRNA:WormBase	
+          miRNA:WormBase 
+	  rRNA:WormBase
+	  scRNA:WormBase
+	  snRNA:WormBase
+	  snoRNA:WormBase
+	  tRNA:WormBase
+glyph = gene
+title = sub {
+	 my $f = shift;
+	 return "Curated gene set " . $f->display_name;
+	 }
+link = sub {
+	my $f = shift;
+	my $name = $f->attributes('Gene') || $f->name;  # TH: This should now be unnecessary
+	return "/get?name=$name;class=Gene";
+	}
+label = sub { 
+	my $f = shift;
+	my ($locus)  = $f->attributes('locus');
+	my ($name)   = $f->display_name;
+	return $locus ? "$locus ($name)" : $name;
+	}
+description  = sub {	     
+	my $f = shift;
+	my $type = $f->type;
+	# Component parts:
+	# ncRNAs : gene > ncRNA > exon
+	# coding : gene > mRNA > CDS
+	if ($type =~ /CDS/) {
+	   return 'protein coding';
+        } else {
+	   return $f->method;  # please, someone explain why this works ;) Bio::DB::GFF backwards compat?
+        }
+#	return 'ncRNA'      if $type =~ /ncRNA/i;
+#	return 'pseudogene' if $type =~ /pseudogene/i;
+#	return "desc $type";
+ 	# This does NOT work in this context. Biotype 
+	# is an attribute of gene, not CDS.
+	# my ($biotype) = $f->attributes('biotype');
+	# or...
+	# $f->get_tag_values('biotype'));
+	# $biotype =~ s/_/ /g;
+	# my $tags   = join(';',$f->get_all_tags());
+	# return $biotype;	
+       }
 category     = Genes
 key          = Gene Models
-bgcolor      = sub {
+bgcolor = sub {
 	     my $f = shift;
-	     return 'gray'   if $f->method =~ /pseudogene/i;
-             return 'gray'   if $f->source =~ /pseudogene/i;
-	     return 'gray'   if $f->source =~ /ncrna|non_coding/i;
+	     my $type = $f->type;
+   	     # Component parts:
+	     # ncRNAs : gene > ncRNA > exon
+	     # coding : gene > mRNA > CDS
+	     return 'gray'   if $f->type =~ /exon|pseudogene/i;
 	     return 'violet' if $f->strand > 0;
 	     return 'turquoise';
 	     }
@@ -12,9 +74,11 @@ fgcolor      = black
 utr_color    = gray
 font2color   = blue
 height  = sub {
-	my $feature = shift;
-	return $feature->type =~ /transcript|UTR|CDS/i ? 10 : 6;
-
+	my $f = shift;
+	# Component parts:
+	# ncRNAs : gene > ncRNA > exon
+	# coding : gene > mRNA > CDS
+	return $f->type =~ /mRNA|CDS|UTR/i ? 10 : 6;
 	}
 # This only applies to C. elegans, C. briggsae, C. japonica, C. remanei, and C. brenneri.
 # All others that include this config file will need to override.
@@ -38,3 +102,10 @@ citation = Protein-coding gene structures result from the integration of a varie
 #	my $name = $f->attributes('Gene') || $f->name;
 #	return "/get?name=$name;class=Gene";
 #	}
+
+
+[PRIMARY_GENE_TRACK:150000]
+glyph        = generic
+strand_arrow = 1
+bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+description  = 0
