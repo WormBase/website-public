@@ -6,6 +6,7 @@ use Moose;
 use JSON::XS;
 use URI::Escape;
 use Text::CSV;
+use POSIX;
 # use String::Escape qw( printable unprintable );
 
 BEGIN { extends 'Catalyst::Controller::REST' }
@@ -80,7 +81,7 @@ sub search :Path('/search') Args {
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
       # if it finds an exact match, redirect to the page 
         my $it = $api->xapian->search_exact($c, $tmp_query, $search);
-        if($it->{mset}->size() == 1){
+        if((scalar (@{$it->{struct}}) == 1 )&& @{$it->{struct}}[0]){
           my $o = @{$it->{struct}}[0];
           my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
           my $url = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
@@ -105,7 +106,7 @@ sub search :Path('/search') Args {
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
-    $c->stash->{count} = $api->xapian->search_count($c, $tmp_query, $search, $c->stash->{species});
+    $c->stash->{count} = $api->xapian->search_count_estimate($c, $tmp_query, $search, $c->stash->{species});
     $c->stash->{error} = ($query_error || "") . ($error || "");
     my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
@@ -259,7 +260,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   return;
 }
 
-sub search_count :Path('/search/count') :Args(3) {
+sub search_count_estimate :Path('/search/count') :Args(3) {
   my ($self, $c, $species, $type, $q) = @_;
 
   $c->stash->{noboiler} = 1;
@@ -277,11 +278,33 @@ sub search_count :Path('/search/count') :Args(3) {
   }
 
   my $tmp_query = $self->_prep_query($q);
-  my $count = $api->xapian->search_count($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
-  $c->response->body("$count");
+  my $count = $api->xapian->search_count_estimate($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
 
+  if( $count > 500) {
+    my @scale_array = ("+", "K", "M", "G", "T", "P");
+    my $scale_counter = 0;
+
+    while($count >= 1000){
+      $count = int($count/1000);
+      $scale_counter++;
+    }
+    $count = $self->_round_down($count) . $scale_array[$scale_counter];
+  }
+  $c->response->body("$count");
   $c->set_cache($key => "$count") if $cache;
   return;
+}
+
+# Round a number down
+# @param: $int - number we are rounding
+#         $min - only round if it's larger than this amt
+#         $acc - rounding accuracy
+sub _round_down {
+  my ($self, $int, $min, $acc) = @_;
+  $min ||= 10;
+  $acc ||= ($int < 100) ? 10 : 100;
+
+  return ($int > $min) ? int($int/$acc)*$acc : $int;
 }
 
 sub _get_url {

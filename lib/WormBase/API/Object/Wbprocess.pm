@@ -90,7 +90,7 @@ sub related_process{
 		} $object->Related_process;
 	
 	return {
-		description => "Processes related to this record",
+		description => "Topics related to this record",
 		data	=> @related_proc ? \@related_proc : undef
 	};
 }
@@ -110,7 +110,7 @@ sub other_name{
 
 # historical_gene { }
 # This mehtod will return a data structure containing the 
-# historical reocrd of the dead gene originally associated with this Process
+# historical reocrd of the dead gene originally associated with this Topic
 
 
 sub historical_gene {
@@ -176,7 +176,6 @@ sub expression_cluster {
 	my @data;
 	foreach my $e_cluster(@e_clusters){
 		push @data, $self->_process_e_cluster($e_cluster);
-		#$log->debug( "JDJDJD".join(",",@data));
 	}
 	
 	return {
@@ -283,10 +282,6 @@ sub go_term{
 		};
 	}
 		
-#	use Data::Dumper;
-#	my $dump =  Dumper(\%data);
-#	die $dump;
-	
 	return {
 		description => "Gene Ontology Term",
 		data => \@data
@@ -318,26 +313,11 @@ sub pathway{
 	
 	return {
 		description => "Related wikipathway link",
-#		data => $object
 		data => $data ? $data : undef
 };
 }
 
 
-# Sample wrapper function to copy
-# replace the xxx's with stuff
-0 if <<'SAMPLE_FUNC';
-sub xxx{
-	my ($self) = @_;
-	my $object = $self->object;
-	
-		
-	return {
-		description => "xxx",
-		data => xxx
-	};
-}
-SAMPLE_FUNC
 
 ############################################################
 #

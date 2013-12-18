@@ -46,7 +46,7 @@
 	nomenclature = 'http://www.cbs.umn.edu/CGC/nomenclature/'
 	}
 
- Refseq = { 
+ RefSeq = { 
 	description = 'RefSeq is a comprehensive, integrated, non-redundant set of sequences, including genomic DNA, transcript (RNA), and protein products.'
 	maintainer  = 'NCBI',
 	base        = 'http://www.ncbi.nlm.nih.gov/RefSeq/',

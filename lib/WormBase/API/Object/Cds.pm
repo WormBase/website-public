@@ -33,15 +33,16 @@ has 'method' => (
 
 sub _build_method {
     my ($self) = @_;
-    my $class = $self->object->class;
-    my $method = $self ~~ 'Method';
+    my $object = $self->object;
+    my $class = $object->class;
+    my $method = $object->Method;
     my $details = $method->Remark if $method;
     return {
         description => "the method used to describe the $class",
         data => ($method || $details) ? {
-	    method => $method && "$method",
-	    details => $details && "$details",
-	} : undef
+            method => $method && "$method",
+            details => $details && "$details",
+        } : undef
     };
 }
 
@@ -181,7 +182,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? [qw(PRIMARY_GENE_TRACK CG ESTB MOTIFS)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? ($self->method->{data}{method} eq 'history') ?  [qw(HISTORICAL_GENES)] : [qw(PRIMARY_GENE_TRACK CG ESTB MOTIFS)] : undef,
     };
 }
 
