@@ -411,7 +411,16 @@ sub _build_best_blastp_matches {
         my ($class, $id);
 
        # this doesn't seem optimal... maybe there should be something in config?
-        if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
+        if($hit =~ /(\w+):(.+)/ && $hit->Database && !($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/)) { #try to link out to database
+            my $accession = $2;
+            my @databases = $hit->Database;
+            foreach my $db (@databases) {
+              foreach my $dbt ($db->col){
+                 map {if($_ =~ "$accession"){$class = $db; $id = $accession}} $dbt->col;
+              }
+            }
+
+        } else {
             $description ||= eval {
                 $best{$method}{hit}->Corresponding_CDS->Brief_identification;
             };
@@ -424,16 +433,6 @@ sub _build_best_blastp_matches {
                 }
             }
             $class = 'protein';
-        } elsif($hit =~ /(\w+):(.+)/ && $hit->Database) { #try to link out to database
-            my $accession = $2;
-            my @databases = $hit->Database;
-            foreach my $db (@databases) {
-              foreach my $dbt ($db->col){
-                 map {if($_ =~ "$accession"){$class = $db; $id = $accession}} $dbt->col;
-              }
-            }
-            $self->log->debug("DATABASE: $class");
-
         }
         next if ($hit =~ /^MSP/);
         $species =~ /(.*)\.(.*)/;

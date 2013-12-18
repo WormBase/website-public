@@ -447,7 +447,12 @@ sub corresponding_all {
         }
         
     }
-    
+
+    # add historical gene to table
+    map {
+        push @rows, { gene => $self->_pack_obj($_) };
+    } $object->Gene_history;
+
     return {
         description => 'corresponding cds, transcripts, gene for this protein',
         data        => @rows ? \@rows : undef

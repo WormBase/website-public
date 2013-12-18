@@ -4,6 +4,7 @@ use File::Basename;
 use File::Copy;
 use IPC::Run3;
 use Data::UUID;
+use Digest::MD5 qw(md5);
 
 use Moose;
 with 'WormBase::API::Role::Object';
@@ -218,7 +219,7 @@ sub _rplot_subdir {
     my ($self, $filename) = @_;
 
     if (defined WormBase::Web->config->{rplots_subdirs} && WormBase::Web->config->{rplots_subdirs} > 0) {
-        return unpack('L', $filename) % WormBase::Web->config->{rplots_subdirs} . '/';
+        return unpack('L', md5($filename)) % WormBase::Web->config->{rplots_subdirs} . '/';
     }
 
     return '';
