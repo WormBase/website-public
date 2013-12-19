@@ -65,7 +65,7 @@ citation = Protein-coding gene structures result from the integration of a varie
            The purple and blue colors indicate transcripts on the forward and reverse 
            strands respectively. If sufficient room is available between features, gene 
            models end with a triangle; if not a small arrow is used. 
-           The grey areas represent 5' and 3' UTRs of protein-coding transcripts, assigned  
+           Grey areas represent 5' and 3' UTRs of protein-coding transcripts, assigned  
            automatically using the extents of overlapping ESTs and full-length cDNAs. The 
            UTR predictions have not been reviewed by WormBase curators, and some are 
            known to contain artifacts.

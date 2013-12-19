@@ -1,6 +1,8 @@
 [HISTORICAL_GENES]
 feature  = wormbase_cds:history
-glyph    = wormbase_transcript
+#glyph    = wormbase_transcript
+glyph        = transcript
+#bgcolor      = white
 title    = Historical gene prediction $name
 category     = Genes
 key          = Gene Models (historical)
@@ -32,10 +34,20 @@ description  = sub {
 	$notes =~ s/\w{3,4}-\d+$//;   # name is already in label
         return "$notes; $source";
     }
+#description  = sub { 
+#		my $f = shift;
+#		my $name = $f->display_name;
+#		my ($wp)   = $name =~ /wp(\d+)$/;
+#		return $wp ? "(changed; WormPep WP$wp)" : "(obsolete)";
+#	}
+#citation     = This track shows historical gene models that have been superseded.  The 
+#		suffix indicates which WormPep release the gene model was last present
+#		in.
 citation = Historical gene predictions.
 
 [HISTORICAL_GENES:150000]
 glyph        = generic
 strand_arrow = 1
-bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+#bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+bgcolor       = white
 description = 0
