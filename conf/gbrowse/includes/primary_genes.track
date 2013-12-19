@@ -1,19 +1,7 @@
 [PRIMARY_GENE_TRACK]
-# Include appropriate configuration. These MUST come first.
-# Override any option by supplying it after the include.
-# Core gene model configuration:
-#   category, key, bgcolor, fgcolor, utr_color, font2color, height, citation
-# include includes/gene_models-core.track
-
-# Two different types of ncRNA transcript: Non_coding_transcript:nc_primary_transcript
-
-# ncRNA: F02A9.9          - needs nc_primary_transcript handling
-# miRNA: WBGene00003278   - needs preMRNA handling
-# pseuodgene : WBGene00023295
-
 feature = CDS:WormBase
+          miRNA:WormBase
 	  ncRNA:WormBase	
-          miRNA:WormBase 
 	  rRNA:WormBase
 	  scRNA:WormBase
 	  snRNA:WormBase
