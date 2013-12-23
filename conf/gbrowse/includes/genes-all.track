@@ -1,21 +1,12 @@
-[PRIMARY_GENE_TRACK]
-#     miRNA: WBGene00003278 / mir-50   - needs preMRNA handling
-#     ncRNA: F02A9.9          - needs nc_primary_transcript handling
-key          = Gene Models
+# [PRIMARY_GENE_TRACK]
+# Key and citation should be provided by each species.
+# key          = Genes
 category     = Genes
-feature  = gene:WormBase
-#feature = CDS:WormBase
-#          miRNA:WormBase
-#	  ncRNA:WormBase	
-#	  rRNA:WormBase
-#	  scRNA:WormBase
-#	  snRNA:WormBase
-#	  snoRNA:WormBase
-#	  tRNA:WormBase
+feature  = gene:WormBase gene:WormBase_imported
 glyph = gene
 title = sub {
 	 my $f = shift;
-	 return "Cruated transcript " . $f->display_name . "<br /><i>click for details";
+	 return "Curated transcript " . $f->display_name . "<br /><i>click for details";
 	 }
 label    = sub { 
 		my $f = shift;
@@ -53,7 +44,7 @@ height  = sub {
 	return $f->type =~ /mRNA|CDS|UTR/i ? 10 : 6;
 	}
 link = sub {
-     my $f = shift;
+        my $f = shift;
 	my $transcript = $f->name; # Either a WBGene or transcript name
 
 	# We won't link these
@@ -72,19 +63,6 @@ link = sub {
     	    return "/get?name=$transcript;class=Gene";
         }
      }
-# This only applies to C. elegans, C. briggsae, C. japonica, C. remanei, and C. brenneri.
-# All others that include this config file will need to override.
-citation = Protein-coding gene structures result from the integration of a variety 
-           of prediction methods and data sources followed by manual review and revison 
-           by WormBase curators. tRNAs are predicted by tRNAscan, and other non-coding 
-           RNA transcripts are taken from a variety of literature sources. 
-           The purple and blue colors indicate transcripts on the forward and 
-           reverse strands respectively. If sufficient room is available between 
-           features, gene models end with a triangle; if not a small arrow is used. 
-           Grey areas represent 5' and 3' UTRs of protein-coding transcripts, assigned  
-           automatically using the extents of overlapping ESTs and full-length cDNAs. The 
-           UTR predictions have not been reviewed by WormBase curators, and some are 
-           known to contain artifacts.
 box_subparts = 1
 balloon hover  = sub {
 	my $f = shift;
@@ -94,13 +72,15 @@ balloon hover  = sub {
 	
 	# In the balloon, provide some additional (conditional) information on
 	# each individual transcript
+	# We could also, eg, include direct links to protein reports
 
 	my ($locus)  = $f->attributes('locus');
 		
 	# Biotypes are only associated with gene features.
 	# Depending on the current entity, we may not have direct access.
 	my $message;
-	if ($type =~ /gene/i) {
+	my $type;
+	if ($f->type =~ /gene/i) {
             ($type) = $f->attributes('biotype');
 	    $type =~ s/_/ /g;
         } elsif ($f->type =~ /mRNA/i) {
@@ -112,7 +92,7 @@ balloon hover  = sub {
 	my @return;
 	if ($type) {
 		push @return,"<b>$transcript</b>";
-        	push @return,"Type: $type" if $type;
+        	push @return,"Type: $type"            if $type;
  		push @return,"Locus: <i>$locus</i>"   if $locus;
         } else {
 		 # top-level feature
@@ -125,6 +105,7 @@ balloon hover  = sub {
          }
 	return join("<br />",@return,$message);
      }
+
 
 
 [PRIMARY_GENE_TRACK:150000]

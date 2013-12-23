@@ -1,11 +1,13 @@
-[CLASSICAL_ALLELES]
-key          = Classical alleles
+[CHANGE_OF_FUNCTION_POLYMORPHISMS]
+feature =     deletion:PCoF_CGH_allele_Polymorhpism
+              deletion:PCoF_Variation_project_Polymorhpism
+        insertion_site:PCoF_Variation_project_Polymorhpism
+                   SNP:PCoF_Variation_project_Polymorhpism
+          substitution:PCoF_Variation_project_Polymorhpism
+  complex_substitution:PCoF_Variation_project_Polymorhpism
+   sequence_alteration:PCoF_Variation_project_Polymorhpism
 category     = Alleles, Variations, RNAi
-feature      = deletion:Allele
-	       insertion_site:Allele
-	       substitution:Allele
-	       complex_substitution:Allele
-	       transposable_element_insertion_site:Allele
+key          = Change-of-function polymorphisms
 label        = sub {
 	     my $f = shift;
 	     my %attributes = $f->attributes;
@@ -35,11 +37,17 @@ glyph        = sub {
 bgcolor      = sub {
 		my $f = shift;
 		my $m = $f->method;
-		return 'red'    if $m eq 'deletion';
-		return 'yellow' if $m eq 'point_mutation';
-		return 'yellow' if $m eq 'substitution';
-		return 'blue'   if $m eq 'complex_substitution';		
-		return 'white'; # insertion_site, mobile_element_insertion
+	        my %attributes = $f->attributes();
+		return 'green'  if $attributes{consequence} eq 'Missense';
+		return 'yellow' if $attributes{consequence} eq 'Coding_exon';
+		return 'red'    if $attributes{consequence} eq 'Nonsense';
+		return 'blue'   if $attributes{consequence} eq 'Frameshift';
+		return 'white'; # insertion_site, mobile_element_insertion	
+#		return 'red'    if $m eq 'deletion';
+#		return 'yellow' if $m eq 'point_mutation';
+#		return 'yellow' if $m eq 'substitution';
+#		return 'blue'   if $m eq 'complex_substitution';		
+#		return 'white'; # insertion_site, mobile_element_insertion
 	}
 fgcolor      = black
 font2color   = blue
@@ -63,10 +71,11 @@ balloon hover = sub {
 		   # We might want to be a little fancier with sources, like linking to the resource.
                    my $source = $f->source; 
 		   my $sanitized_source = $source;
-		   $sanitized_source =~ s/_Polymorphisms//g;
+		   $sanitized_source =~ s/_polymorphism//ig;
+		   $sanitized_source =~ s/PCoF_//g;
 		   $sanitized_source =~ s/_/ /g;
 
-		   my @notes = ("<b>Allele: $name</b>");
+		   my @notes = ("<b>Putative Change-of-Function Allele: $name</b>");
 		   push (@notes,"type: $type");
 		   push (@notes,"status: $status")                  if $status;
 		   push (@notes,"position: $ref:$start..$stop");
@@ -83,9 +92,11 @@ balloon hover = sub {
 		   push (@notes,"source: $sanitized_source");  # maybe a link to resource, too?	
 		   return join('<br />',@notes);
 	}
-citation      = This track shows classical alleles comprised of insertions, deletions,
-	        substitutions and complex changes. These alleles were typically generated
-		during forward genetic screens.
-		Red boxes represent deletions; yellow diamonds represent substitutions; 
-		blue boxes represent complex substitutions; and white triangles represent
-		insertions.
+citation     = This track shows single nucleotide polymorphisms (SNPs) that may generate
+ 	       a change of function.
+               In this track, the molecular nature of the polymorphism is indicated by
+               its glyph: Boxes are deletions; triangles are insertions; point mutations
+                and substitutions are diamonds. Color shows the potential effect on coding regions.
+                Green indicates a possible missense; red a possible
+ 		nonsense; blue a frameshift; yellow a disruption of a coding exon(s); and
+		white for everything else. Mouse over the feature for details.

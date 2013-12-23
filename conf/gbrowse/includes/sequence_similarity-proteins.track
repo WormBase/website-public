@@ -6,7 +6,7 @@
 [B_MALAYI_PROTEINS_BLASTX]
 feature       = protein_match:bmalayi_proteins-BLASTX
 key           = B. malayi proteins
-category      = Sequence Similarity Tracks (proteins)
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -18,7 +18,7 @@ citation      =  Matches to WormBase B. malayi proteins, aligned with BLASTX
 [C_BRENNERI_PROTEINS_BLASTX]
 feature       = protein_match:cbrenneri_proteins-BLASTX
 key           = C. brenneri proteins
-category      = Sequence Similarity Tracks (proteins)
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -30,7 +30,7 @@ citation      =  Matches to WormBase C. brenneri proteins, aligned with BLASTX
 [C_BRIGGSAE_PROTEINS_BLASTX]
 feature       = protein_match:cbriggsae_proteins-BLASTX
 key           = C. briggsae proteins
-category      = Sequence Similarity Tracks (proteins)
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -41,7 +41,7 @@ citation      = Matches to WormBase C. briggsae proteins, aligned with BLASTX
 [C_ELEGANS_PROTEINS_BLASTX]
 feature       = protein_match:celegans_proteins-BLASTX
 key           = C. elegans proteins
-category      = Sequence Similarity Tracks (proteins)
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -52,7 +52,7 @@ citation      = Matches to WormBase C. elegans proteins, aligned with BLASTX
 [C_JAPONICA_PROTEINS_BLASTX]
 feature       = protein_match:cjaponica_proteins-BLASTX
 key           = C. japonica proteins
-category      = Sequence Similarity Tracks (proteins)
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -63,7 +63,7 @@ citation      = Matches to WormBase C. japonica proteins, aligned with BLASTX
 [C_REMANEI_PROTEINS_BLASTX]
 feature       = protein_match:cremanei_proteins-BLASTX
 key           = C. remanei proteins
-category      = Sequence Similarity Tracks (proteins)
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -74,7 +74,7 @@ citation      = Matches to WormBase C. remanei proteins, aligned with BLASTX
 [P_PACIFICUS_PROTEINS_BLASTX]
 feature       = protein_match:ppacificus_proteins-BLASTX
 key           = P. pacificus proteins
-category      = Sequence Similarity Tracks (proteins)
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -85,8 +85,8 @@ citation      =  Matches to WormBase P. pacificus proteins, aligned with BLASTX
 
 [D_MELANOGASTER_PROTEINS_BLASTX]
 feature       = protein_match:dmelanogaster_proteins-BLASTX
-key           = Drosophila proteins
-category      = Sequence Similarity Tracks (proteins)
+key           = D. melanogaster proteins
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -96,8 +96,8 @@ citation      = Matches to Drosophila melanogaster proteins from FlyBase, aligne
 
 [H_SAPIENS_PROTEINS_BLASTX]
 feature       = protein_match:hsapiens_proteins-BLASTX
-key           = Human proteins
-category      = Sequence Similarity Tracks (proteins)
+key           = H. sapiens proteins
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -107,8 +107,8 @@ citation      = Matches to Human proteins from Ensembl, aligned with BLASTX
 
 [S_CEREVISIAE_PROTEINS_BLASTX]
 feature       = protein_match:scerevisiae_proteins-BLASTX
-key           = Yeast proteins
-category      = Sequence Similarity Tracks (proteins)
+key           = S. cerevisiae proteins
+category      = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black
@@ -129,85 +129,6 @@ citation      = Matches to proteins from a slimmed-down version of UniProt (with
                 (nucleotide to protein, via six-frame translation).
 
 
-################################################
-# Repeats
-################################################
-
-[REPEATS_DUST]
-feature       = repeat_region:Dust
-	        repeat_region:dust
-                low_complexity_region:dust
-bgcolor       = bisque
-fgcolor       = black
-category      = Misc
-height        = 4
-key           = Low complextity region (Dust)
-connector     = none
-description   = sub {
-	my $f = shift;
-	my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
-	my $method = $f->method;
-	$method =~ s/_/ /g;
-	return join('; ',$f->notes,"$ref: $start..$stop");
-	}
-label         = sub {
-	my $f = shift;
-	my $method = $f->method;
-	$method =~ s/_/ /g;
-	return $method;
-	}
-link          = 0
-citation      = Low-complexity regions identified by Dust.
-
-[REPEATS_REPEAT_MASK]
-feature       = repeat_region:RepeatMask
-	        repeat_region:RepeatMasker
-bgcolor       = bisque
-fgcolor       = black
-category      = Misc
-height        = 4
-key           = Repeat Region (RepeatMasker)
-connector     = none
-description   = sub {
-	my $f = shift;
-	my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
-	my $method = $f->method;
-	$method =~ s/_/ /g;
-	return join('; ',$f->notes,"$ref: $start..$stop");
-	}
-label         = sub {
-        my $f = shift;
-        my $label = $f->id;
-        $label=~s/Motif://;
-	return $label;
-	}
-link          = 0
-citation      = Repetitive regions identified by RepeatMasker.
-
-[REPEATS_TRF]
-feature       = inverted_repeat:inverted
-	        tandem_repeat:tandem	        
-bgcolor       = bisque
-fgcolor       = black
-category      = Misc
-height        = 4
-key           = Tandem and Inverted Repeats (TRF and inverted)
-connector     = none
-description   = sub {
-	my $f = shift;
-	my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
-	my $method = $f->method;
-	$method =~ s/_/ /g;
-	return join('; ',$f->notes,"$ref: $start..$stop");
-	}
-label         = sub {
-	my $f = shift;
-	my $method = $f->method;
-	$method =~ s/_/ /g;
-	return $method;
-	}
-link          = 0
-citation      = Exact tandem and inverted repetitive elements.
 
 
 

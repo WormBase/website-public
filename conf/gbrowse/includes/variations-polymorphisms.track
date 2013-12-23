@@ -1,17 +1,21 @@
-[CLASSICAL_ALLELES]
-key          = Classical alleles
+[POLYMORPHISMS]
+# Polymorphism was MISSPELLED IN WS240. Update to correct spelling for WS241.
+key          = Polymorphisms
 category     = Alleles, Variations, RNAi
-feature      = deletion:Allele
-	       insertion_site:Allele
-	       substitution:Allele
-	       complex_substitution:Allele
-	       transposable_element_insertion_site:Allele
+feature      = deletion:CGH_allele_Polymorhpism
+           substitution:Variation_project_Polymorhpism
+               deletion:Variation_project_Polymorhpism
+                    SNP:Variation_project_Polymorhpism
+         insertion_site:Variation_project_Polymorhpism
+   complex_substitution:Variation_project_Polymorhpism
+   sequence_alteration:Variation_project_Polymorhpism
+	       deletion:Allele_Polymorhpism
 label        = sub {
 	     my $f = shift;
 	     my %attributes = $f->attributes;
 	     my $name = $attributes{public_name} || $f->name;
 	     if ($name =~ /^WBVar/) {
-	         ($name) = $f->attributes('other_name') || $name;
+	         ($name) = $attributes{other_name} || $name;
              }	     
 	     return join('-',@$name);   
 	      }	      
@@ -32,21 +36,11 @@ glyph        = sub {
 		return 'diamond'  if $m eq 'point_mutation';
 		return 'generic';
 	}
-bgcolor      = sub {
-		my $f = shift;
-		my $m = $f->method;
-		return 'red'    if $m eq 'deletion';
-		return 'yellow' if $m eq 'point_mutation';
-		return 'yellow' if $m eq 'substitution';
-		return 'blue'   if $m eq 'complex_substitution';		
-		return 'white'; # insertion_site, mobile_element_insertion
-	}
 fgcolor      = black
 font2color   = blue
-height       = 8
 balloon hover = sub {
 	           my $f    = shift;
-		   my $type = $f->type;
+		   my $type = $f->method;
 		   $type =~ s/_/ /g;
 
 		   my ($name)        = $f->attributes('public_name');
@@ -66,7 +60,7 @@ balloon hover = sub {
 		   $sanitized_source =~ s/_Polymorphisms//g;
 		   $sanitized_source =~ s/_/ /g;
 
-		   my @notes = ("<b>Allele: $name</b>");
+		   my @notes = ("<b>Polymorphism: $name</b>");
 		   push (@notes,"type: $type");
 		   push (@notes,"status: $status")                  if $status;
 		   push (@notes,"position: $ref:$start..$stop");
@@ -83,9 +77,25 @@ balloon hover = sub {
 		   push (@notes,"source: $sanitized_source");  # maybe a link to resource, too?	
 		   return join('<br />',@notes);
 	}
-citation      = This track shows classical alleles comprised of insertions, deletions,
-	        substitutions and complex changes. These alleles were typically generated
-		during forward genetic screens.
-		Red boxes represent deletions; yellow diamonds represent substitutions; 
-		blue boxes represent complex substitutions; and white triangles represent
-		insertions.
+bgcolor      = sub {
+		my $f = shift;	
+		my ($strain) = $f->attributes('strain');
+		if ($strain eq 'CB4858' || $strain eq 'AF16') {
+		    return 'blue';
+		} elsif ($strain eq 'CB4856' || $strain eq 'HK104') {
+		    return 'yellow';
+                } else {
+		    return 'white';
+                } 
+	}
+height       = sub {
+	        my $f = shift;
+		my %attributes = $f->attributes();
+
+                # Confirmed, RFLP SNPs
+                if (defined $attributes{rflp} && $attributes{status} eq 'Confirmed') {
+                        return 14;
+                } else {
+                        return 8;
+                }
+        }	

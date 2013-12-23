@@ -1,0 +1,69 @@
+# [GENES_PSEUDOGENES]
+#key          = Curated Genes (pseudogenes)   # PROVIDED BY INCLUDER
+category     = Genes
+feature = pseudogenic_transcript:WormBase
+glyph = gene
+title = sub {
+	 my $f = shift;
+	 return "Curated pseudogene " . $f->display_name . "<br /><i>click for details";
+	 }
+link = sub {
+        my $f = shift;
+        my $name = $f->attributes('Gene') || $f->name; 
+        return "/get?name=$name;class=Gene";
+        }
+label = sub { 
+        my $f = shift;
+        my ($locus)  = $f->attributes('locus');
+        my ($name)   = $f->display_name;
+        return $locus ? "$locus ($name)" : $name;
+        }
+description  = sub {             
+        my $f = shift;
+  	return 'pseudogene';
+  
+        # eventually maybe also descriptions
+        # my $tags   = join(';',$f->get_all_tags());
+       }
+bgcolor = sub {
+             my $f = shift;
+             my $type = $f->type;
+                # Component parts:
+             # ncRNAs : gene > ncRNA > exon
+             # coding : gene > mRNA > CDS
+             return 'gray'   if $f->type =~ /exon|pseudogene/i;
+             return 'violet' if $f->strand > 0;
+             return 'turquoise';
+             }
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height  = sub {
+        my $f = shift;
+        # Component parts:
+        # ncRNAs : gene > ncRNA > exon
+        # coding : gene > mRNA > CDS
+        return $f->type =~ /mRNA|CDS|UTR/i ? 10 : 6;
+        }
+balloon hover  = sub {
+	my $f = shift;
+
+	my ($transcript) = $f->display_name; 
+	my ($locus)  = $f->attributes('locus');
+		
+	my @return;
+	if ($transcript && $locus) {
+	       push @return,"<b>$locus ($transcript)</b>";
+	} else {
+	       push @return,"<b>$transcript</b>";
+        }    
+	push @return,"<i>click to view Gene Report</i>";        
+	return join("<br />",@return);
+     }
+citation = A subset of the full Curated Genes set limited to pseudogenes only.
+
+[GENES_PSEUDOGENES:150000]
+glyph        = generic
+strand_arrow = 1
+bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+description  = 0
