@@ -1,0 +1,51 @@
+[BINDING_SITES_PREDICTED]
+key          = Binding sites (predicted)
+category     = Sequence Features:Binding Sites & Regions
+feature      = binding_site:PicTar
+               binding_site:miRanda
+               binding_site:cisRed
+glyph        = box
+bgcolor      = sub {
+	my $f = shift;
+	return 'blue' if $f->source eq 'PicTar';
+	return 'red'  if $f->source eq 'miRanda';
+	return 'green';
+	}
+link      = sub {
+		my $f = shift;
+		my %attributes  = $f->attributes();
+		my ($note) = $attributes{Note};
+		$note[0]  =~ /Predicted binding site for (.*)/;
+		my $gene = $1;
+		return "/get?name=$gene;class=Gene" if $gene;
+		return "http://pictar.bio.nyu.edu/cgi-bin/new_PicTar_nematode.cgi?species=nematode" if $f->source eq 'PicTar';
+		return "http://microrna.sanger.ac.uk/targets/v3/" if $f->source eq 'miRanda'; 
+		return "/get?name=$name;class=Feature";
+		return;
+	}
+label = sub {
+	     my $f = shift;
+	     my %attributes  = $f->attributes();
+	     my ($note) = $attributes{Note};
+	     return join("; ",@$note);
+	     }
+description = sub {
+	    my $f = shift;
+	    return $f->source;
+           }
+balloon hover = sub {
+	        my $f    = shift;
+		my $source = $f->source;		
+		return "External data: See http://pictar.bio.nyu.edu/cgi-bin/new_PicTar_nematode.cgi?species=nematode" if $source eq 'PicTar';
+		return "External data: See http://microrna.sanger.ac.uk/targets/v3/" if $source eq 'miRanda';				
+		return;  # default to title
+        }
+citation     = This track shows curated and predicted binding sites for
+               microRNAs. Binding sites (indicated in green) are extracted from the
+               cisRed database of computationally derived potential bind
+               targets. miRanda predictions -- indicated in red -- are the predicted
+               target sequences for microRNA genes, provided by Anton Enright's group
+               using the miRanda program. PicTar predictions -- indicated in blue --
+               are the predicted target sequences for microRNA genes from Lall et al;
+               A genome-wide map of conserved microRNA targets in C. elegans. Curr
+               Biol. 2006 Mar 7;16(5):460-71.

@@ -1,0 +1,36 @@
+[SEQUENCE_SIMILARITY_WORMBASE_CORE_ESTS_AND_MRNAS_OTHER]
+key      = WormBase nematode mRNAs/ESTs (other)
+category = Sequence Similarity:Nucleotide
+feature  = expressed_sequence_match:BLAT_Caen_EST_OTHER
+           expressed_sequence_match:BLAT_Caen_mRNA_OTHER
+glyph    = segments
+bgcolor = sub {
+    my $f = shift;
+    my $source = $f->source;;
+    return 'lightblue' if $source eq 'BLAT_Caen_mRNA_OTHER';
+    return 'green' if $source eq 'BLAT_Caen_EST_OTHER';
+  }
+title = sub {
+    my $feature = shift;
+    return $feature->attributes('Species');
+  }
+fgcolor   = black
+height    = 4
+connector = solid
+label     = 0
+link  = sub {
+    my $f = shift;
+    my $source = $f->source;
+    my $name = $f->name;
+    return "/get?name=$name;class=Sequence";
+  }
+citation = ESTs and mRNAs from other WormBase core species aligned to the genome using 
+           <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>. This track shows 
+           non-unique matches, which may represent repetitive sequences. For the best single 
+           alignment, see the track labeled "WormBase nematode mRNAs and ESTs (best)".
+           <p>
+           mRNAs are shown in light blue; ESTs in green.
+
+
+[SEQUENCE_SIMILARITY_WORMBASE_CORE_ESTS_AND_MRNAS_OTHER:50000]
+glyph = box

@@ -1,0 +1,13 @@
+[SEQUENCE_SIMILARITY_C_ELEGANS_MRNAS]
+key            = C. elegans mRNAs/ncRNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:celegans_mRNAs-BLAT
+                 nucleotide_match:celegans_ncRNAs-BLAT
+glyph          = segments
+bgcolor        = yellow
+fgcolor        = black
+connector      = solid
+height         = 4
+link           = AUTO
+citation       = <i>C.elegans</i> full-length mRNAs and ncRNAs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

@@ -1,0 +1,29 @@
+[MRNA_OTHER]
+key      = mRNAs/ncRNAs (other)
+category = Transcription:Products
+feature  = alignment:BLAT_mRNA_OTHER alignment:BLAT_ncRNA_OTHER
+glyph    = segments
+label    = sub {
+    my $f = shift;
+    my $label = ($f->source =~ /BLAT_mRNA_OTHER/) ? 'mRNA' : 'ncRNA';
+    my $name = $f->name;
+    return "$label: $name";
+  }
+draw_target  = 1
+show_mismach = 1
+ragged_start = 1
+bgcolor = sub {
+    my $f = shift;
+    return 'green' if ($f->source =~ /BLAT_mRNA_OTHER/);
+    return 'grey';
+  }
+fgcolor   = black
+height    = 5
+connector = solid
+citation  = Native (same species) full length mRNAs and ncRNAs aligned to the 
+            genome using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT/a>.
+            This track shows non-unique matches, which may represent repetitive sequences.
+            For the best single alignment, see the track labeled "mRNAs/ncRNAs (best)".
+
+[MRNA_OTHER:5000]
+glyph = box

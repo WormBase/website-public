@@ -1,0 +1,31 @@
+[MRNA_BEST]
+key        = mRNAs/ncRNAs (best)
+category   = Transcription:Products
+feature    = expressed_sequence_match:BLAT_mRNA_BEST 
+             expressed_sequence_match:BLAT_ncRNA_BEST
+glyph = segments
+label = sub {
+    my $f = shift;
+    my $label = ($f->source =~ /BLAT_mRNA_BEST/) ? 'mRNA' : 'ncRNA';
+    my $name = $f->name;
+    return "$label: $name";
+  }
+draw_target  = 0
+show_mismach = 1
+ragged_start = 1
+bgcolor = sub {
+    my $f = shift;
+    return 'yellow' if ($f->source =~ /BLAT_mRNA_BEST/);
+    return 'grey';
+  }
+fgcolor   = black
+height    = 6
+connector = solid
+citation  = Native (same species) full length cDNAs and ncRNAs aligned to
+            the genome using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+            This track shows the best unique location for each cDNA. Other cDNA matches, some
+            of which may represent repetitive elements, are shown in the track labeled
+            "mRNAs/ncRNAs (other)".
+
+[MRNA_BEST:5000]
+glyph = box

@@ -1,0 +1,55 @@
+[PROTEIN_MOTIFS]
+# Individual spans
+# feature     = motif_segment:translated_feature
+# Single, full length spans
+# feature     = Motif:translated_feature
+# Aggregated features (skip top level feature)
+#feature       = motif:translated_feature
+feature       = sequence_motif:translated_feature
+key           = Protein motifs
+category      = Sequence Features:Translated Features
+glyph         = segments
+connector     = dashed
+connector_color = gray
+fgcolor       = black
+bgcolor       = sub {
+		my $feature = shift;
+		my $name = $feature->name;
+                return 'magenta'          if ($name =~ /tmhmm/);
+                return 'lightseagreen'     if ($name =~ /seg/);
+	        return 'aquamarine'    if ($name =~ /signalp/);
+       		return 'chartreuse'    if ($name =~ /ncoils/);
+		return 'lightsalmon'         if ($name =~ /pfam/);
+	}
+#link          = sub { my $f   = shift;
+#     		my %notes = map { split /=/ } $f->notes;
+#                #my $name = $f->name;
+#                #my ($target) = $name =~ /(WP_.*)\-.*/;
+#		#$target =~ s/_/:/g;
+#                return "/get?name=$notes{Protein};class=Protein";
+#        }
+height        = 7
+#label         = sub { 
+#		my $f = shift;
+#		my $name = $f->name;
+#		#my ($label) = $name =~ /(WP_.*-.*)\.\d/;
+#                #my ($label) = $name =~ /(.*)\-.*\.\d$/;
+#		#$label =~ s/_/:/;
+#		my %notes = map { split /=/ } $f->notes;
+#		my $label = $notes{Type};
+#		return $label;
+#	}
+#description = sub { my $feature = shift;
+#		my %notes = map { split /=/ } $feature->notes;
+##		my $desc = "$notes{CDS}; aa: $notes{Range}; exon(s): $notes{Exons}";
+##		$desc .= "; $notes{Description}" if $notes{Description};
+##		my $desc = $notes{Type};
+##		$desc .= "; $notes{Description}" if $notes{Description};
+#		my $desc = $notes{Description};
+#		return $desc;
+#	}
+citation      = This track shows the extent of predicted protein motifs. Note these
+                spans correspond to amino acid coordinates interpolated onto the
+                physical map.  Included are signal peptide (signalp), coiled coil (ncoils)
+		and transmembrane (tmhmm) domains, regions of low complexity (seg),
+                and Pfam annotated motif homologies. 

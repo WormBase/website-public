@@ -1,0 +1,12 @@
+[MICROARRAY_OLIGO_PROBES]
+key           = Microarray oligo probes
+feature       = reagent:Oligo_set
+glyph         = primers
+category      = Reagents
+height        = 4
+fgcolor       = black
+connect       = 1
+connect_color = black
+font2color    = black
+fgcolor       = black
+citation      = This track contains Affymetrix GeneChip and Washington University GSC microarray probe sets.

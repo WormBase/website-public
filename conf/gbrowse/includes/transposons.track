@@ -1,0 +1,31 @@
+[TRANSPOSONS]
+key          = Transposons
+category     = Genes
+feature      = transposable_element:Transposon
+glyph        = segments
+bgcolor      = gray
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height       = 6
+title        = Transposon $name
+label        = sub { 
+ 	        my $f = shift;
+		my $name = $f->display_name;
+		return $name;
+	}
+# Nothing currently available.
+#description  = 0
+# No Gene attribute available
+#link = sub {
+#	my $f = shift;	
+#	my $name = $f->attributes('Gene') || $f->name;
+#	return "/get?name=$name;class=Gene";
+#	}
+citation = These are transposon spans reviewed by WormBase curators.
+
+[TRANSPOSONS:150000]
+glyph        = generic
+strand_arrow = 1
+bgcolor      = gray
+description  = 0

@@ -1,0 +1,12 @@
+[SEQUENCE_SIMILARITY_P_PACIFICUS_MRNAS]
+key           = P. pristionchus mRNAs
+category      = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:ppacificus_mRNAs-BLAT
+glyph         = segments
+bgcolor       = darkcyan
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>P. pacificus</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

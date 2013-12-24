@@ -1,0 +1,60 @@
+[SAGE_TAGS]
+key           = SAGE tags
+category      = Expression
+feature       = SAGE_tag:SAGE_tag
+glyph	      = transcript2
+arrow_length  = 2
+orient        = sub {
+	          my $f = shift;
+		  return $f->strand > 0 ? 'E' : 'W';
+                }
+strand_arrow  = 1
+height        = 7
+description   = sub {
+		  my $f = shift;
+		  return 0 if $f->source eq 'SAGE_tag';
+		  my $name = $f->name;
+		  $name =~ s/SAGE://;
+	  	  return $name;
+	  	}
+bgcolor       = sub {
+                  my $f = shift;
+		  return 'lightgrey' if $f->source eq 'SAGE_tag';                
+		  return $f->strand > 0 ? 'violet' : 'turquoise';
+	       }
+fgcolor       = sub {
+                  my $f = shift;
+                  return 'lightgrey' if $f->source eq 'SAGE_tag';
+                  return $f->strand > 0 ? 'violet' : 'turquoise';
+               }
+label         = sub {
+		  my $f = shift;
+	          return '' if $f->source eq 'SAGE_tag';
+		  my ($cnt)  = $f->attributes('count');
+	          my ($gene) = $f->attributes('Gene', 'Transcript', 'Pseudogene');
+		  return "$gene count:$cnt" if $gene && $cnt; 
+  		}
+link          = sub {
+                  my $f = shift;
+	          my $name = $f->name;
+	          return "/db/seq/sage?name=$name;class=SAGE_tag";
+               }
+citation      = This track indicates the location of Serial Analysis of Gene Expression (SAGE)
+        patterns associated with a tag and its associated genes.  Tags shown in grey are
+	either unambiguously mapped to a gene elsewhere or are ambigous due to multiple occurences
+	in genomic or trascript sequences.  Colored tags are mapped unambiguously to a single
+        gene or genomic location.  Violet and turquoise refer to the plus strand and minus 
+        strands, respectively.  The number shown above tags is the total number of times
+        this tag was observed in all SAGE experiments.
+
+[SAGE_TAGS:7001]
+arrow_length  = 3
+    
+[SAGE_TAGS:10001]
+arrow_length  = 5
+label         = sub {
+                  my $f = shift;
+                  return 0 if $f->source eq 'SAGE_tag';
+                  my ($cnt) = $f->attributes('count');
+		  return "$cnt "; #must not be '1'
+                }

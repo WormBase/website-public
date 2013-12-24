@@ -1,0 +1,14 @@
+[GENBANK_ENTRIES]
+feature       = assembly_component:Genbank
+glyph         = arrow
+key           = Genbank submissions
+category      = Genome Structure:Assembly & Curation
+tick          = +2
+base          = 1
+relative_coords = 1
+fgcolor       = sienna
+link          = http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=Search&db=Nucleotide&doptcmdl=GenBank&term=$name[accn]
+# link          = ../gbrowse_moby?id=$name;source=$class
+citation      = The C. elegans genome was submitted to the GenBank and EMBL databases in
+     	        in the form of a set of minimally-overlapping segments.  This track shows the
+	        position of these accessioned entries.

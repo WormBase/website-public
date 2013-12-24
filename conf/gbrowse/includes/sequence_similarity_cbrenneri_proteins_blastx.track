@@ -1,0 +1,10 @@
+[SEQUENCE_SIMILARITY_CBRENNERI_PROTEINS_BLASTX]
+feature       = protein_match:cbrenneri_proteins-BLASTX
+key           = C. brenneri proteins
+category      = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      =  Matches to WormBase C. brenneri proteins, aligned with BLASTX 
+                (nucleotide to protein, via six-frame translation).

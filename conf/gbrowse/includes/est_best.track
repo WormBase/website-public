@@ -1,0 +1,24 @@
+[EST_BEST]
+key            = ESTs (best)
+category       = Transcription:Products
+feature        = expressed_sequence_match:BLAT_EST_BEST
+glyph          = segments
+das category   = transcription
+draw_target    = 1
+show_mismatch  = 1
+ragged_start   = 1
+height         = 5
+bgcolor        = limegreen
+fgcolor        = black
+mismatch_color = yellow
+connector      = solid
+group_pattern  = /\.[35]$/
+citation       = Native (same-species) Expressed Sequence Tags (ESTs), aligned to
+                 the genome using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+                 This track shows the best unique location for each EST. Other EST matches, some
+                 of which may represent repetitive elements, are shown in the track labeled
+                 "ESTs (other)". The paired 5' and 3' ESTs from the same cDNA clone 
+                 are connected by a dashed line.
+
+[EST_BEST:50000]
+glyph = box

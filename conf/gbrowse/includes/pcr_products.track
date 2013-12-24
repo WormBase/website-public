@@ -1,0 +1,15 @@
+# This is an aggregated track of ALL PCR_products (promoterome, orfeome, etc)
+[PCR_PRODUCTS]
+key           = PCR Assays
+feature       = PCR_product
+bgcolor       = violet
+glyph         = primers
+category      = Reagents
+fgcolor       = black
+connect       = 1
+connect_color = cyan
+citation      = This track indicates the location of primer pairs that have been created by a number
+	of groups.  Click on the element to obtain the left and right oligo sequences, information
+	about the amplification information, and ordering information (if available). 
+
+

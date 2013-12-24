@@ -1,0 +1,87 @@
+[GENES_NONCODING]
+key          = Curated Genes (noncoding)
+category     = Genes
+feature = miRNA:WormBase
+          ncRNA:WormBase        
+          rRNA:WormBase
+          scRNA:WormBase
+          snRNA:WormBase
+          snoRNA:WormBase
+          tRNA:WormBase
+glyph = gene
+title = sub {
+	 my $f = shift;
+	 return "Curated transcript " . $f->display_name . "<br /><i>click for details";
+	 }
+link = sub {
+        my $f = shift;
+        my $name = $f->attributes('Gene') || $f->name;
+        return "/get?name=$name;class=Gene";
+        }
+label = sub { 
+        my $f = shift;
+        my ($locus)  = $f->attributes('locus');
+        my ($name)   = $f->display_name;
+        return $locus ? "$locus ($name)" : $name;
+        }
+description  = sub {             
+        my $f = shift;
+        my $type = $f->type;
+        # Component parts:
+        # ncRNAs : gene > ncRNA > exon
+        return $f->method;  # please, someone explain why this works ;) Bio::DB::GFF backwards compat?
+        # This does NOT work in this context. Biotype 
+        # is an attribute of gene, not CDS.
+        # my ($biotype) = $f->attributes('biotype');
+        # or...
+        # $f->get_tag_values('biotype'));
+        # $biotype =~ s/_/ /g;
+        # my $tags   = join(';',$f->get_all_tags());
+        # return $biotype;        
+	# Eventually, there should be notes to add as well.
+	# my $tags   = join(';',$f->get_all_tags());
+	# return $tags;
+       }
+bgcolor = sub {
+             my $f = shift;
+             my $type = $f->type;
+                # Component parts:
+             # ncRNAs : gene > ncRNA > exon
+             # coding : gene > mRNA > CDS
+             return 'gray'   if $f->type =~ /exon|pseudogene/i;
+             return 'violet' if $f->strand > 0;
+             return 'turquoise';
+             }
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height  = sub {
+        my $f = shift;
+        # Component parts:
+        # ncRNAs : gene > ncRNA > exon
+        # coding : gene > mRNA > CDS
+        return $f->type =~ /mRNA|CDS|UTR/i ? 10 : 6;
+        }
+balloon hover  = sub {
+	my $f = shift;
+
+	my ($transcript) = $f->display_name; 
+	my ($locus)  = $f->attributes('locus');
+		
+	my @return;
+	if ($transcript && $locus) {
+	       push @return,"<b>$locus ($transcript)</b>";
+	} else {
+	       push @return,"<b>$transcript</b>";
+        }    
+	push @return,"<i>click to view Gene Report</i>";        
+	return join("<br />",@return);
+     }
+citation = Non-coding curated gene models, including ncRNA, tRNA, miRNA, snRNA, snoRNA.
+
+
+[GENES_NONCODING:150000]
+glyph        = generic
+strand_arrow = 1
+bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+description  = 0

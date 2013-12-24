@@ -1,0 +1,10 @@
+[SEQUENCE_SIMILARITY_DMELANOGASTER_PROTEINS_BLASTX]
+feature       = protein_match:dmelanogaster_proteins-BLASTX
+key           = D. melanogaster proteins
+category      = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      = Matches to Drosophila melanogaster proteins from FlyBase, aligned with BLASTX 
+                 (nucleotide to protein, via six-frame translation).

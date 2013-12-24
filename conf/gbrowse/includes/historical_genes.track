@@ -1,0 +1,45 @@
+[HISTORICAL_GENES]
+key          = Gene Models (historical)
+category     = Genes
+feature  = pseudogenic_transcript:history
+	   transposable_element:history
+	   protein_coding_primary_transcript:history
+	   primary_transcript:history
+	   nc_primary_transcript:history
+glyph        = transcript
+title        = Historical gene prediction $name
+bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height       = 10
+#sub {
+#	my $f = shift;
+#	return $f->method =~  /transcript|UTR|coding_exon/i ? 10 : 6;
+#	}
+balloon hover  = sub {
+	my $f = shift;
+	my $name = $f->name; 
+        my $method = $f->method;
+	$method =~ s/_/ /g;
+	return "<b>Historical gene prediction</b><br>$name<br>$method";
+	} 
+label    = sub { 
+		my $f = shift;
+		my $name = $f->display_name;
+		return $name;
+	}
+description  = sub {	     
+	my $f = shift;
+	my $method = $f->method;
+	$method =~ s/_/ /g;
+        return "$method";
+    }
+citation = Historical gene predictions.
+
+[HISTORICAL_GENES:150000]
+glyph        = generic
+strand_arrow = 1
+#bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+bgcolor       = white
+description = 0

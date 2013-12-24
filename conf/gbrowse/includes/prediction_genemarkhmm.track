@@ -1,0 +1,14 @@
+[PREDICTION_GENEMARKHMM]
+key          = Prediction: GeneMarkHMM
+category     = Genes
+feature      = CDS:GeneMarkHMM
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+citation     = These are GeneMarkHMM gene predictions provided by Mark Borodovsky. 
+
+[PREDICTION_GENEMARKHMM:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0

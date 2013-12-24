@@ -1,0 +1,28 @@
+[VARIATIONS_RNAI_BEST]
+feature       = RNAi_reagent:RNAi_primary experimental_result_region:cDNA_for_RNAi
+key           = RNAi experiments (primary targets)
+glyph         = segments
+category      = Alleles, Variations, RNAi
+bgcolor       = goldenrod
+fgcolor       = black
+height        = 4
+label         = sub {
+		my $f = shift;
+		my $name   = $f->attributes('History_name');		
+		my $string = $name ? $name : $f->name;
+		return $string;
+	}
+description    = sub {
+		my $f = shift;
+		my $source = $f->attributes('Laboratory');
+		my $string = $source ? "source lab: $source" : '';
+		return $string;
+	}
+citation      = This track represents RNAi probes that have been aligned to the genome
+                using a combination of BLAST and BLAT programs and have sequence identity
+                to the target location of at least 95% over a stretch of at least 100 nt.
+                Probes that satisfy these criteria are almost certain to produce RNAi
+                effect on overlapping genes and the corresponding locations are usually
+                the primary genomic targets of an RNAi experiment. Note that it is possible
+                for a probe to have multiple primary targets within the genome. Click on the
+                RNAi element to get more information about the experiment.

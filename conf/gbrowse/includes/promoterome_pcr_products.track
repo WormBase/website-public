@@ -1,0 +1,10 @@
+[PROMOTEROME_PCR_PRODUCTS]
+key           = Promoterome PCR products
+feature       = PCR_product:Promoterome
+bgcolor       = violet
+glyph         = primers
+category      = Reagents
+fgcolor       = black
+connect       = 1
+connect_color = cyan
+citation      = This track indicates the location of primer pairs for the <a href="http://vidal.dfci.harvard.edu/promoteromedb/">Promoterome project</a>.

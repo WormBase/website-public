@@ -1,0 +1,16 @@
+[GENOME_SEQUENCE_ERRORS_CORRECTED]
+# EG: WBsf047679; III:10553079..10553089
+key           = Genome sequence corrections
+feature       = base_call_error_correction:RNASeq
+category      = Genome Structure:Assembly & Curation
+glyph         = box
+bgcolor       = green
+fgcolor       = black
+label         = sub {
+	      my $f = shift;	      
+	      my $name = $f->name;
+	      return $f->name;
+	      }
+citation      = Positions within the reference genome sequence that were previously
+                identified as having a base call error. This error has now been
+                corrected.

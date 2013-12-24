@@ -1,0 +1,12 @@
+[SEQUENCE_SIMILARITY_C_BRENNERI_MRNAS]
+key           = C. brenneri mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expresssed_sequence_match:cbrenneri_mRNAs-BLAT
+glyph         = segments
+bgcolor       = blue
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>C. brenneri</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

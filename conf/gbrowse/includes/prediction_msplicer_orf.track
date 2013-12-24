@@ -1,0 +1,23 @@
+[PREDICTION_MSPLICER_ORF]
+key          = Prediction: mSplicer-ORF
+category     = Genes
+feature      = CDS:mSplicer_orf
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+citation     = mSplicer predict the splice forms for a given start and
+	       end of a transcript. (Note that it is not yet a
+               full-featured gene-finder.) There are two versions:
+               1. "mSplicer" which splices general pre-mRNA (including
+               UTR or coding regions) without assuming the existence of a
+               reading frame (requires transcription start and stop).
+               2. "mSplicer-ORF" is optimized for coding regions and
+               requires the knowledge of the translation start and stop.
+               These predictions were generated against regions annotated
+               in WS160. More details can be found at <a href="http://www.fml.mpg.de/raetsch/projects/msplicer">http://www.fml.mpg.de/raetsch/projects/msplicer</a>.
+
+[PREDICTION_MSPLICER_ORF:75000]
+glyph        = box
+strand_arrow = 1
+link         = 0

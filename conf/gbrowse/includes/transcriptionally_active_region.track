@@ -1,0 +1,14 @@
+[TRANSCRIPTIONALLY_ACTIVE_REGION]
+feature       = transcribed_fragment:TranscriptionallyActiveRegion
+category      = Transcription:Supporting Evidence
+glyph         = box
+bgcolor       = green
+fgcolor       = black
+label         = sub {
+	      my $f = shift;
+	      my $name = $f->name;
+	      my $notes = $f->notes;
+	      return "$notes";
+	      }
+key           = Transcriptionally Active Region
+citation      = Transcriptionally Active Regions (TARs) found by the Miller lab from tiling-array projects run as part of the modENCODE project.
