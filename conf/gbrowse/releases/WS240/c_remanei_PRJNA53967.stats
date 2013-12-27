@@ -29,8 +29,8 @@ gene:WormBase		WormBase	gene	Genes (primary_gene_track)	32402
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	0
 	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	0
 intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	119569
-inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	112322
-	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	55071
+inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	112322
+	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	55071
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	159221
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	415527
 protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	190301

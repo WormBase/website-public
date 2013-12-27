@@ -32,8 +32,8 @@ gene:WormBase		WormBase	gene	Genes (primary_gene_track)	14374
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	0
 	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	0
 intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	104880
-inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	43655
-	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	87233
+inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	43655
+	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	87233
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	189735
 ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	2
 	miRNA:WormBase	WormBase	miRNA	Curated Genes (noncoding) (genes_noncoding)	0

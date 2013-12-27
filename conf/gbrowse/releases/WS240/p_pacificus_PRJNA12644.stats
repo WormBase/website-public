@@ -28,8 +28,8 @@ gene:WormBase		WormBase	gene	Genes (primary_gene_track)	24216
 	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (primary_gene_track)	0
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	0
 	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	0
-inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	70916
-	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	60624
+inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	70916
+	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	60624
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	141332
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	452841
 protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	206882

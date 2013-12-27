@@ -100,8 +100,8 @@ gene:interpolated_pmap_position		interpolated_pmap_position	gene	Genetic limits 
 	gene:absolute_pmap_position	absolute_pmap_position	gene	Genetic limits (genetic_limits)	25789
 histone_binding_site:histone_binding_site_region		histone_binding_site_region	histone_binding_site	Histone binding sites (histone_binding_sites)	5164
 intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	144045
-inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	100603
-	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (TRF and inverted) (repeats_tandem_and_inverted)	53024
+inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	100603
+	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	53024
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	189148
 mRNA_region:Polysome_profiling		Polysome_profiling	mRNA_region	Polysomes (polysomes)	227070
 ncRNA:RNAz		RNAz	ncRNA	RNAz non-coding RNA genes (prediction_rnaz)	3672
