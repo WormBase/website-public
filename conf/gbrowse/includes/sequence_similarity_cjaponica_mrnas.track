@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_JAPONICA_MRNAS]
+[SEQUENCE_SIMILARITY_CJAPONICA_MRNAS]
 key            = C. japonica mRNAs
 category       = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:cjaponica_mRNAs-BLAT

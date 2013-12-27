@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_P_PACIFICUS_ESTS]
+[SEQUENCE_SIMILARITY_PPACIFICUS_ESTS]
 key            = P. pristionchus ESTs
 category      = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:ppacificus_ESTs-BLAT

@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_JAPONICA_ESTS]
+[SEQUENCE_SIMILARITY_CJAPONICA_ESTS]
 key            = C. japonica ESTs
 category       = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:cjaponica_ESTs-BLAT

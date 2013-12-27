@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_BRIGGSAE_MRNAS]
+[SEQUENCE_SIMILARITY_CBRIGGSAE_MRNAS]
 key           = C. briggsae mRNAs
 category       = Sequence Similarity:Nucleotide
 feature       = expressed_sequence_match:cbriggsae_mRNAs-BLAT

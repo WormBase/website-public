@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_B_MALAYI_ESTS]
+[SEQUENCE_SIMILARITY_BMALAYI_ESTS]
 key            = B. malayi ESTs
 category       = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:bmalayi_ESTs-BLAT

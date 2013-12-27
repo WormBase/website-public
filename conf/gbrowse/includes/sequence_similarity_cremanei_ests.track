@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_REMANEI_ESTS]
+[SEQUENCE_SIMILARITY_CREMANEI_ESTS]
 key            = C. remanei ESTs
 category       = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:cremanei_ESTs-BLAT            

@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_BRENNERI_ESTS]
+[SEQUENCE_SIMILARITY_CBRENNERI_ESTS]
 key            = C. brenneri ESTs
 category       = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:cbrenneri_ESTs-BLAT

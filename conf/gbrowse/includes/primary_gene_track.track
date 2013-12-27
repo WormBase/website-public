@@ -105,7 +105,9 @@ balloon hover  = sub {
          }
 	return join("<br />",@return,$message);
      }
-
+citation = The purple and blue colors indicate transcripts on the forward and 
+           reverse strands respectively. If sufficient room is available between 
+           features, gene models end with a triangle; if not a small arrow is used.
 
 
 [PRIMARY_GENE_TRACK:150000]

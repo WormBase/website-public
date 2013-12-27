@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_B_MALAYI_MRNAS]
+[SEQUENCE_SIMILARITY_BMALAYI_MRNAS]
 key           = B. malayi mRNAs
 category       = Sequence Similarity:Nucleotide
 feature       = expressed_sequence_match:bmalayi_mRNAs-BLAT       

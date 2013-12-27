@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_BRIGGSAE_ESTS]
+[SEQUENCE_SIMILARITY_CBRIGGSAE_ESTS]
 key            = C. briggsae ESTs
 category       = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:cbriggsae_ESTs-BLAT

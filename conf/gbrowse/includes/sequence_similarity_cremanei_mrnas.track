@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_REMANEI_MRNAS]
+[SEQUENCE_SIMILARITY_CREMANEI_MRNAS]
 key           = C. remanei mRNAs
 category       = Sequence Similarity:Nucleotide
 feature       = expressed_sequence_match:cremanei_mRNAS-BLAT

@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_ELEGANS_RSTS]
+[SEQUENCE_SIMILARITY_CELEGANS_RSTS]
 key           = C. elegans RSTs
 category       = Sequence Similarity:Nucleotide
 feature       = expressed_sequence_match:celegans_RSTs-BLAT

@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_BRENNERI_MRNAS]
+[SEQUENCE_SIMILARITY_CBRENNERI_MRNAS]
 key           = C. brenneri mRNAs
 category       = Sequence Similarity:Nucleotide
 feature       = expresssed_sequence_match:cbrenneri_mRNAs-BLAT

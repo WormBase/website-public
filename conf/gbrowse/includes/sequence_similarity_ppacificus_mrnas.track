@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_P_PACIFICUS_MRNAS]
+[SEQUENCE_SIMILARITY_PPACIFICUS_MRNAS]
 key           = P. pristionchus mRNAs
 category      = Sequence Similarity:Nucleotide
 feature       = expressed_sequence_match:ppacificus_mRNAs-BLAT

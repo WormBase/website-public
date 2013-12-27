@@ -1,4 +1,4 @@
-[SEQUENCE_SIMILARITY_C_ELEGANS_MRNAS]
+[SEQUENCE_SIMILARITY_CELEGANS_MRNAS]
 key            = C. elegans mRNAs/ncRNAs
 category       = Sequence Similarity:Nucleotide
 feature        = expressed_sequence_match:celegans_mRNAs-BLAT
