@@ -1,6 +1,6 @@
 [TRANS_SPLICED_ACCEPTOR]
 key          = Trans-spliced acceptor
-category     = Genes
+category     = Transcription:Signals
 feature      = SL1_acceptor_site SL2_acceptor_site
 glyph        = triangle
 point        = 1

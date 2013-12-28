@@ -1,7 +1,7 @@
 [SEQUENCE_SIMILARITY_UNIPROT_BLASTX]
 feature       = protein_match:UniProt-BLASTX
 key           = Other UniProt proteins
-category      = Sequence Similarity Tracks (proteins)
+category       = Sequence Similarity:Proteins
 glyph         = segments
 bgcolor       = orange
 fgcolor       = black

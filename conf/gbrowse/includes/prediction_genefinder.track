@@ -1,6 +1,6 @@
 [PREDICTION_GENEFINDER]
 key          = Prediction: GeneFinder
-category     = Genes
+category     = Transcription:Ab-initio predictions
 feature      = CDS:Genefinder
 glyph        = gene
 bgcolor      = palevioletred

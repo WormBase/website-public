@@ -1,6 +1,6 @@
 [PREDICTION_MSPLICER_ORF]
 key          = Prediction: mSplicer-ORF
-category     = Genes
+category     = Transcription:Ab-initio predictions
 feature      = CDS:mSplicer_orf
 glyph        = gene
 bgcolor      = palevioletred

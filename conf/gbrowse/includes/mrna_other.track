@@ -1,6 +1,6 @@
 [MRNA_OTHER]
 key      = mRNAs/ncRNAs (other)
-category = Transcription:Products
+category = Transcription:Supporting Evidence
 feature  = alignment:BLAT_mRNA_OTHER alignment:BLAT_ncRNA_OTHER
 glyph    = segments
 label    = sub {

@@ -1,6 +1,6 @@
 [PREDICTION_TWINSCAN]
 key          = Prediction: Twinscan
-category     = Genes
+category     = Transcription:Ab-initio predictions
 feature      = CDS:twinscan
 glyph        = gene
 bgcolor      = palevioletred

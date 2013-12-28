@@ -1,6 +1,6 @@
 [PREDICTION_GENEMARKHMM]
 key          = Prediction: GeneMarkHMM
-category     = Genes
+category     = Transcription:Ab-initio predictions
 feature      = CDS:GeneMarkHMM
 glyph        = gene
 bgcolor      = palevioletred

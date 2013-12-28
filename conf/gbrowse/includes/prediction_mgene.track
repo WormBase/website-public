@@ -1,6 +1,6 @@
 [PREDICTION_MGENE]
 key          = Prediction: mGene
-category     = Genes
+category     = Transcription:Ab-initio predictions
 feature      = CDS:mGene
 glyph        = gene
 bgcolor      = palevioletred
