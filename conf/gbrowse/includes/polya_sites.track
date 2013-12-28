@@ -1,0 +1,27 @@
+[POLYA_SITES]
+key          = PolyA sites and signal sequences
+category     = Transcription:Signals
+feature      = polyA_signal_sequence polyA_site
+glyph        = sub {
+		my $f = shift;
+		return 'diamond' if $f->type =~ /signal/;
+		return 'dot' if $f->strand eq '0';
+		return 'triangle';
+	}
+description  = sub { my $s = shift->source; $s=~tr/_/ /; $s; }
+point        = 1
+orient       = sub {
+		my $f = shift;
+		return if $f->type =~ /signal/;
+		return 'W' if $f->strand eq '-1';
+		return 'E';
+	}
+bgcolor      = purple
+link         = sub { my $f   = shift;
+                      my $name = $f->name;
+   	              return "/get?name=$name;class=Feature";
+	}
+citation     = High-confidence polyadenylation signal sequences and sites calculated 
+	       by an algorithm trained with verified sites from full-length mRNAs. Signals
+	       are indicated with a diamond; sites with a triangle.	    
+

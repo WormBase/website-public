@@ -1318,7 +1318,7 @@ END;
 
   # is_static refers to pages that don't handle objects (/resources/reagents)
   IF is_class_index && !is_static;
-    index_widgets = (c.config.sections.species_list.$species || !species) ? ((species == 'all')||(class == 'all')) ? ['browse', 'basic_search', 'summary'] : ['browse', 'basic_search'] : ['data_unavailable'];
+    index_widgets = (c.config.sections.species_list.$species || !species) ? ((species == 'all')||(class == 'all')) ? ['browse', 'basic_search'] : ['browse', 'basic_search'] : ['data_unavailable'];
 
 
     FOREACH widget_name IN index_widgets;

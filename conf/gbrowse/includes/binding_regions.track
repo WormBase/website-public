@@ -1,0 +1,20 @@
+[BINDING_REGIONS]
+# EG: WBsf216878; III:7854473..7854493
+key          = Binding regions
+category     = Sequence Features:Binding Sites & Regions
+feature      = binding_site:binding_site_region                    
+glyph        = box
+bgcolor      = green
+link      = sub {
+		my $f = shift;
+		my $method = $f->method;
+		my ($name)   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+label     = sub {
+		my $f = shift;
+		my ($name) = $f->name;
+		return $name;
+	}    
+citation     = Regions within which there may be one or more binding sites of a
+               non-TF, non-Histone molecule.

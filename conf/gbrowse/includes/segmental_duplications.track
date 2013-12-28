@@ -1,0 +1,12 @@
+[SEGMENTAL_DUPLICATIONS]
+feature       = duplication:segmental_duplication
+category      = Genome Structure
+glyph         = box
+bgcolor       = white
+fgcolor       = black
+label         = sub {
+	      my $f = shift;
+	      return $f->notes || $f;
+	      }
+key           = Segmental duplication
+citation      = Polymorphic segmental duplication as defined by the tool OrthoCluster. This feature represents one sequence from a pair of duplicons in the N2 genome.

@@ -1,0 +1,34 @@
+gff_version: 3
+file: /usr/local/ftp/pub/wormbase/releases/WS240/species/c_sp11/PRJNA53597/c_sp11.PRJNA53597.WS240.annotations.gff3.gz
+feature	children	source	method	track	count
+expressed_sequence_match:EMBL_nematode_cDNAs-BLAT		EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_nematode_cdnas)	241023
+expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT		NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	62757
+expressed_sequence_match:NEMBASE_cDNAs-BLAT		NEMBASE_cDNAs-BLAT	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	58529
+expressed_sequence_match:bmalayi_ESTs-BLAT		bmalayi_ESTs-BLAT	expressed_sequence_match	B. malayi ESTs (sequence_similarity_bmalayi_ests)	25600
+expressed_sequence_match:bmalayi_mRNAs-BLAT		bmalayi_mRNAs-BLAT	expressed_sequence_match	B. malayi mRNAs (sequence_similarity_bmalayi_mrnas)	177
+expressed_sequence_match:cbrenneri_ESTs-BLAT		cbrenneri_ESTs-BLAT	expressed_sequence_match	C. brenneri ESTs (sequence_similarity_cbrenneri_ests)	64744
+expressed_sequence_match:cbrenneri_mRNAs-BLAT		cbrenneri_mRNAs-BLAT	expressed_sequence_match	C. brenneri mRNAs (sequence_similarity_cbrenneri_mrnas)	511
+expressed_sequence_match:cbriggsae_ESTs-BLAT		cbriggsae_ESTs-BLAT	expressed_sequence_match	C. briggsae ESTs (sequence_similarity_cbriggsae_ests)	4385
+expressed_sequence_match:cbriggsae_mRNAs-BLAT		cbriggsae_mRNAs-BLAT	expressed_sequence_match	C. briggsae mRNAs (sequence_similarity_cbriggsae_mrnas)	180
+expressed_sequence_match:celegans_ESTs-BLAT		celegans_ESTs-BLAT	expressed_sequence_match	C. elegans ESTs (sequence_similarity_celegans_ests)	62534
+expressed_sequence_match:celegans_OSTs-BLAT		celegans_OSTs-BLAT	expressed_sequence_match	C. elegans OSTs (sequence_similarity_celegans_osts)	1510
+expressed_sequence_match:celegans_RSTs-BLAT		celegans_RSTs-BLAT	expressed_sequence_match	C. elegans RSTs (sequence_similarity_celegans_rsts)	239
+expressed_sequence_match:celegans_mRNAs-BLAT		celegans_mRNAs-BLAT	expressed_sequence_match	C. elegans mRNAs/ncRNAs (sequence_similarity_celegans_mrnas)	115
+expressed_sequence_match:cjaponica_ESTs-BLAT		cjaponica_ESTs-BLAT	expressed_sequence_match	C. japonica ESTs (sequence_similarity_cjaponica_ests)	96743
+expressed_sequence_match:cjaponica_mRNAs-BLAT		cjaponica_mRNAs-BLAT	expressed_sequence_match	C. japonica mRNAs (sequence_similarity_cjaponica_mrnas)	12
+expressed_sequence_match:cremanei_ESTs-BLAT		cremanei_ESTs-BLAT	expressed_sequence_match	C. remanei ESTs (sequence_similarity_cremanei_ests)	42607
+expressed_sequence_match:cremanei_mRNAs-BLAT		cremanei_mRNAs-BLAT	expressed_sequence_match	C. remanei mRNAs (sequence_similarity_cremanei_mrnas)	1029
+expressed_sequence_match:ppacificus_ESTs-BLAT		ppacificus_ESTs-BLAT	expressed_sequence_match	P. pristionchus ESTs (sequence_similarity_ppacificus_ests)	38680
+expressed_sequence_match:ppacificus_mRNAs-BLAT		ppacificus_mRNAs-BLAT	expressed_sequence_match	P. pristionchus mRNAs (sequence_similarity_ppacificus_mrnas)	69
+low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	97051
+protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	577696
+protein_match:cbrenneri_proteins-BLASTX		cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	224560
+protein_match:cbriggsae_proteins-BLASTX		cbriggsae_proteins-BLASTX	protein_match	C. briggsae proteins (sequence_similarity_cbriggsae_proteins_blastx)	188692
+protein_match:celegans_proteins-BLASTX		celegans_proteins-BLASTX	protein_match	C. elegans proteins (sequence_similarity_celegans_proteins_blastx)	234648
+protein_match:cjaponica_proteins-BLASTX		cjaponica_proteins-BLASTX	protein_match	C. japonica proteins (sequence_similarity_cjaponica_proteins_blastx)	155276
+protein_match:cremanei_proteins-BLASTX		cremanei_proteins-BLASTX	protein_match	C. remanei proteins (sequence_similarity_cremanei_proteins_blastx)	223230
+protein_match:dmelanogaster_proteins-BLASTX		dmelanogaster_proteins-BLASTX	protein_match	D. melanogaster proteins (sequence_similarity_dmelanogaster_proteins_blastx)	110120
+protein_match:hsapiens_proteins-BLASTX		hsapiens_proteins-BLASTX	protein_match	H. sapiens proteins (sequence_similarity_hsapiens_proteins_blastx)	239847
+protein_match:ppacificus_proteins-BLASTX		ppacificus_proteins-BLASTX	protein_match	P. pacificus proteins (sequence_similarity_ppacificus_proteins_blastx)	119948
+protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	35515
+repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	61118

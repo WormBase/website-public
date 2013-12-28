@@ -1,0 +1,111 @@
+[EST_BEST]
+key            = ESTs (best)
+category       = Transcription:Products
+feature        = expressed_sequence_match:BLAT_EST_BEST
+glyph          = segments
+das category   = transcription
+draw_target    = 1
+show_mismatch  = 1
+ragged_start   = 1
+height         = 5
+bgcolor        = limegreen
+fgcolor        = black
+mismatch_color = yellow
+connector      = solid
+group_pattern  = /\.[35]$/
+citation       = Native (same-species) Expressed Sequence Tags (ESTs), aligned to
+                 the genome using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+                 This track shows the best unique location for each EST. Other EST matches, some
+                 of which may represent repetitive elements, are shown in the track labeled
+                 "ESTs (other)". The paired 5' and 3' ESTs from the same cDNA clone 
+                 are connected by a dashed line.
+
+[EST_BEST:50000]
+glyph = box
+
+
+[EST_OTHER]
+key           = ESTs (other)
+category      = Transcription:Products
+feature       = expressed_sequence_match:BLAT_EST_OTHER
+glyph         = segments
+draw_target   = 1
+show_mismach  = 1
+ragged_start  = 1
+bgcolor       = lightgray
+fgcolor       = black
+height        = 6
+connector     = solid
+group_pattern = /\.[35]$/
+citation      = Native (same-species) Expressed Sequence Tags (ESTs), aligned to the genome 
+                using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+                This track shows ESTs that align multiple times, some of which represent 
+                repetitive regions. For the "best" match, see the track labeled "ESTs (best)".  
+                The paired 5' and 3' ESTs from the same cDNA clone are connected 
+                by a dashed line.
+
+[EST_OTHER:50000]
+glyph = box
+
+
+[mRNA_BEST]
+key        = mRNAs/ncRNAs (best)
+category   = Transcription:Products
+feature    = expressed_sequence_match:BLAT_mRNA_BEST 
+             expressed_sequence_match:BLAT_ncRNA_BEST
+glyph = segments
+label = sub {
+    my $f = shift;
+    my $label = ($f->source =~ /BLAT_mRNA_BEST/) ? 'mRNA' : 'ncRNA';
+    my $name = $f->name;
+    return "$label: $name";
+  }
+draw_target  = 0
+show_mismach = 1
+ragged_start = 1
+bgcolor = sub {
+    my $f = shift;
+    return 'yellow' if ($f->source =~ /BLAT_mRNA_BEST/);
+    return 'grey';
+  }
+fgcolor   = black
+height    = 6
+connector = solid
+citation  = Native (same species) full length cDNAs and ncRNAs aligned to
+            the genome using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+            This track shows the best unique location for each cDNA. Other cDNA matches, some
+            of which may represent repetitive elements, are shown in the track labeled
+            "mRNAs/ncRNAs (other)".
+
+[mRNA_BEST:5000]
+glyph = box
+
+[mRNA_OTHER]
+key      = mRNAs/ncRNAs (other)
+category = Transcription:Products
+feature  = alignment:BLAT_mRNA_OTHER alignment:BLAT_ncRNA_OTHER
+glyph    = segments
+label    = sub {
+    my $f = shift;
+    my $label = ($f->source =~ /BLAT_mRNA_OTHER/) ? 'mRNA' : 'ncRNA';
+    my $name = $f->name;
+    return "$label: $name";
+  }
+draw_target  = 1
+show_mismach = 1
+ragged_start = 1
+bgcolor = sub {
+    my $f = shift;
+    return 'green' if ($f->source =~ /BLAT_mRNA_OTHER/);
+    return 'grey';
+  }
+fgcolor   = black
+height    = 5
+connector = solid
+citation  = Native (same species) full length mRNAs and ncRNAs aligned to the 
+            genome using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT/a>.
+            This track shows non-unique matches, which may represent repetitive sequences.
+            For the best single alignment, see the track labeled "mRNAs/ncRNAs (best)".
+
+[mRNA_OTHER:5000]
+glyph = box

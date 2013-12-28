@@ -1,0 +1,10 @@
+[SEQUENCE_SIMILARITY_PPACIFICUS_PROTEINS_BLASTX]
+feature       = protein_match:ppacificus_proteins-BLASTX
+key           = P. pacificus proteins
+category      = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      =  Matches to WormBase P. pacificus proteins, aligned with BLASTX 
+                 (nucleotide to protein, via six-frame translation).

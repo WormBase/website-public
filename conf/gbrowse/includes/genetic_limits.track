@@ -1,0 +1,38 @@
+# This track shows the approximate physical span of genetic intervals
+# It is restricted to C. elegans.
+[GENETIC_LIMITS]
+key           = Genetic limits
+category      = Genes
+feature       = gene:interpolated_pmap_position
+		gene:absolute_pmap_position
+glyph         = sub {
+                    my $f = shift;
+                    return ($f->source eq 'interpolated_pmap_position') ? 'span' : 'box';
+       }
+fgcolor       = black
+bgcolor       = sub { my $f = shift;
+		      return ($f->source eq 'interpolated_pmap_position') ? 'red' : 'turquoise';
+	}
+link          = sub { my $f   = shift;
+                      my $name = $f->name;
+   	              return "/get?name=$name;class=Gene";
+	}
+height        = 3
+label         = sub { my $f = shift;
+	      	      my ($status) = $f->attributes('status');
+		      my ($gmap)   = $f->attributes('gmap');
+		      return "$gmap ($status)";
+	}
+description   = sub { my $f = shift;
+	              my $position = join(' ',$f->notes);
+		      return $position;
+        }
+citation      = This track shows the maximal extents for genetic loci.  
+		Loci that have been interpolated onto the physical
+                map (and whose precise location is unknown) are shown 
+                as a thin black span.  The physical extent of such loci are determined 
+                by interpolating their genetic position onto the physical 
+                map using 95% confidence limits.  Please note that the actual 
+                location of such loci may lay outside of the span depicted.
+                Loci with known sequence connections are shown in turquoise 
+                and depicted using the physical span of the gene.

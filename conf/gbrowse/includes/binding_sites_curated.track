@@ -1,0 +1,16 @@
+[BINDING_SITES_CURATED]
+# EG WBsf047547 III:7816962..7816982
+key          = Binding sites (curated)
+category     = Sequence Features:Binding Sites & Regions
+feature      = binding_site:binding_site     
+glyph        = box
+bgcolor      = green
+link         = sub {
+		my $f = shift;
+		my ($name)   = $f->display_name;
+		return "/get?name=$name;class=Feature";
+	}
+label       = 0
+description  = 0
+citation     = Sites where there is experimental evidence of a non-TF, non-Histone
+               molecule binding.

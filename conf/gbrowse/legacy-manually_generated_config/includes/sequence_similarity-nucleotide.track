@@ -1,0 +1,360 @@
+################################################
+# C. elegans: OSTs, RSTs and ncRNAs
+################################################
+[C_ELEGANS_ESTS]
+key            = C. elegans ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:celegans_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = yellow
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>C. elegans</i> ESTs that have been aligned to  the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_ELEGANS_MRNAS]
+key            = C. elegans mRNAs/ncRNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:celegans_mRNAs-BLAT
+                 nucleotide_match:celegans_ncRNAs-BLAT
+glyph          = segments
+bgcolor        = yellow
+fgcolor        = black
+connector      = solid
+height         = 4
+link           = AUTO
+citation       = <i>C.elegans</i> full-length mRNAs and ncRNAs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_ELEGANS_OSTS]
+key           = C. elegans OSTs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:celegans_OSTs-BLAT
+glyph         = segments
+citation      = <i>C. elegans</i> Orfeome Sequence Tags aligned to the genome using 
+		<a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+bgcolor       = yellow
+fgcolor       = black
+height        = 4
+connector     = solid
+
+[C_ELEGANS_RSTS]
+key           = C. elegans RSTs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:celegans_RSTs-BLAT
+glyph         = segments
+citation      = <i>C. elegans</i> RACE Sequence Tags aligned to the genome using 
+	        <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+bgcolor       = yellow
+fgcolor       = black
+height        = 4
+connector     = solid
+
+
+
+
+#########################################################
+#  SPECIES-SPECIFIC TRACKS
+#########################################################
+
+[B_MALAYI_MRNAS]
+key           = B. malayi mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:bmalayi_mRNAs-BLAT       
+glyph         = segments
+bgcolor       = limegreen
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>B. malayi</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[B_MALAYI_ESTS]
+key            = B. malayi ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:bmalayi_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = limegreen
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>B. malayi</i> ESTs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_BRENNERI_MRNAS]
+key           = C. brenneri mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expresssed_sequence_match:cbrenneri_mRNAs-BLAT
+glyph         = segments
+bgcolor       = blue
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>C. brenneri</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_BRENNERI_ESTS]
+key            = C. brenneri ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:cbrenneri_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = blue
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>C. brenneri</i> ESTs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_BRIGGSAE_MRNAS]
+key           = C. briggsae mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:cbriggsae_mRNAs-BLAT
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>C. briggsae</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_BRIGGSAE_ESTS]
+key            = C. briggsae ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:cbriggsae_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = orange
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>C. briggsae</i> ESTs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+
+[C_JAPONICA_MRNAS]
+key            = C. japonica mRNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:cjaponica_mRNAs-BLAT
+glyph          = segments
+bgcolor        = olive green
+fgcolor        = black
+connector      = solid
+height         = 4
+link           = AUTO
+citation       = <i>C. japonica</i> mRNAs aligned to genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_JAPONICA_ESTS]
+key            = C. japonica ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:cjaponica_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = olive green
+fgcolor        = black
+connector      = solid
+height         = 4
+link           = AUTO
+citation       = <i>C. japonica</i> ESTs aligned to genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_REMANEI_MRNAS]
+key           = C. remanei mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:cremanei_mRNAS-BLAT
+glyph         = segments
+bgcolor       = violet
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>C. remanei</i> mRNAs aligned to genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[C_REMANEI_ESTS]
+key            = C. remanei ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:cremanei_ESTs-BLAT            
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = violet
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>C. remanei</i> ESTs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[P_PACIFICUS_MRNAS]
+key           = P. pristionchus mRNAs
+category      = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:ppacificus-mRNAs-BLAT
+glyph         = segments
+bgcolor       = darkcyan
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>P. pacificus</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[P_PACIFICUS_ESTS]
+key            = P. pristionchus ESTs
+category      = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:ppacificus-ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = darkcyan
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>P. pacificus</i> ESTs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+
+
+#########################################################
+#  PAN-SPECIES TRACKS
+#########################################################
+
+[WORMBASE_CORE_ESTS_AND_MRNAS_BEST]
+key      = WormBase nematode mRNAs/ESTs (best)
+category = Sequence Similarity:Nucleotide
+feature  = expressed_sequence_match:BLAT_Caen_EST_BEST
+           expressed_sequence_match:BLAT_Caen_mRNA_BEST
+glyph = segments
+bgcolor = sub {
+    my $f = shift;
+    my $source = $f->source;;
+    return 'lightblue' if $source eq 'BLAT_Caen_mRNA_BEST';
+    return 'green' if $source eq 'BLAT_Caen_EST_BEST';
+  }
+title = sub {
+    my $f = shift;
+    return $f->attributes('Species');
+  }
+label     = 0
+fgcolor   = black
+height    = 4
+connector = solid
+link = sub {
+    my $f = shift;
+    my $source = $f->source;
+    my $name = $f->name;
+    return "/get?name=$name;class=Sequence";
+  }
+citation = ESTs and mRNAs from other WormBase core species aligned to the genome using 
+           <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>. This track
+           shows the best location for each cDNA sequence. 
+           <p>
+           mRNAs are shown in light blue; ESTs in green.
+
+[CAENORHABDITIS_ESTS_AND_MRNAS_BEST:50000]
+glyph = box
+
+
+[CAENORHABDITIS_ESTS_AND_MRNAS_OTHER]
+key      = WormBase nematode mRNAs/ESTs (other)
+category = Sequence Similarity:Nucleotide
+feature  = expressed_sequence_match:BLAT_Caen_EST_OTHER
+           expressed_sequence_match:BLAT_Caen_mRNA_OTHER
+glyph    = segments
+bgcolor = sub {
+    my $f = shift;
+    my $source = $f->source;;
+    return 'lightblue' if $source eq 'BLAT_Caen_mRNA_OTHER';
+    return 'green' if $source eq 'BLAT_Caen_EST_OTHER';
+  }
+title = sub {
+    my $feature = shift;
+    return $feature->attributes('Species');
+  }
+fgcolor   = black
+height    = 4
+connector = solid
+label     = 0
+link  = sub {
+    my $f = shift;
+    my $source = $f->source;
+    my $name = $f->name;
+    return "/get?name=$name;class=Sequence";
+  }
+citation = ESTs and mRNAs from other WormBase core species aligned to the genome using 
+           <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>. This track shows 
+           non-unique matches, which may represent repetitive sequences. For the best single 
+           alignment, see the track labeled "WormBase nematode mRNAs and ESTs (best)".
+           <p>
+           mRNAs are shown in light blue; ESTs in green.
+
+
+[CAENORHABDITIS_ESTS_AND_MRNAS_OTHER:50000]
+glyph = box
+
+
+################################################
+# NON-WormBase Nematode cDNAs
+################################################
+
+[NEMBASE_cDNAS]
+key            = NEMBASE cDNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:NEMBASE_cDNAs-BLAT          
+glyph          = segments
+split_on_cigar = 1
+title          = $name
+fgcolor        = black
+height         = 4
+connector      = solid
+citation       = ESTs provided by <a href="http://nema.cap.ed.ac.uk/nematodeESTs/nembase.html">NEMBASE</a>. 
+                 NEMBASE is a publicly available online database providing access to the sequence and
+   	         associated meta-data currently being generated as part of the University of Edinburgh 
+                 and Wellcome Trust Sanger Institute parasitic nematode EST programme. Aligned using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[NEMBASE_cDNAS:5000]
+glyph = box
+
+[NEMATODE_cDNAS]
+key            = INSDC nematode cDNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:EMBL_nematode_cDNAs-BLAT
+split_on_cigar = 1
+glyph          = segments
+title          = $name
+fgcolor        = black
+height         = 4
+connector      = solid
+citation       = Nematode cDNAs from INSDC that have been aligned to the C. elegans genome using  
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[NEMATODE_cDNAS:50000]
+glyph = box
+
+[NEMATODE_NET_ESTS]
+key            = Nematode.net cDNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT
+glyph          = segments
+split_on_cigar = 1
+title          = $name
+fgcolor        = black
+height         = 4
+connector      = solid
+citation       = ESTs provided by <a href="http://www.nematode.net">Nematode.net</a>,
+ 		 a web-accessible resource for investigating gene sequences
+ 		 from nematode genomes. Aligned using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[NEMATODE_NET_ESTS:50000]
+glyph = box

@@ -1,0 +1,9 @@
+[TECRED_TAGS]
+feature  = nucleotide_match:TEC_RED
+glyph    = box
+bgcolor  = red
+category = Transcription:Supporting Evidence
+height   = 5
+key      = TEC-RED tags
+citation = Trans-spliced Exon Coupled RNA End Determination (TEC-RED) tags. TEC-RED uses a method similar to SAGE
+	   to identify expressed genes and characterize the 5' end of transcripts.

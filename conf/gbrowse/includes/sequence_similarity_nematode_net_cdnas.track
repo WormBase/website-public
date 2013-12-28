@@ -1,0 +1,16 @@
+[SEQUENCE_SIMILARITY_NEMATODE_NET_CDNAS]
+key            = Nematode.net cDNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT
+glyph          = segments
+split_on_cigar = 1
+title          = $name
+fgcolor        = black
+height         = 4
+connector      = solid
+citation       = cDNAs provided by <a href="http://www.nematode.net">Nematode.net</a>,
+ 		 a web-accessible resource for investigating gene sequences
+ 		 from nematode genomes. Aligned using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+
+[SEQUENCE_SIMILARITY_NEMATODE_NET_CDNAS:50000]
+glyph = box

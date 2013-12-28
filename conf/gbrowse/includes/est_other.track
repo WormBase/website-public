@@ -1,0 +1,22 @@
+[EST_OTHER]
+key           = ESTs (other)
+category      = Transcription:Supporting Evidence
+feature       = expressed_sequence_match:BLAT_EST_OTHER
+glyph         = segments
+draw_target   = 1
+show_mismach  = 1
+ragged_start  = 1
+bgcolor       = lightgray
+fgcolor       = black
+height        = 6
+connector     = solid
+group_pattern = /\.[35]$/
+citation      = Native (same-species) Expressed Sequence Tags (ESTs), aligned to the genome 
+                using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+                This track shows ESTs that align multiple times, some of which represent 
+                repetitive regions. For the "best" match, see the track labeled "ESTs (best)".  
+                The paired 5' and 3' ESTs from the same cDNA clone are connected 
+                by a dashed line.
+
+[EST_OTHER:50000]
+glyph = box

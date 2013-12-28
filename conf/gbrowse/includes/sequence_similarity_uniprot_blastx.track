@@ -1,0 +1,11 @@
+[SEQUENCE_SIMILARITY_UNIPROT_BLASTX]
+feature       = protein_match:UniProt-BLASTX
+key           = Other UniProt proteins
+category       = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      = Matches to proteins from a slimmed-down version of UniProt (with proteins from 
+                WormBase core nematodes, human, fly and yeast removed), aligned with BLASTX
+                (nucleotide to protein, via six-frame translation).

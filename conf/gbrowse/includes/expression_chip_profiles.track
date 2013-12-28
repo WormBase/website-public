@@ -1,0 +1,13 @@
+[EXPRESSION_CHIP_PROFILES]
+feature       = experimental_result_region:Expr_profile
+category      = Expression
+bgcolor       = orange
+fgcolor       = black
+height        = 4
+key           = Expression chip profiles
+citation      = This track indicates the location of PCR products that have been placed on
+	expression chips produced by the C. elegans Microarray Consortium [
+	<a href="http://cmgm.stanford.edu/~kimlab/wmdirectorybig.html">http://cmgm.stanford.edu/~kimlab/wmdirectorybig.html</a>]. 
+	The genes corresponding to these products have been clustered by their
+	expression patterns.  Click on the profile to get more information about the expression
+	profile of its corresponding gene.

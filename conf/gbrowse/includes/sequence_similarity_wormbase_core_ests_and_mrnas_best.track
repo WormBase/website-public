@@ -1,0 +1,39 @@
+#########################################################
+#  PAN-SPECIES TRACKS
+#########################################################
+
+[SEQUENCE_SIMILARITY_WORMBASE_CORE_ESTS_AND_MRNAS_BEST]
+key      = WormBase nematode mRNAs/ESTs (best)
+category = Sequence Similarity:Nucleotide
+feature  = expressed_sequence_match:BLAT_Caen_EST_BEST
+           expressed_sequence_match:BLAT_Caen_mRNA_BEST
+glyph = segments
+bgcolor = sub {
+    my $f = shift;
+    my $source = $f->source;;
+    return 'lightblue' if $source eq 'BLAT_Caen_mRNA_BEST';
+    return 'green' if $source eq 'BLAT_Caen_EST_BEST';
+  }
+title = sub {
+    my $f = shift;
+    return $f->attributes('Species');
+  }
+label     = 0
+fgcolor   = black
+height    = 4
+connector = solid
+link = sub {
+    my $f = shift;
+    my $source = $f->source;
+    my $name = $f->name;
+    return "/get?name=$name;class=Sequence";
+  }
+citation = ESTs and mRNAs from other WormBase core species aligned to the genome using 
+           <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>. This track
+           shows the best location for each cDNA sequence. 
+           <p>
+           mRNAs are shown in light blue; ESTs in green.
+
+[SEQUENCE_SIMILARITY_WORMBASE_CORE_ESTS_AND_MRNAS_BEST:50000]
+glyph = box
+

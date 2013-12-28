@@ -1,0 +1,101 @@
+[VARIATIONS_POLYMORPHISMS]
+# Polymorphism was MISSPELLED IN WS240. Update to correct spelling for WS241.
+key          = Polymorphisms
+category     = Alleles, Variations, RNAi
+feature      = deletion:CGH_allele_Polymorhpism
+           substitution:Variation_project_Polymorhpism
+               deletion:Variation_project_Polymorhpism
+                    SNP:Variation_project_Polymorhpism
+         insertion_site:Variation_project_Polymorhpism
+   complex_substitution:Variation_project_Polymorhpism
+   sequence_alteration:Variation_project_Polymorhpism
+	       deletion:Allele_Polymorhpism
+label        = sub {
+	     my $f = shift;
+	     my %attributes = $f->attributes;
+	     my $name = $attributes{public_name} || $f->name;
+	     if ($name =~ /^WBVar/) {
+	         ($name) = $attributes{other_name} || $name;
+             }	     
+	     return join('-',@$name);   
+	      }	      
+description  = sub {
+		my $f = shift;
+		my $m = $f->method;
+		$m =~ s/_/ /g;
+		return $m;
+ 	}
+glyph        = sub {
+		my $f = shift;
+		my $m = $f->method;
+		return 'triangle' if $m eq 'insertion_site';
+		return 'triangle' if $m eq 'mobile_element_insertion';
+		return 'box'      if $m eq 'complex_substitution';
+		return 'box'      if $m eq 'deletion';
+		return 'diamond'  if $m eq 'substitution';
+		return 'diamond'  if $m eq 'point_mutation';
+		return 'generic';
+	}
+fgcolor      = black
+font2color   = blue
+balloon hover = sub {
+	           my $f    = shift;
+		   my $type = $f->method;
+		   $type =~ s/_/ /g;
+
+		   my ($name)        = $f->attributes('public_name');
+		   #$name ||= $f->display_name;
+		   my ($consequence) = $f->attributes('consequence');
+		   $consequence =~ s/_/ /g;
+
+		   my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
+		   my ($status)    = $f->attributes('status');
+		   my ($nt_change) = $f->attributes('substitution') || $f->attributes('insertion');
+		   my ($aa_change) = $f->attributes('aachange');
+		   my ($interpolated_map_position) = $f->attributes('interpolated_map_position');
+
+		   # We might want to be a little fancier with sources, like linking to the resource.
+                   my $source = $f->source; 
+		   my $sanitized_source = $source;
+		   $sanitized_source =~ s/_Polymorphisms//g;
+		   $sanitized_source =~ s/_/ /g;
+
+		   my @notes = ("<b>Polymorphism: $name</b>");
+		   push (@notes,"type: $type");
+		   push (@notes,"status: $status")                  if $status;
+		   push (@notes,"position: $ref:$start..$stop");
+		   push (@notes,"nucleotide change: $nt_change")     if $nt_change;
+		   push (@notes,"amino acid change: $aa_change")     if $aa_change;
+           	   push (@notes,"consequence: " . lc($consequence)) if $consequence;
+           	   push (@notes,"interpolated map position: $interpolated_map_position")   if $interpolated_map_position;
+		   my ($strains) = $f->attributes('strain');
+		   if ($strains) {
+		      my $strains = join(', ',map { '<a href="http://www.wormbase.org/db/get?class=Strain;name=' . $_ . '">' . $_ . '</a>' } split(',',$strains));
+		      push @notes,"strains: $strains"; 
+		   }
+
+		   push (@notes,"source: $sanitized_source");  # maybe a link to resource, too?	
+		   return join('<br />',@notes);
+	}
+bgcolor      = sub {
+		my $f = shift;	
+		my ($strain) = $f->attributes('strain');
+		if ($strain eq 'CB4858' || $strain eq 'AF16') {
+		    return 'blue';
+		} elsif ($strain eq 'CB4856' || $strain eq 'HK104') {
+		    return 'yellow';
+                } else {
+		    return 'white';
+                } 
+	}
+height       = sub {
+	        my $f = shift;
+		my %attributes = $f->attributes();
+
+                # Confirmed, RFLP SNPs
+                if (defined $attributes{rflp} && $attributes{status} eq 'Confirmed') {
+                        return 14;
+                } else {
+                        return 8;
+                }
+        }	

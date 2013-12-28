@@ -1,0 +1,10 @@
+[SEQUENCE_SIMILARITY_SCEREVISIAE_PROTEINS_BLASTX]
+feature       = protein_match:scerevisiae_proteins-BLASTX
+key           = S. cerevisiae proteins
+category      = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      = Matches to S. cerevisiae proteins from SGD, aligned with BLASTX 
+                 (nucleotide to protein, via six-frame translation).

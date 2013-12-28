@@ -1,0 +1,13 @@
+[SEQUENCE_SIMILARITY_PPACIFICUS_ESTS]
+key            = P. pristionchus ESTs
+category      = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:ppacificus_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = darkcyan
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>P. pacificus</i> ESTs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

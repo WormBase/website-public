@@ -1,0 +1,30 @@
+[RNASEQ]
+key          = RNASeq
+feature      = transcript_regions:RNASeq_reads
+glyph        = box
+category     = Expression
+bgcolor      = black
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+height    = sub { 
+	  my $f = shift;
+	  my $score = $f->score;
+	  # range of 1-100
+	  my $height = int($score / 2);
+      	  $height = 50 if ($score > 100);
+	  $height = ($height == 0 || $height == 1) ? 2 : $height;
+	  return $height;
+	  }
+bump = 0
+label     = sub {
+          my $f = shift;
+	  my $score = $f->score;
+	  return "Score: $score";
+	}    
+citation    =  These boxes indicate alignments of short read sequences from all available RNASeq
+               projects. The number of reads has been normalised by averaging over
+               the number of libraries. The height of all boxes indicates the relative score of
+               the feature.

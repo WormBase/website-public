@@ -1,0 +1,19 @@
+[HISTONE_BINDING_SITES]
+# EG WBsf047038; III:7857561..7857581
+key          = Histone binding sites
+category     = Sequence Features:Binding Sites & Regions
+feature      = histone_binding_site:histone_binding_site_region
+glyph        = box
+bgcolor      = green
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+label     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		return $name;
+	}    
+citation     = Regions within which there is experimental evidence for one or more
+               binding sites of a histone.

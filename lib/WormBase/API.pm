@@ -4,7 +4,7 @@ use Moose;                       # Moosey goodness
 
 use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
-use Search::Xapian qw/:all/;
+use Search::Xapian;
 use Config::General;
 use Class::MOP;
 use File::Spec;
@@ -97,7 +97,6 @@ sub _build_xapian {
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
   my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
-  $qp->set_default_op(OP_OR);
 
   my $ptype_svrp = Search::Xapian::NumberValueRangeProcessor->new(8, "ptype:");
   my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
