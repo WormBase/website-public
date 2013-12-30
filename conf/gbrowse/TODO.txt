@@ -1,0 +1,9 @@
+finish proting tracks
+       - mostly reagents
+
+continue simplifying config generation code
+	 (many of the stanzas could be generated automatically for a single template)
+
+slot into update process
+
+write documentaiton

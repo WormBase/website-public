@@ -1,0 +1,624 @@
+# The following features have SUPPORT in the autogeneration code but do not 
+# appear in config outut
+
+
+
+
+
+
+
+
+# THIS IS STILL MISSING
+[OST]
+key           = C.elegans OSTs
+category      = Transcription:Supporting Evidence
+feature       = expressed_sequence_match:BLAT_OST_BEST
+glyph         = segments
+draw_target   = 1
+show_mismatch = 1
+ragged_start  = 1
+height        = 5
+fgcolor       = black
+connector     = solid
+group_pattern = /^OST[RF]/
+description   = OST
+link = sub {
+    my $feature = shift;
+    my $name = $feature->name;
+    $name =~ s/^OST[FR](10|30)/$1/;
+    $name =~ s/^OST[FR]/10/;
+    $name =~ s/_\d*//;
+    $name =~ s/([A-Z]+\d+)$/\@$1/;
+    return qq[http://worfdb.dfci.harvard.edu/searchallwormorfs.pl?by=plate&sid=$name];
+  }
+label       = 1
+link_target = _blank
+citation    = <a href="http://worfdb.dfci.harvard.edu/">ORFeome project</a> sequence reads.
+              The ORFeome project designs primer assays for spliced C. elegans mRNAs and then performs 
+              sequence reads on rtPCR material, producing "OSTs." This track shows ORFeome project 
+              OSTs aligned to the genome using 
+              <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>. This track shows the 
+              best unique location for each OST.
+
+
+
+################################################
+#
+# Category: Reagents
+#
+################################################
+
+[PROMOTEROME_PCR_PRODUCTS]
+key           = Promoterome PCR products
+feature       = PCR_product:Promoterome
+bgcolor       = violet
+glyph         = primers
+category      = Reagents
+fgcolor       = black
+connect       = 1
+connect_color = cyan
+citation      = This track indicates the location of primer pairs for the <a href="http://vidal.dfci.harvard.edu/promoteromedb/">Promoterome project</a>.
+
+[MICROARRAY_OLIGO_PROBES]
+key           = Microarray oligo probes
+feature       = reagent:Oligo_set
+glyph         = primers
+category      = Reagents
+height        = 4
+fgcolor       = black
+connect       = 1
+connect_color = black
+font2color    = black
+fgcolor       = black
+citation      = This track contains Affymetrix GeneChip and Washington University GSC microarray probe sets.
+
+# This is an aggregated track of ALL PCR_products (promoterome, orfeome, etc)
+# THIS REQUIRES SPECIAL HANDLING
+[PCR_PRODUCTS]
+key           = PCR Assays
+feature       = PCR_product
+bgcolor       = violet
+glyph         = primers
+category      = Reagents
+fgcolor       = black
+connect       = 1
+connect_color = cyan
+citation      = This track indicates the location of primer pairs that have been created by a number
+	of groups.  Click on the element to obtain the left and right oligo sequences, information
+	about the amplification information, and ordering information (if available). 
+
+
+
+[CLONES]
+feature       = region:Vancouver_fosmid 
+	        assembly_component:Genomic_canonical	      
+fgcolor       = sub {
+		my $feature = shift;
+		return 'aqua' if !defined $feature->start || !defined $feature->stop;
+		return 'black';
+	}
+das category   = structural
+category      = Reagents
+glyph         = anchored_arrow
+height        = 7
+key           = YACs, Fosmids, & Cosmids
+font2color    = aqua
+description   = sub {
+		my $feature = shift;
+		return 'Warning: Clone end(s) not known/shown.'
+			unless defined $feature->start && defined $feature->end;
+		1;
+	}
+title         = sub {
+		my $f = shift;
+			my $start = $f->start;
+			my $ref = $f->ref;
+			my $stop = $f->stop;
+			my $name = $f->name;
+		if ($f->source eq 'Vancouver_fosmid') {
+			return "Vancouver fosmid: $name $ref:$start..$stop";
+		}
+		$start ||= '-';
+		$stop  ||= '-';
+		return "YACs, Fosmids, & Cosmids: $name $ref:$start..$stop";
+	}
+citation      = This track shows the locations of the cosmids, fosmids, and YACs used for the
+	physical mapping and sequencing of the C. elegans genome.  The clone termini
+	do not necessarily correspond to the termini of submitted GenBank/EMBL entries.
+	In some cases the exact termini of the clones is not known.  For example, YACs
+	were sequenced using PCR amplification across gaps in the cosmid maps.  When
+	a clone end is not known, it is shown as an arrow extending to the end of the 
+	display.  Such data is to be treated with caution.  The Vancouver fosmids can be ordered directly 
+        from <a href="http://www.geneservice.co.uk/products/clones/Celegans_Fos.jsp">GeneService</a>.
+
+
+
+
+
+
+################################################
+#
+# Category: nGASP - all these data are gone?
+#
+# config not yet updated for GFF3
+#
+################################################
+
+[AUGUSTUS_NGASP]
+feature      = ngasp_gene:nGASP_AUGUSTUS
+#feature      = ngasp_gene:AUGUSTUS
+label        = 1
+description  = 1
+key          = nGASP AUGUSTUS gene predictions
+glyph        = transcript2
+category     = nGASP Genes
+title        = AUGUSTUS gene $name
+citation     = AUGUSTUS gene set from the nGASP competition.  Courtesy of Mario Stanke.
+               Gene models are available for download at ftp.wormbase.org/pub/wormbase/nGASP
+
+[mGENE_NGASP]
+#feature      = ngasp_gene:nGASP_mGENE
+feature      = ngasp_gene:mGENE
+label        = 1
+description  = 1
+key          = nGASP mGENE gene predictions
+glyph        = transcript2
+category     = nGASP Genes
+title        = mGENE gene $name
+citation     = mGENE gene set from the nGASP competition.  Courtesy of Gabriele Schweikert and Gunnar Raetsch.
+               Gene models are available for download at ftp.wormbase.org/pub/wormbase/nGASP
+
+[FGENESH_NGASP]
+#feature      = ngasp_gene:nGASP_FGENESH
+feature      = ngasp_gene:FGENESH
+label        = 1
+description  = 1
+key          = nGASP FGENESH gene predictions
+glyph        = transcript2
+category     = nGASP Genes
+title        = FGENESH++ gene $name
+citation     = FGENESH++ gene set from the nGASP competition.  Courtesy of Darin Blasiar.
+               Gene models are available for download at ftp.wormbase.org/pub/wormbase/nGASP
+[JIGSAW_NGASP]
+#feature      = ngasp_gene:nGASP_jigsaw
+feature      = ngasp_gene:nGASP
+label        = 1
+description  = 1
+key          = nGASP JIGSAW combined genes
+glyph        = transcript2
+category     = nGASP Genes
+title        = JIGSAW gene $name
+citation     = JIGSAW gene set from the nGASP competition.  This is the combined gene set for AUGUSTUS
+               mGENE and FGENESH++.  Courtesy of Darin Blasiar.
+               Gene models are available for download at ftp.wormbase.org/pub/wormbase/nGASP
+
+
+
+
+The following features have not yet been ported
+
+
+################################################
+# Category: Misc
+################################################
+ 
+[SYNTENY]
+feature       = similarity:synteny # TODO This pair does not exist in the data anymore.
+bgcolor       = sub { 
+  		  my $f = shift;
+	          my ($s) = $f->attributes('Species');
+		  warn "SPECIES = $s\n";
+		  return $s =~ /briggsae/ ? 'green' : $s =~ /remanei/ ? 'red' : 'purple';
+                }
+#glyph         = segments
+draw_target   = 1
+show_mismatch = 1
+realign       = 0
+category     = Sequence Similarity Tracks (other)
+fgcolor       = black
+height        = 6
+connector     = dashed
+box_subparts  = 0
+key           = PECAN syntenic alignents
+label = sub {	my $feature = shift;
+		my $ref   = $feature->target;
+		my $start = $feature->target->start;
+		my $stop  = $feature->target->end;
+	        my $first = ($feature->segments)[0];
+                my $strand = defined $first && $first->start>$first->end ? -1 : +1;
+		($start,$stop) = ($stop,$start) if $strand < 0;
+		my ($species) = $feature->attributes('species');
+	        "$ref:$start..$stop ($species)";
+	}
+citation      = PECAN alignments
+link = 	sub {
+		my $feature = shift;
+		my $ref   = $feature->target;
+		my $start = $feature->start;
+		my $stop  = $feature->end;
+	        my $first = ($feature->segments)[0];
+                my $strand = defined $first && $first->start>$first->end ? -1 : +1;
+		($start,$stop) = ($stop,$start) if $strand < 0;
+		return "http:///mckay.cshl.edu/cgi-bin/gbrowse_syn?name=$ref:$start..$stop;src=compara;search_src=elegans";
+	}
+title = sub {
+		my $f = shift;
+		my ($species) = $f->attributes('Species');
+		return "PECAN alignment to <i>$species</i>.<br> Click to view this region in the synteny browser";
+	}
+
+
+[SYNTENY:100000]
+feature       = similarity:synteny # TODO This pair does not exist in the data anymore.
+glyph         = generic
+bgcolor       = #E0E0E0
+
+
+
+
+
+[AdjustedNSome]
+feature        = microarray_oligo:AdjustedNSome_coverage.collapsed # TODO Pair not found in data anymore.
+glyph          = wiggle_xyplot
+glyph select   = wiggle_density wiggle_xyplot
+pos_color      = magenta
+neg_color      = violet
+label          = sub { (shift->attributes('Note'))[0] }
+#label_position = left
+min_score      = -3
+max_score      = 3
+smoothing      = mean
+smoothing window  = 6
+key            = Nucleosome Coverage (adjusted)
+category       = Misc
+graph_height   = 40
+citation       = Adjusted Nucleosome coverage from <a href="http://genome.cshlp.org/cgi/content/short/18/7/1051">
+ Valouev et al.,Genome Res. 18:1051-63</a>, downloaded from
+ <a href="http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=111781230&c=chrII&g=nucleosomeAdjustedCoverage">the UCSC</a>.
+ The plot represents relative mononucleosome enrichment at each position in the genome (on a log of 2 scale).
+ The coverage metric is given according to a formula [ (1+n)/N ] / [ (1+c)/C ] where n and c are the numbers
+ of putative 147 base pair cores covering each base pair from nucleosome and control data, N and C are the
+ total number of nucleosome and control reads obtained by SOLiD sequencing with 25 base pairs mapped to the
+ reference genome.
+
+[NSome]
+# TODO Pairs not found in data anymore.
+feature        = microarray_oligo:NSome_coverage.minus.collapsed
+                 microarray_oligo:NSome_coverage.plus.collapsed
+glyph          = wiggle_xyplot
+glyph select   = wiggle_density wiggle_xyplot
+bgcolor        = sub { shift->source_tag =~ /minus/ ? 'green' : 'blue' }
+label          = sub { (shift->attributes('Note'))[0] }
+smoothing      = mean
+smoothing window  = 6
+key            = Nucleosome Coverage
+category       = Misc
+max_score      = 200
+graph_height   = 40
+citation       = Adjusted Nucleosome coverage from <a href="http://genome.cshlp.org/cgi/content/short/18/7/1051">
+ Valouev et al.,Genome Res. 18:1051-63</a>, downloaded from
+ <a href="http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=111781230&c=chrII&g=nucleosomeAdjustedCoverage">the UCSC</a>.
+ The plot represents relative mononucleosome enrichment at each position in the genome (on a log of 2 scale).
+ The coverage metric is given according to a formula [ (1+n)/N ] / [ (1+c)/C ] where n and c are the numbers
+ of putative 147 base pair cores covering each base pair from nucleosome and control data, N and C are the
+ total number of nucleosome and control reads obtained by SOLiD sequencing with 25 base pairs mapped to the
+ reference genome.
+
+[MNase]
+# TODO Pairs not found in data anymore.
+feature        = microarray_oligo:MNase_coverage.minus.collapsed
+                 microarray_oligo:MNase_coverage.plus.collapsed
+glyph          = wiggle_xyplot
+glyph select   = wiggle_density wiggle_xyplot
+bgcolor        = sub { shift->source_tag =~ /minus/ ? 'brown' : 'orange' }
+label          = sub { (shift->attributes('Note'))[0] }
+graph_height   = 40
+smoothing      = mean
+smoothing window  = 6
+key            = Nucleosome Coverage (MNase control)
+category       = Misc
+citation       = Adjusted Nucleosome coverage from <a href="http://genome.cshlp.org/cgi/content/short/18/7/1051">
+ Valouev et al.,Genome Res. 18:1051-63</a>, downloaded from
+ <a href="http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=111781230&c=chrII&g=nucleosomeAdjustedCoverage">the UCSC</a>.
+ The plot represents relative mononucleosome enrichment at each position in the genome (on a log of 2 scale).
+ The coverage metric is given according to a formula [ (1+n)/N ] / [ (1+c)/C ] where n and c are the numbers
+ of putative 147 base pair cores covering each base pair from nucleosome and control data, N and C are the
+ total number of nucleosome and control reads obtained by SOLiD sequencing with 25 base pairs mapped to the
+ reference genome.
+
+
+
+#   THIS DATA NO LONGER EXISTS?
+
+[ETILE]
+smoothing     = mean
+smoothing window = 16
+max_score     = 15
+feature       = microarray_oligo:non_polyA
+                microarray_oligo:polyA
+                microarray_oligo:small_non_polyA
+description   = 0
+sort_order    = sub ($$) {
+                  my $a = shift->feature->source_tag;
+                  my $b = shift->feature->source_tag;
+                  return -1 if $a =~ /^poly/;
+                  return 1  if $b =~ /^poly/;
+                  return 0;
+                }
+glyph         = wiggle_xyplot
+glyph select  = wiggle_density wiggle_xyplot
+height        = 40
+bgcolor       = black
+key           = Mixed-stage tiling arrays
+category      = Expression
+balloon hover = Affymetrix tiling array data from He et al. (2007) <b>Mapping the <i>C. elegans</i> noncoding transcriptome with a whole-genome tiling microarray</b>
+label         = sub {
+                  my $feature = shift;
+                  my $desc = $feature->source_tag;
+                  $desc =~ s/adenylated/A/;
+                  $desc =~ s/mixed_stage_//;
+                  $desc =~ s/small.+/small RNA/;
+                  return $desc;
+                }
+label_position = left
+citation      = <b>Life_stage</b>  mixed stage<br>
+ <b>Strain</b>  N2<br>
+ <b>Remark</b>  The data were analyzed with Affymetrix Tiling analysis software (version 1.0.15). Frequency is a log2(max(PM-MM,1))
+ value for each probe, after quantile-normalization and median intensity scaling for
+ all replicates. See <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=pubmed&cmd=retrieve&dopt=AbstractPlus&list_uids=17785534"
+ target="_new" title="Mapping the C. elegans noncoding transcriptome with a whole-genome tiling microarray">
+ He et al., 2007</a> for details.
+
+[ETILE:40001]
+glyph         = wiggle_density
+
+
+
+
+[FTILE_N2:40001]
+max_score     = 200
+glyph     = wiggle_density
+
+[FTILE_N2]
+smoothing     = mean
+smoothing window = 16
+max_score     = 1500
+# TODO Aggregates? Otherwise, pairs are not found in data anymore.
+feature       = microarray_oligo:CEwtN2Emb
+                microarray_oligo:CEwtN2GA
+                microarray_oligo:CEwtN2L2
+                microarray_oligo:CEwtN2L3
+                microarray_oligo:CEwtN2L4
+                microarray_oligo:CEwtN2YA
+description   = 0
+sort_order    = sub ($$) {
+                  my $a = shift->feature->source_tag;
+                  my $b = shift->feature->source_tag;
+                  return 1  if $a =~ /GA/;
+                  return -1 if $b =~ /GA/;
+                  return -1 if $a =~ /Emb/;
+                  return 1  if $a =~ /A/ && $b !~ /A/;
+                  my ($sa) = $a =~ /L(\d+)/;
+                  my ($sb) = $b =~ /L(\d+)/;
+                  if ($sa && $sb) {
+                    return -1 if $sa < $sb;
+                    return 1 if $sa > $sb;
+                  }
+                  return 0;
+                }
+glyph         = wiggle_xyplot
+glyph select  = wiggle_density wiggle_xyplot
+height        = 40
+bgcolor       = black
+category      = Phenotype/Expression Tracks
+key           = N2 tiling arrays
+label         = sub {
+                  my $feature = shift;
+                  my $desc = $feature->source_tag;
+                  $desc =~ s/CEwtN2//;
+                  $desc =~ s/G/gravid /;
+                  $desc =~ s/Y/young /;
+                  $desc =~ s/A/adult/;
+                  return $desc;
+                }
+label_position = left
+citation       =
+  <b>Strain</b>  N2<br>
+  <b>Remark</b>  Provided by the Andrew Fraser group.
+  The data were analysed using TAS (version 1.1 Build 2, 5/10/2006) with probes originally mapped to
+  WS150 version of the genome.  Quantile normalization was carried out and probe intensity was median scaled.
+
+[FTILE_smg1:40001]
+max_score = 200
+glyph     = wiggle_density
+
+
+[FTILE_smg1]
+smoothing     = mean
+smoothing window = 16
+max_score     = 1500
+# TODO Aggregate? Otherwise, pairs not found in data anymore.
+feature       = microarray_oligo:CEmssmg1GA
+                microarray_oligo:CEmssmg1L3
+                microarray_oligo:CEmssmg1L4
+                microarray_oligo:CEmssmg1YA
+sort_order    = sub ($$) {
+                  my $a = shift->feature->source_tag;
+                  my $b = shift->feature->source_tag;
+                  return 1  if $a =~ /GA/;
+                  return -1 if $b =~ /GA/;
+                  return -1 if $a =~ /Emb/;
+                  return 1  if $a =~ /A/ && $b !~ /A/;
+                  my ($sa) = $a =~ /L(\d+)/;
+                  my ($sb) = $b =~ /L(\d+)/;
+                  if ($sa && $sb) {
+                    return -1 if $sa < $sb;
+                    return 1 if $sa > $sb;
+                  }
+                  return 0;
+                }
+glyph         = wiggle_xyplot
+glyph select   = wiggle_density wiggle_xyplot
+height        = 40
+bgcolor       = black
+category      = Phenotype/Expression Tracks
+key           = smg-1 tiling arrays
+label         = sub {
+                  my $feature = shift;
+                  my $desc = $feature->source_tag;
+                  $desc =~ s/CEmssmg1//;
+                  $desc =~ s/G/gravid /;
+                  $desc =~ s/Y/young /;
+                  $desc =~ s/A/adult/;
+                  return $desc;
+                }
+label_position = left
+citation       =
+  <b>Strain</b>  N2<br>
+  <b>Remark</b>  Provided by Andrew Fraser&#39;s group.
+  The data were analysed using TAS (version 1.1 Build 2, 5/10/2006) with probes originally mapped to
+  WS150 version of the genome.  Quantile normalization was carried out and probe intensity was median scaled.
+
+
+############################################################
+#
+#  modENCODE data
+#
+############################################################
+
+# Jason Lieb tracks
+# 
+# no smoothing for large segments
+#[LIEBChIP_chip:40001]
+#smoothing window  = 1
+#
+## semantic zoom to wiggle_density over 40 kb
+#[LIEBChIP_chip:40001]
+#glyph             = wiggle_density
+# 
+## default glyph is wiggle xyplot
+#[LIEBChIP_chip]
+#feature           = microarray_oligo:HTZ-1_mean
+#                     microarray_oligo:DPY-27_mean_zscore
+#                     microarray_oligo:SDC3_mean_zscore
+#glyph             = wiggle_xyplot
+#glyph select      = wiggle_density wiggle_xyplot
+#neg_color         = orange
+#pos_color         = blue
+#min_score         = -1.5
+#max_score         = 1.5
+#height            = 40
+#label             = sub {
+#                       my $src = shift->source_tag;
+#                       $src =~ s/_\S+$//;
+#                       $src =~ s/Lieb_//;
+#                       $src;
+#                     }
+#label_position    = left
+#smoothing         = mean
+#smoothing window  = 16
+#key               = ChIP-chip arrays
+#category          = modENCODE Tracks: Lieb Group
+#title             = <b>$name ChIP-chip experiment from the Lieb group</b><br>
+#                      The color scheme is orange &lt; zero &gt; blue.
+#                      Color-intensity corresponds to signal amplitude, truncated
+#                      to the range of <span style=white-space:nowrap>
+#                      -1.0 - &#43;1.0 &#40;-2.0 - &#43;2.0</span> for H3 experiments&#41;
+#citation          = ChIP-chip experiments from labs in the Lieb group.  Regions shown in orange are less than zero and in blue are greater than zero.
+#                     The intensity of the color indicates the signal amplitude.  The range is truncated at -2:+2.  The mean scores for three biological
+#                     replicate experiments were used.
+ 
+#[LIEB_computed_peaks]
+#feature           = microarray_oligo:DPY-27_chrX_peaks
+#                     microarray_oligo:HTZ-1_peaks
+#                     microarray_oligo:SDC3_chrX_peaks
+#glyph             = wiggle_box
+#glyph select      = wiggle_box
+#height            = 8
+#fgcolor           = blue
+#bgcolor           = blue
+#label             = sub {
+#                       my $src = shift->source_tag;
+#                       $src =~ s/_\S+//g;
+#                       $src =~ s/Lieb_//;
+#                       $src;
+#                     }
+#label_position    = left
+#key               = ChIP-chip computed peaks
+#category          = modENCODE Tracks: Lieb Group
+#title          = sub {
+#                    my $name = shift->name;
+#                    $name =~ s/_\S+//;
+#                    "<b>Computed peaks for ChIP-chip arrays from labs in the Lieb group: $name</b><br>".
+#                    "Computed peaks are putative binding sites for $name";
+#                 }
+# citation       = Computed peaks are regions for which the signal in the ChIP-chip array are significantly above background levels.  Such regions are
+#                  putative binding sites for the protein targeted by the antibody.
+ 
+  
+# GBrowse stanza configuration for tracks generated
+# for project #43: HTZ-1_N2_Mixed_Embryos (BK00001_HTZ1_N2_MXEMB)
+ 
+#[HTZ1_N2_Mi_WIG_2067_43]
+#feature = WIG:2067
+#bicolor_pivot = zero
+#smoothing = mean
+#label = sub { return shift->name; }
+#citation = TEST
+#max_score = 3
+#glyph = wiggle_xyplot
+#bump density = 250
+#category = Preview
+#pos_color = blue
+#data_source_id = 43
+#sort_order = sub ($$) {shift->feature->name cmp shift->feature->name}
+#stranded = 0
+#connector = solid
+#fgcolor = black
+#track_id = 2067
+#glyph select = wiggle_density wiggle_xyplot
+#min_score = -3
+#label_transcripts = 
+#label density = 100
+#smoothing_window = 10
+#neg_color = orange
+#key = 43 -normalized_data/HTZIP2_WS180.wig- WIG:2067
+#group_on = 
+#bgcolor = lightgrey
+
+
+#[HTZ1_N2_Mi_binding_site_2071_43]
+#label = sub { return shift->name; }
+#citation = TEST
+#feature = binding_site:2071_details
+#glyph = segments
+#bump density = 250
+#category = Preview
+#data_source_id = 43
+#stranded = 0
+#connector = solid
+#fgcolor = black
+#track_id = 2071
+#label_transcripts = 
+#label density = 100
+#key = HTZ-1 Binding Peaks in Mixed Embryos from N2
+#group_on = 
+#bgcolor = lightgrey
+ 
+#[HTZ1_N2_Mi_binding_site_2071_43:100002]
+#label = sub { return shift->name; }
+#feature = binding_site:2071
+#glyph = wiggle_density
+#stranded = 0
+#fgcolor = black
+#group_on = 
+#bgcolor = lightgrey
+
+
+
+
+
+
+
+
+
