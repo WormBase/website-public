@@ -2,7 +2,7 @@
 # Individual spans
 feature      = translated_nucleotide_match:mass_spec_genome
 key           = Mass spec peptides
-category      = Sequence Features: Translated Features
+category      = Sequence Features:Translated Features
 glyph         = segments
 draw_target   = 1
 show_mismatch = 1
