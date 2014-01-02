@@ -25,6 +25,7 @@ gene:WormBase		WormBase	gene	Genes (primary_gene_track)	32245
 	mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	30738
 	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	3243
 	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	3568
+	gene:WormBase_imported	WormBase_imported	gene	Genes (primary_gene_track)	0
 	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (primary_gene_track)	0
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	0
 	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	0
