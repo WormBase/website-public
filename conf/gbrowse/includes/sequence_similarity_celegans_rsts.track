@@ -1,0 +1,11 @@
+[SEQUENCE_SIMILARITY_CELEGANS_RSTS]
+key           = C. elegans RSTs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:celegans_RSTs-BLAT
+glyph         = segments
+citation      = <i>C. elegans</i> RACE Sequence Tags aligned to the genome using 
+	        <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+bgcolor       = yellow
+fgcolor       = black
+height        = 4
+connector     = solid

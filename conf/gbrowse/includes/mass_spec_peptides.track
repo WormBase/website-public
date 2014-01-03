@@ -1,0 +1,41 @@
+[MASS_SPEC_PEPTIDES]
+# Individual spans
+feature      = translated_nucleotide_match:mass_spec_genome
+key           = Mass spec peptides
+category      = Sequence Features:Translated Features
+glyph         = segments
+draw_target   = 1
+show_mismatch = 1
+ragged_start  = 1
+connector     = dashed
+connector_color = gray
+fgcolor       = black
+bgcolor       = sub {
+		my $feature = shift;
+		my $name = $feature->name;
+		return 'red';
+	}
+link          = sub { my $f   = shift;
+                my $name = $f->name;
+                return "/get?name=$name;class=Mass_spec_peptide";
+        }
+height        = 7
+label         = sub { 
+		my $f = shift;
+		my $name = $f->name;
+		$name =~ s/^MSP://;
+		return $name;
+	}
+#group_pattern = /^Mass_spec_peptide:[.*]/
+description  = sub { return undef; }
+#description = sub { 
+#		my $f = shift;
+#		my $exons = $f->attributes('Exons_covered');
+#		return $exons;
+#}
+#title   = sub {
+#		my $f = shift;
+#		return $f->attributes('Exons_covered');
+#	}
+citation      = This track shows peptides identified in mass spec proteomics
+                experiments.

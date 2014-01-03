@@ -1,0 +1,19 @@
+[MICRO_ORF]
+feature      = five_prime_open_reading_frame:micro_ORF
+glyph        = box
+category     = Transcription:Supporting Evidence
+bgcolor      = green
+key          = Micro ORF
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+label     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		my $notes  = $f->notes;
+		$notes     = $name if ($notes eq '');
+		return "$notes";
+	}    
+citation     = The location of micro ORFs with experimental evidence.

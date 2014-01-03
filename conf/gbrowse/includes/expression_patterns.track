@@ -1,0 +1,54 @@
+[EXPRESSION_PATTERNS]
+key           = Expression patterns
+category      = Expression
+feature       = reagent:Expr_pattern
+glyph         = sub {
+		  my $name = shift->name;
+		  my $png = -e "/usr/local/wormbase/website-shared-files/images/expression/assembled/$name.png";
+	          return $png ? 'image' : 'span';
+                }
+glyph_delegate = span
+image         = sub {
+                  my $f = shift;
+                  my $flip = $f->strand > 0 ? ';flip=1' : '';
+                  my $name = $f->name;	
+                  "/db/gene/expression?name=$name;draw=1;thumb=250$flip";
+                }
+link          = /get?name=$name;class=Expr_pattern
+balloon hover = sub {
+	          my $name   = shift->name;
+		  my $length = shift->length;
+		  my $png = -e "/usr/local/wormbase/website-shared-files/images/expression/assembled/$name.png";
+                  my $cartoon = $length > 99999 && $png ? ';cartoon=1' : '';
+		  "url:/gbrowse_popup?name=$name;type=EXPR_PATTERN$cartoon";
+		}
+bgcolor       = silver
+fgcolor       = black
+height        = 8
+fontcolor     = blue
+label         = sub {
+                  my $f = shift;
+#                  my $ace = ElegansSubs::OpenDatabase();
+#                  my $obj = $ace->fetch($f->class => $f->name);
+#                  my ($gene) = ElegansSubs::Bestname($obj->Gene);
+#                  my ($construct) = $obj->Transgene;
+#                  $gene .= " ($construct)" if $construct;
+#                  $gene;
+                }
+citation      = This track represents sequences that were used for in vivo expression pattern analysis,
+                such as promoter sequences for GFP or LacZ constructs.  Colored areas in the worm
+                image represent approximate regions where adult or late larval expression has been
+                documented via Anatomy Ontology terms.  The strand of the sequence (promoter) region
+                used is indicated by color in the same way as genes, where violet is the forward
+                strand and turqoise is the reverse strand.  Clicking on the worm image will take you
+                to a detailed view of the expression pattern.
+
+
+[EXPRESSION_PATTERNS:40000]
+image         = sub {"/db/gene/expression?draw=1;thumb=225;name=".shift->name}
+[EXPRESSION_PATTERNS:60000]
+image         = sub {"/db/gene/expression?draw=1;thumb=200;name=".shift->name}
+[EXPRESSION_PATTERNS:80000]
+image         = sub {"/db/gene/expression?draw=1;thumb=175;name=".shift->name}
+[EXPRESSION_PATTERNS:100000]
+glyph         = span

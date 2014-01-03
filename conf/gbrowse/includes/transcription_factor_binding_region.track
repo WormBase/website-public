@@ -1,0 +1,19 @@
+[TRANSCRIPTION_FACTOR_BINDING_REGION]
+key           = Transcription factor binding regions
+feature       = TF_binding_site:TF_binding_site_region
+category      = Sequence Features:Binding Sites & Regions
+glyph         = box
+bgcolor       = green
+fgcolor       = black
+label         = sub {
+	      my $f = shift;
+	      my $name = $f->name;
+	      return $name;
+	      }
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+citation      = Regions within which there is experimental evidence of one or more
+                binding sites of a transcription factor.

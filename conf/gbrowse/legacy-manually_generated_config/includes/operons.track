@@ -1,0 +1,8 @@
+key          = Operons
+category     = Genes
+feature      = operon:operon
+glyph        = generic
+strand_arrow = 1
+bgcolor      = green
+height       = 10
+description  = 1

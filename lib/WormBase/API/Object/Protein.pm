@@ -852,7 +852,7 @@ sub _build_tracks {
 
     return {
         description => 'Protein specific tracks to display in GBrowse.',
-        data => [qw(CODING_TRANSCRIPTS MOTIFS)]
+        data => [qw(PRIMARY_GENE_TRACK PROTEIN_MOTIFS)]
     };
 }
 

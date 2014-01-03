@@ -1,0 +1,25 @@
+[PREDICTION_RNAZ]
+key          = RNAz non-coding RNA genes
+category     = Transcription:Ab-initio predictions
+feature      = ncRNA:RNAz
+glyph        = transcript
+bgcolor      = white
+fgcolor      = black
+forwardcolor = violet
+reversecolor = cyan
+utr_color    = gray
+font2color   = blue
+label        = sub { 
+		my $f = shift;
+		my $name = $f->display_name;
+		return $name;
+	}
+description = sub {
+	my $f = shift;
+	my $notes = join ' ',$f->notes;
+	return $notes;
+    }
+link   = 0
+citation     = RNAz-derived ncRNAs were predicted using
+        the <a href="http://www.tbi.univie.ac.at/~wash/RNAz/">RNAz algorithm</a>.
+        Please select the RNA for more details.

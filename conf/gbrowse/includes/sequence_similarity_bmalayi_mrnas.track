@@ -1,0 +1,12 @@
+[SEQUENCE_SIMILARITY_BMALAYI_MRNAS]
+key           = B. malayi mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:bmalayi_mRNAs-BLAT       
+glyph         = segments
+bgcolor       = limegreen
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>B. malayi</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

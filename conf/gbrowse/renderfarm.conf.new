@@ -1,0 +1,8 @@
+[GENERAL]
+
+renderfarm = 0
+
+remote renderer = 
+       http://localhost:8101 
+       http://localhost:8102 
+       http://localhost:8103

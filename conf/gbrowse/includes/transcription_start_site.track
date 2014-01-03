@@ -1,0 +1,12 @@
+[TRANSCRIPTION_START_SITE]
+feature       = TSS:RNASeq
+category      = Transcription:Signals
+glyph         = box
+bgcolor       = white
+fgcolor       = black
+label         = sub {
+	      my $f = shift;
+	      return $f->notes || $f;
+	      }
+key           = Transcription start site
+citation      = Transcription_start_site defined by analysis of RNASeq short read datasets (example Hillier et al.)

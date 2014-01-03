@@ -26,7 +26,7 @@ has 'tracks' => (
     default => sub {
         return {
             description => 'tracks displayed in GBrowse',
-            data        => [qw/PRIMARY_GENE_TRACK OP/],
+            data        => [qw/PRIMARY_GENE_TRACK OPERONS/],
         };
     }
 );

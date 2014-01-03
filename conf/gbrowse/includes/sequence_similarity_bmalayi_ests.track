@@ -1,0 +1,13 @@
+[SEQUENCE_SIMILARITY_BMALAYI_ESTS]
+key            = B. malayi ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:bmalayi_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = limegreen
+fgcolor        = black
+height         = 4
+connector      = solid
+link           = AUTO
+citation       = <i>B. malayi</i> ESTs aligned to the genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

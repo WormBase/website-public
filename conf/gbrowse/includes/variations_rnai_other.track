@@ -1,0 +1,27 @@
+[VARIATIONS_RNAI_OTHER]
+feature       = RNAi_reagent:RNAi_secondary
+key           = RNAi experiments (secondary targets)
+category      = Alleles, Variations, RNAi
+glyph         = segments
+bgcolor       = red
+fgcolor       = black
+height        = 4
+label         = sub {
+		my $f = shift;
+		my $name   = $f->attributes('History_name');		
+		my $string = $name ? $name : $f->name;
+		return $string;
+	}
+description    = sub {
+		my $f = shift;
+		my $source = $f->attributes('Laboratory');
+		my $string = $source ? "source lab: $source" : '';
+		return $string;
+	}
+citation      = This track represents RNAi probes that have been aligned to the genome 
+                using BLAST program and have sequence identity to the target location 
+                from 80 to 94.99% over a stretch of at least 200 nt. Probes that satisfy
+                these criteria may or may not produce RNAi effect on overlapping genes
+                and the corresponding locations represent possible secondary 
+                (unintended) genomic targets of an RNAi experiment. Click on the RNAi 
+                element to get more information about the experiment.

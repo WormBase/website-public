@@ -1,0 +1,21 @@
+[POLYSOMES]
+key          = Polysomes
+category     = Expression
+feature      = mRNA_region:Polysome_profiling
+glyph        = box
+bgcolor      = green
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+label     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		my $notes  = $f->notes;
+		$notes     = $name if ($notes eq '');
+		return "$notes";
+	}    
+citation     = This data is from the The Lamm et al. (2011) PMID: 21177965 paper
+               finding regions bound by the polysome fraction of RNAs being actively
+               translated.

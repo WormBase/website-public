@@ -1,0 +1,17 @@
+finish porting tracks
+       - mostly reagents
+
+continue simplifying config generation code
+	 (many of the stanzas could be generated automatically for a single template)
+
+
+
+
+[general]
+reference class
+examples
+search attributes
+automatic classes
+
+label_transcripts  (track defaults)
+

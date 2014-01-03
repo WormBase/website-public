@@ -1,0 +1,10 @@
+[SEQUENCE_SIMILARITY_CELEGANS_PROTEINS_BLASTX]
+feature       = protein_match:celegans_proteins-BLASTX
+key           = C. elegans proteins
+category      = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      = Matches to WormBase C. elegans proteins, aligned with BLASTX 
+                 (nucleotide to protein, via six-frame translation).

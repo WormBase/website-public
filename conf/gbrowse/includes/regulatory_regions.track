@@ -1,0 +1,18 @@
+[REGULATORY_REGIONS]
+# EG WBsf047577; V:8387251..8387261
+key          = Regulatory regions
+category     = Sequence Features:Binding Sites & Regions
+feature      = regulatory_region:regulatory_region
+glyph        = box
+bgcolor      = green
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+label     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		return $name;
+	}    
+citation     = Assorted or unspecified regulatory elements with experimental evidence.

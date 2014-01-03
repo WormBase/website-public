@@ -1,0 +1,100 @@
+[VARIATIONS_MILLION_MUTATION_PROJECT]
+feature      =       point_mutation:Million_mutation
+               complex_substitution:Million_mutation
+                           deletion:Million_mutation
+                     insertion_site:Million_mutation
+                sequence_alteration:Million_mutation
+category     = Alleles, Variations, RNAi
+key          = Million Mutation Project
+label        = sub {
+	     my $f = shift;
+	     my %attributes = $f->attributes;
+	     my $name = $attributes{public_name} || $f->name;
+	     if ($name =~ /^WBVar/) {
+	         ($name) = $f->attributes('other_name') || $name;
+             }	     
+	     return join('-',@$name);   
+	      }	      
+description  = sub {
+		my $f = shift;
+		my $m = $f->method;
+		$m =~ s/_/ /g;
+		return $m;
+ 	}
+glyph        = sub {
+		my $f = shift;
+		my $m = $f->method;
+		return 'triangle' if $m eq 'insertion_site';
+		return 'triangle' if $m eq 'mobile_element_insertion';
+		return 'box'      if $m eq 'complex_substitution';
+		return 'box'      if $m eq 'deletion';
+		return 'diamond'  if $m eq 'substitution';
+		return 'diamond'  if $m eq 'point_mutation';
+		return 'generic';
+	}
+bgcolor      = sub {
+		my $f = shift;
+		my $m = $f->method;
+	        my %attributes = $f->attributes();
+		return 'green'  if $attributes{consequence} eq 'missense';
+		return 'yellow' if $attributes{consequence} eq 'coding_exon';
+		return 'red'    if $attributes{consequence} eq 'nonsense';
+		return 'blue'   if $attributes{consequence} eq 'frameshift';
+		return 'white'; # insertion_site, mobile_element_insertion	
+#		return 'red'    if $m eq 'deletion';
+#		return 'yellow' if $m eq 'point_mutation';
+#		return 'yellow' if $m eq 'substitution';
+#		return 'blue'   if $m eq 'complex_substitution';		
+#		return 'white'; # insertion_site, mobile_element_insertion
+	}
+fgcolor      = black
+font2color   = blue
+height       = 8
+link         = sub {
+                  my $f = shift;
+                  my $name = $f->name;
+                  return "/get?name=$name;class=Variation";
+      }
+balloon hover = sub {
+	           my $f    = shift;
+		   my $type = $f->type;
+		   $type =~ s/_/ /g;
+
+		   my ($name)        = $f->attributes('public_name');
+		   #$name ||= $f->display_name;
+		   my ($consequence) = $f->attributes('consequence');
+		   $consequence =~ s/_/ /g;
+
+		   my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
+		   my ($status)    = $f->attributes('status');
+		   my ($nt_change) = $f->attributes('substitution') || $f->attributes('insertion');
+		   my ($aa_change) = $f->attributes('aachange');
+		   my ($interpolated_map_position) = $f->attributes('interpolated_map_position');
+
+		   # We might want to be a little fancier with sources, like linking to the resource.
+                   my $source = $f->source; 
+		   my $sanitized_source = $source;
+		   $sanitized_source =~ s/_Polymorphisms//g;
+		   $sanitized_source =~ s/_/ /g;
+
+		   my @notes = ("<b>Million Mutation SNP: $name</b>");
+		   push (@notes,"type: $type");
+		   push (@notes,"status: $status")                  if $status;
+		   push (@notes,"position: $ref:$start..$stop");
+		   push (@notes,"nucleotide change: $nt_change")     if $nt_change;
+		   push (@notes,"amino acid change: $aa_change")     if $aa_change;
+           	   push (@notes,"consequence: " . lc($consequence)) if $consequence;
+           	   push (@notes,"interpolated map position: $interpolated_map_position")   if $interpolated_map_position;
+		   my ($strains) = $f->attributes('strain');
+		   if ($strains) {
+		      my $strains = join(', ',map { '<a href="http://www.wormbase.org/db/get?class=Strain;name=' . $_ . '">' . $_ . '</a>' } split(',',$strains));
+		      push @notes,"strains: $strains"; 
+		   }
+
+		   push (@notes,"source: $sanitized_source");  # maybe a link to resource, too?	
+		   return join('<br />',@notes);
+	}
+citation     = This track shows SNPs from the The Million Mutation Project (Waterston/Moerman).
+               The color of the SNP represents its potental effect on a gene. Green indicates a
+	       possible missense; red a possible nonsense; blue a frameshift; yellow a 
+	       disruption of a coding exon(s); and white for everything else.
