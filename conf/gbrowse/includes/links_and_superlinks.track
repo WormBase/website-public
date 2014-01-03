@@ -1,0 +1,12 @@
+[LINKS_AND_SUPERLINKS]
+key           = Links and Superlinks
+category      = Genome Structure:Assembly & Curation
+feature       = assembly_component:Genomic_canonical assembly_component:Link
+fgcolor       = black
+glyph         = arrow
+das category  = structural
+height        = 7
+tick          = 2
+relative_coords = 1
+citation      = This track shows the location and coordinates of contigs
+	        created during the assembly of the C. elegans genome.

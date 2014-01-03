@@ -1,0 +1,11 @@
+[G4_MOTIF]
+feature       = G_quartet:pmid18538569
+category      = Sequence Features:Signals & Motifs
+bgcolor       = magenta
+fgcolor       = black
+height        = 7
+connector     = none
+key           = G4 Motif
+citation      = This track shows the extent of G4 DNA signature. G4 motif is "Intrinsically mutagenic motif, probably
+         because it can form secondary structures during DNA replication". Data are from Kruisselbrink E et al. (2008)
+         Curr Biol "Mutagenic Capacity of Endogenous G4 DNA Underlies Genome Instability in ....".

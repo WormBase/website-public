@@ -1,0 +1,148 @@
+# C. elegans specific gene predictions
+[PREDICTION_GENEFINDER]
+key          = Prediction: GeneFinder
+category     = Genes
+feature      = CDS:Genefinder
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+
+[PREDICTION_GENEFINDER:75000]
+glyph        = box
+strand_arrow = 1
+link         = 0
+
+[PREDICTION_GENEMARKHMM]
+key          = Prediction: GeneMarkHMM
+category     = Genes
+feature      = CDS:GeneMarkHMM
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+citation     = These are GeneMarkHMM gene predictions provided by Mark Borodovsky. 
+
+[PREDICTION_GENEMARKHMM:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0
+
+[PREDICTION_JIGSAW]
+key          = Prediction: Jigsaw
+category     = Genes
+feature      = CDS:Jigsaw
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+ 
+[PREDICTION_JIGSAW:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0
+
+
+
+
+
+[PREDICTION_MGENE]
+key          = Prediction: mGene
+category     = Genes
+feature      = CDS:mGene
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+ 
+[PREDICTION_MGENE:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0
+
+[PREDICTION_mSPLICER_TRANSCRIPT]
+key          = Prediction: mSplicer
+category     = Genes
+feature      = CDS:mSplicer_transcript
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+citation     = mSplicer predict the splice forms for a given start and
+	       end of a transcript. (Note that it is not yet a
+               full-featured gene-finder.) There are two versions:
+               1. "mSplicer" which splices general pre-mRNA (including
+               UTR or coding regions) without assuming the existence of a
+               reading frame (requires transcription start and stop).
+               2. "mSplicer-ORF" is optimized for coding regions and
+               requires the knowledge of the translation start and stop.
+               These predictions were generated against regions annotated
+               in WS160. More details can be found at <a href="http://www.fml.mpg.de/raetsch/projects/msplicer">http://www.fml.mpg.de/raetsch/projects/msplicer</a>.
+
+[PREDICTION_mSPLICER_TRANSCRIPT:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0
+
+[PREDICTION_mSPLICER_ORF]
+key          = Prediction: mSplicer-ORF
+category     = Genes
+feature      = CDS:mSplicer_orf
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+citation     = mSplicer predict the splice forms for a given start and
+	       end of a transcript. (Note that it is not yet a
+               full-featured gene-finder.) There are two versions:
+               1. "mSplicer" which splices general pre-mRNA (including
+               UTR or coding regions) without assuming the existence of a
+               reading frame (requires transcription start and stop).
+               2. "mSplicer-ORF" is optimized for coding regions and
+               requires the knowledge of the translation start and stop.
+               These predictions were generated against regions annotated
+               in WS160. More details can be found at <a href="http://www.fml.mpg.de/raetsch/projects/msplicer">http://www.fml.mpg.de/raetsch/projects/msplicer</a>.
+
+[PREDICTION_mSPLICER_ORF:75000]
+glyph        = box
+strand_arrow = 1
+link         = 0
+
+[PREDICTION_TWINSCAN]
+key          = Prediction: Twinscan
+category     = Genes
+feature      = CDS:twinscan
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+ 
+[PREDICTION_TWINSCAN:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0
+
+[RNAz]
+key          = RNAz non-coding RNA genes
+category     = Genes
+feature      = ncRNA:RNAz
+glyph        = transcript
+bgcolor      = white
+fgcolor      = black
+forwardcolor = violet
+reversecolor = cyan
+utr_color    = gray
+font2color   = blue
+label        = sub { 
+		my $f = shift;
+		my $name = $f->display_name;
+		return $name;
+	}
+description = sub {
+	my $f = shift;
+	my $notes = join ' ',$f->notes;
+	return $notes;
+    }
+link   = 0
+citation     = RNAz-derived ncRNAs were predicted using
+        the <a href="http://www.tbi.univie.ac.at/~wash/RNAz/">RNAz algorithm</a>.
+        Please select the RNA for more details.

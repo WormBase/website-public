@@ -1,0 +1,10 @@
+[SEQUENCE_SIMILARITY_CJAPONICA_PROTEINS_BLASTX]
+feature       = protein_match:cjaponica_proteins-BLASTX
+key           = C. japonica proteins
+category      = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      = Matches to WormBase C. japonica proteins, aligned with BLASTX 
+                 (nucleotide to protein, via six-frame translation).

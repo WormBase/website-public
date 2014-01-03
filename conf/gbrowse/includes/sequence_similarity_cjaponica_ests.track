@@ -1,0 +1,13 @@
+[SEQUENCE_SIMILARITY_CJAPONICA_ESTS]
+key            = C. japonica ESTs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:cjaponica_ESTs-BLAT
+glyph          = segments
+split_on_cigar = 1
+bgcolor        = olive green
+fgcolor        = black
+connector      = solid
+height         = 4
+link           = AUTO
+citation       = <i>C. japonica</i> ESTs aligned to genome using 
+                 <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

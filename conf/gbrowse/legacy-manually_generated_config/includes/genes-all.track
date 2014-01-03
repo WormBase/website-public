@@ -1,0 +1,115 @@
+# [PRIMARY_GENE_TRACK]
+# Key and citation should be provided by each species.
+# key          = Genes
+category     = Genes
+feature  = gene:WormBase gene:WormBase_imported
+glyph = gene
+title = sub {
+	 my $f = shift;
+	 return "Curated transcript " . $f->display_name . "<br /><i>click for details";
+	 }
+label    = sub { 
+		my $f = shift;
+		my ($locus)  = $f->attributes('locus');
+		my ($name) = $f->attributes('sequence_name');
+		return $locus ? "$locus ($name)" : $name;
+	}
+description  = sub {	     
+	my $f = shift;
+	my ($biotype) = $f->attributes('biotype');
+	$biotype =~ s/_/ /g;
+	# Eventually, there should be notes to add as well.
+#	my $tags   = join(';',$f->get_all_tags());
+#	return $tags;
+	return $biotype;	
+       }
+bgcolor = sub {
+	     my $f = shift;
+	     my $type = $f->type;
+   	     # Component parts:
+	     # ncRNAs : gene > ncRNA > exon
+	     # coding : gene > mRNA > CDS
+	     return 'gray'   if $f->type =~ /exon|pseudogene|ncrna/i;
+	     return 'violet' if $f->strand > 0;
+	     return 'turquoise';
+	     }
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height  = sub {
+	my $f = shift;
+	# Component parts:
+	# ncRNAs : gene > ncRNA > exon
+	# coding : gene > mRNA > CDS
+	return $f->type =~ /mRNA|CDS|UTR/i ? 10 : 6;
+	}
+link = sub {
+        my $f = shift;
+	my $transcript = $f->name; # Either a WBGene or transcript name
+
+	# We won't link these
+	return if $f->type eq 'ncRNA:RNAz';
+	
+	# Protein coding genes: to gene or transcript?
+	my ($locus)  = $f->attributes('locus');
+
+	# We are clicking on the grouped gene: link to the Gene Report
+	if ($f->type =~ /Gene/i) {
+   	        return "/get?name=$transcript;class=Gene";
+            # Otherwsie, we are clicking on a child feature. Link to the transcript.
+        } elsif ($transcript && $locus) {
+		return "/get?name=$transcript;class=Transcript";
+        } else {
+    	    return "/get?name=$transcript;class=Gene";
+        }
+     }
+box_subparts = 1
+balloon hover  = sub {
+	my $f = shift;
+
+	my ($transcript) = $f->attributes('sequence_name');
+	$transcript ||= $f->name; 
+	
+	# In the balloon, provide some additional (conditional) information on
+	# each individual transcript
+	# We could also, eg, include direct links to protein reports
+
+	my ($locus)  = $f->attributes('locus');
+		
+	# Biotypes are only associated with gene features.
+	# Depending on the current entity, we may not have direct access.
+	my $message;
+	my $type;
+	if ($f->type =~ /gene/i) {
+            ($type) = $f->attributes('biotype');
+	    $type =~ s/_/ /g;
+        } elsif ($f->type =~ /mRNA/i) {
+	    $type = 'protein coding';
+	    $message = "<i>click to view Transcript Report</i>";
+	} 
+
+	# Display some additional information if mousing over a child feature.
+	my @return;
+	if ($type) {
+		push @return,"<b>$transcript</b>";
+        	push @return,"Type: $type"            if $type;
+ 		push @return,"Locus: <i>$locus</i>"   if $locus;
+        } else {
+		 # top-level feature
+		 if ($transcript && $locus) {
+	     	    push @return,"<b>$locus ($transcript)</b>";
+		 } else {
+	     	    push @return,"<b>$transcript</b>";
+        	 }    
+	     	 push @return,"<i>click to view Gene Report</i>";
+         }
+	return join("<br />",@return,$message);
+     }
+
+
+
+[PRIMARY_GENE_TRACK:150000]
+glyph        = generic
+strand_arrow = 1
+bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+description  = 0

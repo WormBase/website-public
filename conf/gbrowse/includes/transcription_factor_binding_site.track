@@ -1,0 +1,20 @@
+[TRANSCRIPTION_FACTOR_BINDING_SITE]
+# EG: WBsf047616, III:12550176..12550196
+key           = Transcription factor binding sites
+feature       = TF_binding_site:TF_binding_site
+category     = Sequence Features:Binding Sites & Regions
+glyph         = box
+bgcolor       = green
+fgcolor       = black
+label         = sub {
+	      my $f = shift;
+	      my $name = $f->name;
+	      return $name;
+	      }
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+citation      = Sites where there is experimental evidence of a transcription factor
+                binding site.

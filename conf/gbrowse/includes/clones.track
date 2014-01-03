@@ -1,0 +1,41 @@
+[CLONES]
+feature       = region:Vancouver_fosmid 
+	        assembly_component:Genomic_canonical	      
+fgcolor       = sub {
+		my $feature = shift;
+		return 'aqua' if !defined $feature->start || !defined $feature->stop;
+		return 'black';
+	}
+das category   = structural
+category      = Reagents
+glyph         = anchored_arrow
+height        = 7
+key           = YACs, Fosmids, & Cosmids
+font2color    = aqua
+description   = sub {
+		my $feature = shift;
+		return 'Warning: Clone end(s) not known/shown.'
+			unless defined $feature->start && defined $feature->end;
+		1;
+	}
+title         = sub {
+		my $f = shift;
+			my $start = $f->start;
+			my $ref = $f->ref;
+			my $stop = $f->stop;
+			my $name = $f->name;
+		if ($f->source eq 'Vancouver_fosmid') {
+			return "Vancouver fosmid: $name $ref:$start..$stop";
+		}
+		$start ||= '-';
+		$stop  ||= '-';
+		return "YACs, Fosmids, & Cosmids: $name $ref:$start..$stop";
+	}
+citation      = This track shows the locations of the cosmids, fosmids, and YACs used for the
+	physical mapping and sequencing of the C. elegans genome.  The clone termini
+	do not necessarily correspond to the termini of submitted GenBank/EMBL entries.
+	In some cases the exact termini of the clones is not known.  For example, YACs
+	were sequenced using PCR amplification across gaps in the cosmid maps.  When
+	a clone end is not known, it is shown as an arrow extending to the end of the 
+	display.  Such data is to be treated with caution.  The Vancouver fosmids can be ordered directly 
+        from <a href="http://www.geneservice.co.uk/products/clones/Celegans_Fos.jsp">GeneService</a>.

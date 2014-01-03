@@ -1,0 +1,12 @@
+[SEQUENCE_SIMILARITY_CBRIGGSAE_MRNAS]
+key           = C. briggsae mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:cbriggsae_mRNAs-BLAT
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>C. briggsae</i> mRNAs aligned to the genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

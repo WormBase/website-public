@@ -1,0 +1,36 @@
+[RNASEQ_SPLICE]
+key          = RNASeq introns
+category     = Expression
+feature      = intron:RNASeq_splice
+glyph        = box
+bgcolor      = green
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+height    = sub { 
+	  my $f = shift;
+	  my $score = $f->score;
+	  # range of 1-100
+	  my $height = int($score / 2);
+	  $height = 50 if ($score > 100);
+	  $height = ($height == 0 || $height == 1) ? 2 : $height;
+	  return $height;
+	  }
+label     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		return $name;
+	}    
+title     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		my $notes  = $f->notes;
+		$notes     = $name if ($notes eq '');
+		return "$notes";
+	}    
+citation    = These are introns formed by aligned RNASeq reads spanning a
+	      region of the genome. Alignments of short read sequences from
+	      all available RNASeq projects were used. The number of reads
+	      spanning the introns is indicated by the thickness of the display.

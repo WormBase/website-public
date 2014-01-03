@@ -1,0 +1,75 @@
+# [GENES_PROTEIN_CODING]
+# key          = Genes (protein coding)  # provided by INCLUDER
+category     = Genes
+feature = CDS:WormBase
+glyph = gene
+title = sub {
+	 my $f = shift;
+	 return "Curated transcript " . $f->display_name . "<br /><i>click for details";
+	 }
+label    = sub { 
+		my $f = shift;
+		my ($locus)  = $f->attributes('locus');
+		my ($name) = $f->display_name;
+		return $locus ? "$locus ($name)" : $name;
+        }	
+link = sub {
+        my $f = shift;
+        my $name = $f->attributes('Gene') || $f->name;
+        return "/get?name=$name;class=Gene";
+        }
+description  = sub {             
+        my $f = shift;
+        my $type = $f->type;
+        # Component parts:
+        # coding : gene > mRNA > CDS
+	return 'protein coding';
+
+	# Eventually, there should be notes to add as well.
+#	my $tags   = join(';',$f->get_all_tags());
+#	return $tags;
+       }
+bgcolor = sub {
+             my $f = shift;
+             my $type = $f->type;
+                # Component parts:
+             # ncRNAs : gene > ncRNA > exon
+             # coding : gene > mRNA > CDS
+             return 'gray'   if $f->type =~ /exon|pseudogene/i;
+             return 'violet' if $f->strand > 0;
+             return 'turquoise';
+             }
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height  = sub {
+        my $f = shift;
+        # Component parts:        
+        # coding : gene > mRNA > CDS
+        return $f->type =~ /mRNA|CDS|UTR/i ? 10 : 6;
+        }
+balloon hover  = sub {
+	my $f = shift;
+
+	my ($transcript) = $f->display_name; 
+	my ($locus)  = $f->attributes('locus');
+		
+	my @return;
+	if ($transcript && $locus) {
+	       push @return,"<b>$locus ($transcript)</b>";
+	} else {
+	       push @return,"<b>$transcript</b>";
+        }    
+	push @return,"<i>click to view Gene Report</i>";        
+	return join("<br />",@return);
+     }
+citation = A subset of the full Curated Genes set limited to protein-coding genes only.
+           Only the CDS is represented. Full models (with UTRs) can be seen on the 
+	   "Curated Genes" track.
+
+
+[GENES_PROTEIN_CODING:150000]
+glyph        = generic
+strand_arrow = 1
+bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
+description  = 0

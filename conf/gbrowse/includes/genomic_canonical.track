@@ -1,0 +1,26 @@
+[GENOMIC_CANONICAL]
+feature       = assembly_component:Genomic_canonical
+fgcolor       = sienna
+glyph         = arrow
+das category  = similarity
+category      = Genome Structure:Assembly & Curation
+label         = sub {
+		my $f = shift;
+		my $note = $f->attributes('Note');
+	        my ($gb) = $note =~ /Genbank\s+(\S+)/;
+		my $retval = $f->name;
+		$retval .= " (Genbank $gb)" if $gb;
+               }
+height        = 7
+tick          = 2
+relative_coords = 1
+key           = Contig submissions
+citation      = This track shows the location and coordinates of contigs
+        (mostly cosmids) submitted to GenBank/EMBL.
+link          = sub {
+                my $f = shift;
+                my $note = $f->attributes('Note');
+                my ($gb) = $note =~ /Genbank\s+(\S+)/;
+                $gb || return undef;
+		"http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=Search&db=Nucleotide&doptcmdl=GenBank&term=${gb}[accn]";
+                }

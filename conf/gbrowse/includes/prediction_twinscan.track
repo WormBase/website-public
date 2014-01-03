@@ -1,0 +1,13 @@
+[PREDICTION_TWINSCAN]
+key          = Prediction: Twinscan
+category     = Transcription:Ab-initio predictions
+feature      = CDS:twinscan
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+ 
+[PREDICTION_TWINSCAN:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0

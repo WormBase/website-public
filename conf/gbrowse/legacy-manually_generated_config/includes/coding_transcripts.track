@@ -1,0 +1,77 @@
+[CODING_TRANSCRIPTS]
+category = Genes
+key      = All Transcripts
+feature  = gene:WormBase
+glyph    = gene
+title    = sub {
+	 my $f = shift;
+	 return "Coding transcripts for " . $f->display_name;
+	 }
+label    = sub { 
+		my $f = shift;
+		my ($locus)  = $f->attributes('locus');
+		my ($child) = $f->get_SeqFeatures;
+		my $name    = $child->display_name;
+		return $locus ? "$locus ($name)" : $name;
+	}
+description  = sub {	     
+	my $f = shift;
+	my ($biotype) = $f->attributes('biotype');
+	# or...
+#	$f->get_tag_values('biotype'));
+	$biotype =~ s/_/ /g;
+#	my $tags   = join(';',$f->get_all_tags());
+#	return $tags;
+	return $biotype;	
+       }
+bgcolor      = sub {
+	     my $f = shift;
+	     my $type = $f->type;
+	     # Component parts:
+	     # ncRNAs : ncRNA > exon
+	     # coding : mRNA > CDS
+	     return 'gray'   if $type =~ /ncrna|pseudogene|exon/i;
+	     return 'violet' if $f->strand > 0;
+	     return 'turquoise';
+	     }
+fgcolor      = black
+utr_color    = gray
+font2color   = blue
+height  = sub {
+	my $f = shift;
+	# Component parts:
+	# ncRNAs : ncRNA > exon
+	# coding : mRNA > CDS
+	return $f->type =~ /mRNA|UTR|CDS/i ? 10 : 6;
+	}
+# Balloon not working; something wrong with either 'name' assignment or 'type' setting.
+#balloon hover  = sub {
+#		my $f = shift;
+#		my $name = join(", ", $f->get_tag_values('gene')) || $f->load_id;
+#		$name =~ s/^[a-zA-Z]+://;
+#		my $class = $f->class;
+#		return "url:/gbrowse_popup?name=$name;class=$class;type=PRIMARY_GENE_TRACK";
+#	} 
+link = sub {
+		my $f = shift;
+		my ($name) = $f->get_tag_values('Name');
+		return if $f->type eq 'ncRNA:RNAz';
+		return "/get?name=$name;class=Transcript";
+	}
+citation = Protein-coding gene structures result from the integration of a variety 
+           of prediction methods and data sources followed by manual review and revision
+           by WormBase curators. tRNAs are predicted by tRNAscan, and other non-coding 
+           RNA transcripts are taken from a variety of literature sources. 
+           The purple and blue colors indicate transcripts on the forward and reverse 
+           strands respectively. If sufficient room is available between features, gene 
+           models end with a triangle; if not a small arrow is used. 
+           Grey areas represent 5' and 3' UTRs of protein-coding transcripts, assigned  
+           automatically using the extents of overlapping ESTs and full-length cDNAs. The 
+           UTR predictions have not been reviewed by WormBase curators, and some are 
+           known to contain artifacts.
+
+[CODING_TRANSCRIPTS:150000]
+glyph        = generic
+strand_arrow = 1
+bgcolor      = sub {shift->strand>0 ? 'violet' : 'turquoise'}
+description = 0

@@ -1,0 +1,13 @@
+[PREDICTION_JIGSAW]
+key          = Prediction: Jigsaw
+category     = Transcription:Ab-initio predictions
+feature      = CDS:Jigsaw
+glyph        = gene
+bgcolor      = palevioletred
+fgcolor      = palevioletred
+link         = 0
+ 
+[PREDICTION_JIGSAW:75000]   
+glyph        = box
+strand_arrow = 1
+link         = 0

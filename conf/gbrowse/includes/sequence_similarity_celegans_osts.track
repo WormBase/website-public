@@ -1,0 +1,11 @@
+[SEQUENCE_SIMILARITY_CELEGANS_OSTS]
+key           = C. elegans OSTs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:celegans_OSTs-BLAT
+glyph         = segments
+citation      = <i>C. elegans</i> Orfeome Sequence Tags aligned to the genome using 
+		<a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+bgcolor       = yellow
+fgcolor       = black
+height        = 4
+connector     = solid

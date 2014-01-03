@@ -1,0 +1,10 @@
+[OPERONS_DEPRECATED]
+key          = Operons (deprecated)
+category     = Genes
+feature      = operon:deprecated_operon
+glyph        = generic
+strand_arrow = 1
+bgcolor      = green
+height       = 10
+description  = 1
+citation     = These are historical operon predictions.

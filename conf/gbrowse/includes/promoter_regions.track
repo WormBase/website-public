@@ -1,0 +1,18 @@
+[PROMOTER_REGIONS]
+# EG WBsf034281; I:5165237..5165257
+key          = Promoter regions
+category     = Sequence Features:Binding Sites & Regions
+feature      = promoter:promoter
+glyph        = box
+bgcolor      = green
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+label     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		return $name;
+	}    
+citation     = Regions within which there is experimental evidence for a promoter.

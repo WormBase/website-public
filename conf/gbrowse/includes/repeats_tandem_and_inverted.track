@@ -1,0 +1,24 @@
+[REPEATS_TANDEM_AND_INVERTED]
+feature       = inverted_repeat:inverted
+	        tandem_repeat:tandem	        
+bgcolor       = bisque
+fgcolor       = black
+category      = Genome Structure:Repeats
+height        = 4
+key           = Tandem and Inverted Repeats
+connector     = none
+description   = sub {
+	my $f = shift;
+	my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
+	my $method = $f->method;
+	$method =~ s/_/ /g;
+	return join('; ',$f->notes,"$ref: $start..$stop");
+	}
+label         = sub {
+	my $f = shift;
+	my $method = $f->method;
+	$method =~ s/_/ /g;
+	return $method;
+	}
+link          = 0
+citation      = Exact tandem and inverted repetitive elements.

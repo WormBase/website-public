@@ -1,0 +1,12 @@
+[SEQUENCE_SIMILARITY_CREMANEI_MRNAS]
+key           = C. remanei mRNAs
+category       = Sequence Similarity:Nucleotide
+feature       = expressed_sequence_match:cremanei_mRNAS-BLAT
+glyph         = segments
+bgcolor       = violet
+fgcolor       = black
+height        = 4
+connector     = solid
+link          = AUTO
+citation      = <i>C. remanei</i> mRNAs aligned to genome using 
+                <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.

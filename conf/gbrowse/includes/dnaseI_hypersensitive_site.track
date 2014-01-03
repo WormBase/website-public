@@ -1,0 +1,19 @@
+[DNASEI_HYPERSENSITIVE_SITE]
+feature      = DNAseI_hypersensitive_site:DNAseI_hypersensitive_site
+glyph        = box
+category     = Sequence Features:Signals & Motifs
+bgcolor      = green
+key          = DNAseI hypersensitive site
+link         = sub {
+		my $f = shift;		
+		my $name   = $f->name;
+		return "/get?name=$name;class=Feature";
+	}
+label     = sub {
+		my $f = shift;
+		my $name   = $f->name;
+		my $notes  = $f->notes;
+		$notes     = $name if ($notes eq '');
+		return "$notes";
+	}    
+citation     = DNAse I hypersensitive sites from the 2009 paper by Shi et al.

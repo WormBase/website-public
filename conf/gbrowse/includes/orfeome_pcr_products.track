@@ -1,0 +1,23 @@
+[ORFEOME_PCR_PRODUCTS]
+key           = ORFeome PCR Products
+category      = Transcription:Supporting Evidence
+feature       = PCR_product:Orfeome
+glyph         = sub {
+		my $f = shift;
+		return 'primers' if $f->method eq 'PCR_product';
+		return 'box';
+	}	
+height        = 4
+fgcolor       = black
+connect       = 1
+#connect_color = \&ostp_color
+#font2color    = \&ostp_color
+#fgcolor       = \&ostp_color
+#description   = \&ostp_amplifies
+citation      = This track contains Orfeome Project primer pairs and RACE tags.  These primers were used to amplify
+	C. elegans cDNAs.  A positive amplification, shown in green, is evidence that the region
+	between the two primers is transcribed.  Failure to amplify, shown in red, suggests
+	either that the gene model is incorrect, or that the gene is expressed at very low levels.
+	Detailed gene models derived from ORFeome sequencing will be added to this display in
+	the future.  See <i>Reboul et al. Nat. Genet. 2003 Apr 7.</i> and 
+	<a href="http://worfdb.dfci.harvard.edu" target="_blank">WORFdb</a> for further information.

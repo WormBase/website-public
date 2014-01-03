@@ -1,0 +1,10 @@
+[SEQUENCE_SIMILARITY_HSAPIENS_PROTEINS_BLASTX]
+feature       = protein_match:hsapiens_proteins-BLASTX
+key           = H. sapiens proteins
+category      = Sequence Similarity:Proteins
+glyph         = segments
+bgcolor       = orange
+fgcolor       = black
+height        = 5
+citation      = Matches to Human proteins from Ensembl, aligned with BLASTX 
+                 (nucleotide to protein, via six-frame translation).

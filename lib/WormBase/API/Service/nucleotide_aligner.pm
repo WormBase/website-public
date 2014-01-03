@@ -33,20 +33,21 @@ use constant TGT_END   => 4;
 our %TYPES    = (BLAT_EST_BEST  => [qw(expressed_sequence_match:BLAT_EST_BEST)],
         BLAT_EST_OTHER  => [qw(alignment:BLAT_EST_OTHER)],
         BLAT_mRNA_BEST => [qw(alignment:BLAT_mRNA_BEST)],
-        BRIGGSAE   => [qw(waba_alignment)]
+#        BRIGGSAE   => [qw(waba_alignment)]
            );
 our %LABELS   = (
          BLAT_EST_BEST  => 'ESTs Aligned with BLAT (best)',
          BLAT_EST_OTHER => 'ESTs aligned by BLAT (other)',
          BLAT_mRNA_BEST => 'full-length mRNAs Aligned with BLAT (best)',
-         BRIGGSAE   => 'Briggsae Alignments (WABA)',
+#         BRIGGSAE   => 'Briggsae Alignments (WABA)',
          );
  
 our %TRACKS   = (
-         BLAT_EST_BEST  => 'ESTB',
-         BLAT_EST_OTHER => 'ESTO',
-         BLAT_mRNA_BEST => 'mRNAB',
-         BRIGGSAE   => 'WABA',
+         BLAT_EST_BEST  => 'EST_BEST',
+         BLAT_EST_OTHER => 'EST_OTHER',
+         BLAT_mRNA_BEST => 'MRNA_BEST',
+    # WS240 - this track / data no longer exist
+#         BRIGGSAE   => 'WABA',
          );
 
 sub index {

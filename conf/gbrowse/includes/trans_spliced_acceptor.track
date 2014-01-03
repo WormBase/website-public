@@ -1,0 +1,29 @@
+[TRANS_SPLICED_ACCEPTOR]
+key          = Trans-spliced acceptor
+category     = Transcription:Signals
+feature      = SL1_acceptor_site SL2_acceptor_site
+glyph        = triangle
+point        = 1
+orient       = sub {
+	my $f = shift;
+	my $strand  = $f->strand;
+	return 'E' if $strand > 0;
+	return 'W';
+	}
+bgcolor      = sub {
+	    my $f = shift;
+            return $f->source eq 'SL1' ? 'red' : 'green';
+	}
+font2color   = 'red';
+height       = 8
+label        = 0
+label density = 100
+description  = sub {
+		shift->source;
+	}
+link         = sub { my $f   = shift;
+                      my $name = $f->name;
+   	              return "/get?name=$name;class=Feature";
+	}
+citation     = These are SL1 and SL2 trans-spliced acceptors published by Blumenthal et al, 
+	       Nature 417: 851-854 (2002). SL1 acceptors are show in red, SL2 in green.
