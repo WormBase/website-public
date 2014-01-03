@@ -1346,7 +1346,6 @@ sub _compile_nucleotide_changes {
             my $change = $type->right;
             ($wt,$mut) = eval { $change->row };
 
-
             # How to know if ntides need to be revcomped?  
             # copy code from below, big ugly mess.  
             # Maybe we should store strand info for substitutions in ace?
@@ -1381,6 +1380,7 @@ sub _compile_nucleotide_changes {
                 ($wt,$mut) = split("/",$change);
             }
         }
+
 
         # Set wt and mutant labels
         if ($object->SNP(0) || $object->RFLP(0)) {
