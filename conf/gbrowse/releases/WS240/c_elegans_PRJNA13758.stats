@@ -93,10 +93,6 @@ gene:WormBase		WormBase	gene	Genes (primary_gene_track)	46746
 	mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	30250
 	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	23745
 	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	24807
-	gene:WormBase_imported	WormBase_imported	gene	Genes (primary_gene_track)	0
-	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (primary_gene_track)	0
-	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	0
-	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	0
 gene:interpolated_pmap_position		interpolated_pmap_position	gene	Genetic limits (genetic_limits)	984
 	gene:absolute_pmap_position	absolute_pmap_position	gene	Genetic limits (genetic_limits)	25789
 histone_binding_site:histone_binding_site_region		histone_binding_site_region	histone_binding_site	Histone binding sites (histone_binding_sites)	5164
