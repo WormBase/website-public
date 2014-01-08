@@ -1590,7 +1590,7 @@ sub orfeome_primers {
     my $self   = shift;
     my $object = $self->object;
     my @segments = $self->_segments ? @{$self->_segments} : undef ;
-    my @ost = map { $self->_pack_obj($_)}
+    my @ost = map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
               map {$_->info}
               map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') }
               @segments
@@ -1617,7 +1617,7 @@ sub primer_pairs {
     
     my @segments = @{$self->_segments};
     my @primer_pairs =  
-    map {$self->_pack_obj($_)} 
+    map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
     map {$_->info} 
     map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
     
