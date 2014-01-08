@@ -13,41 +13,35 @@ connector     = dashed
 connector_color = gray
 fgcolor       = black
 bgcolor       = sub {
-		my $feature = shift;
-		my $name = $feature->name;
-                return 'magenta'          if ($name =~ /tmhmm/);
-                return 'lightseagreen'     if ($name =~ /seg/);
-	        return 'aquamarine'    if ($name =~ /signalp/);
-       		return 'chartreuse'    if ($name =~ /ncoils/);
-		return 'lightsalmon'         if ($name =~ /pfam/);
+		my $f = shift;
+		my $type = $f->attributes('Type');
+                return 'magenta'             if ($type =~ /tmhmm/);
+                return 'lightseagreen'       if ($type =~ /seg/);
+	        return 'aquamarine'          if ($type =~ /signalp/);
+       		return 'chartreuse'          if ($type =~ /ncoils/);
+		return 'lightsalmon'         if ($type =~ /pfam/);
 	}
-#link          = sub { my $f   = shift;
-#     		my %notes = map { split /=/ } $f->notes;
-#                #my $name = $f->name;
-#                #my ($target) = $name =~ /(WP_.*)\-.*/;
-#		#$target =~ s/_/:/g;
-#                return "/get?name=$notes{Protein};class=Protein";
-#        }
+link          = sub { my $f   = shift;
+	        my $protein = $f->attributes('Protein');
+                return "/get?name=$protein;class=Protein";
+        }
 height        = 7
-#label         = sub { 
-#		my $f = shift;
-#		my $name = $f->name;
-#		#my ($label) = $name =~ /(WP_.*-.*)\.\d/;
-#                #my ($label) = $name =~ /(.*)\-.*\.\d$/;
-#		#$label =~ s/_/:/;
-#		my %notes = map { split /=/ } $f->notes;
-#		my $label = $notes{Type};
-#		return $label;
-#	}
-#description = sub { my $feature = shift;
-#		my %notes = map { split /=/ } $feature->notes;
-##		my $desc = "$notes{CDS}; aa: $notes{Range}; exon(s): $notes{Exons}";
-##		$desc .= "; $notes{Description}" if $notes{Description};
-##		my $desc = $notes{Type};
-##		$desc .= "; $notes{Description}" if $notes{Description};
-#		my $desc = $notes{Description};
-#		return $desc;
-#	}
+label         = sub { 
+		my $f = shift;
+		my $label = $f->attributes{Type};
+		return $label;
+	}
+description = sub { my $f = shift;
+	      my $aa_range = $f->attributes('Range');
+	      my $exons    = $f->attributes('Exons');
+	      my @desc;
+	      if ($aa_range) {
+	      	 push @desc,"amino acid range: $aa_range";
+              }
+	      if ($exons) {
+	         push @desc,"exon range: $exons";
+              }		 
+	}
 citation      = This track shows the extent of predicted protein motifs. Note these
                 spans correspond to amino acid coordinates interpolated onto the
                 physical map.  Included are signal peptide (signalp), coiled coil (ncoils)
