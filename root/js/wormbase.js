@@ -808,13 +808,14 @@
         dl.load(dl.attr("href"), function(){
           if((parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10)) < 100000){
             searchSummary.find("#get-breakdown").show().click(function(){
-           
+              setLoading($jq(this));
               searchSummary.find(".count").each(function() {
                 $jq(this).load($jq(this).attr("href"), function(){
                   if($jq(this).text() === '0'){
                     $jq(this).parent().remove();
                   }else {
                     $jq(this).parent().show().parent().prev(".title").show();
+                    searchSummary.find("#get-breakdown").remove();
                   }
                 });
               });
@@ -833,8 +834,6 @@
                 curr.html(button.html());
                 return false;
               });
-              searchSummary.find("#get-breakdown").remove();
-
              });
           }
         });
