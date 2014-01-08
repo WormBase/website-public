@@ -20,7 +20,7 @@ CDS:mSplicer_transcript	mSplicer_transcript	CDS	Prediction: mSplicer (prediction
 CDS:twinscan	twinscan	CDS	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	124073	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 DNAseI_hypersensitive_site:DNAseI_hypersensitive_site	DNAseI_hypersensitive_site	DNAseI_hypersensitive_site	DNAseI hypersensitive site (dnaseI_hypersensitive_site)	0	0	0	0	0	0	0	7095	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 G_quartet:pmid18538569	pmid18538569	G_quartet	G4 Motif (g4_motif)	0	0	0	0	0	0	0	2907	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-PCR_product:GenePair_STS	GenePair_STS	PCR_product	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	79378	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+PCR_product:GenePair_STS	GenePair_STS	PCR_product	PCR Assays (pcr_products)	0	0	0	0	0	0	0	79378	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 PCR_product:Orfeome	Orfeome	PCR_product	ORFeome PCR Products (orfeome_pcr_products)	0	0	0	0	0	0	0	22176	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 PCR_product:Promoterome	Promoterome	PCR_product	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	6851	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 RNAi_reagent:RNAi_primary	RNAi_primary	RNAi_reagent	RNAi experiments (primary targets) (variations_rnai_best)	0	0	0	0	0	0	0	294161	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -168,7 +168,7 @@ nucleotide_match:EXONERATE_BAC_END_OTHER	EXONERATE_BAC_END_OTHER	nucleotide_matc
 nucleotide_match:TEC_RED	TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	0	0	0	0	0	0	7064	7993	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 nucleotide_match:TIGR_BEST	TIGR_BEST	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models)	0	0	54111	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 nucleotide_match:TIGR_OTHER	TIGR_OTHER	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models_other)	0	0	267212	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-nucleotide_match:Vancouver_fosmid	Vancouver_fosmid	nucleotide_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	12874	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:Vancouver_fosmid	Vancouver_fosmid	nucleotide_match	YACs, Fosmids, & Cosmids (clones)	0	0	0	0	0	0	0	12874	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 nucleotide_match:celegans_TC1s-BLAT	celegans_TC1s-BLAT	nucleotide_match	NO CONFIG AVAILABLE	252	240	0	229	177	0	0	0	0	0	17	233	148	124	196	56	135	114	242	0	57	11	98
 nucleotide_match:celegans_ncRNAs-BLAT	celegans_ncRNAs-BLAT	nucleotide_match	NO CONFIG AVAILABLE	317	267	0	503	566	0	0	0	0	0	298	962	156	696	828	371	142	173	606	0	240	30	217
 operon:deprecated_operon	deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	0	0	0	0	0	0	0	74	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

@@ -10,6 +10,7 @@ CDS:mSplicer_orf		mSplicer_orf	CDS	Prediction: mSplicer-ORF (prediction_msplicer
 CDS:mSplicer_transcript		mSplicer_transcript	CDS	Prediction: mSplicer (prediction_msplicer_transcript)	171688
 DNAseI_hypersensitive_site:DNAseI_hypersensitive_site		DNAseI_hypersensitive_site	DNAseI_hypersensitive_site	DNAseI hypersensitive site (dnaseI_hypersensitive_site)	7095
 G_quartet:pmid18538569		pmid18538569	G_quartet	G4 Motif (g4_motif)	2907
+PCR_product:GenePair_STS		GenePair_STS	PCR_product	PCR Assays (pcr_products)	79378
 PCR_product:Orfeome		Orfeome	PCR_product	ORFeome PCR Products (orfeome_pcr_products)	22176
 RNAi_reagent:RNAi_primary		RNAi_primary	RNAi_reagent	RNAi experiments (primary targets) (variations_rnai_best)	294161
 	experimental_result_region:cDNA_for_RNAi	cDNA_for_RNAi	experimental_result_region	RNAi experiments (primary targets) (variations_rnai_best)	2828
@@ -112,6 +113,8 @@ ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	23323
 	exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	234795
 	intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	172538
 nucleotide_match:TEC_RED		TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	7993
+nucleotide_match:Vancouver_fosmid		Vancouver_fosmid	nucleotide_match	YACs, Fosmids, & Cosmids (clones)	12874
+	assembly_component:Genomic_canonical	Genomic_canonical	assembly_component	YACs, Fosmids, & Cosmids (clones)	3267
 operon:deprecated_operon		deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	74
 operon:operon		operon	operon	Operons (operons)	1390
 point_mutation:Million_mutation		Million_mutation	point_mutation	Million Mutation Project (variations_million_mutation_project)	845703
