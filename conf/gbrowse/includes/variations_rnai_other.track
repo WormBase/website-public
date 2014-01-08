@@ -12,6 +12,10 @@ label         = sub {
 		my $string = $name ? $name : $f->name;
 		return $string;
 	}
+link           = sub {
+	       my $f = shift;
+	       return /get?name=$f;class=RNAi
+	       }
 description    = sub {
 		my $f = shift;
 		my $source = $f->attributes('Laboratory');
