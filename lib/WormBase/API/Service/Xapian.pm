@@ -210,9 +210,9 @@ sub _get_obj {
   my %ret;
   $ret{name} = $self->_pack_search_obj($c, $doc);
   my $species = $ret{name}{taxonomy};
-  if($species =~ m/^(.).*_([^_]*)$/){
+  if($species =~ m/^(.*)_([^_]*)$/){
     my $s = $c->config->{sections}{species_list}{$species};
-    $ret{taxonomy}{genus} = $s->{genus} || uc($1) . '.';
+    $ret{taxonomy}{genus} = $s->{genus} || ucfirst($1);
     $ret{taxonomy}{species} = $s->{species} || $2;
   }
   $ret{ptype} = $doc->get_value(7) if $doc->get_value(7);
@@ -266,7 +266,7 @@ sub _get_tag_info {
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
         my ($it,$res)= $self->search_exact($c, $id, lc($ace));
-        if($it->{pager}->{total_entries} > 0 ){
+        if(scalar (@{$it->{struct}}) > 0 ){
           my $doc = @{$it->{struct}}[0]->get_document();
           return $self->_get_obj($c, $doc, $footer) if $fill;
 
@@ -277,7 +277,7 @@ sub _get_tag_info {
       }
     }else{
       my ($it,$res)= $self->search_exact($c, $id, $aceclass ? lc($aceclass) : undef);
-      if($it->{pager}->{total_entries} > 0 ){
+      if(scalar (@{$it->{struct}}) > 0 ){
         my $doc = @{$it->{struct}}[0]->get_document();
           if($fill){
             return $self->_get_obj($c, $doc, $footer);
@@ -287,13 +287,9 @@ sub _get_tag_info {
     }
   }
 
-  my $api = $self->_api;
-  my $object = $api->fetch({ class => ucfirst $class, name => $id });
-  my $tag = $object->name->{data} if ($object > 0);
-
-  $tag =  { id => $id,
+  my $tag =  { id => $id,
            class => $class
-  } unless $tag;
+  };
   $tag = { name => $tag, footer => $footer } if $fill;
   return $tag;
 }
@@ -307,7 +303,6 @@ sub _get_tag_info {
 sub _get_taxonomy {
   my ($self, $doc) = @_;
   my $taxonomy = $doc->get_value(5);
-  $taxonomy =~ s/_([^_]*)_/\_/g;
   return $taxonomy;
 }
 
