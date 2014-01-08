@@ -50,7 +50,10 @@ sub run {
     my $peptide_id = $param->{"sequence"};
     my $protRecord = $self->ace_dsn->fetch("Protein"=> $peptide_id);
     return {msg=>"Sorry, 0 results found for this protein"} unless $protRecord;
+
+#    my $dbh = $self->mysql_dsn("clustal")->dbh;
     my $dbh = $self->mysql_dsn("clustal")->dbh;
+
     $self->log->debug("prepare the query to clustal db for protein $peptide_id");
     my $sql = qq{ SELECT alignment FROM clustal WHERE peptide_id = "$peptide_id"}; 
     my $sth = $dbh->prepare( $sql );

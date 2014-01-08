@@ -6,7 +6,7 @@ use DBD::mysql;
 
 has 'dbh' => (
     is        => 'rw',
-    isa       => 'Ref',       # Could also be a seq feature store, eh?
+    isa       => 'Ref',
     predicate => 'has_dbh',
     writer    => 'set_dbh',
 );
@@ -30,8 +30,14 @@ sub ping {
 
 sub connect {
     my $self = shift;
-    my $dsn = "DBI:mysql:database=".$self->source.";user='".$self->user."';host=".$self->host;
-    return DBI->connect($dsn);
+    my $source = $self->source;
+    my $pass   = $self->pass;
+    my $host   = $self->host;
+    my $user   = $self->user;
+
+    my $dsn = "DBI:mysql:database=$source;host=$host";
+    my $db = DBI->connect($dsn,$user,$pass);
+    return $db;
 }
 
 

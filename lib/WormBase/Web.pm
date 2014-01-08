@@ -252,7 +252,9 @@ sub _setup_static {
     $c->config(static => {
         dirs         => [qw/ css js img tmp /],
 	include_path => [
-            '/usr/local/wormbase/tmp','/usr/local/wormbase/shared/tmp',
+            '/usr/local/wormbase/tmp',
+	    '/usr/local/wormbase/shared/tmp',
+	    '/usr/local/wormbase/website-admin/html',
 	    __PACKAGE__->config->{root},
 	    __PACKAGE__->config->{shared_html_base},
 	    ],
