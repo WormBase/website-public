@@ -10,7 +10,7 @@ title = sub {
 	 }
 label    = sub { 
 		my $f = shift;
-		my ($locus)  = $f->attributes('locus');
+		my ($locus)  = $f->attributes('Alias');
 		my ($name) = $f->attributes('sequence_name');
 		return $locus ? "$locus ($name)" : $name;
 	}
@@ -51,7 +51,7 @@ link = sub {
 	return if $f->type eq 'ncRNA:RNAz';
 	
 	# Protein coding genes: to gene or transcript?
-	my ($locus)  = $f->attributes('locus');
+	my ($locus)  = $f->attributes('Alias');
 
 	# We are clicking on the grouped gene: link to the Gene Report
 	if ($f->type =~ /Gene/i) {
@@ -74,7 +74,7 @@ balloon hover  = sub {
 	# each individual transcript
 	# We could also, eg, include direct links to protein reports
 
-	my ($locus)  = $f->attributes('locus');
+	my ($locus)  = $f->attributes('Alias');
 		
 	# Biotypes are only associated with gene features.
 	# Depending on the current entity, we may not have direct access.
