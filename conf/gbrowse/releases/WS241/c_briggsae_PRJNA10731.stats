@@ -66,6 +66,7 @@ substitution:Allele		Allele	substitution	 (variations_classical_alleles)	10
 	insertion_site:Allele	Allele	insertion_site	 (variations_classical_alleles)	1
 	complex_substitution:Allele	Allele	complex_substitution	 (variations_classical_alleles)	0
 	transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	 (variations_classical_alleles)	0
+	point_mutation:Allele	Allele	point_mutation	 (variations_classical_alleles)	0
 transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	221617
 	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	215640
 transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	506825
