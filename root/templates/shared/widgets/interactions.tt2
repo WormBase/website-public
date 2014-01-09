@@ -5,7 +5,7 @@
   MACRO interaction_table BLOCK;
   WRAPPER $field_block title="Interactions" key="interactions";
       'Found ';
-      searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
+      searchlink('interaction', object.name.data.id, (fields.interactions.data.edges.size || '0') _ " " _ pluralize("interaction", fields.interactions.data.size));
 
       build_data_table(order=['interactions','type','effector','affected','direction','phenotype','citations'],
                        columns={type  => 'Interaction Type',

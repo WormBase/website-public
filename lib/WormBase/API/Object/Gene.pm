@@ -576,7 +576,7 @@ sub fpkm_expression {
                 label => "$label",
                 value => "$value",
                 project => "$project",
-                life_stage => $life_stage
+                life_stage => "$life_stage"
             }
         } @fpkm_table;
     } $object->RNASeq_FPKM;
@@ -1353,9 +1353,9 @@ sub human_diseases {
 
   if($data[0]){
     foreach my $type ($data[0]->col) {
-        $data{lc($type)} = ();
+        $data{lc("$type")} = ();
       foreach my $disease ($type->col){
-          push (@{$data{lc($type)}}, ($disease =~ /^(OMIM:)(.*)/ ) ? "$2" : "$disease");
+          push (@{$data{lc("$type")}}, ($disease =~ /^(OMIM:)(.*)/ ) ? "$2" : "$disease");
       }
     }
   }
