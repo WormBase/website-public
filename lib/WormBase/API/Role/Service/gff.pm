@@ -82,7 +82,8 @@ sub connect {
 	    $self->log->debug("       $_" . " "  . $gff_args->{$_});
 	}
     }  
-    
+
+    # TH 2014.01.08: Why is this still using Bio::DB::GFF?
     my $dbh = Bio::DB::GFF->new(%$gff_args)
 	or $self->log->fatal("Couldn't connect to the $species GFF database!");
     

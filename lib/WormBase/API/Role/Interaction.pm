@@ -97,7 +97,7 @@ sub interactions  {
         data        => $results->{showall} ? {    
                             edges => @edges ? \@edges : undef,
                             types => $results->{types},
-                            nodes => $results->{nodes},
+                            nodes => keys %{ $results->{nodes} } ? $results->{nodes} : undef,
                             showall => $results->{showall},
                             ntypes => $results->{ntypes},
                             edges_all => @edges_all ? \@edges_all : undef,

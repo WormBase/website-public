@@ -1,5 +1,5 @@
 [CLONES]
-feature       = region:Vancouver_fosmid 
+feature       = nucleotide_match:Vancouver_fosmid 
 	        assembly_component:Genomic_canonical	      
 fgcolor       = sub {
 		my $feature = shift;

@@ -1,4 +1,7 @@
-[VARIATIONS_CLASSICAL_ALLELES]
+# WS240
+[CLASSICAL_ALLELES]
+# WS241
+#[VARIATIONS_CLASSICAL_ALLELES]
 key          = Classical alleles
 category     = Alleles, Variations, RNAi
 feature      = deletion:Allele
