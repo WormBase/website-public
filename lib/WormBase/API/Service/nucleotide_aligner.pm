@@ -227,9 +227,9 @@ sub run {
     my $source = join('_', @db[0..@db-2]);
 
     my $plugin_url = "http://www.wormbase.org/tools/genome/gbrowse/" . $source . "/?";
-    $plugin_url .= "name=$name;plugin=Aligner;plugin_action=Go;label=ESTB;Aligner.upcase=CDS;Aligner.align=ESTB;";
+    $plugin_url .= "name=$name;plugin=Aligner;plugin_action=Go;label=EST_BEST;Aligner.upcase=CDS;Aligner.align=EST_BEST;";
    
-    $plugin_url .= 'Aligner.align=ESTO;' if $self->algorithms->{BLAT_EST_OTHER};
+    $plugin_url .= 'Aligner.align=EST_OTHER;' if $self->algorithms->{BLAT_EST_OTHER};
     $plugin_url .= $ragged . ";" . $flip_format;
 
     $self->log->debug( "ALIGNER: URL: $plugin_url\n");
