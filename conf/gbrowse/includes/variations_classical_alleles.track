@@ -8,6 +8,7 @@ feature      = deletion:Allele
 	       insertion_site:Allele
 	       substitution:Allele
 	       complex_substitution:Allele
+	       point_mutation:Allele
 	       transposable_element_insertion_site:Allele
 label        = sub {
 	     my $f = shift;

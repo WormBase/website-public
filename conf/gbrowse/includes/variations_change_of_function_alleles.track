@@ -3,6 +3,7 @@ feature =         complex_substitution:PCoF_Allele
                               deletion:PCoF_Allele
                         insertion_site:PCoF_Allele
                           substitution:PCoF_Allele
+		        point_mutation:PCoF_Allele
    transposable_element_insertion_site:PCoF_Allele
                               deletion:PCoF_CGH_allele
                   complex_substitution:PCoF_KO_consortium
