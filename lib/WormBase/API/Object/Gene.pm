@@ -642,8 +642,12 @@ sub fpkm_expression {
 
     my $plot;
     if ($mode eq 'summary_ls') {
+	# This is NOT consistently returning an ID, resulting in fpkm_.png 
+	# and breaking the expression widget.
+	# filename => "fpkm_" . $self->name->{data}{id} . ".png",
+	my $obj = $self->object;
         $plot = $rserve->boxplot(\@fpkm_map, {
-                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    filename => "fpkm_$object.png",
                                     xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
                                     ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
                                     width    => WormBase::Web->config->{fpkm_expression_chart_width},

@@ -120,7 +120,11 @@ sub barchart {
     my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
 
     # If a filename is provided and the plot exists already: do not generate it again!
-    return { uri => "/img-static/rplots/" . $self->_rplot_subdir($filename) . $filename } if (WormBase::Web->config->{installation_type} ne 'development' && defined $filename && -e (WormBase::Web->config->{rplots} . $self->_rplot_subdir($filename) . $filename));
+    return { uri => "/img-static/rplots/" 
+		 . $self->_rplot_subdir($filename) . $filename } 
+    if (WormBase::Web->config->{installation_type} ne 'development' 
+	&& defined $filename && 
+	-e (WormBase::Web->config->{rplots} . $self->_rplot_subdir($filename) . $filename));
 
     my $format = "png";
     my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);
