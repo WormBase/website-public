@@ -14,7 +14,7 @@ label         = sub {
 	}
 link           = sub {
 	       my $f = shift;
-	       return /get?name=$f;class=RNAi
+	       return "/get?name=$f;class=RNAi";
 	       }
 description    = sub {
 		my $f = shift;
