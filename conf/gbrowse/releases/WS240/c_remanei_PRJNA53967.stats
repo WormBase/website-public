@@ -25,10 +25,6 @@ gene:WormBase		WormBase	gene	Genes (primary_gene_track)	32402
 	mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	31530
 	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	2649
 	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	2519
-	gene:WormBase_imported	WormBase_imported	gene	Genes (primary_gene_track)	0
-	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (primary_gene_track)	0
-	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	0
-	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	0
 intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	119569
 inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	112322
 	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	55071

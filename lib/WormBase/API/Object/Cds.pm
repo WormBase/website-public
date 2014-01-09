@@ -198,7 +198,10 @@ sub _build_tracks {
 sub _build_genomic_image {
     my ($self) = @_;
     my $seq = $self->object;
-    return unless(defined $self->_segments && defined $self->_segments->[0] && $self->_segments->[0]->length< 100_0000);
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data => undef
+    } unless(defined $self->_segments && defined $self->_segments->[0] && $self->_segments->[0]->length< 100_0000);
 
     my $source = $self->_parsed_species;
     my $segment = $self->_segments->[0];

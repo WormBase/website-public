@@ -576,7 +576,7 @@ sub fpkm_expression {
                 label => "$label",
                 value => "$value",
                 project => "$project",
-                life_stage => $life_stage
+                life_stage => "$life_stage"
             }
         } @fpkm_table;
     } $object->RNASeq_FPKM;
@@ -642,8 +642,12 @@ sub fpkm_expression {
 
     my $plot;
     if ($mode eq 'summary_ls') {
+	# This is NOT consistently returning an ID, resulting in fpkm_.png 
+	# and breaking the expression widget.
+	# filename => "fpkm_" . $self->name->{data}{id} . ".png",
+	my $obj = $self->object;
         $plot = $rserve->boxplot(\@fpkm_map, {
-                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    filename => "fpkm_$object.png",
                                     xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
                                     ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
                                     width    => WormBase::Web->config->{fpkm_expression_chart_width},
@@ -1349,9 +1353,9 @@ sub human_diseases {
 
   if($data[0]){
     foreach my $type ($data[0]->col) {
-        $data{lc($type)} = ();
+        $data{lc("$type")} = ();
       foreach my $disease ($type->col){
-          push (@{$data{lc($type)}}, ($disease =~ /^(OMIM:)(.*)/ ) ? "$2" : "$disease");
+          push (@{$data{lc("$type")}}, ($disease =~ /^(OMIM:)(.*)/ ) ? "$2" : "$disease");
       }
     }
   }
@@ -1590,7 +1594,7 @@ sub orfeome_primers {
     my $self   = shift;
     my $object = $self->object;
     my @segments = $self->_segments ? @{$self->_segments} : undef ;
-    my @ost = map { $self->_pack_obj($_)}
+    my @ost = map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
               map {$_->info}
               map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') }
               @segments
@@ -1617,7 +1621,7 @@ sub primer_pairs {
     
     my @segments = @{$self->_segments};
     my @primer_pairs =  
-    map {$self->_pack_obj($_)} 
+    map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
     map {$_->info} 
     map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
     

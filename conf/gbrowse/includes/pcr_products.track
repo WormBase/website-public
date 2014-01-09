@@ -1,4 +1,4 @@
-# This is an aggregated track of ALL PCR_products (promoterome, orfeome, etc)
+# This is an aggregated track of ALL PCR_products (promoterome, orfeome, GenePair etc)
 [PCR_PRODUCTS]
 key           = PCR Assays
 feature       = PCR_product

@@ -5,7 +5,7 @@ use Bio::DB::SeqFeature::Store () ;
 
 has 'dbh' => (
     is        => 'rw',
-    isa       => 'Bio::DB::SeqFeature::Store',   # Could also be a seq feature store, eh?
+    isa       => 'Bio::DB::SeqFeature::Store',
     predicate => 'has_dbh',
     writer    => 'set_dbh',
     handles   => [qw/search_notes get_features_by_name get_features_by_attribute/],
@@ -28,23 +28,23 @@ has 'adaptor' => (
     }
 );
 
-has 'aggregators' => (
-    is  => 'ro',
-    isa => 'ArrayRef[Str]',
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        my @array;
-        my $ret = $self->conf->{data_sources}->{$self->species}->{aggregator};
-
-	if ($ret =~ /ARRAY/) {
-	    push(@array, @$ret);
-	} else {
-	    push(@array, $ret);
-	}
-        return \@array;
-    }
-);
+#has 'aggregators' => (
+#    is  => 'ro',
+#    isa => 'ArrayRef[Str]',
+#    lazy => 1,
+#    default => sub {
+#        my $self = shift;
+#        my @array;
+#        my $ret = $self->conf->{data_sources}->{$self->species}->{aggregator};
+#
+#	if ($ret =~ /ARRAY/) {
+#	    push(@array, @$ret);
+#	} else {
+#	    push(@array, $ret);
+#	}
+#        return \@array;
+#    }
+#);
 
 sub _build_function {
     return 'get connection to GFF database';
@@ -66,13 +66,15 @@ sub connect {
     my $self = shift;
 
     my $db = Bio::DB::SeqFeature::Store->new( -user => $self->user,
-			      -pass => $self->pass,
-			      -dsn => "dbi:mysql:database=".$self->source.";host=" . $self->host,
-			      -adaptor     => $self->adaptor,
-			      -aggregators => $self->aggregators,
-				  $self->ace ? (-acedb=>$self->ace):()
-    );
-
+					      -pass => $self->pass,
+					      -dsn => "dbi:mysql:database=".$self->source.";host=" . $self->host,
+					      -adaptor     => $self->adaptor,
+	);
+    # No longer req'd; testing to be certain
+#			      -aggregators => $self->aggregators,
+#					      $self->ace ? (-acedb=>$self->ace):()
+#	);
+    
     return $db;
 }
 1;
