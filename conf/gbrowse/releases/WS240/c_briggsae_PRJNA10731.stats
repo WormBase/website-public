@@ -60,11 +60,11 @@ pseudogenic_transcript:WormBase		WormBase	pseudogenic_transcript	Genes (pseudoge
 reagent:Oligo_set		Oligo_set	reagent	Microarray oligo probes (microarray_oligo_probes)	85642
 repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	178040
 sequence_motif:translated_feature		translated_feature	sequence_motif	Protein motifs (protein_motifs)	200701
-substitution:Allele		Allele	substitution	Classical alleles (variations_classical_alleles)	10
-	deletion:Allele	Allele	deletion	Classical alleles (variations_classical_alleles)	0
-	insertion_site:Allele	Allele	insertion_site	Classical alleles (variations_classical_alleles)	1
-	complex_substitution:Allele	Allele	complex_substitution	Classical alleles (variations_classical_alleles)	0
-	transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	Classical alleles (variations_classical_alleles)	0
+substitution:Allele		Allele	substitution	 (variations_classical_alleles)	10
+	deletion:Allele	Allele	deletion	 (variations_classical_alleles)	0
+	insertion_site:Allele	Allele	insertion_site	 (variations_classical_alleles)	1
+	complex_substitution:Allele	Allele	complex_substitution	 (variations_classical_alleles)	0
+	transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	 (variations_classical_alleles)	0
 transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	221617
 	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	215640
 transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	506825
