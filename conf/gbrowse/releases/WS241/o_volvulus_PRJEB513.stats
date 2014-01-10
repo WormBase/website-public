@@ -17,10 +17,10 @@ expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match
 expressed_sequence_match:EMBL_nematode_cDNAs-BLAT		EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_nematode_cdnas)	2189297
 expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT		NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	522631
 expressed_sequence_match:NEMBASE_cDNAs-BLAT		NEMBASE_cDNAs-BLAT	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	300645
-gene:WormBase		WormBase	gene	Genes (primary_gene_track)	12994
-	mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	12994
-	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	4428
-	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	3035
+gene:WormBase		WormBase	gene	Genes (genes)	12994
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	12994
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	4428
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	3035
 intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	159574
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	202917
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	257182

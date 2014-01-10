@@ -52,7 +52,7 @@ sub _build__object_class {
 
 sub _build_tracks {
     my ($self) = @_;
-    my @tracks = qw/PRIMARY_GENE_TRACK MICROARRAY_OLIGO_PROBES PCR_PRODUCTS ORFEOME_PCR_PRODUCTS CLONES/;
+    my @tracks = qw/GENES MICROARRAY_OLIGO_PROBES PCR_PRODUCTS ORFEOME_PCR_PRODUCTS CLONES/;
 
     return {
         description => 'tracks displayed in GBrowse',

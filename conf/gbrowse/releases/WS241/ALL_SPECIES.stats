@@ -126,11 +126,11 @@ expressed_sequence_match:cremanei_ESTs-BLAT	cremanei_ESTs-BLAT	expressed_sequenc
 expressed_sequence_match:cremanei_mRNAs-BLAT	cremanei_mRNAs-BLAT	expressed_sequence_match	C. remanei mRNAs (sequence_similarity_cremanei_mrnas)	443	665	0	1291	800	0	0	0	0	0	1029	1014	586	436	692	462	307	261	452	0	0	513	352	172
 expressed_sequence_match:ppacificus_ESTs-BLAT	ppacificus_ESTs-BLAT	expressed_sequence_match	P. pristionchus ESTs (sequence_similarity_ppacificus_ests)	44372	43802	0	112258	34674	0	0	0	0	0	38680	47311	28143	100806	81583	35206	23365	41995	200536	0	0	36235	54225	80997
 expressed_sequence_match:ppacificus_mRNAs-BLAT	ppacificus_mRNAs-BLAT	expressed_sequence_match	P. pristionchus mRNAs (sequence_similarity_ppacificus_mrnas)	66	66	0	202	67	0	0	0	0	0	69	77	54	61	77	69	47	43	121	0	0	71	60	33
-five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	0	0	2427	0	0	3246	183	24054	3750	2651	0	0	0	0	0	0	0	0	0	4428	928	0	0	0
-five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	20945	0	0	34	0	0	0	0	0
+five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	0	0	2427	0	0	3246	183	24054	3750	2651	0	0	0	0	0	0	0	0	0	4428	928	0	0	0
+five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	20945	0	0	34	0	0	0	0	0
 five_prime_open_reading_frame:micro_ORF	micro_ORF	five_prime_open_reading_frame	Micro ORF (micro_orf)	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-gene:WormBase	WormBase	gene	Genes (primary_gene_track)	0	0	15699	0	0	32249	22802	46739	29944	32396	0	0	0	0	0	0	137	0	0	12994	24216	0	252	0
-gene:WormBase_imported	WormBase_imported	gene	Genes (primary_gene_track)	0	18542	0	18074	27970	0	0	0	0	0	22326	34696	12857	20964	23517	23610	14908	14420	21232	0	0	24249	7825	16380
+gene:WormBase	WormBase	gene	Genes (genes)	0	0	15699	0	0	32249	22802	46739	29944	32396	0	0	0	0	0	0	137	0	0	12994	24216	0	252	0
+gene:WormBase_imported	WormBase_imported	gene	Genes (genes)	0	18542	0	18074	27970	0	0	0	0	0	22326	34696	12857	20964	23517	23610	14908	14420	21232	0	0	24249	7825	16380
 gene:WormBase_transposon	WormBase_transposon	gene	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	322	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 gene:absolute_pmap_position	absolute_pmap_position	gene	Genetic limits (genetic_limits)	0	0	0	0	0	0	0	25788	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 gene:interpolated_pmap_position	interpolated_pmap_position	gene	Genetic limits (genetic_limits)	0	0	0	0	0	0	0	981	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -150,8 +150,8 @@ intron:RNASeq_splice	RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	0	0	104
 intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	0	0	121089	0	0	129387	99844	174886	100267	126744	0	0	0	0	0	0	0	0	0	91322	226216	0	0	0
 inverted_repeat:inverted	inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	0	0	42019	0	0	81687	76338	65700	199751	76873	0	0	0	0	0	0	0	0	0	0	70916	0	0	0
 low_complexity_region:dust	dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	307569	311770	189733	84039	290511	235624	170449	189148	362590	159221	97051	141577	201349	38454	201467	153467	179105	162400	364940	202917	141332	41549	184851	91322
-mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	0	0	18190	0	0	30745	21850	30494	36118	31526	0	0	0	0	0	0	0	0	0	12994	24243	0	394	0
-mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (primary_gene_track)	0	18542	0	18074	33934	0	0	0	0	0	27721	46280	12857	20964	24775	24942	15445	14420	21232	0	0	26372	7794	16380
+mRNA:WormBase	WormBase	mRNA	Genes (genes)	0	0	18190	0	0	30745	21850	30494	36118	31526	0	0	0	0	0	0	0	0	0	12994	24243	0	394	0
+mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	0	18542	0	18074	33934	0	0	0	0	0	27721	46280	12857	20964	24775	24942	15445	14420	21232	0	0	26372	7794	16380
 mRNA:maker	maker	mRNA	NO CONFIG AVAILABLE	11427	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 mRNA:ratt	ratt	mRNA	NO CONFIG AVAILABLE	993	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 mRNA:tophat	tophat	mRNA	NO CONFIG AVAILABLE	2840	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -227,8 +227,8 @@ tRNA_primary_transcript:WormBase	WormBase	tRNA_primary_transcript	NO CONFIG AVAI
 tRNA_primary_transcript:WormBase_imported	WormBase_imported	tRNA_primary_transcript	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1582	0	0	0	0	0	0	0	0	0
 tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	67771	70908	87233	21659	49236	64358	59754	53024	120788	55071	34819	58415	53376	7196	70884	115828	65560	60447	164734	55851	60624	8166	32391	24496
 three_prime_UTR:UTRome	UTRome	three_prime_UTR	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	21357	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	0	0	1999	0	0	3573	40	25060	3347	2521	0	0	0	0	0	0	0	0	0	3035	946	0	0	0
-three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	19605	0	0	29	0	0	0	0	0
+three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	0	0	1999	0	0	3573	40	25060	3347	2521	0	0	0	0	0	0	0	0	0	3035	946	0	0	0
+three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (genes)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	19605	0	0	29	0	0	0	0	0
 transcribed_fragment:TranscriptionallyActiveRegion	TranscriptionallyActiveRegion	transcribed_fragment	Transcriptionally Active Region (transcriptionally_active_region)	0	0	0	0	0	0	0	4095280	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 transcript_region:RNASeq_F_asymmetry	RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	0	0	400635	0	0	316004	221617	419720	377586	250362	0	0	0	0	0	0	0	0	0	256718	0	0	0	0
 transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	0	0	395086	0	0	308881	215640	418059	336082	244507	0	0	0	0	0	0	0	0	0	255421	0	0	0	0
