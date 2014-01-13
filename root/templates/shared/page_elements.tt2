@@ -10,9 +10,11 @@
   [% IF data %]
   <div class="evidence [% IF text %] result[% END %]">
     [% IF text.exists('label') %]
-	[% tag2link(text) %]
+      [% tag2link(text) %]
+    [% ELSIF( text.match(".*\\<[^>]+>.*") ) # don't link html %]
+          [% "$text" %]
     [% ELSE %]
-	[% markup("$text"); %]
+      [% markup("$text") %]
     [% END %]
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
