@@ -600,7 +600,7 @@ sub _build_genomic_image {
 sub _build__segments {
     my ($self) = @_;
     my $object = $self->object;
-    my @segments = $self->gff_dsn->get_features_by_attribute( variation => $object);
+    my @segments = grep { !("$_" =~ /PCoF/) } $self->gff_dsn->get_features_by_attribute( variation => $object );
     return \@segments;
 }
 
