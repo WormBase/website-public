@@ -58,8 +58,9 @@ sub ping {
 
 # Added to handle all the places where we pass an Ace Object to segment
 sub segment {
-    my ($self, $object) = @_;
-    return $self->dbh->segment("$object");
+    my ($self, $object, $start, $stop) = @_;
+    return $self->dbh->segment("$object") unless ($start || $stop);
+    return $self->dbh->segment("$object", $start, $stop);
 }
 
 sub connect {
