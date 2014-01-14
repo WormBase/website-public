@@ -644,11 +644,11 @@ sub nucleotide_change {
     my ($self) = @_;
     
     # Nucleotide change details (from ace)
-    my $variations = $self->_compile_nucleotide_changes($self->object);
+    my @variations = $self->_compile_nucleotide_changes($self->object);
 
     return {
         description => 'raw nucleotide changes for this variation',
-        data        => @$variations ? $variations : undef,
+        data        => @variations ? \@variations : undef,
     };
 }
 
@@ -856,7 +856,7 @@ $affects->{$type_affected} = \@rows;
             $hash->{item} = $self->_pack_obj($_);
             push(@rows, $hash);
         }
-        $affects->{$type_affected} = \@rows;
+        $affects->{$type_affected} = @rows ? \@rows : undef;
     }
 
     return {
@@ -1400,7 +1400,7 @@ sub _compile_nucleotide_changes {
             mutant_label   => "$mut_label",
         };
     }
-    return \@variations;
+    return @variations;
 }
 
 
@@ -1590,9 +1590,9 @@ sub _build_sequence_strings {
     # $debug .= "WT SNIPPET DNA FROM GFF: $dna" . br if DEBUG_ADVANCED;
     # Visit each variation and create a formatted string
     my ($wt_fragment,$mut_fragment,$wt_plus,$mut_plus);
-    my $variations = $self->_compile_nucleotide_changes($object);
+    my @variations = $self->_compile_nucleotide_changes($object);
 
-    foreach my $variation (@{$variations}) {
+    foreach my $variation (@variations) {
         my $type = $variation->{type};
         my $wt   = $variation->{wildtype};
         my $mut  = $variation->{mutant};
