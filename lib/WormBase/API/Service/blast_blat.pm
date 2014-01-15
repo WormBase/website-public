@@ -13,6 +13,7 @@ use File::Spec::Functions qw(catfile);
 use GD::Simple;
 use namespace::autoclean -except => 'meta';
 use JSON::Parse qw(json_file_to_perl);
+use Data::Dumper;
 
 use Moose;
 with 'WormBase::API::Role::Object'; 
@@ -431,10 +432,9 @@ sub display_results {
         my $kviewer_image_content;
         my $kviewer_imagemap;
         my $address = $ENV{REMOTE_ADDR};
-
         # Slurp result file
         my $result_file_content =
-	    $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref);
+	    $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref, $species);
 
         $self->log->debug( "$address: processing results file: done" );
   
@@ -456,7 +456,7 @@ sub display_results {
 }
 
 sub result2html {
-    my ($self,$result, $genome_links_ref, $expand_links_ref) = @_;
+    my ($self,$result, $genome_links_ref, $expand_links_ref, $species) = @_;
     
     my $address = $ENV{REMOTE_ADDR};
  #   warn "$address: the result file is: $result_file" if DEBUG;
@@ -519,7 +519,7 @@ sub result2html {
                 my $expand_link    = $expand_links_ref->{$hit};
                 my $alignment_link = "#hit_anchor_${hit}";
 		my $genome_link;     
-                $genome_link = {class=>'genomic_location', id=>$genome_links_ref->{$hit} , label=>'[Genome View]'} if $genome_links_ref->{$hit};
+                $genome_link = {class=>'genomic_location', id=>$genome_links_ref->{$hit} , label=>'[Genome View]', taxonomy=>$species} if $genome_links_ref->{$hit};
 
 		# Replace the Gene name in the report with a link to the sequence.
 		$line =~ s/^$hit//;
@@ -1122,7 +1122,7 @@ sub extract_hit_info {
 
 	my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
-        $hit_genome_link = $gbrowse_root . qq[?name=${hit_name};$hit_ranges] if $gbrowse_root;
+        $hit_genome_link =  qq[${hit_name};$hit_ranges];
         $hit_expand_link = $expand_root . qq[?] . join(";", 'width=450', qq[name=${hit_name};$hit_ranges]) if $expand_root;
 
         my $piece_ref = {
@@ -1203,7 +1203,7 @@ sub extract_hit_info {
             $view_end   = $top_hsp_end - 3000;
         }
 
-        $hit_genome_link = $gbrowse_root . qq[?name=${chr}:${view_start}..${view_end};$hit_ranges] if $gbrowse_root;
+        $hit_genome_link = qq[${chr}:${view_start}..${view_end};$hit_ranges];
         $hit_expand_link = $expand_root . qq[?] . join( ";", 'width=450', qq[name=${hit_name}:${view_start}..${view_end};$hit_ranges]) if $expand_root;
 
     }
@@ -1271,7 +1271,7 @@ sub extract_hit_info {
             $view_end   = $top_hsp_end - 3000;
         }
 
-        $hit_genome_link = $gbrowse_root . qq[?name=${hit_name}:${view_start}..${view_end};$hit_ranges] if $gbrowse_root;
+        $hit_genome_link = qq[${hit_name}:${view_start}..${view_end};$hit_ranges];
         $hit_expand_link = $expand_root . qq[?] . join(";", 'width=450', qq[name=${hit_name};$hit_ranges]) if $expand_root;
 
     }
