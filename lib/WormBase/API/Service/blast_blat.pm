@@ -13,7 +13,6 @@ use File::Spec::Functions qw(catfile);
 use GD::Simple;
 use namespace::autoclean -except => 'meta';
 use JSON::Parse qw(json_file_to_perl);
-use Data::Dumper;
 
 use Moose;
 with 'WormBase::API::Role::Object'; 
@@ -22,15 +21,15 @@ has 'file_dir' => (
     is => 'ro',
     lazy => 1,
     default => sub {
-	return shift->tmp_dir('blast_blat');
+        return shift->tmp_dir('blast_blat');
     }
 );
 
 has 'image_dir' => (
-     is => 'ro',
+    is => 'ro',
     lazy => 1,
     default => sub {
-	return shift->tmp_image_dir('blast_blat');
+        return shift->tmp_image_dir('blast_blat');
     }
 );
 
@@ -41,8 +40,7 @@ has 'blast_databases' => (
     default => sub {
         my $self = shift;
         my $data;
-	my $base_dir = catfile($self->pre_compile->{base});
-	
+        my $base_dir = catfile($self->pre_compile->{base});
         my $assemblies_info = catfile(WormBase::Web->config->{metadata_path}, "ASSEMBLIES." . WormBase::Web->config->{wormbase_release} . ".json");
         unless (-e $assemblies_info) {
             error("Misconfigured set-up. Cannot find metadata file that describes assemblies.");
@@ -60,73 +58,73 @@ has 'blast_databases' => (
         }
 
         # Discover available BLAST databases
-	my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
-	foreach my $version (@versions) {
-	    my @species = grep { -d "$base_dir/$version/blast/$_" } read_dir("$base_dir/$version/blast") if (-e "$base_dir/$version/blast");
-	    foreach my $species (@species) {
-		my ($g,$s)   = split('_',$species);
-		my $symbolic = uc($g) . ". $s";
+        my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
+        foreach my $version (@versions) {
+            my @species = grep { -d "$base_dir/$version/blast/$_" } read_dir("$base_dir/$version/blast") if (-e "$base_dir/$version/blast");
+            foreach my $species (@species) {
+                my ($g,$s)   = split('_',$species);
+                my $symbolic = uc($g) . ". $s";
 
-	        my @bioprojects = grep { -d "$base_dir/$version/blast/$species/$_" } read_dir("$base_dir/$version/blast/$species");
-	        push @bioprojects, ''; # Also consider old WormBase releases that did not have Bioproject IDs associated with them.
-	        foreach my $bioproject (@bioprojects) {
-		    my $blast_dir = catfile($self->pre_compile->{base},
-					    $version,
-					    $self->pre_compile->{blast},
-					    $species,
-					    $bioproject);
+                my @bioprojects = grep { -d "$base_dir/$version/blast/$species/$_" } read_dir("$base_dir/$version/blast/$species");
+                push @bioprojects, ''; # Also consider old WormBase releases that did not have Bioproject IDs associated with them.
+                foreach my $bioproject (@bioprojects) {
+                    my $blast_dir = catfile($self->pre_compile->{base},
+                        $version,
+                        $self->pre_compile->{blast},
+                        $species,
+                        $bioproject);
 
                     my $filename_prefix;
                     if ($bioproject ne '') {
-	                $filename_prefix = join('_',$version,$species,$bioproject);
-	            } else {
+                        $filename_prefix = join('_',$version,$species,$bioproject);
+                    } else {
                         $bioproject = 'not applicable';
-	                $filename_prefix = join('_',$version,$species);
-	            }
+                    $filename_prefix = join('_',$version,$species);
+                    }
 
-		    my $species_entry;
-		    if (-e "$blast_dir/genomic.fa") {
-		        $species_entry = $data->{"$version"}{Genome}{"$species"} || {};
-		        $species_entry->{"name"} = join('_',$filename_prefix,'genomic.fa');
-			$species_entry->{"symbolic"} = "$symbolic";
-		        $species_entry->{$bioproject} = {
-	                    symbolic    => "$bioproject",
+                    my $species_entry;
+                    if (-e "$blast_dir/genomic.fa") {
+                        $species_entry = $data->{"$version"}{Genome}{"$species"} || {};
+                        $species_entry->{"name"} = join('_',$filename_prefix,'genomic.fa');
+                        $species_entry->{"symbolic"} = "$symbolic";
+                        $species_entry->{$bioproject} = {
+                            symbolic    => "$bioproject",
                             description => $bioproject_metadata->{$bioproject}->{bioproject_description},
-			    name        => join('_',$filename_prefix,'genomic.fa'),
-			    location    => catfile($blast_dir, $species, 'genomic.fa'),
-		        };
-		        $data->{"$version"}{Genome}{"$species"} = $species_entry;
-		    }
-		    if (-e "$blast_dir/peptide.fa") {
-		        $species_entry = $data->{"$version"}{Protein}{"$species"} || {};
-		        $species_entry->{"name"} = join('_',$filename_prefix,'peptide.fa');
-			$species_entry->{"symbolic"} = "$symbolic";
-		        $species_entry->{$bioproject} = {
-	                    symbolic    => "$bioproject",
+                            name        => join('_',$filename_prefix,'genomic.fa'),
+                            location    => catfile($blast_dir, $species, 'genomic.fa'),
+                        };
+                        $data->{"$version"}{Genome}{"$species"} = $species_entry;
+                    }
+                    if (-e "$blast_dir/peptide.fa") {
+                        $species_entry = $data->{"$version"}{Protein}{"$species"} || {};
+                        $species_entry->{"name"} = join('_',$filename_prefix,'peptide.fa');
+                        $species_entry->{"symbolic"} = "$symbolic";
+                        $species_entry->{$bioproject} = {
+                            symbolic    => "$bioproject",
                             description => $bioproject_metadata->{$bioproject}->{bioproject_description},
-			    name        => join('_',$filename_prefix,'peptide.fa'),
-			    location    => catfile($blast_dir, $species, 'peptide.fa'),
-		        };
-		        $data->{"$version"}{Protein}{"$species"} = $species_entry;
-		    }
-		    if (-e "$blast_dir/ests.fa") {
-		        $species_entry = $data->{"$version"}{ESTs}{"$species"} || {};
-		        $species_entry->{"name"} = join('_',$filename_prefix,'ests.fa');
-			$species_entry->{"symbolic"} = "$symbolic";
-		        $species_entry->{$bioproject} = {
-	                    symbolic    => "$bioproject",
+                            name        => join('_',$filename_prefix,'peptide.fa'),
+                            location    => catfile($blast_dir, $species, 'peptide.fa'),
+                        };
+                        $data->{"$version"}{Protein}{"$species"} = $species_entry;
+                    }
+                    if (-e "$blast_dir/ests.fa") {
+                        $species_entry = $data->{"$version"}{ESTs}{"$species"} || {};
+                        $species_entry->{"name"} = join('_',$filename_prefix,'ests.fa');
+                        $species_entry->{"symbolic"} = "$symbolic";
+                        $species_entry->{$bioproject} = {
+                            symbolic    => "$bioproject",
                             description => $bioproject_metadata->{$bioproject}->{bioproject_description},
-			    name        => join('_',$filename_prefix,'ests.fa'),
-			    location    => catfile($blast_dir, $species, 'ests.fa'),
-		        };
-		        $data->{"$version"}{ESTs}{"$species"} = $species_entry;
-		    }
-	        }
-	    }
-	}
-	return $data;
+                            name        => join('_',$filename_prefix,'ests.fa'),
+                            location    => catfile($blast_dir, $species, 'ests.fa'),
+                        };
+                        $data->{"$version"}{ESTs}{"$species"} = $species_entry;
+                    }
+                }
+            }
+        }
+        return $data;
     }
-    );
+);
 
 our %BLAST_APPLICATIONS = (
     blastn  => {query_type => "nucl", database_type => "nucl"},
@@ -279,28 +277,28 @@ sub process_input {
     }
 
     elsif ($search_type eq "blat") {
-	my $db_info;
+        my $db_info;
 
-	my $database_type = $self->_get_database_type($database);
+        my $database_type = $self->_get_database_type($database);
 
-	my $blat_client = $self->pre_compile->{BLAT_CLIENT};
-	$blat_client = "/usr/local/wormbase/services/blat/bin/blat";
+        my $blat_client = $self->pre_compile->{BLAT_CLIENT};
+        $blat_client = "/usr/local/wormbase/services/blat/bin/blat";
 
-	# Only supporting matching query and database types:
-	if ($query_type ne $database_type) {
-	    error("Incompatible query($query_type)/database($database_type)");
-	}
+        # Only supporting matching query and database types:
+        if ($query_type ne $database_type) {
+            error("Incompatible query($query_type)/database($database_type)");
+        }
 
-	my $query_and_database_type;
-	if ($query_type eq 'nucl') {
-	    $query_and_database_type = '-t=dna -q=dna';
-	} elsif ($query_type eq 'prot') {
-	    $query_and_database_type = '-prot';
-	}
+        my $query_and_database_type;
+        if ($query_type eq 'nucl') {
+            $query_and_database_type = '-t=dna -q=dna';
+        } elsif ($query_type eq 'prot') {
+            $query_and_database_type = '-prot';
+        }
 
         $command_line = "$blat_client -out=blast $query_and_database_type $database_location $query_file $out_file 2> $out_file.err ";
-#            $blat_client . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
-	    
+        #            $blat_client . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
+
     }
 
     else {
@@ -310,7 +308,7 @@ sub process_input {
     # Run search
     my $result = system($command_line);
     if ($result) {
-	warn "$out_file.err";
+        warn "$out_file.err";
         my $err = slurp("$out_file.err");
 
         my %seen;
@@ -318,7 +316,7 @@ sub process_input {
         my @nr_err;
         
         foreach (@err) {
-	    warn($_, "\n");
+            warn($_, "\n");
             push @nr_err, $_ unless $seen{$_};
             $seen{$_}++;
         }    
@@ -400,8 +398,8 @@ sub display_results {
     my $data = $self->process_result_file(
         $query_file,  $query_type, $result_file,
         $search_type, $blast_app,
-	$species,
-      );
+        $species,
+    );
 
     
     my $pattern;
@@ -434,7 +432,7 @@ sub display_results {
         my $address = $ENV{REMOTE_ADDR};
         # Slurp result file
         my $result_file_content =
-	    $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref, $species);
+            $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref, $species);
 
         $self->log->debug( "$address: processing results file: done" );
   
@@ -658,13 +656,11 @@ sub make_links {
     my ($id1,$id2,$id3,$discard) = split /\#/, $hit;
     # $id1 = 0;
     if ($id1){
-	$hit = $id1;
-    }
-    elsif ($id2){
-	$hit = $id2;
-    }
-    else {
-	$hit = $id3;
+        $hit = $id1;
+    } elsif ($id2){
+        $hit = $id2;
+    } else {
+        $hit = $id3;
     }
     
     
@@ -711,27 +707,27 @@ sub make_links {
     
     # wormpep
     elsif ($object = $self->dsn->{acedb}->fetch('Transcript' => $hit) || $self->dsn->{acedb}->fetch('CDS' => $hit)) {
-	my $protein = $object->Corresponding_CDS ? $object->Corresponding_CDS->Corresponding_protein : $object->Corresponding_protein;
-	my $gene = $object->Corresponding_CDS ? $object->Corresponding_CDS->Gene : $object->Gene;
-	$sequence_link = $self->_pack_obj($object);
-	$gene_link = $self->_pack_obj($gene || undef, '[Gene Summary]');
-	$protein_link = $self->_pack_obj($protein || undef, '[Protein Summary]');
+        my $protein = $object->Corresponding_CDS ? $object->Corresponding_CDS->Corresponding_protein : $object->Corresponding_protein;
+        my $gene = $object->Corresponding_CDS ? $object->Corresponding_CDS->Gene : $object->Gene;
+        $sequence_link = $self->_pack_obj($object);
+        $gene_link = $self->_pack_obj($gene || undef, '[Gene Summary]');
+        $protein_link = $self->_pack_obj($protein || undef, '[Protein Summary]');
     }
     
     # est
     elsif($object = $self->dsn->{acedb}->fetch('Sequence' => $hit)){
-	$sequence_link = $self->_pack_obj($object);
-	my ($gene) = $object->Gene ? $object->Gene : $object->Matching_cds && $object->Matching_cds->Gene;
-	my $corr_gene_name = $gene && $self->_make_common_name($gene);
-	$corr_gene_link = $self->_pack_obj($gene || undef, $corr_gene_name && "[Corr. Gene: $corr_gene_name]");
+        $sequence_link = $self->_pack_obj($object);
+        my ($gene) = $object->Gene ? $object->Gene : $object->Matching_cds && $object->Matching_cds->Gene;
+        my $corr_gene_name = $gene && $self->_make_common_name($gene);
+        $corr_gene_link = $self->_pack_obj($gene || undef, $corr_gene_name && "[Corr. Gene: $corr_gene_name]");
     }
 
     elsif($object = $self->dsn->{acedb}->fetch('Protein' => $hit)){
-	$sequence_link = $self->_pack_obj($object);
+        $sequence_link = $self->_pack_obj($object);
     }
 
     else {
-	$sequence_link = {label => $hit} if !$sequence_link;
+        $sequence_link = {label => $hit} if !$sequence_link;
     }
     return ($sequence_link, $gene_link, $protein_link, $corr_gene_link);
 }
@@ -975,75 +971,75 @@ sub process_result_file {
 		    $track->add_feature(@hsps_in_track) if @hsps_in_track;
 		}
 	    }
-      
-	# Write image to a temp file
-	my $temp_file = File::Temp->new(
-	    TEMPLATE => "alignment_XXXXX",
-	    DIR      => $self->image_dir,
-	    SUFFIX   => ".png",
-	    UNLINK   => 0,
-	);
+          
+        # Write image to a temp file
+        my $temp_file = File::Temp->new(
+            TEMPLATE => "alignment_XXXXX",
+            DIR      => $self->image_dir,
+            SUFFIX   => ".png",
+            UNLINK   => 0,
+        );
 
-	my $alignment_image = $temp_file->filename;
-	
-	$temp_file = File::Temp->new(
-	    TEMPLATE => "score_key_XXXXX",
-	    DIR      => $self->image_dir,
-	    SUFFIX   => ".png",
-	    UNLINK   => 0,
-	);
+        my $alignment_image = $temp_file->filename;
 
-	my $score_key_image = $temp_file->filename;
-	  # Print out images
-	open(IMAGE, ">$alignment_image")
-	  or error("Cannot write file ($alignment_image): $!");
-	print IMAGE $panel->png;
-	$panel->finished;
-	close IMAGE;
+        $temp_file = File::Temp->new(
+            TEMPLATE => "score_key_XXXXX",
+            DIR      => $self->image_dir,
+            SUFFIX   => ".png",
+            UNLINK   => 0,
+        );
 
-	open(IMAGE, ">$score_key_image")
-	  or error("Cannot write file ($score_key_image): $!");
-	print IMAGE $score_key->png;
-	$score_key->finished;
-	close IMAGE;
+        my $score_key_image = $temp_file->filename;
+          # Print out images
+        open(IMAGE, ">$alignment_image")
+          or error("Cannot write file ($alignment_image): $!");
+        print IMAGE $panel->png;
+        $panel->finished;
+        close IMAGE;
 
-	# Generate image map
-	my @image_map_pieces;
+        open(IMAGE, ">$score_key_image")
+          or error("Cannot write file ($score_key_image): $!");
+        print IMAGE $score_key->png;
+        $score_key->finished;
+        close IMAGE;
 
-	#     my @boxes = $panel->boxes;
-	#     foreach my $map_component (@boxes) {
-	#         my ($feature, $x1, $y1, $x2, $y2, $track) = @{$map_component};
-	#
-	#         my ($anchor) = $feature->get_tag_values('anchor');
-	#         $x1 += 142;
-	#         $x2 += 142;
-	#         push @image_map_pieces, { coords => qq[$x1, $y1, $x2, $y2], href => qq[#$anchor] } if $anchor; # Padding (temporary)
-	#     }
+        # Generate image map
+        my @image_map_pieces;
 
-	# kviewer_string
-	my %kviewer_adds;
-	my $kviewer_adds = 0;
-	foreach (@piece_refs) {
-	    next unless $_->{pos};
+        #     my @boxes = $panel->boxes;
+        #     foreach my $map_component (@boxes) {
+        #         my ($feature, $x1, $y1, $x2, $y2, $track) = @{$map_component};
+        #
+        #         my ($anchor) = $feature->get_tag_values('anchor');
+        #         $x1 += 142;
+        #         $x2 += 142;
+        #         push @image_map_pieces, { coords => qq[$x1, $y1, $x2, $y2], href => qq[#$anchor] } if $anchor; # Padding (temporary)
+        #     }
 
-	    $kviewer_adds++;
+        # kviewer_string
+        my %kviewer_adds;
+        my $kviewer_adds = 0;
+        foreach (@piece_refs) {
+            next unless $_->{pos};
 
-	    my $kviewer_add;
+            $kviewer_adds++;
 
-	    my $chr  = $_->{chr};
-	    my $name = $_->{name};
-	    my $type = $_->{type};
-	    my $pos  = $_->{pos};
-	    my $link = CGI::escape($_->{genome_link});    # ***
+            my $kviewer_add;
 
-	    my $name_string = join(",", @{$name});
+            my $chr  = $_->{chr};
+            my $name = $_->{name};
+            my $type = $_->{type};
+            my $pos  = $_->{pos};
+            my $link = CGI::escape($_->{genome_link});    # ***
 
-	    $kviewer_add =
-	      qq[$type ${name_string}-$kviewer_adds ${pos}]
-	      ;    # Zero-length markers do not work
+            my $name_string = join(",", @{$name});
 
-	    push @{$kviewer_adds{$chr}}, $kviewer_add;
-	}
+            $kviewer_add =
+              qq[$type ${name_string}-$kviewer_adds ${pos}]
+              ;    # Zero-length markers do not work
+
+            push @{$kviewer_adds{$chr}}, $kviewer_add;
+        }
 
         push @data, [$query_name, $alignment_image, $score_key_image,
                      \%kviewer_adds, \%genome_links, \%expand_links,
@@ -1064,24 +1060,7 @@ sub extract_hit_info {
     my $hit_description = $hit->description;
     my $hit_name        = $hit->name;
 
-    my $gbrowse_root_id;
-
-    # TH 7/2008: WARNING!  This is hard-coded and will break if we have new IDs.
-    if ($hit_name =~ /^cb25/) {
-        $gbrowse_root_id = 'c_briggsae_cb25';
-    }
-
-    elsif ($hit_name =~ /^chr/) {
-        $gbrowse_root_id = 'c_briggsae';
-    }
-
-    elsif ($hit_name =~ /^(CHROMOSOME_|)([IVX]+|MtDNA)/) {
-        $gbrowse_root_id = 'c_elegans_PRJNA13758';
-    } else {
-	# Just use the species ID
-	$gbrowse_root_id = $species;
-    }
-
+    my $gbrowse_root_id = $species;
 
     my $gbrowse_root = "$gbrowse_root_id/"
       if $gbrowse_root_id;
@@ -1120,9 +1099,9 @@ sub extract_hit_info {
               if @hsp_genome_link_parts < $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT};
         }
 
-	my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+        my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
-        $hit_genome_link =  qq[${hit_name};$hit_ranges];
+        $hit_genome_link = qq[${hit_name};$hit_ranges];
         $hit_expand_link = $expand_root . qq[?] . join(";", 'width=450', qq[name=${hit_name};$hit_ranges]) if $expand_root;
 
         my $piece_ref = {
@@ -1256,7 +1235,7 @@ sub extract_hit_info {
 
         }
 
-	my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+        my $hit_ranges = qq[${on_reverse_strand}add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
 
         my $view_start;
         my $view_end;
