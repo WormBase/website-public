@@ -418,6 +418,7 @@ WB.getPlugin("dataTables", function(){
           }
         });
         WB.getPlugin("tabletools", function(){
+          setTimeout(function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
@@ -432,14 +433,14 @@ WB.getPlugin("dataTables", function(){
                 {
                   "sExtends": "collection",
                   "sButtonText": "Save table",
-                  "aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
+                  "aButtons": [ "copy", "csv", "pdf", "print" ]
                 }
               ]
             },
             [% style %]
 
           });
-
+          }, 1);
         });
 	});
     </script>
