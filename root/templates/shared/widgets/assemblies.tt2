@@ -5,14 +5,6 @@ tokens = fields.name.data.id.split('\s');
 first_char = tokens.0.substr(0,1) | lower;
 species = first_char _ '_' _ tokens.1;
 
-# Insert appropriate bioprojectid into the data structure
-bioprojectid = c.config.sections.species_list.$species.bioprojects.keys;
-
-# Still necessary now that previous assemblies are in their own table?
-FOR row IN fields.current_assemblies.data.merge( fields.previous_assemblies.data );
-    row.bioproject = bioprojectid.join(',');
-END;
-
 '<p><span class="species">' _ fields.name.data.label _ '</span>';
 IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; END;
 
