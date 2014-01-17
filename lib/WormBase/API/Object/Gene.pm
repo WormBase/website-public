@@ -237,7 +237,7 @@ sub classification {
         $data->{type} = "protein coding";
     }
 
-    $data->{type} = 'Transposon in origin' if $object->Corresponding_transposon;
+    $data->{type} = 'Transposon in origin' if $object->Transposon_in_origin;
 
     unless($data->{type}){
       # Is this a non-coding RNA?
