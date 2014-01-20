@@ -117,17 +117,64 @@ sub anatomy_terms {
     my $object      = $self->object;
     my @data;
     foreach ($object->Anatomy_term) {
-	my $definition   = $_->Definition;
-	push @data, {
-	    anatomy_term => $self->_pack_obj($_),
-	    definition => $definition && "$definition",
-	};
+        my $definition   = $_->Definition;
+        push @data, {
+            anatomy_term => $self->_pack_obj($_),
+            definition => $definition && "$definition",
+        };
     }
     return { data        => @data ? \@data : undef,
-	     description => 'anatomy terms associated with this expression cluster'
+             description => 'anatomy terms associated with this expression cluster'
     };
 }
 
+sub life_stages {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @data;
+    foreach ($object->Life_stage) {
+        my $definition   = $_->Definition;
+        push @data, {
+            life_stages => $self->_pack_obj($_),
+            definition => $definition && "$definition",
+        };
+    }
+    return { data        => @data ? \@data : undef,
+             description => 'Life stages associated with this expression cluster'
+    };
+}
+
+sub go_terms {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @data;
+    foreach ($object->GO_term) {
+        my $definition   = $_->Definition;
+        push @data, {
+            go_terms => $self->_pack_obj($_),
+            definition => $definition && "$definition",
+        };
+    }
+    return { data        => @data ? \@data : undef,
+             description => 'GO terms associated with this expression cluster'
+    };
+}
+
+sub processes {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @data;
+    foreach ($object->WBProcess) {
+        my $definition   = $_->Summary;
+        push @data, {
+            processes => $self->_pack_obj($_),
+            definition => $definition && "$definition",
+        };
+    }
+    return { data        => @data ? \@data : undef,
+             description => 'Processes associated with this expression cluster'
+    };
+}
 
 
 #######################################
