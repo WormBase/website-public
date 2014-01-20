@@ -6,8 +6,14 @@
     END;
 
     '<br />';
-
-    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
+    
+    murray_records = [];
+    expr_patterns = [];
+    FOREACH expr_pattern IN fields.expression_patterns.data;
+        expr_pattern.reference == 'WBPaper00040986'? murray_records.push(expr_pattern) : expr_patterns.push(expr_pattern);
+    END;
+    
+    WRAPPER $field_block title="Expression patterns" key="expr_patterns";
         build_data_table(
             order=['expression_pattern','gene','description', 'certainty'],
             columns={ 
@@ -16,15 +22,9 @@
                 description         => 'Description',
                 certainty           => 'Certainty',
             },
-            key='expression_patterns');
+            key='expr_patterns');
     END;
-    
-    murray_records = [];
-    FOREACH expr_pattern IN fields.expression_patterns.data;
-        murray_records.push(expr_pattern) 
-            IF expr_pattern.reference == 'WBPaper00040986';
-    END;
-    
+
     IF murray_records.size > 0;
         WRAPPER $field_block title="Inferred expression patterns from " 
             _ text2link('Paper','WBPaper00040986','Murray JI et al.','Murray JI et al.','all');
