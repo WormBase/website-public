@@ -8,11 +8,11 @@
     '<br />';
     
     murray_records = [];
-    expr_patterns = [];
+    fields.expr_patterns.data = [];
     FOREACH expr_pattern IN fields.expression_patterns.data;
-        expr_pattern.reference == 'WBPaper00040986'? murray_records.push(expr_pattern) : expr_patterns.push(expr_pattern);
+        expr_pattern.reference == 'WBPaper00040986'? murray_records.push(expr_pattern) : fields.expr_patterns.data.push(expr_pattern);
     END;
-    
+
     WRAPPER $field_block title="Expression patterns" key="expr_patterns";
         build_data_table(
             order=['expression_pattern','gene','description', 'certainty'],
