@@ -19,7 +19,7 @@
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
     [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: [% tags2link(data.$type, '; ') %]  
+        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: [% tags2link(data.$type, '; ', 'items') %]  
         [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
@@ -909,9 +909,10 @@ END;
 
    WRAPPER $field_block title="Phenotypes" key="phenotypes";
 
-       build_data_table(order=['phenotype','evidence'],
+       build_data_table(order=['phenotype','description', 'evidence'],
                         columns={ 
                         phenotype    => 'Phenotype',
+                        description => 'Description',
                 evidence  => 'Evidence'
                     },
                     key='phenotypes');
