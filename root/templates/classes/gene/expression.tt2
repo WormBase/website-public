@@ -47,7 +47,13 @@ END;
 
 
 WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
-  tags2link(fields.expression_cluster.data, '<br />', 'expression clusters');
+  build_data_table(
+    order=['expression_cluster','description'],
+    columns={ 
+      expression_pattern => 'Expression clusters',
+      description  => 'Description'
+    },
+    key='expression_cluster');
 END;
 
 
