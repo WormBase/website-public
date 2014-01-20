@@ -225,6 +225,41 @@ sub sage_tags {
     };
 }
 
+#######################################
+#
+# The Regulation widget
+#
+#######################################
+
+sub regulated_by_gene {
+    my $self = shift;
+    my $object = $self->object;
+    my @data = map {$self->_pack_obj($_)} $object->Regulated_by_gene;
+    return {
+        description => "Gene regulating this expression cluster",
+        data => @data ? \@data : undef
+    }
+}
+
+sub regulated_by_treatment {
+    my $self = shift;
+    my $object = $self->object;
+    my $treatment = $object->Regulated_by_treatment;
+    return {
+        description => "Treatment regulating this expression cluster",
+        data => $treatment && "$treatment"
+    }
+}
+
+sub regulated_by_molecule {
+    my $self = shift;
+    my $object = $self->object;
+    my @data = map {$self->_pack_obj($_)} $object->Regulated_by_molecule;
+    return {
+        description => "Molecule regulating this expression cluster",
+        data => @data ? \@data : undef
+    }
+}
 
 
 #######################################

@@ -20,8 +20,9 @@ END;
    markup(fields.description.data);
 
     IF fields.algorithm.data;
-        '<br /><br /><h4>Algorithm</h4>';
+        '<br /><br /><h4>Algorithm:</h4>';
         fields.algorithm.data;
+        '<br /><br />';
     END;
 
     remarks(no_toggle=1);
