@@ -1,0 +1,13 @@
+[%
+WRAPPER $field_block title="Regulated by Gene" key="regulated_by_gene";
+    tags2link(fields.regulated_by_gene.data);
+END;
+
+WRAPPER $field_block title="Regulated by Treatment" key="regulated_by_treatment";
+    fields.regulated_by_treatment.data;
+END;
+
+WRAPPER $field_block title="Regulated by Molecule" key="regulated_by_molecule";
+    tags2link(fields.regulated_by_molecule.data);
+END;
+%]
