@@ -63,7 +63,22 @@ sub algorithm {
     };
 }
 
+sub attribute_of {
+    my $self = shift;
+    my $object = $self->object;
+    my @attribute_of = $object->Attribute_of;
+    my %data;
 
+    foreach my $ao ($object->Attribute_of) {
+        my @items = map { $self->_pack_obj($_) } $object->$ao;
+        $data{"$ao"} = @items ? \@items : undef;
+    }
+
+    return {
+        description => "Items attributed to this expression cluster",
+        data => %data ? \%data : undef,
+    }
+}
 
 #######################################
 #
