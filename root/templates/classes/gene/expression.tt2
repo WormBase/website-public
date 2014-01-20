@@ -50,7 +50,7 @@ WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
   build_data_table(
     order=['expression_cluster','description'],
     columns={ 
-      expression_pattern => 'Expression clusters',
+      expression_cluster => 'Expression clusters',
       description  => 'Description'
     },
     key='expression_cluster');

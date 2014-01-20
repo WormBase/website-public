@@ -71,9 +71,13 @@
 			  key = 'anatomy_function_nots');
     END;
 
-    WRAPPER $field_block title="Expression clusters" key="expression_clusters";
-       FOREACH data IN fields.expression_clusters.data;
-        tag2link(data.ec_data) _ '<br />';
-       END;
+    WRAPPER $field_block title="Expression Cluster" key="expression_clusters";
+      build_data_table(
+        order=['expression_cluster','description'],
+        columns={ 
+          expression_cluster => 'Expression clusters',
+          description  => 'Description'
+        },
+        key='expression_clusters');
     END;
 %]
