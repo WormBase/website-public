@@ -169,7 +169,7 @@
         FOREACH bp IN bioproject;
           IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
               url = gbrowse_url(species, item.name.class _ ":" _ item.name.id, bp);
-              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
+              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
           ELSIF(!search);
               url = gbrowse_url(species, '', bp);
               linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
