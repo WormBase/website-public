@@ -322,7 +322,7 @@ END;
         FOREACH o IN order; headers.push(columns.$o); END;
 
         # generate table
-        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order);   
+        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator);   
       END;
     END; # END of MACRO
 %]
@@ -337,7 +337,7 @@ END;
      styling via javascript.
 %]
      
-[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns) BLOCK %]
+[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator) BLOCK %]
   
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
@@ -388,13 +388,13 @@ END;
 			cell='<a href="' _ cell _ '">Lab link</a>';
 		    END;
 		    '<td>';
-		    cell_content(cell);
+		    cell_content(cell, separator);
 		    '</td>';
 		END;
 	    ELSE;
 		FOREACH cell IN row;
 		    '<td>';
-		    cell_content(cell);
+		    cell_content(cell, separator);
 		    '</td>';
 		END;
 	    END;
@@ -525,7 +525,7 @@ END; %]
     markup_var(genstr);
 END; %]
 
-[% MACRO cell_content(cell) BLOCK;
+[% MACRO cell_content(cell, separator) BLOCK;
     IF ref(cell) == 'HASH';
       IF cell.defined('species');
           '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
@@ -566,7 +566,7 @@ END; %]
         FOREACH item IN cell;
           cell_content(item);
           IF !item.defined('evidence') && !loop.last;
-              '<br />';
+              separator || '<br />';
           END;
         END;
 	  END;
