@@ -21,10 +21,10 @@ expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match
 expressed_sequence_match:EMBL_nematode_cDNAs-BLAT		EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_nematode_cdnas)	7499267
 expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT		NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	4528878
 expressed_sequence_match:NEMBASE_cDNAs-BLAT		NEMBASE_cDNAs-BLAT	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	671706
-gene:WormBase		WormBase	gene	Genes (primary_gene_track)	24216
-	mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	24243
-	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	928
-	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	946
+gene:WormBase		WormBase	gene	Genes (genes)	24216
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	24243
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	928
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	946
 inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	70916
 	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	60624
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	141332

@@ -99,7 +99,7 @@ expressed_sequence_match:BLAT_Caen_tc1_BEST	BLAT_Caen_tc1_BEST	expressed_sequenc
 expressed_sequence_match:BLAT_Caen_tc1_OTHER	BLAT_Caen_tc1_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	1855	0	0	523	652	0	1538	279	0	0	0	0	0	0	0	0	0	1987	4849	0	0	0
 expressed_sequence_match:BLAT_EST_BEST	BLAT_EST_BEST	expressed_sequence_match	ESTs (best) (est_best)	0	0	81262	0	0	88314	12046	1258067	88118	109445	0	0	0	0	0	0	0	0	0	23	137208	0	0	0
 expressed_sequence_match:BLAT_EST_OTHER	BLAT_EST_OTHER	expressed_sequence_match	ESTs (other) (est_other)	0	0	163926	0	0	179672	3579	583547	598579	84782	0	0	0	0	0	0	0	0	0	1	1301706	0	0	0
-expressed_sequence_match:BLAT_OST_BEST	BLAT_OST_BEST	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	106445	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:BLAT_OST_BEST	BLAT_OST_BEST	expressed_sequence_match	C. elegans OSTs (orfeome_sequence_tags)	0	0	0	0	0	0	0	106445	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 expressed_sequence_match:BLAT_OST_OTHER	BLAT_OST_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	100146	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 expressed_sequence_match:BLAT_RST_BEST	BLAT_RST_BEST	expressed_sequence_match	C.elegans RSTs (race_sequence_tags)	0	0	0	0	0	0	0	7367	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 expressed_sequence_match:BLAT_RST_OTHER	BLAT_RST_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	4971	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
