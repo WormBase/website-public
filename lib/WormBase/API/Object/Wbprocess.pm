@@ -119,8 +119,19 @@ sub historical_gene {
 
     my @historical_gene = map { {text => $self->_pack_obj($_), 
                               evidence => $self->_get_evidence($_)} } $object->Historical_gene;
-    return { description => 'Historical record of the dead genes originally associated with this process',
+    return { description => 'Historical record of the dead genes originally associated with this topic',
              data        => @historical_gene ? \@historical_gene : undef,
+    };
+}
+
+sub life_stage {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @life_stages = map { {text => $self->_pack_obj($_), 
+                              evidence => $self->_get_evidence($_)} } $object->Life_stage;
+    return { description => 'Life stages associated with this topic',
+             data        => @life_stages ? \@life_stages : undef,
     };
 }
 
@@ -141,7 +152,7 @@ sub genes{
     }
     
     return { 
-		description => 'alleles found within this gene',
+		description => 'genes found within this topic',
 	    data        => @data ? \@data : undef 
 	};
 }
@@ -179,7 +190,7 @@ sub expression_cluster {
 	}
 	
 	return {
-		description => "Expression cluster(s) related to this process",
+		description => "Expression cluster(s) related to this topic",
 		data        => @data ? \@data : undef 
 	};
 
@@ -219,7 +230,7 @@ sub interaction {
 	}
 	
 	return {
-		description => "Interactions relating to this process",
+		description => "Interactions relating to this topic",
 		data        => @data ? \@data : undef 
 	};
 
@@ -306,7 +317,7 @@ sub pathway{
 		my $pathway_id = $row[4];
 		
 		$data = {
-			pathway_id		=> $pathway_id,
+			pathway_id		=> "$pathway_id",
 		};
 		
 	}
@@ -318,6 +329,40 @@ sub pathway{
 }
 
 
+#######################################
+#
+# Phenotypes widget
+#
+#######################################
+
+# sub phenotypes { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+
+
+#######################################
+#
+# Anatomy widget
+#
+#######################################
+
+sub anatomy_term {
+	my $self = shift;
+	my $object = $self->object;
+	my @data;
+    foreach my $anatomy_term ($object->Anatomy_term){
+        my $description = $anatomy_term->Definition;
+        push @data, {
+            anatomy_term => {text => $self->_pack_obj($anatomy_term), evidence => $self->_get_evidence($anatomy_term)},
+            description => $description && "$description",
+        }
+    }
+	return {
+		description => "Anatomy terms related to this topic",
+		data => @data ? \@data : undef
+	}
+}
 
 ############################################################
 #

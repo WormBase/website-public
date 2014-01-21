@@ -1,19 +1,55 @@
 [% 
 
 WRAPPER $field_block title="Anatomy Terms" key="anatomy_terms";
-
     build_data_table (
 		order = [ 
 			'anatomy_term',
 			'definition', 
 			],
 		columns = {				 		
-			anatomy_term => 'Anatomy_term',
+			anatomy_term => 'Anatomy term',
 			definition => 'Definition',
 			},
 		key = 'anatomy_terms');
 END;
 
-expression_patterns;
+WRAPPER $field_block title="Life Stages" key="life_stages";
+    build_data_table (
+		order = [ 
+			'life_stages',
+			'definition', 
+			],
+		columns = {				 		
+			life_stages => 'Life Stages',
+			definition => 'Definition',
+			},
+		key = 'life_stages');
+END;
+
+WRAPPER $field_block title="GO_terms" key="go_terms";
+    build_data_table (
+		order = [ 
+			'go_terms',
+			'definition', 
+			],
+		columns = {				 		
+			go_terms => 'GO_terms',
+			definition => 'Definition',
+			},
+		key = 'go_terms');
+END;
+
+WRAPPER $field_block title="Processes" key="processes";
+    build_data_table (
+		order = [ 
+			'processes',
+			'definition', 
+			],
+		columns = {				 		
+			processes => 'Processes',
+			definition => 'Definition',
+			},
+		key = 'processes');
+END;
 
 %]

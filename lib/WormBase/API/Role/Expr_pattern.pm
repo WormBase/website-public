@@ -98,15 +98,16 @@ sub _build_expression_patterns {
             $certainty = $_->fetch()->at("Expressed_in.$class.$object");
             $certainty = $certainty->right if $certainty;
             $c_ev = $self->_get_evidence($certainty);
-            $c_ev->{$certainty} = $gene->{label} . ($self->certainty_ev->{$certainty} || "") . ($obj_label || "") if $certainty;
+            $c_ev->{"$certainty"} = $gene->{label} . ($self->certainty_ev->{$certainty} || "") . ($obj_label || "") if $certainty;
         }
+        my $reference = $_->Reference;
         push @data, {
             expression_pattern => $self->_pack_obj($_),
             description        => join("<br />", @patterns) || undef,
             author             => $author && "$author",
             gene               => $gene,
             certainty          => $c_ev ? { evidence => $c_ev, text => "$certainty"} : ($certainty && "$certainty"),
-            reference          => $_->Reference
+            reference          => "$reference"
         };
     }
 

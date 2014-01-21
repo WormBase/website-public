@@ -237,7 +237,7 @@ sub classification {
         $data->{type} = "protein coding";
     }
 
-    $data->{type} = 'Transposon in origin' if $object->Corresponding_transposon;
+    $data->{type} = 'Transposon in origin' if grep {/Transposon_in_origin/} ($object->History);
 
     unless($data->{type}){
       # Is this a non-coding RNA?
@@ -860,8 +860,16 @@ sub microarray_topology_map_position {
 sub expression_cluster {
     my $self   = shift;
     my $object = $self->object;
-    my @expr_clusters = $object->Expression_cluster;  
-    return { data        => @expr_clusters ? $self->_pack_objects(\@expr_clusters) : undef,
+    my @data;
+
+    foreach my $expr_cluster ($object->Expression_cluster){
+        my $description = $expr_cluster->Description;
+        push @data, {
+            expression_cluster => $self->_pack_obj($expr_cluster),
+            description => $description && "$description"
+        }
+    }
+    return { data        => @data ? \@data : undef,
              description => 'expression cluster data' };
 }
 
