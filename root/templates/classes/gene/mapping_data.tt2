@@ -1,13 +1,15 @@
 [% 
    WRAPPER $field_block title="Two Point Data" key="two_pt_data";
         build_data_table(
-            order=['distance','genes','author','genotype', 'raw_data','comment'],
-            columns={ genes      => 'Genes',
+            order=['distance','point_1', 'point_2', 'mapper','genotype', 'raw_data','comment', 'date'],
+            columns={ 'point_1'  => 'Point 1',
+                      'point_2'  => 'Point 2',
                       distance   => 'Distance',
-                      author     => 'Author',
+                      mapper     => 'Mapper',
                       raw_data   => 'Raw data',
                       genotype   => 'Genotype',
                       comment    => 'Comment',
+                      date       => 'Date',
             },
             key='two_pt_data',
             separator=' ',
@@ -17,18 +19,23 @@
 
    WRAPPER $field_block title="Multi Point Data" key="multi_pt_data";
         build_data_table(
-            order=['result','author','comment'],
+            order=['result','genotype', 'mapper','comment', 'date'],
             columns={ result     => 'Result',
-                      author     => 'Author',
+                      genotype   => 'Genotype',
+                      mapper     => 'Mapper',
                       comment    => 'Comment',
+                      date       => 'Date',
             },
             key='multi_pt_data');
     END;
 
    WRAPPER $field_block title="Positive/Negative Data" key="pos_neg_data";
         build_data_table(
-            order=['result'],
+            order=['result', 'mapper', 'comment', 'date'],
             columns={ result     => 'Result',
+                      mapper     => 'Mapper',
+                      comment    => 'Comment',
+                      date       => 'Date',
             },
             key='pos_neg_data',
             separator=' ');

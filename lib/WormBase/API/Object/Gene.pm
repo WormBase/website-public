@@ -1466,21 +1466,26 @@ sub two_pt_data {
 
     foreach my $exp ($object->get('2_point')){
 
-        my @genes = ($self->_pack_obj($exp->Gene_1), " <> ", $self->_pack_obj($exp->Gene_2));
+        my @point_1 = map { $self->_pack_obj($_)} ($exp->Gene_1, $exp->Point_1->right(2));
+        my @point_2 = map { $self->_pack_obj($_)} ($exp->Gene_2, $exp->Point_2->right(2));
         my $genotype = $exp->Genotype;
         my $author = $exp->Mapper;
         my $raw_data = $exp->Results;
         my $comment = join('<br />', $exp->Remark);
 
         my $distance = ($exp->Calc_distance || "0.0") . ' (' . (0+$exp->Calc_lower_conf) . '-' . (0+$exp->Calc_upper_conf) . ')';
+        $exp->date_style('ace');
+        my $date = $exp->Date;
 
         push @data, {
-            genes => @genes ? \@genes : undef,
+            point_1 => @point_1 ? \@point_1 : undef,
+            point_2 => @point_2 ? \@point_2 : undef,
             distance => $distance && "$distance",
-            author => $author ? $self->_pack_obj($author) : undef,
+            mapper => $author ? $self->_pack_obj($author) : undef,
             genotype => $genotype && "$genotype",
             raw_data => $raw_data && "$raw_data",
-            comment => $comment && "$comment"
+            comment => $comment && "$comment",
+            date => $date && "$date",
         }
     }
 
@@ -1499,49 +1504,49 @@ sub multi_pt_data {
     my @data;
 
     foreach my $exp ($object->Multi_point){
-        foreach my $cross ($exp->Results){
-            my @results = $cross->row;
-            shift @results;
-            my (@loci, $total);
-            $total = 0;
+        my $cross = $exp->Combined;
+        my @results = $cross->row;
+        my (@loci, $total);
+        $total = 0;
 
-            while (@results) {
-                my ($label,$locus,$count) = splice(@results,0,3);
-                $count ||= 0;
-                $total += $count;
-                push(@loci,[$locus=>$count]);
-            }
-            my $genotype = '';
-            my $open_paren = 0;
-            while (@loci) {
-                my $l = shift @loci;
-                my $gene = $self->_pack_obj($l->[0]);
-                my $best = $gene->{label};
-                if ((defined $l->[1]) && (($l->[1]+0) == 0)) {
-                    $genotype .= "($best";
-                    $open_paren++;
-                } else {
-                    $genotype .= " $best";
-                    while ($open_paren > 0) {
-                        $genotype .= ")";
-                        $open_paren--;
-                    }
-                    $genotype .= " ($l->[1]/$total) " if defined($l->[1]);
+        while (@results) {
+            my ($label,$locus,$count) = splice(@results,0,3);
+            $count ||= 0;
+            $total += $count;
+            push(@loci,[$locus=>$count]);
+        }
+        my $genotype = '';
+        my $open_paren = 0;
+        my $sum = 0;
+        while (@loci) {
+            my $l = shift @loci;
+            my $gene = $self->_pack_obj($l->[0]);
+            my $best = $gene->{label};
+            if ((defined $l->[1]) && (($l->[1]+0) == 0)) {
+                $genotype .= ($open_paren == 0 && ($sum < $total) && ($open_paren = 1)) ? "($best" : " $best";
+            } else {
+                $genotype .= " $best";
+                if ($open_paren > 0) {
+                    $genotype .= ")";
+                    $open_paren = 0;
                 }
+                $genotype .= " ($l->[1]/$total) " if defined($l->[1]);
+                $sum += $l->[1];
             }
-            while ($open_paren > 0) {
-                $genotype .= ")";
-                $open_paren--;
-            }
+        }
 
-            my $author = $exp->Mapper;
-            my $comment = join('<br />', $exp->Remark);
+        my $author = $exp->Mapper;
+        my $comment = join('<br />', $exp->Remark);
+        my $gtype = $exp->Genotype;
+        $exp->date_style('ace');
+        my $date = $exp->Date;
 
-            push @data, {
-                result => $genotype && "$genotype",
-                author => $author ? $self->_pack_obj($author) : undef,
-                comment => $comment && "$comment"
-            }
+        push @data, {
+            result => $genotype && "$genotype",
+            genotype => $gtype && "$gtype",
+            mapper => $author ? $self->_pack_obj($author) : undef,
+            comment => $comment && "$comment",
+            date => $date && "$date",
         }
     }
 
@@ -1565,6 +1570,10 @@ sub pos_neg_data {
         my @items = split(' ', $exp->Results);
         my $item1 = $self->_pack_obj($exp->Item_1->right);
         my $item2 = $self->_pack_obj($exp->Item_2->right);
+        my $mapper = $exp->Mapper;
+        my $comment = join('<br />', $exp->Remark);
+        $exp->date_style('ace');
+        my $date = $exp->Date;
 
         @items = map {
                     if($_ =~ /$item1->{label}/){
@@ -1577,7 +1586,10 @@ sub pos_neg_data {
                  } @items;
 
         push @data, {
-            result => @items ? \@items : undef
+            result => @items ? \@items : undef,
+            mapper => $mapper ? $self->_pack_obj($mapper) : undef,
+            comment => $comment && "$comment",
+            date => $date && "$date",
         }
     }
 
