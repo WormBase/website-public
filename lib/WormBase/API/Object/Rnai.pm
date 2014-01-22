@@ -103,7 +103,7 @@ sub movies {
         my $file = $_->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
         my $name = $_->Remark || "$_";
         push @data,{ file  => "$file",
-                 name  => $_,
+                 name  => "$_",
                  label => "$name",
         };
     }
