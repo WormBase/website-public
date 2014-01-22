@@ -1515,22 +1515,23 @@ sub multi_pt_data {
             $total += $count;
             push(@loci,[$locus=>$count]);
         }
-        my $genotype = '';
         my $open_paren = 0;
         my $sum = 0;
+        my @genotype;
         while (@loci) {
             my $l = shift @loci;
             my $gene = $self->_pack_obj($l->[0]);
             my $best = $gene->{label};
             if ((defined $l->[1]) && (($l->[1]+0) == 0)) {
-                $genotype .= ($open_paren == 0 && ($sum < $total) && ($open_paren = 1)) ? "($best" : " $best";
+                push @genotype, "(" if ($open_paren == 0 && ($sum < $total) && ($open_paren = 1));
+                push @genotype, $gene;
             } else {
-                $genotype .= " $best";
+                push @genotype, $gene;
                 if ($open_paren > 0) {
-                    $genotype .= ")";
+                    push @genotype, ")";
                     $open_paren = 0;
                 }
-                $genotype .= " ($l->[1]/$total) " if defined($l->[1]);
+                push @genotype, " ($l->[1]/$total) " if defined($l->[1]);
                 $sum += $l->[1];
             }
         }
@@ -1542,7 +1543,7 @@ sub multi_pt_data {
         my $date = $exp->Date;
 
         push @data, {
-            result => $genotype && "$genotype",
+            result => @genotype ? \@genotype : undef,
             genotype => $gtype && "$gtype",
             mapper => $author ? $self->_pack_obj($author) : undef,
             comment => $comment && "$comment",

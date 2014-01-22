@@ -26,6 +26,7 @@
                       comment    => 'Comment',
                       date       => 'Date',
             },
+            separator=' ',
             key='multi_pt_data');
     END;
 
