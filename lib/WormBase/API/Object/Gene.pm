@@ -112,8 +112,8 @@ sub _build__alleles {
     }
 
     return {
-        alleles        => @alleles ? \@alleles : $count,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : $count,
+        alleles        => @alleles ? \@alleles : scalar @alleles,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : scalar @polymorphisms,
     };
 
 }
