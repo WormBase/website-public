@@ -112,8 +112,8 @@ sub _build__alleles {
     }
 
     return {
-        alleles        => @alleles ? \@alleles : $count,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : $count,
+        alleles        => @alleles ? \@alleles : scalar @alleles,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : scalar @polymorphisms,
     };
 
 }
@@ -1417,7 +1417,6 @@ sub treefam {
         $data{"$treefam"} = "";
     }
     my @data = keys %data;
-    $self->log->debug("TREEFAM: " . join(',', @data));
     return { description => 'data and IDs related to rendering Treefam trees',
              data        => @data ? \@data : undef,
     };
@@ -1447,6 +1446,160 @@ sub _build_genomic_position {
 
 # sub genomic_image { }
 # Supplied by Role
+
+
+#######################################
+#
+# The Mapping Data Widget
+#   template: classes/gene/mapping_data.tt2
+#
+#######################################
+
+# two_pt_data
+# this method returns mapping data associated with this gene
+# adapted from old site
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/two_pt_data
+sub two_pt_data {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $exp ($object->get('2_point')){
+
+        my @point_1 = map { $self->_pack_obj($_)} ($exp->Gene_1, $exp->Point_1->right(2));
+        my @point_2 = map { $self->_pack_obj($_)} ($exp->Gene_2, $exp->Point_2->right(2));
+        my $genotype = $exp->Genotype;
+        my $author = $exp->Mapper;
+        my $raw_data = $exp->Results;
+        my $comment = join('<br />', $exp->Remark);
+
+        my $distance = ($exp->Calc_distance || "0.0") . ' (' . (0+$exp->Calc_lower_conf) . '-' . (0+$exp->Calc_upper_conf) . ')';
+        $exp->date_style('ace');
+        my $date = $exp->Date;
+
+        push @data, {
+            point_1 => @point_1 ? \@point_1 : undef,
+            point_2 => @point_2 ? \@point_2 : undef,
+            distance => $distance && "$distance",
+            mapper => $author ? $self->_pack_obj($author) : undef,
+            genotype => $genotype && "$genotype",
+            raw_data => $raw_data && "$raw_data",
+            comment => $comment && "$comment",
+            date => $date && "$date",
+        }
+    }
+
+    return {
+        description => 'Two point mapping data for this gene',
+        data => @data ? \@data : undef
+    }
+}
+
+# multi_pt_data
+# this method returns mapping data associated with this gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/multi_pt_data
+sub multi_pt_data {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $exp ($object->Multi_point){
+        my $cross = $exp->Combined;
+        my @results = $cross->row;
+        my (@loci, $total);
+        $total = 0;
+
+        while (@results) {
+            my ($label,$locus,$count) = splice(@results,0,3);
+            $count ||= 0;
+            $total += $count;
+            push(@loci,[$locus=>$count]);
+        }
+        my $open_paren = 0;
+        my $sum = 0;
+        my @genotype;
+        while (@loci) {
+            my $l = shift @loci;
+            my $gene = $self->_pack_obj($l->[0]);
+            my $best = $gene->{label};
+            if ((defined $l->[1]) && (($l->[1]+0) == 0)) {
+                push @genotype, "(" if ($open_paren == 0 && ($sum < $total) && ($open_paren = 1));
+                push @genotype, $gene;
+            } else {
+                push @genotype, $gene;
+                if ($open_paren > 0) {
+                    push @genotype, ")";
+                    $open_paren = 0;
+                }
+                push @genotype, " ($l->[1]/$total) " if defined($l->[1]);
+                $sum += $l->[1];
+            }
+        }
+
+        my $author = $exp->Mapper;
+        my $comment = join('<br />', $exp->Remark);
+        my $gtype = $exp->Genotype;
+        $exp->date_style('ace');
+        my $date = $exp->Date;
+
+        push @data, {
+            result => @genotype ? \@genotype : undef,
+            genotype => "$gtype" || undef,
+            mapper => $author ? $self->_pack_obj($author) : undef,
+            comment => $comment && "$comment",
+            date => $date && "$date",
+        }
+    }
+
+
+    return {
+        description => 'Multi point mapping data for this gene',
+        data => @data ? \@data : undef
+    }
+}
+
+# pos_neg_data
+# this method returns mapping data associated with this gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/pos_neg_data
+sub pos_neg_data {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+
+
+    foreach my $exp ($object->Pos_neg_data){
+        my @items = split(' ', $exp->Results);
+        my $item1 = $self->_pack_obj($exp->Item_1->right);
+        my $item2 = $self->_pack_obj($exp->Item_2->right);
+        my $mapper = $exp->Mapper;
+        my $comment = join('<br />', $exp->Remark);
+        $exp->date_style('ace');
+        my $date = $exp->Date;
+
+        @items = map {
+                    if($_ =~ /$item1->{label}/){
+                        $item1;
+                    }elsif($_ =~ /$item2->{label}/){
+                        $item2;
+                    }else{
+                        "$_ ";
+                    }
+                 } @items;
+
+        push @data, {
+            result => @items ? \@items : undef,
+            mapper => $mapper ? $self->_pack_obj($mapper) : undef,
+            comment => $comment && "$comment",
+            date => $date && "$date",
+        }
+    }
+
+    return {
+        description => 'Positive/Negative mapping data for this gene',
+        data => @data ? \@data : undef
+    }
+}
+
 
 #######################################
 #
