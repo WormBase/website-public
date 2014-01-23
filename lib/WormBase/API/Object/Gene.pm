@@ -659,7 +659,7 @@ sub fpkm_expression {
                                  })->{uri};
     } else {
         $plot = $rserve->barchart(\@fpkm_map, {
-                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    filename => "fpkm_$object.png",
                                     xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
                                     ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
                                     width    => WormBase::Web->config->{fpkm_expression_chart_width},
