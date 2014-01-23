@@ -534,6 +534,12 @@
 	search      = 'http://www.sciencedirect.com/science/article/pii/%s'
 	}
 
+ Movie = {
+ 	description = 'Static movies on the file system'
+ 	base        = 'http://www.wormbase.org/img-static/movies/'
+ 	search      = 'http://www.wormbase.org/img-static/movies/%s'
+ }
+
  MRC_geneservice = {
 	description = 'Supplier of genomic products and contract research company'
 	base        = 'http://www.geneservice.co.uk/products/rnai/index.jsp'

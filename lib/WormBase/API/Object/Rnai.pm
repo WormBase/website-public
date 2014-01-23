@@ -96,15 +96,29 @@ sub targets {
 sub movies {
     my $self   = shift;
     my $object = $self->object;
-    my @tag_objects = $object->Supporting_data->col if $object->Supporting_data;
-    my @movies = $object->Movie;
     my @data;
-    foreach (@tag_objects) {
-        my $file = $_->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
-        my $name = $_->Remark || "$_";
+
+    # Why does have the CRAZIEST model? So hard to get data...
+    foreach my $movie ($object->follow(-tag=>'Movie',-filled=>1)) {
+
+        # I'm so sorry
+        my ($db, $file);
+        if ($movie->DB_info) {
+            ($db) = grep { /RNAi/ } $movie->at('DB_info')->col;
+            ($file) = map { $_->right } grep { /id/ } map { $_->col } $db;
+        }
+        $file ||= $movie->Name;
+        $db ||= 'Movie';
+
+
+
+        # my $file = $movie->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
+        my $name = $movie->Remark || "$movie";
         push @data,{ file  => "$file",
-                 name  => "$_",
+                 name  => "$movie",
                  label => "$name",
+                 class => "$db",
+                 id => "$file"
         };
     }
     return { data        => @data ? \@data : undef,

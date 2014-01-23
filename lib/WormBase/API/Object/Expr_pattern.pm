@@ -135,8 +135,6 @@ sub ep_movies{
     my @movies = $object->Movie;
     my @filenames = map { my $name = $_->Name; "$name" } @movies;
     
-    #print $_,"\n" foreach @filenames; # DELETE
-    
     return {
         description => 'Movies showcasing this expression pattern',
         data        => @filenames ? \@filenames : undef

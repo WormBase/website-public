@@ -3,15 +3,9 @@
 # Movies
 WRAPPER $field_block title="Movies" key="movies";
     FOREACH item IN fields.movies.data;
-    WRAPPER toggle title='<a href="/img-static/movies/' _ item.file _ '">' _ item.label _ '</a>';
-      '<OBJECT  WIDTH="320"HEIGHT="180"
-      CODEBASE="http://www.apple.com/qtactivex/qtplugin.cab">
-      <PARAM name="SRC" VALUE="/img-static/movies/' _ item.file _ '">
-      <PARAM name="AUTOPLAY" VALUE="true">
-      <PARAM name="CONTROLLER" VALUE="true">
-      <EMBED SRC="/img-static/movies/' _ item.file _ ' " WIDTH="300" HEIGHT="250" AUTOPLAY="true" CONTROLLER="true" PLUGINSPAGE="http://www.apple.com/quicktime/download/">
-      </EMBED>
-      </OBJECT>';
+
+    WRAPPER toggle title='<a href="http://www.rnai.org/movies/' _ item.file _ '">' _ item.label _ '</a>'  open=1;
+            embed_video(get_url(item.class, item.id));
     END;
 
     END;

@@ -78,21 +78,25 @@
 
 
    MACRO get_url(class, id, taxonomy) BLOCK;
-        class = (ACE2WB_MAP.$class || class) FILTER lower;
-        IF c.config.sections.species.$class.defined;
-          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
-        ELSIF (class == 'bench');
-          c.uri_for('/me', id).path;
-        ELSIF (class == 'page');
-          id;
-        ELSIF (class == 'genomic_location');
-          gbrowse_url(taxonomy, id);
-        ELSIF (class == 'txt');
-          '';
-        ELSIF !(c.config.sections.resources.$class.defined);
-          c.uri_for('/search', 'all', id).path;
+        IF (site.external_urls.$class.defined); 
+            get_external_url(class, id);
         ELSE;
-          c.uri_for('/resources', class, id).path;
+          class = (ACE2WB_MAP.$class || class) FILTER lower;
+          IF c.config.sections.species.$class.defined;
+            c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
+          ELSIF (class == 'bench');
+            c.uri_for('/me', id).path;
+          ELSIF (class == 'page');
+            id;
+          ELSIF (class == 'genomic_location');
+            gbrowse_url(taxonomy, id);
+          ELSIF (class == 'txt');
+            '';
+          ELSIF !(c.config.sections.resources.$class.defined);
+            c.uri_for('/search', 'all', id).path;
+          ELSE;
+            c.uri_for('/resources', class, id).path;
+          END;
         END;
    END;
 
@@ -274,10 +278,18 @@
     MACRO external_link(link, text, id, dbt) BLOCK;
        IF (link||text||id);
         text = text || id || link;
-        link = match_link(link);
-        ext_url = "";
+        ext_url = get_external_url(link, id, dbt);
+        "<a href=\"$ext_url\" 
+            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
+            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
+       END;
+    END;
 
-        IF(site.external_urls.defined(link));
+    MACRO get_external_url(link, id, dbt) BLOCK;
+       ext_url = "";
+       link = match_link(link);
+
+       IF(site.external_urls.defined(link));
           desc = site.external_urls.$link.description;
           IF id;
               USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt : site.external_urls.$link.search.replace('%S', '%s'));
@@ -293,10 +305,7 @@
           END;
         END;
         UNLESS (ext_url.length > 1); ext_url = link; END; 
-        "<a href=\"$ext_url\" 
-            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
-            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
-       END;
+        ext_url;
     END;
 
     MACRO match_link(link) BLOCK;
