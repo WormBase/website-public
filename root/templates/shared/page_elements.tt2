@@ -545,34 +545,34 @@ END; %]
           show_genotype(cell.genotype);
       ELSE;
 
-      # assumes that hash passed to cell should be output as the key followed by its value
-      # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
-      FOREACH key IN cell.keys.sort;
-        "$key";
-        cell_content(cell.$key);
+        # assumes that hash passed to cell should be output as the key followed by its value
+        # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
+        FOREACH key IN cell.keys.sort;
+          "$key";
+          cell_content(cell.$key);
+        END;
       END;
-      END;
-	ELSIF ref(cell) == 'ARRAY';
-	  IF (!separator) && (cell.size > 10);
-	      WRAPPER toggle title=cell.size _ ' Results';
+    ELSIF ref(cell) == 'ARRAY';
+      IF (!separator) && (cell.size > 10);
+          WRAPPER toggle title=cell.size _ ' Results';
             FOREACH item IN cell;
               cell_content(item);
               IF !item.defined('evidence') && !loop.last;
                   '<br />';
               END;
             END;
-	      END;
-	  ELSE;
+          END;
+      ELSE;
         FOREACH item IN cell;
           cell_content(item);
           IF !item.defined('evidence') && !loop.last;
               separator || '<br />';
           END;
         END;
-	  END;
-	ELSE;
-	   cell;
-	END;
+      END;
+    ELSE;
+      cell;
+    END;
   END;
 %]
 
