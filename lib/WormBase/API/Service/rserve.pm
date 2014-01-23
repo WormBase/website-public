@@ -56,7 +56,11 @@ sub execute_r_program {
         }
     }
 
+    # This was a note from Joachim.
     # TODO: figure out why `move($image_tmp_path, $destination);` does not work anymore!
+    # TH: The system command doesn't work here either. The reason
+    # is that the Rserve is running as jenkins but the app may (or may not) be.
+    # If it is NOT, mv here is cp and the tmp dir fills with images.
     system('mv', $image_tmp_path, $destination);
 
     # Return the absolute URI (relative to the server) of the generated image:
