@@ -553,7 +553,7 @@ END; %]
       END;
       END;
 	ELSIF ref(cell) == 'ARRAY';
-	  IF cell.size > 10;
+	  IF (!separator) && (cell.size > 10);
 	      WRAPPER toggle title=cell.size _ ' Results';
             FOREACH item IN cell;
               cell_content(item);
