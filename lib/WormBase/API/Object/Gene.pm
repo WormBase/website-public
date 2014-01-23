@@ -1544,7 +1544,7 @@ sub multi_pt_data {
 
         push @data, {
             result => @genotype ? \@genotype : undef,
-            genotype => $gtype && "$gtype",
+            genotype => "$gtype" || undef,
             mapper => $author ? $self->_pack_obj($author) : undef,
             comment => $comment && "$comment",
             date => $date && "$date",
