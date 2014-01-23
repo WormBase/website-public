@@ -1,7 +1,7 @@
 [% 
    WRAPPER $field_block title="Two Point Data" key="two_pt_data";
         build_data_table(
-            order=['genotype','point_1', 'point_2', 'distance','raw_data', 'date','comment', 'date'],
+            order=['genotype','point_1', 'point_2', 'distance', 'mapper', 'raw_data', 'date','comment'],
             columns={ 'point_1'  => 'Point 1',
                       'point_2'  => 'Point 2',
                       distance   => 'Distance',
