@@ -192,7 +192,7 @@
 	}
 
  CTD = {
-	description = 'Comparative Toxicogenomic Database advances the understanding of the effects of environmental chemicals on human health and includes manually curated data describing cross-species chemical gene/protein interactions and chemical- and gene- disease relationships to illuminate molecular mechanisms underlying variable susceptibility and environmentally influenced diseases. These data will also provide insights into complex chemical-gene and protein interaction networks.'
+	description = 'Comparative Toxicogenomic Database (CTD) advances the understanding of the effects of environmental chemicals on human health and includes manually curated data describing cross-species chemical gene/protein interactions and chemical- and gene- disease relationships to illuminate molecular mechanisms underlying variable susceptibility and environmentally influenced diseases. These data will also provide insights into complex chemical-gene and protein interaction networks.'
 	base        = 'http://ctd.mdibl.org'
 	search      = 'http://ctd.mdibl.org/detail.go?type=chem&acc=%s'
 	}
