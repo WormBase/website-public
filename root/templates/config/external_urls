@@ -270,7 +270,7 @@
  
  EnsEMBL = {
 	description = 'Ensembl produces and maintains automatic annotation on selected eukaryotic genomes'
-	search      = 'http://www.ensembl.org/%s/protview?peptide=%s'
+	search      = 'http://www.ensembl.org/Multi/Search/Results?q=%s;x=0;y=0;site=ensembl_all'
 	base        = 'http://www.ensembl.org'
 	}
 
