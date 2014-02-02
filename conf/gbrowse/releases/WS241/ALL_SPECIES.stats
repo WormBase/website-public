@@ -41,7 +41,7 @@ binding_site:binding_site	binding_site	binding_site	Binding sites (curated) (bin
 binding_site:binding_site_region	binding_site_region	binding_site	Binding regions (binding_regions)	0	0	0	0	0	0	0	307	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 binding_site:cisRed	cisRed	binding_site	Binding sites (predicted) (binding_sites_predicted)	0	0	0	0	0	0	0	7929	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 binding_site:miRanda	miRanda	binding_site	Binding sites (predicted) (binding_sites_predicted)	0	0	0	0	0	0	0	71796	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-complex_substitution:Allele	Allele	complex_substitution	 (variations_classical_alleles)	0	0	0	0	0	0	0	527	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:Allele	Allele	complex_substitution	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	527	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 complex_substitution:KO_consortium	KO_consortium	complex_substitution	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	1056	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 complex_substitution:Million_mutation	Million_mutation	complex_substitution	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	1218	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 complex_substitution:NBP_knockout	NBP_knockout	complex_substitution	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	1086	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -56,7 +56,7 @@ conserved_region:c_briggsae_LASTZ_NET	c_briggsae_LASTZ_NET	conserved_region	NO C
 conserved_region:c_elegans_LASTZ_NET	c_elegans_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	131050	98266	0	92948	106967	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 conserved_region:c_japonica_LASTZ_NET	c_japonica_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	92948	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 conserved_region:c_remanei_LASTZ_NET	c_remanei_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	106967	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-deletion:Allele	Allele	deletion	 (variations_classical_alleles)	0	0	0	0	0	0	0	1910	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:Allele	Allele	deletion	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	1910	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 deletion:Allele_Polymorphism	Allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 deletion:CGH_allele	CGH_allele	deletion	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	68	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 deletion:CGH_allele_Polymorphism	CGH_allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	239	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -139,7 +139,7 @@ gene:maker	maker	gene	NO CONFIG AVAILABLE	11427	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 gene:ratt	ratt	gene	NO CONFIG AVAILABLE	993	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 gene:tophat	tophat	gene	NO CONFIG AVAILABLE	2840	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 histone_binding_site:histone_binding_site_region	histone_binding_site_region	histone_binding_site	Histone binding sites (histone_binding_sites)	0	0	0	0	0	0	0	5164	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-insertion_site:Allele	Allele	insertion_site	 (variations_classical_alleles)	0	0	0	0	0	0	1	35	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+insertion_site:Allele	Allele	insertion_site	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	1	35	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 insertion_site:Million_mutation	Million_mutation	insertion_site	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	4332	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 insertion_site:PCoF_Allele	PCoF_Allele	insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	1	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 insertion_site:PCoF_Million_mutation	PCoF_Million_mutation	insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	207	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -174,7 +174,7 @@ nucleotide_match:celegans_TC1s-BLAT	celegans_TC1s-BLAT	nucleotide_match	NO CONFI
 nucleotide_match:celegans_ncRNAs-BLAT	celegans_ncRNAs-BLAT	nucleotide_match	NO CONFIG AVAILABLE	317	267	0	503	566	0	0	0	0	0	298	962	156	696	828	371	142	173	606	0	0	240	30	217
 operon:deprecated_operon	deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	0	0	3	0	0	0	0	75	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 operon:operon	operon	operon	Operons (operons)	0	0	1786	0	0	0	0	1390	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-point_mutation:Allele	Allele	point_mutation	 (variations_classical_alleles)	0	0	0	0	0	0	0	47	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:Allele	Allele	point_mutation	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	47	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 point_mutation:KO_consortium	KO_consortium	point_mutation	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	2698	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 point_mutation:Million_mutation	Million_mutation	point_mutation	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	845703	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 point_mutation:PCoF_Allele	PCoF_Allele	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	35	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -218,7 +218,7 @@ sequence_alteration:Variation_project_Polymorphism	Variation_project_Polymorphis
 sequence_motif:translated_feature	translated_feature	sequence_motif	Protein motifs (protein_motifs)	0	0	91177	0	0	191145	145510	165137	128748	195571	0	0	0	0	0	0	0	0	0	89494	354937	0	0	0
 snRNA:WormBase	WormBase	snRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	0	130	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 snoRNA:WormBase	WormBase	snoRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	67	0	0	0	0	345	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-substitution:Allele	Allele	substitution	 (variations_classical_alleles)	0	0	0	0	0	0	10	4390	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+substitution:Allele	Allele	substitution	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	10	4390	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 substitution:PCoF_Allele	PCoF_Allele	substitution	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	7	3885	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 substitution:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	substitution	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 substitution:Variation_project_Polymorphism	Variation_project_Polymorphism	substitution	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	4	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

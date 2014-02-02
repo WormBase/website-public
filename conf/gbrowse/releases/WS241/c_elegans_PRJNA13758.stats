@@ -144,12 +144,12 @@ reagent:Oligo_set		Oligo_set	reagent	Microarray oligo probes (microarray_oligo_p
 regulatory_region:regulatory_region		regulatory_region	regulatory_region	Regulatory regions (regulatory_regions)	64
 repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	116933
 sequence_motif:translated_feature		translated_feature	sequence_motif	Protein motifs (protein_motifs)	165137
-substitution:Allele		Allele	substitution	 (variations_classical_alleles)	4390
-	deletion:Allele	Allele	deletion	 (variations_classical_alleles)	1910
-	insertion_site:Allele	Allele	insertion_site	 (variations_classical_alleles)	35
-	complex_substitution:Allele	Allele	complex_substitution	 (variations_classical_alleles)	527
-	transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	 (variations_classical_alleles)	499
-	point_mutation:Allele	Allele	point_mutation	 (variations_classical_alleles)	47
+substitution:Allele		Allele	substitution	Classical alleles (variations_classical_alleles)	4390
+	deletion:Allele	Allele	deletion	Classical alleles (variations_classical_alleles)	1910
+	insertion_site:Allele	Allele	insertion_site	Classical alleles (variations_classical_alleles)	35
+	complex_substitution:Allele	Allele	complex_substitution	Classical alleles (variations_classical_alleles)	527
+	transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	Classical alleles (variations_classical_alleles)	499
+	point_mutation:Allele	Allele	point_mutation	Classical alleles (variations_classical_alleles)	47
 substitution:Variation_project_Polymorphism		Variation_project_Polymorphism	substitution	Polymorphisms (variations_polymorphisms)	4
 	deletion:CGH_allele_Polymorphism	CGH_allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	239
 	deletion:Variation_project_Polymorphism	Variation_project_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	112049
