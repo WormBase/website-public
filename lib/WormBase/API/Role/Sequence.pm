@@ -971,11 +971,6 @@ sub print_sequence {
             map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
             $seq_obj->get_SeqFeatures();
 
-        # Do we still need the different species code?? - AC
-        if ($s->Species =~ /briggsae/) {
-            @features = grep { $_->info eq $s && !$seenit{$_->start}++ } @features;
-        }
-
         @features = ($seq_obj->strand > 0) ? sort { $a->start <=> $b->start } @features : sort { $b->stop <=> $a->stop } @features;
 
         push @data, _print_unspliced($markup,$seq_obj,$unspliced,@features);
