@@ -840,7 +840,8 @@ sub microarray_topology_map_position {
     };
 
     return $datapack unless @{$self->sequences};
-    my @segments = $self->_segments && @{$self->_segments} or return $datapack;
+    my @segments = $self->_segments && @{$self->_segments};
+    return $datapack unless $segments[0];
     my @p = map { $_->info }
             $segments[0]->features('experimental_result_region:Expr_profile')
         or return $datapack;
@@ -1754,12 +1755,12 @@ sub microarray_probes {
 sub orfeome_primers {
     my $self   = shift;
     my $object = $self->object;
-    my @segments = $self->_segments ? @{$self->_segments} : undef ;
+    my @segments = $self->_segments && @{$self->_segments};
     my @ost = map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
               map {$_->info}
               map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') }
               @segments
-        if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
+        if ($segments[0] && ($object->Corresponding_CDS || $object->Corresponding_Pseudogene));
     
     return { description =>  "ORFeome Project primers and sequences",
              data        =>  @ost ? \@ost : undef };
@@ -1780,11 +1781,11 @@ sub primer_pairs {
                 data => undef
             } unless @{$self->sequences};
     
-    my @segments = @{$self->_segments};
+    my @segments = $self->_segments && @{$self->_segments};
     my @primer_pairs =  
     map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
     map {$_->info} 
-    map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
+    map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments if $segments[0];
     
     return { description =>  "Primer pairs",
              data        =>  @primer_pairs ? \@primer_pairs : undef };
@@ -2089,19 +2090,17 @@ sub _build__segments {
     my $sequences = $self->sequences;
     my @segments;
 
-    my $dbh = $self->gff_dsn() || return \@segments;
+    my $dbh = $self->gff_dsn();# || return \@segments;
 
     my $object = $self->object;
-    my $species = $object->Species;
-
 
     if (@segments = $dbh->segment($object)
-        or @segments = map {$dbh->segment($_)} @$sequences
-        or @segments = map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
-        or @segments = map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
+        ||  map {$dbh->segment($_)} @$sequences
+        ||  map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
+        ||  map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
 
     ) {
-        return \@segments;
+        return defined $segments[0] ? \@segments : undef;
     }
 
     return;
