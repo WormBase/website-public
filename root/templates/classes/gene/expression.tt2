@@ -60,7 +60,7 @@ END;
 WRAPPER $field_block title="Microarray, Tiling Array and RNAseq";
      '<a href="' _ site.external_urls.spell_wormbase.base _ '/spell/search/">Perform Clustering Analysis in SPELL</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
      '<br />';
-     external_link('spell_wormbase', 'SPELL analysis for ' _ span_class(object.name.data.label, 'locus', 0, 1), object.name.data.label);
+     external_link('spell_wormbase', 'Show Expression Levels of ' _ span_class(object.name.data.label, 'locus', 0, 1) _ ' in All Datasets', object.name.data.label);
 END;
 
 
