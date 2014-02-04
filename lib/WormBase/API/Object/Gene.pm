@@ -98,13 +98,13 @@ sub _build__alleles {
 
       if($count < 500){
           foreach my $allele (@all) {
-              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
+              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_process_variation($allele)) : 
                     push(@alleles, $self->_process_variation($allele));
           }
       }else{
           foreach my $allele (@all) {
-              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
+              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_pack_obj($allele)) : 
                     push(@alleles, $self->_pack_obj($allele));
           }
