@@ -198,8 +198,6 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
        END;
 
        IF features.Interactor;
-          #pluralize('Interactor', features.Interactor.size) _ ': ';
-          #tags2link(features.Interactor, '', 'interactors');
           WRAPPER toggle title=pluralize('Interactor', features.Interactor.size) _ ' (' _ features.Interactor.size _ ')';
             tags2link(features.Interactor);
           END;
