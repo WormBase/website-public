@@ -306,8 +306,8 @@ td.details {
     color: #666;
 }
 
-.paging_full_numbers span.paginate_button,
- 	.paging_full_numbers span.paginate_active {
+.paging_full_numbers a.paginate_button,
+.paging_full_numbers a.paginate_active {
     padding: 3px 10px;
     margin: 0;
     cursor: pointer;
@@ -315,19 +315,19 @@ td.details {
     font-weight: bold;
 }
 
-.paging_full_numbers span.paginate_button {
+.paging_full_numbers a.paginate_button {
 }
 
-.paging_full_numbers span.paginate_button:hover:not(.paginate_button_disabled) {
+.paging_full_numbers a.paginate_button:hover:not(.paginate_button_disabled) {
     background-color: #BBB;
 }
 
-.paging_full_numbers span.paginate_active {
+.paging_full_numbers a.paginate_active {
     color: #99B3FF;
     cursor: auto;
 }
 
-.paging_full_numbers span.paginate_button_disabled {
+.paging_full_numbers a.paginate_button_disabled {
     opacity: 0.5;
     filter: alpha(opacity=50);
     -moz-opacity: 0.5;
@@ -342,7 +342,7 @@ table.display tr.odd.row_selected td {
     background-color: #9FAFD1;
 }
 
-.paging_full_numbers span.first,.paging_full_numbers span.previous, .paging_full_numbers span.next, .paging_full_numbers span.last {
+.paging_full_numbers a.first,.paging_full_numbers a.previous, .paging_full_numbers a.next, .paging_full_numbers a.last {
     text-indent: -9999px;
     overflow: hidden;
     background-repeat: no-repeat;
@@ -355,15 +355,15 @@ table.display tr.odd.row_selected td {
     display: inline-block;
 }
 
-.paging_full_numbers span.last {
+.paging_full_numbers a.last {
     background-position: -64px -158px;
 }
 
-.paging_full_numbers span.previous {
+.paging_full_numbers a.previous {
     background-position: -48px -158px;
 }
 
-.paging_full_numbers span.next {
+.paging_full_numbers a.next {
     background-position: -32px -158px;
 }
 /* .ui-icon {  } */
@@ -583,4 +583,3 @@ div.box {
     border: 1px solid #8080FF;
     background-color: #E5E5FF;
 }
- 
