@@ -1,11 +1,15 @@
 [%
 #Genes
 build_data_table(
-	order = ['name','type'],
-	columns={ 
-		name	=> "Gene",
-		type	=> "Type"
-	},
-	key = 'genes'
+    order = ['name','type', 'bp_inv', 'assay', 'phenotype', 'reference'],
+    columns={ 
+        name        => "Gene",
+        type        => "Type",
+        'bp_inv'    => 'Anatomical Sites',
+        'assay'     => 'Assay',
+        'phenotype' => 'Phenotype',
+        'reference' => 'Reference'
+    },
+    key = 'genes'
 );
 %]

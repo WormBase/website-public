@@ -148,28 +148,44 @@ sub genes{
 
     my @data;
     foreach my $gene (@genes) {
-		push @data, $self->_process_gene($gene);
+        my $type = WormBase::API::Object::Gene->
+        classification($gene)->{data}->{type};
+        foreach ($gene->Anatomy_function){
+            my @bp_inv = map { 
+                if ("$_" eq "$gene") {
+                    my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}
+                } else { 
+                    { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}
+                }
+            } $_->Involved;
+            next unless @bp_inv;
+            my @assay = map { my $as = $_->right;
+                if ($as) {
+                    my @geno = $as->Genotype;                   
+                    {evidence => { genotype => join('<br /> ', @geno) },
+                    text => "$_",}
+                }
+            } $_->Assay;
+            my $pev;
+
+            push @data, {
+                name      => $self->_pack_obj($gene),
+                type      => $type,
+                phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+                    {    evidence => $pev,
+                         text     => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
+                assay     => @assay ? \@assay : undef,
+                bp_inv    => @bp_inv ? \@bp_inv : undef,
+                reference => $self->_pack_obj(scalar $_->Reference),
+            };
+        }
+
     }
-    
+
     return { 
-		description => 'genes found within this topic',
-	    data        => @data ? \@data : undef 
-	};
-}
-# Used above. Processes a single gene record to be displayed with the build_data_table
-# macro. Returns name and type
-sub _process_gene {
-	my ($self, $gene) = @_;
-	my $type = WormBase::API::Object::Gene->
-		classification($gene)->{data}->{type};
-	
-
-	my %data = (
-		name 	=> $self->_pack_obj($gene),
-		type	=> $type
-	);
-
-	return \%data;
+        description => 'genes found within this topic',
+        data        => @data ? \@data : undef 
+    };
 }
 
 #######################################
