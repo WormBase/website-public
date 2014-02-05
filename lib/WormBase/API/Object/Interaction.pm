@@ -72,17 +72,14 @@ sub _build__interactors {
 # Supplied by Role
 
 # Override Role to give a better label for name.
-sub _build_name { 
+sub _build__common_name { 
     my $self = shift;
     my $object = $self->object;
     my @list;
     map {push @list, sort keys %{$self->_interactors->{$_}}} sort keys %{$self->_interactors};
 
     my $label = join(' : ', @list);
-    return {
-        description => "The name and WormBase internal ID of $object",
-        data        =>  $self->_pack_obj($object,$label),
-    };
+    return $label;
 }
 
 # remarks {}
