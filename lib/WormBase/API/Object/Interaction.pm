@@ -40,7 +40,7 @@ sub _build__interactors {
     my %interactors;
     foreach my $type ($object->Interactor) {
 		my $count = 0;
-        next unless $type =~ /Molecule_regulator|Other_regulator|Other_regulated|Rearrangement|Interactor_overlapping_gene/;
+        next unless $type =~ /Molecule_regulator|Other_regulator|Other_regulated|Rearrangement|Interactor_overlapping_gene|Feature_interactor/;
 		foreach my $interactor ($type->col) {
 			my $name = eval {$interactor->Public_name} || "$interactor";
 			foreach my $tag ($type->right->down($count++)->col) {
