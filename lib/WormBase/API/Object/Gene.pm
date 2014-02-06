@@ -768,10 +768,21 @@ sub expression_patterns {
         }
         my $sub = $expr->Subcellular_localization;
 
+        my @dbs;
+        foreach my $db ($expr->DB_info) {
+            # assuming we don't have any other fields other than id
+            foreach my $id (map { $_->col } $db->col) {
+                push @dbs, { class => "$db",
+                             label => "$db",
+                             id    => "$id" };
+            }
+        }
+
         push @data, {
             expression_pattern =>  $expr_packed,
             description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
             type             => $type && "$type",
+            database         => @dbs ? \@dbs : undef,
             expressed_in    => @expressed_in ? \@expressed_in : undef,
             life_stage    => @life_stage ? \@life_stage : undef,
             go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,

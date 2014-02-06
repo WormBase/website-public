@@ -13,10 +13,11 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
         '</a>';
       '</div>';
     END;	
-           build_data_table(order=['expression_pattern','type', 'description', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
+           build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={ 
                           expression_pattern => 'Pattern',
                           description  => 'Description',
+                          database => 'Database',
                           type => 'Type',
                           expressed_in => 'Expressed in',
                           life_stage => 'Life stage',

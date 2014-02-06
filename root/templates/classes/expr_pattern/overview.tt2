@@ -8,8 +8,11 @@
 [%
 
 WRAPPER highlight_box;
- 
-   status;
+  WRAPPER $field_block title=pluralize("Database", fields.database.data.size) key='database';
+    tags2link(fields.database.data);
+  END;
+
+  status;
 
 END;
 
