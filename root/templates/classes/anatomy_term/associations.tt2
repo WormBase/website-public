@@ -6,27 +6,14 @@
     END;
 
     '<br />';
-
-    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
-        build_data_table(
-            order=['expression_pattern','gene','description', 'certainty'],
-            columns={ 
-                expression_pattern  => 'Expression Pattern',
-                gene                => 'Gene',
-                description         => 'Description',
-                certainty           => 'Certainty',
-            },
-            key='expression_patterns');
-    END;
     
     murray_records = [];
+    fields.expr_patterns.data = [];
     FOREACH expr_pattern IN fields.expression_patterns.data;
-        murray_records.push(expr_pattern) 
-            IF expr_pattern.reference == 'WBPaper00040986';
+        expr_pattern.reference == 'WBPaper00040986'? murray_records.push(expr_pattern) : fields.expr_patterns.data.push(expr_pattern);
     END;
-    
-    WRAPPER $field_block title="Inferred expression patterns from " 
-        _ text2link('Paper','WBPaper00040986','Murray JI et al.','Murray JI et al.','all');
+
+    WRAPPER $field_block title="Expression patterns" key="expr_patterns";
         build_data_table(
             order=['expression_pattern','gene','description', 'certainty'],
             columns={ 
@@ -35,8 +22,23 @@
                 description         => 'Description',
                 certainty           => 'Certainty',
             },
-            passed_data = murray_records
-        );
+            key='expr_patterns');
+    END;
+
+    IF murray_records.size > 0;
+        WRAPPER $field_block title="Inferred expression patterns from " 
+            _ text2link('Paper','WBPaper00040986','Murray JI et al.','Murray JI et al.','all');
+            build_data_table(
+                order=['expression_pattern','gene','description', 'certainty'],
+                columns={ 
+                    expression_pattern  => 'Expression Pattern',
+                    gene                => 'Gene',
+                    description         => 'Description',
+                    certainty           => 'Certainty',
+                },
+                passed_data = murray_records
+            );
+        END;
     END;
     
     WRAPPER $field_block title="Gene ontology" key="gene_ontology";
@@ -69,9 +71,13 @@
 			  key = 'anatomy_function_nots');
     END;
 
-    WRAPPER $field_block title="Expression clusters" key="expression_clusters";
-       FOREACH data IN fields.expression_clusters.data;
-        tag2link(data.ec_data) _ '<br />';
-       END;
+    WRAPPER $field_block title="Expression Cluster" key="expression_clusters";
+      build_data_table(
+        order=['expression_cluster','description'],
+        columns={ 
+          expression_cluster => 'Expression clusters',
+          description  => 'Description'
+        },
+        key='expression_clusters');
     END;
 %]

@@ -1,11 +1,11 @@
 [VARIATIONS_CHANGE_OF_FUNCTION_POLYMORPHISMS]
-feature =     deletion:PCoF_CGH_allele_Polymorhpism
-              deletion:PCoF_Variation_project_Polymorhpism
-        insertion_site:PCoF_Variation_project_Polymorhpism
-                   SNP:PCoF_Variation_project_Polymorhpism
-          substitution:PCoF_Variation_project_Polymorhpism
-  complex_substitution:PCoF_Variation_project_Polymorhpism
-   sequence_alteration:PCoF_Variation_project_Polymorhpism
+feature =     deletion:PCoF_CGH_allele_Polymorphism
+              deletion:PCoF_Variation_project_Polymorphism
+        insertion_site:PCoF_Variation_project_Polymorphism
+                   SNP:PCoF_Variation_project_Polymorphism
+          substitution:PCoF_Variation_project_Polymorphism
+  complex_substitution:PCoF_Variation_project_Polymorphism
+   sequence_alteration:PCoF_Variation_project_Polymorphism
 category     = Alleles, Variations, RNAi
 key          = Change-of-function polymorphisms
 label        = sub {

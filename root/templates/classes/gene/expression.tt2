@@ -47,12 +47,20 @@ END;
 
 
 WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
-  tags2link(fields.expression_cluster.data, '<br />', 'expression clusters');
+  build_data_table(
+    order=['expression_cluster','description'],
+    columns={ 
+      expression_cluster => 'Expression clusters',
+      description  => 'Description'
+    },
+    key='expression_cluster');
 END;
 
 
 WRAPPER $field_block title="Microarray, Tiling Array and RNAseq";
      '<a href="' _ site.external_urls.spell_wormbase.base _ '/spell/search/">Perform Clustering Analysis in SPELL</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
+     '<br />';
+     external_link('spell_wormbase', 'Show Expression Levels of ' _ span_class(object.name.data.label, 'locus', 0, 1) _ ' in All Datasets', object.name.data.label);
 END;
 
 

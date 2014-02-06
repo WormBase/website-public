@@ -1480,16 +1480,15 @@ sub _build_remarks {
     my ($self) = @_;
     my $object = $self->object;
 
-    #    my @remarks = grep defined, map { $object->$_} qw/Remark/;
     my @remarks = $object->get('Remark');
-    @remarks = $object->get('Comment') unless @remarks; 
+    @remarks = $object->get('Comment') unless @remarks;
+    @remarks = (@remarks, ($object->get('DB_remark')));
+
     my $class   = $object->class;
 
     @remarks = grep { !/phenobank/ } @remarks if($class =~ /^RNAi$/i);
-
     @remarks = map { { text => "$_", evidence =>$self->_get_evidence($_)} } @remarks; # stringify them
 
-    # TODO: handling of Evidence nodes
     return {
         description => "curatorial remarks for the $class",
         data        => @remarks ? \@remarks : undef,

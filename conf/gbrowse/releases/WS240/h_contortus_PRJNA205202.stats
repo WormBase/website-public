@@ -19,10 +19,10 @@ expressed_sequence_match:cremanei_ESTs-BLAT		cremanei_ESTs-BLAT	expressed_sequen
 expressed_sequence_match:cremanei_mRNAs-BLAT		cremanei_mRNAs-BLAT	expressed_sequence_match	C. remanei mRNAs (sequence_similarity_cremanei_mrnas)	462
 expressed_sequence_match:ppacificus_ESTs-BLAT		ppacificus_ESTs-BLAT	expressed_sequence_match	P. pristionchus ESTs (sequence_similarity_ppacificus_ests)	35206
 expressed_sequence_match:ppacificus_mRNAs-BLAT		ppacificus_mRNAs-BLAT	expressed_sequence_match	P. pristionchus mRNAs (sequence_similarity_ppacificus_mrnas)	69
-gene:WormBase_imported		WormBase_imported	gene	Genes (primary_gene_track)	23610
-	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (primary_gene_track)	24942
-	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (primary_gene_track)	20945
-	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (primary_gene_track)	19605
+gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	23610
+	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	24942
+	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	20945
+	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (genes)	19605
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	153467
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	414585
 protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	206102

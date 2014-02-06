@@ -1,13 +1,11 @@
-# WS240
-[CLASSICAL_ALLELES]
-# WS241
-#[VARIATIONS_CLASSICAL_ALLELES]
+[VARIATIONS_CLASSICAL_ALLELES]
 key          = Classical alleles
 category     = Alleles, Variations, RNAi
 feature      = deletion:Allele
 	       insertion_site:Allele
 	       substitution:Allele
 	       complex_substitution:Allele
+	       point_mutation:Allele
 	       transposable_element_insertion_site:Allele
 label        = sub {
 	     my $f = shift;

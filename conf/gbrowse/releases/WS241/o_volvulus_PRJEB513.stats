@@ -1,0 +1,41 @@
+gff_version: 3
+file: /usr/local/ftp/pub/wormbase/releases/WS241/species/o_volvulus/PRJEB513/o_volvulus.PRJEB513.WS241.annotations.gff3.gz
+feature	children	source	method	track	count
+CDS:WormBase		WormBase	CDS	Genes (protein coding) (genes_protein_coding)	103384
+	CDS:WormBase_imported	WormBase_imported	CDS	Genes (protein coding) (genes_protein_coding)	0
+assembly_component:Genomic_canonical		Genomic_canonical	assembly_component	Contig submissions (genomic_canonical)	1870
+assembly_component:Link		Link	assembly_component	Links and Superlinks (links_and_superlinks)	708
+	assembly_component:Genomic_canonical	Genomic_canonical	assembly_component	Links and Superlinks (links_and_superlinks)	1870
+expressed_sequence_match:BLAT_Caen_EST_BEST		BLAT_Caen_EST_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	512042
+	expressed_sequence_match:BLAT_Caen_mRNA_BEST	BLAT_Caen_mRNA_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	11358
+expressed_sequence_match:BLAT_Caen_EST_OTHER		BLAT_Caen_EST_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	489638
+	expressed_sequence_match:BLAT_Caen_mRNA_OTHER	BLAT_Caen_mRNA_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	2790
+expressed_sequence_match:BLAT_EST_BEST		BLAT_EST_BEST	expressed_sequence_match	ESTs (best) (est_best)	23
+expressed_sequence_match:BLAT_EST_OTHER		BLAT_EST_OTHER	expressed_sequence_match	ESTs (other) (est_other)	1
+expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	64034
+	expressed_sequence_match:BLAT_ncRNA_BEST	BLAT_ncRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	0
+expressed_sequence_match:EMBL_nematode_cDNAs-BLAT		EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_nematode_cdnas)	2189297
+expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT		NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	522631
+expressed_sequence_match:NEMBASE_cDNAs-BLAT		NEMBASE_cDNAs-BLAT	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	300645
+gene:WormBase		WormBase	gene	Genes (genes)	12994
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	12994
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	4428
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	3035
+intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	159574
+low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	202917
+protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	257182
+protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	177102
+protein_match:cbrenneri_proteins-BLASTX		cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	139215
+protein_match:cbriggsae_proteins-BLASTX		cbriggsae_proteins-BLASTX	protein_match	C. briggsae proteins (sequence_similarity_cbriggsae_proteins_blastx)	123934
+protein_match:celegans_proteins-BLASTX		celegans_proteins-BLASTX	protein_match	C. elegans proteins (sequence_similarity_celegans_proteins_blastx)	165074
+protein_match:cjaponica_proteins-BLASTX		cjaponica_proteins-BLASTX	protein_match	C. japonica proteins (sequence_similarity_cjaponica_proteins_blastx)	127297
+protein_match:cremanei_proteins-BLASTX		cremanei_proteins-BLASTX	protein_match	C. remanei proteins (sequence_similarity_cremanei_proteins_blastx)	127381
+protein_match:dmelanogaster_proteins-BLASTX		dmelanogaster_proteins-BLASTX	protein_match	D. melanogaster proteins (sequence_similarity_dmelanogaster_proteins_blastx)	94843
+protein_match:hsapiens_proteins-BLASTX		hsapiens_proteins-BLASTX	protein_match	H. sapiens proteins (sequence_similarity_hsapiens_proteins_blastx)	220154
+protein_match:ppacificus_proteins-BLASTX		ppacificus_proteins-BLASTX	protein_match	P. pacificus proteins (sequence_similarity_ppacificus_proteins_blastx)	97660
+protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	31555
+repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	114947
+sequence_motif:translated_feature		translated_feature	sequence_motif	Protein motifs (protein_motifs)	89494
+transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	256718
+	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	255421
+transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	767499

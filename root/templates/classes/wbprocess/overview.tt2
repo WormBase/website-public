@@ -6,7 +6,9 @@
 
 [% 
   WRAPPER highlight_box;
-	
+    WRAPPER $field_block title="Life stage" key="life_stage";
+      cell_content( fields.life_stage.data );
+    END;
   END;
 
   
@@ -22,50 +24,11 @@
 		tags2link( fields.related_process.data );
 	END;
 
+
+
   WRAPPER $field_block title="Historical gene" key="historical_gene";
     cell_content(fields.historical_gene.data);
   END;
-
-%]
-
-[%## 
-  
-  WRAPPER highlight_box;
-   other_names;
-  END;
-
-
-
-  '<div class="description">';
-   WRAPPER $field_block title="Genotype";
-       show_genotype(fields.genotype.data);
-    END;
-
-   WRAPPER $field_block title="Reference strain" key="reference_strain";
-        tag2link(fields.reference_strain.data);
-   END;
-
-  # WRAPPER $field_block title="Properties";
-         WRAPPER $field_block title="Mutagen" key="mutagen";
-             fields.mutagen.data;
-         END;
-
-         WRAPPER $field_block title="Outcrossed" key="outcrossed";
-              fields.outcrossed.data;
-         END;
-
-         WRAPPER $field_block title="Males?" key="throws_males";
-             fields.throws_males.data;
-         END;
-
-  # END;
-
-  '</div>';
-   phenotypes;
-
-   phenotypes_not_observed;
-
-   remarks;
 
 %]
 

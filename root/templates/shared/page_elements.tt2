@@ -10,14 +10,16 @@
   [% IF data %]
   <div class="evidence [% IF text %] result[% END %]">
     [% IF text.exists('label') %]
-	[% tag2link(text) %]
+      [% tag2link(text) %]
+    [% ELSIF( text.match(".*\\<[^>]+>.*") ) # don't link html %]
+          [% "$text" %]
     [% ELSE %]
-	[% markup("$text"); %]
+      [% markup("$text") %]
     [% END %]
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
     [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: [% tags2link(data.$type, '; ') %]  
+        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: [% tags2link(data.$type, '; ', 'items') %]  
         [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
@@ -320,7 +322,7 @@ END;
         FOREACH o IN order; headers.push(columns.$o); END;
 
         # generate table
-        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order);   
+        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator);   
       END;
     END; # END of MACRO
 %]
@@ -335,7 +337,7 @@ END;
      styling via javascript.
 %]
      
-[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns) BLOCK %]
+[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator) BLOCK %]
   
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
@@ -386,13 +388,13 @@ END;
 			cell='<a href="' _ cell _ '">Lab link</a>';
 		    END;
 		    '<td>';
-		    cell_content(cell);
+		    cell_content(cell, separator);
 		    '</td>';
 		END;
 	    ELSE;
 		FOREACH cell IN row;
 		    '<td>';
-		    cell_content(cell);
+		    cell_content(cell, separator);
 		    '</td>';
 		END;
 	    END;
@@ -416,6 +418,7 @@ WB.getPlugin("dataTables", function(){
           }
         });
         WB.getPlugin("tabletools", function(){
+          setTimeout(function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
@@ -430,14 +433,14 @@ WB.getPlugin("dataTables", function(){
                 {
                   "sExtends": "collection",
                   "sButtonText": "Save table",
-                  "aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
+                  "aButtons": [ "copy", "csv", "pdf", "print" ]
                 }
               ]
             },
             [% style %]
 
           });
-
+          }, 1);
         });
 	});
     </script>
@@ -522,7 +525,7 @@ END; %]
     markup_var(genstr);
 END; %]
 
-[% MACRO cell_content(cell) BLOCK;
+[% MACRO cell_content(cell, separator) BLOCK;
     IF ref(cell) == 'HASH';
       IF cell.defined('species');
           '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
@@ -542,34 +545,34 @@ END; %]
           show_genotype(cell.genotype);
       ELSE;
 
-      # assumes that hash passed to cell should be output as the key followed by its value
-      # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
-      FOREACH key IN cell.keys.sort;
-        "$key";
-        cell_content(cell.$key);
+        # assumes that hash passed to cell should be output as the key followed by its value
+        # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
+        FOREACH key IN cell.keys.sort;
+          "$key";
+          cell_content(cell.$key);
+        END;
       END;
-      END;
-	ELSIF ref(cell) == 'ARRAY';
-	  IF cell.size > 10;
-	      WRAPPER toggle title=cell.size _ ' Results';
+    ELSIF ref(cell) == 'ARRAY';
+      IF (!separator) && (cell.size > 10);
+          WRAPPER toggle title=cell.size _ ' Results';
             FOREACH item IN cell;
               cell_content(item);
               IF !item.defined('evidence') && !loop.last;
                   '<br />';
               END;
             END;
-	      END;
-	  ELSE;
+          END;
+      ELSE;
         FOREACH item IN cell;
           cell_content(item);
           IF !item.defined('evidence') && !loop.last;
-              '<br />';
+              separator || '<br />';
           END;
         END;
-	  END;
-	ELSE;
-	   cell;
-	END;
+      END;
+    ELSE;
+      cell;
+    END;
   END;
 %]
 
@@ -906,9 +909,10 @@ END;
 
    WRAPPER $field_block title="Phenotypes" key="phenotypes";
 
-       build_data_table(order=['phenotype','evidence'],
+       build_data_table(order=['phenotype','description', 'evidence'],
                         columns={ 
                         phenotype    => 'Phenotype',
+                        description => 'Description',
                 evidence  => 'Evidence'
                     },
                     key='phenotypes');
@@ -1368,6 +1372,37 @@ END;
 %]
 
 [% END; %]
+
+
+
+[% MACRO embed_video(movie_path) BLOCK; %]
+  [% IF movie_path.match(site.external_urls.RNAi.base); %]
+      <div>
+      [% # These are in an iframe since they don't seem to work in an embedded object without reformatting %]
+      <iframe src="[% movie_path %]" width="650" height="450" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+      </div>
+  [% ELSE %]
+  <div class="embeddedVideo">
+      <object classid='clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B'
+          width="600" height="400"
+          codebase='http://www.apple.com/qtactivex/qtplugin.cab'>
+          <param name='src' value="[% movie_path %]">
+          <param name='autoplay' value="false">
+          <param name='controller' value="true">
+          <param name='loop' value="false">
+          
+          <embed src="[% movie_path %]" width="600" height="400"
+          scale="tofit" autoplay="false"
+          controller="true" loop="false" bgcolor="#000000"
+          pluginspage='http://www.apple.com/quicktime/download/'>
+          </embed>
+      </object>     
+  </div>
+  [% END %]
+
+  [% external_link(movie_path, 'download movie') %]
+
+[% END %]
 
 
 

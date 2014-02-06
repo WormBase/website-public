@@ -69,7 +69,7 @@ has 'tracks' => (
         my $self = shift;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/PRIMARY_GENE_TRACK VARIATIONS_CLASSICAL_ALLELES/],
+            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/GENES VARIATIONS_CLASSICAL_ALLELES/],
         };
     }
 );
@@ -98,13 +98,13 @@ sub _build__alleles {
 
       if($count < 500){
           foreach my $allele (@all) {
-              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
+              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_process_variation($allele)) : 
                     push(@alleles, $self->_process_variation($allele));
           }
       }else{
           foreach my $allele (@all) {
-              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
+              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_pack_obj($allele)) : 
                     push(@alleles, $self->_pack_obj($allele));
           }
@@ -112,8 +112,8 @@ sub _build__alleles {
     }
 
     return {
-        alleles        => @alleles ? \@alleles : $count,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : $count,
+        alleles        => @alleles ? \@alleles : scalar @alleles,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : scalar @polymorphisms,
     };
 
 }
@@ -237,7 +237,7 @@ sub classification {
         $data->{type} = "protein coding";
     }
 
-    $data->{type} = 'Transposon in origin' if $object->Corresponding_transposon;
+    $data->{type} = 'Transposon in origin' if grep {/Transposon_in_origin/} ($object->History);
 
     unless($data->{type}){
       # Is this a non-coding RNA?
@@ -659,7 +659,7 @@ sub fpkm_expression {
                                  })->{uri};
     } else {
         $plot = $rserve->barchart(\@fpkm_map, {
-                                    filename => "fpkm_" . $self->name->{data}{id} . ".png",
+                                    filename => "fpkm_$object.png",
                                     xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
                                     ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
                                     width    => WormBase::Web->config->{fpkm_expression_chart_width},
@@ -840,7 +840,8 @@ sub microarray_topology_map_position {
     };
 
     return $datapack unless @{$self->sequences};
-    my @segments = $self->_segments && @{$self->_segments} or return $datapack;
+    my @segments = $self->_segments && @{$self->_segments};
+    return $datapack unless $segments[0];
     my @p = map { $_->info }
             $segments[0]->features('experimental_result_region:Expr_profile')
         or return $datapack;
@@ -860,8 +861,16 @@ sub microarray_topology_map_position {
 sub expression_cluster {
     my $self   = shift;
     my $object = $self->object;
-    my @expr_clusters = $object->Expression_cluster;  
-    return { data        => @expr_clusters ? $self->_pack_objects(\@expr_clusters) : undef,
+    my @data;
+
+    foreach my $expr_cluster ($object->Expression_cluster){
+        my $description = $expr_cluster->Description;
+        push @data, {
+            expression_cluster => $self->_pack_obj($expr_cluster),
+            description => $description && "$description"
+        }
+    }
+    return { data        => @data ? \@data : undef,
              description => 'expression cluster data' };
 }
 
@@ -1409,7 +1418,6 @@ sub treefam {
         $data{"$treefam"} = "";
     }
     my @data = keys %data;
-    $self->log->debug("TREEFAM: " . join(',', @data));
     return { description => 'data and IDs related to rendering Treefam trees',
              data        => @data ? \@data : undef,
     };
@@ -1439,6 +1447,160 @@ sub _build_genomic_position {
 
 # sub genomic_image { }
 # Supplied by Role
+
+
+#######################################
+#
+# The Mapping Data Widget
+#   template: classes/gene/mapping_data.tt2
+#
+#######################################
+
+# two_pt_data
+# this method returns mapping data associated with this gene
+# adapted from old site
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/two_pt_data
+sub two_pt_data {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $exp ($object->get('2_point')){
+
+        my @point_1 = map { $self->_pack_obj($_)} ($exp->Gene_1, $exp->Point_1->right(2));
+        my @point_2 = map { $self->_pack_obj($_)} ($exp->Gene_2, $exp->Point_2->right(2));
+        my $genotype = $exp->Genotype;
+        my $author = $exp->Mapper;
+        my $raw_data = $exp->Results;
+        my $comment = join('<br />', $exp->Remark);
+
+        my $distance = ($exp->Calc_distance || "0.0") . ' (' . (0+$exp->Calc_lower_conf) . '-' . (0+$exp->Calc_upper_conf) . ')';
+        $exp->date_style('ace');
+        my $date = $exp->Date;
+
+        push @data, {
+            point_1 => @point_1 ? \@point_1 : undef,
+            point_2 => @point_2 ? \@point_2 : undef,
+            distance => $distance && "$distance",
+            mapper => $author ? $self->_pack_obj($author) : undef,
+            genotype => $genotype && "$genotype",
+            raw_data => $raw_data && "$raw_data",
+            comment => $comment && "$comment",
+            date => $date && "$date",
+        }
+    }
+
+    return {
+        description => 'Two point mapping data for this gene',
+        data => @data ? \@data : undef
+    }
+}
+
+# multi_pt_data
+# this method returns mapping data associated with this gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/multi_pt_data
+sub multi_pt_data {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $exp ($object->Multi_point){
+        my $cross = $exp->Combined;
+        my @results = $cross->row;
+        my (@loci, $total);
+        $total = 0;
+
+        while (@results) {
+            my ($label,$locus,$count) = splice(@results,0,3);
+            $count ||= 0;
+            $total += $count;
+            push(@loci,[$locus=>$count]);
+        }
+        my $open_paren = 0;
+        my $sum = 0;
+        my @genotype;
+        while (@loci) {
+            my $l = shift @loci;
+            my $gene = $self->_pack_obj($l->[0]);
+            my $best = $gene->{label};
+            if ((defined $l->[1]) && (($l->[1]+0) == 0)) {
+                push @genotype, "(" if ($open_paren == 0 && ($sum < $total) && ($open_paren = 1));
+                push @genotype, $gene;
+            } else {
+                push @genotype, $gene;
+                if ($open_paren > 0) {
+                    push @genotype, ")";
+                    $open_paren = 0;
+                }
+                push @genotype, " ($l->[1]/$total) " if defined($l->[1]);
+                $sum += $l->[1];
+            }
+        }
+
+        my $author = $exp->Mapper;
+        my $comment = join('<br />', $exp->Remark);
+        my $gtype = $exp->Genotype;
+        $exp->date_style('ace');
+        my $date = $exp->Date;
+
+        push @data, {
+            result => @genotype ? \@genotype : undef,
+            genotype => "$gtype" || undef,
+            mapper => $author ? $self->_pack_obj($author) : undef,
+            comment => $comment && "$comment",
+            date => $date && "$date",
+        }
+    }
+
+
+    return {
+        description => 'Multi point mapping data for this gene',
+        data => @data ? \@data : undef
+    }
+}
+
+# pos_neg_data
+# this method returns mapping data associated with this gene
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/pos_neg_data
+sub pos_neg_data {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+
+
+    foreach my $exp ($object->Pos_neg_data){
+        my @items = split(' ', $exp->Results);
+        my $item1 = $self->_pack_obj($exp->Item_1->right);
+        my $item2 = $self->_pack_obj($exp->Item_2->right);
+        my $mapper = $exp->Mapper;
+        my $comment = join('<br />', $exp->Remark);
+        $exp->date_style('ace');
+        my $date = $exp->Date;
+
+        @items = map {
+                    if($_ =~ /$item1->{label}/){
+                        $item1;
+                    }elsif($_ =~ /$item2->{label}/){
+                        $item2;
+                    }else{
+                        "$_ ";
+                    }
+                 } @items;
+
+        push @data, {
+            result => @items ? \@items : undef,
+            mapper => $mapper ? $self->_pack_obj($mapper) : undef,
+            comment => $comment && "$comment",
+            date => $date && "$date",
+        }
+    }
+
+    return {
+        description => 'Positive/Negative mapping data for this gene',
+        data => @data ? \@data : undef
+    }
+}
+
 
 #######################################
 #
@@ -1593,12 +1755,12 @@ sub microarray_probes {
 sub orfeome_primers {
     my $self   = shift;
     my $object = $self->object;
-    my @segments = $self->_segments ? @{$self->_segments} : undef ;
+    my @segments = $self->_segments && @{$self->_segments};
     my @ost = map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
               map {$_->info}
               map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') }
               @segments
-        if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
+        if ($segments[0] && ($object->Corresponding_CDS || $object->Corresponding_Pseudogene));
     
     return { description =>  "ORFeome Project primers and sequences",
              data        =>  @ost ? \@ost : undef };
@@ -1619,11 +1781,11 @@ sub primer_pairs {
                 data => undef
             } unless @{$self->sequences};
     
-    my @segments = @{$self->_segments};
+    my @segments = $self->_segments && @{$self->_segments};
     my @primer_pairs =  
     map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
     map {$_->info} 
-    map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
+    map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments if $segments[0];
     
     return { description =>  "Primer pairs",
              data        =>  @primer_pairs ? \@primer_pairs : undef };
@@ -1928,19 +2090,17 @@ sub _build__segments {
     my $sequences = $self->sequences;
     my @segments;
 
-    my $dbh = $self->gff_dsn() || return \@segments;
+    my $dbh = $self->gff_dsn();# || return \@segments;
 
     my $object = $self->object;
-    my $species = $object->Species;
-
 
     if (@segments = $dbh->segment($object)
-        or @segments = map {$dbh->segment($_)} @$sequences
-        or @segments = map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
-        or @segments = map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
+        ||  map {$dbh->segment($_)} @$sequences
+        ||  map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
+        ||  map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
 
     ) {
-        return \@segments;
+        return defined $segments[0] ? \@segments : undef;
     }
 
     return;

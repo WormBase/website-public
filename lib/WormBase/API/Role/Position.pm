@@ -80,7 +80,7 @@ sub _build_genomic_image { # genomic_picture_position?
     # Go through all positions and pick the one with the widest range:
     my $widest_span = undef;
     for my $position (@$positions) {
-        if (defined $widest_span) {
+        unless (defined $widest_span) {
             # No purported widest range set yet, so pick the first best choice and
             # iterate over that in the next rounds of the 'for' loop.
             $widest_span = $position;

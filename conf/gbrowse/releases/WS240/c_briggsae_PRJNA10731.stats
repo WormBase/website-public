@@ -26,10 +26,10 @@ expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match
 expressed_sequence_match:EMBL_nematode_cDNAs-BLAT		EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_nematode_cdnas)	1723861
 expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT		NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	1014156
 expressed_sequence_match:NEMBASE_cDNAs-BLAT		NEMBASE_cDNAs-BLAT	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	249421
-gene:WormBase		WormBase	gene	Genes (primary_gene_track)	22804
-	mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	21842
-	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	185
-	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	40
+gene:WormBase		WormBase	gene	Genes (genes)	22804
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	21842
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	185
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	40
 inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	116452
 	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	59754
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	170449
@@ -65,6 +65,7 @@ substitution:Allele		Allele	substitution	 (variations_classical_alleles)	10
 	insertion_site:Allele	Allele	insertion_site	 (variations_classical_alleles)	1
 	complex_substitution:Allele	Allele	complex_substitution	 (variations_classical_alleles)	0
 	transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	 (variations_classical_alleles)	0
+	point_mutation:Allele	Allele	point_mutation	 (variations_classical_alleles)	0
 transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	221617
 	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	215640
 transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	506825

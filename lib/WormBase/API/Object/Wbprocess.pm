@@ -119,8 +119,19 @@ sub historical_gene {
 
     my @historical_gene = map { {text => $self->_pack_obj($_), 
                               evidence => $self->_get_evidence($_)} } $object->Historical_gene;
-    return { description => 'Historical record of the dead genes originally associated with this process',
+    return { description => 'Historical record of the dead genes originally associated with this topic',
              data        => @historical_gene ? \@historical_gene : undef,
+    };
+}
+
+sub life_stage {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @life_stages = map { {text => $self->_pack_obj($_), 
+                              evidence => $self->_get_evidence($_)} } $object->Life_stage;
+    return { description => 'Life stages associated with this topic',
+             data        => @life_stages ? \@life_stages : undef,
     };
 }
 
@@ -137,28 +148,44 @@ sub genes{
 
     my @data;
     foreach my $gene (@genes) {
-		push @data, $self->_process_gene($gene);
+        my $type = WormBase::API::Object::Gene->
+        classification($gene)->{data}->{type};
+        foreach ($gene->Anatomy_function){
+            my @bp_inv = map { 
+                if ("$_" eq "$gene") {
+                    my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}
+                } else { 
+                    { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}
+                }
+            } $_->Involved;
+            next unless @bp_inv;
+            my @assay = map { my $as = $_->right;
+                if ($as) {
+                    my @geno = $as->Genotype;                   
+                    {evidence => { genotype => join('<br /> ', @geno) },
+                    text => "$_",}
+                }
+            } $_->Assay;
+            my $pev;
+
+            push @data, {
+                name      => $self->_pack_obj($gene),
+                type      => $type,
+                phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+                    {    evidence => $pev,
+                         text     => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
+                assay     => @assay ? \@assay : undef,
+                bp_inv    => @bp_inv ? \@bp_inv : undef,
+                reference => $self->_pack_obj(scalar $_->Reference),
+            };
+        }
+
     }
-    
+
     return { 
-		description => 'alleles found within this gene',
-	    data        => @data ? \@data : undef 
-	};
-}
-# Used above. Processes a single gene record to be displayed with the build_data_table
-# macro. Returns name and type
-sub _process_gene {
-	my ($self, $gene) = @_;
-	my $type = WormBase::API::Object::Gene->
-		classification($gene)->{data}->{type};
-	
-
-	my %data = (
-		name 	=> $self->_pack_obj($gene),
-		type	=> $type
-	);
-
-	return \%data;
+        description => 'genes found within this topic',
+        data        => @data ? \@data : undef 
+    };
 }
 
 #######################################
@@ -179,7 +206,7 @@ sub expression_cluster {
 	}
 	
 	return {
-		description => "Expression cluster(s) related to this process",
+		description => "Expression cluster(s) related to this topic",
 		data        => @data ? \@data : undef 
 	};
 
@@ -219,7 +246,7 @@ sub interaction {
 	}
 	
 	return {
-		description => "Interactions relating to this process",
+		description => "Interactions relating to this topic",
 		data        => @data ? \@data : undef 
 	};
 
@@ -306,7 +333,7 @@ sub pathway{
 		my $pathway_id = $row[4];
 		
 		$data = {
-			pathway_id		=> $pathway_id,
+			pathway_id		=> "$pathway_id",
 		};
 		
 	}
@@ -318,6 +345,40 @@ sub pathway{
 }
 
 
+#######################################
+#
+# Phenotypes widget
+#
+#######################################
+
+# sub phenotypes { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+
+
+#######################################
+#
+# Anatomy widget
+#
+#######################################
+
+sub anatomy_term {
+	my $self = shift;
+	my $object = $self->object;
+	my @data;
+    foreach my $anatomy_term ($object->Anatomy_term){
+        my $description = $anatomy_term->Definition;
+        push @data, {
+            anatomy_term => {text => $self->_pack_obj($anatomy_term), evidence => $self->_get_evidence($anatomy_term)},
+            description => $description && "$description",
+        }
+    }
+	return {
+		description => "Anatomy terms related to this topic",
+		data => @data ? \@data : undef
+	}
+}
 
 ############################################################
 #

@@ -476,6 +476,8 @@ sub pfam_graph {
 	    my $start = $feature->right(3);
 	    my $stop  = $feature->right(4);
 	    my $type = $feature->right ||"";
+        my $label = $feature->Title;
+        map { $label = $_->right if "$_" eq 'short_name'} $feature->DB_info->right->col;
 	    $type  ||= 'Interpro' if $feature =~ /IPR/;
 
 	    # Are the multiple occurences of this feature?
@@ -487,10 +489,10 @@ sub pfam_graph {
 		for( my $count=0; $start=shift @multiple;$count++) {
  		    $score= $scores[$count] if($#scores>=$count && $scores[$count]);
 		    my $stop = $start->right;
-		   push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS]};
+		   push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS],label=>"$label"};
 		}
 	    } else {
-		    push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS]};
+		    push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS],label=>"$label"};
 
 	    }
     }
@@ -575,9 +577,8 @@ sub pfam_graph {
 		$graph_hash->{startStyle} = "straight";
 		$graph_hash->{endStyle} = "straight";
         
-        # if the description begins with the word 'Major' generate and acronym
-        # otherwise, use first three letters 
-		$graph_hash->{text} = $desc =~ m/^major/i ? uc(join('', $desc =~ m/\b([A-Za-z])/g)) : ucfirst(substr($desc,0,3));
+        # use short_name for label
+		$graph_hash->{text} = $obj->{label};
 		$graph_hash->{metadata}->{end} = $obj->{end};
 	    }
 
@@ -852,7 +853,7 @@ sub _build_tracks {
 
     return {
         description => 'Protein specific tracks to display in GBrowse.',
-        data => [qw(PRIMARY_GENE_TRACK PROTEIN_MOTIFS)]
+        data => [qw(GENES PROTEIN_MOTIFS)]
     };
 }
 

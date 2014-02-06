@@ -1,0 +1,44 @@
+[% 
+   WRAPPER $field_block title="Two Point Data" key="two_pt_data";
+        build_data_table(
+            order=['genotype','point_1', 'point_2', 'distance', 'mapper', 'raw_data', 'date','comment'],
+            columns={ 'point_1'  => 'Point 1',
+                      'point_2'  => 'Point 2',
+                      distance   => 'Distance',
+                      mapper     => 'Mapper',
+                      raw_data   => 'Raw data',
+                      genotype   => 'Genotype',
+                      comment    => 'Comment',
+                      date       => 'Date',
+            },
+            key='two_pt_data',
+            separator=' ',
+            #style = 'aaSorting : [[0, "desc"]]'  // uncomment this if you need to sort descending
+    );
+    END;
+
+   WRAPPER $field_block title="Multi Point Data" key="multi_pt_data";
+        build_data_table(
+            order=['genotype','result', 'mapper','date', 'comment'],
+            columns={ result     => 'Result',
+                      genotype   => 'Genotype',
+                      mapper     => 'Mapper',
+                      comment    => 'Comment',
+                      date       => 'Date',
+            },
+            separator=' ',
+            key='multi_pt_data');
+    END;
+
+   WRAPPER $field_block title="Positive/Negative Data" key="pos_neg_data";
+        build_data_table(
+            order=['result', 'mapper', 'date', 'comment'],
+            columns={ result     => 'Result',
+                      mapper     => 'Mapper',
+                      comment    => 'Comment',
+                      date       => 'Date',
+            },
+            key='pos_neg_data',
+            separator=' ');
+    END;
+%]

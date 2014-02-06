@@ -50,34 +50,34 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
        END;
    END;
 
-   WRAPPER $field_block title="Protein Change" key="amino_acid_change";
-       FOREACH change IN fields.amino_acid_change.data;
-#            tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
-            tag2link(change.transcript) _ ' (wildtype)<br/>';
-#            tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
+    WRAPPER $field_block title="Protein Change" key="amino_acid_change";
+      FOREACH change IN fields.amino_acid_change.data;
+        #            tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
+        tag2link(change.transcript) _ ' (wildtype)<br/>';
+        #            tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
 
-	# Display the conceptual translation.
-	feature_type = 'Predicted_CDS';
+        # Display the conceptual translation.
+        feature_type = 'Predicted_CDS';
 
-          IF fields.features_affected.data.$feature_type;
-           FOREACH feature IN fields.features_affected.data.$feature_type.sort;
-    	      NEXT UNLESS feature.item.id == change.transcript.id;
-              IF feature.wildtype_conceptual_translation;
-	      # This won't actually result in download option for the conceptual translation.
+        IF fields.features_affected.data.$feature_type;
+          FOREACH feature IN fields.features_affected.data.$feature_type.sort;
+            NEXT UNLESS feature.item.id == change.transcript.id;
+            IF feature.wildtype_conceptual_translation;
+              # This won't actually result in download option for the conceptual translation.
               # tag2link(feature.item) _ ' (mutant' _ change.amino_acid_change _ ')<br/>';
-                 WRAPPER toggle title=change.transcript.id _ ' conceptual translation';        
-                    '<div>';                   
-                         '<div class="sequence-container">';
-                              '<pre>> wildtype<br />' _ feature.wildtype_conceptual_translation _ '</pre>';
-                              '<pre>> wildtype<br />' _ feature.mutant_conceptual_translation _ '</pre>';
-                         '</div>';                                       
-                 '</div>';
-                  END; # of feature loop
-              END;
-	    END;
-	  END;
-       END;
-   END;
+              WRAPPER toggle title=change.transcript.id _ ' conceptual translation';        
+                '<div>';                   
+                '<div class="sequence-container">';
+                '<pre>> wildtype<br />' _ feature.wildtype_conceptual_translation _ '</pre>';
+                '<pre>> wildtype<br />' _ feature.mutant_conceptual_translation _ '</pre>';
+                '</div>';                                       
+                '</div>';
+              END; # of feature loop
+            END;
+          END;
+        END;
+      END;
+    END;
 
    WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products";
        tags2link(fields.flanking_pcr_products.data, ', ');
@@ -197,11 +197,9 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
           tags2link(features.Gene, ', ', 'genes') _ '<br />';
        END;
 
-       IF fields.features_affected.data.Interactor;
-          IF fields.features_affected.data.Interactor.size > 1; 'Interactors: '; ELSE; 'Interactor: '; END;
-          FOREACH interactor IN fields.features_affected.data.Interactor.sort;
-             tags2link(interactor.item, '', 'interactors');
-             ', ' UNLESS loop.last;
+       IF features.Interactor;
+          WRAPPER toggle title=pluralize('Interactor', features.Interactor.size) _ ' (' _ features.Interactor.size _ ')';
+            tags2link(features.Interactor);
           END;
        END;
 
