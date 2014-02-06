@@ -94,7 +94,11 @@
 	   [% external_link($DOI _ fields.doi.data, 'doi:' _ fields.doi.data) %]
 	[% END %]
 [%# END OF CITATION. %]
-</div>
+
+	[% IF fields.publication_type.data.grep('Meeting_abstract|Gazette_article').size %]
+	<b>Unpublished information; cite only with author permission.</b>
+	[% END %]
+</div><br />
 	<p class="text-width">
 	[% IF fields.abstract.data %]
 	   [% markup(fields.abstract.data) %]
