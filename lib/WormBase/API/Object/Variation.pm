@@ -800,7 +800,7 @@ sub features_affected {
             # Get the coordinates in absolute coordinates
             # the coordinates of the containing feature,
             # and the coordinates of the variation WITHIN the feature.
-            @{$affected_hash}{qw(start stop fstart fstop start stop)}
+            @{$affected_hash}{qw(abs_start abs_stop fstart fstop start stop)}
                  = $self->_fetch_coords_in_feature($type_affected,$item_affected);
             push(@rows, $affected_hash);
         }
@@ -816,8 +816,7 @@ $affects->{$type_affected} = \@rows;
         foreach (@affects_this) {
             next unless $_;
             my $hash = $affects->{$type_affected}->{$_} = $self->_pack_obj($_);
-# $affects->{$type_affected}->{$_}
-            @{$hash}{qw(start stop fstart fstop start stop)}
+            @{$hash}{qw(abs_start abs_stop fstart fstop start stop)}
                 = $self->_fetch_coords_in_feature($type_affected,$_);
             $hash->{item} = $self->_pack_obj($_);
             push(@rows, $hash);
