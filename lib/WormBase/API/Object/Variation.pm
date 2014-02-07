@@ -72,41 +72,7 @@ sub variation_type {
     my ($self) = @_;
     my $object = $self->object;
 
-    # the following is contrary to what is done in the classic code...
-    # is this the correct behaviour?
-    my @types;
-    if ($object->KO_consortium_allele(0)) {
-        push @types,"Knockout Consortium allele";
-    }
-
-    # TH: TEMPORARY HACK FOR WS230. Mary Ann will be making these
-    # types explicit in the database.
-    if ($object->Transposon_insertion(0) && !$object->Allele(0)) {
-	push @types,'Transposon Insertion';
-    } elsif ($object->Natural_variant(0) && !$object->SNP(0)) {
-	push @types,'Naturally Occurring Allele'; 
-    } elsif ($object->Natural_variant(0) && $object->SNP(0)) {
-	push @types,'SNP';
-    } elsif ($object->Allele(0) && $object->Natural_variant(0)) {
-	push @types,'Naturally Occurring Allele';
-    } elsif ($object->Allele(0) && $object->Transposon_insertion(0)) {
-	push @types,'Transposon Insertion';
-    } elsif ($object->SNP(0)) {
-	push @types,'SNP';
-    } else {
-	push @types,'Allele';
-    }
-
-    # Not sure what to do with this at the moment.  Off for now.
-#    if ($object->SNP) {
-#	# handled above.
-##        my $type = 'Polymorphism';
-#	my $type;
-#        $type .= '; RFLP' if $object->RFLP;
-#        $type .= $object->Confirmed_SNP ? ' (confirmed)' : ' (predicted)';
-#        push @types, $type;
-#    }
-
+    my @types = map { $_ =~ s/_/ /g; "$_" } $object->Variation_type;
 
     my $physical_type = join('/', $object->Type_of_mutation); # what about text?
     if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
