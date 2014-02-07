@@ -1971,8 +1971,6 @@ sub gene_models {
     my %seen;
     my @rows;
 
-    use Data::Dumper; # DELETE
-    
     
     my $coding = $self->object->Corresponding_CDS ? 1 : 0;
 
@@ -2026,12 +2024,31 @@ sub gene_models {
         }
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
-        @sequences =  map {$self->_pack_obj($_)} @sequences;
+
+        my @remarks;
+        if($cds){
+            push @remarks, map { "$_" } $cds->DB_remark;
+            push @remarks, map { "$_" } $cds->Remark;
+        }
+
+        @sequences =  map { 
+            my @seq_rmks;
+            push @seq_rmks, map { "$_" } $_->DB_remark;
+            push @seq_rmks, map { "$_" } $_->Remark;
+
+            @seq_rmks ? {   text => $self->_pack_obj($_), 
+                            evidence => { remark => \@seq_rmks } } : $self->_pack_obj($_);
+
+            } @sequences;
         $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
-        $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
-
+        $data{cds} = $status ? {    text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), 
+                                    evidence => { 
+                                        status => "$status"
+                                    } 
+                                } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
+        $data{cds}{evidence}{remark} = \@remarks if (@remarks && $data{cds}{text});
         push @rows, \%data;
     }
 
