@@ -89,6 +89,19 @@ sub variation_type {
 }
 
 
+sub evidence {
+    my ($self) = @_;
+    my $object = $self->object;
+    my $ev = $object->get('Evidence');
+    my $evidence = $self->_get_evidence($ev);
+
+    return {
+        description => 'Evidence for this Variation',
+        data => $evidence ? { text => '', evidence => $evidence} : undef
+    };
+
+}
+
 # remarks {}
 # Supplied by Role
 
