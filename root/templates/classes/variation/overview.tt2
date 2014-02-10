@@ -27,5 +27,8 @@ remarks(no_toggle=1);
 
 '</div>';
 
+  IF fields.evidence.data.defined;
+    cell_content(fields.evidence.data);
+  END;
 
 %]

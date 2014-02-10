@@ -222,8 +222,8 @@ s = '';
                IF protein_effects;
                   FOREACH effect_type IN protein_effects.sort;
                      effect = protein_effects.$effect_type;
-                     s = s _ 'Effect on protein: ' _ effect_type.replace('_', ' ');
-                      s = s _ effect.subtype || effect.position || '';
+                     s = s _ 'Effect on protein: ' _ effect_type.replace('_', ' ') _ '<br />';
+                      s = s _ (effect.subtype || effect.position || '') _ '<br />';
               s = s _ effect.description _ '<br />';
                    END;
                END;
@@ -249,12 +249,10 @@ feature.affects = s;
 #                 END;
              '</div>';
               END; # of feature loop
-
-       build_data_table(order=['item', 'affects', 'abs_start','abs_stop','fstart','fstop','start','stop'],
+      order = (feature_type == 'Clone') ? ['item', 'fstart','fstop','start','stop'] : ['item', 'affects', 'fstart','fstop','start','stop'];
+       build_data_table(order=order,
                          columns={  item    => 'item',
                                     affects => 'Affects',
-                                    abs_start    => 'absolute start',
-                                    abs_stop    => 'absolute stop',
                                     fstart    => 'feature start',
                                     fstop    => 'feature stop',
                                     start    => 'start relative to feature',
@@ -262,7 +260,6 @@ feature.affects = s;
                                  },
                          passed_data=fields.features_affected.data.$feature_type,
                          key=feature_type);
-
             END;
 
 

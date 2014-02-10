@@ -72,41 +72,7 @@ sub variation_type {
     my ($self) = @_;
     my $object = $self->object;
 
-    # the following is contrary to what is done in the classic code...
-    # is this the correct behaviour?
-    my @types;
-    if ($object->KO_consortium_allele(0)) {
-        push @types,"Knockout Consortium allele";
-    }
-
-    # TH: TEMPORARY HACK FOR WS230. Mary Ann will be making these
-    # types explicit in the database.
-    if ($object->Transposon_insertion(0) && !$object->Allele(0)) {
-	push @types,'Transposon Insertion';
-    } elsif ($object->Natural_variant(0) && !$object->SNP(0)) {
-	push @types,'Naturally Occurring Allele'; 
-    } elsif ($object->Natural_variant(0) && $object->SNP(0)) {
-	push @types,'SNP';
-    } elsif ($object->Allele(0) && $object->Natural_variant(0)) {
-	push @types,'Naturally Occurring Allele';
-    } elsif ($object->Allele(0) && $object->Transposon_insertion(0)) {
-	push @types,'Transposon Insertion';
-    } elsif ($object->SNP(0)) {
-	push @types,'SNP';
-    } else {
-	push @types,'Allele';
-    }
-
-    # Not sure what to do with this at the moment.  Off for now.
-#    if ($object->SNP) {
-#	# handled above.
-##        my $type = 'Polymorphism';
-#	my $type;
-#        $type .= '; RFLP' if $object->RFLP;
-#        $type .= $object->Confirmed_SNP ? ' (confirmed)' : ' (predicted)';
-#        push @types, $type;
-#    }
-
+    my @types = map { $_ =~ s/_/ /g; "$_" } $object->Variation_type;
 
     my $physical_type = join('/', $object->Type_of_mutation); # what about text?
     if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
@@ -122,6 +88,19 @@ sub variation_type {
     };
 }
 
+
+sub evidence {
+    my ($self) = @_;
+    my $object = $self->object;
+    my $ev = $object->get('Evidence');
+    my $evidence = $self->_get_evidence($ev);
+
+    return {
+        description => 'Evidence for this Variation',
+        data => $evidence ? { text => '', evidence => $evidence} : undef
+    };
+
+}
 
 # remarks {}
 # Supplied by Role
@@ -834,7 +813,7 @@ sub features_affected {
             # Get the coordinates in absolute coordinates
             # the coordinates of the containing feature,
             # and the coordinates of the variation WITHIN the feature.
-            @{$affected_hash}{qw(start stop fstart fstop start stop)}
+            @{$affected_hash}{qw(abs_start abs_stop fstart fstop start stop)}
                  = $self->_fetch_coords_in_feature($type_affected,$item_affected);
             push(@rows, $affected_hash);
         }
@@ -850,8 +829,7 @@ $affects->{$type_affected} = \@rows;
         foreach (@affects_this) {
             next unless $_;
             my $hash = $affects->{$type_affected}->{$_} = $self->_pack_obj($_);
-# $affects->{$type_affected}->{$_}
-            @{$hash}{qw(start stop fstart fstop start stop)}
+            @{$hash}{qw(abs_start abs_stop fstart fstop start stop)}
                 = $self->_fetch_coords_in_feature($type_affected,$_);
             $hash->{item} = $self->_pack_obj($_);
             push(@rows, $hash);

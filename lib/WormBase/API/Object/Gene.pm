@@ -768,10 +768,21 @@ sub expression_patterns {
         }
         my $sub = $expr->Subcellular_localization;
 
+        my @dbs;
+        foreach my $db ($expr->DB_info) {
+            # assuming we don't have any other fields other than id
+            foreach my $id (map { $_->col } $db->col) {
+                push @dbs, { class => "$db",
+                             label => "$db",
+                             id    => "$id" };
+            }
+        }
+
         push @data, {
             expression_pattern =>  $expr_packed,
             description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
             type             => $type && "$type",
+            database         => @dbs ? \@dbs : undef,
             expressed_in    => @expressed_in ? \@expressed_in : undef,
             life_stage    => @life_stage ? \@life_stage : undef,
             go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
@@ -1960,8 +1971,6 @@ sub gene_models {
     my %seen;
     my @rows;
 
-    use Data::Dumper; # DELETE
-    
     
     my $coding = $self->object->Corresponding_CDS ? 1 : 0;
 
@@ -2016,11 +2025,11 @@ sub gene_models {
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
         @sequences =  map {$self->_pack_obj($_)} @sequences;
+
         $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
         $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
-
         push @rows, \%data;
     }
 

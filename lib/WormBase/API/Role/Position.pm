@@ -135,16 +135,16 @@ sub _genomic_position {
 sub _seg2posURLpart {
     my ($self, $segment, $adjust_coords) = @_;
 
-    my ($ref, $start, $stop) = map { $segment->$_ } qw(seq_id start end);
+    my ($ref, $o_start, $o_stop) = map { $segment->$_ } qw(seq_id start end);
     # return if abs($stop - $start) == 0; # why ?
 
-    ($start, $stop) = $adjust_coords->($start, $stop) if $adjust_coords;
+    my ($start, $stop) = $adjust_coords->($o_start, $o_stop) if $adjust_coords;
 
     # Create padded coordinates suitable for generating a GBrowse image
     my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $stop, pad_for_gbrowse => 1);
     # Use the ACTUAL feature coordinates for the label, not the GBrowse coordinates.
     return {
-        label      => $self->_format_coordinates(ref => $ref, start => $start, stop => $stop),
+        label      => $self->_format_coordinates(ref => $ref, start => $o_start, stop => $o_stop),
         id         => $position,
         taxonomy   => $self->_parsed_species,
         class      => 'genomic_location',
@@ -314,8 +314,9 @@ sub _seg2coords {
 
     $segment->absolute($prev_abs); # reset relativity
     my $abs_ref   = $segment->abs_ref;
-    my $abs_start = $segment->start;
-    my $abs_stop  = $segment->stop;
+    my $abs_start = $segment->abs_start;
+    my $abs_stop = $segment->abs_end;
+
     ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
 
     return ($abs_ref,$abs_start,$abs_stop,$start,$stop); # what about $ref?

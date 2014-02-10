@@ -8,11 +8,8 @@
 [%
 
 WRAPPER highlight_box;
- 
-   status;
-
+  status;
 END;
-
 
 IF fields.description.data;
       # The main concise description
@@ -20,10 +17,13 @@ IF fields.description.data;
          markup(fields.description.data);
       '</div>';
 
-
       IF fields.is_bc_strain.data;
-	'<b>N.B.</b>: GFP constructs were generated as part of the <a href="http://elegans.bcgsc.ca/home/ge_consortium.html">BC <i>C. elegans</i> Gene Expression Consortium</a>';
+        '<b>N.B.</b>: GFP constructs were generated as part of the <a href="http://elegans.bcgsc.ca/home/ge_consortium.html">BC <i>C. elegans</i> Gene Expression Consortium</a>';
       END;
+END;
+
+WRAPPER $field_block title=pluralize("Database", fields.database.data.size) key='database';
+  tags2link(fields.database.data);
 END;
 
 WRAPPER $field_block title=pluralize("Subcellular Location", fields.subcellular_locations.data.size) key='subcellular_locations';
