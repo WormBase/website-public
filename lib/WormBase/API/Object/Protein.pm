@@ -864,230 +864,229 @@ sub _build_tracks {
 ############################################################
 
 sub _draw_image {
-  my $self = shift;
-  my $obj = shift;
-  my $best_only = shift;
+    my $self = shift;
+    my $obj = shift;
+    my $best_only = shift;
 
-  # Get out the length;
-  my $length = length($self->peptide);
+    # Get out the length;
+    my $length = length($self->peptide);
 
-  # Setup the panel, using the protein length to establish the box as a guide
-  my $ftr = 'Bio::Graphics::Feature';
-  my $segment = $ftr->new(-start=>1,-end=>$length,
-			  -name=>$obj,
-			  -type=>'Protein');
+    # Setup the panel, using the protein length to establish the box as a guide
+    my $ftr = 'Bio::Graphics::Feature';
+    my $segment = $ftr->new(-start=>1,-end=>$length,
+        -name=>"$obj",
+        -type=>'Protein');
 
-  my $panel = Bio::Graphics::Panel->new(-segment   =>$segment,
-					-key       =>'Protein Features',
-					-key_style =>'between',
-					-key_align =>'left',
-					-grid      => 1,
-					-width     =>'650');
+    my $panel = Bio::Graphics::Panel->new(-segment   =>$segment,
+        -key       =>'Protein Features',
+        -key_style =>'between',
+        -key_align =>'left',
+        -grid      => 1,
+        -width     =>'650');
 
-  # Get out the gene - will use to extract the exons, then map them
-  # onto the protein backbone.
-  my $gene    = $self->cds->[0];
-  my $gffdb = $self->gff_dsn($self->_parsed_species) || return;
-# print $gffdb;
-  my $dbh = $gffdb->dbh || return;
-  my ($seq_obj) = $dbh->segment($gene);
+    # Get out the gene - will use to extract the exons, then map them
+    # onto the protein backbone.
+    my $gene    = $self->cds->[0];
+    my $gffdb = $self->gff_dsn($self->_parsed_species) || return;
+    # print $gffdb;
+    my $dbh = $gffdb->dbh || return;
+    my ($seq_obj) = $dbh->segment("$gene");
 
-  my (@exons,@segmented_exons);
+    my (@exons,@segmented_exons);
 
-  # Translate the bp start and stop positions into the approximate amino acid
-  # contributions from the different exons.
-  my ($count,$end_holder);
+    # Translate the bp start and stop positions into the approximate amino acid
+    # contributions from the different exons.
+    my ($count,$end_holder);
   
-  if ($seq_obj) {
-      @exons = $seq_obj->features('exon:curated');
-      @exons = grep { $_->name eq $gene } @exons;
-      
-#   local $^W = 0;  # kill uninitialized variable warning
-      $end_holder=0;
-      foreach my $exon (sort { $a->start <=> $b->start } @exons) {
-	  
-	  $count++;
-	  my $start = $exon->start;
-	  my $stop  = $exon->stop;
-	  
-	  # Calculate the difference of the start and stop to figure
-	  # to figure out how many amino acids it corresponds to
-	  my $length = (($stop - $start) / 3);
-	  
-	  my $end = $length + $end_holder;
-	  my $seg = $ftr->new(-start=>$end_holder,-end=>$end,
-			      -name=>"exon $count",-type=>'exon');
-	  push @segmented_exons,$seg;
-	  $end_holder = $end;
-      }
-  }
+    if ($seq_obj) {
+        @exons = $seq_obj->features('exon:curated');
+        @exons = grep { $_->name eq $gene } @exons;
+
+        #   local $^W = 0;  # kill uninitialized variable warning
+        $end_holder=0;
+        foreach my $exon (sort { $a->start <=> $b->start } @exons) {
+
+            $count++;
+            my $start = $exon->start;
+            my $stop  = $exon->stop;
+
+            # Calculate the difference of the start and stop to figure
+            # to figure out how many amino acids it corresponds to
+            my $length = (($stop - $start) / 3);
+
+            my $end = $length + $end_holder;
+            my $seg = $ftr->new(-start=>$end_holder,-end=>$end,
+                  -name=>"exon $count",-type=>'exon');
+            push @segmented_exons,$seg;
+            $end_holder = $end;
+        }
+    }
   
   
-  ## Structural motifs (this returns a list of feature types)
-  my %features;
-  my @features = $obj->Feature;
-  # Visit each of the features, pushing into an array based on its name
-  foreach my $type (@features) {
+    ## Structural motifs (this returns a list of feature types)
+    my %features;
+    my @features = $obj->Feature;
+    # Visit each of the features, pushing into an array based on its name
+    foreach my $type (@features) {
       # 'Tis dangereaux - could lose some features if the keys overlap...
       my %positions = map {$_ => $_->right(1)} $type->col;
       foreach my $start (keys %positions) {
-	  my $seg   = $ftr->new(-start=>$start,-end=>$positions{$start},
-				-name=>"$type",-type=>$type);
-	  # Create a hash of all the features, keyed by type;
-	  push (@{$features{'Features-' . $type}},$seg);
+        my $seg = $ftr->new(-start=>"$start",-end=>$positions{"$start"},
+            -name=>"$type",-type=>"$type");
+        # Create a hash of all the features, keyed by type;
+        push (@{$features{'Features-' . "$type"}},$seg);
       }
-  }
+    }
   
-  ## A protein ruler
-  $panel->add_track(arrow => [ $segment ],
-  		    -label => 'amino acids',
-		    -arrowstyle=>'regular',
-		    -tick=>5,
-  		    #		    -tkcolor => 'DarkGray',
-      );
+    ## A protein ruler
+    $panel->add_track(arrow => [ $segment ],
+        -label => 'amino acids',
+        -arrowstyle=>'regular',
+        -tick=>5,
+        #		    -tkcolor => 'DarkGray',
+    );
   
-  ## Print the exon boundaries
-  $panel->add_track(generic=>[ @segmented_exons ],
-		    -glyph     => 'generic',
-		    -key       => 'exon boundaries',
-		    -bump      => 0,
-		    -height    => 6,
-		    -spacing   => 50,
-		    -linewidth =>1,
-		    -connector =>'none',
-      ) if @segmented_exons;
+    ## Print the exon boundaries
+    $panel->add_track(generic=>[ @segmented_exons ],
+        -glyph     => 'generic',
+        -key       => 'exon boundaries',
+        -bump      => 0,
+        -height    => 6,
+        -spacing   => 50,
+        -linewidth =>1,
+        -connector =>'none',
+    ) if @segmented_exons;
   
-  my %glyphs = (low_complexity => 'generic',
-		transmembrane   => 'generic',
-		signal_peptide  => 'generic',
-		tmhmm           => 'generic'
-      );
+    my %glyphs = (  low_complexity  => 'generic',
+                    transmembrane   => 'generic',
+                    signal_peptide  => 'generic',
+                    tmhmm           => 'generic'
+    );
   
-  my %labels   = ('low_complexity'       => 'Low Complexity',
-		  'transmembrane'         => 'Transmembrane Domain(s)',
-		  'signal_peptide'        => 'Signal Peptide(s)',
-		  'tmhmm'                 => 'Transmembrane Domain(s)',
-		  'wublastp_ensembl'      => 'BLASTP Hits on Human ENSEMBL database',
-		  'wublastp_fly'          => 'BLASTP Hits on FlyBase database',
-		  'wublastp_slimSwissProt'=> 'BLASTP Hits on SwissProt',
-		  'wublastp_slimTrEmbl'   => 'BLASTP Hits on Uniprot',
-		  'wublastp_worm'         => 'BLASTP Hits on WormPep',
-      );
+    my %labels   = ('low_complexity'        => 'Low Complexity',
+                    'transmembrane'         => 'Transmembrane Domain(s)',
+                    'signal_peptide'        => 'Signal Peptide(s)',
+                    'tmhmm'                 => 'Transmembrane Domain(s)',
+                    'wublastp_ensembl'      => 'BLASTP Hits on Human ENSEMBL database',
+                    'wublastp_fly'          => 'BLASTP Hits on FlyBase database',
+                    'wublastp_slimSwissProt'=> 'BLASTP Hits on SwissProt',
+                    'wublastp_slimTrEmbl'   => 'BLASTP Hits on Uniprot',
+                    'wublastp_worm'         => 'BLASTP Hits on WormPep',
+    );
   
-  my %colors   = ('low_complexity' => 'blue',
-		  'transmembrane'  => 'green',
-		  'signalp'        => 'gray',
-		  'prosite'        => 'cyan',
-		  'seg'            => 'lightgrey',
-		  'pfam'           => 'wheat',
-		  'motif_homol'    => 'orange',
-		  'wublastp_remanei'      => 'blue'
-      );
+    my %colors = (  'low_complexity'    => 'blue',
+                    'transmembrane'     => 'green',
+                    'signalp'           => 'gray',
+                    'prosite'           => 'cyan',
+                    'seg'               => 'lightgrey',
+                    'pfam'              => 'wheat',
+                    'motif_homol'       => 'orange',
+                    'wublastp_remanei'  => 'blue'
+    );
   
-  foreach ($obj->Homol) {
-      my (%partial,%best);
-      my @hits = $obj->get($_);
-      my %motif_ranges = ();
-      
-      # Pep_homol data structure is a little different
-      if ($_ eq 'Pep_homol') {
-	  my @features = wrestle_blast(\@hits,1);
-	  
-	  # Sort features by type.  If $best_only flag is true, then we only keep the
-	  # best ones for each type.
-	  my %best;
-	  for my $f (@features) {
-	      next if $f->name eq $obj;
-	      my $type = $f->type;
-	      if ($best_only) {
-		  next if $best{$type} && $best{$type}->score > $f->score;
-		  $best{$type} = $f;
-	      } else {
-		  push @{$features{'BLASTP Homologies'}},$f;
-	      }
-	  }
-	  
-	  # add descriptive information for each of the best ones
-#       local $^W = 0; #kill uninit variable warning
-	  for my $feature ($best_only ? values %best : @{$features{'BLASTP Homologies'}}) {
-	      my $homol = $HIT_CACHE{$feature->name};
-	      my $species =  $homol->Species||"";
-	      my $description = $species;
-	      my $score       = sprintf("%7.3G",10**-$feature->score);
-	      $description    =~ s/^(\w)\w* /$1. /;
-	      $description   .= " ";
-# 	my $desc= $homol->Description} || $homol->Gene_name || "";
-	      $description   .= $homol->Description || $homol->Gene_name || "";
-	      $description   .=  $homol->Corresponding_CDS ? $homol->Corresponding_CDS->Brief_identification ||"" : ""
-		  if $species =~ /elegans|briggsae/;
-	      my $t = $best_only ? "best hit, " : '';
-	      $feature->desc("$description (${t}e-val=$score)") if $description;
-	  }
-	  
-	  if ($best_only) {
-	      for my $type (keys %best) {
-		  push @{$features{'Selected BLASTP Homologies'}},$best{$type};
-	      }
-	  }
-	  
-	  # these are other homols
-      } else {	
-	  for my $homol (@hits) {
-	      my $title = eval {$homol->Title};
-	      my $type  = $homol->right or next;
-	      my @coord = $homol->right->col;
-	      my $name  = $title ? "$title ($homol)" : $homol;
-	      
-	      ### filter out duplicate segments ####
-	      foreach my $segment (@coord) {
-		  my ($start,$stop) = $segment->right->row;
-		  my $range = $start."_to_".$stop;
-		  
-		  
-		  if ($motif_ranges{$range}){
-		      next;
-		  }
-		  else{
-		      my $seg  = $ftr->new(-start=>$start,
-					   -end =>$stop,
-					   -name =>$name,
-					   -type =>$type);
-		      push (@{$features{'Motifs'}},$seg);
-		      # print "<pre>$range</pre>"; 
-		      $motif_ranges{$range} = 1;;
-		  }
-	      }
-	  }
-      }
-  }
-  
-  foreach my $key (sort keys %features) {
-      # Get the glyph
-      my $type  = $features{$key}[0]->type;
-      
-      my $label = $labels{$key}  || $key;
-      my $glyph = $glyphs{$key}  || 'graded_segments';
-      my $color = $colors{lc($type)} || 'green';
-      my $connector = $key eq 'Pep_homol' ? 'solid' : 'none';
-      
-      $panel->add_track(segments     => $features{$key},
-			-glyph       => $glyph,
-			-label       => ($label =~ /Features/) ? 0 : 1,
-			-bump        => 1,
-			-sort_order  => 'high_score',
-			-bgcolor     => $color,
-			-font2color  => 'grey',
-			-height      => 6,
-			-linewidth   => 1,
-			-description => 1,
-			-min_score   => -50,
-			-max_score   => 100,
-			-key         => $label,
-			-description => 1,
-	  );
-  }
-  
-  return $panel;
+    foreach ($obj->Homol) {
+        my (%partial,%best);
+        my @hits = $obj->get($_);
+        my %motif_ranges = ();
+
+        # Pep_homol data structure is a little different
+        if ($_ eq 'Pep_homol') {
+            my @features = wrestle_blast(\@hits,1);
+
+            # Sort features by type.  If $best_only flag is true, then we only keep the
+            # best ones for each type.
+            my %best;
+            for my $f (@features) {
+                next if $f->name eq $obj;
+                my $type = $f->type;
+                if ($best_only) {
+                    next if $best{$type} && $best{$type}->score > $f->score;
+                    $best{$type} = $f;
+                } else {
+                    push @{$features{'BLASTP Homologies'}},$f;
+                }
+            }
+
+            # add descriptive information for each of the best ones
+            # local $^W = 0; #kill uninit variable warning
+            for my $feature ($best_only ? values %best : @{$features{'BLASTP Homologies'}}) {
+                my $homol = $HIT_CACHE{$feature->name};
+                my $species =  $homol->Species||"";
+                my $description = $species;
+                my $score       = sprintf("%7.3G",10**-$feature->score);
+                $description    =~ s/^(\w)\w* /$1. /;
+                $description   .= " ";
+                # my $desc = $homol->Description} || $homol->Gene_name || "";
+                $description   .= $homol->Description || $homol->Gene_name || "";
+                $description   .=  $homol->Corresponding_CDS ? $homol->Corresponding_CDS->Brief_identification ||"" : ""
+                if $species =~ /elegans|briggsae/;
+                my $t = $best_only ? "best hit, " : '';
+                $feature->desc("$description (${t}e-val=$score)") if $description;
+            }
+
+            if ($best_only) {
+                for my $type (keys %best) {
+                    push @{$features{'Selected BLASTP Homologies'}},$best{$type};
+                }
+            }
+
+            # these are other homols
+        } else {
+            for my $homol (@hits) {
+                my $title = eval {$homol->Title};
+                my $type  = $homol->right or next;
+                my @coord = $homol->right->col;
+                my $name  = $title ? "$title ($homol)" : $homol;
+
+                ### filter out duplicate segments ####
+                foreach my $segment (@coord) {
+                    my ($start,$stop) = $segment->right->row;
+                    my $range = $start."_to_".$stop;
+
+
+                    if ($motif_ranges{$range}){
+                        next;
+                    } else {
+                        my $seg  = $ftr->new(-start=>$start,
+                            -end =>$stop,
+                            -name =>$name,
+                            -type =>$type);
+                        push (@{$features{'Motifs'}},$seg);
+                        # print "<pre>$range</pre>"; 
+                        $motif_ranges{$range} = 1;;
+                    }
+                }
+            }
+        }
+    }
+
+    foreach my $key (sort keys %features) {
+        # Get the glyph
+        my $type  = $features{$key}[0]->type;
+
+        my $label = $labels{$key}  || $key;
+        my $glyph = $glyphs{$key}  || 'graded_segments';
+        my $color = $colors{lc($type)} || 'green';
+        my $connector = $key eq 'Pep_homol' ? 'solid' : 'none';
+
+        $panel->add_track(segments     => $features{$key},
+            -glyph       => $glyph,
+            -label       => ($label =~ /Features/) ? 0 : 1,
+            -bump        => 1,
+            -sort_order  => 'high_score',
+            -bgcolor     => $color,
+            -font2color  => 'grey',
+            -height      => 6,
+            -linewidth   => 1,
+            -description => 1,
+            -min_score   => -50,
+            -max_score   => 100,
+            -key         => $label,
+            -description => 1,
+        );
+    }
+
+    return $panel;
 }
 
 sub wrestle_blast {
