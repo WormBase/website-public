@@ -116,7 +116,9 @@ sub _build_genomic_position {
     my ($self) = @_;
 
     my @positions = $self->_genomic_position($self->_segments);
-
+    unless ($self->_make_multiple_genomic_images()) {
+        @positions = splice(@positions, 0, 1);
+    }
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
