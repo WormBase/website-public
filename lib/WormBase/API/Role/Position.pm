@@ -116,7 +116,9 @@ sub _build_genomic_position {
     my ($self) = @_;
 
     my @positions = $self->_genomic_position($self->_segments);
-
+    unless ($self->_make_multiple_genomic_images()) {
+        @positions = splice(@positions, 0, 1);
+    }
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
@@ -141,7 +143,7 @@ sub _seg2posURLpart {
     my ($start, $stop) = $adjust_coords->($o_start, $o_stop) if $adjust_coords;
 
     # Create padded coordinates suitable for generating a GBrowse image
-    my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $stop, pad_for_gbrowse => 1);
+    my $position = $self->_format_coordinates(ref => $ref, start => ($start || $o_start), stop => ($stop || $o_stop), pad_for_gbrowse => 1);
     # Use the ACTUAL feature coordinates for the label, not the GBrowse coordinates.
     return {
         label      => $self->_format_coordinates(ref => $ref, start => $o_start, stop => $o_stop),

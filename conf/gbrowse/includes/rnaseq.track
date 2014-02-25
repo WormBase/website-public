@@ -1,6 +1,6 @@
 [RNASEQ]
 key          = RNASeq
-feature      = transcript_regions:RNASeq_reads
+feature      = transcript_region:RNASeq_reads
 glyph        = box
 category     = Expression
 bgcolor      = black

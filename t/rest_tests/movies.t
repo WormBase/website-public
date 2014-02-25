@@ -1,18 +1,6 @@
 #!/usr/bin/env perl
 
-# This is a unit test template for implementing tests that work
-# with a running WormBase Website instance.
-#
-# Unit tests are called automagically, just adhere to the following:
-#
-# 1. the unit test is placed in the t/rest_tests folder
-# 2. the filename and package name coincide (sans suffix)
-# 3. unit test names have the prefix "test_"
-#
-# Actual tests are implemented at the bottom of this file. Please see:
-#
-# 1. test_port_open
-# 2. test_single_gene_overview
+# Rest tests for movies
 
 {
     # Package name is the same as the filename (sans suffix, i.e. no .t ending)
@@ -24,8 +12,9 @@
     # We use Test::More for all tests, so include that here.
     use Test::More;
 
-    use LWP::Simple qw(get getstore);
+    use LWP::Simple qw(get);
     use JSON        qw(from_json);
+    use Net::FTP;
 
     my $configuration;
 
@@ -33,30 +22,18 @@
         $configuration = $_[0];
     }
 
-    sub test_port_open {
-        my $host = $configuration->{'host'};
-        my $port = $configuration->{'port'};
-        my $sock = IO::Socket::INET->new(PeerAddr => "$host:$port");
-
-        # Please keep test names/descriptions all lower case.
-        isnt($sock, undef, 'port open');
-    }
-
     sub test_movies {
-        my $host = $configuration->{'host'};
-        my $port = $configuration->{'port'};
-        my $url = "http://$host:$port/img-static/movies/200806024_lin-11_7H3_1_L1.mov";
-        
-        print $url,"\n";
+        my $ftp = Net::FTP->new('caltech.wormbase.org') 
+            or die "Cannot connect to some.host.name: $@";
+        $ftp->login('anonymous') 
+            or die "Cannot login ", $ftp->message;
+        $ftp->cwd('/pub/OICR/Movies/WBPaper00004811') 
+            or die "Cannot change working directory ", $ftp->message;
+        my $size = $ftp->size('001.A06.15c.term.mov') 
+            or die "size failed ", $ftp->message;
+        $ftp->quit;
 
-        my $filename = 'delete.x';
-        unlink $filename if -e $filename;;
-        my $file = getstore($url, $filename);
-
-        #print "\n\n",-e $filename,"\n\n";
-        
-        is  (-e $filename, 1, 'movie found at url');
-        unlink $filename;
+        is  (($size>0), 1, 'movie found at url');
     }
 
 }

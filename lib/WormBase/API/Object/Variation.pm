@@ -545,7 +545,7 @@ sub _build_genomic_image {
     my ($self) = @_;
 
     # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
-    my $UNMAPPED_SPAN = 10000;
+    my $UNMAPPED_SPAN = 1000;
 
     my $position;
     if (my $segment = $self->_segments->[0]) {
