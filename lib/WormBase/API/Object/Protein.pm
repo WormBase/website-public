@@ -801,7 +801,7 @@ sub _build_genomic_position {
 
     return {
         description => "Genomic position of the genes that are coding the protein",
-        data => \@positions
+        data => @positions ? \@positions : undef
     };
 }
 
@@ -822,7 +822,7 @@ sub _build_genetic_position {
 
     return {
         description => "Genetic positions of the genes that are coding the protein",
-        data => \@positions
+        data => @positions ? \@positions : undef
     };
 }
 
