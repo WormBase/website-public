@@ -40,7 +40,7 @@ sub _build__interactors {
     my %interactors;
     foreach my $type ($object->Interactor) {
 		my $count = 0;
-        next unless $type =~ /Molecule_regulator|Other_regulator|Other_regulated|Rearrangement|Interactor_overlapping_gene/;
+        next unless $type =~ /Molecule_regulator|Other_regulator|Other_regulated|Rearrangement|Interactor_overlapping_gene|Feature_interactor/;
 		foreach my $interactor ($type->col) {
 			my $name = eval {$interactor->Public_name} || "$interactor";
 			foreach my $tag ($type->right->down($count++)->col) {
@@ -72,17 +72,14 @@ sub _build__interactors {
 # Supplied by Role
 
 # Override Role to give a better label for name.
-sub _build_name { 
+sub _build__common_name { 
     my $self = shift;
     my $object = $self->object;
     my @list;
     map {push @list, sort keys %{$self->_interactors->{$_}}} sort keys %{$self->_interactors};
 
     my $label = join(' : ', @list);
-    return {
-        description => "The name and WormBase internal ID of $object",
-        data        =>  $self->_pack_obj($object,$label),
-    };
+    return $label;
 }
 
 # remarks {}

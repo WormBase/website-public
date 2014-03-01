@@ -78,21 +78,25 @@
 
 
    MACRO get_url(class, id, taxonomy) BLOCK;
-        class = (ACE2WB_MAP.$class || class) FILTER lower;
-        IF c.config.sections.species.$class.defined;
-          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
-        ELSIF (class == 'bench');
-          c.uri_for('/me', id).path;
-        ELSIF (class == 'page');
-          id;
-        ELSIF (class == 'genomic_location');
-          gbrowse_url(taxonomy, id);
-        ELSIF (class == 'txt');
-          '';
-        ELSIF !(c.config.sections.resources.$class.defined);
-          c.uri_for('/search', 'all', id).path;
+        IF (site.external_urls.$class.defined); 
+            get_external_url(class, id);
         ELSE;
-          c.uri_for('/resources', class, id).path;
+          class = (ACE2WB_MAP.$class || class) FILTER lower;
+          IF c.config.sections.species.$class.defined;
+            c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
+          ELSIF (class == 'bench');
+            c.uri_for('/me', id).path;
+          ELSIF (class == 'page');
+            id;
+          ELSIF (class == 'genomic_location');
+            gbrowse_url(taxonomy, id);
+          ELSIF (class == 'txt');
+            '';
+          ELSIF !(c.config.sections.resources.$class.defined);
+            c.uri_for('/search', 'all', id).path;
+          ELSE;
+            c.uri_for('/resources', class, id).path;
+          END;
         END;
    END;
 
@@ -156,7 +160,6 @@
       valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
       species = undef;
       IF data.taxonomy;
-        known_species = false;
         FOREACH s IN c.config.sections.species_list.keys;
           IF s == data.taxonomy;
             species = s;
@@ -166,13 +169,14 @@
       IF species;
         linkouts = [];
         species = species == 'all' ? 'c_elegans' : species;
-        FOREACH bioproject IN c.config.sections.species_list.$species.bioprojects.keys;
+        bioproject = data.bioproject || c.config.sections.species_list.$species.bioprojects.keys;
+        FOREACH bp IN bioproject;
           IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-              url = gbrowse_url(species, item.name.class _ ":" _ item.name.id, bioproject);
-              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
+              url = gbrowse_url(species, item.name.class _ ":" _ item.name.id, bp);
+              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
           ELSIF(!search);
-              url = gbrowse_url(species, '', bioproject);
-              linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bioproject)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bioproject)</a>]</span>");
+              url = gbrowse_url(species, '', bp);
+              linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
           END;
         END;
         linkouts.join(' ');
@@ -186,21 +190,21 @@
     MACRO pluralize(word, size) BLOCK;
       UNLESS word; RETURN; END;
       IF (size != 1);
-	  	 IF (matches = word.match('^(.*)y$'));
-		 	word = matches.0 _ 'ies';					# antibody -> antibodies
-		 ELSIF (matches = word.match('^(.*)ium$'));
-		 	word = matches.0 _ 'ia';					# bacterium -> bacteria
-         ELSIF (matches = word.match('^(.*)cus$'));
-            word = matches.0 _ 'ci';                    # locus -> loci
-         ELSIF (matches = word.match('^(.*)sis$'));
-            word = matches.0 _ 'ses';                   # analysis -> analyses
-		 ELSIF (matches = word.match('^(.*)ius$'));
-		 	word = matches.0 _ 'ii';					# radius -> radii 
-         ELSIF (matches = word.match('^(.*)ss$'));
-            word = matches.0 _ 'sses';                   # class -> classes 
-		 ELSE; 
-		 	word = word _ "s";                          # fallback
-		 END;
+        IF (matches = word.match('^(.*)y$'));
+          word = matches.0 _ 'ies';                   # antibody -> antibodies
+        ELSIF (matches = word.match('^(.*)ium$'));
+          word = matches.0 _ 'ia';                    # bacterium -> bacteria
+        ELSIF (matches = word.match('^(.*)cus$'));
+          word = matches.0 _ 'ci';                    # locus -> loci
+        ELSIF (matches = word.match('^(.*)sis$'));
+          word = matches.0 _ 'ses';                   # analysis -> analyses
+        ELSIF (matches = word.match('^(.*)ius$'));
+          word = matches.0 _ 'ii';                    # radius -> radii 
+        ELSIF (matches = word.match('^(.*)ss$'));
+          word = matches.0 _ 'sses';                  # class -> classes 
+        ELSIF (matches = word.match('^(.*)[^s]$')); 
+          word = word _ "s";                          # fallback
+        END;
       END;
       word;
     END;
@@ -274,10 +278,18 @@
     MACRO external_link(link, text, id, dbt) BLOCK;
        IF (link||text||id);
         text = text || id || link;
-        link = match_link(link);
-        ext_url = "";
+        ext_url = get_external_url(link, id, dbt);
+        "<a href=\"$ext_url\" 
+            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
+            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
+       END;
+    END;
 
-        IF(site.external_urls.defined(link));
+    MACRO get_external_url(link, id, dbt) BLOCK;
+       ext_url = "";
+       link = match_link(link);
+
+       IF(site.external_urls.defined(link));
           desc = site.external_urls.$link.description;
           IF id;
               USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt : site.external_urls.$link.search.replace('%S', '%s'));
@@ -293,10 +305,7 @@
           END;
         END;
         UNLESS (ext_url.length > 1); ext_url = link; END; 
-        "<a href=\"$ext_url\" 
-            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
-            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
-       END;
+        ext_url;
     END;
 
     MACRO match_link(link) BLOCK;
@@ -372,12 +381,11 @@
     END;
 
     MACRO markup(text, omim, locus, var, link) BLOCK;
-      UNLESS(text.match(".*\\<[^>]+>.*")); # don't markup html... only text
-        text = markup_linkouts(text);
-        UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
-        UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
-        UNLESS (omim == 0); text = markup_omim(text); END;
-      END;
+      text = text FILTER html;
+      text = markup_linkouts(text);
+      UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
+      UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
+      UNLESS (omim == 0); text = markup_omim(text); END;
       text;
     END;
 

@@ -137,20 +137,17 @@ sub transgenes {
 sub expression_clusters {
     my $self   = shift;
     my $object = $self->object;
-    my @data_pack;
+    my @data;
 
-    foreach my $expression_cluster ($object->Expression_cluster) {
-        my $ec_description = $expression_cluster->Description;
-        push @data_pack,
-          {
-            'ec_data'     => $self->_pack_obj($expression_cluster),
-            'description' => $ec_description && "$ec_description",
-          };
+    foreach my $expr_cluster ($object->Expression_cluster){
+        my $description = $expr_cluster->Description;
+        push @data, {
+            expression_cluster => $self->_pack_obj($expr_cluster),
+            description => $description && "$description"
+        }
     }
-    return {
-        'data'        => @data_pack ? \@data_pack : undef,
-        'description' => 'expression_clusters associated with this anatomy_term'
-    };
+    return { data        => @data ? \@data : undef,
+             description => 'expression cluster data' };
 }
 
 # expression_patterns {}

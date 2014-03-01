@@ -54,6 +54,7 @@
           <li>[% external_link("http://www.nematodes.org/", 'Nematodes.org') %]</li>
           <li>[% external_link("http://www.ipm.ucdavis.edu/NEMABASE/", 'NEMABASE') %]</li>
           <li>[% external_link("http://nematode.net/", 'Nematode.net') %]</li>
+          <li>[% external_link("http://www.smid-db.org/", 'SMID-DB') %]</li>
         </ul>  
       </div>
 
@@ -122,9 +123,14 @@
       <span>Last software update: [% git_update_time %]
       </span><br />
       [% END %]
-      <span>
-        WormBase is supported by grant #U41 HG002223 from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a></span><br /><span>at the <a href="http://www.nih.gov/">US National Institutes of Health</a> and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
-      </span>
+        <span>
+          WormBase is supported by grant #U41 HG002223 from the 
+          [% external_link("http://www.genome.gov/", "National Human Genome Research Institute") %]
+        </span><br />
+        <span>at the [% external_link("http://www.nih.gov/", "US National Institutes of Health") %], 
+          the [% external_link("http://www.mrc.ac.uk/", "UK Medical Research Council") %] and the 
+          [% external_link("http://www.bbsrc.ac.uk/home/home.aspx", "UK Biotechnology and Biological Sciences Research Council") %].
+        </span>
     </div>
 
 

@@ -30,7 +30,7 @@
       [% EDGES = fields.interactions.data.edges_all %]
       [% CLASSTYPE = fields.interactions.data.class %]
       [% PHENOTYPES = fields.interactions.data.phenotypes %]
-      
+      [% OBJTYPE = fields.interaction_type.data %]
       
       [% WRAPPER shared/fields/interaction_details.tt2; 
            #this is in a wrapper so the js will execute at the bottom of the widget and prevent blocking
@@ -46,11 +46,11 @@
 
 <a href="http://genemania.org/link?o=6239&g=[%
 FOREACH edge IN fields.interactions.data.edges.sort;
-    IF edge.effector.class == 'Gene';
+    IF edge.effector.class == 'gene';
     name = edge.effector.label FILTER upper;
     "$name|";
     END;
-    IF edge.affected.class == 'Gene';
+    IF edge.affected.class == 'gene';
     name = edge.affected.label FILTER upper;
     "$name|";
     END;

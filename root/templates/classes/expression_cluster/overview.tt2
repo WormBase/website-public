@@ -3,15 +3,29 @@
 [%
 
 WRAPPER highlight_box;
-WRAPPER $field_block title="Algorithm" key="algorithm";
-     fields.algorithm.data;
-END;
+    FOREACH ao IN fields.attribute_of.data.keys;
+        IF fields.attribute_of.data.$ao;
+            WRAPPER $field_block title="Attribute of " _ ao.replace('_', ' ');
+                tags2link(fields.attribute_of.data.$ao);
+            END;
+        ELSE;
+            WRAPPER $field_block title="Attribute of";
+                ao.replace('_', ' ');
+            END;
+        END;
+    END;
 END;
 
 '<div class="description">';
    markup(fields.description.data);
 
-   remarks(no_toggle=1);
+    IF fields.algorithm.data;
+        '<br /><br /><h4>Algorithm:</h4>';
+        fields.algorithm.data;
+        '<br /><br />';
+    END;
+
+    remarks(no_toggle=1);
 '</div>';
 
 %]

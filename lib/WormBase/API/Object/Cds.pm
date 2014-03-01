@@ -182,7 +182,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? ($self->method->{data}{method} eq 'history') ?  [qw(HISTORICAL_GENES)] : [qw(PRIMARY_GENE_TRACK EST_BEST PROTEIN_MOTIFS)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? ($self->method->{data}{method} eq 'history') ?  [qw(HISTORICAL_GENES)] : [qw(GENES EST_BEST PROTEIN_MOTIFS)] : undef,
     };
 }
 

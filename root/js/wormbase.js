@@ -1757,10 +1757,9 @@ var Scrolling = (function(){
                 legend.find('input:checkbox').map(function(){
                     var t = $jq(this);
                     if (t.attr('name') == 'type'){ 
-                        t.prop('checked', (!t.val().match('Predicted')));
-                    }else if(clazz === 'WBProcess' && t.val().match('nearby')){
+                        t.prop('checked', (clazz === 'Predicted' ? true : (!t.val().match('Predicted'))));
+                    }else if(!(clazz === 'WBProcess' && t.val().match('nearby'))){
                         // don't check nearby if process page
-                    }else { 
                         t.prop('checked', true);
                     }
                 });

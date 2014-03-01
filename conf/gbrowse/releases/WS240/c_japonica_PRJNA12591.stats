@@ -22,10 +22,10 @@ expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match
 expressed_sequence_match:EMBL_nematode_cDNAs-BLAT		EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_nematode_cdnas)	4920439
 expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT		NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	2907672
 expressed_sequence_match:NEMBASE_cDNAs-BLAT		NEMBASE_cDNAs-BLAT	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	378828
-gene:WormBase		WormBase	gene	Genes (primary_gene_track)	29946
-	mRNA:WormBase	WormBase	mRNA	Genes (primary_gene_track)	36129
-	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (primary_gene_track)	3752
-	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (primary_gene_track)	3346
+gene:WormBase		WormBase	gene	Genes (genes)	29946
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	36129
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	3752
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	3346
 intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	94048
 inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	323166
 	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	120788

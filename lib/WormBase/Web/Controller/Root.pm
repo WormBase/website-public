@@ -250,7 +250,7 @@ sub gbrowse_popup :Path('gbrowse_popup') :Args(0) {
 
     # WARNING: quickly hacked together code ahead with View and Model code!
     # consider making a proper model and view for this GBrowse popup data
-    if ($type eq 'PRIMARY_GENE_TRACK') {
+    if ($type eq 'GENES') {
         if (my $ace = $api->fetch({aceclass => $class, name => $name})) {
             $ace = $ace->object;
             my $gene = eval { $ace->Corresponding_CDS->Gene } || eval { $ace->Gene };

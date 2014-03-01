@@ -341,7 +341,7 @@ sub print_sequence {
 sub _build_tracks {
     return {
         description => 'tracks',
-        data        => [qw(PRIMARY_GENE_TRACK CLONES LINKS_AND_SUPERLINKS GENOMIC_CANONICAL)]
+        data        => [qw(GENES CLONES LINKS_AND_SUPERLINKS GENOMIC_CANONICAL)]
     };
 }
 

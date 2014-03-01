@@ -133,14 +133,33 @@ sub ep_movies{
     my $object = $self->object;
     
     my @movies = $object->Movie;
-    my @filenames = map { my $name = $_->Name; "$name" } @movies;
-    
-    #print $_,"\n" foreach @filenames; # DELETE
+    my $reference = $object->Reference;
+    my @filenames = map { my $name = $_->Name; "$reference/$name" } @movies;
     
     return {
         description => 'Movies showcasing this expression pattern',
         data        => @filenames ? \@filenames : undef
     };
+}
+
+sub database {
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my @dbs;
+    foreach my $db ($object->DB_info) {
+        # assuming we don't have any other fields other than id
+        foreach my $id (map { $_->col } $db->col) {
+            push @dbs, { class => "$db",
+                         label => "$db",
+                         id    => "$id" };
+        }
+    }
+
+    return {
+        description => 'Database for this expression pattern',
+        data        => @dbs ? \@dbs : undef,
+    }
 }
 
 # remarks {}

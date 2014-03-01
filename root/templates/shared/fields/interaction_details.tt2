@@ -7,16 +7,14 @@
     }	
     
 </style>
-
 [%# If these values are asserted, they are given by Interaction->interactions,  
 otherwise find them in Interaction->interaction_details %]
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
 [% EDGES = EDGES || interaction_details.data.edges %]
 [% NTYPES = NTYPES || interaction_details.data.ntypes %]
-[% CLASSTYPE = CLASSTYPE || undef %]
+[% CLASSTYPE = (CLASSTYPE == 'WBProcess') ? CLASSTYPE : OBJTYPE %]
 [% PHENOTYPES = PHENOTYPES || interaction_details.data.phenotypes %]
-
 [% 
     # Legend supertypes specification #
     master = [
