@@ -645,7 +645,7 @@ sub amino_acid_change {
     my $variations = $self->_compile_amino_acid_changes($self->object);
     return {
         description => 'amino acid changes for this variation, if appropriate',
-        data        => @$variations ? $variations : undef,
+        data        => $variations && @$variations ? $variations : undef,
     };
 }
 
