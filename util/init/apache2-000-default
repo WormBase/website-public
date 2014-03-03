@@ -1,0 +1,161 @@
+# GBrowse is self-contained in the app itself
+# and run from the jenkins repository.
+<VirtualHost *:8000>
+
+   LogFormat "%h %l %u %t \"%r\" %s %b" common
+   LogFormat "%h %l %u %t %{Referer}i \"%{User-Agent}i\" \"%r\" %s %b" combined_format
+   #LogFormat "%h %l %u %t %{Referer}i \"%{User-Agent}i\" \"%r\" %s %b %P" combined_format  
+   LogFormat "witheld %l %u %t \"%r\" %s %b" anonymous
+
+   ErrorLog     /usr/local/wormbase/logs/apache2/gbrowse/error.log
+   CustomLog    /usr/local/wormbase/logs/apache2/gbrowse/access.log combined_format
+
+    # Static and dynamically generated images. Dynamic images are handled by a symlink
+    # within the static directory as created by GBrowse.
+    Alias        "/gbrowse-static"   "/var/lib/jenkins/jobs/staging_build/workspace/root/gbrowse"
+
+    <Directory "/usr/local/wormbase/tmp/gbrowse">
+       Allow from all
+    </Directory>
+
+    <Directory "/var/lib/jenkins/jobs/staging_build/workspace/root/gbrowse">
+      Options -Indexes -MultiViews +FollowSymLinks
+      Order allow,deny
+      Allow from all
+    </Directory>
+
+    <Directory "/var/lib/jenkins/jobs/staging_build/workspace/root/gbrowse/cgi">
+      SetEnv PERL5LIB "/var/lib/jenkins/jobs/staging_build/workspace/lib:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio/Graphics:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio/Graphics/Glyph:/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi"
+       SetEnv GBROWSE_CONF   "/var/lib/jenkins/jobs/staging_build/workspace/conf/gbrowse"
+#       AllowOverride None
+#       Options None
+#       Order allow,deny
+#       Allow from all
+    </Directory>
+
+
+    # FastCGID
+#    <IfModule mod_fcgid.so>
+        Alias /tools/genome "/var/lib/jenkins/jobs/staging_build/workspace/root/gbrowse/cgi"
+        <Location /tools/genome>
+            SetHandler   fcgid-script
+            Options ExecCGI
+            Order allow,deny
+            Allow from all
+        </Location>
+        DefaultInitEnv GBROWSE_CONF /var/lib/jenkins/jobs/staging_build/workspace/conf/gbrowse
+        DefaultInitEnv PERL5LIB "/var/lib/jenkins/jobs/staging_build/workspace/lib:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio/Graphics:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio/Graphics/Glyph:/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi"
+	FcgidInitialEnv PERL5LIB "/var/lib/jenkins/jobs/staging_build/workspace/lib:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio/Graphics:/var/lib/jenkins/jobs/staging_build/workspace/lib/Bio/Graphics/Glyph:/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi"
+        # these directives prevent idle/busy timeouts and may need to be
+        # adjusted up or down
+        FcgidMinProcessesPerClass 6
+        FcgidIOTimeout   600
+        FcgidBusyTimeout 600
+#   </IfModule>
+</VirtualHost>
+
+
+
+
+
+
+
+# Todd's GBrowse installation - GBrowse is self-contained in the app itself.
+<VirtualHost *:10001>
+
+   LogFormat "%h %l %u %t \"%r\" %s %b" common
+   LogFormat "%h %l %u %t %{Referer}i \"%{User-Agent}i\" \"%r\" %s %b" combined_format
+   #LogFormat "%h %l %u %t %{Referer}i \"%{User-Agent}i\" \"%r\" %s %b %P" combined_format  
+   LogFormat "witheld %l %u %t \"%r\" %s %b" anonymous
+
+   ErrorLog     /usr/local/wormbase/website/tharris/logs/apache2-error.log
+   CustomLog    /usr/local/wormbase/website/tharris/logs/apache2-access.log combined_format
+
+    # Static and dynamically generated images. Dynamic images are handled by a symlink
+    # within the static directory as created by GBrowse.
+    Alias        "/gbrowse-static"   "/usr/local/wormbase/website/tharris/root/gbrowse"
+
+    <Directory "/usr/local/wormbase/tmp/gbrowse">
+       Allow from all
+    </Directory>
+
+    <Directory "/usr/local/wormbase/website/tharris/root/gbrowse">
+      Options -Indexes -MultiViews +FollowSymLinks
+      Order allow,deny
+      Allow from all
+    </Directory>
+
+    <Directory "/usr/local/wormbase/website/tharris/root/gbrowse/cgi">
+      SetEnv PERL5LIB "/usr/local/wormbase/website/tharris/lib:/usr/local/wormbase/website/tharris/lib/Bio:/usr/local/wormbase/website/tharris/lib/Bio/Graphics:/usr/local/wormbase/website/tharris/lib/Bio/Graphics/Glyph:/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi"
+       SetEnv GBROWSE_CONF   "/usr/local/wormbase/website/tharris/conf/gbrowse"
+#       AllowOverride None
+#       Options None
+#       Order allow,deny
+#       Allow from all
+    </Directory>
+
+
+    # FastCGID
+#    <IfModule mod_fcgid.so>
+        Alias /tools/genome "/usr/local/wormbase/website/tharris/root/gbrowse/cgi"
+        <Location /tools/genome>
+            SetHandler   fcgid-script
+            Options ExecCGI
+            Order allow,deny
+            Allow from all
+        </Location>
+        DefaultInitEnv GBROWSE_CONF /usr/local/wormbase/website/tharris/conf/gbrowse
+        DefaultInitEnv PERL5LIB "/usr/local/wormbase/website/tharris/lib:/usr/local/wormbase/website/tharris/lib/Bio:/usr/local/wormbase/website/tharris/lib/Bio/Graphics:/usr/local/wormbase/website/tharris/lib/Bio/Graphics/Glyph:/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi"
+	FcgidInitialEnv PERL5LIB "/usr/local/wormbase/website/tharris/lib:/usr/local/wormbase/website/tharris/lib/Bio:/usr/local/wormbase/website/tharris/lib/Bio/Graphics:/usr/local/wormbase/website/tharris/lib/Bio/Graphics/Glyph:/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi"
+        # these directives prevent idle/busy timeouts and may need to be
+        # adjusted up or down
+        FcgidMinProcessesPerClass 6
+        FcgidIOTimeout   600
+        FcgidBusyTimeout 600
+#   </IfModule>
+</VirtualHost>
+
+# Gbrowse syn
+# Running under it's own virtual host since it has some weird configuration quirks.
+<VirtualHost *:8001>
+
+   LogFormat "%h %l %u %t \"%r\" %s %b" common
+   LogFormat "%h %l %u %t %{Referer}i \"%{User-Agent}i\" \"%r\" %s %b" combined_format
+   LogFormat "witheld %l %u %t \"%r\" %s %b" anonymous
+
+   ErrorLog     /usr/local/wormbase/logs/apache2/gbrowse_syn/error.log
+   CustomLog    /usr/local/wormbase/logs/apache2/gbrowse_syn/access.log combined_format
+
+    # Support files: mostly contained in the wormbase-website repo
+    ScriptAlias  "/tools/synteny"      "/usr/local/wormbase/website/production/root/gbrowse/cgi/gbrowse_syn"
+    Alias      "/gbrowse2/images/" "/usr/local/wormbase/website/production/root/gbrowse/images/"
+    Alias      "/synteny/images" "/usr/local/wormbase/tmp/gbrowse_syn/images"
+    Alias      "/gbrowse-static"   "/usr/local/wormbase/website/production/root/gbrowse"
+
+    <Directory "/usr/local/wormbase/tmp/gbrowse">
+       Allow from all
+    </Directory>
+
+    <Directory "/usr/local/wormbase/website/production/root/gbrowse">
+      Options -Indexes -MultiViews +FollowSymLinks
+      Order allow,deny
+      Allow from all
+    </Directory>
+
+    <Directory "/usr/local/wormbase/website/production/root/gbrowse/cgi">
+      SetEnv PERL5LIB "/usr/local/wormbase/website/production/lib:/usr/local/wormbase/website/production/lib/Bio:/usr/local/wormbase/website/production/lib/Bio/Graphics:/usr/local/wormbase/website/production/lib/Bio/Graphics/Glyph:/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi"
+
+       SetEnv GBROWSE_CONF   "/usr/local/wormbase/website/production/conf/gbrowse"
+       AllowOverride None
+       Options None
+       Order allow,deny
+       Allow from all
+    </Directory>
+</VirtualHost>
+
+
+
+
+
+
+
