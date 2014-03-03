@@ -303,9 +303,9 @@ END
 
    DETAILS  => 'Nánar',
 
-   ALL_ON => 'Virkja allar',
+   ALL_OFF => 'Virkja allar',
 
-   ALL_OFF  => 'Afvirkja allar',
+   ALL_ON  => 'Afvirkja allar',
 
    ANALYSIS  => 'Greining',
 
