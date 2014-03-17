@@ -36,10 +36,10 @@ bgcolor      = sub {
 		my $f = shift;
 		my $m = $f->method;
 	        my %attributes = $f->attributes();
-		return 'green'  if $attributes{consequence} eq 'missense';
-		return 'yellow' if $attributes{consequence} eq 'coding_exon';
-		return 'red'    if $attributes{consequence} eq 'nonsense';
-		return 'blue'   if $attributes{consequence} eq 'frameshift';
+		return 'green'  if $attributes{consequence} eq 'Missense';
+		return 'yellow' if $attributes{consequence} eq 'Coding_exon';
+		return 'red'    if $attributes{consequence} eq 'Nonsense';
+		return 'blue'   if $attributes{consequence} eq 'Frameshift';
 		return 'white'; # insertion_site, mobile_element_insertion	
 #		return 'red'    if $m eq 'deletion';
 #		return 'yellow' if $m eq 'point_mutation';
