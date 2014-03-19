@@ -4,7 +4,6 @@ wp_id		= fields.pathway.data.pathway_id;
 img_path	= '/img-static/wikipathways/';
 revision  = fields.pathway.data.revision;
 %]
-abc
 
 [% IF fields.pathway.data.pathway_id %]
 Link to WikiPathways: <a href="[% link_base _ wp_id %]">[% link_base _ wp_id %]</a>
@@ -13,8 +12,9 @@ Link to WikiPathways: <a href="[% link_base _ wp_id %]">[% link_base _ wp_id %]<
 
 [% IF fields.pathway.data.revision%]
 <iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[%wp_id%]&rev=[%revision%]" width="800px" height="664px" style="overflow:hidden;"></iframe>
-[% END %]
+[%ELSE%]
 <iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[%wp_id%]" width="800px" height="664px" style="overflow:hidden;"></iframe>
+[% END %]
 [% END %]
 
 <script type="text/javascript">
