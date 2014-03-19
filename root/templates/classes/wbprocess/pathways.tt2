@@ -2,20 +2,19 @@
 link_base 	= 'http://www.wikipathways.org/index.php/Pathway:';
 wp_id		= fields.pathway.data.pathway_id;
 img_path	= '/img-static/wikipathways/';
+revision  = fields.pathway.data.revision;
 %]
-
+abc
 
 [% IF fields.pathway.data.pathway_id %]
 Link to WikiPathways: <a href="[% link_base _ wp_id %]">[% link_base _ wp_id %]</a>
 <br />
 <br />
-<img class="wp-img" src="[% img_path %][% wp_id %].png" width="800px" height="664px" />
 
-
-<!-- WikiPathways iframe, disabled for now 
-<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[% wp_id %]"  style="overflow:hidden;"></iframe>
--->
-
+[% IF fields.pathway.data.revision%]
+<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[%wp_id%]&rev=[%revision%]" width="800px" height="664px" style="overflow:hidden;"></iframe>
+[% END %]
+<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[%wp_id%]" width="800px" height="664px" style="overflow:hidden;"></iframe>
 [% END %]
 
 <script type="text/javascript">

@@ -1,5 +1,7 @@
 package WormBase::API::Object::Wbprocess;
 
+use XML::Simple;
+use HTTP::Request;
 use Moose;
 use WormBase::API::Object::Gene qw/classification/; 
 use Switch;
@@ -327,13 +329,27 @@ sub pathway{
 	my $object = $self->object;
 	my $pathway = $object->Pathway;
 	my $data;
-	
+
 	if($pathway){
 		my @row = $pathway->row;
 		my $pathway_id = $row[4];
-		
+        my $revision;
+	    my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
+        my $req = HTTP::Request->new(GET => $url);
+        my $lwp       = LWP::UserAgent->new;
+        my $response  = $lwp->request($req);
+        my $response_content = $response->content;
+
+        my $xml_file = XMLin($response_content);
+        my @tags = @{ ($xml_file->{'ns1:tags'})[0] };
+        foreach(@tags){
+            if($_->{'ns2:pathway'}->{'ns2:id'} eq "$pathway_id"){
+                $revision = $_->{'ns2:pathway'}->{'ns2:revision'};
+            }
+        }
 		$data = {
 			pathway_id		=> "$pathway_id",
+            revision        => $revision
 		};
 		
 	}
