@@ -655,6 +655,10 @@ sub widget_GET {
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
     if($cached_data && (ref $cached_data eq 'HASH')){
         $c->stash->{fields} = $cached_data;
+
+	# Served from cache? Let's include a link to it in the cache.
+	# Primarily a debugging element.
+	$c->stash->{served_from_cache} = $key;
     } elsif ($cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
         $c->response->status(200);
         $c->response->body($cached_data);

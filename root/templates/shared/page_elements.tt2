@@ -205,7 +205,12 @@ END;
   [% IF c.check_user_roles('admin') || c.config.timer %]
     <div class="ui-state-highlight ui-corner-all" style="position:absolute; left:30%; top:0.6em;">
     <span class="ui-icon ui-icon-clock" style="float: left; margin-right: .3em;"></span>
-    [% FILTER format('%5f') %][% c.stats.elapsed %][% END %] s [% server_details("") %]
+    [% server_details("") %] in [% FILTER format("%2.2f") %][% c.stats.elapsed %][% END %]s
+         [%- IF c.stash.served_from_cache -%]; served from couch: 
+              <a target="_blank" href="http://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a> 
+              | 
+             <a target="_blank" href="http://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a> 
+         [% END %]
       [% cache %] 
      
     </div>
