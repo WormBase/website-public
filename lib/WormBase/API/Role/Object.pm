@@ -2154,7 +2154,7 @@ sub gazette_abstracts {
 		   data        => $references,
     };
     return $result;
-}/
+}
 
 sub wormbook_abstracts {
     my $self = shift;
@@ -2219,4 +2219,8 @@ sub _get_count{
     my $curr;
     return scalar(  grep {  $curr = @{$_}[$col-1] if (@{$_}[$col-1]);
                             (@{$_}[$col] && ($curr eq "?tag?$tag?")); 
-           
+                    } @{$first_item->{'.raw'}} );
+}
+
+
+1;           
