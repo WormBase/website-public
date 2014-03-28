@@ -2043,7 +2043,7 @@ sub _check_data_content {
         }
 
     }
-    elsif (eval {$data->isa('Ace::Object')}) {
+    elsif (eval {$data->isa('Ace::Object')} || eval {$data->isa('Ace::Object::Wormbase')}) {
         push @compliance_problems,
             join('->', @keys)
           . ": Ace::Object (class: "
@@ -2154,7 +2154,7 @@ sub gazette_abstracts {
 		   data        => $references,
     };
     return $result;
-}
+}/
 
 sub wormbook_abstracts {
     my $self = shift;
@@ -2219,8 +2219,4 @@ sub _get_count{
     my $curr;
     return scalar(  grep {  $curr = @{$_}[$col-1] if (@{$_}[$col-1]);
                             (@{$_}[$col] && ($curr eq "?tag?$tag?")); 
-                    } @{$first_item->{'.raw'}} );
-}
-
-
-1;
+           
