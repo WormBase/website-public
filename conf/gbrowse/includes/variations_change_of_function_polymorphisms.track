@@ -8,6 +8,11 @@ feature =     deletion:PCoF_CGH_allele_Polymorphism
    sequence_alteration:PCoF_Variation_project_Polymorphism
 category     = Alleles, Variations, RNAi
 key          = Change-of-function polymorphisms
+link          = sub { 
+	      my $f = shift;
+	      my ($name) = $f->attributes('variation');
+	      return "/db/get?name=$name;class=Variation";
+        }
 label        = sub {
 	     my $f = shift;
 	     my %attributes = $f->attributes;
