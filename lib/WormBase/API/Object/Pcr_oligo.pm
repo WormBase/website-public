@@ -201,7 +201,7 @@ sub overlaps_pseudogene {
 sub overlaps_variation {
     my ($self) = @_;
     my $object = $self->object;
-    my @variations = map { $self->_pack_obj($_) } $object->Overlaps_Variation;
+    my @variations = map { $self->_pack_obj($_) } $object->Variation;
 
     return {
         description => 'Variations that this ' . $self->_object_class . ' overlaps',
