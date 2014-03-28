@@ -182,11 +182,12 @@ sub overlaps_transcript {
 
 sub overlaps_pseudogene {
 	my ($self) = @_;
-	my $pseudogenes = $self->_pack_objects($self ~~ '@Overlaps_Pseudogene');
+    my $object = $self->object;
+	my @pseudogenes = map { $self->_pack_obj($_) } $object->Overlaps_Pseudogene;
 
 	return {
 		description => 'Pseudogenes that this ' . $self->_object_class . ' overlaps',
-		data		=> %$pseudogenes ? \$pseudogenes : undef,
+		data		=> @pseudogenes ? \@pseudogenes : undef,
 	};
 }
 
