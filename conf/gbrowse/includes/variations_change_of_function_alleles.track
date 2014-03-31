@@ -99,10 +99,10 @@ balloon hover = sub {
 		   return join('<br />',@notes);
 	}
 link          = sub { 
-	      my $f = shift;
-	      my $name = $f->id;
-	      return "/db/get?name=$name;class=Variation";
-        }
+ 	             my $f = shift;
+ 		     my ($name) = $f->attributes('variation');
+                     return "/db/get?name=$name;class=Variation";
+         }
 citation      = This track shows alleles that generate a putative change-of-function.
 	        In this track, the type of mutation is indicated by its glyph: Boxes are
  		deletions. Triangles are insertions. Point mutations and substitutions 
