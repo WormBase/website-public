@@ -42,7 +42,7 @@ citation = These are transposon spans reviewed by WormBase curators.
 
 
 [TRANSPOSON_GENES:150000]
-glyph        = generic
+glyph        = transcript
 strand_arrow = 1
 bgcolor      = gray
 description  = 0
