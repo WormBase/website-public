@@ -610,7 +610,7 @@ sub motif_details {
     
     # Summary by Motif
     my @tot_positions;
-	my @data = ();
+    my @data = ();
 	
     if (@motif_homol > 0) {
 	
@@ -623,10 +623,10 @@ sub motif_details {
 			my $source = $motif_homol->right ||"";
 			$source  ||= 'interpro' if $motif_homol =~ /IPR/;
 			my $label = "$motif_homol";
-            $source = { class=>"$source", label=>"$source", id=>"$source"} if $source;
+			$source = { class=>"$source", label=>"$source", id=>"$source"} if $source;
 			my $desc = $motif_homol->Title ||$motif_homol ;
 			
-			# Are the multiple occurences of this motif_homol?
+			# Are there multiple occurences of this motif_homol?
 			# Gets all scores for the current motif
 			my @scores = $motif_homol->right->col;
 			
@@ -636,14 +636,14 @@ sub motif_details {
 					my $stop = $start->right;
 					
 					push( @data, {
-						feat	=> 
-							$self->_pack_obj($motif_homol,"$motif_homol"),
+					    feat	=> 
+						$self->_pack_obj($motif_homol,"$motif_homol"),
 						start	=> "$start",
 						stop	=> "$stop",
 						score	=> "$score",
 						source	=> $source,
 						desc	=> "$desc"
-					});
+					      });
 					
 					
 				}
@@ -664,7 +664,7 @@ sub motif_details {
     }
     my $data = { description => 'The motif details of the protein',
 #		 data        => @tot_positions ? \@tot_positions : undef,
-		data => (scalar @data) > 1 ? \@data : undef
+		data => (scalar @data) > 0 ? \@data : undef
 	}; 
     
 }
