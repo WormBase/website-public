@@ -477,7 +477,7 @@ sub pfam_graph {
 	    my $stop  = $feature->right(4);
 	    my $type = $feature->right ||"";
         my $label = $feature->Title;
-        map { $label = $_->right if "$_" eq 'short_name'} $feature->DB_info->right->col;
+        map { $label = $_->right if "$_" eq 'short_name'} eval { $feature->DB_info->right->col };
 	    $type  ||= 'Interpro' if $feature =~ /IPR/;
 
 	    # Are the multiple occurences of this feature?
@@ -899,8 +899,8 @@ sub _draw_image {
     my ($count,$end_holder);
   
     if ($seq_obj) {
-        @exons = $seq_obj->features('exon:curated');
-        @exons = grep { $_->name eq $gene } @exons;
+        @exons = $seq_obj->features('exon:WormBase');
+#        @exons = grep { $_->name eq $gene } @exons;
 
         #   local $^W = 0;  # kill uninitialized variable warning
         $end_holder=0;
