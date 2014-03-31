@@ -48,19 +48,13 @@ glyph        = sub {
 	}
 bgcolor      = sub {
 		my $f = shift;
-		my $m = $f->method;
-	        my %attributes = $f->attributes();
-		return 'green'  if $attributes{consequence} eq 'missense';
-		return 'yellow' if $attributes{consequence} eq 'coding_exon';
-		return 'red'    if $attributes{consequence} eq 'nonsense';
-		return 'blue'   if $attributes{consequence} eq 'frameshift';
-		return 'white'; # insertion_site, mobile_element_insertion	
-#		return 'red'    if $m eq 'deletion';
-#		return 'yellow' if $m eq 'point_mutation';
-#		return 'yellow' if $m eq 'substitution';
-#		return 'blue'   if $m eq 'complex_substitution';		
-#		return 'white'; # insertion_site, mobile_element_insertion
-	}
+                my ($consequence) = $f->attributes('consequence');
+                return 'green'  if $consequence =~ /missense/i;
+                return 'yellow' if $consequence =~ /coding_exon/i;
+                return 'red'    if $consequence =~ /nonsense/i;
+                return 'blue'   if $consequence =~ /frameshift/i;
+                return 'white';
+         }
 fgcolor      = black
 font2color   = blue
 height       = 8

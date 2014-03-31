@@ -41,19 +41,13 @@ glyph        = sub {
 	}
 bgcolor      = sub {
 		my $f = shift;
-		my $m = $f->method;
-	        my %attributes = $f->attributes();
-		return 'green'  if $attributes{consequence} eq 'Missense';
-		return 'yellow' if $attributes{consequence} eq 'Coding_exon';
-		return 'red'    if $attributes{consequence} eq 'Nonsense';
-		return 'blue'   if $attributes{consequence} eq 'Frameshift';
-		return 'white'; # insertion_site, mobile_element_insertion	
-#		return 'red'    if $m eq 'deletion';
-#		return 'yellow' if $m eq 'point_mutation';
-#		return 'yellow' if $m eq 'substitution';
-#		return 'blue'   if $m eq 'complex_substitution';		
-#		return 'white'; # insertion_site, mobile_element_insertion
-	}
+                my ($consequence) = $f->attributes('consequence');
+                return 'green'  if $consequence =~ /missense/i;
+                return 'yellow' if $consequence =~ /coding_exon/i;
+                return 'red'    if $consequence =~ /nonsense/i;
+                return 'blue'   if $consequence =~ /frameshift/i;
+                return 'white';
+         }
 fgcolor      = black
 font2color   = blue
 height       = 8
@@ -80,7 +74,7 @@ balloon hover = sub {
 		   $sanitized_source =~ s/PCoF_//g;
 		   $sanitized_source =~ s/_/ /g;
 
-		   my @notes = ("<b>Putative Change-of-Function Allele: $name</b>");
+		   my @notes = ("<b>Putative Change-of-Function Polymorphism: $name</b>");
 		   push (@notes,"type: $type");
 		   push (@notes,"status: $status")                  if $status;
 		   push (@notes,"position: $ref:$start..$stop");
