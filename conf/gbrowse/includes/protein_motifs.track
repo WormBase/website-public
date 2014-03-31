@@ -26,11 +26,10 @@ link          = sub { my $f   = shift;
                 return "/get?name=$protein;class=Protein";
         }
 height        = 7
-label         = sub { 
-		my $f = shift;
-		my $label = $f->name;
-		return $label;
-	}
+label         = sub { my $f = shift;
+                  my ($description) = $f->attributes('Description');
+                  return $description ? $description : '';
+         }
 description = sub { my $f = shift;
 	      my ($aa_range) = $f->attributes('Range');
 	      my ($exons)    = $f->attributes('Exons');
@@ -38,10 +37,10 @@ description = sub { my $f = shift;
 	      my ($label) = $f->attributes('Type');
 	      push @desc, $label;
 	      if ($aa_range) {
-	      	 push @desc,"amino acid range: $aa_range";
+	      	 push @desc,"amino acids: $aa_range";
               }
 	      if ($exons) {
-	         push @desc,"exon range: $exons";
+	         push @desc,"exons: $exons";
               }		 
 	      return join('; ',@desc);
 	}
