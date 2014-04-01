@@ -1517,8 +1517,7 @@ sub multi_pt_data {
 
     foreach my $exp ($object->Multi_point){
         my $cross = $exp->Combined;
-        next unless $cross;
-        my @results = $cross->row;
+        my @results = $cross->row if $cross;
         my (@loci, $total);
         $total = 0;
 
@@ -1557,7 +1556,7 @@ sub multi_pt_data {
 
         push @data, {
             result => @genotype ? \@genotype : undef,
-            genotype => "$gtype" || undef,
+            genotype => $gtype && "$gtype" || undef,
             mapper => $author ? $self->_pack_obj($author) : undef,
             comment => $comment && "$comment",
             date => $date && "$date",
