@@ -1517,6 +1517,7 @@ sub multi_pt_data {
 
     foreach my $exp ($object->Multi_point){
         my $cross = $exp->Combined;
+        next unless $cross;
         my @results = $cross->row;
         my (@loci, $total);
         $total = 0;
