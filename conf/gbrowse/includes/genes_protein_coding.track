@@ -69,7 +69,7 @@ citation = A subset of the full Curated Genes set limited to protein-coding gene
 
 
 [GENES_PROTEIN_CODING:150000]
-glyph        = generic
+glyph        = transcript
 strand_arrow = 1
 bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
 description  = 0

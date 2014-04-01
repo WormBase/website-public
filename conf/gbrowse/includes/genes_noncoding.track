@@ -84,7 +84,7 @@ citation = Non-coding curated gene models, including ncRNA, tRNA, miRNA, snRNA, 
 
 
 [GENES_NONCODING:150000]
-glyph        = generic
+glyph        = transcript
 strand_arrow = 1
 bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
 description  = 0
