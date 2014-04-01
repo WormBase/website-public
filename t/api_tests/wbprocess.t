@@ -29,6 +29,16 @@
         is($pathway->{'data'}->{'pathway_id'}, 'WP2313', 'Found Id');
     }
 
+    sub test_unfolded_protein {
+        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000046' });
+        can_ok('WormBase::API::Object::Wbprocess', ('pathway'));
+        my $pathway = $wbprocess->pathway();
+
+        isnt($pathway->{'data'}, undef, 'data returned');
+        isnt($pathway->{'data'}->{'pathway_id'}, undef, 'Defined');
+        is($pathway->{'data'}->{'pathway_id'}, 'WP2578 ', 'Found Id');
+    }
+
 }
 
 1;
