@@ -2043,7 +2043,7 @@ sub _check_data_content {
         }
 
     }
-    elsif (eval {$data->isa('Ace::Object')}) {
+    elsif (eval {$data->isa('Ace::Object')} || eval {$data->isa('Ace::Object::Wormbase')}) {
         push @compliance_problems,
             join('->', @keys)
           . ": Ace::Object (class: "
@@ -2223,4 +2223,4 @@ sub _get_count{
 }
 
 
-1;
+1;           

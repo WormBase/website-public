@@ -48,19 +48,20 @@ Internal methods are usually preceded with a _
 
 # Let the code begin...
 
-
 package Bio::Graphics::Browser2::Plugin::SequenceDumper;
 # $Id: SequenceDumper.pm,v 1.18 2009-01-02 20:57:37 lstein Exp $
 # Sequence Dumper plugin
 
 use strict;
 use Bio::Graphics::Browser2::Plugin;
+use Bio::SeqFeature::Generic;
 use Bio::SeqIO;
 use Bio::Seq::RichSeq;
-use POSIX qw(strftime);
-use Bio::Location::Fuzzy;
+use Bio::Graphics::Browser2::TrackDumper::RichSeqMaker;
+
 use CGI qw(:standard *pre);
-use Bio::SeqFeature::Generic;
+use POSIX qw(strftime);
+
 use vars qw($VERSION @ISA);
 use constant DEBUG => 0;
 
@@ -70,8 +71,8 @@ my @FORMATS = ( 'fasta'   => ['Fasta',        undef],
 		'embl'    => ['EMBL',         undef],
 		'gcg'     => ['GCG',          undef],
 		'raw'     => ['Raw sequence', undef],
-		'game'    => ['GAME (XML)',   'xml'],
 		'bsml'    => ['BSML (XML)',   'xml'],
+                'featurefasta'=>['Feature Fasta', undef],
 		'gff'     => ['GFF3',          undef],
 	      );
 
@@ -85,13 +86,14 @@ my @ORDER = grep {
 }
   grep { ! /gff/i } map { $FORMATS[2*$_] } (0..@FORMATS/2-1);
 
+unshift @ORDER,'featurefasta';
 unshift @ORDER,'gff';
 
 # initialize %FORMATS and %LABELS from @FORMATS
 my %FORMATS = @FORMATS;
 my %LABELS  = map { $_ => $FORMATS{$_}[0] } keys %FORMATS;
 
-$VERSION = '0.13';
+$VERSION = '0.14';
 
 @ISA = qw(Bio::Graphics::Browser2::Plugin);
 
@@ -117,69 +119,14 @@ sub dump {
     $self->gff_dump($segment);
     return;
   }
+  # special case for feature fasta
+  if ($config->{'fileformat'} eq 'featurefasta') {
+    $self->feature_fasta_dump($segment);
+    return;
+  }
   my @filter    = $self->selected_features;
-  my $seq  = new Bio::Seq::RichSeq(-display_id       => $segment->display_id,
-				   -desc             => $segment->desc,
-				   -accession_number => $segment->accession_number,
-				   
-				   -alphabet         => $segment->alphabet || 'dna',
-			  );
-  $seq->add_date(strftime("%d-%b-%Y",localtime));
-  my $ps = $segment->primary_seq; 
-  $seq->primary_seq(!ref $ps ? Bio::PrimarySeq->new(-seq=>$ps) : $ps);
-  $segment->absolute(1);
-  my $offset     = $segment->start - 1;
-  my $segmentend = $segment->length;
-  $seq->add_SeqFeature( map {
-      my $score = $_->score;
-      $score    = ref $score eq 'HASH' ? $score->{sumData}/$score->{validCount} : $score;
-      my $nf = new Bio::SeqFeature::Generic(-primary_tag => $_->primary_tag,
-					    -source_tag  => $_->source_tag,
-					    -frame       => eval{$_->phase}||eval{$_->frame}||undef,
-					    -score       => $score,
-					    );
-      for my $tag ( $_->get_all_tags ) {
-	  my %seen;
-	  $nf->add_tag_value($tag, grep { ! $seen{$_}++ } 
-			     grep { defined } $_->get_tag_values($tag));
-      }
-      my $loc = $_->location;
-      my @locs = $loc->each_Location;
-      for my $sl (@locs ) {
-	  $sl->start($sl->start() - $offset);
-	  $sl->end  ($sl->end() - $offset );
-	  my ($startstr,$endstr);
-
-	  if( $sl->start() < 1) {
-	      $startstr = "<1";
-	      $endstr   = $sl->end;
-	  }
-	  
-	  if( $sl->end() > $segmentend) {
-	      $endstr = ">$segmentend";
-	      $startstr = $sl->start unless defined $startstr;
-	  }
-	  if( defined $startstr || defined $endstr ) {
-	      $sl = Bio::Location::Fuzzy->new(-start         => $startstr,
-					      -end           => $endstr,
-					      -strand        => $sl->strand,
-					      -location_type => '..');
-	      # warn $sl->to_FTstring();
-	  }
-      }
-      if( @locs > 1 ) { 
-	  # let's insure they are sorted
-          if( $wantsorted ) {  # for VectorNTI
-	      @locs = sort { $a->start <=> $b->start } @locs;
-          }
-	  $nf->location( new Bio::Location::Split(-locations => \@locs,
-						  -seq_id    =>
-						  $segment->display_id));
-      } else { 
-	  $nf->location(shift @locs);
-      }
-      $nf;
-  } $segment->features(-types => \@filter) );
+  my $iterator  = $segment->get_seq_stream(-types => \@filter);
+  my $seq =  Bio::Graphics::Browser2::TrackDumper::RichSeqMaker->stream_to_rich_seq($segment,$iterator);
 
   my $out = new Bio::SeqIO(-format => $config->{fileformat},-fh=>\*STDOUT);
   my $mime_type = $self->mime_type;
@@ -287,5 +234,34 @@ sub gff_dump {
   print end_pre() if $html;
   print end_html() if $html;
 }
+
+sub feature_fasta_dump {
+  my $self          = shift;
+  my $segment       = shift;
+  my $page_settings = $self->page_settings;
+  my $conf          = $self->browser_config;
+  my $date = localtime;
+
+  my $mime_type = $self->mime_type;
+  my $html      = $mime_type =~ /html/;
+  print start_html($segment) if $html;
+
+  print h1($segment),start_pre() if $html;
+  print "##date $date\n";
+  print "##source gbrowse SequenceDumper\n";
+  print "##$segment\n";
+  print "##NOTE: Selected features dumped.\n";
+  my @feature_types = $self->selected_features;
+  $segment->absolute(0);
+  my $iterator = $segment->get_seq_stream(-types => \@feature_types) or return;
+  while (my $f = $iterator->next_seq) {
+      my $out = new Bio::SeqIO(-format =>'fasta',-fh=>\*STDOUT);
+      $out->write_seq($f->seq);
+  }
+
+  print end_pre() if $html;
+  print end_html() if $html;
+}
+
 
 1;

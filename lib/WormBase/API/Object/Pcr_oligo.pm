@@ -148,32 +148,35 @@ sub overlapping_genes {
 	};
 }
 
+
 # overlaps_CDS { }
-# Returns a datapack containing the CDS's that the product overlaps.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_CDS
+# Returns a datapack containing the CDS(s) that the product overlaps.
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_CDS
 
 sub overlaps_CDS {
 	my ($self) = @_;
-	my $CDS = $self->_pack_objects($self ~~ '@Overlaps_CDS');
+    my $object = $self->object;
+	my @CDSs = map { $self->_pack_obj($_) } $object->Overlaps_CDS;
 
 	return {
-		description => 'CDS\'s that this ' . $self->_object_class . ' overlaps',
-		data		=> %$CDS ? $CDS : undef,
+		description => 'CDSs that this ' . $self->_object_class . ' overlaps',
+		data		=> @CDSs ? \@CDSs : undef,
 	};
 }
 
 # overlaps_transcript { }
 # Returns a datapack containing the transcript(s) that the product overlaps.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_transcript
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_transcript
 
 sub overlaps_transcript {
-	my ($self) = @_;
-	my $transcripts = $self->_pack_objects($self ~~ '@Overlaps_Transcript');
+    my ($self) = @_;
+    my $object = $self->object;
+    my @transcripts = map { $self->_pack_obj($_) } $object->Overlaps_Transcript;
 
-	return {
-		description => 'Transcripts that this ' . $self->_object_class . ' overlaps',
-		data		=> %$transcripts ? $transcripts : undef,
-	};
+    return {
+        description => 'Transcripts that this ' . $self->_object_class . ' overlaps',
+        data        => @transcripts ? \@transcripts : undef,
+    };
 }
 
 # overlaps_pseudogene { }
@@ -181,27 +184,29 @@ sub overlaps_transcript {
 # curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_pseudogene
 
 sub overlaps_pseudogene {
-	my ($self) = @_;
-	my $pseudogenes = $self->_pack_objects($self ~~ '@Overlaps_Pseudogene');
+    my ($self) = @_;
+    my $object = $self->object;
+    my @pseudogenes = map { $self->_pack_obj($_) } $object->Overlaps_Pseudogene;
 
-	return {
-		description => 'Pseudogenes that this ' . $self->_object_class . ' overlaps',
-		data		=> %$pseudogenes ? \$pseudogenes : undef,
-	};
+    return {
+        description => 'Pseudogenes that this ' . $self->_object_class . ' overlaps',
+        data        => @pseudogenes ? \@pseudogenes : undef,
+    };
 }
 
 # overlaps_variation { }
 # Returns a datapack containing the variation(s) that the product overlaps.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_variation
+# curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_variation
 
 sub overlaps_variation {
-	my ($self) = @_;
-	my $variations = $self->_pack_objects($self ~~ '@Overlaps_Variation');
+    my ($self) = @_;
+    my $object = $self->object;
+    my @variations = map { $self->_pack_obj($_) } $object->Variation;
 
-	return {
-		description => 'Variations that this ' . $self->_object_class . ' overlaps',
-		data		=> %$variations ? \$variations : undef,
-	};
+    return {
+        description => 'Variations that this ' . $self->_object_class . ' overlaps',
+        data        => @variations ? \@variations : undef,
+    };
 }
 
 # on_orfeome_project { }
