@@ -5,7 +5,7 @@ use HTTP::Request;
 use Moose;
 use WormBase::API::Object::Gene qw/classification/; 
 use Switch;
-
+use Data::Dumper;
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Interaction';
 extends 'WormBase::API::Object';
@@ -331,8 +331,22 @@ sub pathway{
 	my $data;
 
 	if($pathway){
-		my @row = $pathway->row;
-		my $pathway_id = $row[4];
+		my @row = $pathway->row; 
+		my $pathway_id = ($row[0]->{".right"}->{".right"}->row)[2]->name;
+        my $present_row=$row[0]->{".right"}->{".right"};
+        if (($present_row->name)ne"WikiPathways"){
+            while(1){
+                $present_row = $present_row->{".down"};
+                if(!($present_row)){
+                    last;
+                }
+                print Dumper($present_row->name);
+                if($present_row->name eq "WikiPathways"){
+                    $pathway_id = ($present_row->row)[2]->name;
+                    last;
+                }
+            }
+        }
         my $revision;
 	    my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
         my $req = HTTP::Request->new(GET => $url);
@@ -351,14 +365,15 @@ sub pathway{
 			pathway_id		=> "$pathway_id",
             revision        => $revision
 		};
-		
+
 	}
-	
+
 	return {
 		description => "Related wikipathway link",
 		data => $data ? $data : undef
 };
 }
+
 
 
 #######################################
