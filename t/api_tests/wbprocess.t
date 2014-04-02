@@ -36,7 +36,7 @@
 
         isnt($pathway->{'data'}, undef, 'data returned');
         isnt($pathway->{'data'}->{'pathway_id'}, undef, 'Defined');
-        is($pathway->{'data'}->{'pathway_id'}, 'WP2578 ', 'Found Id');
+        is($pathway->{'data'}->{'pathway_id'}, 'WP2578', 'Found Id');
     }
 
 }
