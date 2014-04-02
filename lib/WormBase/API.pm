@@ -191,6 +191,7 @@ sub _build__tools {
             _api        => $self,
             dsn         => $self->_services, 
             tmp_base    => $self->tmp_base,
+            version     => $self->version,
             # ($tool eq 'aligner' ? (search => $self->search) : ()),
         });
         $self->log->debug( "service $tool registered");
