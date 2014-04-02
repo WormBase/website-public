@@ -52,9 +52,11 @@
     sub test_movies {
         can_ok('WormBase::API::Object::Rnai', ('movies'));
 
+        # link out to RNAi DB
         my $rnai_db = $api->fetch({ class => 'Rnai', name => 'WBRNAi00008269' });
         my $db_movies = $rnai_db->movies();
 
+        # link to wormbase hosted movies
         my $rnai_orig = $api->fetch({ class => 'Rnai', name => 'WBRNAi00081349' });
         my $orig_movies = $rnai_orig->movies();
 
