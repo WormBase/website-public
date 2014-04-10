@@ -38,7 +38,7 @@ description  = sub {
 citation = Historical gene predictions.
 
 [HISTORICAL_GENES:150000]
-glyph        = generic
+glyph        = transcript
 strand_arrow = 1
 #bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
 bgcolor       = white

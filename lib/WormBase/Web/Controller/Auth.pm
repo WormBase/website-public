@@ -103,7 +103,7 @@ sub password_reset : Chained('password') PathPart('reset')  Args(0){
       $pass->delete;
       $user->update();
       $pass->update();
-      $c->stash->{message} = "Your password has been reset. Please login'";
+      $c->stash->{message} = "Your password has been reset. Please login.";
     }
     $c->stash->{message} ||= "The link to reset your password has expired. Please try again.";
 }
