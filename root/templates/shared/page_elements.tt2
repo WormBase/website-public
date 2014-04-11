@@ -19,7 +19,9 @@
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
     [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: [% tags2link(data.$type, '; ', 'items') %]  
+        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: 
+          [% IF (type == 'curatorial_remarks'); '<br />'; END; %]
+          [% tags2link(data.$type, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items') %]  
         [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
