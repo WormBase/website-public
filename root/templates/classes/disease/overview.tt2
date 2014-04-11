@@ -17,7 +17,7 @@
         tags2link(fields.type.data);
       END;
 
-      WRAPPER $field_block title="Mapping of DO to OMIM ID" key="omim";
+      WRAPPER $field_block title="Mapping to OMIM ID" key="omim";
         FOREACH omim_dbt IN fields.omim.data.keys;
             FOREACH omim_id IN fields.omim.data.$omim_dbt.ids;
                 external_link('OMIM',"OMIM:" _ omim_id,omim_id) _ '<br />';
