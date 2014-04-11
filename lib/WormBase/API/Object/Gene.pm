@@ -728,67 +728,17 @@ sub anatomic_expression_patterns {
     };
 }
 
+
+
 sub expression_patterns {
     my ($self) = @_;
     my $object = $self->object;
     my @data;
 
     foreach my $expr ($object->Expr_pattern) {
-
-        my $author = $expr->Author;
-        my @patterns = $expr->Pattern
-            || $expr->Subcellular_localization
-            || $expr->Remark;
-        my $desc = join("<br />", @patterns) if @patterns;
         my $type = $expr->Type;
-        $type =~ s/_/ /g if $type;
-        my $reference = $self->_pack_obj($expr->Reference);
-
-        my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
-        my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
-        my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
-        my @transgene = map {
-                my @cs =map { "$_" } $_->Construction_summary;
-                @cs ?   {   text=>$self->_pack_obj($_),
-                            evidence=>{'Construction summary'=> \@cs }
-                        } : $self->_pack_obj($_)
-            } $expr->Transgene;
-        my $expr_packed = $self->_pack_obj($expr, "$expr");
-
-
-        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
-        $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
-        foreach($expr->Picture) {
-            next unless($_->class eq 'Picture');
-            my $pic = $self->_api->wrap($_);
-            if( $pic->image->{data}) {
-                $expr_packed->{curated_images} = 1;
-                last;
-            }
-        }
-        my $sub = $expr->Subcellular_localization;
-
-        my @dbs;
-        foreach my $db ($expr->DB_info) {
-            # assuming we don't have any other fields other than id
-            foreach my $id (map { $_->col } $db->col) {
-                push @dbs, { class => "$db",
-                             label => "$db",
-                             id    => "$id" };
-            }
-        }
-
-        push @data, {
-            expression_pattern =>  $expr_packed,
-            description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
-            type             => $type && "$type",
-            database         => @dbs ? \@dbs : undef,
-            expressed_in    => @expressed_in ? \@expressed_in : undef,
-            life_stage    => @life_stage ? \@life_stage : undef,
-            go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
-            transgene => @transgene ? \@transgene : undef
-
-        };
+        next if $type =~ /Microarray|Tiling_array/;
+        push @data, $self->_expression_pattern_details($expr, $type);
     }
 
     return {
@@ -797,6 +747,81 @@ sub expression_patterns {
     };
 }
 
+
+sub expression_profiling_graphs {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $expr ($object->Expr_pattern) {
+        my $type = $expr->Type;
+        next unless $type =~ /Microarray|Tiling_array/;
+        push @data, $self->_expression_pattern_details($expr, $type);
+    }
+
+    return {
+        description => "expression patterns associated with the gene:$object",
+        data        => @data ? \@data : undef
+    };
+}
+
+sub _expression_pattern_details {
+    my ($self, $expr, $type) = @_;
+
+    my $author = $expr->Author;
+    my @patterns = $expr->Pattern
+        || $expr->Subcellular_localization
+        || $expr->Remark;
+    my $desc = join("<br />", @patterns) if @patterns;
+    $type =~ s/_/ /g if $type;
+    my $reference = $self->_pack_obj($expr->Reference);
+
+    my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
+    my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
+    my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
+    my @transgene = map {
+            my @cs =map { "$_" } $_->Construction_summary;
+            @cs ?   {   text=>$self->_pack_obj($_),
+                        evidence=>{'Construction summary'=> \@cs }
+                    } : $self->_pack_obj($_)
+        } $expr->Transgene;
+    my $expr_packed = $self->_pack_obj($expr, "$expr");
+
+
+    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
+    $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
+    foreach($expr->Picture) {
+        next unless($_->class eq 'Picture');
+        my $pic = $self->_api->wrap($_);
+        if( $pic->image->{data}) {
+            $expr_packed->{curated_images} = 1;
+            last;
+        }
+    }
+    my $sub = $expr->Subcellular_localization;
+
+    my @dbs;
+    foreach my $db ($expr->DB_info) {
+        # assuming we don't have any other fields other than id
+        foreach my $id (map { $_->col } $db->col) {
+            push @dbs, { class => "$db",
+                         label => "$db",
+                         id    => "$id" };
+        }
+    }
+
+    return {
+        expression_pattern =>  $expr_packed,
+        description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
+        type             => $type && "$type",
+        database         => @dbs ? \@dbs : undef,
+        expressed_in    => @expressed_in ? \@expressed_in : undef,
+        life_stage    => @life_stage ? \@life_stage : undef,
+        go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
+        transgene => @transgene ? \@transgene : undef
+
+    };
+}
 
 # anatomy_terms { }
 # This method will return a hash
