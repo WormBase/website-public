@@ -43,6 +43,9 @@ ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	28
 	tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	777
 	exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	122725
 	intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	99844
+	piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	0
 nucleotide_match:EXONERATE_BAC_END_BEST		EXONERATE_BAC_END_BEST	nucleotide_match	 (bac_ends)	36872
 	nucleotide_match:EXONERATE_BAC_END_OTHER	EXONERATE_BAC_END_OTHER	nucleotide_match	 (bac_ends)	12895
 nucleotide_match:TEC_RED		TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	7064

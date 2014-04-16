@@ -264,7 +264,7 @@ sub resolve_coordinates {
   my ($segment)   = $db->segment(@args);
   if ($segment) {
     $segment->absolute(1);
-    my ($ref,$start,$stop) = ($segment->ref,$segment->low,$segment->high);
+    my ($ref,$start,$stop) = ($segment->ref,$segment->start,$segment->stop);
     my ($gb,$canonical,$gene) = segment2goodstuff($segment);
 
     return ($ref,$start,$stop,$gb,$canonical,$gene);
@@ -276,7 +276,7 @@ sub resolve_coordinates {
 
 sub segment2goodstuff {
   my $segment = shift;
-  my ($ref,$start,$stop) = ($segment->ref,$segment->low,$segment->high);
+  my ($ref,$start,$stop) = ($segment->ref,$segment->start,$segment->stop);
 
   my (@genes,$gb,$c);
   # Not correct for WS126
@@ -306,13 +306,13 @@ sub segment2goodstuff {
     @exons  = sort {$a && $b ? $a->start<=>$b->start : 0} @exons;
     for (my $e=0; $e < @exons; $e++) {
 	# Track partial coverage
-	if ((($segment->low > $exons[$e]->stop) && ($segment->high > $exons[$e]->start))
-	    || (($segment->low < $exons[$e]->stop) && ($segment->high < $exons[$e]->start))) {
+	if ((($segment->start > $exons[$e]->stop) && ($segment->stop > $exons[$e]->start))
+	    || (($segment->start < $exons[$e]->stop) && ($segment->stop < $exons[$e]->start))) {
 	    push(@{ $full_genes->{$full_gene->name}->{partially_covered}},$e+1);
 	}
 
-      next if $exons[$e]->stop  < $segment->low;
-      next if $exons[$e]->start > $segment->high;
+      next if $exons[$e]->stop  < $segment->start;
+      next if $exons[$e]->start > $segment->stop;
      # one-based indexing for biologists!
      push(@{ $full_genes->{$full_gene->name}->{covered}},$e+1);
     }
@@ -339,7 +339,7 @@ sub segment2goodstuff {
   $gb = [undef,undef,undef];
   if (my @genbank = eval { @{$features{Genbank} } }) {
     my $middle = ($stop+$start)/2;
-    my %distance_from_middle = map {$_ => abs(0.5-($middle-$_->low)/$_->length)} @genbank;
+    my %distance_from_middle = map {$_ => abs(0.5-($middle-$_->stop)/$_->length)} @genbank;
     my ($middle_most) = sort {$distance_from_middle{$a}<=>$distance_from_middle{$b}} @genbank;
     $segment->ref($middle_most);
     $gb = [$middle_most->name,$segment->start,$segment->stop];

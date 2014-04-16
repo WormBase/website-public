@@ -139,7 +139,13 @@
 	base        = 'http://www.biomedcentral.com/bmcgenomics'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
- 
+	
+  BMCMolecularBiology = {
+	description = 'BMC Molecular Biology'
+	base        = 'http://www.biomedcentral.com/bmcmolbiol'
+	search      = 'http://www.biomedcentral.com/%s'
+	}
+	
  BMCNeuroscience = {
 	description = 'BMC Neuroscience'
 	base        = 'http://www.biomedcentral.com/bmcneurosci'

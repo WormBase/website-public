@@ -2,7 +2,7 @@
 
     [% IF fields.human_diseases.data.experimental_model; %]
     <p><h3>Curated Experimental Model</h3></p>
-      [% FOREACH item IN fields.human_diseases.data.experimental_model; 
+      [% FOREACH item IN fields.human_diseases.data.experimental_model;
           text = object.name.data.label _ ' is an experimental model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
           '<div class="description">';
             evidence(item.ev, 0 , text);
@@ -29,7 +29,7 @@ END;
   </p>
   <div class="description">
     [% IF fields.human_diseases.data.potential_model; %]
-      [% FOREACH item IN fields.human_diseases.data.potential_model; 
+      [% FOREACH item IN fields.human_diseases.data.potential_model;
           text = object.name.data.label _ ' is a potential model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
           evidence(item.ev, 0 , text);
           '<br />';
@@ -39,8 +39,8 @@ END;
   [% FOREACH type IN ['disease', 'gene'] %]
     [% IF fields.human_diseases.data.$type; %]
     <h4>[% pluralize(type, fields.human_diseases.data.$type.size) | ucfirst %]</h4>
-      [% FOREACH item IN fields.human_diseases.data.$type; 
-       external_link('omim',"OMIM:" _ item,item) _ '<br />';
+      [% FOREACH item IN fields.human_diseases.data.$type;
+       external_link('OMIM',"OMIM:" _ item,item) _ '<br />';
         END;%]
     [% END %]
     <br />

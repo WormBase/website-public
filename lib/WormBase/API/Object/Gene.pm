@@ -11,7 +11,7 @@ with    'WormBase::API::Role::Position';
 with    'WormBase::API::Role::Interaction';
 with    'WormBase::API::Role::Variation';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -93,19 +93,19 @@ sub _build__alleles {
     my $count = $self->_get_count($object, 'Allele');
     my @alleles;
     my @polymorphisms;
-    unless ($count > 1000) { 
+    unless ($count > 1000) {
       my @all = $object->Allele;
 
       if($count < 500){
           foreach my $allele (@all) {
               (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_process_variation($allele)) : 
+                    push(@polymorphisms, $self->_process_variation($allele)) :
                     push(@alleles, $self->_process_variation($allele));
           }
       }else{
           foreach my $allele (@all) {
               (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_pack_obj($allele)) : 
+                    push(@polymorphisms, $self->_pack_obj($allele)) :
                     push(@alleles, $self->_pack_obj($allele));
           }
       }
@@ -126,7 +126,7 @@ sub _build__phenotypes {
     foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
 
         my $type_name; #label that shows in the evidence column above each list of that object type
-        if ($type =~ /Transgene/) { $type_name = 'Transgene:'; } 
+        if ($type =~ /Transgene/) { $type_name = 'Transgene:'; }
         elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
         else { $type_name = $type . ':'; }
 
@@ -153,7 +153,7 @@ sub _build__phenotypes {
                     # add some additional information for RNAis
                     if ($type eq 'RNAi_result') {
                         $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
-                        my $genotype = $obj->Genotype;	
+                        my $genotype = $obj->Genotype;
                         $evidence->{Genotype} = "$genotype" if $genotype;
                         my $strain = $obj->Strain;
                         $evidence->{Strain} = "$strain" if $strain;
@@ -219,7 +219,7 @@ sub named_by {
 
 sub classification {
     my $self   = shift;
-    
+
     #optional second parameter: source object
     my $gene_obj = shift;
     my $object = $gene_obj ? $gene_obj : $self->object;
@@ -332,7 +332,7 @@ sub cloned_by {
 
 sub parent_sequence {
     my $self      = shift;
-    my $object = $self->object;  
+    my $object = $self->object;
     return {
         description => 'parent sequence of this gene',
         data        => $self->_pack_obj($object->Sequence),
@@ -346,7 +346,7 @@ sub parent_sequence {
 
 sub clone {
     my $self      = shift;
-    my $object = $self->object;  
+    my $object = $self->object;
     return {
         description => 'parent clone of this gene',
         data        => $self->_pack_obj($object->Positive_clone),
@@ -361,17 +361,17 @@ sub clone {
 
 sub concise_description {
     my $self   = shift;
-    my $object = $self->object;  
-    
-    my $description = 
+    my $object = $self->object;
+
+    my $description =
         $object->Concise_description
         || eval {$object->Corresponding_CDS->Concise_description}
         || eval { $object->Gene_class->Description }
         || $self->name->{data}->{label} . ' gene';
-    
+
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
     my $evidence = $self->_get_evidence($evs[0]);
-    
+
     return {
       description => "A manually curated description of the gene's function",
       data        => { text => $description && "$description", evidence => $evidence }
@@ -386,8 +386,8 @@ sub concise_description {
 
 sub gene_class {
     my $self   = shift;
-    my $gene_class = $self->object->Gene_class;  
-    
+    my $gene_class = $self->object->Gene_class;
+
     return {
     description => "The gene class for this gene",
     data        => $gene_class ? { tag => $self->_pack_obj($gene_class),
@@ -404,8 +404,8 @@ sub gene_class {
 
 sub operon {
     my $self   = shift;
-    my $object = $self->object;  
-    
+    my $object = $self->object;
+
     return {
     description => "Operon the gene is contained in",
     data        => $self->_pack_obj($object->Contained_in_operon)};
@@ -418,9 +418,9 @@ sub operon {
 
 sub transposon {
     my $self   = shift;
-    my $object = $self->object;  
+    my $object = $self->object;
     my @transposons = map { $self->_pack_obj($_)} $object->Corresponding_transposon;
-    
+
     return {
         description => "Corresponding transposon for this gene",
         data        => @transposons ? \@transposons : undef
@@ -450,7 +450,7 @@ sub legacy_information {
 sub locus_name {
     my $self   = shift;
     my $object = $self->object;
-    my $locus  = $object->CGC_name;   
+    my $locus  = $object->CGC_name;
     # Genes known only by sequence often lack a CGC (locus) name.
     return { description => 'the locus name (also known as the CGC name) of the gene',
              data        => $locus ? $self->_pack_obj($locus->CGC_name_for, $locus && "$locus") : 'not assigned'}
@@ -489,11 +489,11 @@ sub sequence_name {
 sub structured_description {
    my $self = shift;
    my %ret;
-   my @types = qw(Provisional_description 
+   my @types = qw(Provisional_description
                   Other_description
                   Sequence_features
-                  Functional_pathway 
-                  Functional_physical_interaction 
+                  Functional_pathway
+                  Functional_physical_interaction
                   Molecular_function
                   Sequence_features
                   Biological_process
@@ -564,7 +564,7 @@ sub fpkm_expression {
     my $object = $self->object;
 
     my $rserve = $self->_api->_tools->{rserve};
-    my @fpkm_map = map { 
+    my @fpkm_map = map {
         my $life_stage = $_->Public_name;
         my @fpkm_table = $_->col;
         map {
@@ -642,7 +642,7 @@ sub fpkm_expression {
 
     my $plot;
     if ($mode eq 'summary_ls') {
-	# This is NOT consistently returning an ID, resulting in fpkm_.png 
+	# This is NOT consistently returning an ID, resulting in fpkm_.png
 	# and breaking the expression widget.
 	# filename => "fpkm_" . $self->name->{data}{id} . ".png",
 	my $obj = $self->object;
@@ -708,7 +708,7 @@ sub fourd_expression_movies {
 
 
 # anatomic_expression_patterns { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing expression patterns described at the
 # anatomic level. Includes links to images.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomic_expression_patterns
@@ -717,7 +717,7 @@ sub anatomic_expression_patterns {
     my $self   = shift;
     my $object = $self->object;
     my %data_pack;
-    
+
     my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
     $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
 
@@ -728,67 +728,17 @@ sub anatomic_expression_patterns {
     };
 }
 
+
+
 sub expression_patterns {
     my ($self) = @_;
     my $object = $self->object;
     my @data;
 
     foreach my $expr ($object->Expr_pattern) {
-
-        my $author = $expr->Author;
-        my @patterns = $expr->Pattern
-            || $expr->Subcellular_localization
-            || $expr->Remark;
-        my $desc = join("<br />", @patterns) if @patterns;
         my $type = $expr->Type;
-        $type =~ s/_/ /g if $type;
-        my $reference = $self->_pack_obj($expr->Reference);
-
-        my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
-        my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
-        my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
-        my @transgene = map { 
-                my @cs =map { "$_" } $_->Construction_summary;
-                @cs ?   {   text=>$self->_pack_obj($_), 
-                            evidence=>{'Construction summary'=> \@cs }
-                        } : $self->_pack_obj($_)
-            } $expr->Transgene;
-        my $expr_packed = $self->_pack_obj($expr, "$expr");
-
-
-        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
-        $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
-        foreach($expr->Picture) {
-            next unless($_->class eq 'Picture');
-            my $pic = $self->_api->wrap($_);
-            if( $pic->image->{data}) {
-                $expr_packed->{curated_images} = 1;
-                last;
-            }   
-        }
-        my $sub = $expr->Subcellular_localization;
-
-        my @dbs;
-        foreach my $db ($expr->DB_info) {
-            # assuming we don't have any other fields other than id
-            foreach my $id (map { $_->col } $db->col) {
-                push @dbs, { class => "$db",
-                             label => "$db",
-                             id    => "$id" };
-            }
-        }
-
-        push @data, {
-            expression_pattern =>  $expr_packed,
-            description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
-            type             => $type && "$type",
-            database         => @dbs ? \@dbs : undef,
-            expressed_in    => @expressed_in ? \@expressed_in : undef,
-            life_stage    => @life_stage ? \@life_stage : undef,
-            go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
-            transgene => @transgene ? \@transgene : undef
-
-        };
+        next if $type =~ /Microarray|Tiling_array/;
+        push @data, $self->_expression_pattern_details($expr, $type);
     }
 
     return {
@@ -798,8 +748,83 @@ sub expression_patterns {
 }
 
 
+sub expression_profiling_graphs {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $expr ($object->Expr_pattern) {
+        my $type = $expr->Type;
+        next unless $type =~ /Microarray|Tiling_array/;
+        push @data, $self->_expression_pattern_details($expr, $type);
+    }
+
+    return {
+        description => "expression patterns associated with the gene:$object",
+        data        => @data ? \@data : undef
+    };
+}
+
+sub _expression_pattern_details {
+    my ($self, $expr, $type) = @_;
+
+    my $author = $expr->Author;
+    my @patterns = $expr->Pattern
+        || $expr->Subcellular_localization
+        || $expr->Remark;
+    my $desc = join("<br />", @patterns) if @patterns;
+    $type =~ s/_/ /g if $type;
+    my $reference = $self->_pack_obj($expr->Reference);
+
+    my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
+    my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
+    my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
+    my @transgene = map {
+            my @cs =map { "$_" } $_->Construction_summary;
+            @cs ?   {   text=>$self->_pack_obj($_),
+                        evidence=>{'Construction summary'=> \@cs }
+                    } : $self->_pack_obj($_)
+        } $expr->Transgene;
+    my $expr_packed = $self->_pack_obj($expr, "$expr");
+
+
+    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
+    $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
+    foreach($expr->Picture) {
+        next unless($_->class eq 'Picture');
+        my $pic = $self->_api->wrap($_);
+        if( $pic->image->{data}) {
+            $expr_packed->{curated_images} = 1;
+            last;
+        }
+    }
+    my $sub = $expr->Subcellular_localization;
+
+    my @dbs;
+    foreach my $db ($expr->DB_info) {
+        # assuming we don't have any other fields other than id
+        foreach my $id (map { $_->col } $db->col) {
+            push @dbs, { class => "$db",
+                         label => "$db",
+                         id    => "$id" };
+        }
+    }
+
+    return {
+        expression_pattern =>  $expr_packed,
+        description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
+        type             => $type && "$type",
+        database         => @dbs ? \@dbs : undef,
+        expressed_in    => @expressed_in ? \@expressed_in : undef,
+        life_stage    => @life_stage ? \@life_stage : undef,
+        go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
+        transgene => @transgene ? \@transgene : undef
+
+    };
+}
+
 # anatomy_terms { }
-# This method will return a hash 
+# This method will return a hash
 # containing unique anatomy terms described from the
 # expression patterns associated with this gene
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_terms
@@ -831,7 +856,7 @@ sub microarray_expression_data {
     my $self   = shift;
     my $object = $self->object;
     my %data;
-    my @microarray_results = $object->Microarray_results;    
+    my @microarray_results = $object->Microarray_results;
     return { data        => @microarray_results ? $self->_pack_objects(\@microarray_results) : undef,
              description => 'gene expression determined via microarray analysis'};
 }
@@ -902,21 +927,21 @@ sub anatomy_function {
       next unless @bp_inv;
       my @assay = map { my $as = $_->right;
                   if ($as) {
-                      my @geno = $as->Genotype;                   
+                      my @geno = $as->Genotype;
                       {evidence => { genotype => join('<br /> ', @geno) },
                       text => "$_",}
                   }
                 } $_->Assay;
       my $pev;
       push @data_pack, {
-          phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+          phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
                             { evidence => $pev,
                             text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
           assay    => @assay ? \@assay : undef,
           bp_inv    => @bp_inv ? \@bp_inv : undef,
           reference => $self->_pack_obj(scalar $_->Reference),
       };
-    } 
+    }
 
     return {
         data        => @data_pack ? \@data_pack : undef,
@@ -943,7 +968,7 @@ sub anatomy_function {
 #######################################
 
 # alleles { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing alleles of the gene (but not including
 # polymorphisms or other natural variations.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
@@ -955,14 +980,14 @@ sub alleles {
     my $count = $self->_alleles->{alleles};
     my @alleles = @{$count} if(ref($count) eq 'ARRAY');
 
-    return { 
+    return {
         description => 'alleles contained in the strain',
-        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef 
+        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef
     };
 }
 
 # polymorphisms { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing polymorphisms and natural variations
 # but not alleles.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/polymorphisms
@@ -970,19 +995,19 @@ sub alleles {
 sub polymorphisms {
     my $self    = shift;
     my $object  = $self->object;
-    
+
     my $count = $self->_alleles->{polymorphisms};
     my @polymorphisms = @{$count} if(ref($count) eq 'ARRAY');
 
-    return { 
+    return {
         description => 'polymorphisms and natural variations found within this gene',
-        data        => @polymorphisms ? \@polymorphisms : $count > 0 ? "$count found" : undef 
+        data        => @polymorphisms ? \@polymorphisms : $count > 0 ? "$count found" : undef
     };
 }
 
 
 # reference_allele { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing the reference allele of the gene, if
 # one exists.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/reference_allele
@@ -990,14 +1015,14 @@ sub polymorphisms {
 sub reference_allele {
     my $self = shift;
     my $ref_alleles = $self ~~ '@Reference_allele' ;
-    
+
     my @array = map { $self->_pack_obj($_) } @$ref_alleles;
     return { description => 'the reference allele of the gene',
              data        => @array ? \@array : undef };
 }
 
 # strains { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing strains carrying the gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/strains
 
@@ -1033,13 +1058,13 @@ sub strains {
     };
 }
 
-# rearrangements { }    
-# This method will return a data structure 
+# rearrangements { }
+# This method will return a data structure
 # containing rearrangements affecting the gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/rearrangements
 
 sub rearrangements {
-    my $self    = shift;     
+    my $self    = shift;
     my $object  = $self->object;
     my @positive = map { $self->_pack_obj($_) } $object->Inside_rearr;
     my @negative = map { $self->_pack_obj($_) } $object->Outside_rearr;
@@ -1082,7 +1107,7 @@ sub gene_ontology {
             my $description = $code->Description;
 
 #                evidence_code => {  text=>"$code",
-#                                    evidence=> map {                         
+#                                    evidence=> map {
 #                    $_->{'Description'} = "$description";
 #                                                $_ } ($self->_get_evidence($code))
 #                                  },
@@ -1090,7 +1115,7 @@ sub gene_ontology {
             push @{ $data{"$facet"} }, {
                 method        => $1,
                 evidence_code => {  text=>"$code",
-                                    evidence=> map {                         
+                                    evidence=> map {
                                     $_->{'Description'} = "$description";
                                                 $_ } ($self->_get_evidence($code))
                                   },
@@ -1115,7 +1140,7 @@ sub gene_ontology {
 #######################################
 
 # history { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # curatorial history of the gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/history
 
@@ -1126,35 +1151,35 @@ sub history{
 
     foreach my $history_type ( $object->History ){
         $history_type =~ s/_ / /g;
-        
+
         # foreach version if version change
         if($history_type eq 'Version_change'){
-            
+
             my @versions = $history_type->col;
             foreach my $version (@versions){
-                
+
                 # NOTE: version may not contain event
-                my ($vers,   $date,   $curator, $event_tag) 
+                my ($vers,   $date,   $curator, $event_tag)
                     = $version->row;
-                
+
                 my %current_row = (
                     version => $version && "$version",
                     date    => $date && "$date",
                     type    => $history_type && "$history_type", # <- is this needed?
-                    curator => $self->_pack_obj($curator), 
+                    curator => $self->_pack_obj($curator),
                 );
-                
+
                 if($event_tag){
-                
+
                     my @events = $version->right(3)->col;
                     my (@actions, $remark, $gene);
                     foreach my $event (@events){
-                    
+
                         my $action;
                         ($action, $remark, $gene) = $event->row;
-                        
+
                         #next if $action eq 'Imported';
-                        
+
                         # In some cases, the remark is actually a gene object
                         if (   $action eq 'Merged_into'
                             || $action eq 'Acquires_merge'
@@ -1166,33 +1191,33 @@ sub history{
                                 $remark = undef;
                             }
                         }
-                        
+
                         push @actions, $action;
                     }
-                    
+
                     push @data, { %current_row,
                         action  => join(",", sort @actions),
                         remark  => $remark && "$remark",
                         gene    => $self->_pack_obj($gene),
                     };
-                    
+
                 }else{
-                
+
                     if( $object->Merged_into ){
                         my $gene = $object->Merged_into;
                         %current_row = ( %current_row,
                             action  => "Merged_into",
                             gene    => $self->_pack_obj($gene),
                         );
-                    } 
-                    
+                    }
+
                     push @data, \%current_row;
                 }
-                
+
             }
         }
     }
-    
+
     return {
         description => 'the curatorial history of the gene',
         data        => @data ? \@data : undef
@@ -1200,12 +1225,12 @@ sub history{
 
 }
 
-# Subroutine for the "Historical Annotations" table 
+# Subroutine for the "Historical Annotations" table
 sub old_annot{
     my $self   = shift;
     my $object = $self->object;
     my @data;
-    
+
     foreach (
         $object->Corresponding_CDS_history,
         $object->Corresponding_transcript_history,
@@ -1217,7 +1242,7 @@ sub old_annot{
         );
         push @data, \%row;
     }
-    
+
     return {
         description => 'the historical annotations of this gene',
         data        => @data ? \@data : undef
@@ -1235,7 +1260,7 @@ sub old_annot{
 # Supplied by Role
 
 # nematode_orthologs { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # orthologs of this gene to other nematodes housed
 # at WormBase.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/nematode_orthologs
@@ -1258,7 +1283,7 @@ sub nematode_orthologs {
 }
 
 # human_orthologs { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # human orthologs of this gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/human_orthologs
 
@@ -1292,7 +1317,7 @@ sub human_orthologs {
 
 
 # other_orthologs { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # orthologs of this gene to species outside of the core
 # nematodes housed at WormBase. See also nematode_orthologs()
 # and human_orthologs();
@@ -1309,7 +1334,7 @@ sub other_orthologs {
 }
 
 # paralogs { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # paralogs of this gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/paralogs
 
@@ -1360,12 +1385,12 @@ sub _parse_homologs {
 sub human_diseases {
   my $self = shift;
   my $object = $self->object;
-  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col if $object->DB_info; 
+  my @data = grep { $_ eq 'OMIM' } $object->DB_info->col if $object->DB_info;
 
   my %data;
   if($object->Disease_info){
     my @diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Potential_model;
-    $data{'potential_model'} = \@diseases;
+    $data{'potential_model'} = @diseases ? \@diseases : undef;
 
     my @exp_diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Experimental_model;
     $data{'experimental_model'} = \@exp_diseases;
@@ -1387,7 +1412,7 @@ sub human_diseases {
 }
 
 # protein_domains { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # protein domains contained in this gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/protein_domains
 
@@ -1413,14 +1438,14 @@ sub protein_domains {
 
 
 # treefam { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # link outs to the Treefam resource.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/treefam
 
 sub treefam {
     my $self   = shift;
     my $object = $self->object;
-    
+
     my %data;
     foreach (@{$self->_all_proteins}) {
         my $treefam = $self->_fetch_protein_ids($_,'treefam');
@@ -1517,7 +1542,7 @@ sub multi_pt_data {
 
     foreach my $exp ($object->Multi_point){
         my $cross = $exp->Combined;
-        my @results = $cross->row;
+        my @results = $cross->row if $cross;
         my (@loci, $total);
         $total = 0;
 
@@ -1556,7 +1581,7 @@ sub multi_pt_data {
 
         push @data, {
             result => @genotype ? \@genotype : undef,
-            genotype => "$gtype" || undef,
+            genotype => $gtype && "$gtype" || undef,
             mapper => $author ? $self->_pack_obj($author) : undef,
             comment => $comment && "$comment",
             date => $date && "$date",
@@ -1637,15 +1662,15 @@ sub phenotype {
 sub drives_overexpression {
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my %phenotypes;
     foreach my $type ('Drives_Transgene', 'Transgene_product'){
         foreach my $transgene ($object->$type){
-            
+
             # Only include those transgenes where the Driven_by_gene
             # is the current gene.
             next unless $transgene->Driven_by_gene eq $object;
-            
+
             my $summary = $transgene->Summary;
 
             # Retain in case we also want to add not_observed...
@@ -1654,9 +1679,9 @@ sub drives_overexpression {
                     $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
                     my $evidence = $self->_get_evidence($phene);
                     $evidence->{Summary}   = "$summary" if $summary;
-                    $evidence->{Transgene} = $self->_pack_obj($transgene); 
+                    $evidence->{Transgene} = $self->_pack_obj($transgene);
 
-                    
+
                     my ($key,$caused_by);
                     if ($transgene->Gene) {
                         $caused_by = join(", ",map { $_->Public_name } $transgene->Gene);
@@ -1667,14 +1692,14 @@ sub drives_overexpression {
                     }
 
                     push @{$phenotypes{$obs}{$phene}{evidence}{$key}}, { text     => $self->_pack_obj($transgene,$transgene->Public_name ),
-                                                                         evidence => $evidence } if $evidence && %$evidence;            
-                    
+                                                                         evidence => $evidence } if $evidence && %$evidence;
+
                 }
             }
         }
-    }   
+    }
     return { data        => (defined $phenotypes{Phenotype}) ? \%phenotypes : undef ,
-             description => 'phenotypes due to overexpression under the promoter of this gene', }; 
+             description => 'phenotypes due to overexpression under the promoter of this gene', };
 #    return \%phenotypes;
 }
 
@@ -1772,7 +1797,7 @@ sub orfeome_primers {
               map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') }
               @segments
         if ($segments[0] && ($object->Corresponding_CDS || $object->Corresponding_Pseudogene));
-    
+
     return { description =>  "ORFeome Project primers and sequences",
              data        =>  @ost ? \@ost : undef };
 }
@@ -1787,17 +1812,17 @@ sub orfeome_primers {
 sub primer_pairs {
     my $self   = shift;
     my $object = $self->object;
-    
+
     return {    description => "No primer pairs found",
                 data => undef
             } unless @{$self->sequences};
-    
+
     my @segments = $self->_segments && @{$self->_segments};
-    my @primer_pairs =  
+    my @primer_pairs =
     map {{ id=>$_, class=>'pcr_oligo', label=>$_}}
-    map {$_->info} 
+    map {$_->info}
     map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments if $segments[0];
-    
+
     return { description =>  "Primer pairs",
              data        =>  @primer_pairs ? \@primer_pairs : undef };
 }
@@ -1811,9 +1836,9 @@ sub primer_pairs {
 sub sage_tags {
     my $self   = shift;
     my $object = $self->object;
-    
+
     my @sage_tags = map {$self->_pack_obj($_)} $object->SAGE_tag;
-    
+
     return {  description =>  "SAGE tags identified",
               data        =>  @sage_tags ? \@sage_tags : undef
     };
@@ -1828,8 +1853,8 @@ sub sage_tags {
 sub transgenes {
     my $self   = shift;
     my $object = $self->object;
-    
-    my @data; 
+
+    my @data;
     foreach ($object->Drives_transgene) {
         my $summary = $_->Summary;
         my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
@@ -1838,10 +1863,10 @@ sub transgenes {
                 summary    => "$summary",
         };
     }
-    
+
     return {
         description => 'transgenes expressed by this gene',
-        data        => @data ? \@data : undef };    
+        data        => @data ? \@data : undef };
 }
 
 # transgene_products { }
@@ -1853,7 +1878,7 @@ sub transgene_products {
     my $self   = shift;
     my $object = $self->object;
 
-    my @data; 
+    my @data;
     foreach ($object->Transgene_product) {
         my $summary = $_->Summary;
             my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
@@ -1862,10 +1887,10 @@ sub transgene_products {
                 summary    => "$summary",
         };
     }
-    
+
     return {
         description => 'transgenes that express this gene',
-        data        => @data ? \@data : undef };    
+        data        => @data ? \@data : undef };
 }
 
 #######################################
@@ -1876,7 +1901,7 @@ sub transgene_products {
 #######################################
 
 # regulation_on_expression_level { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # a data table describing the regulation on expression
 # level.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/regulation_on_expression_level
@@ -1971,14 +1996,14 @@ sub gene_models {
     my %seen;
     my @rows;
 
-    
+
     my $coding = $self->object->Corresponding_CDS ? 1 : 0;
 
     # $sequence could potentially be a Transcript, CDS, Pseudogene - but
     # I still need to fetch some details from sequence
     # Fetch a variety of information about all transcripts / CDS prior to printing
     # These will be stored using the following keys (which correspond to column headers)
- 
+
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
         my $gff   = $self->_fetch_gff_gene($sequence) or next;
@@ -1987,9 +2012,9 @@ sub gene_models {
             = ( $sequence->class eq 'CDS' )
             ? $sequence
             : eval { $sequence->Corresponding_CDS };
-            
+
         next if defined $cds && $seen{$cds}++;
-        
+
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
 
@@ -2024,12 +2049,27 @@ sub gene_models {
         }
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
-        @sequences =  map {$self->_pack_obj($_)} @sequences;
+
+        my $ind = 1;
+        my @remarks = map { "<sup>" . $ind++ . "</sup> $_" } $cds->Remark if $cds;
+        $ind = 1;
+        @sequences =  map {
+            my @seq_rmks = map { "<sup>" . $ind++ . "</sup> $_" } $_->Remark;
+            @seq_rmks ? {   text => $self->_pack_obj($_),
+                            evidence => { curatorial_remarks => \@seq_rmks } } : $self->_pack_obj($_);
+        } @sequences;
+
 
         $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
-        $data{cds} = $status ? { text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'), evidence => { status => "$status"} } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
+
+        $data{cds} = $status ? {    text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'),
+                                    evidence => {
+                                        status => "$status"
+                                    }
+                                } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
+        $data{cds}{evidence}{curatorial_remarks} = \@remarks if (@remarks && $data{cds}{text});
         push @rows, \%data;
     }
 
@@ -2155,28 +2195,28 @@ sub _fetch_protein_ids {
 # TODO: This could logically be moved into a template
 sub _other_notes { # pending deletion
     my ($self,$object) = @_;
-    
+
     my @notes;
     if ($object->Corresponding_Pseudogene) {
         push (@notes,'This gene is thought to be a pseudogene');
     }
-    
+
     if ($object->CGC_name || $object->Other_name) {
         if (my @contained_in = $object->In_cluster) {
 #####      my $cluster = join ' ',map{a({-href=>Url('gene'=>"name=$_")},$_)} @contained_in;
         my $cluster = join(' ',@contained_in);
         push @notes,"This gene is contained in gene cluster $cluster.\n";
     }
-    
+
 #####    push @notes,map { GetEvidence(-obj=>$_,-dont_link=>1) } $object->Remark if $object->Remark;
     push @notes,$object->Remark if $object->Remark;
     }
-    
+
     # Add a brief remark for Transposon CDS entries
     push @notes,
     'This gene is believed to represent the remnant of a transposon which is no longer functional'
     if (eval {$object->Corresponding_CDS->Method eq 'Transposon_CDS'});
-    
+
     foreach (@notes) {
         $_ = ucfirst($_);
         $_ .= '.' unless /\.$/;
@@ -2213,33 +2253,33 @@ sub _y2h_data { # pending deletion
     my ($self,$object,$limit,$c) = @_;
     my %tags = ('YH_bait'   => 'Target_overlapping_CDS',
                 'YH_target' => 'Bait_overlapping_CDS');
-    
+
     my %results;
     foreach my $tag (keys %tags) {
         if (my @data = $object->$tag) {
-            
+
     # Map baits/targets to CDSs
             my $subtag = $tags{$tag};
             my %seen = ();
             foreach (@data) {
             my @cds = $_->$subtag;
-            
+
             unless (@cds) {
                 my $try_again = ($subtag eq 'Bait_overlapping_CDS') ? 'Target_overlapping_CDS' : 'Bait_overlapping_CDS';
                 @cds = $_->$try_again;
             }
-            
+
             unless (@cds) {
                 my $try_again = ($subtag eq 'Bait_overlapping_CDS') ? 'Bait_overlapping_gene' : 'Target_overlapping_gene';
                 my $new_gene = $_->$try_again;
                 @cds = $new_gene->Corresponding_CDS if $new_gene;
             }
-            
+
             foreach my $cds (@cds) {
                 push @{$seen{$cds}},$_;
-            }    
             }
-            
+            }
+
             my $count = 0;
             for my $cds (keys %seen){
                 my ($y2h_ref,$count);
@@ -2277,11 +2317,11 @@ sub _go_evidence_code { # pending deletion
     my @results;
     foreach my $type (@type) {
     my $evidence = '';
-    
+
     for my $ev (@evidence) {
         my $desc;
         my (@supporting_data) = $ev->col;
-        
+
         # For IMP, this is semi-formatted text remark
         if ($type eq 'IMP' && $type->right eq 'Inferred_automatically') {
         my (%phenes,%rnai);
@@ -2295,29 +2335,29 @@ sub _go_evidence_code { # pending deletion
 #    $evidence .= 'via Phenotype: '
 #      #          . join(', ',map { a({-href=>ObjectLink('phenotype',"WBPhenotype$_")},$_) }
 #      . join(', ',map { a({-href=>Object2URL("WBPhenotype$_",'phenotype')},$_) }
-#         
+#
 #         keys %phenes) if keys %phenes > 0;
-        
+
         $evidence .= 'via Phenotype: '
             . join(', ',         keys %phenes) if keys %phenes > 0;
-        
+
         $evidence .= '; ' if $evidence && keys %rnai > 0;
-        
+
 #    $evidence .= 'via RNAi: '
-#      . join(', ',map { a({-href=>Object2URL("WBRNAi$_",'rnai')},$_) } 
+#      . join(', ',map { a({-href=>Object2URL("WBRNAi$_",'rnai')},$_) }
 #         keys %rnai) if keys %rnai > 0;
         $evidence .= 'via RNAi: '
             . join(', ', keys %rnai) if keys %rnai > 0;
-        
+
         next;
         }
-        
+
         my @seen;
-        
+
         foreach (@supporting_data) {
         if ($_->class eq 'Paper') {  # a paper
 #      push @seen,ObjectLink($_,build_citation(-paper=>$_,-format=>'short'));
-            
+
             push @seen,$_;
         } elsif ($_->class eq 'Person') {
             #          push @seen,ObjectLink($_,$_->Standard_name);
@@ -2331,11 +2371,11 @@ sub _go_evidence_code { # pending deletion
         }
         if (@seen) {
         $evidence .= ($evidence ? ' and ' : '') . "via $desc ";
-        $evidence .= join('; ',@seen); 
+        $evidence .= join('; ',@seen);
         }
     }
-    
-    
+
+
     # Return an array of arrays, containing the go evidence code (IMP, IEA) and its source (RNAi, paper, curator, etc)
     push @results,[$type,($type eq 'IEA') ? 'via InterPro' : $evidence];
     }
@@ -2343,7 +2383,7 @@ sub _go_evidence_code { # pending deletion
     return @results;
 }
 
-=cut 
+=cut
 
 sub _build_hash {
     open my $fh, '<', $_[0] or die $!;

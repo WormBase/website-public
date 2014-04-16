@@ -53,7 +53,7 @@ has 'previous_address_data' => (
             foreach my $entry ($object->get('Old_address')) {
                 my %address;
                 $entry =~ m/^(.*)\s(\S*)$/g;
-                $address{date_modified} = "$1";
+                $address{date_modified} = $1 && "$1";
 
                 foreach my $tag ($entry->col) {
                     if ($tag =~ m/street|email|office/i) {

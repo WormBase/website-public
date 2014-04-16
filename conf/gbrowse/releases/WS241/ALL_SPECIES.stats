@@ -235,7 +235,7 @@ transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq
 transcript_region:RNASeq_reads	RNASeq_reads	transcript_region	RNASeq (rnaseq)	0	0	872120	0	0	883555	506825	615962	1092341	647718	0	0	0	0	0	0	0	0	0	767499	0	0	0	0
 transcription_end_site:RNASeq	RNASeq	transcription_end_site	Transcription end site (transcription_end_site)	0	0	0	0	0	0	0	92672	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 translated_nucleotide_match:mass_spec_genome	mass_spec_genome	translated_nucleotide_match	Mass spec peptides (mass_spec_peptides)	0	0	0	0	0	0	0	138045	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-transposable_element:Transposon	Transposon	transposable_element	Transposons (transposons)	0	0	0	0	0	0	0	745	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transposable_element:Transposon	Transposon	transposable_element	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	745	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 transposable_element:history	history	transposable_element	Gene Models (historical) (historical_genes)	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 transposable_element_CDS:WormBase_transposon	WormBase_transposon	transposable_element_CDS	Transposon Genes (transposon_genes)	0	0	0	0	0	0	13	330	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	0	0	0	0	0	0	0	499	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

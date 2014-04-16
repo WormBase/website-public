@@ -1,4 +1,4 @@
-[% 
+[%
 
 
 
@@ -8,13 +8,13 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
     gene_image = fields.anatomic_expression_patterns.data.image;
     IF gene_image;
       '<div style="max-width:500px;">';
-        '<a href="'_ gene_image _ '" target="_blank">' _ 
+        '<a href="'_ gene_image _ '" target="_blank">' _
            '<img src="' _ gene_image _ '" width="100%">' _
         '</a>';
       '</div>';
-    END;	
+    END;
            build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
-                      columns={ 
+                      columns={
                           expression_pattern => 'Pattern',
                           description  => 'Description',
                           database => 'Database',
@@ -28,6 +28,30 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
 
 END;
 
+
+WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profiling_graphs";
+    gene_image = fields.anatomic_expression_patterns.data.image;
+    IF gene_image;
+      '<div style="max-width:500px;">';
+        '<a href="'_ gene_image _ '" target="_blank">' _
+           '<img src="' _ gene_image _ '" width="100%">' _
+        '</a>';
+      '</div>';
+    END;
+           build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
+                      columns={
+                          expression_pattern => 'Pattern',
+                          description  => 'Description',
+                          database => 'Database',
+                          type => 'Type',
+                          expressed_in => 'Expressed in',
+                          life_stage => 'Life stage',
+                          go_term => 'GO term',
+                          transgene => 'Transgene'
+                             },
+                    key='expression_profiling_graphs');
+
+END;
 WRAPPER $field_block title="Anatomy terms" key="anatomy_terms";
   tags2link(fields.anatomy_terms.data, '<br />', 'anatomy terms');
 END;
@@ -50,7 +74,7 @@ END;
 WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
   build_data_table(
     order=['expression_cluster','description'],
-    columns={ 
+    columns={
       expression_cluster => 'Expression clusters',
       description  => 'Description'
     },

@@ -18,6 +18,11 @@ label        = sub {
              }	     
 	     return join('-',@$name);   
 	      }	      
+link          = sub { 
+	      my $f = shift;
+	      my ($name) = $f->attributes('variation');
+	      return "/db/get?name=$name;class=Variation";
+        }
 description  = sub {
 		my $f = shift;
 		my $m = $f->method;

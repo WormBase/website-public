@@ -1,7 +1,7 @@
 [TRANSPOSONS]
 key          = Transposons
 category     = Genes
-feature      = transposable_element:Transposon
+feature      = transposable_element:WormBase_transposon
 glyph        = segments
 bgcolor      = gray
 fgcolor      = black

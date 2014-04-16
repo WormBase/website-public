@@ -20,8 +20,8 @@ height    = sub {
 	  }
 label     = sub {
 		my $f = shift;
-		my $name   = $f->name;
-		return $name;
+		my $score = $f->score;
+		return $score ? "$score reads" : $f->name;
 	}    
 title     = sub {
 		my $f = shift;

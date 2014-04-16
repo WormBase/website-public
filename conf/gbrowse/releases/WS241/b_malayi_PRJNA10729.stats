@@ -41,6 +41,9 @@ ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	755
 	tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	167
 	exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	140926
 	intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	121089
+	piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	0
 nucleotide_match:TIGR_BEST		TIGR_BEST	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models)	54111
 nucleotide_match:TIGR_OTHER		TIGR_OTHER	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models_other)	267212
 operon:deprecated_operon		deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	3

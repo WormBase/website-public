@@ -16,7 +16,7 @@
 [% WRAPPER $field_block title="WormAtlas" key="wormatlas" -%] 
 	[%
 	links ="";
-	dbname="wormatlas";
+	dbname="WormAtlas";
 	hash = fields.wormatlas.data;
 	FOREACH dbt IN hash.keys;
         FOREACH id IN hash.$dbt.ids; 

@@ -940,7 +940,7 @@ sub print_sequence {
             if($len > 0){
                 push @data,{
                     header=>"Sequence",
-                    sequence=>"$fasta",
+                    sequence=>$fasta && "$fasta",
                     length=>$len,
                 };
             }

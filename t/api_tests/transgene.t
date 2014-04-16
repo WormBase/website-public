@@ -20,7 +20,7 @@
         $api = $_[0];
     }
 
-    # Tests whether the reporter_construct sub returns a single value for WBTransgene00009878.
+    # Tests whether the reporter_construct sub returns two values for WBTransgene00009878.
     sub test__reporter_construct {
         my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00009878' });
 
@@ -31,7 +31,7 @@
         isnt($products, undef, 'data returned');
         isnt($products->{'data'}, undef, 'data hash not empty');
         $products = $products->{'data'};
-        is  (keys %$products, 1, 'has a reporter product');
+        is  (keys %$products, 2, 'has two reporter product');
     }
 
 

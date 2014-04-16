@@ -21,7 +21,7 @@ STDIN.each { |line|
     next unless line.chomp.end_with?(';')
 
     # Feed the line to R and output the result.
-    puts buffer
+    # puts buffer
     rserve.eval(buffer)
     buffer = ''
   rescue => error

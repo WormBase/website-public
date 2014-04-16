@@ -1321,36 +1321,37 @@ sub _compile_nucleotide_changes {
             # mutant sequence = the mutant sequence
         }
         elsif ($type =~ /substitution/i) {
-            my $change = $type->right;
-            ($wt,$mut) = eval { $change->row };
+            my $change;
+            if($change = $type->right) {
+                ($wt,$mut) = eval { $change->row };
 
-            # How to know if ntides need to be revcomped?  
-            # copy code from below, big ugly mess.  
-            # Maybe we should store strand info for substitutions in ace?
-            my $species = $self->_parsed_species;
-            my $db_obj  = $self->gff_dsn($species); # Get a WormBase::API::Service::gff object
-            my $db      = $db_obj->dbh;
+                # How to know if ntides need to be revcomped?
+                # copy code from below, big ugly mess.
+                # Maybe we should store strand info for substitutions in ace?
+                my $species = $self->_parsed_species;
+                my $db_obj  = $self->gff_dsn($species); # Get a WormBase::API::Service::gff object
+                my $db      = $db_obj->dbh;
 
-            my $segment    = $self->_segments->[0];
+                my $segment    = $self->_segments->[0];
 
-            return unless $segment;
+                return unless $segment;
 
-            my $sourceseq  = $segment->seq_id;
-            my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
+                my $sourceseq  = $segment->seq_id;
+                my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
-            my ($full_segment) = $db->segment($sourceseq,$abs_start,$abs_stop);
-            my $plus_strand_dna = $full_segment->dna;
-            # # test if the wildtype seq matches its location in the dna
-            if( uc($wt) ne uc($plus_strand_dna) ){
-                my $rc_wt = &reverse_complement($wt);
-                if( uc($rc_wt) eq uc($plus_strand_dna) ){
-                    $wt = $rc_wt;
-                    $mut = &reverse_complement($mut);
-                }else{
-                    die "Neither wild type sequence [".$wt."] nor reverse complment matches DNA [".$plus_strand_dna."]";
+                my ($full_segment) = $db->segment($sourceseq,$abs_start,$abs_stop);
+                my $plus_strand_dna = $full_segment->dna;
+                # # test if the wildtype seq matches its location in the dna
+                if( uc($wt) ne uc($plus_strand_dna) ){
+                    my $rc_wt = &reverse_complement($wt);
+                    if( uc($rc_wt) eq uc($plus_strand_dna) ){
+                        $wt = $rc_wt;
+                        $mut = &reverse_complement($mut);
+                    }else{
+                       die "Neither wild type sequence [".$wt."] nor reverse complment matches DNA [".$plus_strand_dna."]";
+                    }
                 }
             }
-
 
             # Ack. Some of the alleles are still stored as A/G.
             unless ($wt && $mut) {
