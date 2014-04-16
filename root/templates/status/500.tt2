@@ -17,7 +17,7 @@
    </p>
 
    <div class="error-message-technical">
-      Expected URL: [% c.req.path %]<br />
+      Expected URL: [%- c.config.base -%][% c.req.path %]<br />
       Server Error: 500<br />
       Error Message:<br />
              [% c.error.join("<br>"); %]

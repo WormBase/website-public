@@ -67,6 +67,19 @@
         is($c_desc->{data}->{evidence}->{Curator_confirmed}, undef, 'no Curator_confirmed evidence returned');
     }
 
+
+    # Tests the multi_pt_data method of Gene
+    sub test_multi_pt_data {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00007555' });
+
+        can_ok('WormBase::API::Object::Gene', ('multi_pt_data'));
+
+        my $mpt_data = $gene->multi_pt_data();
+
+        # issue #2521 - mapping data when Combined undef
+        isnt($mpt_data, undef, 'data returned');
+        isnt($mpt_data->{data}, undef, 'data structure returned');
+    }
 }
 
 1;

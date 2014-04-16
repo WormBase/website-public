@@ -57,6 +57,10 @@ Running WormBase Perl API tests:
 
     API_TESTS=1 perl t/api.t
 
+Running WormBase Perl API tests for just the gene class:
+
+    API_TESTS=gene t/api.t
+
 Comparative Testing
 -------------------
 

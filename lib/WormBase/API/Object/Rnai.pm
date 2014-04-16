@@ -110,15 +110,13 @@ sub movies {
         $file ||= $movie->Name;
         $db ||= 'Movie';
 
-	my $reference = $object->Reference;
-
         # my $file = $movie->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
         my $name = $movie->Remark || "$movie";
         push @data,{ file  => "$file",
                  name  => "$movie",
                  label => "$name",
                  class => "$db",
-                 id => "$reference/$file",
+                 id => "$file",
         };
     }
     return { data        => @data ? \@data : undef,

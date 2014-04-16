@@ -48,6 +48,27 @@
 
     }
 
+    # Unit test for movies - make sure it links out to the correct source
+    sub test_movies {
+        can_ok('WormBase::API::Object::Rnai', ('movies'));
+
+        # link out to RNAi DB
+        my $rnai_db = $api->fetch({ class => 'Rnai', name => 'WBRNAi00008269' });
+        my $db_movies = $rnai_db->movies();
+
+        # link to wormbase hosted movies
+        my $rnai_orig = $api->fetch({ class => 'Rnai', name => 'WBRNAi00081349' });
+        my $orig_movies = $rnai_orig->movies();
+
+        isnt($db_movies->{'data'}, undef, 'data returned');
+        isnt($orig_movies->{'data'}, undef, 'data returned');
+        is  ($db_movies->{'data'}[0]->{id}, 'GL1/GL1_8/8h2-0101.mov', 'correct rnaidb id returned');
+        is  ($db_movies->{'data'}[0]->{class}, 'RNAi', 'correct class for rnaidb linking returned');
+        is  ($orig_movies->{'data'}[0]->{id}, '009.G06.f1.term.mov', 'correct movie id returned');
+        is  ($orig_movies->{'data'}[0]->{class}, 'Movie', 'correct class for stored movie linking returned');
+
+    } 
+
 }
 
 1;

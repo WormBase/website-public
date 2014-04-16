@@ -3,7 +3,7 @@
 [%
 
   WRAPPER highlight_box;
-      WRAPPER $field_block title='Ontology Term';          
+      WRAPPER $field_block title='Ontology Term';
         external_link('do', object.name.data.id, object.name.data.id);
       END;
 
@@ -11,42 +11,41 @@
 
       WRAPPER $field_block title="Synonym" key="synonym";
         fields.synonym.data.join('<br />');
-      END; 
+      END;
 
       WRAPPER $field_block title="Type" key="type";
         tags2link(fields.type.data);
-      END; 
+      END;
 
-      WRAPPER $field_block title="OMIM ID" key="omim";
+      WRAPPER $field_block title="Mapping to OMIM ID" key="omim";
         FOREACH omim_dbt IN fields.omim.data.keys;
-            FOREACH omim_id IN fields.omim.data.$omim_dbt.ids; 
-                external_link('omim',"OMIM:" _ omim_id,omim_id) _ '<br />';
+            FOREACH omim_id IN fields.omim.data.$omim_dbt.ids;
+                external_link('OMIM',"OMIM:" _ omim_id,omim_id) _ '<br />';
             END;
         END;
+      END;
+
+
+      WRAPPER $field_block title="Parent" key="parent";
+        tags2link(fields.parent.data);
+      END;
+
+      WRAPPER $field_block title="Child" key="child";
+        tags2link(fields.child.data);
       END;
   END;
 
   '<div class="description">';
     markup(fields.definition.data);
 
-  
-
-   WRAPPER $field_block title="Parent" key="parent";
-     tags2link(fields.parent.data);
-   END; 
-
-   WRAPPER $field_block title="Child" key="child";
-     tags2link(fields.child.data);
-   END; 
-
+   WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
+     tags2link(fields.genes_biology.data);
+   END;
 
    WRAPPER $field_block title="Genes by orthology to human disease gene" key="genes_orthology";
      tags2link(fields.genes_orthology.data);
-   END; 
+   END;
 
-   WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
-     tags2link(fields.genes_biology.data);
-   END; 
   '</div>';
   remarks;
 

@@ -9,6 +9,11 @@ use Digest::MD5 qw(md5);
 use Moose;
 with 'WormBase::API::Role::Object';
 
+
+has 'version' => (
+    is => 'ro',
+);
+
 sub init_chart {
     my ($self, $filename, $data, $format) = @_;
 
@@ -47,12 +52,15 @@ sub execute_r_program {
     run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
 
     # Relocate the plot into an accessible directory of the web-server:
-    my $destination = WormBase::Web->config->{rplots} . $self->_rplot_subdir($image_filename) . $image_filename;
+    my $destination = WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($image_filename) . $image_filename;
     # If sub-dir usage is configured to spread image files over multiple directories,
     # then check whether the directory exists or not. If not, well, create it!
     if (defined WormBase::Web->config->{rplots_subdirs} && WormBase::Web->config->{rplots_subdirs}) {
-        unless (-d WormBase::Web->config->{rplots} . $self->_rplot_subdir($image_filename)) {
-            mkdir WormBase::Web->config->{rplots} . $self->_rplot_subdir($image_filename);
+        unless (-d WormBase::Web->config->{rplots} . $self->version) {
+            mkdir WormBase::Web->config->{rplots} . $self->version;
+        }
+        unless (-d WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($image_filename)) {
+            mkdir WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($image_filename);
         }
     }
 
@@ -65,7 +73,7 @@ sub execute_r_program {
 
     # Return the absolute URI (relative to the server) of the generated image:
     return {
-        uri => WormBase::Web->config->{rplots_url_suffix} . $self->_rplot_subdir($image_filename) . $image_filename
+        uri => WormBase::Web->config->{rplots_url_suffix} . $self->version . "/" . $self->_rplot_subdir($image_filename) . $image_filename
     };
 }
 
@@ -124,11 +132,11 @@ sub barchart {
     my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
 
     # If a filename is provided and the plot exists already: do not generate it again!
-    return { uri => "/img-static/rplots/" 
+    return { uri => "/img-static/rplots/" . $self->version . "/"
 		 . $self->_rplot_subdir($filename) . $filename } 
     if (WormBase::Web->config->{installation_type} ne 'development' 
 	&& defined $filename && 
-	-e (WormBase::Web->config->{rplots} . $self->_rplot_subdir($filename) . $filename));
+	-e (WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($filename) . $filename));
 
     my $format = "png";
     my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);
@@ -192,7 +200,7 @@ sub boxplot {
     my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
 
     # If a filename is provided and the plot exists already: do not generate it again!
-    return { uri => "/img-static/rplots/" . $self->_rplot_subdir($filename) . $filename } if (WormBase::Web->config->{installation_type} ne 'development' && defined $filename && -e (WormBase::Web->config->{rplots} . $self->_rplot_subdir($filename) . $filename));
+    return { uri => "/img-static/rplots/" . $self->version . "/" . $self->_rplot_subdir($filename) . $filename } if (WormBase::Web->config->{installation_type} ne 'development' && defined $filename && -e (WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($filename) . $filename));
 
     my $format = "png";
     my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);

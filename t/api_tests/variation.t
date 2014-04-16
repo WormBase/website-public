@@ -35,6 +35,21 @@
         is  ($ntc->{data}[0]->{mutant_label}, 'HK104', 'correct mutant label');
     }
 
+    # test nucleotide change - sparse data #2603
+    sub test_sparse_nucleotide_change {
+        my $var = $api->fetch({ class => 'Variation', name => 'WBVar00274963' });
+
+        can_ok('WormBase::API::Object::Variation', ('nucleotide_change'));
+
+        my $ntc = $var->nucleotide_change();
+
+        isnt($ntc->{data}, undef, 'data returned');
+        is  ($ntc->{data}[0]->{wildtype_label}, 'wild type', 'correct wildtype label');
+        is  ($ntc->{data}[0]->{wildtype}, '', 'correct wildtype');
+        is  ($ntc->{data}[0]->{mutant}, '', 'correct mutant');
+        is  ($ntc->{data}[0]->{mutant_label}, 'mutant', 'correct mutant label');     
+    }
+
 }
 
 1;

@@ -113,6 +113,9 @@ ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	23334
 	tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	637
 	exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	237739
 	intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	174886
+	piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	0
 nucleotide_match:TEC_RED		TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	7993
 nucleotide_match:Vancouver_fosmid		Vancouver_fosmid	nucleotide_match	YACs, Fosmids, & Cosmids (clones)	12874
 	assembly_component:Genomic_canonical	Genomic_canonical	assembly_component	YACs, Fosmids, & Cosmids (clones)	3267
@@ -164,7 +167,6 @@ transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASe
 transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	615962
 transcription_end_site:RNASeq		RNASeq	transcription_end_site	Transcription end site (transcription_end_site)	92672
 translated_nucleotide_match:mass_spec_genome		mass_spec_genome	translated_nucleotide_match	Mass spec peptides (mass_spec_peptides)	138045
-transposable_element:Transposon		Transposon	transposable_element	Transposons (transposons)	745
 transposable_element_CDS:WormBase_transposon		WormBase_transposon	transposable_element_CDS	Transposon Genes (transposon_genes)	330
 transposable_element_insertion_site:Allele		Allele	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	499
 	transposable_element_insertion_site:Mos_insertion_allele	Mos_insertion_allele	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	16

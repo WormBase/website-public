@@ -63,7 +63,7 @@ balloon hover  = sub {
 citation = A subset of the full Curated Genes set limited to pseudogenes only.
 
 [GENES_PSEUDOGENES:150000]
-glyph        = generic
+glyph        = transcript
 strand_arrow = 1
 bgcolor      = sub {shift->strand>0?'violet':'turquoise'}
 description  = 0

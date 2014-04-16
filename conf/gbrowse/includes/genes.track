@@ -14,6 +14,7 @@ label    = sub {
 		my ($name) = $f->attributes('sequence_name');
 		return $locus ? "$locus ($name)" : $name;
 	}
+label_transcripts = 1
 description  = sub {	     
 	my $f = shift;
 	my ($biotype) = $f->attributes('biotype');

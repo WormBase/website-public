@@ -4,6 +4,11 @@ feature      = transposable_element_insertion_site:Mos_insertion_allele
 	       transposable_element_insertion_site:NemaGENETAG_consortium
 category     = Alleles, Variations, RNAi
 key          = Transposon insert sites
+link          = sub { 
+	      my $f = shift;
+	      my ($name) = $f->attributes('variation');
+	      return "/db/get?name=$name;class=Variation";
+        }
 label        = sub {
 	     my $f = shift;
 	     my %attributes = $f->attributes;

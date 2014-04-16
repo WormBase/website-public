@@ -21,7 +21,7 @@
                 [% END %]
      <br />
      <textarea id="issue-content" class="error-message-technical" rows="10" cols="80">
-        Expected URL: [% c.req.uri %]&#10;
+        Expected URL: [%- c.config.base -%][%- c.req.uri -%]&#10;
         Server Error: 500&#10;
         Error Message:&#10;
                [% c.error.join('<br />').replace('\n','<br />') %]

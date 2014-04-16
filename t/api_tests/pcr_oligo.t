@@ -32,6 +32,18 @@
         is  ($orfeome->{'data'}, undef, 'data correctly empty');
     }
 
+    # test overlaps_pseudogene method - don't return a reference
+    sub test_overlap_pseudogene {
+        my $pcr = $api->fetch({ class=> 'Pcr_oligo', name => 'sjj_F29C4.5' });
+
+        can_ok('WormBase::API::Object::Pcr_oligo', ('overlaps_pseudogene'));
+
+        my $pseudogene = $pcr->overlaps_pseudogene();
+
+        isnt($pseudogene->{'data'}, undef, 'data returned');
+        is  ($pseudogene->{'data'}[0]{'id'}, 'F29C4.5', 'correct pseudogene returned');
+    }
+
 }
 
 1;
