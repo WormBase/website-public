@@ -69,7 +69,7 @@ sub _build__segments {
     # my $class = $object->class;
 
     my $dbh = $self->gff_dsn();
-    
+
     # $class .= ':reagent' if $class eq 'Oligo_set';
 
     my @segments = $dbh->segment($object);
@@ -141,7 +141,7 @@ sub oligos {
 sub overlapping_genes {
 	my ($self) = @_;
     my @results = map { $self->_pack_obj($_) } map {$_->Gene} $self->object->get('Overlaps_CDS');
-    
+
 	return {
 		description => 'Overlapping genes of this ' . $self->_object_class,
 		data		=> @results ? \@results : undef,
@@ -201,7 +201,7 @@ sub overlaps_pseudogene {
 sub overlaps_variation {
     my ($self) = @_;
     my $object = $self->object;
-    my @variations = map { $self->_pack_obj($_) } $object->Variation;
+    my @variations = map { $self->_pack_obj($_) } $object->get('Variation');
 
     return {
         description => 'Variations that this ' . $self->_object_class . ' overlaps',
