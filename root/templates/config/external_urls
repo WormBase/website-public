@@ -1,6 +1,6 @@
 [%#  External URLs currently referenced by WormBase
 
-     Usage: site.external_url.[symbolic_name].base  
+     Usage: site.external_url.[symbolic_name].base
 
      Note that we also store this information in the database
      but is maintained here for ease of updates between releases.
@@ -16,19 +16,19 @@
         email       -> the contact email of the person/resource
         base        -> the home page for the resource
         search      -> a url constructor for searches/links
-        icon        -> a link to a (local?) thumbnail icon 
+        icon        -> a link to a (local?) thumbnail icon
 
      Optional parameters
         [custom] -> custom pages or searches at the resource
 
 %]
-  
+
 
 
 [% site.external_urls = {
   ### ADD ENTRIES AFTER THIS POINT ###
 
- AceView = { 
+ AceView = {
        description =  'The AceView genes - NCBI'
        maintainer  =  'Jean-Thierry and Danielle Mieg',
        email       =  '',
@@ -36,7 +36,7 @@
        search      = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
       	}
 
- cgc = { 
+ cgc = {
 	description = 'The C. elegans Genetics Center'
 	maintainer  = 'Aric Daul'
 	email       = 'cgc@umn.edu'
@@ -46,12 +46,12 @@
 	nomenclature = 'http://www.cbs.umn.edu/CGC/nomenclature/'
 	}
 
- RefSeq = { 
+ RefSeq = {
 	description = 'RefSeq is a comprehensive, integrated, non-redundant set of sequences, including genomic DNA, transcript (RNA), and protein products.'
 	maintainer  = 'NCBI',
 	base        = 'http://www.ncbi.nlm.nih.gov/RefSeq/',
 	email       = '',
-	search      = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept' 
+	search      = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept'
 	}
 
  AmerChemicalSoc = {
@@ -104,60 +104,60 @@
 	base        = 'http://www.biolcell.org'
 	search      = 'http://www.biolcell.org/boc/101/0599/boc1010599.htm'
 	}
- 
+
  BiomedCentralLTD = {
 	description = 'Biomed Central LTD'
 	base        = 'http://www.biomedcentral.com/'
 	}
- 
+
  BMCBiology = {
 	description = 'BMC Biology'
 	base        = 'http://www.biomedcentral.com/bmcbiol'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
- 
+
  BMCCellBiology = {
 	description = 'BMC Cell Biology'
 	base        = 'http://www.biomedcentral.com/bmccellbiol'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
- 
+
  BMCDevelopmentalBiology = {
 	description = 'BMC Developmental Biology'
 	base        = 'http://www.biomedcentral.com/bmcdevbiol'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
- 
+
  BMCEvolutionaryBiology = {
 	description = 'BMC Evolutionary Biology'
 	base        = 'http://www.biomedcentral.com/bmcevolbiol'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
- 
+
  BMCGenomics = {
 	description = 'BMC Genomics'
 	base        = 'http://www.biomedcentral.com/bmcgenomics'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
-	
+
   BMCMolecularBiology = {
 	description = 'BMC Molecular Biology'
 	base        = 'http://www.biomedcentral.com/bmcmolbiol'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
-	
+
  BMCNeuroscience = {
 	description = 'BMC Neuroscience'
 	base        = 'http://www.biomedcentral.com/bmcneurosci'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
- 
+
  BMCPhysiology = {
 	description = 'BMC Physiology'
 	base        = 'http://www.biomedcentral.com/bmcphysiol'
 	search      = 'http://www.biomedcentral.com/%s'
 	}
- 
+
  Cell = {
 	base        = 'http://www.cell.com/'
 	search      = 'http://www.sciencedirect.com/science/article/pii/%s'
@@ -185,7 +185,7 @@
 	base        = 'http://chem.sis.nlm.nih.gov/chemidplus/chemidlite.jsp'
 	search      = 'http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=%s'
 	}
- 
+
  ColdSpringHarborLabPress = {
 	description = 'Cold Spring Harbor Lab Press'
 	base        = 'http://www.cshlpress.com/'
@@ -232,13 +232,13 @@
 	base        = 'http://www.cell.com/developmental-cell/'
 	search      = 'http://www.sciencedirect.com/science/article/pii/%s'
 	}
- 
+
  'DiseaseModels&Mechanisms' = {
 	description = 'Disease Models & Mechanisms'
 	base        = 'http://dmm.biologists.org/'
 	search      = 'http://dmm.biologists.org/content/%s'
 	}
- 
+
  do = {
 	description = 'Disease Ontology'
 	base        = 'http://disease-ontology.org'
@@ -273,7 +273,7 @@
 	base        = 'http://endo.endojournals.org/'
 	search      = 'http://endo.endojournals.org/content/%s'
 	}
- 
+
  EnsEMBL = {
 	description = 'Ensembl produces and maintains automatic annotation on selected eukaryotic genomes'
 	search      = 'http://www.ensembl.org/Multi/Search/Results?q=%s;x=0;y=0;site=ensembl_all'
@@ -485,7 +485,7 @@
 	base        = 'http://www.genome.jp/kegg'
 	search      = 'http://www.genome.jp/dbget-bin/www_bget?cpd:%s'
 	}
- 
+
  MaryAnnLiebertInc = {
 	description = 'Mary Ann Liebert Inc'
 	base        = 'http://www.liebertpub.com/'
@@ -523,7 +523,7 @@
 	search      = 'http://submit.modencode.org/submit/public/citation/%s'
 	}
 
- modencodetissueya_cepsh = {
+ MODEncodeTissueYA_CEPsh = {
 	description = 'MODEncode Genome Browser Wiggle Track for Tissue YA_CEPsh'
 	base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/YA_CEPsh'
 	}
@@ -592,7 +592,7 @@
  ncbi_taxonomy = {
 	description = 'NCBI Taxonomy'
 	base        = 'http://www.ncbi.nlm.nih.gov/Taxonomy/'
-	search      = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s' 
+	search      = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s'
 	}
 
  NemaGENETAG_Consortium = {
@@ -634,6 +634,7 @@
  NeuroBrowse = {
 	description = 'A C. elegans neural network browser based on NBrowse2'
 	email       = 'raymond@caltech.edu'
+	base        = 'http://aquila.bio.nyu.edu/cgi-bin/NBrowseJnlpProd?-d=NEUROBROWSE&-s=New%20Search'
 	search      = 'http://aquila.bio.nyu.edu/cgi-bin/NBrowseJnlpProd?-q=%s&-d=NEUROBROWSE&-s=New%20Search&-l=Locate%20Node'
 	}
 
@@ -707,7 +708,7 @@
 	search      = 'http://www.plosgenetics.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pgen.%s'
 	}
 
- PLoSOne = { 
+ PLoSOne = {
 	description = 'PloS One'
 	base        = 'http://www.plosone.org/',
 	search      = 'http://www.plosone.org/article/info%%3Adoi%%2F10.1371%%2Fjournal.pone.%s'
@@ -761,7 +762,7 @@
  	base        = 'http://www.rnai.org/'
  	search      = 'http://www.rnai.org/movies/%s'
  	}
- 	
+
  Science = {
 	description = 'Science'
 	base        = 'http://www.sciencemag.org/'
@@ -773,7 +774,7 @@
 	base        = 'http://stke.sciencemag.org/'
 	search      = 'http://stke.sciencemag.org/cgi/content/full/sigtrans;%s'
 	}
- 
+
  secsg = {
 	description = 'The Southeast Collaboratory for Structural Genomics'
 	base        = 'http://www.secsg.org/'
@@ -791,7 +792,7 @@
 	base        = 'http://smid-db.org'
 	search      = 'http://smid-db.org/search?term=%s'
 	}
- 
+
  SocietyofNeuroscience = {
 	description = 'Society of Neuroscience'
 	base        = 'www.sfn.org'
@@ -802,7 +803,7 @@
 	base        = 'http://www.vanderbilt.edu/wormdoc/wormmap/Expressed_genes.html'
 	}
 
- spell_wormbase = { 
+ spell_wormbase = {
 	description = 'WormBase Spell instance',
 	maintainer  = 'WormBase',
 	base        = 'http://50.18.180.228:3000',
@@ -940,7 +941,7 @@
  	base	    = 'http://www.vanderbilt.edu/wormdoc/wormmap/Welcome.html'
  	search 	    = 'http://jsp.weigelworld.org/wormviz/tileviz.jsp?experiment=wormviz&normalization=absolute&probesetcsv=%s'
  	}
- 	
+
  SignaLink = {
 	description = 'SignaLink 2.0: An integrated resource to analyze signaling pathway cross-talks, transcription factors, miRNAs and regulatory enzymes'
 	base        = 'http://www.signalink.org'
@@ -963,6 +964,146 @@
  MODEncodeTissueEMB_BAG = {
 	description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_BAG'
 	base        = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_BAG'
+	}
+
+ MODEncodeTissueEMB_0hr_ref_array_v2 = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_0hr_ref_array_v2'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_0hr_ref_array_v2'
+    }
+
+ MODEncodeTissueEMB_ALLREF = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_ALLREF'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_ALLREF'
+    }
+
+ MODEncodeTissueEMB_AVA_neurons = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_AVA_neurons'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_AVA_neurons'
+    }
+
+ MODEncodeTissueEMB_AVE_neurons = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_AVE_neurons'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_AVE_neurons'
+    }
+
+ MODEncodeTissueEMB_bw_v2 = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_bw_v2'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_bw_v2'
+    }
+
+ MODEncodeTissueEMB_coelomocytes = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_coelomocytes'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_coelomocytes'
+    }
+
+ MODEncodeTissueEMB_dopa = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_dopa'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_dopa'
+    }
+
+ MODEncodeTissueEMB_GABA = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_GABA'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_GABA'
+    }
+
+ MODEncodeTissueEMB_GLP = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_GLP'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_GLP'
+    }
+
+ MODEncodeTissueEMB_hypodermal = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_hypodermal'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_hypodermal'
+    }
+
+ MODEncodeTissueEMB_intestine = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_intestine'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_intestine'
+    }
+
+ MODEncodeTissueEMB_panneural = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_panneural'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_panneural'
+    }
+
+ MODEncodeTissueEMB_PhM = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_PhM'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_PhM'
+    }
+
+ MODEncodeTissueEMB_PVC = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue EMB_PVC'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=EMBRYO_FAX_WIG/EMB_PVC'
+    }
+
+ MODEncodeTissueL2_bw_muscle = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_bw_muscle'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_bw_muscle'
+    }
+
+ MODEncodeTissueL2_coelomocytes = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_coelomocytes'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_coelomocytes'
+    }
+
+ MODEncodeTissueL2_excretory_cell = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_excretory_cell'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_excretory_cell'
+    }
+
+ MODEncodeTissueL2_GABA_neurons = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_GABA_neurons'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_GABA_neurons'
+    }
+
+ MODEncodeTissueL2_glut_rec = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_glut_rec'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_glut_rec'
+    }
+
+ MODEncodeTissueL2_intestine = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_intestine'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_intestine'
+    }
+
+ MODEncodeTissueL2_panneural = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_panneural'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_panneural'
+    }
+
+ MODEncodeTissueL2_reference = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_reference'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L2_reference'
+    }
+
+ MODEncodeTissueL3_L4_dopa = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L3_L4_dopa'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L3_L4_dopa'
+    }
+
+ MODEncodeTissueL3_L4_hypodermal = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L3_L4_hypodermal'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L3_L4_hypodermal'
+    }
+
+ MODEncodeTissueL3_L4_PVD_OLL = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L3_L4_PVD_OLL'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L3_L4_PVD_OLL'
+    }
+
+ MODEncodeTissueL3_L4_reference = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue L3_L4_reference'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/L3_L4_reference'
+    }
+
+ MODEncodeTissueYA_gonad = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue YA_gonad'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=REINKE_TF_WIG/YA_gonad'
+    }
+
+ MODEncodeTissueYA_reference = {
+    description = 'MODEncode Genome Browser Wiggle Track for Tissue YA_reference'
+    base = 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/YA_reference'
 	}
 
 
