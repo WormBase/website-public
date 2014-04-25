@@ -193,7 +193,7 @@ sub _make_common_name {
         if ($wbclass->meta->get_method('_build__common_name')->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
 #             $self->log->debug("$class has overridden _build_common_name");
-            $name = $self->_api->wrap($object)->_common_name if $self->can('_api'); 
+            $name = $self->_api->wrap($object)->_common_name if $self->can('_api');
         }
     }
     $name //= eval { $self->ace_dsn->dbh->raw_fetch($object, "Public_name"); };
@@ -349,13 +349,13 @@ sub _build_best_blastp_matches {
         # current_object might already be a protein.
         $proteins = [$self->object] unless $proteins;
     }
-    
+
     if (@$proteins == 0) {
       return {  description => 'no proteins found, no best blastp hits to display',
                 data        => undef,
       };
     }
-    
+
     my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
 
     my @pep_homol = $biggest->Pep_homol;
@@ -441,8 +441,8 @@ sub _build_best_blastp_matches {
         push @hits, {
             taxonomy => $taxonomy,
             # custom packing for linking out to external sources
-            hit      => {   class => "$class", 
-                            id => $id || "$hit", 
+            hit      => {   class => "$class",
+                            id => $id || "$hit",
                             label => "$hit"},
             description => $description && "$description",
             evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
@@ -522,7 +522,7 @@ sub _build_central_dogma {
     my $self   = shift;
     my $object = $self->object;
     my $class  = $object->class;
-   
+
     # Need to get the root element, a gene.
     my $gene;
     if ($class eq 'Gene') {
@@ -542,22 +542,22 @@ sub _build_central_dogma {
 
     my $gff = $self->gff_dsn || return { description => 'the central dogma from the perspective of this protein',
          data        => undef };
-        
-    my %data;    
+
+    my %data;
     $data{gene} = $self->_pack_obj($gene);
 
     foreach my $cds ($gene->Corresponding_CDS) {
 	my $protein = $cds->Corresponding_protein;
 
 	my $transcript = $cds->Corresponding_transcript;
-	
+
 	# Fetch the intron/exon sequences from GFF
 #	my ($seq_obj) = sort {$b->length<=>$a->length}
 #	grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $transcript);
-	
+
     # eval {$gff->get_features_by_name()}; return if $@;
 	my ($seq_obj) = $gff->get_features_by_name(Transcript => $transcript);
-	
+
 #	$self->log->debug("seq obj: " . $seq_obj);
 	$seq_obj->ref($seq_obj); # local coordinates
 	# Is the genefinder specific formatting cruft?
@@ -572,13 +572,13 @@ sub _build_central_dogma {
 			   stop  => $_->stop,
 			   seq   => $_->dna };
 	}
-	
+
 	push @{$data{gene_models}},{ cds     => $self->_pack_obj($cds),
 				     exons   => \@exons,
 				     protein => $self->_pack_obj($protein)
 	};
     }
-    
+
     return { description => 'the central dogma from the perspective of this protein',
 	     data        => \%data };
 }
@@ -604,10 +604,10 @@ sub _build_central_dogma2 {
 	my @genes = grep { ! $seen{%_}++ } map { $_->Gene } grep{ $_->Method ne 'history'}  $object->Corresponding_CDS;
 	$gene = $genes[0];
     }
-    
+
     # Transcripts
     my @transcripts = $gene->Corresponding_transcript;
-    
+
     # Each transcript has one or more CDS
     foreach my $transcript (@transcripts) {
 	my @cds = $transcript->Corresponding_CDS;
@@ -620,7 +620,7 @@ sub _build_central_dogma2 {
 	    };
 	}
     }
-    
+
     $data->{gene} = $self->_pack_obj($gene);
 
     return {
@@ -944,7 +944,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 has 'phenotypes' => (
     is       => 'ro',
@@ -955,7 +955,7 @@ has 'phenotypes' => (
 
 ## method to build data
 
-sub _build_phenotypes {	
+sub _build_phenotypes {
 	my $self = shift;
 	my $data = $self->_build_phenotypes_data('Phenotype');
 	return {
@@ -1013,7 +1013,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 has 'phenotypes_not_observed' => (
     is       => 'ro',
@@ -1345,7 +1345,7 @@ sub _pull_phenotype_data {
 =head3 references
 
 Currently, the WormBase web app uses a custom search
-to retrieve references. This method will return 
+to retrieve references. This method will return
 references directly cross-referenced to the current
 object.
 
@@ -1785,7 +1785,7 @@ sub _build_xrefs {
     my %dbs;
     foreach my $db (@databases) {
         # Possibly multiple entries for a single DB
-      $dbs{$db} = {};
+      $dbs{$db} = $db->col ? {} : undef;
       foreach my $dbt ($db->col){
         @{$dbs{$db}{$dbt}{ids}} = map {( $_ =~ /^(OMIM:|GI:)(.*)/ ) ? "$2" : "$_";} $dbt->col;
       }
@@ -1879,7 +1879,7 @@ sub tmp_acedata_dir {
 
 # A simple array would probably suffice instead of a hash
 # (which is used in the view for sorting).
-# We could sort objects in view according to name key 
+# We could sort objects in view according to name key
 # supplied by _pack_obj but might be messy to change now.
 sub _pack_objects {
     my ($self, $objects) = @_;
@@ -1919,7 +1919,7 @@ sub _parsed_species {
     return 'all';
 }
 
-# Take a string of Genus species and return a 
+# Take a string of Genus species and return a
 # data structure suitable for marking up species in the view.
 
 sub _split_genus_species {
@@ -2080,13 +2080,13 @@ sub _check_data_content {
 sub _get_references {
   my ($self,$filter) = @_;
   my $object = $self->object;
-  
+
   # References are not standardized. They may be under the Reference or Paper tag.
   # Dynamically select the correct tag - this is a kludge until these are defined.
   my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
-  
+
   my $dbh = $self->ace_dsn;
-  
+
   my $class = $object->class;
   my @references;
   if ( $filter eq 'all' ) {
@@ -2099,7 +2099,7 @@ sub _get_references {
       @references = $dbh->fetch(
 	  -query => "find $class $object; follow $tag PMID",
 	  -fill => 1);
-      
+
       #    @filtered = grep { $_->CGC_name || $_->PMID || $_->Medline_name }
       #      @$references;
   } elsif ( $filter eq 'meeting_abstracts' ) {
@@ -2218,9 +2218,9 @@ sub _get_count{
     # grep for rows that are objects
     my $curr;
     return scalar(  grep {  $curr = @{$_}[$col-1] if (@{$_}[$col-1]);
-                            (@{$_}[$col] && ($curr eq "?tag?$tag?")); 
+                            (@{$_}[$col] && ($curr eq "?tag?$tag?"));
                     } @{$first_item->{'.raw'}} );
 }
 
 
-1;           
+1;

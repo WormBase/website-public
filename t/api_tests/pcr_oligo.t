@@ -44,6 +44,17 @@
         is  ($pseudogene->{'data'}[0]{'id'}, 'F29C4.5', 'correct pseudogene returned');
     }
 
+    # test overlaps_variation method
+    sub test_overlaps_variation {
+        my $pcr = $api->fetch({ class=> 'Pcr_oligo', name => '171720_x_at' });
+
+        can_ok('WormBase::API::Object::Pcr_oligo', ('overlaps_variation'));
+
+        my $variation = $pcr->overlaps_variation();
+
+        is ($variation->{'data'}, undef, 'data correctly empty');
+    }
+
 }
 
 1;
