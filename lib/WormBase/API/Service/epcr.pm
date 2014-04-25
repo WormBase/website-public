@@ -293,12 +293,12 @@ sub segment2goodstuff {
   my $full_genes = {}; 
   foreach my $partial_gene (@{$features{curated}}) {
     # fetch the full gene, please
-    my ($full_gene) = grep {$_->name eq $partial_gene->name} $partial_gene->features('CDS');
+    my ($full_gene) = grep {$_->name eq $partial_gene->name} $partial_gene->features('mRNA:WormBase');
      $segment->ref($full_gene);
 
     my $full_cds = $GFFDB->segment($full_gene);    
 
-    my @exons = $full_cds->features('coding_exon:curated');
+    my @exons = $full_cds->features('exon:WormBase');
 
     $full_genes->{$full_gene->name}->{total} = scalar @exons;
     
