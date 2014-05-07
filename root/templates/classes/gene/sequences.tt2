@@ -1,8 +1,8 @@
-[% 
+[%
 
-IF fields.gene_models.data;
+IF fields.gene_models.data.table;
 
-    IF fields.gene_models.data.0.keys.size > 3; 
+    IF fields.gene_models.data.table.0.keys.size > 3;
         build_data_table( order = ['model', 'type', 'length_unspliced','cds', 'length_spliced','protein','length_protein'],
                           columns = { model => 'Sequence',
                                       type => 'Type',
@@ -11,15 +11,23 @@ IF fields.gene_models.data;
                                       cds => 'Coding<br />Sequence<br />(CDS)',
                                       protein => 'Protein',
                                       length_protein => 'Protein<br />Length (aa)'},
-                          passed_data = fields.gene_models.data,
+                          passed_data = fields.gene_models.data.table,
                           key = 'gene_models_constructed' );
     ELSE;
         build_data_table( order = ['model','length_unspliced','type'],
                           columns = { model => 'Transcript',
                                       type => 'Type',
                                       length_unspliced => 'Transcript<br />Length (nt)'},
-                          passed_data = fields.gene_models.data,
+                          passed_data = fields.gene_models.data.table,
                           key = 'gene_models_constructed' );
+    END;
+
+    IF fields.gene_models.data.remarks;
+      WRAPPER toggle title="Curatorial remarks";
+        FOREACH n IN fields.gene_models.data.remarks.nsort;
+          '<sup>' _ fields.gene_models.data.remarks.$n _ '</sup> ' _ n _ '<br />';
+        END;
+      END;
     END;
 
 END;

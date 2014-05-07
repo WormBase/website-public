@@ -1995,7 +1995,8 @@ sub gene_models {
     my $seqs   = $self->sequences;
     my %seen;
     my @rows;
-
+    my %remarks;
+    my $ind = 1;
 
     my $coding = $self->object->Corresponding_CDS ? 1 : 0;
 
@@ -2050,13 +2051,10 @@ sub gene_models {
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
 
-        my $ind = 1;
-        my @remarks = map { "<sup>" . $ind++ . "</sup> $_" } $cds->Remark if $cds;
-        $ind = 1;
+        my @remarks = map { $remarks{"$_"} ||= $ind++; $remarks{"$_"}; } $cds->Remark if $cds;
         @sequences =  map {
-            my @seq_rmks = map { "<sup>" . $ind++ . "</sup> $_" } $_->Remark;
-            @seq_rmks ? {   text => $self->_pack_obj($_),
-                            evidence => { curatorial_remarks => \@seq_rmks } } : $self->_pack_obj($_);
+            my @seq_rmks = map { $remarks{"$_"} ||= $ind++; $remarks{"$_"}; } $_->Remark;
+            @seq_rmks ? $self->_pack_obj($_, "$_", footnotes=>\@seq_rmks) : $self->_pack_obj($_)
         } @sequences;
 
 
@@ -2064,18 +2062,18 @@ sub gene_models {
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
 
-        $data{cds} = $status ? {    text => ($cds ? $self->_pack_obj($cds) : '(no CDS)'),
+        $data{cds} = $status ? {    text => ($cds ? (@remarks ? $self->_pack_obj($cds, "$cds", footnotes => \@remarks) : $self->_pack_obj($cds)) : '(no CDS)'),
                                     evidence => {
                                         status => "$status"
                                     }
                                 } : ($cds ? $self->_pack_obj($cds) : '(no CDS)');
-        $data{cds}{evidence}{curatorial_remarks} = \@remarks if (@remarks && $data{cds}{text});
         push @rows, \%data;
     }
 
     return {
         description => 'gene models for this gene',
-        data        => @rows ? \@rows : undef
+        data        => { table => @rows ? \@rows : undef,
+                         remarks => %remarks ? \%remarks : undef }
     };
 }
 

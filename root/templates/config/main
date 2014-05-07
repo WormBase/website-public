@@ -1,7 +1,7 @@
 [% # config/main
    #
    # This is the main View configuration template. It is processed before
-   # any other page by virtue of it being defined as a PRE_PROCESS 
+   # any other page by virtue of it being defined as a PRE_PROCESS
    # template.  This is the place to define any extra template variables,
    # macros, load plugins, and perform any other template setup.
 
@@ -15,11 +15,11 @@
      copyright => '2000-2011 The WormBase Consortium',
      unknown   => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
    };
-  
+
    WB2ACE_MAP = c.model('WormBaseAPI').modelmap.WB2ACE_MAP.class;
    ACE2WB_MAP = c.model('WormBaseAPI').modelmap.ACE2WB_MAP.class;
 
-    MACRO tag2link(data,text,title) BLOCK;  
+    MACRO tag2link(data,text,title) BLOCK;
       IF data.defined;
         UNLESS text; text = data.label; END;
         IF data.class.defined;
@@ -40,11 +40,16 @@
           '</div>';
         END;
         IF data.curated_images;
-          '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ data.id _ '/curated_images"  title="curated pictures for ' _ data.id _ '"></a>';      
+          '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ data.id _ '/curated_images"  title="curated pictures for ' _ data.id _ '"></a>';
         END;
         IF data.image || data.curated_images;
           '<small>view images</small>';
         END;
+
+        FOREACH ft IN data.footnotes;
+          '<sup>' _ ft _ '</sup> ';
+        END;
+
       END;
    END;
 
@@ -78,7 +83,7 @@
 
 
    MACRO get_url(class, id, taxonomy) BLOCK;
-        IF (site.external_urls.$class.defined); 
+        IF (site.external_urls.$class.defined);
             get_external_url(class, id);
         ELSE;
           class = (ACE2WB_MAP.$class || class) FILTER lower;
@@ -104,7 +109,7 @@
 # You must provide both the id and text.
 # URLs
     MACRO text2link(class,id,text,title,taxonomy) BLOCK;
-      IF (site.external_urls.$class.defined); 
+      IF (site.external_urls.$class.defined);
           external_link(class, text, id);
       ELSIF id.match('CHROMOSOME');
         text;
@@ -199,16 +204,16 @@
         ELSIF (matches = word.match('^(.*)sis$'));
           word = matches.0 _ 'ses';                   # analysis -> analyses
         ELSIF (matches = word.match('^(.*)ius$'));
-          word = matches.0 _ 'ii';                    # radius -> radii 
+          word = matches.0 _ 'ii';                    # radius -> radii
         ELSIF (matches = word.match('^(.*)ss$'));
-          word = matches.0 _ 'sses';                  # class -> classes 
-        ELSIF (matches = word.match('^(.*)[^s]$')); 
+          word = matches.0 _ 'sses';                  # class -> classes
+        ELSIF (matches = word.match('^(.*)[^s]$'));
           word = word _ "s";                          # fallback
         END;
       END;
       word;
     END;
-    
+
 # create venn type diagram with tables and colours
     MACRO venn(title_a, list_a, title_b, list_b, title_ab, list_ab, title_none, list_none, expandable_title) BLOCK;
     %]
@@ -273,14 +278,14 @@
 #         text          - text displayed in the link
 #         id (optional) - the unique id needed in the url.  If not provided, base url is used.
 #         dbt (optional)- entry type in the database
-# returns: formatted html to link using url and description from config.  
+# returns: formatted html to link using url and description from config.
 #          Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id, dbt) BLOCK;
        IF (link||text||id);
         text = text || id || link;
         ext_url = get_external_url(link, id, dbt);
-        "<a href=\"$ext_url\" 
-            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\" 
+        "<a href=\"$ext_url\"
+            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\"
             target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
        END;
     END;
@@ -304,7 +309,7 @@
               ext_url = site.external_urls.$link.base FILTER url;
           END;
         END;
-        UNLESS (ext_url.length > 1); ext_url = link; END; 
+        UNLESS (ext_url.length > 1); ext_url = link; END;
         ext_url;
     END;
 
@@ -419,11 +424,11 @@
            '</small>';
      END;
 
-   # load up any other configuration items 
+   # load up any other configuration items
    PROCESS config/external_urls;
 
    # set defaults for variables, etc.
-   DEFAULT 
+   DEFAULT
      message = 'There is no message';
 
    # Set some default templates
@@ -440,7 +445,7 @@
    git_update_time = git_update_time.remove('\$Date|\: |\$');
 
    #######################################
-   # Define some convenient macros   
+   # Define some convenient macros
    #######################################
    # image: wrap a src in an image tag using the format plugin
    USE image  = format('<img src="%s" valign="middle" width="100%">');
