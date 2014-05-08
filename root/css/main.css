@@ -647,7 +647,7 @@ div#create-prompt {
 }
 
 #results ul li a{
-   text-decoration:underline; 
+   text-decoration:underline;
 }
 
 #results ul li div.date{
@@ -676,8 +676,8 @@ div#create-prompt {
 
 .ellipsis, .ellipsis>span {
   text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;  
-  -ms-text-overflow: ellipsis;  
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
   overflow: hidden;
   height:1.3em;
 }
@@ -856,17 +856,17 @@ a#fade:hover {
   background:#FFF;
 }
 
-#searchForm input.text, #searchResultForm input.text{  
+#searchForm input.text, #searchResultForm input.text{
   float:right;
   width:8em;
-  color: #565656;  
+  color: #565656;
   border:none;
-  padding: 0 0.3em; 
+  padding: 0 0.3em;
   font-size:1em;
-  text-align: left;  
+  text-align: left;
   height:1.3em;
   margin:0;
-}  
+}
 
 
 #searchForm input.ui-icon, #searchResultForm input.ui-icon{
@@ -887,7 +887,6 @@ a#fade:hover {
   background-color:white;
   border:1px solid #CCC;
   margin:0 0.3em;
-  float:left;
   padding:0.6em;
   cursor:pointer;
 }
@@ -1071,8 +1070,8 @@ a#fade:hover {
 .ui-icon-2-1 { background-position: -32px 0px; }
 .ui-icon-1-2 { background-position: -48px 0px; }
 
-.ui-icon-stars { width: 20px; height: 20px; 
-background-image: url(../img/new-icons.png) !important; 
+.ui-icon-stars { width: 20px; height: 20px;
+background-image: url(../img/new-icons.png) !important;
 cursor:pointer;}
 .ui-icon-star-gray  {  background-position: -120px 0px; }
 .result:hover .ui-icon-star-gray, .ui-icon-star-gray:hover  {   background-position: -160px 0px; }
@@ -1109,12 +1108,12 @@ h1,h2,h3,h4,h5,h6 { color:black; margin:0; font-weight:bold;}
 
 h1 { font-size:1.8em;   }  /* 24px   ; site title */
 h2 { font-size:1.4em; }  /* 21.6px ; page title */
-h3 { font-size:1.2em; }  /* 19.2px ; page subtitle (if applicable) */  
+h3 { font-size:1.2em; }  /* 19.2px ; page subtitle (if applicable) */
 h4 { font-size:1em; }  /* 16.8px ; widget titles */
 h5 { font-size:0.8em; }  /* 13.2px ; field names */
 h6 { font-size:0.8em;    /* 12px; subfield names */
      font-weight:bold;
-}  
+}
 
 /* IE hack: Force tables and input forms to inherit our default size */
 input, select, th, td { font-size:1em; }
@@ -1139,12 +1138,12 @@ input, select, th, td { font-size:1em; }
 
 /* Global Links */
 a:link {
-    text-decoration: none; 
+    text-decoration: none;
     color: #0000B8;
 }
 
 a:visited {
-    text-decoration: none; 
+    text-decoration: none;
     color: #410082;
     border:none;
 }
@@ -1166,10 +1165,10 @@ p  {
 
 
 /*********************************
-   
+
    Headers
 
-   
+
 *********************************/
 div#header {
   padding:0;
@@ -1233,7 +1232,7 @@ div#header .release_date { }
   color:white;
   margin:0em;
   text-align:center;
-  font-weight:bold; 
+  font-weight:bold;
   position:fixed;
   z-index:999999;
   border-bottom:1px solid black;
@@ -1278,12 +1277,12 @@ div#header .release_date { }
    margin-top:50px;
    padding:25px;
    border: 2px solid gray;
-   text-align:center;   
+   text-align:center;
 }
 
 
 /* System wide error message */
-div#error-box {    
+div#error-box {
     margin-top:50px;
     margin-bottom:50px;
     margin-left:auto;
@@ -1368,7 +1367,7 @@ ul.nav-bar li span.ui-icon {
 }
 
 
-ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{ 
+ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{
   color:black;
   border-bottom:5px solid #AAA;
 }
@@ -1531,9 +1530,9 @@ ul.wb-dropdown li.selected {
 }
 
 /*********************************
-   
+
    Sections
-   
+
 *********************************/
 
 
@@ -1565,7 +1564,7 @@ ul.wb-dropdown li.selected {
     font-size:0.8em;
     background-color:#E9EEF2;
     border:1px solid gray;
-    list-style: none; 
+    list-style: none;
 }
 
 #page-with-no-widgets p {
@@ -1578,7 +1577,7 @@ ul.wb-dropdown li.selected {
 }
 
 /* *******************************
-   USERGUIDE SPECIFIC FORMATTING 
+   USERGUIDE SPECIFIC FORMATTING
    ******************************* */
 #userguide  {
     width:1000px;
@@ -1605,7 +1604,7 @@ ul.wb-dropdown li.selected {
     font-size:0.8em;
     background-color:#E9EEF2;
     border:1px solid gray;
-    list-style: none; 
+    list-style: none;
 }
 
 #userguide p {
@@ -1620,7 +1619,7 @@ ul.wb-dropdown li.selected {
 
 
 /* Fieldsets : used on profile and admin pages */
-fieldset { 
+fieldset {
   display: block;
   border: 2px groove threedface;
   margin-bottom:1em;
@@ -1629,9 +1628,9 @@ fieldset {
 
 
 /*********************************
-   
+
    Per-Page styling
-   
+
 *********************************/
 
 /* =========================================
@@ -1683,7 +1682,7 @@ div#footercredit a{
 
 
 #footer .footer-column {
-  float:left; 
+  float:left;
   display: inline-block;
   padding-top:1.5em;
   width:12em;
@@ -1763,7 +1762,7 @@ div#footercredit a{
    padding:0 0 0.5em 1em;
 }
 
-.superscript      { vertical-align:super; 
+.superscript      { vertical-align:super;
                     font-size:0.8em;
                   }
 
@@ -1791,7 +1790,7 @@ div.columns ul {
 }
 
 div.columns ul li{
-  list-style: none; 
+  list-style: none;
   position:relative;
   display:block;
   float:none;
@@ -1898,7 +1897,7 @@ div#column-dropdown ul li.ui-state-disabled:hover {
 /*********************************
 
            WIDGETS
- 
+
    ********************************* */
 
 /* Styles for the standard widget */
@@ -1907,7 +1906,7 @@ li div.widget-container {
   padding:0;
   margin:0 0 0.7em 0.7em;
   display:none;
-  background-color:#FFFFFF; 
+  background-color:#FFFFFF;
   position:relative;
   border:1px solid #97A1AD;
 }
@@ -1940,8 +1939,8 @@ li.visible div.widget-container {
     display:block;
 }
 
-.widget-container #widget-feed, 
-.widget-container #widget-footer, 
+.widget-container #widget-feed,
+.widget-container #widget-footer,
 .widget-header .ui-icon,
 .widget-container.minimized:hover #widget-footer{
     display:none;
@@ -1999,7 +1998,7 @@ li.visible div.widget-container {
 }
 
 #widget-tools {
-    border-color: #ABA0B8; 
+    border-color: #ABA0B8;
 }
 
 #widget-me .widget-header, .navigation .me.ui-selected, .me-bg {
@@ -2009,7 +2008,7 @@ li.visible div.widget-container {
     background-color: #C2D1DF;
 }
 #widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
-    background-color: #CFC1DE; 
+    background-color: #CFC1DE;
 }
 
 /* END styles for standard widgets */
@@ -2030,7 +2029,7 @@ div.field {
 
 div.field-title {
   float: left;
-  text-align: right; 
+  text-align: right;
   font-size: 1em;
   padding:0 0.5em 0 0;
   width: 10em;
@@ -2083,7 +2082,7 @@ div.field .field .field-content {
 
 /* Special field elements */
 /* Google Map */
-div#google-map { 
+div#google-map {
     position:relative;
     height: auto;
     overflow:hidden;
@@ -2092,10 +2091,10 @@ div#google-map {
 
 
 
-/* dataheader and datacell are used in page-wide tables such as in the 
+/* dataheader and datacell are used in page-wide tables such as in the
    listing of all rearrangements by chrom on the rearrangment page */
 
-.code             { 
+.code             {
                     background-color: #CCFFFF;
                     font-family: Courier, monospace;
                     border:1px solid grey;
@@ -2201,9 +2200,9 @@ div#google-map {
 
 
 /*********************************
-   
+
    Navigation for sidebar view
-   
+
 *********************************/
 #widgets {
   margin:0 -1em;
@@ -2229,7 +2228,7 @@ div#google-map {
   margin: 0em;
   border:1px solid #CDCDCD;
   float:right;
-  list-style-type: none; 
+  list-style-type: none;
   padding:0;
 }
 
@@ -2270,7 +2269,7 @@ div#google-map {
 
 /* end narrow references */
 
-#references-content li { 
+#references-content li {
   border:none;
 }
 
@@ -2308,44 +2307,44 @@ div#google-map {
   background: #FFFFDF;
 }
 
-.navigation .ui-selected { 
-  background: #C2D1DF; 
-  color: black; 
+.navigation .ui-selected {
+  background: #C2D1DF;
+  color: black;
 }
 
-.navigation ul { 
-  list-style-type: none; 
-  margin: 0 0 0 0em; 
+.navigation ul {
+  list-style-type: none;
+  margin: 0 0 0 0em;
   padding: 0;
   overflow: hidden;
 }
 
-.navigation ul li { 
+.navigation ul li {
   padding:0.4em 0.5em 0.7em 1.5em;
-  font-size: 0.9em; 
+  font-size: 0.9em;
   height: 1em;
   overflow:hidden;
   cursor:pointer;
   position:relative;
 }
 
-.navigation ul li.title { 
+.navigation ul li.title {
   background: #FFF;
-  font-size: 0.9em; 
+  font-size: 0.9em;
   font-weight: bold;
   padding-left: 1.5em;
   padding-top: 10px;
   border-top:1px solid #AAA;
 }
 
-.navigation ul li.title span.ui-icon{ 
+.navigation ul li.title span.ui-icon{
   visibility:visible;
   position:absolute;
   left:0.2em;
   top:0.7em;
 }
 
-.navigation ul li span.ui-icon.ui-icon-close{ 
+.navigation ul li span.ui-icon.ui-icon-close{
   visibility:hidden;
   position:absolute;
   left:0.2em;
@@ -2355,13 +2354,13 @@ div#google-map {
   -moz-opacity:0.5;
 }
 
-.navigation ul li span.ui-icon-close:hover{ 
+.navigation ul li span.ui-icon-close:hover{
   opacity:1;
   filter:alpha(opacity=100);
   -moz-opacity:1;
 }
 
-.navigation ul li:hover.ui-selected span.ui-icon-close  { 
+.navigation ul li:hover.ui-selected span.ui-icon-close  {
   visibility:visible;
 }
 
@@ -2651,25 +2650,25 @@ table.venn tr.venn-data td {
    background-color:#FED;
    border-color:#E88;
   color:#A22;
-}   
+}
 
 .issue-table tr.open {
    background-color:#DFF;
    border-color:#BEE;
 /*   color:#099; */
-}   
+}
 
 .issue-table tr.hold {
    background-color:#FDB;
    border-color:#EEA;
 /*   color:#880; */
-}   
+}
 
 .issue-table tr.resolved {
    background-color:#DDD;
    border-color:#DDD;
 /*   color:#OOO; */
-}   
+}
 
 
 /* markup of issue content by severity (offline) */
@@ -2677,25 +2676,25 @@ table.venn tr.venn-data td {
    background-color:#FED;
    border-color:#E88;
 /*  color:#A22; */
-}   
+}
 
 .issue-table tr.major-offline {
    background-color:#DFF;
    border-color:#BEE;
 /*   color:#099; */
-}   
+}
 
 .issue-table tr.normal-offline {
    background-color:#FDB;
    border-color:#EEA;
 /*   color:#880; */
-}   
+}
 
 .issue-table tr.duplicate-offline {
    background-color:#DDD;
    border-color:#DDD;
 /*   color:#OOO; */
-}   
+}
 
 .issue-table tr:hover {
     background-color:#FFEC8B;
@@ -2710,9 +2709,9 @@ table.venn tr.venn-data td {
 }
 
 .issue-content{
-  position:relative; 
+  position:relative;
   background-color:#fcfcfc;
-  border: 1px solid #ddd; 
+  border: 1px solid #ddd;
   padding: 1em;
 }
 
@@ -2720,10 +2719,10 @@ table.venn tr.venn-data td {
   margin-top:1em;
 }
 
-#operator-box-wrap{  
-  position:fixed;       
+#operator-box-wrap{
+  position:fixed;
   bottom:0;
-  right:1em;  
+  right:1em;
   z-index:100;
   -webkit-transform: translateZ(0);
   -webkit-perspective: 1000;
@@ -2777,14 +2776,14 @@ table.venn tr.venn-data td {
 }
 
 #issue-box{
-  position:absolute;  
+  position:absolute;
   right:0;
   bottom:0;
   z-index:99;
 }
 
 #issue-box-tab {
-  padding:0.7em; 
+  padding:0.7em;
   background: #6D1B1C;
   font-weight:bold;
   font-size:0.9em;
@@ -2835,7 +2834,7 @@ table.venn tr.venn-data td {
   padding:0;
 }
 
-#resizable { 
+#resizable {
   width: 750px;
   height: 750px;
   padding: 0.5em;
@@ -2996,8 +2995,8 @@ p {
 }
 
 #vote_form .result {
-  float:right; 
-  background:#CFC1DE; 
+  float:right;
+  background:#CFC1DE;
   display: none;
   height: 6px;
   border:1px solid #999;
@@ -3038,7 +3037,7 @@ Use width:auto or a fixed width on the .social_buttons element
     text-decoration: none !important;
     margin:0.2em;
 }
-button::-moz-focus-inner { 
+button::-moz-focus-inner {
     border: 0;
     padding: 0;
 }
@@ -3105,11 +3104,11 @@ button::-moz-focus-inner {
     border: 1px solid #6D88EA;
 }
 .sb_google:hover {
-    background: #4E6CF7;    
+    background: #4E6CF7;
 }
 .sb_twitter > span {
     border-top-color: rgba(255,255,255,0.7) !important;
-    border-bottom-color: rgba(0,0,0,0.3) !important;    
+    border-bottom-color: rgba(0,0,0,0.3) !important;
     color: #3C6B9C !important;
     text-shadow: 0 1px 1px rgba(255,255,255,0.7) !important;
 }
@@ -3149,11 +3148,11 @@ button::-moz-focus-inner {
 /*Interactions*/
 .social_buttons:hover > span {
     border-top-color: rgba(255,255,255,0.5);
-    border-bottom-color: rgba(0,0,0,0.7);  
+    border-bottom-color: rgba(0,0,0,0.7);
 }
 .social_buttons:active > span {
-    background: -webkit-gradient(linear, left bottom, left top, from(rgba(255,255,255,0.3)), color-stop(30%, rgba(255,255,255,0)), color-stop(50%, rgba(0,0,0,0)), to(rgba(0,0,0,0.2)));  
-    background: -moz-linear-gradient(bottom, rgba(255,255,255,0.3), rgba(255,255,255,0) 30%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.2));  
+    background: -webkit-gradient(linear, left bottom, left top, from(rgba(255,255,255,0.3)), color-stop(30%, rgba(255,255,255,0)), color-stop(50%, rgba(0,0,0,0)), to(rgba(0,0,0,0.2)));
+    background: -moz-linear-gradient(bottom, rgba(255,255,255,0.3), rgba(255,255,255,0) 30%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.2));
     border-top: 1px solid rgba(255,255,255,0.2);
     border-bottom: 1px solid rgba(0,0,0,0.3);
 }
