@@ -837,6 +837,7 @@ a#fade:hover {
   margin: 0.4em;
   position:relative;
   background:white;
+  min-width: 235px;
 }
 
 #searchResultForm #searchBody {
@@ -887,6 +888,7 @@ a#fade:hover {
   background-color:white;
   border:1px solid #CCC;
   margin:0 0.3em;
+  float:left;
   padding:0.6em;
   cursor:pointer;
 }
