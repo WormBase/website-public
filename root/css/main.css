@@ -855,6 +855,7 @@ a#fade:hover {
   height:2em;
   margin:0.5em 1.5em 0 0;
   background:#FFF;
+  min-width:275px;
 }
 
 #searchForm input.text, #searchResultForm input.text{
