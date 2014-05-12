@@ -251,7 +251,7 @@ sub other_alleles {
 
 sub strains {
     my $self   = shift;
-    my $object = $self->object;    
+    my $object = $self->object;
     my @data;
     my %count;
     foreach ($object->Strain) {
@@ -268,7 +268,7 @@ sub strains {
           $cgc ? push @{$count{available_from_cgc}},$packed : push @{$count{others}},$packed;
         }
     }
-    
+
     return {
         description => 'strains carrying this gene',
         data       => %count ? \%count : undef,
@@ -284,7 +284,7 @@ sub strains {
 
 sub rescued_by_transgene {
     my ($self) = @_;
-    
+
     return {
         description => 'transgenes that rescue phenotype(s) caused by this variation',
         data        => $self->_pack_obj($self ~~ 'Rescued_by_Transgene'),
@@ -377,7 +377,7 @@ sub date_isolated {
     };
 }
 
-# mutagen { } 
+# mutagen { }
 # This method returns a data structure containing
 # the mutagen used to generate the variation, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/mutagen
@@ -464,7 +464,7 @@ sub transposon_insertion {
 
 sub derived_from {
     my ($self) = @_;
-    
+
     return {
         description => 'variation from which this one was derived',
         data        => $self->_pack_obj($self ~~ 'Derived_from'),
@@ -597,7 +597,7 @@ sub _build__segments {
 
 sub sequencing_status {
     my ($self) = @_;
-    
+
     my $status = $self ~~ 'SeqStatus';
     $status =~ s/_/ /g;
     return {
@@ -609,7 +609,7 @@ sub sequencing_status {
 
 # nucleotide_change { }
 # This method returns a data structure containing
-# both the wild type and mutant variants of the 
+# both the wild type and mutant variants of the
 # variation, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/nucleotide_change
 
@@ -621,7 +621,7 @@ sub sequencing_status {
 
 sub nucleotide_change {
     my ($self) = @_;
-    
+
     # Nucleotide change details (from ace)
     my @variations = $self->_compile_nucleotide_changes($self->object);
 
@@ -640,7 +640,7 @@ sub nucleotide_change {
 
 sub amino_acid_change {
     my ($self) = @_;
-    
+
     # Amino acid changes (potentially) for each transcript.
     my $variations = $self->_compile_amino_acid_changes($self->object);
     return {
@@ -658,10 +658,10 @@ sub amino_acid_change {
 sub flanking_sequences {
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $left_flank  = $object->Flanking_sequences(1);
     my $right_flank = $object->Flanking_sequences(2);
-    
+
     return {
         description => 'sequences flanking the variation',
         data        => {
@@ -680,10 +680,10 @@ sub flanking_sequences {
 sub cgh_deleted_probes {
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $left_flank  = $object->CGH_deleted_probes(1);
     my $right_flank = $object->CGH_deleted_probes(2);
-    
+
     return {
         description => 'probes used for CGH of deletion alleles',
         data        => ($left_flank || $right_flank) ? {
@@ -699,7 +699,7 @@ sub cgh_deleted_probes {
 sub cgh_flanking_probes {
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $left_flank  = $object->CGH_flanking_probes(1);
     my $right_flank = $object->CGH_flanking_probes(2);
 
@@ -722,9 +722,9 @@ sub cgh_flanking_probes {
 # Show the variation in context.
 sub context {
     my ($self) = @_;
-    
+
     my $name   = $self ~~ 'Public_name';
-    
+
     # Display a formatted string that shows the mutation in context
     my $flank = 250;
     my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
@@ -767,15 +767,15 @@ sub deletion_verification {
 sub features_affected {
     my ($self) = @_;
     my $object = $self->object;
-    
+
     # This is mostly constructed from Molecular_change hash associated with
     # tags in Affects, with the exception of Clone and Chromosome
     my $affects = {};
 #     my @affects;
-    
+
     # Clone and Chromosome are calculated, not provided in the DB.
     # Feature and Interactor are handled a bit differently.
-    
+
     foreach my $type_affected ($object->Affects) {
         my @rows;
         foreach my $item_affected ($type_affected->col) { # is a subtree
@@ -845,7 +845,7 @@ $affects->{$type_affected} = \@rows;
 
 # possibly_affects { }
 # This method returns a data structure containing
-# features that are possibly -- but haven't been 
+# features that are possibly -- but haven't been
 # demonstrated to -- be affected by the variation.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/possibly_affects
 
@@ -1051,7 +1051,7 @@ sub polymorphism_assays {
 
             $dna = $segment->dna;
 	    }
-	
+
         $pcr_data{pcr_product} = $self->_pack_obj(
             $pcr_product, undef, # let _pack_obj resolve label
             left_oligo     => $left_oligo && "$left_oligo",
@@ -1087,7 +1087,7 @@ sub polymorphism_assays {
 
 sub nature_of_variation {
     my ($self) = @_;
-    
+
     # WS230: Mary Ann is cleaning this up. For now we need to.
     # use this heuristic
     my $variation = $self->object;
@@ -1095,7 +1095,7 @@ sub nature_of_variation {
     if ($variation->Transposon_insertion(0) && !$variation->Allele(0)) {
 	$nature = 'Transposon Insertion';
     } elsif ($variation->Natural_variant(0) && !$variation->SNP(0)) {
-	$nature = 'Naturally Occurring Allele'; 
+	$nature = 'Naturally Occurring Allele';
     } elsif ($variation->Natural_variant(0) && $variation->SNP(0)) {
 	$nature = 'SNP';
     } elsif ($variation->Allele(0) && $variation->Natural_variant(0)) {
@@ -1111,7 +1111,7 @@ sub nature_of_variation {
 	description => 'nature of the variation',
 	data        => $nature && "$nature",
     };
-    
+
 #    my $nature = $self ~~ 'Nature_of_variation';
 #    return {
 #        description => 'nature of the variation',
@@ -1242,7 +1242,7 @@ sub _compile_amino_acid_changes {
 
     my @data;
     foreach my $type_affected ($object->Affects) {
-        foreach my $item_affected ($type_affected->col) { # is a subtree	    
+        foreach my $item_affected ($type_affected->col) { # is a subtree
             foreach my $change_type ($item_affected->col) {
                 # This should be handled by change_data above. Oh well.
                 my $aa_change;
@@ -1478,6 +1478,7 @@ sub _do_markup {
     $markup->add_style('cds0'  => 'BGCOLOR yellow');
     $markup->add_style('cds1'  => 'BGCOLOR orange');
     $markup->add_style('space' => ' ');
+    $markup->add_style('tandem_duplication'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('substitution'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('deletion'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('insertion'     => 'background-color:#FF8080; text-transform:uppercase;');
