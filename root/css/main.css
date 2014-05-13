@@ -838,6 +838,7 @@ a#fade:hover {
   position:relative;
   background:white;
   min-width: 235px;
+  max-height: 1.3em;
 }
 
 #searchResultForm #searchBody {
