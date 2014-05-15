@@ -818,40 +818,45 @@ a#fade:hover {
   background-color: #E9EEF2;
 }
 
-.search-bg #searchResultForm #SearchResult {
-  width:90%;
-  float:left;
+.search-results #searchResultForm #SearchResult {
+  width:100%;
 }
+
+.search-results {
+  overflow:hidden;
+  max-height: 72px;
+}
+
 
 /* The search bar form */
 #searchResultForm {
-  float:left;
-  position:relative;
   padding:0;
-  width:80%;
+  display: flex;
+  float:left;
 }
 
 #searchBody {
   border-right:1px dotted gray;
   float:left;
+  display:flex;
   margin: 0.4em;
   position:relative;
   background:white;
   min-width: 235px;
   max-height: 1.3em;
+  justify-content: space-between;
 }
 
 #searchResultForm #searchBody {
-  width:80%;
   margin: 0;
   padding:0.3em;
-  float:left;
   border:none;
 }
 
 #searchForm {
   float:right;
   position:relative;
+  display:flex;
   padding:0;
   height:2em;
   margin:0.5em 1.5em 0 0;
@@ -879,7 +884,6 @@ a#fade:hover {
   background-color:transparent;
   cursor:pointer;
   border:none;
-  display:inline;
 }
 
 #searchResultForm input.ui-icon {
@@ -897,11 +901,9 @@ a#fade:hover {
 
 #searchResultForm #searchSelect {
   font-size:0.8em;
-  float:right;
 }
 
 #searchSelect {
-  float:right;
   padding:0;
   margin:0.2em 0.5em;
   list-style:none;
@@ -917,7 +919,7 @@ a#fade:hover {
 #search-more{
   font-weight:normal;
   font-size:0.6em;
-  float:left;
+  float:right;
   margin-top:2em;
 }
 
@@ -956,7 +958,7 @@ a#fade:hover {
 }
 
 #searchSelect ul li a{
-  padding:0.5em;
+  padding:0 0.5em;
   white-space:nowrap;
 }
 

@@ -3,6 +3,7 @@
     [% IF query; val = query FILTER html; END; %]
 
     <div id="searchBody">
+      <input class="text" id="Search" name="query" type="text" placeholder="Search...">
       <ul id="searchSelect">
         <li>
           <span class="ui-icon ui-icon-triangle-1-s" style="float:right"></span>
@@ -14,7 +15,6 @@
           </ul>
         </li>
       </ul>
-      <input class="text" id="Search" name="query" type="text" placeholder="Search..."> 
 
     </div>
     <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search(); return false;" value="">
