@@ -725,9 +725,12 @@ sub context {
 
     my $name   = $self ~~ 'Public_name';
 
+    # Get start and end to calculate length before generating sequence string
+    my (undef, undef, $start, $end) = $self->object->Source_location->row if $self->object->Source_location;
+
     # Display a formatted string that shows the mutation in context
     my $flank = 250;
-    my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
+    my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings if (abs($end - $start) < 1000000);
     return {
         description => 'wildtype and mutant sequences in an expanded genomic context',
         data        => ($wt || $wt_full || $mut || $mut_full) ? {
