@@ -292,7 +292,7 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
 sub _fuzzy_estimate {
   my ($self, $count) = @_;
 
-  if( $count > 500) {
+  if( $count >= 500) {
     my @scale_array = ("+", "K", "M", "G", "T", "P");
     my $scale_counter = 0;
 
