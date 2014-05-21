@@ -774,53 +774,58 @@ sub features_affected {
     # This is mostly constructed from Molecular_change hash associated with
     # tags in Affects, with the exception of Clone and Chromosome
     my $affects = {};
-#     my @affects;
 
     # Clone and Chromosome are calculated, not provided in the DB.
     # Feature and Interactor are handled a bit differently.
 
     foreach my $type_affected ($object->Affects) {
         my @rows;
-        foreach my $item_affected ($type_affected->col) { # is a subtree
-            my $affected_hash  = $self->_pack_obj($item_affected);
-            $affected_hash->{item} = $self->_pack_obj($item_affected);
-            # Genes ONLY have gene
-            if ($type_affected eq 'Gene') {
-                $affected_hash->{entry}++;
-            push(@rows, $affected_hash);
-                next;
-            }
+        my $count = $self->_get_count($object, $type_affected);
 
-            my ($protein_effects, $location_effects, $do_translation)
-                = $self->_retrieve_molecular_changes($item_affected);
-
-            $affected_hash->{protein_effects}  = $protein_effects if %$protein_effects;
-            $affected_hash->{location_effects} = $location_effects if %$location_effects;
-
-            # Display a conceptual translation, but only for Missense and
-            # Nonsense alleles within exons
-            if ($type_affected eq 'Predicted_CDS' && $do_translation) {
-                # $do_translation implies $protein_effects
-                if ($protein_effects->{Missense}) {
-                    my ($wt_snippet,$mut_snippet,$wt_full,$mut_full)
-                        = $self->_do_simple_conceptual_translation(
-                            $item_affected,
-                            $protein_effects->{Missense}
-                          );
-                    $affected_hash->{wildtype_conceptual_translation} = $wt_full;
-                    $affected_hash->{mutant_conceptual_translation}   = $mut_full;
+        if( $count < 500){
+            foreach my $item_affected ($type_affected->col) { # is a subtree
+                my $affected_hash  = $self->_pack_obj($item_affected);
+                $affected_hash->{item} = $self->_pack_obj($item_affected);
+                # Genes ONLY have gene
+                if ($type_affected eq 'Gene') {
+                    $affected_hash->{entry}++;
+                push(@rows, $affected_hash);
+                    next;
                 }
-                # what about the manual translation?
-            }
 
-            # Get the coordinates in absolute coordinates
-            # the coordinates of the containing feature,
-            # and the coordinates of the variation WITHIN the feature.
-            @{$affected_hash}{qw(abs_start abs_stop fstart fstop start stop)}
-                 = $self->_fetch_coords_in_feature($type_affected,$item_affected);
-            push(@rows, $affected_hash);
+                my ($protein_effects, $location_effects, $do_translation)
+                    = $self->_retrieve_molecular_changes($item_affected);
+
+                $affected_hash->{protein_effects}  = $protein_effects if %$protein_effects;
+                $affected_hash->{location_effects} = $location_effects if %$location_effects;
+
+                # Display a conceptual translation, but only for Missense and
+                # Nonsense alleles within exons
+                if ($type_affected eq 'Predicted_CDS' && $do_translation) {
+                    # $do_translation implies $protein_effects
+                    if ($protein_effects->{Missense}) {
+                        my ($wt_snippet,$mut_snippet,$wt_full,$mut_full)
+                            = $self->_do_simple_conceptual_translation(
+                                $item_affected,
+                                $protein_effects->{Missense}
+                              );
+                        $affected_hash->{wildtype_conceptual_translation} = $wt_full;
+                        $affected_hash->{mutant_conceptual_translation}   = $mut_full;
+                    }
+                    # what about the manual translation?
+                }
+
+                # Get the coordinates in absolute coordinates
+                # the coordinates of the containing feature,
+                # and the coordinates of the variation WITHIN the feature.
+                @{$affected_hash}{qw(abs_start abs_stop fstart fstop start stop)}
+                     = $self->_fetch_coords_in_feature($type_affected,$item_affected);
+                push(@rows, $affected_hash);
+            }
+        } else {
+
         }
-$affects->{$type_affected} = \@rows;
+        $affects->{$type_affected} = @rows ? \@rows : ($count > 0) ? $count : undef;
     } # end of FOR loop
 
     # Clone and Chromosome are not provided in the DB - we calculate them here.
