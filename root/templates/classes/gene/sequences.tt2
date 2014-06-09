@@ -23,9 +23,10 @@ IF fields.gene_models.data.table;
     END;
 
     IF fields.gene_models.data.remarks;
-      WRAPPER toggle title="Curatorial remarks";
-        FOREACH n IN fields.gene_models.data.remarks.nsort;
-          '<sup>' _ fields.gene_models.data.remarks.$n _ '</sup> ' _ n _ '<br />';
+      WRAPPER toggle title="Curator comments";
+        FOREACH k IN fields.gene_models.data.remarks.keys.nsort;
+          '<sup>' _ k _ '</sup>';
+          cell_content(fields.gene_models.data.remarks.$k);
         END;
       END;
     END;

@@ -1997,6 +1997,7 @@ sub gene_models {
     my @rows;
     my %remarks;
     my $ind = 1;
+    my @rmks_full;
 
     my $coding = $self->object->Corresponding_CDS ? 1 : 0;
 
@@ -2051,9 +2052,9 @@ sub gene_models {
         my $type = $sequence->Method;
         $type =~ s/_/ /g;
 
-        my @remarks = map { $remarks{"$_"} ||= $ind++; $remarks{"$_"}; } $cds->Remark if $cds;
+        my @remarks = map { push @rmks_full, $_; $remarks{"$_"} ||= $ind++; $remarks{"$_"}; } $cds->Remark if $cds;
         @sequences =  map {
-            my @seq_rmks = map { $remarks{"$_"} ||= $ind++; $remarks{"$_"}; } $_->Remark;
+            my @seq_rmks = map { push @rmks_full, $_; $remarks{$_} ||= $ind++; $remarks{$_}; } $_->Remark;
             @seq_rmks ? $self->_pack_obj($_, "$_", footnotes=>\@seq_rmks) : $self->_pack_obj($_)
         } @sequences;
 
@@ -2070,10 +2071,11 @@ sub gene_models {
         push @rows, \%data;
     }
 
+    my %rmks_final = map {my $ft = $remarks{"$_"}; my $ev = $self->_get_evidence($_); $ev ? ($ft => { text=>"$_", evidence=>$ev }) : ($ft => "$_")} @rmks_full;
     return {
         description => 'gene models for this gene',
-        data        => { table => @rows ? \@rows : undef,
-                         remarks => %remarks ? \%remarks : undef }
+        data        =>  @rows ? { table => @rows ? \@rows : undef,
+                         remarks => %rmks_final ? \%rmks_final : undef } : undef
     };
 }
 
