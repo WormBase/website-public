@@ -22,7 +22,7 @@ WRAPPER $field_block title="Title" key="title";
 END;
 
 WRAPPER $field_block title="URL" key="url";
-     fields.url.data;
+     external_link(fields.url.data);
 END;
 
 WRAPPER $field_block title="Details";
