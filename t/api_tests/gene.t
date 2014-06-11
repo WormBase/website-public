@@ -31,7 +31,8 @@
 
         isnt($models, undef, 'data returned');
         isnt($models->{data}, undef, 'data structure returned');
-        $models = $models->{data};
+        isnt($models->{data}{table}, undef, 'table data structure returned');
+        $models = $models->{data}{table};
         is  (scalar @$models, 3, 'two models returned');
     }
 
