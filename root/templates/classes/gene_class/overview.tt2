@@ -23,6 +23,13 @@ END;
 
 laboratory(title="Designating laboratory");
 
+WRAPPER $field_block title="$title"||'Former Designating Laboratory' key="former_laboratory";
+    '<div style="white-space:nowrap;">';
+    	  tag2link(fields.former_laboratory.data.lab);
+    '</div>';
+    fields.former_laboratory.data.time;
+
+END;
 
 # WRAPPER $field_block title="Phenotype" key="phenotype" ;
       # fields.phenotype.data;

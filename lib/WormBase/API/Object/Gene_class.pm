@@ -96,6 +96,21 @@ sub phenotype {
     return $data;
 }
 
+sub former_laboratory {
+    my $self = shift;
+    my $object    = $self->object;
+    my $former_lab_time = $object->Former_designating_laboratory;
+    my $former_lab = $former_lab_time && $former_lab_time->right;
+    my $data = 	{ description => 'Former_designating_laboratory',
+		  data =>  undef};
+    if ($former_lab){
+	$data->{'data'} = { lab => $self->_pack_obj($former_lab),
+			    time => "$former_lab_time"
+	}
+    }
+    return $data;
+}
+
 # remarks {}
 # Supplied by Role
 
