@@ -2223,7 +2223,7 @@ sub _get_count{
                         } @{$first_item->{'.raw'}} );
     } else {
         # try to avoid this, breaks on larger items
-        return scalar $obj->get($tag, 0)->col;
+        return $obj->get($tag, 0) ? scalar $obj->get($tag, 0)->col : 0;
     }
 }
 
