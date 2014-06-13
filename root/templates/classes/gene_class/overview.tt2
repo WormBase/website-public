@@ -27,8 +27,8 @@ laboratory(title="Designating laboratory");
 
 WRAPPER $field_block title="$title"||'Former Designating Laboratory' key="former_laboratory";
     tag2link(fields.former_laboratory.data.lab); '<br/>';
-    untilDate = fields.former_laboratory.data.time;    
-    '(Unil '; date.format(untilDate, '%d %b %Y', 'en_GB'); ')<br/>';
+    untilDate = fields.former_laboratory.data.time;
+    '(Unil '; untilDate; ')<br/>';
 
 END;
 
