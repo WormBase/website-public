@@ -16,7 +16,11 @@ label = sub {
         my $f = shift;
         my ($locus)  = $f->attributes('Alias');
         my ($name)   = $f->display_name;
-        return $locus ? "$locus ($name)" : $name;
+	if ($name eq $locus) {
+		    return $name;
+	} else {
+		    return $locus ? "$locus ($name)" : $name;
+        }       
         }
 description  = sub {             
         my $f = shift;
