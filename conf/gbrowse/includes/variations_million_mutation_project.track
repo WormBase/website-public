@@ -49,11 +49,6 @@ bgcolor      = sub {
 fgcolor      = black
 font2color   = blue
 height       = 8
-link         = sub {
-                  my $f = shift;
-                  my $name = $f->name;
-                  return "/get?name=$name;class=Variation";
-      }
 balloon hover = sub {
 	           my $f    = shift;
 		   my $type = $f->type;
