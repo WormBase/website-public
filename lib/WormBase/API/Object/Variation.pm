@@ -730,16 +730,23 @@ sub context {
 
     # Display a formatted string that shows the mutation in context
     my $flank = 250;
-    my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings if (abs($end - $start) < 1000000);
+    my $seqLen = abs($end - $start) + 1;
+    my ($wt,$mut,$wt_full,$mut_full,$debug, $placeholder);
+    if ($seqLen < 1000000){
+        ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
+    }else{
+        $placeholder = $seqLen ? sprintf("Sequence of length %d is too long to be displayed.", $seqLen) : undef;
+    }
     return {
         description => 'wildtype and mutant sequences in an expanded genomic context',
-        data        => ($wt || $wt_full || $mut || $mut_full) ? {
+        data        => ($wt || $wt_full || $mut || $mut_full || $placeholder) ? {
             wildtype_fragment => $wt,
             wildtype_full     => $wt_full,
             mutant_fragment   => $mut,
             mutant_full       => $mut_full,
             wildtype_header   => "Wild type N2, with $flank bp flanks",
-            mutant_header     => "$name with $flank bp flanks"
+            mutant_header     => "$name with $flank bp flanks",
+            placeholder       => $placeholder
         } : undef,
     };
 }

@@ -133,6 +133,13 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
    # Mutation context
    WRAPPER $field_block title="Sequence" key="context";
+    IF fields.context.data.placeholder;
+        fields.context.data.placeholder;"<br/>";
+        'You may locate it at our ';
+        '<a href="ftp://ftp.wormbase.org/pub/wormbase/species/">FTP</a>';
+        ' site.';
+    ELSE;
+        
       '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p><p>';
 
       '<span class="sequence-container" style="background-color:#FF8080">red</span> = mutation <br />';
@@ -168,7 +175,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
       sequence(wildtype, '', wildtype_length);
       mutant.header =  markup_var(object.name.data.label, 1) _" with 250 bp flanks";
       sequence(mutant, '', mutant_length);
-
+    END;
    END;
 
   WRAPPER $field_block title="CGH Flanking Probes" key="cgh_flanking_probes";
