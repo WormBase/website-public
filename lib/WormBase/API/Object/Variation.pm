@@ -781,6 +781,7 @@ sub features_affected {
     foreach my $type_affected ($object->Affects) {
         my @rows;
         my $count = $self->_get_count($object, $type_affected);
+        my $comment;
 
         if( $count < 500){
             foreach my $item_affected ($type_affected->col) { # is a subtree
@@ -823,9 +824,9 @@ sub features_affected {
                 push(@rows, $affected_hash);
             }
         } else {
-
+            $comment = sprintf("%d (not displayed due to massive size)", $count);
         }
-        $affects->{$type_affected} = @rows ? \@rows : ($count > 0) ? $count : undef;
+        $affects->{$type_affected} = @rows ? \@rows : ($count > 0) ? $comment : undef;
     } # end of FOR loop
 
     # Clone and Chromosome are not provided in the DB - we calculate them here.
