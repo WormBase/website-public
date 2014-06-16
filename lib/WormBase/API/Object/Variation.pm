@@ -735,7 +735,7 @@ sub context {
     if ($seqLen < 1000000){
         ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
     }else{
-        $placeholder = $seqLen ? sprintf("Sequence of length %d is too long to be displayed.", $seqLen) : undef;
+        $placeholder = $seqLen ? sprintf("A sequence of length %d is too long to be displayed.", $seqLen) : undef;
     }
     return {
         description => 'wildtype and mutant sequences in an expanded genomic context',
@@ -831,7 +831,7 @@ sub features_affected {
                 push(@rows, $affected_hash);
             }
         } else {
-            $comment = sprintf("%d (Not displayed due to massive data. You may check them out at <a href='/tools/wormmine/'>WormMine</a>)", $count);
+            $comment = sprintf("%d (Not displayed, due to massive amount of data. You may browse through them at <a href='/tools/wormmine/'>WormMine</a>.)", $count);
         }
         $affects->{$type_affected} = @rows ? \@rows : ($count > 0) ? $comment : undef;
     } # end of FOR loop
