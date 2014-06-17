@@ -730,16 +730,23 @@ sub context {
 
     # Display a formatted string that shows the mutation in context
     my $flank = 250;
-    my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings if (abs($end - $start) < 1000000);
+    my $seqLen = abs($end - $start) + 1;
+    my ($wt,$mut,$wt_full,$mut_full,$debug, $placeholder);
+    if ($seqLen < 1000000){
+        ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
+    }else{
+        $placeholder = $seqLen ? sprintf("A sequence of length %d is too long to display.", $seqLen) : undef;
+    }
     return {
         description => 'wildtype and mutant sequences in an expanded genomic context',
-        data        => ($wt || $wt_full || $mut || $mut_full) ? {
+        data        => ($wt || $wt_full || $mut || $mut_full || $placeholder) ? {
             wildtype_fragment => $wt,
             wildtype_full     => $wt_full,
             mutant_fragment   => $mut,
             mutant_full       => $mut_full,
             wildtype_header   => "Wild type N2, with $flank bp flanks",
-            mutant_header     => "$name with $flank bp flanks"
+            mutant_header     => "$name with $flank bp flanks",
+            placeholder       => $placeholder
         } : undef,
     };
 }
@@ -781,6 +788,7 @@ sub features_affected {
     foreach my $type_affected ($object->Affects) {
         my @rows;
         my $count = $self->_get_count($object, $type_affected);
+        my $comment;
 
         if( $count < 500){
             foreach my $item_affected ($type_affected->col) { # is a subtree
@@ -823,9 +831,9 @@ sub features_affected {
                 push(@rows, $affected_hash);
             }
         } else {
-
+            $comment = sprintf("%d (Too many features to display. You may download them using <a href='/tools/wormmine/'>WormMine</a>.)", $count);
         }
-        $affects->{$type_affected} = @rows ? \@rows : ($count > 0) ? $count : undef;
+        $affects->{$type_affected} = @rows ? \@rows : ($count > 0) ? $comment : undef;
     } # end of FOR loop
 
     # Clone and Chromosome are not provided in the DB - we calculate them here.

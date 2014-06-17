@@ -1,4 +1,5 @@
-[% USE date %]
+
+    [% USE date %]
 <h2>[% fields.name.data.label %] </h2>
 [%
 
@@ -26,9 +27,9 @@ END;
 laboratory(title="Designating laboratory");
 
 WRAPPER $field_block title="$title"||'Former Designating Laboratory' key="former_laboratory";
-    tag2link(fields.former_laboratory.data.lab); '<br/>';
     untilDate = fields.former_laboratory.data.time;
-    '(Until '; untilDate; ')<br/>';
+    tag2link(fields.former_laboratory.data.lab);
+    ' (Until '; untilDate; ')<br/>';
 
 END;
 
