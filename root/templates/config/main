@@ -353,7 +353,7 @@
       # The '(^|[^/])\K' at the beginning of the regexp denotes that the match in group $2
       # cannot be preceeded by a '/' character. That way, substrings of URIs are not linked
       # as locus references. (see also 'markup_var')
-      text.replace('(^|[^/])\K(\b([A-Z][a-z]{1,2}\-)?[a-z]{3,4}-(\d+(\.\d+)?)[a-z]*( [IVXLCDM]+|\(RNAi\))?\s)', span_class('$2', "locus", 'gene', link));
+      text.replace('(^|[^/])\K(\b([A-Z][a-z]{1,2}\-)?[a-z]{3,4}-(\d+(\.\d+)?)[a-z]*( [IVXLCDM]+|\(RNAi\))?[A-Z]?\b)', span_class('$2', "locus", 'gene', link));
     END;
 
 # Markup any variation name in text
