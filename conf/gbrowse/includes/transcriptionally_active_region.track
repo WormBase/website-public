@@ -10,5 +10,11 @@ label         = sub {
 	      my $notes = $f->notes;
 	      return "$notes";
 	      }
+link          = sub {
+	      my $f = shift;
+	      my ($modencode)  = $f->attributes('Note');
+	      my $link = "http://intermine.modencode.org/release-32/keywordSearchResults.do?searchTerm=$modencode&searchSubmit=GO";
+	      return $link;
+	      }
 key           = Transcriptionally Active Region
 citation      = Transcriptionally Active Regions (TARs) found by the Miller lab from tiling-array projects run as part of the modENCODE project.
