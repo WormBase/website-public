@@ -128,10 +128,11 @@ sub cds {
     my @data;
 
     foreach my $cds ($object->CDS) {
-	push @data, {
-	    cds           => $self->_pack_obj($cds),
-	    evidence_code => $self->_get_GO_evidence( $object, $cds ),
-	};
+        push @data, {
+            cds           => $self->_pack_obj($cds),
+            species       => $self->_pack_obj($cds->Species || undef),
+            evidence_code => $self->_get_GO_evidence( $object, $cds ),
+        };
     }
     return {
         'data'        => @data ? \@data : undef,

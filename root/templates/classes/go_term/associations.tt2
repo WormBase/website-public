@@ -22,10 +22,12 @@ WRAPPER $field_block title="CDS" key="cds";
 	build_data_table (
 		order = [ 
 			'cds',
+            'species',
 			'evidence_code'
 			],
 		columns = {
 			cds => 'CDS',
+            species => 'Species',
 			evidence_code => 'Evidence Code'
 			},
 		key = 'cds');
