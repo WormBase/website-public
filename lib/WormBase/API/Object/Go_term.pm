@@ -103,12 +103,14 @@ sub genes {
     my @data;
 
     foreach my $gene ($object->Gene) {
-	my $desc = $gene->Concise_description || $gene->Provisional_description || undef;
-	push @data, {
-	    gene          => $self->_pack_obj($gene),
-	    evidence_code => $self->_get_GO_evidence( $object, $gene ),
-	    description	  => $desc && "$desc",
-	};
+        my $desc = $gene->Concise_description || $gene->Provisional_description || undef;
+        my $species = $gene->Species || undef;
+            push @data, {
+                gene          => $self->_pack_obj($gene),
+                species       => $self->_pack_obj($species),
+                evidence_code => $self->_get_GO_evidence( $object, $gene ),
+                description	  => $desc && "$desc",
+            };
     }
     return {
         'data'        => @data ? \@data : undef,
