@@ -60,6 +60,22 @@
         isnt($response_html =~ /<div class\=\"field\s+\"\>  \<div class\=\"field-title\"\>\s+\<span title\=\"\"\> WormBase ID/, '', 'WormBase ID field displayed');
     }
 
+    # Test if links treat gene names lin-15 and lin-15A differently
+    sub test_linking_to_genes {
+        my $host = $configuration->{'host'};
+        my $port = $configuration->{'port'};
+
+        my $url_html = "http://$host:$port/rest/widget/gene/WBGene00003004/overview?download=1&content-type=text%2Fhtml";
+        my $response_html = get($url_html);
+
+        ok($response_html =~ /lin-15/, 'contains gene lin-15');
+        ok($response_html =~ /lin-15A/, 'contains gene lin-15A');
+        ok($response_html =~ /<a href="\/search\/gene\/lin-15" class="gene-link">lin-15<\/a>/,
+           'contains links to gene lin-15');
+        ok($response_html =~ /<a href="\/search\/gene\/lin-15A" class="gene-link">lin-15A<\/a>/,
+           'contains links to gene lin-15A');
+
+    }
 }
 
 1;
