@@ -135,7 +135,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
    WRAPPER $field_block title="Sequence" key="context";
     IF fields.context.data.placeholder;
         fields.context.data.placeholder;"<br/>";
-        'You may locate it at our ';
+        'You may download the full sequence from our ';
         '<a href="ftp://ftp.wormbase.org/pub/wormbase/species/">FTP</a>';
         ' site.';
     ELSE;
