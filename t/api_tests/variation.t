@@ -60,7 +60,7 @@
         my $context = $variation->context();
 
         isnt($context->{'data'}->{'placeholder'}, undef, 'data returned');
-        is($context->{'data'}->{'placeholder'}, 'A sequence of length 7566000 is too long to display.', 'The (over 1000000) comment is returned');
+        is($context->{'data'}->{'placeholder'}->{'seqLength'}, '7,566,000', 'The (over 1000000) comment is returned');
     }
 
     # test a Features Affected field that contains over 500 
@@ -73,9 +73,9 @@
         my $features_affected = $variation->features_affected();
 
         isnt($features_affected->{'data'}, undef, 'data returned');
-        is($features_affected->{'data'}->{'Gene'}, "2849 (Too many features to display. You may download them using <a href='/tools/wormmine/'>WormMine</a>.)", 'The (over 500) comment is returned');
-        is($features_affected->{'data'}->{'Predicted_CDS'}, "2357 (Too many features to display. You may download them using <a href='/tools/wormmine/'>WormMine</a>.)", 'The (over 500) comment is returned');
-        is($features_affected->{'data'}->{'Transcript'}, "1969 (Too many features to display. You may download them using <a href='/tools/wormmine/'>WormMine</a>.)", 'The (over 500) comment is returned');
+        ok($features_affected->{'data'}->{'Gene'} =~ /Too many features to display/, 'Comment is returned for # genes > 500');
+        ok($features_affected->{'data'}->{'Predicted_CDS'} =~ /Too many features to display/, 'Comment is returned for # predicted cds > 500');
+        ok($features_affected->{'data'}->{'Transcript'} =~ /Too many features to display/, 'Comment is returned for # transcripts > 500');
   
     }
 
