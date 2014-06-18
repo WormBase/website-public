@@ -77,6 +77,14 @@
         isnt($doi, undef, 'data returned');
           is($doi->{'data'}, "10.1895/wormbook.1.1.1", 'correct doi returned (doi exists)');
 
+        # test on paper with doi from #2799
+        $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00036072' });
+        $doi = $paper->doi();
+
+        isnt($doi, undef, 'data returned');
+          is($doi->{'data'}, "10.1534/genetics.110.116293", 'correct doi returned (doi exists)');
+
+
         # test on paper with multiple names
         $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00000802' });
         $doi = $paper->doi();
