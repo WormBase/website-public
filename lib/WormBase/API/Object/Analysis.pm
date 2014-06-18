@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -45,7 +45,7 @@ http://wormbase.org/resources/analysis
 # Supplied by Role
 
 # title { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # the title of the analysis, if there is one.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/title
 
@@ -59,11 +59,26 @@ sub title {
     };
 }
 
+
+# url { }
+# This method returns a data structure containing the
+# the url of the analysis, if there is one.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/url
+
+sub url {
+    my ($self) = @_;
+    my $url = $self ~~ 'URL';
+
+    return {
+        description => 'the url of the analysis',
+        data        => $url && "$url",
+    };
+}
 # description { }
 # Supplied by Role
 
 # based_on_wb_release { }
-# This method returns a data structure containing 
+# This method returns a data structure containing
 # the WormBase release the analysis is based on.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_wb_release
 
@@ -79,7 +94,7 @@ sub based_on_wb_release {
 
 
 # based_on_db_release { }
-# This method returns a data structure containing 
+# This method returns a data structure containing
 # the database release the analysis is based on.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_db_release
 
@@ -94,7 +109,7 @@ sub based_on_db_release {
 }
 
 # project { }
-# This method returns a data structure containing 
+# This method returns a data structure containing
 # the project that conducted the analysis.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/project
 
@@ -108,20 +123,20 @@ sub project {
 
 
 # subproject { }
-# This method returns a data structure containing 
+# This method returns a data structure containing
 # the subproject of the analysis.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/subproject
 
 sub subproject {
     my $self = shift;
-   
+
     return { description => 'the subproject of the analysis if there is one',
 	     data        => $self->_pack_obj($self ~~ 'Subproject')
     };
 }
 
 # conducted_by { }
-# This method returns a data structure containing 
+# This method returns a data structure containing
 # the person that conducted the analysis.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/conducted_by
 
@@ -139,7 +154,7 @@ sub conducted_by {
 #
 # The External Links widget
 #
-############################################################ 
+############################################################
 
 # xrefs {}
 # Supplied by Role

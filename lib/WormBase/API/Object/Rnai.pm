@@ -5,7 +5,7 @@ extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -66,14 +66,14 @@ sub targets {
     my ($self) = @_;
     my $object = $self->object;
 
-    my %seen;    
+    my %seen;
     my @genes = $object->Gene;
     push @genes, grep { !$seen{$_}++ } $object->Predicted_gene;
-    
+
     my @data;
     foreach my $gene (@genes) {
         my @types = $gene->col;
-	
+
         foreach (@types) {
             my ($remark) = $_->col;
 	    push @data, {target_type => $remark =~ /primary/ ? 'Primary target' : 'Secondary target',
@@ -81,14 +81,14 @@ sub targets {
 	    };
         }
     }
-    
+
     return { description => 'gene targets of the RNAi experiment',
 	     data        => @data ? \@data : undef };
 }
 
 
 # movies { }
-# This method will return a data structure with links to 
+# This method will return a data structure with links to
 # movies demonstrating the phenotype observed in the RNAi
 # experiment.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/movies
@@ -107,7 +107,7 @@ sub movies {
             ($db) = grep { /RNAi/ } $movie->at('DB_info')->col;
             ($file) = map { $_->right } grep { /id/ } map { $_->col } $db;
         }
-        $file ||= $movie->Name;
+        $file ||= $movie->Public_name;
         $db ||= 'Movie';
 
         # my $file = $movie->Name;   # We can't have tags called "Name". Hoping for fix in WS239.
@@ -170,8 +170,8 @@ sub sequence {
 
     my @tag_objects = map {{ sequence=> "$_", header=> $_->right && $_->right->asString }} $object->DNA_text || $object->Sequence;
     if (!@tag_objects  && $object->PCR_product) {
-        @tag_objects = map {    {   header=>"$_", 
-                                    sequence=> $self->_api->wrap($_)->segment->{data}->{dna} 
+        @tag_objects = map {    {   header=>"$_",
+                                    sequence=> $self->_api->wrap($_)->segment->{data}->{dna}
                                 }} $object->PCR_product;
     }
     my @data   = map { {sequence=> $_->{sequence},

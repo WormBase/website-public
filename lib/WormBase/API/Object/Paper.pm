@@ -332,8 +332,8 @@ sub doi {
     my $object = $self->object;
 
     my $doi;
-    map { $doi = $1 if ($_ =~ m{^(?:doi.*)?(10\.[^/]+.+)$}); } $object->Name;
-    
+    map { $doi = $1 if ($_ =~ m{^(?:doi[^/]*)?(10\.[^/]+.+)$}); } $object->Name;
+
     return {
         description => 'DOI of publication',
         data        => $doi,

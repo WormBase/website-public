@@ -1,30 +1,30 @@
 [%
 
 WRAPPER $field_block title="Gene" key="corresponding_gene";
-         tags2link(fields.corresponding_gene.data);
+         cell_content(fields.corresponding_gene.data);
 END;
 
 WRAPPER $field_block title="Reference Allele" key="reference_allele";
-         tag2link(fields.reference_allele.data);
+         cell_content(fields.reference_allele.data);
 END;
 
 
 WRAPPER $field_block  title="Other alleles" key="other_alleles";
 	build_data_table (
-		order = [ 
+		order = [
 			'allele',
 			'type',
 			'physical_type',
 			'status',
 			],
-		columns = {				 		
+		columns = {
 			allele        => 'Allele',
 			type          => 'Type',
 			physical_type => 'Classification',
 			status        => 'Status',
 			},
 		key = 'other_alleles');
-   END;	
+   END;
 
 
    # Strains

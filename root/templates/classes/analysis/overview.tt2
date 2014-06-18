@@ -1,6 +1,6 @@
 <h2>[% fields.name.data.label %]</h2>
 
-[% 
+[%
 
 WRAPPER highlight_box;
 
@@ -21,6 +21,9 @@ WRAPPER $field_block title="Title" key="title";
      fields.title.data;
 END;
 
+WRAPPER $field_block title="URL" key="url";
+     external_link(fields.url.data);
+END;
 
 WRAPPER $field_block title="Details";
    WRAPPER $field_block title="Conducted By" key="conducted_by";

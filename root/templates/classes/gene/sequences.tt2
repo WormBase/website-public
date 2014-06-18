@@ -1,25 +1,34 @@
-[% 
+[%
 
-IF fields.gene_models.data;
+IF fields.gene_models.data.table;
 
-    IF fields.gene_models.data.0.keys.size > 3; 
+    IF fields.gene_models.data.table.0.keys.size > 3;
         build_data_table( order = ['model', 'type', 'length_unspliced','cds', 'length_spliced','protein','length_protein'],
-                          columns = { model => 'Sequence',
+                          columns = { model => 'Transcript',
                                       type => 'Type',
                                       length_spliced   => 'Coding<br />Sequence<br />Length (nt)',
-                                      length_unspliced => 'Sequence<br />Length (nt)',
+                                      length_unspliced => 'Transcript<br />Length (nt)',
                                       cds => 'Coding<br />Sequence<br />(CDS)',
                                       protein => 'Protein',
                                       length_protein => 'Protein<br />Length (aa)'},
-                          passed_data = fields.gene_models.data,
+                          passed_data = fields.gene_models.data.table,
                           key = 'gene_models_constructed' );
     ELSE;
         build_data_table( order = ['model','length_unspliced','type'],
                           columns = { model => 'Transcript',
                                       type => 'Type',
                                       length_unspliced => 'Transcript<br />Length (nt)'},
-                          passed_data = fields.gene_models.data,
+                          passed_data = fields.gene_models.data.table,
                           key = 'gene_models_constructed' );
+    END;
+
+    IF fields.gene_models.data.remarks;
+      WRAPPER toggle title="Curator comments";
+        FOREACH k IN fields.gene_models.data.remarks.keys.nsort;
+          '<sup>' _ k _ '</sup>';
+          cell_content(fields.gene_models.data.remarks.$k);
+        END;
+      END;
     END;
 
 END;

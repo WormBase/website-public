@@ -295,12 +295,28 @@ sub gene_classes {
     my @data;
     my @gene_classes = $object->Gene_classes;
     foreach (@gene_classes) {
-	my $description = $_->Description;
-	push @data,{ gene_class => $self->_pack_obj($_),
+	   my $description = $_->Description;
+	   push @data,{ gene_class => $self->_pack_obj($_),
 		     description => $description && "$description" };
     }
     return { description => 'gene classes assigned to laboratory',
 		 data    => @data ? \@data : undef };
+}
+
+sub former_gene_classes {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my @data;
+    my @former_gene_classes = $object->Former_gene_classes;
+    foreach (@former_gene_classes) {
+        my $description = $_->Description;
+        my $el = { former_gene_class => $self->_pack_obj($_),
+             description => $description && "$description" };
+        push @data, $el;
+    }
+    return { description => 'former gene classes assigned to laboratory',
+         data    => @data ? \@data : undef };
 }
 
 #######################################
