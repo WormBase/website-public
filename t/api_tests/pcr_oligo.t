@@ -55,6 +55,28 @@
         is ($variation->{'data'}, undef, 'data correctly empty');
     }
 
+    # test overlaps_cds
+    sub test_overlaps_CDS {
+        my $pcr = $api->fetch({ class=> 'Pcr_oligo', name => 'sjj_Y18D10A.5_f' });
+
+        can_ok('WormBase::API::Object::Pcr_oligo', ('overlaps_CDS'));
+
+        my $CDS = $pcr->overlaps_CDS();
+
+        is ($CDS->{'data'}, undef, 'data correctly empty');
+    }
+
+    # test overlaps_trascript
+    sub test_overlaps_transcript {
+        my $pcr = $api->fetch({ class=> 'Pcr_oligo', name => 'sjj_Y18D10A.5_f' });
+
+        can_ok('WormBase::API::Object::Pcr_oligo', ('overlaps_transcript'));
+
+        my $transcript = $pcr->overlaps_transcript();
+
+        is ($transcript->{'data'}, undef, 'data correctly empty');
+    }
+
 }
 
 1;
