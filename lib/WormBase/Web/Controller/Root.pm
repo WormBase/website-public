@@ -126,6 +126,27 @@ sub me :Path("/me") Args(0) {
     $c->response->headers->expires(time);
 }
 
+# Action added for Elsevier linking - issue #2086
+# Returns WormBase logo if paper with corresponding doi is located
+# Otherwise returns transparent png
+sub elsevier :Path("/elsevier/wblogo.png") Args(0) {
+    my ( $self, $c ) = @_;
+    my $doi = (split '\/', $c->req->param('doi'))[-1];
+    my $path = "transparent";
+
+    if($doi){
+      my $api = $c->model('WormBaseAPI');
+      my $object = $api->xapian->_get_tag_info($c, $doi, 'paper');
+      if($object->{id} =~ /WBPaper\d{8}/){
+        $object = $api->fetch({ class => 'Paper', name => $object->{id}})
+          or die "Could not fetch object";
+        $path = "wblogo" if $object->doi->{data} =~ /$doi/;
+      }
+    }
+
+    $c->serve_static_file("root/img/buttons/$path.png");
+}
+
 #######################################################
 #
 #     CONFIGURATION - PROBABLY BELONGS ELSEWHERE
@@ -157,7 +178,7 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
       $c->serve_static_file($c->path_to("root/static/$path"));
   }
-  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw')) {
+  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw' || $path =~ /\.png/)) {
       $c->forward('WormBase::Web::View::TT');
   }
 }
@@ -188,12 +209,10 @@ sub get :Local Args(0) {
 
     $c->stash->{template} = 'species/report.tt2';
 
-    my $requested_class = $c->req->param('class');
-    my $name            = $c->req->param('name');
     my $doi             = $c->req->param('doi');
+    my $requested_class = $c->req->param('class') || ($doi && 'paper');
+    my $name            = $c->req->param('name') || ($doi && (split '\/', $doi)[-1]);
 
-    $requested_class ||= 'paper' if $doi;
-    $name ||= (split '\/', $doi)[-1] if $doi;
     $name =~ s/^\s+|\s+$//g;
 
     my $api    = $c->model('WormBaseAPI');

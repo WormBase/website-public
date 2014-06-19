@@ -156,7 +156,7 @@ sub overlapping_genes {
 sub overlaps_CDS {
 	my ($self) = @_;
     my $object = $self->object;
-	my @CDSs = map { $self->_pack_obj($_) } $object->Overlaps_CDS;
+	my @CDSs = map { $self->_pack_obj($_) } $object->get('Overlaps_CDS');
 
 	return {
 		description => 'CDSs that this ' . $self->_object_class . ' overlaps',
@@ -171,7 +171,7 @@ sub overlaps_CDS {
 sub overlaps_transcript {
     my ($self) = @_;
     my $object = $self->object;
-    my @transcripts = map { $self->_pack_obj($_) } $object->Overlaps_Transcript;
+    my @transcripts = map { $self->_pack_obj($_) } $object->get('Overlaps_Transcript');
 
     return {
         description => 'Transcripts that this ' . $self->_object_class . ' overlaps',
@@ -186,7 +186,7 @@ sub overlaps_transcript {
 sub overlaps_pseudogene {
     my ($self) = @_;
     my $object = $self->object;
-    my @pseudogenes = map { $self->_pack_obj($_) } $object->Overlaps_Pseudogene;
+    my @pseudogenes = map { $self->_pack_obj($_) } $object->get('Overlaps_Pseudogene');
 
     return {
         description => 'Pseudogenes that this ' . $self->_object_class . ' overlaps',
