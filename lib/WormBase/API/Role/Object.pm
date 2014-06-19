@@ -2212,14 +2212,19 @@ sub _get_count{
     # get the first item in the tag
     my $first_item = $tag ? $obj->get($tag, 0) && $obj->get($tag, 0)->right : $obj->right;
 
-    # get our current column location
-    my $col = $first_item->{'.col'};
+    if($first_item->{'.raw'}){
+        # get our current column location
+        my $col = $first_item->{'.col'};
 
-    # grep for rows that are objects
-    my $curr;
-    return scalar(  grep {  $curr = @{$_}[$col-1] if (@{$_}[$col-1]);
-                            (@{$_}[$col] && ($curr eq "?tag?$tag?"));
-                    } @{$first_item->{'.raw'}} );
+        # grep for rows that are objects
+        my $curr;
+        return scalar(  grep {  $curr = @{$_}[$col-1] if (@{$_}[$col-1]);
+                                (@{$_}[$col] && ($curr eq "?tag?$tag?"));
+                        } @{$first_item->{'.raw'}} );
+    } else {
+        # try to avoid this, breaks on larger items
+        return $obj->get($tag, 0) ? scalar $obj->get($tag, 0)->col : 0;
+    }
 }
 
 

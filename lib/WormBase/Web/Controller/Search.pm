@@ -40,7 +40,7 @@ sub search :Path('/search') Args {
     # set search to 'all' if there's not query, OR if current search type is 'basic'
     #   (for forwarding from /db/searches/basic)
     $type = 'all' if (!$query || ($type eq 'basic'));
-   
+
     # hack for references widget
     unless($page_count =~ m/\d|^all$/){
       $type = $page_count =~ m/references/ ? 'paper' : $page_count;
@@ -56,7 +56,7 @@ sub search :Path('/search') Args {
 
     $c->response->headers->expires(time);
     my $headers = $c->req->headers;
-    my $content_type 
+    my $content_type
         = $headers->content_type
         || $c->req->params->{'content-type'}
         || 'text/html';
@@ -66,7 +66,7 @@ sub search :Path('/search') Args {
 
     my ($tmp_query, $query_error) = $self->_prep_query($query);
     $c->log->debug("search $tmp_query");
-      
+
     my $search = $type unless($type=~/all/);
 
     if($page_count>1 || $page_count eq 'all' || $content_type ne 'text/html') {
@@ -79,7 +79,7 @@ sub search :Path('/search') Args {
       $c->stash->{req_class} = $c->req->param("class");
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
-      # if it finds an exact match, redirect to the page 
+      # if it finds an exact match, redirect to the page
         my $it = $api->xapian->search_exact($c, $tmp_query, $search);
         if((scalar (@{$it->{struct}}) == 1 )&& @{$it->{struct}}[0]){
           my $o = @{$it->{struct}}[0];
@@ -106,12 +106,15 @@ sub search :Path('/search') Args {
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
-    $c->stash->{count} = $api->xapian->search_count_estimate($c, $tmp_query, $search, $c->stash->{species});
     $c->stash->{error} = ($query_error || "") . ($error || "");
     my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
+
+    my $count = $api->xapian->search_count_estimate($c, $tmp_query, $search, $c->stash->{species});
+    $c->stash->{count} = $count;
+    $c->stash->{count_estimate} = $self->_fuzzy_estimate($count);
 
     if ( $content_type eq 'text/html' ) {
       $c->forward('WormBase::Web::View::TT');
@@ -121,8 +124,8 @@ sub search :Path('/search') Args {
     # Change the data structure a bit so the CSV converter can read it
     if ( $content_type eq 'text/csv' ) {
       my %seen;
-      @ret = map { 
-          my $ret = { id => $_->{name}->{id}, 
+      @ret = map {
+          my $ret = { id => $_->{name}->{id},
                       label => $_->{name}->{label},
                       class => $_->{name}->{class},
                       taxonomy => $_->{taxonomy}->{genus} . ' ' . $_->{taxonomy}->{species}};
@@ -137,9 +140,9 @@ sub search :Path('/search') Args {
 
       my @columns = (('id', 'label', 'class', 'taxonomy'), keys %seen);
       # unshift(@columns, ('id', 'label', 'class', 'taxonomy'));
-      $c->stash ( data => \@ret, 
-                  columns => \@columns, 
-                  filename => "$query\_$type\_" . $c->stash->{species} . $api->version . ".csv" 
+      $c->stash ( data => \@ret,
+                  columns => \@columns,
+                  filename => "$query\_$type\_" . $c->stash->{species} . $api->version . ".csv"
                   );
     }
 
@@ -162,7 +165,7 @@ sub search_git :Path('/search/issue') :Args(2) {
 
     $c->response->headers->expires(time);
     my $headers = $c->req->headers;
-    my $content_type 
+    my $content_type
         = $headers->content_type
         || $c->req->params->{'content-type'}
         || 'text/html';
@@ -279,8 +282,17 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
 
   my $tmp_query = $self->_prep_query($q);
   my $count = $api->xapian->search_count_estimate($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
+  $count = $self->_fuzzy_estimate($count);
 
-  if( $count > 500) {
+  $c->response->body("$count");
+  $c->set_cache($key => "$count") if $cache;
+  return;
+}
+
+sub _fuzzy_estimate {
+  my ($self, $count) = @_;
+
+  if( $count >= 500) {
     my @scale_array = ("+", "K", "M", "G", "T", "P");
     my $scale_counter = 0;
 
@@ -290,9 +302,8 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
     }
     $count = $self->_round_down($count) . $scale_array[$scale_counter];
   }
-  $c->response->body("$count");
-  $c->set_cache($key => "$count") if $cache;
-  return;
+
+  return $count;
 }
 
 # Round a number down
@@ -340,7 +351,7 @@ sub _prep_query {
     @words = grep { $phrase ||length($_) > 3 } @words;
     $new_q = join(' ', @words[0..5]);
     $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
-  } 
+  }
 
   return wantarray ? ($new_q, $error) : $new_q;
 }

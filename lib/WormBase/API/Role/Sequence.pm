@@ -97,7 +97,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub sequence_type {
     my ($self) = @_;
@@ -113,7 +113,7 @@ sub library {
     return {
     description => 'Library for the sequence',
     data        => $library ? { name => "$library",
-                               description => $library->Description, 
+                               description => $library->Description,
                                 vector => $self->_pack_obj($library->Vector)  } : undef,
     };
 }
@@ -186,16 +186,16 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub identity {
     my ($self) = @_;
- 
-    # Cull a brief identification from each gene. Redundant with gene page and 
+
+    # Cull a brief identification from each gene. Redundant with gene page and
     # not necessarily accurate if we are looking at a splice variant.
     my $data = join(', ', @{$self->genes}, $self ~~ 'Brief_identification' || ());
     $data .= ' (pseudogene)' if $data && $self->type eq 'pseudogene';
-    
+
     return { description => 'the identity of the sequence',
 	     data        => $data || undef   };
 }
@@ -249,17 +249,17 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub available_from {
     my $self   = shift;
     my $object = $self->object;
-    
+
     my $data = $self->method eq 'Vancouver_fosmid' && {
     label => 'GeneService',
     class => 'Geneservice_fosmids',
     };
-    
+
     return { description => 'availability of clones of the sequence',
          data        => "$data" || undef };
 }
@@ -313,7 +313,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub analysis {
     my ($self) = @_;
@@ -374,7 +374,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub corresponding_all {
     my $self = shift;
@@ -387,9 +387,9 @@ sub corresponding_all {
     }else{
         $cds = eval { $object->Corresponding_CDS };
     }
-    
+
     my %data  = ();
-    
+
     if( defined($cds) ){
         my $gff   = $self->_fetch_gff_gene($cds) or next;
         my $protein = $cds->Corresponding_protein if $cds;
@@ -433,8 +433,8 @@ sub corresponding_all {
             my $gene = $object->Gene;
             $data{gene} = $self->_pack_obj($gene);
             my @sequences = $gene->Corresponding_transcript;
-            $data{model}   = @sequences ? 
-                [ map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences ] 
+            $data{model}   = @sequences ?
+                [ map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences ]
                 : undef;
             my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
             $data{length_unspliced} = @lengths ? \@lengths : undef;
@@ -442,10 +442,10 @@ sub corresponding_all {
             my $type = $sequences[0]->Method if @sequences;
             $type =~ s/_/ /g;
             $data{type} = $type && "$type";
-            
+
             push @rows, \%data;
         }
-        
+
     }
 
     # add historical gene to table
@@ -514,13 +514,13 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub orfeome_assays {
     my ($self) = @_;
     my (@orfeome,@pcr);
     if ($self->type =~ /gene|coding sequence|cDNA/) {
-		 
+
 		@pcr     = map {$_->info} map { eval {$_->features('PCR_product:GenePair_STS', 'structural:PCR_product')} }
 		           @{$self->_segments}  ;
 		@orfeome = grep {/^mv_/} @pcr;
@@ -589,7 +589,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub microarray_assays {
     my ($self) = @_;
@@ -657,7 +657,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub pcr_products {
     my $self = shift;
@@ -716,7 +716,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub matching_cdnas {
     my ($self) = @_;
@@ -775,11 +775,11 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub source_clone {
     my ($self) = @_;
-     
+
     my $clone = $self ~~ 'Clone' ||( $self->sequence ? $self->sequence->Clone : undef );
     return { description => 'The Source clone of the sequence',
 	     data        =>  $clone ? map {$self->_pack_obj($_)} $clone : undef};
@@ -840,13 +840,13 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub print_blast {
     my ($self) = @_;
     my @target = ('Elegans genome');
     push @target,"Elegans protein" if ($self ~~ 'Coding');
-    
+
     return { description => 'links to BLAST analyses',
 	     data        =>  { source => $self ~~ 'name',
 			       target => @target ? \@target : undef,
@@ -903,7 +903,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # TODO: REWRITE THIS. This is very gory code. Some of it doesn't do what
 #       one would expect due to some Perl details...
@@ -1040,7 +1040,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub print_homologies {
     my ($self) = @_;
@@ -1050,7 +1050,7 @@ sub print_homologies {
     # Transcripts are not sequence features any more...
     my $gff = $self->ace_dsn->raw_query("gif seqget $seq -coords 1 ".$self->length." ; seqfeatures")
 	if $self->length > 0;
-    return unless $gff;
+    return { description => 'homologous sequences', data => undef } unless $gff;
 
     my ($origin,$extent,%HITS);
     foreach (split("\n",$gff)) {
@@ -1170,7 +1170,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub print_feature {
     my ($self) = @_;
@@ -1278,7 +1278,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub predicted_units {
     my ($self) = @_;
@@ -1372,13 +1372,13 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub strand {
     my ($self) = @_;
     my $strand = $self->_segments->[0]->strand if $self->_segments->[0];
     return { description => 'strand orientation of the sequence',
-         data        => $strand ? ($strand > 0) ? "+" : "-" : undef 
+         data        => $strand ? ($strand > 0) ? "+" : "-" : undef
     };
 }
 
@@ -1431,11 +1431,11 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub transcripts {
     my ($self) = @_;
-    
+
     my @transcripts;
     if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
     $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
@@ -1443,7 +1443,7 @@ sub transcripts {
     map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
     @{$self->_segments};
     }
-    
+
     return { description => 'Transcripts in this region of the sequence',
          data        => @transcripts ? \@transcripts : undef, #class Sequence
     };

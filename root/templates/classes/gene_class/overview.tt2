@@ -1,3 +1,5 @@
+
+    [% USE date %]
 <h2>[% fields.name.data.label %] </h2>
 [%
 
@@ -16,13 +18,20 @@ END;
 
 WRAPPER $field_block title="Other names" key="other_names";
 
-       FOREACH name IN fields.other_names.data;
-           name _ '<br />';
-       END;
+       	FOREACH name IN fields.other_names.data;
+       		name _ '<br />';
+       	END;
+	
 END;
 
 laboratory(title="Designating laboratory");
 
+WRAPPER $field_block title="$title"||'Former Designating Laboratory' key="former_laboratory";
+    untilDate = fields.former_laboratory.data.time;
+    tag2link(fields.former_laboratory.data.lab);
+    ' (Until '; untilDate; ')<br/>';
+
+END;
 
 # WRAPPER $field_block title="Phenotype" key="phenotype" ;
       # fields.phenotype.data;

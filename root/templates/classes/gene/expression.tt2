@@ -30,14 +30,6 @@ END;
 
 
 WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profiling_graphs";
-    gene_image = fields.anatomic_expression_patterns.data.image;
-    IF gene_image;
-      '<div style="max-width:500px;">';
-        '<a href="'_ gene_image _ '" target="_blank">' _
-           '<img src="' _ gene_image _ '" width="100%">' _
-        '</a>';
-      '</div>';
-    END;
            build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={
                           expression_pattern => 'Pattern',

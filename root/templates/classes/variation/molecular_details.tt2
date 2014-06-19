@@ -1,4 +1,4 @@
-[% 
+[%
       wildtype_length = 0;
       mutant_length = 0;
 
@@ -36,8 +36,8 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
            IF change.mutant && (change.mutant.length < 100);
                   change.mutant;
                   label.push(change.mutant_label);
-                  
-           ELSIF (change.mutant.length > 0);      
+
+           ELSIF (change.mutant.length > 0);
                   change.mutant.length _ ' bp insertion';
            ELSIF !change.wildtype;
               '(sequence unknown / unlisted)';
@@ -65,12 +65,12 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
             IF feature.wildtype_conceptual_translation;
               # This won't actually result in download option for the conceptual translation.
               # tag2link(feature.item) _ ' (mutant' _ change.amino_acid_change _ ')<br/>';
-              WRAPPER toggle title=change.transcript.id _ ' conceptual translation';        
-                '<div>';                   
+              WRAPPER toggle title=change.transcript.id _ ' conceptual translation';
+                '<div>';
                 '<div class="sequence-container">';
                 '<pre>> wildtype<br />' _ feature.wildtype_conceptual_translation _ '</pre>';
                 '<pre>> wildtype<br />' _ feature.mutant_conceptual_translation _ '</pre>';
-                '</div>';                                       
+                '</div>';
                 '</div>';
               END; # of feature loop
             END;
@@ -83,7 +83,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
        tags2link(fields.flanking_pcr_products.data, ', ');
    END;
 
-   
+
    # Conditionally display some information if this is a polymorphism
 
 
@@ -133,6 +133,13 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
    # Mutation context
    WRAPPER $field_block title="Sequence" key="context";
+    IF fields.context.data.placeholder;
+        fields.context.data.placeholder.seqLength _ ' bp';"<br/>";
+        'Too large to display. Download full sequence from ';
+        '<a href="ftp://ftp.wormbase.org/pub/wormbase/species/">FTP</a>';
+        ' site.';
+    ELSE;
+        
       '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p><p>';
 
       '<span class="sequence-container" style="background-color:#FF8080">red</span> = mutation <br />';
@@ -148,14 +155,14 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
       IF fields.cgh_flanking_probes.data;
       '<span class="sequence-container" style="background-color:#80FFFF">blue</span> = CGH flanking probe <span id="fade">(if within the window of displayed sequence)</span><br />';
-        IF fields.cgh_flanking_probes.data.left_flank; 
-          wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_flanking_probes.data.left_flank, '#80FFFF'); 
-          mutant.sequence = highlight_seq(mutant.sequence, fields.cgh_flanking_probes.data.left_flank, '#80FFFF'); 
-        END; 
-        IF fields.cgh_flanking_probes.data.right_flank; 
-          wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_flanking_probes.data.right_flank, '#80FFFF'); 
-          mutant.sequence = highlight_seq(mutant.sequence, fields.cgh_flanking_probes.data.right_flank, '#80FFFF'); 
-        END; 
+        IF fields.cgh_flanking_probes.data.left_flank;
+          wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_flanking_probes.data.left_flank, '#80FFFF');
+          mutant.sequence = highlight_seq(mutant.sequence, fields.cgh_flanking_probes.data.left_flank, '#80FFFF');
+        END;
+        IF fields.cgh_flanking_probes.data.right_flank;
+          wildtype.sequence = highlight_seq(wildtype.sequence, fields.cgh_flanking_probes.data.right_flank, '#80FFFF');
+          mutant.sequence = highlight_seq(mutant.sequence, fields.cgh_flanking_probes.data.right_flank, '#80FFFF');
+        END;
       END;
       '</p>';
 
@@ -168,7 +175,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
       sequence(wildtype, '', wildtype_length);
       mutant.header =  markup_var(object.name.data.label, 1) _" with 250 bp flanks";
       sequence(mutant, '', mutant_length);
-
+    END;
    END;
 
   WRAPPER $field_block title="CGH Flanking Probes" key="cgh_flanking_probes";
@@ -205,65 +212,57 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
        FOREACH feature_type IN ['Predicted_CDS', 'Transcript', 'Pseudogene', 'Feature', 'Clone'];
           NEXT UNLESS fields.features_affected.data.$feature_type;
-          t =  pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) _ ' (' _ fields.features_affected.data.$feature_type.size _ ')';
-          WRAPPER toggle title=t;
 
-           FOREACH feature IN fields.features_affected.data.$feature_type.sort;
-              '<div>';
-              # feature = fields.features_affected.data.$feature_type.$feature_name;
-#                IF feature_type == 'Chromosome';
-#                     feature.label;
-#                ELSE;
-#                  tag2link(feature);
-#                END;
-#               '<br>';
-s = '';
-               protein_effects = feature.protein_effects;
-               IF protein_effects;
+          IF ref(fields.features_affected.data.$feature_type) == 'ARRAY';
+
+            t =  pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) _ ' (' _ fields.features_affected.data.$feature_type.size _ ')';
+
+            WRAPPER toggle title=t;
+
+             FOREACH feature IN fields.features_affected.data.$feature_type.sort;
+                '<div>';
+                s = '';
+                protein_effects = feature.protein_effects;
+                IF protein_effects;
                   FOREACH effect_type IN protein_effects.sort;
-                     effect = protein_effects.$effect_type;
-                     s = s _ 'Effect on protein: ' _ effect_type.replace('_', ' ') _ '<br />';
-                      s = s _ (effect.subtype || effect.position || '') _ '<br />';
-              s = s _ effect.description _ '<br />';
-                   END;
-               END;
-
-
-               location_effects = feature.location_effects;
-
-                  IF location_effects;
-                      FOREACH effect_type IN location_effects.sort;
-                          effect = location_effects.$effect_type;
-                      s = s _ 'Affects: ' _ effect_type.replace('_', ' ') _ '<br />';
-                      END;
+                    effect = protein_effects.$effect_type;
+                    s = s _ 'Effect on protein: ' _ effect_type.replace('_', ' ') _ '<br />';
+                    s = s _ (effect.subtype || effect.position || '') _ '<br />';
+                    s = s _ effect.description _ '<br />';
                   END;
-feature.affects = s;
+                END;
 
-		# Displayed above in Protein Change
-#                 IF feature.wildtype_conceptual_translation;
-#                'Conceptual Translations: ' _ item;
-#                      '<div class="sequence-container">';
-#                           '<pre>> wildtype<br />' _ feature.wildtype_conceptual_translation _ '</pre>';
-#                           '<pre>> wildtype<br />' _ feature.mutant_conceptual_translation _ '</pre>';
-#                      '</div>';                 
-#                 END;
-             '</div>';
+
+                location_effects = feature.location_effects;
+
+                IF location_effects;
+                    FOREACH effect_type IN location_effects.sort;
+                        effect = location_effects.$effect_type;
+                    s = s _ 'Affects: ' _ effect_type.replace('_', ' ') _ '<br />';
+                    END;
+                END;
+                feature.affects = s;
+
+               '</div>';
               END; # of feature loop
-      order = (feature_type == 'Clone') ? ['item', 'fstart','fstop','start','stop'] : ['item', 'affects', 'fstart','fstop','start','stop'];
-       build_data_table(order=order,
-                         columns={  item    => 'item',
-                                    affects => 'Affects',
-                                    fstart    => 'feature start',
-                                    fstop    => 'feature stop',
-                                    start    => 'start relative to feature',
-                                    stop    => 'stop relative to feature'
-                                 },
-                         passed_data=fields.features_affected.data.$feature_type,
-                         key=feature_type);
-            END;
 
+              order = (feature_type == 'Clone') ? ['item', 'fstart','fstop','start','stop'] : ['item', 'affects', 'fstart','fstop','start','stop'];
+              build_data_table(order=order,
+                             columns={  item    => 'item',
+                                        affects => 'Affects',
+                                        fstart    => 'feature start',
+                                        fstop    => 'feature stop',
+                                        start    => 'start relative to feature',
+                                        stop    => 'stop relative to feature'
+                                     },
+                             passed_data=fields.features_affected.data.$feature_type,
+                             key=feature_type);
+            END; # END toggle wrapper
+          ELSE; # If array not returned
+            pluralize(feature_type.replace('_', ' ')) _ ': ' _ fields.features_affected.data.$feature_type _ ' <br />';
+          END;
 
-       END; # of feature type loop; 
+       END; # of feature type loop;
    END; # of Features Affected WRAPPER;
 
    WRAPPER $field_block title="Detection Method" key="detection_method";

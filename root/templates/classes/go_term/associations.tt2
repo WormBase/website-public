@@ -5,11 +5,13 @@ WRAPPER $field_block title="Genes" key="genes";
     build_data_table (
 		order = [ 
 			'gene',
+            'species',
 			'evidence_code',
 			'description'
 			],
 		columns = {				 		
 			gene => 'Gene',
+            species => 'Species',
 			evidence_code => 'Evidence Code',
 			description => 'Description'
 			},
@@ -20,10 +22,12 @@ WRAPPER $field_block title="CDS" key="cds";
 	build_data_table (
 		order = [ 
 			'cds',
+            'species',
 			'evidence_code'
 			],
 		columns = {
 			cds => 'CDS',
+            species => 'Species',
 			evidence_code => 'Evidence Code'
 			},
 		key = 'cds');

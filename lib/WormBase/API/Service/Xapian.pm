@@ -70,7 +70,7 @@ sub search {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my ($query, $error) =$class->_setup_query($q, $class->qp, 2|512|16); 
+    my ($query, $error) =$class->_setup_query($q, $class->qp, 2|512|16);
     my $enq       = $class->db->enquire ( $query );
 
     if($type && $type =~ /paper/){
@@ -118,14 +118,15 @@ sub search_exact {
     if( $type ){
       $query=$class->_setup_query("\"$type$q\" $type..$type", $class->qp,1|2);
       $enq       = $class->db->enquire ( $query );
-      @mset = $enq->matches( 0,2 ) if $enq;
+      @mset = $enq->matches( 0,1 ) if $enq;
 
       if (!$mset[0]){
-        $query=$class->_setup_query($class->_uniquify($q, $type) . "* $type..$type", $class->qp,1|2);
+        $query=$class->_setup_query($class->_uniquify($q, $type) . " $type..$type", $class->qp,1|2);
         $enq       = $class->db->enquire ( $query );
-        @mset = $enq->matches( 0,2 ) if $enq;
+        @mset = $enq->matches( 0,1 ) if $enq;
       }
-      @mset = undef if (@mset != 1);
+      # reset if result is not the exact query
+      @mset = undef if ($mset[0] && ($mset[0]->get_document()->get_value(1) ne $q ));
     }
 
     if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
@@ -189,7 +190,7 @@ sub search_count_estimate {
     return $amt;
 }
 
- 
+
 =item extract_data <item> <query>
 
 Extract data from a L<Search::Xapian::Document>. Defaults to
@@ -199,7 +200,7 @@ using Storable::thaw.
 
 sub extract_data {
     my ( $self,$item, $query ) = @_;
-    my $data=Storable::thaw( $item->get_data ); 
+    my $data=Storable::thaw( $item->get_data );
     return $data;
 }
 
@@ -233,7 +234,7 @@ sub _split_fields {
     my ($d, $label) = ($2, $1);
     my $array = $ret->{$label} || ();
     $data = $3;
-    
+
     if($d =~ m/^WB/){
       $d = $self->_get_tag_info($c, $d, $self->modelmap->WB2ACE_MAP->{$label} ? $label : undef);
     }elsif($label =~ m/^author$/){
@@ -242,7 +243,7 @@ sub _split_fields {
         $id = $2;
         $l = $1;
       }
-      $d = { id =>$id || $d, 
+      $d = { id =>$id || $d,
              label=>$l || $d,
              class=>'person'}
     }
@@ -261,7 +262,7 @@ sub _get_tag_info {
       $aceclass = $class unless $aceclass;
   }
   if(!$class || (($class ne 'protein') && ($class ne 'interaction'))){ # this is a hack to deal with the Protein labels
-                           # we can remove this if Protein?Gene_name is updated to 
+                           # we can remove this if Protein?Gene_name is updated to
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
@@ -303,7 +304,7 @@ sub _get_tag_info {
   return $tag;
 }
 
-# why is species sometimes getting stored weird in xapian? 
+# why is species sometimes getting stored weird in xapian?
 # eg. c_caenorhabditis_elegans instead of c_elegans
 #
 # Snips of possible BioProject suffix. For example,

@@ -1,12 +1,12 @@
 <h2 class="locus">[% fields.name.data.label %]</h2>
-            
+
 [%
 
 WRAPPER highlight_box;
    status;
 
   WRAPPER $field_block title="Gene" key="corresponding_gene";
-          tags2link(fields.corresponding_gene.data);
+          cell_content(fields.corresponding_gene.data);
   END;
 
   other_names;

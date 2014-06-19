@@ -16,7 +16,7 @@ use parent 'WormBase::Web::Controller';
 #
 #   And things that don't handle objects
 #   /resources/reagents
-# 
+#
 ##############################################################
 
 # This would/should/could be a listing of all resources
@@ -27,7 +27,7 @@ sub resources :Path('/resources') :Args(0)   {
       $c->stash->{noboiler} = 1;
     }
 
-    $c->stash->{is_class_index} = 1;      
+    $c->stash->{is_class_index} = 1;
     $c->stash->{template} = "resources/report.tt2";
     $c->stash->{class}   = 'all';
 
@@ -41,16 +41,16 @@ sub resources_class_index :Path('/resources') :Args(1)  {
     if (defined $c->req->param("inline")) {
       $c->stash->{noboiler} = 1;
     }
-    
+
     $c->stash->{template} = "resources/report.tt2";
 
     # get static widgets/layout info for this page
     $self->_setup_page($c);
-    
+
     if (defined $c->config->{'sections'}->{'resources'}->{$class}){
       $c->stash->{section} = 'resources';
       $c->stash->{class}   = $class;
-      
+
       # Special cases: like reagents
       # These will have a property of "static" set to "true".
       # We need to generate links to these a bit differently
@@ -59,12 +59,12 @@ sub resources_class_index :Path('/resources') :Args(1)  {
       #     /resources/class/object/widget
       # We handle it here so that in the future we can just add a property.
       if (defined $c->config->{'sections'}->{'resources'}->{$class}->{static}) {
-	  $c->stash->{is_static} = 1;	  
+	  $c->stash->{is_static} = 1;
       }
 
       # We're also an index page, some for classes that DO handle objects.
-      $c->stash->{is_class_index} = 1;      
-      
+      $c->stash->{is_class_index} = 1;
+
     } else {
 	# We aren't a recognized resource (ie specified in config or a custom action).
 	# Detach to a soft 404.
@@ -81,7 +81,7 @@ sub resources_report :Path("/resources") Args(2) {
 }
 
 # TH 2011.09.05: I think this is deprecated.
-## Documentation: 
+## Documentation:
 ## Two directory hierarcy:
 ## about: privacy, copyright, mission statement (one document)
 ## advisory_board
@@ -106,7 +106,7 @@ sub downloads :Path('/resources/downloads') Args(0) {
 #
 #  These have their own tt2 and
 #  set up a custom sidebar.
-#  
+#
 #################################
 #sub advisory_board :Path("/resources/advisory_board") Args {
 #    my ($self,$c, @args) = @_;
@@ -129,7 +129,7 @@ sub _get_report {
     $c->stash->{section}  = 'resources';
     $c->stash->{template} = 'resources/report.tt2';
 
-    unless ($c->config->{sections}->{resources}->{$class}) { 
+    unless ($c->config->{sections}->{resources}->{$class}) {
       # class doesn't exist in this section
       $c->res->redirect($c->uri_for('/search',"all","$class $name")->path."?redirect=1", 307);
       $c->detach;
@@ -143,10 +143,12 @@ sub _get_report {
     my $api = $c->model('WormBaseAPI');
     my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
 
-    #$c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1")  
-    #  if( !($object->{label}) || lc($object->{id}) ne lc($name) || lc($object->{class}) ne lc($class));
-
-    $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
+    if(!($object->{label}) || $object->{id} ne $name || lc($object->{class}) ne lc($class)){
+      $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1", 307);
+      return;
+    } else {
+      $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
+    }
 
     # get static widgets/layout info for this page
     $self->_setup_page($c);

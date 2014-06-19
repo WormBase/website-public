@@ -3,7 +3,7 @@
 #
 #  Widgets, Fields, Subfields
 #
-####################################################  
+####################################################
 %]
 
 [% MACRO evidence(data, id, text, label) BLOCK %]
@@ -18,10 +18,10 @@
     [% END %]
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
-    [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]: 
+    [% FOREACH type IN data.keys -%]
+        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]:
           [% IF (type == 'curatorial_remarks'); '<br />'; END; %]
-          [% tags2link(data.$type, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items') %]  
+          [% tags2link(data.$type, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items') %]
         [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
@@ -43,7 +43,7 @@
 [% END %]
 
 [% MACRO user_login_info BLOCK %]
-    [% UNLESS c.user_exists %]  
+    [% UNLESS c.user_exists %]
           <div style="padding:0.5em">
             You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login').path %]" >Login</a></h3> to use this feature
           </div>
@@ -57,7 +57,7 @@
 [% END %]
 
 [% BLOCK toggle %]
-    <div class="toggle [% IF lazy; 'load-toggle'; END; %]" 
+    <div class="toggle [% IF lazy; 'load-toggle'; END; %]"
          [% IF href; ' href="' _ href _ '"'; END; %]
          [% IF id; ' id="' _ id _ '"'; END; %]>
       <span style="float:left" class="ui-icon ui-icon-triangle-1-[% open ? 's' : 'e' %]"></span>
@@ -85,10 +85,10 @@
 
 [% MACRO extended_social_links BLOCK;
       IF c.user.open_ids;
-         FOREACH id IN c.user.open_ids;	 
+         FOREACH id IN c.user.open_ids;
 	    IF id.provider == 'twitter';
               '&nbsp;&nbsp;<a href="http://twitter.com/' _ id.screen_name
-                                    _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
+                                    _ '" class="twitter-follow-button" data-show-count="true">Follow @'
 	     			    _ id.screen_name
 				    _ '</a>'
 				    _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
@@ -111,12 +111,12 @@ END;
 [% END %]
 
 
- 
+
 [% MACRO issue_table(issues, issue_type) BLOCK %]
 [% IF issues %]
   [% USE time_dir = Time.Duration %]
 
-<!-- Eventually provide a filter of results 
+<!-- Eventually provide a filter of results
   <p>
   <h4>Filter (not wired yet)</h4>
 
@@ -157,7 +157,7 @@ END;
       <th>State</th>
       <th>Severity</th>
       [% UNLESS (issue_type == 'page') %]<th>Page</th>[% END %]
-      <th>Date</th> 
+      <th>Date</th>
       <th>Reported by</th>
       <th>Responsible</th>
       [% IF c.check_user_roles('admin') %]
@@ -167,31 +167,31 @@ END;
     [% even = 1 %]
     [% FOREACH IS IN issues %]
 
-      [% IF IS.is_private; 
+      [% IF IS.is_private;
          UNLESS (c.check_any_user_role('admin', 'curator') || (c.user.user_id == IS.reporter.user_id)); NEXT ; END;
       END;
       %]
 
 
       [% url = c.uri_for(c.controller('Tools').action_for('issue'),IS.id).path %]
-      <tr 
-        [% IF (even == 1); 
+      <tr
+        [% IF (even == 1);
 	     myclass='r0';
 	     even=0;
 	   ELSE;
 	      myclass='r1';
 	      even=1;
-	   END;	   
+	   END;
         %]
 	class="[% myclass %] [% IS.severity %] [% IS.state %]">
 
         <td><a href="[% url %]">[% IS.id %]</a></td>
-        <td ><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id).path %]">[% IS.title %]:</a> <i>[% txt = IS.content.chunk(30); txt.0; IF txt.1; '...'; END; %]</i></td> 
+        <td ><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id).path %]">[% IS.title %]:</a> <i>[% txt = IS.content.chunk(30); txt.0; IF txt.1; '...'; END; %]</i></td>
         <td>[% IF IS.is_private ; ' <em>private</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
-        <td>[% time_dir.ago(current_time - IS.timestamp, 1)  %]</td>  
+        <td>[% time_dir.ago(current_time - IS.timestamp, 1)  %]</td>
         <td>[% IF IS.reporter_id; linkUser(IS.reporter); END %]</td>
         <td>[% IF IS.responsible_id; linkUser(IS.responsible); END %]</td>
         [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
@@ -208,13 +208,13 @@ END;
     <div class="ui-state-highlight ui-corner-all" style="position:absolute; left:30%; top:0.6em;">
     <span class="ui-icon ui-icon-clock" style="float: left; margin-right: .3em;"></span>
     [% server_details("") %] in [% FILTER format("%2.2f") %][% c.stats.elapsed %][% END %]s
-         [%- IF c.stash.served_from_cache -%]; served from couch: 
-              <a target="_blank" href="http://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a> 
-              | 
-             <a target="_blank" href="http://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a> 
+         [%- IF c.stash.served_from_cache -%]; served from couch:
+              <a target="_blank" href="http://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a>
+              |
+             <a target="_blank" href="http://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a>
          [% END %]
-      [% cache %] 
-     
+      [% cache %]
+
     </div>
   [% END %]
 [% END %]
@@ -228,15 +228,15 @@ END;
        [% wb_id_field %]
        [% download_field %]
     </div>
-[% END %] 
+[% END %]
 
 [% #get page info %]
 [% BLOCK page_info %]
   [% path = c.req.path %]
   [% url = c.req.uri.path.remove('(\/+)$') %]
   [% label = c.req.args.-1 %]
-  [% IF (c.action.name == 'index'); label = 'home'; 
-    ELSIF c.action.name == 'me'; label = 'my wormbase'; 
+  [% IF (c.action.name == 'index'); label = 'home';
+    ELSIF c.action.name == 'me'; label = 'my wormbase';
     END; %]
   [% is_obj = object.name.data.defined('id') %]
   [% IF object.name.data.id; label = object.name.data.label; END; %]
@@ -252,7 +252,7 @@ END;
 
 
 [%# options:
-   print="always" to print the field even if there is no data 
+   print="always" to print the field even if there is no data
 %]
 
 [% BLOCK field_block %]
@@ -300,7 +300,7 @@ END;
     Parameters:
         order  : array of columns
         columns: hash ref associating columns to labels
-        key    : data key for accessing the stash        
+        key    : data key for accessing the stash
         passed_data : in lieu of passing a key for accessing data,
                       pass in pre-structured data as passed_data;
                       useful in cases when you want to change the processing heuristic.
@@ -314,7 +314,7 @@ END;
 
       local_data = passed_data ? passed_data : fields.$key.data;
 
-      UNLESS local_data.0.exists(order.0); 
+      UNLESS local_data.0.exists(order.0);
         IF ref(local_data) == 'ARRAY';
           # just print the list of objects
           cell_content(local_data);
@@ -329,7 +329,7 @@ END;
         FOREACH o IN order; headers.push(columns.$o); END;
 
         # generate table
-        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator);   
+        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator);
       END;
     END; # END of MACRO
 %]
@@ -338,14 +338,14 @@ END;
 
      This is Xq's original jquery data implementation with some
      sugar added to make it configurable.
-     
+
      It might be better to build the table directly from the data
      structure instead of formatting it into a html table and then
      styling via javascript.
 %]
-     
+
 [% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator) BLOCK %]
-  
+
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
        IF rows.size < 11 || (rows.size < 31 && table_headers.size < 3);
@@ -368,7 +368,7 @@ END;
       	  length          = 'true';
           lengthMenu      = '[[50, 100, 150, -1], [50, 100, 200, "All"]]';
           filter          = 'true';
-      	  info            = 'true'; 
+      	  info            = 'true';
       END;
 
      UNLESS table_build;
@@ -378,7 +378,7 @@ END;
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
     <thead>
         <tr>
-            [% FOREACH header IN table_headers %]  
+            [% FOREACH header IN table_headers %]
             <th>[% header %]</th>
             [% END %]
         </tr>
@@ -491,7 +491,7 @@ END; %]
 
   # Set to "xrefs" for WS236.
   FOREACH db IN xrefs_offline;
-     FOREACH xref IN db.keys; 
+     FOREACH xref IN db.keys;
      dbname = db.$xref.name;
 
      # Override database names in Acedb.
@@ -500,16 +500,16 @@ END; %]
       ELSE;
 	  dbname = db.$xref.name;
       END;
-       
+
       id    = db.$xref.accession;
       label = db.$xref.label;
 
       # This information is pulled from config which we might want to use in preference over ?Database;
       # Create a tooltip with information from information culled from both the database and our config.
       description = site.external_urls.$dname.description;
-      
+
       href= FILTER format(site.external_urls.$dbname.search); id; END;
- 
+
       # We'll use description info from the website and not the DB.
       # Should be a table of resource, ID linked to page description, maintainer.
       links = links _ external_link(href,id,label);
@@ -550,6 +550,8 @@ END; %]
           concatenated_links_cell(cell);
       ELSIF cell.defined('genotype');
           show_genotype(cell.genotype);
+      ELSIF cell.defined('footnotes');
+        cell_content(cell.text) _ format_footnotes(cell.footnotes);
       ELSE;
 
         # assumes that hash passed to cell should be output as the key followed by its value
@@ -583,6 +585,12 @@ END; %]
   END;
 %]
 
+[% MACRO format_footnotes(notes) BLOCK;
+  notes.join('');
+
+  END;
+%]
+
 [% MACRO empty_widget_check BLOCK;
   not_empty;
   FOREACH field IN fields.keys;
@@ -599,20 +607,20 @@ END; %]
 
 
 [% BLOCK status_bar %]
-<div style="float:right;padding:1em;"> | 
+<div style="float:right;padding:1em;"> |
 <button id="my-cart"></button> <a href="/bench">([% c.user_session.bench.register.size %])</a>
 </div>
 [% END %]
 
 
 [% BLOCK widget_sortable_block %]
- 
+
    <!-- start [% id %] widget -->
           <div id="widget-[% type %]" class="widget-container ui-corner-all">
                 <div class="ui-corner-top widget-header">
                     <div class="module-close ui-icon ui-icon-large ui-icon-close" wname="[% id %]" title="close"></div>
 [% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink" wname="[% id %]" title="pop out"></div>
-[% END %]              
+[% END %]
                     <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF c.config.installation_type == 'development' %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide ui-helper-hidden" title="move"></span>
@@ -622,23 +630,23 @@ END; %]
                 <div id="[%- id -%]-content" class="content">
                 [% content %]
                 </div>
-         
+
                 <div id="widget-footer" class="ui-helper-hidden">
 [% UNLESS (type.match('(tool)|(me)') || id == 'basic_search' ) %]
                     <a   onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,is_class_index? 'all': this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
-[% END %] 
+[% END %]
 [% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator", "editor") %]
                     <a  tip="edit" id="edit-button"  onClick='WB.StaticWidgets.edit("[% id %]");' class="button ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
     [% END %]
                     <a  tip="view history" id="history-button" onClick='WB.StaticWidgets.history("[% id %]");' class="button ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
 [% END %]
-                    
+
 
                 </div>
-        <div id="widget-feed"></div>  
+        <div id="widget-feed"></div>
 
-      </div> 
+      </div>
    <!-- end [% id %] widget -->
 
 [% END %]
@@ -647,9 +655,9 @@ END; %]
 [%#
  #####################################################
  #
- #  Server Details: the server that generated the 
- #  block of code. Mostly useful for debugging. 
- #  
+ #  Server Details: the server that generated the
+ #  block of code. Mostly useful for debugging.
+ #
  ####################################################
 %]
 [% MACRO server_details(title) PERL %]
@@ -733,7 +741,7 @@ olark.identify('2761-632-10-6316');/*]]>{/literal}*/</script><noscript><a href="
 %]
 
 
-[% MACRO other_names BLOCK; 
+[% MACRO other_names BLOCK;
       WRAPPER $field_block title="Other names" key="other_names";;
           fields.other_names.data.join(', ');
       END;
@@ -744,7 +752,7 @@ END;
    matches = c.stash.fields.best_blastp_matches.data;
    IF matches.hits;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
-    
+
       build_data_table(order=['evalue','taxonomy','hit','description','percent'],
                        columns={ taxonomy => 'Species',
                                  hit      => 'Hit',
@@ -761,7 +769,7 @@ END;
          '</div>';
     END;
   END;
-   
+
 
 
 
@@ -775,7 +783,7 @@ END;
    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
 
        build_data_table(order=['expression_pattern','gene', 'description','author'],
-                      columns={ 
+                      columns={
                           expression_pattern => 'Pattern',
                           gene => 'Gene',
                           description  => 'Description',
@@ -789,9 +797,9 @@ END;
 
 
 [% MACRO central_dogma BLOCK %]
-  
+
   NOT DONE!
-  
+
    <table border="1">
       <tr><td colspan="4">Central Dogma</td></tr>
 
@@ -816,7 +824,7 @@ END;
            %]
            </pre>
          </td>
-     
+
      <td>
           [% tag2link(gene_model.protein) %]
      </td>
@@ -842,24 +850,24 @@ END;
           [% IF fields.central_dogma.data.transcripts.size > 0 %]
             <div>
                <span class="rarrow"></span>
-            </div>  
+            </div>
             <div>
                 <b>Transcripts</b><br />
                  [% FOREACH item IN fields.central_dogma.data.transcripts %]
                    [% tag2link(item) %]<br />
-                 [% END %] 
+                 [% END %]
            </div>
          [% END %]
 
           [% IF fields.central_dogma.data.cds.size > 0 %]
             <div>
                <span class="rarrow"></span>
-            </div>  
+            </div>
             <div>
                 <b>CDS</b><br />
                  [% FOREACH item IN fields.central_dogma.data.cds %]
                    [% tag2link(item) %]<br />
-                 [% END %] 
+                 [% END %]
            </div>
          [% END %]
 
@@ -878,9 +886,9 @@ END;
                 tag2link(lab.laboratory);
             '</div>';
 
-            # Include the lab representative, if one exists         
+            # Include the lab representative, if one exists
             IF lab.representative;
-              "(" _ tag2link(lab.representative) _ ")" ; 
+              "(" _ tag2link(lab.representative) _ ")" ;
             END;
 
             IF !loop.last;
@@ -900,7 +908,7 @@ END;
 END;
 %]
 
-[%# 
+[%#
 
     Shared phenotypes and phenotypes_not_observed macros. These macros
     could conceivably be folded into shared/widgets/phenotypes.tt2, although
@@ -913,7 +921,7 @@ END;
    WRAPPER $field_block title="Phenotypes" key="phenotypes";
 
        build_data_table(order=['phenotype','description', 'evidence'],
-                        columns={ 
+                        columns={
                         phenotype    => 'Phenotype',
                         description => 'Description',
                 evidence  => 'Evidence'
@@ -928,13 +936,13 @@ END;
    WRAPPER $field_block title="Phenotypes NOT Observed" key="phenotypes_not_observed";
 
        build_data_table(order=['phenotype','evidence'],
-                        columns={ 
+                        columns={
                         phenotype    => 'Phenotype',
                 evidence  => 'Evidence'
                     },
                     key='phenotypes_not_observed');
-      END;            
-   
+      END;
+
  END;
 %]
 
@@ -953,7 +961,7 @@ END;
    END;
 
    IF contents != '';
-    IF no_toggle == 1 && contents;  
+    IF no_toggle == 1 && contents;
         #WRAPPER $field_block title="Remarks" key="remarks";
           '<h4>Remarks:</h4>';
             contents;
@@ -975,14 +983,14 @@ END;
 END;
 %]
 
-[% MACRO status BLOCK; 
+[% MACRO status BLOCK;
       WRAPPER $field_block title="Status" key="status";
            fields.status.data || 'Live';
       END;
 END;
 %]
 
-[% MACRO taxonomy BLOCK; 
+[% MACRO taxonomy BLOCK;
    # Don't display unless we have a genus and species
    IF fields.taxonomy.data.genus;
       WRAPPER $field_block title="Species" key="taxonomy";
@@ -1008,7 +1016,7 @@ END;
 %]
 
 
-[% MACRO wb_id_field BLOCK; 
+[% MACRO wb_id_field BLOCK;
    IF fields.name.data;
    WRAPPER $field_block title="WormBase ID";
           fields.name.data.id;
@@ -1050,13 +1058,13 @@ END;
       format_seq = format_seq _ line;
       UNLESS loop.last;
         format_seq = format_seq _ "\n";
-      END;  
+      END;
     END;
     format_seq;
 END;
 %]
 
-[% MACRO sequence(field_key, field_title, open_toggle) BLOCK; 
+[% MACRO sequence(field_key, field_title, open_toggle) BLOCK;
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
     IF fields.$field_key.data.defined;
@@ -1073,7 +1081,7 @@ END;
 
     FOREACH obj IN sequence_list;
       IF obj.defined('sequence');
-        seq = obj.sequence;  
+        seq = obj.sequence;
         NEXT IF seq.length == 0;
 
         # If parts of the feature commented on and possible have a highlighted region, then pass the parameters on:
@@ -1089,7 +1097,7 @@ END;
           format_seq = seq.match('\s') ? '>' _ object.name.data.label _ ' ' _ obj.header  _ "\n" _ seq  : format_sequence(seq, obj.header || object.name.data.label);
         END;
 
-        title = obj.header || 'sequence';    
+        title = obj.header || 'sequence';
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
         title_html = title | remove('(\<(/?[^\>]+)\>)');
         fname = object.name.data.id _ title_html _ '.fasta';
@@ -1113,12 +1121,12 @@ END;
               sequences.$obj.seq;
             END;
             IF (sequences.$obj.title.match('UTR') && sequences.$obj.seq.match('color'));
-              '<p id="fade" style="width:55em">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next</p>'; 
+              '<p id="fade" style="width:55em">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next</p>';
             END;
           END;
           '</div>';
         END;
-        
+
 
       END;
 
@@ -1132,7 +1140,7 @@ END;
 
 
 [% MACRO strains BLOCK;
-     venn("Carrying " _ tag2link(object.name.data) _ " alone", 
+     venn("Carrying " _ tag2link(object.name.data) _ " alone",
                                          fields.strains.data.carrying_gene_alone,
             "Available from the CGC",    fields.strains.data.available_from_cgc,
             "",                          fields.strains.data.carrying_gene_alone_and_cgc,
@@ -1161,10 +1169,10 @@ END;
 %]
 
 
-[%# 
+[%#
     #######################################################
 
-      Class-specific MACROS, used only by a single class 
+      Class-specific MACROS, used only by a single class
 
     #######################################################
 %]
@@ -1188,13 +1196,13 @@ END;
 		  WRAPPER toggle title=species _ '(' _ fields.$key.data.$species.size _ ' members)';
 		    IF key == 'current_genes';
 		      build_data_table(
-			  order=['locus', 'sequence'], 
+			  order=['locus', 'sequence'],
 			  columns={ locus    => 'Locus',
 				    sequence => 'Sequence' },
 			  passed_data=fields.$key.data.$species, key= key _ loop.index);
 		    ELSE;
 		      build_data_table(
-			  order=['former_name', 'new_name', 'sequence'], 
+			  order=['former_name', 'new_name', 'sequence'],
 			  columns={ former_name => 'Former name',
 				    new_name    => 'New name',
 				    sequence => 'Sequence' },
@@ -1204,11 +1212,11 @@ END;
 		END; # END of nested WRAPPER
            END; # END IF species contains data
          END; # END of SPECIES
-     END; # END of primary WRAPPER 
+     END; # END of primary WRAPPER
   END; # END of MACRO
 %]
 
-[%# 
+[%#
     #######################################################
 
       Page MACROS, used to construct class pages
@@ -1261,13 +1269,13 @@ END;
 
   # Conditionally set up different types of pages.
   IF is_class_index && ((!class || class == 'all') || (species && species != 'all'));
-    SET this_object_id    = 'all'; 
-    SET this_object_label = species; 
+    SET this_object_id    = 'all';
+    SET this_object_label = species;
     base = base _ '/index';
     arg1 = species;
     this_object_id = class;
-    IF species; 
-      section_fetch = 'species_list'; 
+    IF species;
+      section_fetch = 'species_list';
       IF class == 'all';
         section_fetch = c.config.sections.species_list.$species;
       ELSE;
@@ -1345,12 +1353,12 @@ END;
     tool_list = section_fetch.tools.keys.sort || [];
 
     # object pages automatically get the tree display
-    IF object.name.data.id; tool_list.unshift('tree'); 
+    IF object.name.data.id; tool_list.unshift('tree');
       IF c.check_any_user_role('admin'); tool_list.unshift('epic'); END;
     ELSIF (is_class_index && (class != 'all')); tool_list.unshift('schema'); END;
 
-    IF tool_list.size > 0; 
-      widgets.push({ title="Tools" type="title"}); 
+    IF tool_list.size > 0;
+      widgets.push({ title="Tools" type="title"});
     END;
     FOREACH widget_name IN tool_list;
         widget = c.config.sections.tools.$widget_name;
@@ -1360,14 +1368,14 @@ END;
         ELSE;
           NEXT IF widget.display == "index";
         END;
-        
+
         w = { id = widget_name
               title = widget.title
               href =  c.uri_for('/tools',widget.name, 'run').path _ '?inline=1&class=' _ class _ '&name=' _ this_object_id _ '&sequence=' _ this_object_id,
 
               type = 'tools'
               };
-      
+
         widgets.push(w);
     END;
 
@@ -1393,13 +1401,13 @@ END;
           <param name='autoplay' value="false">
           <param name='controller' value="true">
           <param name='loop' value="false">
-          
+
           <embed src="[% movie_path %]" width="600" height="400"
           scale="tofit" autoplay="false"
           controller="true" loop="false" bgcolor="#000000"
           pluginspage='http://www.apple.com/quicktime/download/'>
           </embed>
-      </object>     
+      </object>
   </div>
   [% END %]
 
@@ -1412,7 +1420,7 @@ END;
 
 
 
-[%# This is an expedient replication of report_page to support the userguide. 
+[%# This is an expedient replication of report_page to support the userguide.
     Instead of specifying in config a list of widgets, we just pass them in %]
 
 [% MACRO userguide_page BLOCK;
@@ -1427,18 +1435,18 @@ END;
   # We need to add a param for the top level category.
   IF category == 'index'; subcategory = 'any'; END;
 
-  FOREACH widget IN widget_list;    
+  FOREACH widget IN widget_list;
       hash = widget.keys;
       name = hash.0;
-      wtitle = widget.$name;    
-     
+      wtitle = widget.$name;
+
       # No need to append the name for our final path for class documentation; HACK HACK HACK!
       IF path.match("api-rest/class");
               myhref = c.uri_for('/rest','widget',path).path;
       ELSE;
               myhref = c.uri_for('/rest','widget',path,name).path;
       END;
-      
+
       w = { id    = name
             title = wtitle,
             href  = myhref,
@@ -1448,7 +1456,7 @@ END;
     widgets.push(w);
   END;
 
-  widgets.push({ title="Tools" type="title"}); 
+  widgets.push({ title="Tools" type="title"});
 
   FOREACH widget_name IN ['comment', 'issue'];
       t = widget_name FILTER ucfirst;
@@ -1475,11 +1483,11 @@ END;
  #
  #  Debugging
  #
- #    Simple view debugging. Should be passed the name 
+ #    Simple view debugging. Should be passed the name
  #    of the component since this is localized to the template
  #    (or block). That is, it doesn't work as expected when
  #    used via PROCESS or INCLUDE
- #  
+ #
  ####################################################
 %]
 
