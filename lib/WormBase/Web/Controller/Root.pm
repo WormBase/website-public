@@ -126,6 +126,23 @@ sub me :Path("/me") Args(0) {
     $c->response->headers->expires(time);
 }
 
+# Action added for Elsevier linking - issue #2086
+# Returns WormBase logo if paper with corresponding doi is located
+# Otherwise returns transparent png
+sub elsevier :Path("/elsevier/wblogo.png") Args(0) {
+    my ( $self, $c ) = @_;
+    my $doi = (split '\/', $c->req->param('doi'))[-1];
+    my $path = "transparent.png";
+
+    if($doi){
+      my $api = $c->model('WormBaseAPI');
+      my $object = $api->xapian->_get_tag_info($c, $doi, 'paper');
+      $path = "wblogo.png" if $object->{id} =~ /WBPaper\d{8}/;
+    }
+
+    $c->serve_static_file("root/img/buttons/" . $path);
+}
+
 #######################################################
 #
 #     CONFIGURATION - PROBABLY BELONGS ELSEWHERE
@@ -157,7 +174,7 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
       $c->serve_static_file($c->path_to("root/static/$path"));
   }
-  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw')) {
+  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw' || $path =~ /\.png/)) {
       $c->forward('WormBase::Web::View::TT');
   }
 }
