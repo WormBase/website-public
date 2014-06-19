@@ -188,12 +188,10 @@ sub get :Local Args(0) {
 
     $c->stash->{template} = 'species/report.tt2';
 
-    my $requested_class = $c->req->param('class');
-    my $name            = $c->req->param('name');
     my $doi             = $c->req->param('doi');
+    my $requested_class = $c->req->param('class') || ($doi && 'paper');
+    my $name            = $c->req->param('name') || ($doi && (split '\/', $doi)[-1]);
 
-    $requested_class ||= 'paper' if $doi;
-    $name ||= (split '\/', $doi)[-1] if $doi;
     $name =~ s/^\s+|\s+$//g;
 
     my $api    = $c->model('WormBaseAPI');
