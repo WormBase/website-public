@@ -66,7 +66,7 @@
         is ($CDS->{'data'}, undef, 'data correctly empty');
     }
 
-    # test overlaps_trascript
+    # test overlaps_transcript
     sub test_overlaps_transcript {
         my $pcr = $api->fetch({ class=> 'Pcr_oligo', name => 'sjj_Y18D10A.5_f' });
 
@@ -75,6 +75,18 @@
         my $transcript = $pcr->overlaps_transcript();
 
         is ($transcript->{'data'}, undef, 'data correctly empty');
+    }
+
+
+    # test overlaps_pseudogene
+    sub test_overlaps_pseudogene {
+        my $pcr = $api->fetch({ class=> 'Pcr_oligo', name => 'sjj_Y18D10A.5_f' });
+
+        can_ok('WormBase::API::Object::Pcr_oligo', ('overlaps_pseudogene'));
+
+        my $pseudogene = $pcr->overlaps_pseudogene();
+
+        is ($pseudogene->{'data'}, undef, 'data correctly empty');
     }
 
 }
