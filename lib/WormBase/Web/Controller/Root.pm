@@ -132,15 +132,19 @@ sub me :Path("/me") Args(0) {
 sub elsevier :Path("/elsevier/wblogo.png") Args(0) {
     my ( $self, $c ) = @_;
     my $doi = (split '\/', $c->req->param('doi'))[-1];
-    my $path = "transparent.png";
+    my $path = "transparent";
 
     if($doi){
       my $api = $c->model('WormBaseAPI');
       my $object = $api->xapian->_get_tag_info($c, $doi, 'paper');
-      $path = "wblogo.png" if $object->{id} =~ /WBPaper\d{8}/;
+      if($object->{id} =~ /WBPaper\d{8}/){
+        $object = $api->fetch({ class => 'Paper', name => $object->{id}})
+          or die "Could not fetch object";
+        $path = "wblogo" if $object->doi->{data} =~ /$doi/;
+      }
     }
 
-    $c->serve_static_file("root/img/buttons/" . $path);
+    $c->serve_static_file("root/img/buttons/$path.png");
 }
 
 #######################################################
