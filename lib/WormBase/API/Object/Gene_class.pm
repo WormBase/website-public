@@ -102,7 +102,7 @@ sub former_laboratory {
     my $former_lab_time = $object->Former_designating_laboratory;
     my ($former_lab_day) = ($former_lab_time =~ /(\d+\s\w+\s\d+)\s.+/);
     my $former_lab = $former_lab_time && $former_lab_time->right;
-    my $data = 	{ description => 'Former_designating_laboratory',
+    my $data = 	{ description => 'Former designating laboratory for the gene class and the date of retirement',
 		  data => $former_lab ? { lab => $self->_pack_obj($former_lab),
 					  time => "$former_lab_day" } : undef };
     return $data;
