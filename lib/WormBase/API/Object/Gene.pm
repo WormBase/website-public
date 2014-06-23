@@ -1393,7 +1393,7 @@ sub human_diseases {
     $data{'potential_model'} = @diseases ? \@diseases : undef;
 
     my @exp_diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Experimental_model;
-    $data{'experimental_model'} = \@exp_diseases;
+    $data{'experimental_model'} = @exp_diseases ? \@exp_diseases : undef;
   }
 
   if($data[0]){

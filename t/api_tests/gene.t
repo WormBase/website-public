@@ -98,6 +98,20 @@
         is  (@{$names->{data}}[1]->{id}, 'WBPerson10953', 'correct name returned');
 
     }
+
+    # This is an example test that checks whether a particular gene can be
+    # returned and whether the resulting data structure contains certain
+    # data entries.
+    sub test_diseases {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00000900' });
+
+        can_ok('WormBase::API::Object::Gene', ('human_diseases'));
+
+        my $human_diseases = $gene->human_diseases();
+
+        # Please keep test names/descriptions all lower case.
+        is($human_diseases->{'data'}->{'experimental_model'}, undef, 'undef returned when there is no data');
+    }
 }
 
 1;
