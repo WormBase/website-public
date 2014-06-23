@@ -81,6 +81,23 @@
         isnt($mpt_data, undef, 'data returned');
         isnt($mpt_data->{data}, undef, 'data structure returned');
     }
+
+        # Tests the named_by method of Gene
+    sub test_named_by {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00004679' });
+
+        can_ok('WormBase::API::Object::Gene', ('named_by'));
+
+        my $names = $gene->named_by();
+
+        # issue #2521 - mapping data when Combined undef
+        isnt($names, undef, 'data returned');
+        isnt($names->{data}, undef, 'data structure returned');
+        is  (scalar @{$names->{data}}, 2, 'correct amount of names returned');
+        is  (@{$names->{data}}[0]->{id}, 'WBPerson36', 'correct name returned');
+        is  (@{$names->{data}}[1]->{id}, 'WBPerson10953', 'correct name returned');
+
+    }
 }
 
 1;

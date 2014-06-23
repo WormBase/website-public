@@ -208,7 +208,7 @@ sub named_by {
     my $name = $self->_get_evidence($object->CGC_name, ['Person_evidence']);
     return {
         description => 'the person who named this gene',
-        data        => $name ? @{$name->{Person_evidence}}[0] : undef,
+        data        => $name ? \@{$name->{Person_evidence}} : undef,
     };
 }
 
