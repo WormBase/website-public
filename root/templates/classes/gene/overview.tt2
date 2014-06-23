@@ -1,8 +1,8 @@
-<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;"> 
-[% IF fields.gene_class.data %] 
+<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;">
+[% IF fields.gene_class.data %]
   ([% fields.gene_class.data.description %])
 [% END %]
-</span></h2> 
+</span></h2>
 
 
 
@@ -15,7 +15,7 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
-        markup_locus(fields.other_names.data.join(', '), 1); 
+        markup_locus(fields.other_names.data.join(', '), 1);
    END;
 
    IF fields.classification.data.type;
@@ -51,7 +51,7 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title="Named by" key="named_by";
-           tag2link(fields.named_by.data);
+           tags2link(fields.named_by.data);
    END;
 
 END;
@@ -67,13 +67,13 @@ IF fields.status.data == 'Dead';
 	'<br/>';
 	'<h3>';
 	'This gene is dead!<br/>';
-	
+
 	IF fields.merged_into.data;
 		'Merged into -> ';
 		tags2link(fields.merged_into.data);
 		'<br/>';
 	END;
-	
+
 	'</h3>';
 	#'</div>';
 	'<br/><br/>';
