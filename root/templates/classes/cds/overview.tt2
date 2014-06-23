@@ -17,6 +17,7 @@ WRAPPER highlight_box;
 END;
 
 
+
 '<div class="description">';
 	 markup(fields.description.data);
 
@@ -24,6 +25,16 @@ WRAPPER $field_block title="Identity" key='identity';
 	 fields.identity.data;
 END;
 
+WRAPPER $field_block title="Brief identification" key='brief';
+    brief_data  = fields.brief.data;
+    brief_data.brief _ " ";
+    IF brief_data.source;
+        " </br>(By " _ brief_data.source _ ": ";
+        external_link(brief_data.linkout, fields.brief.data.evidence_id);
+        " )";
+    END;
+END;
+    
 remarks;
 
 

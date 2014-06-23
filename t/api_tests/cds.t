@@ -35,6 +35,18 @@
 
     }
 
+    sub test_brief_identification {
+        my $cds = $api->fetch({ class => 'Cds', name => 'AH6.1'});
+        can_ok('WormBase::API::Object::Cds', ('brief'));
+
+        my $brief = $cds->brief();
+        isnt($brief->{'data'}, undef, 'data returned');
+        is($brief->{'data'}->{'brief'}, 'Guanylate cyclase receptor-type gcy-1', 'Correct brief identification');
+        is($brief->{'data'}->{'source'}, 'UniProt', 'Correct source specified');
+        is($brief->{'data'}->{'evidence_id'}, 'Q09435', 'Correct cross-referecne id specified');
+        is($brief->{'data'}->{'linkout'}, 'http://www.uniprot.org/uniprot/Q09435', 'Correct link to UniProt specified');
+    }
+
 }
 
 1;
