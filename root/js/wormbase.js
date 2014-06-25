@@ -2,23 +2,23 @@
  * WormBase
  * http://wormbase.org/
  *
- * WormBase copyright © 1999-2011 
- * California Institute of Technology, 
+ * WormBase copyright © 1999-2011
+ * California Institute of Technology,
  * Ontario Institute for Cancer Research,
- * Washington University at St. Louis, and 
+ * Washington University at St. Louis, and
  * The Wellcome Trust Sanger Institute.
  *
- * WormBase is supported by a grant from the 
- * National Human Genome Research Institute at the 
- * US National Institutes of Health # P41 HG02223 and the 
+ * WormBase is supported by a grant from the
+ * National Human Genome Research Institute at the
+ * US National Institutes of Health # P41 HG02223 and the
  * British Medical Research Council.
  *
- * author: Abigail Cabunoc 
+ * author: Abigail Cabunoc
  *         abigail.cabunoc@oicr.on.ca
  */
 
 
-+function(window, document, undefined){ 
++function(window, document, undefined){
   var location = window.location,
       $jq = jQuery.noConflict();
 
@@ -30,7 +30,7 @@
         body = $jq("#wrap"),
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0;
-    
+
     function init(){
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results"),
@@ -39,26 +39,26 @@
       if(history_on){
         $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
       }
-      
+
       if($jq(".user-history").size()>0){
         histUpdate(history_on);
       }
-      
+
 
       search_change(pageInfo['class']);
       if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
       comment.init(pageInfo);
       issue.init(pageInfo);
-        
+
 
       updateCounts(pageInfo['ref']);
       if(pageInfo['notify']){ displayNotification(pageInfo['notify']); }
-      
+
       navBarInit();
       pageInit();
 
-      if(searchAll.size()>0) { 
+      if(searchAll.size()>0) {
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
       } else {
@@ -76,11 +76,11 @@
         });
       }
     }
-    
-    
+
+
     function histUpdate(history_on){
       var uhc = $jq("#user_history-content");
-      
+
       ajaxGet($jq(".user-history"), "/rest/history?sidebar=1");
       if(uhc.size()>0 && uhc.text().length > 4) ajaxGet(uhc, "/rest/history");
       if(history_on){
@@ -89,12 +89,12 @@
       reloadWidget('activity');
       return;
     }
-   
+
     function ajaxError(xhr){
           var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '',
               statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
           return '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname 
+                  + '<p><a href="/tools/support?url=' + location.pathname
                   + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
                   + '">Let us know</a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
     }
@@ -125,7 +125,7 @@
                 toHide.children("a").removeClass("hover");
               }, 300)
         });
-        
+
         ajaxGet($jq(".status-bar"), "/rest/auth", undefined, function(){
           $jq("#bench-status").load("/rest/workbench");
           var login = $jq("#login");
@@ -143,11 +143,11 @@
           }
         });
     }
-    
+
     function pageInit(){
       var personSearch = $jq("#person-search"),
           colDropdown = $jq("#column-dropdown");
-      
+
       operator();
 
       $jq("#print").click(function() {
@@ -156,9 +156,9 @@
           $jq.ajax({
               type: "POST",
               url : '/rest/print',
-              data: {layout:layout}, 
+              data: {layout:layout},
               beforeSend:function(){
-                setLoading(print); 
+                setLoading(print);
               },
               success: function(data){
                 print.html('');
@@ -169,7 +169,7 @@
               }
             });
       });
-   
+
       $jq(".section-button").click(function() {
           var section = $jq(this).attr('wname');
           $jq("#nav-" + section).trigger("open");
@@ -187,8 +187,8 @@
           update: function(event, ui) { Layout.updateLayout(); }
         });
       }
-      
-      
+
+
       colDropdown.hover(function () {
           if(timer){
             $jq("#nav-bar").find("ul li .hover").removeClass("hover");
@@ -228,14 +228,14 @@
         Layout.updateLayout();
         body.toggleClass("sidebar-hidden");
       });
-      
+
       // Should be a user supplied site-wide option for this.
       // which can be over-ridden on any widget.
       // Toggle should empty look of button
       $jq("#hide-empty-fields").click(function() {
             body.toggleClass("show-empty");
       });
-      
+
       if(personSearch.size()>0){
           ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
             checkSearch(personSearch);
@@ -254,12 +254,12 @@
                             if(data.email && data.status_ok){
                               var re = new RegExp($jq("input#email").val(),"gi");
                               if (((email.match(re))) || !($jq("input#email").val())){
-                                $jq("#email").attr("disabled", "disabled").parent().hide(); 
+                                $jq("#email").attr("disabled", "disabled").parent().hide();
                               }
                               $jq("input#wbemail").attr("value", email).parent().show();
                             }else{
                               $jq("input#wbemail").attr("value", "").parent().hide();
-                              $jq("#email").removeAttr("disabled").parent().show(); 
+                              $jq("#email").removeAttr("disabled").parent().show();
                             }
                             $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").show();
                             $jq("input#wbid").attr("value", data.wbid);
@@ -296,10 +296,10 @@
           });
       }
     }
-    
-    
-    
-    
+
+
+
+
     function widgetInit(){
       var widgetHolder = $jq("#widget-holder"),
           widgets = $jq("#widgets"),
@@ -310,7 +310,7 @@
         return;
       }
       Scrolling.sidebarInit();
-            
+
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
       Layout.Breadcrumbs.init();
@@ -321,9 +321,9 @@
       }else{
         Layout.openAllWidgets();
       }
-      
+
 //       if(listLayouts.children().size()==0){ajaxGet(listLayouts, "/rest/layout_list/"  + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"));}
-      
+
       // used in sidebar view, to open and close widgets when selected
       widgets.find(".module-load").click(function() {
         var widget_name = $jq(this).attr("wname"),
@@ -354,9 +354,9 @@
         Scrolling.sidebarMove();
         return false;
       });
-      
-      
-      
+
+
+
           // used in sidebar view, to open and close widgets when selected
       widgets.find(".module-close").click(function() {
         var widget_name = $jq(this).attr("wname"),
@@ -366,29 +366,29 @@
           Scrolling.scrollUp(content.parents("li"));
           moduleMin(content.prev().find(".module-min"), false, "minimize", function(){
             nav.removeClass("ui-selected");
-            content.parents("li").removeClass("visible"); 
+            content.parents("li").removeClass("visible");
             Layout.updateLayout();
           });
 
         Scrolling.sidebarMove();
         return false;
       });
-      
-      
+
+
       function height(list){
-        var len = 0; 
-        for(var i=-1, l = list.length; i++<l;){ 
+        var len = 0;
+        for(var i=-1, l = list.length; i++<l;){
           len += list.eq(i).height();
-        } 
+        }
         return len;
       }
-      
 
 
-      
-     
 
-      
+
+
+
+
       widgetHolder.children("#widget-header").disableSelection();
 
       widgetHolder.find(".module-max").click(function() {
@@ -421,17 +421,17 @@
         openWidget(widget_name, nav, content, ".left");
         return false;
       });
-      
+
       widgetHolder.find(".module-min").click(function() {
         moduleMin($jq(this), true);
       });
-      
-      
+
+
 
       widgetHolder.find(".reload").click(function() {
         reloadWidget($jq(this).attr("wname"));
       });
-      
+
       $jq(".feed").click(function() {
         var url=$jq(this).attr("rel"),
             div=$jq(this).parent().next("#widget-feed");
@@ -439,7 +439,7 @@
         div.slideToggle('fast');
       });
     }
-    
+
     function effects(){
       var content = $jq("#content");
       $jq("body").delegate(".toggle", 'click', function(){
@@ -461,19 +461,19 @@
         ev.children(".ev-more").toggleClass('open').children('.ui-icon').toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
         ev.children(".ev").toggle('fast');
       });
-      
+
       content.delegate(".slink", 'mouseover', function(){
           var slink = $jq(this);
           Plugin.getPlugin("colorbox", function(){
-            slink.colorbox({data: slink.attr("href"), 
-                            width: "800px", 
+            slink.colorbox({data: slink.attr("href"),
+                            width: "800px",
                             height: "550px",
                             scrolling: false,
                            onComplete: function() {$jq.colorbox.resize(); },
                             title: function(){ return slink.next().text() + " " + slink.data("class"); }});
           });
       });
-      
+
       content.delegate(".bench-update", 'click', function(){
         var update = $jq(this),
             wbid = update.attr("wbid"),
@@ -481,13 +481,13 @@
             url = update.attr("ref") + '?name=' + escape(update.attr("name")) + "&url=" + escape(update.attr("href")) + "&save_to=" + save_to + "&is_obj=" + update.attr("is_obj");
         $jq(".star-status-" + wbid).find("#save").toggleClass("ui-icon-star-yellow ui-icon-star-gray");
         $jq("#bench-status").load(url, function(){
-          if($jq("div#" + save_to + "-content").text().length > 3){ 
+          if($jq("div#" + save_to + "-content").text().length > 3){
             reloadWidget(save_to, 1);
           }
         });
         return false;
       });
-      
+
       $jq("body").delegate(".generate-file-download", 'click', function(e){
           var filename = $jq(this).find("#filename").text(),
               content = $jq(this).find("#content").text();
@@ -498,13 +498,13 @@
               script      : '/rest/download'
           });
         });
-      });     
-      
+      });
+
     }
-    
+
     function moduleMin(button, hover, direction, callback) {
       var module = $jq("#" + button.attr("wname") + "-content");
-      
+
       if (direction && (button.attr("title") !== direction) ){ if(callback){ callback()} return; }
       module.slideToggle("fast", function(){Scrolling.sidebarMove(); if(callback){ callback()}});
       button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").closest(".widget-container").toggleClass("minimized");
@@ -514,7 +514,7 @@
 
       Layout.updateLayout();
     }
-    
+
 
     function displayNotification (message){
         if(notifyTimer){
@@ -527,7 +527,7 @@
         notifyTimer = setTimeout(function() {
               notification.fadeOut(400);
             }, 3e3)
-            
+
         notification.click(function() {
           if(notifyTimer){
             clearTimeout(notifyTimer);
@@ -536,20 +536,20 @@
           $jq(this).hide();
         });
     }
-    
 
-       
+
+
    function systemMessage(action, messageId){
      var systemMessage = $jq(".system-message"),
          notifications = $jq("#notifications");
       if(action === 'show'){
 //         systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
         notifications.css("top", "20px");
-        Scrolling.set_system_message(20); 
+        Scrolling.set_system_message(20);
       }else{
         systemMessage.animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
         $jq.post("/rest/system_message/" + messageId);
-        Scrolling.set_system_message(0); 
+        Scrolling.set_system_message(0);
         notifications.css("top", "0");
       }
   }
@@ -577,9 +577,9 @@
         }
       });
     }
-    
+
       function operator(){
-        
+
         $jq("#issue-box-tab").click(function(){
           var isBox = $jq(this).parent();
           isBox.toggleClass("minimize");//.children().toggle();
@@ -594,7 +594,7 @@
     /***************************/
     // Search Bar functions
     // author: Abigail Cabunoc
-    // abigail.cabunoc@oicr.on.ca      
+    // abigail.cabunoc@oicr.on.ca
     /***************************/
 
     //The search bar methods
@@ -619,19 +619,19 @@
                   }
               });
           },
-          minLength: 3,
+          minLength: 2,
           select: function( event, ui ) {
               location.href = ui.item.url;
           }
       });
-      
-    
+
+
     }
 
 
-    
+
     function search(box) {
-        if(!box){ box = "Search"; }else{ cur_search_type = cur_search_type || 'all'; } 
+        if(!box){ box = "Search"; }else{ cur_search_type = cur_search_type || 'all'; }
         var f = $jq("#" + box).val();
         if(f === "search..." || !f){
           f = "";
@@ -656,11 +656,11 @@
         }
         new_search = search_for + " " + new_search.replace(/[_]/, ' ');
       }
-      
+
       $jq(".current-search").text(new_search);
     }
-    
-    
+
+
     function search_species_change(new_search) {
       cur_search_species_type = new_search;
       if(new_search === "all"){
@@ -678,9 +678,9 @@
     var results = div.find("#results"),
         searchData = (results.size() > 0) ? results.data("search") : undefined;
     if(!searchData){ formatExpand(results); return; }
-    SearchResult(searchData['query'], searchData["type"], searchData["species"], searchData["widget"], searchData["nostar"], searchData["count"], div);  
+    SearchResult(searchData['query'], searchData["type"], searchData["species"], searchData["widget"], searchData["nostar"], searchData["count"], div);
   }
-  
+
   function formatExpand(div){
       var expands = div.find(".text-min");
       for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
@@ -711,8 +711,8 @@
         $jq(this).load($jq(this).attr("href"));
       });
     }
-    
-    
+
+
     function formatResults(div){
       formatExpand(div);
 
@@ -723,10 +723,10 @@
         }
       });
     }
-    
+
     formatResults(container.find("div#results"));
     init();
-    
+
     if(total > 10 || !total){
       if(container.find(".lazyload-widget").size() > 0){ Scrolling.search(); }
       resultDiv.click(function(){
@@ -736,9 +736,9 @@
 
         $jq(this).removeClass("load-results");
         page++;
-        
+
         setLoading(div);
-        
+
         res.html("loading...");
         div.load(url, function(response, status, xhr) {
           total = div.find("#page-count").data("count") || total;
@@ -758,7 +758,7 @@
             $jq(this).html(msg + xhr.status + " " + xhr.statusText);
           }
           Scrolling.sidebarMove();
-          
+
           div.find(".load-star").each(function(){
             $jq(this).load($jq(this).attr("href"));
           });
@@ -769,12 +769,12 @@
         Scrolling.sidebarMove();
       });
     }
-    
+
   } //end SearchResult
 
   function loadResults(url){
     var allSearch = $jq("#all-search-results");
-    allSearch.empty(); 
+    allSearch.empty();
     ajaxGet(allSearch, url, undefined, function(){
       checkSearch(allSearch);
     });
@@ -783,7 +783,7 @@
       scrollToTop();
     return false;
   }
-  
+
   function scrollToTop(){
     try{
       $jq(window).scrollTop(0);
@@ -792,7 +792,7 @@
     Scrolling.resetSidebar();
     return undefined;
   }
-  
+
   function allResults(type, species, query, widget){
     var url = "/search/" + type + "/" + query + "/1?inline=1" + (species && "&species=" + species),
         allSearch = $jq("#all-search-results"),
@@ -819,13 +819,13 @@
                   }
                 });
               });
-              
+
               searchSummary.find(".ui-icon-close").click(function(){
                 loadResults(url);
                 searchSummary.find(".ui-selected").removeClass("ui-selected");
                 return false;
               });
-              
+
               searchSummary.find(".load-results").click(function(){
                 var button = $jq(this);
                 loadResults(button.attr("href"));
@@ -850,15 +850,15 @@
     }catch(err){}
   }
 
-   
+
     function openWidget(widget_name, nav, content, column){
         var url     = nav.attr("href");
-            
+
         content.closest("li").appendTo($jq("#widget-holder").children(column));
 
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
-          ajaxGet(content, url, undefined, function(){ 
+          ajaxGet(content, url, undefined, function(){
             Scrolling.sidebarMove();checkSearch(content);
             Layout.resize();
           });
@@ -868,24 +868,24 @@
         content.parents("li").addClass("visible");
         return false;
     }
-    
+
     function minWidget(widget_name){
       moduleMin($jq("#" + widget_name).find(".module-min"), false, "minimize");
     }
-    
+
     function reloadWidget(widget_name, noLoad, url){
         var con = $jq("#" + widget_name + "-content");
         if(con.text().length > 4)
           ajaxGet(con, url || $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
-    
-      
+
+
   function addWidgetEffects(widget_container) {
       widget_container.find("div.module-min").hover(
         function () {
           var button = $jq(this);
           button.addClass((button.hasClass("show") ? "ui-icon-circle-triangle-e" : "ui-icon-circle-triangle-s"));
-        }, 
+        },
         function () {
           var button = $jq(this);
           button.removeClass("ui-icon-circle-triangle-s ui-icon-circle-triangle-e").addClass((button.hasClass("show") ? "ui-icon-triangle-1-e" : "ui-icon-triangle-1-s"));
@@ -898,8 +898,8 @@
         }
       );
   }
-    
-    
+
+
 var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
@@ -917,20 +917,20 @@ var Layout = (function(){
         this.wl = { list: list };
         return this.wl;
         })();
-      
+
     function resize(){
       if(sColumns !== (sColumns = (document.documentElement.clientWidth < maxWidth))){
         sColumns ? columns(100, 100) : readHash();
         if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
       }
       if ((body.hasClass('table-columns')) && title.size() > 0 &&
-        ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
+        ((wHolder.children(".left").width() + wHolder.children(".right").width()) >
         (title.outerWidth())))
         columns(100, 100, 1);
       if(ref && (ref.hasClass("widget-narrow") !== (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
     }
-    
+
     function columns(leftWidth, rightWidth, noUpdate){
       var sortable = wHolder.children(".sortable"),
           tWidth = wHolder.innerWidth(),
@@ -966,7 +966,7 @@ var Layout = (function(){
           }
         }, "xml");
     }
-    
+
     function resetPageLayout(layout){
       layout = layout || wHolder.data("layout");
       if(layout['hash']){
@@ -997,7 +997,7 @@ var Layout = (function(){
        }, 700)
       return false;
     }
-    
+
     function updateURLHash (left, right, leftWidth, minimized, sidebar) {
       var l = $jq.map(left, function(i) { return getWidgetID(i);}),
           r = $jq.map(right, function(i) { return getWidgetID(i);}),
@@ -1009,20 +1009,20 @@ var Layout = (function(){
       location.hash = ret;
       return ret;
     }
-    
+
     function readHash() {
       if(reloadLayout === 0){
         var hash = location.hash,
             arr,
             h = (arr = decodeURI(hash).match(/^[#](.*)$/)) ? arr[1].split('-') : undefined;
         if(!h){ return; }
-        
+
         var l = h[0],
             r = h[1],
             w = (h[2] * 10),
             m = h[3],
             s = (hash.charAt(hash.length-1) === '-');
-            
+
         if(l){ l = $jq.map(l.split(''), function(i) { return getWidgetName(i);}); }
         if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
         if(m){ m = $jq.map(m.split(''), function(i) { return getWidgetName(i);}); }
@@ -1031,14 +1031,14 @@ var Layout = (function(){
         reloadLayout--;
       }
     }
-    
 
-    
+
+
     //returns order of widget in widget list in radix (base 36) 0-9a-z
     function getWidgetID (widget_name) {
         return widgetList.list.indexOf(widget_name).toString(36);
     }
-   
+
     function openAllWidgets(){
       var hash = "",
           wlen = $jq("#navigation").find("li.module-load:not(.tools,.me,.toggle)").size();
@@ -1049,8 +1049,8 @@ var Layout = (function(){
       window.location.hash = hash + "--10";
       return false;
     }
-    
-    //returns widget name 
+
+    //returns widget name
     function getWidgetName (widget_id) {
         return widgetList.list[parseInt(widget_id,36)];
     }
@@ -1064,7 +1064,7 @@ var Layout = (function(){
       if(callback){ callback(); }
       });
     }
-    
+
     function readLayout(holder){
       var left = holder.children(".left").children(".visible")
                       .map(function() { return this.id;})
@@ -1119,9 +1119,9 @@ var Layout = (function(){
         updateLayout(undefined, hash);
       }
     }
-    
-    
-    
+
+
+
 
   var Breadcrumbs = (function(){
     var bc = $jq("#breadcrumbs"),
@@ -1129,10 +1129,10 @@ var Layout = (function(){
         hiddenContainer,
         bWidth,
         bCount;
-        
+
     function init() {
       if (!bc || ((bCount = bc.children().size()) < 3)) { return; }
-      var children = bc.children(),        
+      var children = bc.children(),
           hidden = children.slice(0, (bCount - 2)),
           shown = children.slice((bCount - 2)),
           expand;
@@ -1142,7 +1142,7 @@ var Layout = (function(){
 
       bc.append('<span id="breadcrumbs-expand" class="ui-icon-large ui-icon-triangle-1-e tl" tip="exapand"></span>').append(hiddenContainer).append(shown);
       bc.children(':last').addClass("page-title").before(" &raquo; ");
-    
+
       expand = $jq("#breadcrumbs-expand");
       expand.click( function(){
         (bExp = !bExp) ? show($jq(this)) : hide($jq(this));
@@ -1150,22 +1150,22 @@ var Layout = (function(){
       bWidth = hiddenContainer.width();
       hide(expand);
     }
-    
+
     function show(expand){
       hiddenContainer.animate({width:bWidth}, function(){ hiddenContainer.css("width", "auto");}).css("visibility", 'visible');
       expand.attr("tip", "minimize").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-w");
     }
-    
+
     function hide(expand){
-      hiddenContainer.animate({width:0}, function(){ hiddenContainer.css("visibility", 'hidden');});     
+      hiddenContainer.animate({width:0}, function(){ hiddenContainer.css("visibility", 'hidden');});
       expand.attr("tip", "expand").removeClass("ui-icon-triangle-1-w").addClass("ui-icon-triangle-1-e");
     }
-    
+
     return {
      init: init
     }
   })();
-    
+
   return {
       resize: resize,
       deleteLayout: deleteLayout,
@@ -1196,12 +1196,12 @@ var Scrolling = (function(){
       scrollingDown = 0,
       count = 0, //semaphore
       titles;
-                 
+
   function resetSidebar(){
     static = 0;
     sidebar.stop(false, true).css('position', 'relative').css('top', 0);
   }
-  
+
   function goToAnchor(anchor){
       var elem = document.getElementById(anchor),
           scroll = isScrolledIntoView(elem) ? undefined : $jq(elem).offset().top - system_message - 10;
@@ -1212,24 +1212,24 @@ var Scrolling = (function(){
         scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
       }
   }
-  
+
   function scrollUp(elem){
     var elemBottom = $jq(elem).offset().top + $jq(elem).height(),
         docViewBottom = $window.scrollTop() + $window.height();
-    if((elemBottom <= docViewBottom) ){ 
+    if((elemBottom <= docViewBottom) ){
       body.stop(false, true).animate({
           scrollTop: $window.scrollTop() - elem.height() - 10
       }, "fast", function(){ Scrolling.sidebarMove(); });
     }
   }
-    
+
   function isScrolledIntoView(elem){
       var docViewTop = $window.scrollTop(),
           docViewBottom = docViewTop + ($window.height()*0.75),
           elemTop = $jq(elem).offset().top;
       return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
-  
+
   function sidebarMove() {
       if(!sidebar)
         return;
@@ -1259,28 +1259,28 @@ var Scrolling = (function(){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
-            } 
+            }
           }
-        }else if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){ 
+        }else if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
           count++; //Add counting semaphore to lock
-          //close lowest section. delay for animation. 
+          //close lowest section. delay for animation.
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
         }else{
           resetSidebar();
         }
-      } 
+      }
     }
-  
+
   function sidebarInit(){
     sidebar   = $jq("#navigation");
     offset = sidebar.offset().top;
     widgetHolder = $jq("#widget-holder");
-    
+
     $window.scroll(function() {
       Scrolling.sidebarMove();
     });
   }
-  
+
   var search = function searchInit(){
       if(loadcount >= 6){ return; }
       $window.scroll(function() {
@@ -1294,15 +1294,15 @@ var Scrolling = (function(){
         }
       });
     };
-  
+
   function set_system_message(val){
     system_message = val;
   }
-  
+
   return {
     sidebarInit:sidebarInit,
     search:search,
-    set_system_message:set_system_message, 
+    set_system_message:set_system_message,
     sidebarMove: sidebarMove,
     resetSidebar:resetSidebar,
     goToAnchor: goToAnchor,
@@ -1320,30 +1320,30 @@ var Scrolling = (function(){
             return -1;
         }
     }
-      
-      
+
+
   function updateCounts(url){
     var comments = $jq(".comment-count");
     if(comments.size() > 0)
       comments.load("/rest/feed/comment?count=1;url=" + url);
   }
 
-  
+
   function validate_fields(email,username, password, confirm_password, wbemail){
       if( (email.val() ==="") && (!wbemail || wbemail.val() === "")){
-                email.focus().addClass("ui-state-error"); 
-                email.closest('#issues-new').find(".anon").removeClass("anon"); 
+                email.focus().addClass("ui-state-error");
+                email.closest('#issues-new').find(".anon").removeClass("anon");
                 return false;
       } else if( email.val() && (validate_email(email.val(),"Not a valid email address!")===false)) {
                 email.focus().addClass("ui-state-error");
-                email.closest('#issues-new').find(".anon").removeClass("anon"); 
+                email.closest('#issues-new').find(".anon").removeClass("anon");
                 return false;
       } else if(password) {
           if( password.val() ===""){
                 password.focus().addClass("ui-state-error");return false;
           } else if( confirm_password && (password.val() !== confirm_password.val())) {
               alert("The passwords do not match. Please enter again"); password.focus().addClass("ui-state-error");return false;
-          }  
+          }
       } else if( username && username.val() ==="") {
                 username.focus().addClass("ui-state-error"); return false;
       }  else {
@@ -1357,9 +1357,9 @@ var Scrolling = (function(){
     if (apos<1||dotpos-apos<2)
       {alert(alerttxt);return false;}
     else {return true;}
-  } 
-  
-  
+  }
+
+
   var comment = {
     init: function(pageInfo){
       comment.url = pageInfo['ref'];
@@ -1392,11 +1392,11 @@ var Scrolling = (function(){
     cmDelete: function(cm){
        var $id=cm.attr("id"),
            url= cm.attr("rel");
-      
+
       $jq.ajax({
         type: "POST",
         url : url,
-        data: {method:"delete",id:$id}, 
+        data: {method:"delete",id:$id},
         success: function(data){
                       updateCounts(url);
           },
@@ -1405,9 +1405,9 @@ var Scrolling = (function(){
             cm.innerHTML(error);
           }
       });
-      cm.parent().remove(); 
+      cm.parent().remove();
     }
-    
+
   }
 
 
@@ -1436,8 +1436,8 @@ var Scrolling = (function(){
           type: 'POST',
           url: rel,
           dataType: 'json',
-          data: {title:feed.find("#issue-title option:selected").val(), 
-                content: content, 
+          data: {title:feed.find("#issue-title option:selected").val(),
+                content: content,
                 name: name.val(),
                 email: email.val(),
                 url: url || issue.url,
@@ -1477,7 +1477,7 @@ var Scrolling = (function(){
               error: function(xhr,status,error) {
                 widget.find(".content").html(ajaxError(xhr));
                 }
-          }); 
+          });
     },
     edit: function(wname, rev) {
       var widget_id = wname.split("-").pop(),
@@ -1502,7 +1502,7 @@ var Scrolling = (function(){
       }
       widget.find("a.button").removeClass("ui-state-highlight");
       $jq("#nav-static-widget-" + widget_id).text(title.val());
-      if(rev_id) { url = url + "?rev=" + rev_id; } 
+      if(rev_id) { url = url + "?rev=" + rev_id; }
       w_content.load(url);
     },
     delete_widget: function(widget_id){
@@ -1516,7 +1516,7 @@ var Scrolling = (function(){
           error: function(xhr,status,error) {
               $jq("li#static-widget-" + widget_id).find(".content").html(ajaxError(xhr));
           }
-        }); 
+        });
       }
     },
     history: function(wname){
@@ -1527,15 +1527,15 @@ var Scrolling = (function(){
         widget.find("a#history-button").toggleClass("ui-state-highlight");
       }else{
         var widget_id = wname.split("-").pop(),
-            history = $jq('<div id="' + wname + '-history"></div>'); 
+            history = $jq('<div id="' + wname + '-history"></div>');
         history.load("/rest/widget/static/" + widget_id + "?history=1");
         widget.find("div.content").append(history);
         widget.find("a#history-button").addClass("ui-state-highlight");
       }
     }
   }
-  
-  
+
+
   function historyOn(action, value, callback){
     if(action === 'get'){
         Plugin.getPlugin("colorbox", function(){
@@ -1543,14 +1543,14 @@ var Scrolling = (function(){
             if(callback) callback();
         });
     }else{
-      $jq.post("/rest/history", { 'history_on': value }, function(){ 
-        histUpdate(value == 1 ? 1 : undefined); 
+      $jq.post("/rest/history", { 'history_on': value }, function(){
+        histUpdate(value == 1 ? 1 : undefined);
         if(callback) callback(); });
       if($jq.colorbox) $jq.colorbox.close();
       $jq(".user-history").add("#user_history-content").html("<div><span id='fade'>Please wait, updating your history preferences</span></div>");
     }
   }
-  
+
   function loadRSS(id, url){
     var container = $jq("#" + id);
     setLoading(container);
@@ -1564,7 +1564,7 @@ var Scrolling = (function(){
           }
           var txt = '<div id="results"><ul>';
           for(var i=-1, entry; (entry = feeds.entries[++i]);){
-            txt += '<div class="result"><li><div class="date" id="fade">' 
+            txt += '<div class="result"><li><div class="date" id="fade">'
                 + entry.publishedDate.substring(0, 16) + '</div>'
                 + '<a href="' + entry.link + '">' + entry.title + '</a></li>'
                 + '<div class="text-min">' + entry.content.replace(/(\<\/?p\>|\<br\>)/g, '') + '</div></div>';
@@ -1585,11 +1585,11 @@ var Scrolling = (function(){
           url: 'https://www.google.com/accounts/o8/id'
       },
       facebook: {
-          name: 'Facebook',      
+          name: 'Facebook',
           url:  'http://facebook.anyopenid.com/'
       }
   };
-  
+
   var providers = $jq.extend({}, providers_large);
 
   var openid = {
@@ -1607,16 +1607,16 @@ var Scrolling = (function(){
         // var w = 600;
         // var screenx = (screen.width/2) - (w/2 );
         // var screeny = (screen.height/2) - (h/2);
-        
+
         // var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
         // win2.focus();
         window.location = url;
       }
   };
 
-    
+
 	function setupCytoscape(data, types, clazz){
-        
+
         /* Converts element attributes to their appropriate mapped values
          * Any non-matching attributes will be matched to the "other" mapping
          *     if exists
@@ -1624,7 +1624,7 @@ var Scrolling = (function(){
             * elementType: nodes or edges
             * attr: some key under data[elementType][i].data
             * mapping: obj mapping oldVal: newVal for attr
-            * (toType): new values will be put into this attr, if attr 
+            * (toType): new values will be put into this attr, if attr
             *   shouldn't be touched
         */
         function mapAttr(elementType, attr, mapping, toType){
@@ -1638,38 +1638,38 @@ var Scrolling = (function(){
                 }
             }
         }
-        
+
         // Execute custom mappers
         for(var i=0; i < data.mappers.length; i++){
             var m = data.mappers[i];
             mapAttr(m.elementType, m.attribute, m.mapping, m.toType);
         }
-        
+
         // Color of each type, in order.  Matches legend.  See interaction_details.tt2
         var edgeColor = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E" ];
         var typeColorMapper = function(){
             var map = {};
             for(var i=0; i < types.length; i++){
                 // Predicted always black
-                map[ types[i] ] = 
+                map[ types[i] ] =
                     (types[i] == 'Predicted') ? '#999' : edgeColor[i];
             }
             return map;
         }();
         //mapAttr('edges', 'type', typeColorMapper, 'color');
-        
+
         +function increaseBaseWidth(baseWidth){
             for(var i=0; i < data['edges'].length; i++){
                 data['edges'][i]['data']['width'] += baseWidth;
             }
         }(1);
-        
+
         Plugin.getPlugin('cytoscape_js',function(){
-            
+
             var legend = $jq('#cyto_legend');
-            
+
             $jq( "#cy" ).cytoscape({
-                
+
             style: cytoscape.stylesheet()
                 .selector('node')
                 .css({
@@ -1688,7 +1688,7 @@ var Scrolling = (function(){
                     'opacity':0.4,
                     'line-color': 'data(color)',
                     'line-style': 'solid'
-                    
+
                 })
                 .selector('edge[type="Predicted"]')
                 .css({
@@ -1712,20 +1712,20 @@ var Scrolling = (function(){
                     'border-color': 'black',
                     'border-width': 2,
                 }),
-            
+
             elements: data,
-            
+
             layout: {
                 name: 'arbor',
             },
 
             ready: function(){
                 window.cy = this;
-                
+
                 resetChecked();
                 updateEdgeFilter();
                 updateNodeFilter();
-                
+
                 legend.find('input:checkbox').click(function(){
                     if(this.name == 'interactionToggle'){
                         if(this.checked){
@@ -1741,44 +1741,44 @@ var Scrolling = (function(){
                             legend.find('input:checkbox[name="phenotype"]').prop('checked',false);
                         }
                     }
-                    
+
                     updateEdgeFilter();
                     updateNodeFilter();
                 });
-                
-                cy.on('tap', 'node', function(e){ 
+
+                cy.on('tap', 'node', function(e){
                     window.open(e.cyTarget.data().link); });
-                
+
             }
-                
+
             });
-            
+
             function resetChecked(){
                 legend.find('input:checkbox').map(function(){
                     var t = $jq(this);
-                    if (t.attr('name') == 'type'){ 
+                    if (t.attr('name') == 'type'){
                         t.prop('checked', (clazz === 'Predicted' ? true : (!t.val().match('Predicted'))));
                     }else if(!(clazz === 'WBProcess' && t.val().match('nearby'))){
                         // don't check nearby if process page
                         t.prop('checked', true);
                     }
                 });
-                
+
             }
-            
-            // Hide all edges, show a subset, then hide all visible members of 
+
+            // Hide all edges, show a subset, then hide all visible members of
             // each non-asserted subset thereafter
             function updateEdgeFilter(){
-                /* for all elements: 
-                 * make true those which 
+                /* for all elements:
+                 * make true those which
                  *  edge "type" value match the values of "type" checkboxes
                  *  edge "direction" value match the values of "direction" checkboxes
-                 * 
+                 *
                  * NOTE: Can use cy.filter( function(i, ele) ) instead
                  */
-                
-                cy.elements('edge').hide(); 
-                
+
+                cy.elements('edge').hide();
+
                 // Get arrays of valid edge types
                 var edgeTypes = legend.find('input[name="type"]:checked')
                     .map(function(){ return this.getAttribute('value'); }).get()
@@ -1786,13 +1786,13 @@ var Scrolling = (function(){
                     .map(function(){ return this.getAttribute('value'); }).get();
                 var edgePhens = legend.find('input[name="phenotype"]:checked')
                     .map(function(){ return this.getAttribute('value'); }).get();
-                
-                var nearbyExists = legend.find('input[name=nearby]').size() > 0 ? 
+
+                var nearbyExists = legend.find('input[name=nearby]').size() > 0 ?
                     true : false;
-                var nearbyChecked = 
-                    legend.find('input[name=nearby]:checked').size() > 0 ? 
+                var nearbyChecked =
+                    legend.find('input[name=nearby]:checked').size() > 0 ?
                     true : false;
-                
+
                 // restore checked edge types
                 cy.elements('edge').filter(function(i, ele){
                     /**console.log({
@@ -1804,11 +1804,11 @@ var Scrolling = (function(){
                         (!ele.data().phenotype || $jq.inArray(ele.data().phenotype, edgePhens) > -1) &&
                         (!ele.data().type      || $jq.inArray(ele.data().type,      edgeTypes) > -1) &&
                         (!ele.data().direction || $jq.inArray(ele.data().direction, edgeDirs ) > -1) &&
-                        (   
+                        (
                             !nearbyExists || // is nearby asserted?
                             ele.data().nearby == 0 || // non-nearby edges will show regardless
-                            (nearbyChecked && ele.data().nearby == 1) 
-                        ) 
+                            (nearbyChecked && ele.data().nearby == 1)
+                        )
                     ){
                         return true;
                     }else{
@@ -1816,39 +1816,39 @@ var Scrolling = (function(){
                     }
                 }).show();
             }
-            
+
             // Show all nodes then hide all non-connected
             function updateNodeFilter(){
                 cy.elements('node').show();
-                
+
                 // Interactor types
                 var intTypes = legend.find('input[name=nodes]:not(:checked)')
                     .map(function(){ return this.getAttribute('value'); }).get();
-                
+
                 for (var i=0; i < intTypes.length; i++){
-                    var type = intTypes[i]; 
+                    var type = intTypes[i];
                     cy.elements('node[^mainNode][ntype = "'+ type +'"]').hide();
                 }
-                
+
                 // Hide nodes with no visible edges
                 cy.elements('node[^mainNode]').filter(function(i, ele){
                     return ele.edgesWith('').allAre(':hidden');
                 }).hide();
 
             }
-    
+
         });
-        
-		
+
+
 	}
-	
+
 	function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
         Plugin.getPlugin("markitup-wiki", callback);
       });
       return;
     }
-    
+
     var Plugin = (function(){
       var plugins = new Array(),
           css = new Array(),
@@ -1871,12 +1871,12 @@ var Scrolling = (function(){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
                         tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css"
           };
-          
 
-      
-      
+
+
+
       function getScript(name, url, stylesheet, callback) {
-        
+
        function LoadJs(){
            css[name] = true;
            loadFile(url, true, function(){
@@ -1884,21 +1884,21 @@ var Scrolling = (function(){
               plugins[name] = true;
            });
         }
-        
+
         if(stylesheet){
          loadFile(stylesheet, false, LoadJs());
         }else{
            LoadJs();
         }
       }
-      
-      
+
+
       function loadFile(url, js, callback) {
         var head = document.documentElement,
             script = document.createElement( js ? "script" : "link"),
             done = false;
         loading = true;
-        
+
         if(js){
           script.src = url;
         }else{
@@ -1906,12 +1906,12 @@ var Scrolling = (function(){
           script.rel="stylesheet";
           script.type = "text/css";
         }
-        
+
         function doneLoad(){
             done = true;
             loading = false;
             if(callback)
-              callback();   
+              callback();
         }
 
         if(js){
@@ -1919,15 +1919,15 @@ var Scrolling = (function(){
           if(!done && (!this.readyState ||
             this.readyState === "loaded" || this.readyState === "complete")){
             doneLoad();
-          
+
               script.onload = script.onreadystatechange = null;
               if( head && script.parentNode){
                 head.removeChild( script );
               }
             }
           };
-          
-          
+
+
         }else{
           script.onload = function () {
             doneLoad();
@@ -1963,19 +1963,19 @@ var Scrolling = (function(){
             }
           }, 10);
         }
-        
+
         head.insertBefore( script, head.firstChild);
         return undefined;
       }
 
-      
+
       function getPlugin(name, callback){
         var script = pScripts[name],
             css = pStyle[name];
         loadPlugin(name, script, css, callback);
         return;
       }
-      
+
       function loadPlugin(name, url, stylesheet, callback){
         if(!plugins[name]){
           getScript(name, url, !css[name] ? stylesheet : undefined, callback);
@@ -1988,13 +1988,13 @@ var Scrolling = (function(){
         }
         return;
       }
-      
+
       return {
         getPlugin: getPlugin,
         loadFile: loadFile
       };
     })();
-    
+
     return{
       // initiate page
       init: init,                                   // initiate all js on any wormbase page
@@ -2040,7 +2040,7 @@ var Scrolling = (function(){
       comment: comment,                             // add comment to a page
       issue: issue,                                 // submit an issue
 
-      // miscellaneous 
+      // miscellaneous
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
@@ -2059,7 +2059,7 @@ var Scrolling = (function(){
         window.$jq = $jq;
       }
   });
-  
+
   window.WB = WB;
 }(this,document);
 
@@ -2069,7 +2069,7 @@ var Scrolling = (function(){
 
 if(typeof String.prototype.trim !== 'function') {
   String.prototype.trim = function() {
-    return this.replace(/^\s+|\s+$/g, ''); 
+    return this.replace(/^\s+|\s+$/g, '');
   }
 }
 
