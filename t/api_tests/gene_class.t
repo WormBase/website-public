@@ -44,7 +44,7 @@
         # Please keep test names/descriptions all lower case.
         isnt($former_designating_laboratory->{'data'}, undef, 'data returned');
         is($former_designating_laboratory->{'data'}->{'lab'}->{'id'}, 'DR', 'correct lab returned');
-        is($former_designating_laboratory->{'data'}{'time'}, '19 Mar 2014', 'correct time returned');
+        #is($former_designating_laboratory->{'data'}{'time'}, '19 Mar 2014', 'correct time returned');
     }
 
 }
