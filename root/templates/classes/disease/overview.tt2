@@ -37,16 +37,53 @@
 
   '<div class="description">';
     markup(fields.definition.data);
-
-   WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
-     tags2link(fields.genes_biology.data);
-   END;
-
-   WRAPPER $field_block title="Genes by orthology to human disease gene" key="genes_orthology";
-     tags2link(fields.genes_orthology.data);
-   END;
-
   '</div>';
+    
+  WRAPPER $field_block title="Genes by orthology to human disease gene" key="genes_orthology";
+    genes_orthology_data = fields.genes_orthology.data;
+    
+    FOREACH gene_obj IN genes_orthology_data;
+        ortholog_links = [];
+        FOREACH omim_id IN gene_obj.human_orthologs;
+            omim_link = external_link('OMIM',"OMIM:" _ omim_id,omim_id);
+            ortholog_links.push(omim_link);
+        END;
+    
+        gene_obj.formatted_orthologs = ortholog_links.join('</br>');
+    END;
+     
+    build_data_table( order=['gene', 'relevance', 'formatted_orthologs'],
+	    columns={
+            gene => 'Gene',
+            relevance => 'Disease Relevance',
+            formatted_orthologs => 'Human Orthologs'
+        }, key="genes_orthology",
+	    passed_data=genes_orthology_data);
+  END;
+
+  WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
+    
+    genes_biology_data = fields.genes_biology.data;
+    
+    FOREACH gene_obj IN genes_biology_data;
+        ortholog_links = [];
+        FOREACH omim_id IN gene_obj.human_orthologs;
+            omim_link = external_link('OMIM',"OMIM:" _ omim_id,omim_id);
+            ortholog_links.push(omim_link);
+        END;
+    
+        gene_obj.formatted_orthologs = ortholog_links.join('</br>');
+    END;
+     
+    build_data_table( order=['gene', 'relevance', 'formatted_orthologs'],
+	    columns={
+            gene => 'Gene',
+            relevance => 'Disease Relevance',
+            formatted_orthologs => 'Human Orthologs'
+        },  key="genes_biology",
+	    passed_data=genes_biology_data);
+  END;
+
   remarks;
 
 %]
