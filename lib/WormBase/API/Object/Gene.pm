@@ -571,10 +571,11 @@ sub fpkm_expression {
         map {
             my @fpkm_entry = $_->row;
             my $label = $fpkm_entry[2];
+            my $name = $self->_pack_obj($fpkm_entry[2]);
             my $value = $fpkm_entry[0];
             my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
             {
-                label => "$label",
+                label => $name,
                 value => "$value",
                 project => "$project",
                 life_stage => "$life_stage"
