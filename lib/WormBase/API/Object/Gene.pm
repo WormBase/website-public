@@ -872,21 +872,25 @@ sub microarray_topology_map_position {
     my $object = $self->object;
 
     my $datapack = {
-        description => 'microarray topology map',
+        description => 'microarray topography map',
         data        => undef,
     };
 
     return $datapack unless @{$self->sequences};
     my @segments = $self->_segments && @{$self->_segments};
     return $datapack unless $segments[0];
-    my @p = map { $_->info }
-            $segments[0]->features('experimental_result_region:Expr_profile')
-        or return $datapack;
-    my %data = map {
-        $_ => $self->_pack_obj($_, eval { 'Mountain ' . $_->Expr_map->Mountain })
-    } @p;
 
-    $datapack->{data} = \%data if %data;
+    my @profiles = $segments[0]->features('experimental_result_region:Expr_profile');
+    my @p = map {  $_->info } @profiles or return $datapack;
+
+    my @data = map {{
+        'expr_profile' => {
+            'class' => 'expr_profile',
+            'label' => $_,
+            'id' => $_}
+            }} @p;
+
+    $datapack->{data} = \@data if @data;
     return $datapack;
 }
 
