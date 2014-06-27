@@ -22,17 +22,8 @@ END;
 	 markup(fields.description.data);
 
 WRAPPER $field_block title="Identity" key='identity';
-	 fields.identity.data;
-END;
-
-WRAPPER $field_block title="Brief identification" key='brief';
-    brief_data  = fields.brief.data;
-    brief_data.brief _ " ";
-    IF brief_data.source;
-        " </br>(By " _ brief_data.source _ ": ";
-        external_link(brief_data.linkout, fields.brief.data.evidence_id);
-        " )";
-    END;
+    id_data = fields.identity.data;
+	evidence(id_data.evidence, 'Brief_identification', id_data.text);
 END;
     
 remarks;

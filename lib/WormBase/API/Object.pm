@@ -511,7 +511,7 @@ sub _get_evidence {
               $packed = $self->_pack_obj($evidence);
           } 
 
-          $class = (defined $class) ? lc("$class") : undef;
+          $class = (defined $class) ? "$class" : undef;
           push( @evidences, $packed ? $packed : { id=> "$evidence", label => "$label", class => $class });
       }
       $type =~ s/(Curator)_confirmed/$1/;

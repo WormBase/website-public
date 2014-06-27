@@ -119,23 +119,17 @@ sub _build_type {
 # laboratory { }
 # Supplied by Role
 
-sub brief{
+
+sub identity{
     my ($self) = @_;
     my $cds = $self->object;
-    my $brief_id = $cds->Brief_identification;
-    my ($source) = $brief_id && $brief_id->at('Accession_evidence');
-    my $evidence_id = $source && $source->right();
-    my $linkout = undef;
-    if ($source eq 'UniProt'){
-        $linkout = "http://www.uniprot.org/uniprot/$evidence_id";
-    }
-    return { description => 'Brief description of the CDS',
-             data        => $brief_id ? { brief => "$brief_id",
-                                          source => "$source",
-                                          evidence_id => "$evidence_id",
-                                          linkout => $linkout } : undef};
+    my $description = $cds->Brief_identification;
+    my $evidence = $self->_get_evidence($description);
+    return {
+      description => 'Brief description of the CDS',
+      data        => $description ? { text => "$description", evidence => $evidence } : undef
+    };
 }
-    
 
 sub partial{
     my ($self) = @_;

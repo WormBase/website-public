@@ -365,13 +365,13 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
-        || eval {$object->Corresponding_CDS->Concise_description}
         || eval {$object->Corresponding_CDS->Brief_identification}
         || eval { $object->Gene_class->Description }
         || $self->name->{data}->{label} . ' gene';
 
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
-    my $evidence = $self->_get_evidence($evs[0]);
+    my $evidence = $self->_get_evidence($description)
+        || $self->_get_evidence(shift @evs);
 
     return {
       description => "A manually curated description of the gene's function",
