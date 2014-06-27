@@ -76,6 +76,24 @@
            'contains links to gene lin-15A');
 
     }
+
+    # Test links to topo maps
+    sub test_linking_to_topo_maps {
+        my $host = $configuration->{'host'};
+        my $port = $configuration->{'port'};
+
+        my $url_html = "http://$host:$port/rest/widget/gene/WBGene00015099/expression?download=1&content-type=text%2Fhtml";
+        my $response_html = get($url_html);
+
+        ok($response_html =~ /B0280\.1\b/, 'lists a topo map');
+        ok($response_html =~ /B0280\.11\b/, 'lists another topo map');
+        ok($response_html =~ /href=\"\/species\/c_elegans\/expr_profile\/B0280.1\"/,
+           'contains links to one topo map');
+        ok($response_html =~ /href=\"\/species\/c_elegans\/expr_profile\/B0280.11\"/,
+           'contains links to another topo map');
+
+    }
+    
 }
 
 1;
