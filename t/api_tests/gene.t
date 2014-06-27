@@ -112,6 +112,18 @@
         # Please keep test names/descriptions all lower case.
         is($human_diseases->{'data'}->{'experimental_model'}, undef, 'undef returned when there is no data');
     }
+
+    # Test the analysis link in the fpkm table of the expression method 
+    # issue #2821 
+    sub test_fpkm_link {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
+        
+        can_ok('WormBase::API::Object::Gene', ('fpkm_expression_summary_ls'));
+
+        my $fpkm_expression = $gene->fpkm_expression_summary_ls();
+
+        isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{label}, undef, 'data returned');
+    }
 }
 
 1;
