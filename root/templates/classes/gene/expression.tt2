@@ -81,8 +81,10 @@ WRAPPER $field_block title="Microarray, Tiling Array and RNAseq";
 END;
 
 
-WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_topology_map_position";
-     tags2link(fields.microarray_topology_map_position.data);
+WRAPPER $field_block title="Microarray \"topography map\" data" key="microarray_topology_map_position";
+    FOREACH topo IN fields.microarray_topology_map_position.data;
+        tags2link(topo); "</br>";
+    END;
 END;
 
 WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) _ " of Action" key="anatomy_function";

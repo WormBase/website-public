@@ -12,7 +12,7 @@
     <div id="issue-box-content" class="ui-corner-tl">
       <div id="issues-new">
           <div>
-            Send us an email and we'll get back to you ASAP. Or you can search through our <a href="[% c.uri_for('/search','issue','*') %]">current issues</a>.
+            Send us an email and we'll get back to you ASAP. Or you can read our <a href="[% c.uri_for('/about','Frequently_asked_questions') %]">Frequently Asked Questions</a>.
           </div>
 
           [% UNLESS c.user_exists %]
@@ -41,5 +41,5 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
 [% END %]

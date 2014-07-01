@@ -87,23 +87,54 @@ sub synonym {
     };
 }
 
-sub genes_orthology {
+has 'genes_orthology' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__genes_orthology',
+);
+
+has 'genes_biology' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__genes_biology',
+);
+
+sub _get_gene_relevance{
+    my ($self, $gene) = @_;
+    my @omim_ace = $gene->DB_info->at('OMIM.gene') if $gene->DB_info;  #human homologs
+    my @omim = map {"$_";} @omim_ace;
+    my @relevance_ace = $gene->Disease_relevance;
+    my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
+ 
+    my $relevance;
+    my $data = {
+        gene => $self->_pack_obj($gene),
+        human_orthologs => @omim ? \@omim : undef,
+        relevance => @relevance ? \@relevance : undef
+    };
+
+    return $data;
+}
+
+sub _build__genes_orthology {
     my ($self) = @_;
-    my @genes = map { $self->_pack_obj($_) } $self->object->Gene_by_orthology;
+    my @data = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_orthology;
     return {
         description => 'Genes by orthology to human disease gene',
-        data        => @genes ? \@genes : undef ,
+        data        => @data ? \@data : undef ,
     };
 }
 
-sub genes_biology {
+sub _build__genes_biology {
     my ($self) = @_;
-    my @genes = map { $self->_pack_obj($_) } $self->object->Gene_by_biology;
+    my @genes = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_biology;
     return {
         description => 'Genes used as experimental models',
         data        => @genes ? \@genes : undef ,
     };
 }
+
+
 
 
 

@@ -50,6 +50,35 @@
         is  ($ntc->{data}[0]->{mutant_label}, 'mutant', 'correct mutant label');     
     }
 
+    # test a Sequence field that contains over 1000000 
+    # related to issue #2788 
+    sub test_sequence {
+        my $variation = $api->fetch({ class => 'Variation', name => 'WBVar01500129' });
+
+        can_ok('WormBase::API::Object::Variation', ('context'));
+
+        my $context = $variation->context();
+
+        isnt($context->{'data'}->{'placeholder'}, undef, 'data returned');
+        is($context->{'data'}->{'placeholder'}->{'seqLength'}, '7,566,000', 'The (over 1000000) comment is returned');
+    }
+
+    # test a Features Affected field that contains over 500 
+    # related to issue #2788 
+    sub test_features_affected {
+        my $variation = $api->fetch({ class => 'Variation', name => 'WBVar01500129' });
+
+        can_ok('WormBase::API::Object::Variation', ('features_affected'));
+
+        my $features_affected = $variation->features_affected();
+
+        isnt($features_affected->{'data'}, undef, 'data returned');
+        ok($features_affected->{'data'}->{'Gene'} =~ /Too many features to display/, 'Comment is returned for # genes > 500');
+        ok($features_affected->{'data'}->{'Predicted_CDS'} =~ /Too many features to display/, 'Comment is returned for # predicted cds > 500');
+        ok($features_affected->{'data'}->{'Transcript'} =~ /Too many features to display/, 'Comment is returned for # transcripts > 500');
+  
+    }
+
 }
 
 1;

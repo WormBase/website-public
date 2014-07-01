@@ -81,6 +81,49 @@
         isnt($mpt_data, undef, 'data returned');
         isnt($mpt_data->{data}, undef, 'data structure returned');
     }
+
+        # Tests the named_by method of Gene
+    sub test_named_by {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00004679' });
+
+        can_ok('WormBase::API::Object::Gene', ('named_by'));
+
+        my $names = $gene->named_by();
+
+        # issue #2521 - mapping data when Combined undef
+        isnt($names, undef, 'data returned');
+        isnt($names->{data}, undef, 'data structure returned');
+        is  (scalar @{$names->{data}}, 2, 'correct amount of names returned');
+        is  (@{$names->{data}}[0]->{id}, 'WBPerson36', 'correct name returned');
+        is  (@{$names->{data}}[1]->{id}, 'WBPerson10953', 'correct name returned');
+
+    }
+
+    # This is an example test that checks whether a particular gene can be
+    # returned and whether the resulting data structure contains certain
+    # data entries.
+    sub test_diseases {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00000900' });
+
+        can_ok('WormBase::API::Object::Gene', ('human_diseases'));
+
+        my $human_diseases = $gene->human_diseases();
+
+        # Please keep test names/descriptions all lower case.
+        is($human_diseases->{'data'}->{'experimental_model'}, undef, 'undef returned when there is no data');
+    }
+
+    # Test the analysis link in the fpkm table of the expression method 
+    # issue #2821 
+    sub test_fpkm_link {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
+        
+        can_ok('WormBase::API::Object::Gene', ('fpkm_expression_summary_ls'));
+
+        my $fpkm_expression = $gene->fpkm_expression_summary_ls();
+
+        isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{label}, undef, 'data returned');
+    }
 }
 
 1;

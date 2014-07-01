@@ -208,7 +208,7 @@ sub named_by {
     my $name = $self->_get_evidence($object->CGC_name, ['Person_evidence']);
     return {
         description => 'the person who named this gene',
-        data        => $name ? @{$name->{Person_evidence}}[0] : undef,
+        data        => $name ? \@{$name->{Person_evidence}} : undef,
     };
 }
 
@@ -365,12 +365,13 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
-        || eval {$object->Corresponding_CDS->Concise_description}
+        || eval {$object->Corresponding_CDS->Brief_identification}
         || eval { $object->Gene_class->Description }
         || $self->name->{data}->{label} . ' gene';
 
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
-    my $evidence = $self->_get_evidence($evs[0]);
+    my $evidence = $self->_get_evidence($description)
+        || $self->_get_evidence(shift @evs);
 
     return {
       description => "A manually curated description of the gene's function",
@@ -570,10 +571,11 @@ sub fpkm_expression {
         map {
             my @fpkm_entry = $_->row;
             my $label = $fpkm_entry[2];
+            my $name = $self->_pack_obj($fpkm_entry[2]);
             my $value = $fpkm_entry[0];
             my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
             {
-                label => "$label",
+                label => $name,
                 value => "$value",
                 project => "$project",
                 life_stage => "$life_stage"
@@ -871,21 +873,25 @@ sub microarray_topology_map_position {
     my $object = $self->object;
 
     my $datapack = {
-        description => 'microarray topology map',
+        description => 'microarray topography map',
         data        => undef,
     };
 
     return $datapack unless @{$self->sequences};
     my @segments = $self->_segments && @{$self->_segments};
     return $datapack unless $segments[0];
-    my @p = map { $_->info }
-            $segments[0]->features('experimental_result_region:Expr_profile')
-        or return $datapack;
-    my %data = map {
-        $_ => $self->_pack_obj($_, eval { 'Mountain ' . $_->Expr_map->Mountain })
-    } @p;
 
-    $datapack->{data} = \%data if %data;
+    my @profiles = $segments[0]->features('experimental_result_region:Expr_profile');
+    my @p = map {  $_->info } @profiles or return $datapack;
+
+    my @data = map {{
+        'expr_profile' => {
+            'class' => 'expr_profile',
+            'label' => $_,
+            'id' => $_}
+            }} @p;
+
+    $datapack->{data} = \@data if @data;
     return $datapack;
 }
 
@@ -1393,7 +1399,7 @@ sub human_diseases {
     $data{'potential_model'} = @diseases ? \@diseases : undef;
 
     my @exp_diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Experimental_model;
-    $data{'experimental_model'} = \@exp_diseases;
+    $data{'experimental_model'} = @exp_diseases ? \@exp_diseases : undef;
   }
 
   if($data[0]){

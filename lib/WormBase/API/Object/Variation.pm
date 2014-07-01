@@ -3,6 +3,7 @@ package WormBase::API::Object::Variation;
 use Moose;
 use Bio::Graphics::Browser2::Markup;
 use List::Util qw(first);
+use Number::Format;
 
 extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
@@ -735,7 +736,8 @@ sub context {
     if ($seqLen < 1000000){
         ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
     }else{
-        $placeholder = $seqLen ? sprintf("A sequence of length %d is too long to display.", $seqLen) : undef;
+        my $nf = new Number::Format();
+        $placeholder = $seqLen ? {seqLength => $nf->format_number($seqLen) } : undef;
     }
     return {
         description => 'wildtype and mutant sequences in an expanded genomic context',
@@ -831,7 +833,7 @@ sub features_affected {
                 push(@rows, $affected_hash);
             }
         } else {
-            $comment = sprintf("%d (Too many features to display. You may download them using <a href='/tools/wormmine/'>WormMine</a>.)", $count);
+            $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
         }
         $affects->{$type_affected} = @rows ? \@rows : ($count > 0) ? $comment : undef;
     } # end of FOR loop

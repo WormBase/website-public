@@ -134,8 +134,8 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
    # Mutation context
    WRAPPER $field_block title="Sequence" key="context";
     IF fields.context.data.placeholder;
-        fields.context.data.placeholder;"<br/>";
-        'You may download the full sequence from our ';
+        fields.context.data.placeholder.seqLength _ ' bp';"<br/>";
+        'Too large to display. Download full sequence from ';
         '<a href="ftp://ftp.wormbase.org/pub/wormbase/species/">FTP</a>';
         ' site.';
     ELSE;

@@ -38,7 +38,7 @@ Root level controller actions for the WormBase web application.
 =head2 INDEX
 
 =cut
- 
+
 sub index :Path Args(0) {
     my ($self,$c) = @_;
     $c->stash->{template} = 'index.tt2';
@@ -58,7 +58,7 @@ The default action is run last when no other action matches.
 sub default :Path {
     my ($self,$c) = @_;
     $c->log->warn("DEFAULT: couldn't find an appropriate action");
-    
+
     my $path = $c->request->path;
 
     # A user may be trying to request the top level page
@@ -87,7 +87,7 @@ sub soft_404 :Path('/soft_404') {
     # 404: Page not found...
 
     my $headers = $c->req->headers;
-    my $content_type 
+    my $content_type
         = $headers->content_type
         || $c->req->params->{'content-type'}
         || 'text/html';
@@ -100,7 +100,7 @@ sub soft_404 :Path('/soft_404') {
       message => "Page not found"
     );
 }
-    
+
 
 sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
@@ -114,7 +114,7 @@ sub footer :Path("/footer") Args(0) {
       my ($self,$c) = @_;
       $c->stash->{noboiler}=1;
       $c->stash->{template} = 'footer/default.tt2';
-} 
+}
 
 
 
@@ -126,6 +126,27 @@ sub me :Path("/me") Args(0) {
     $c->response->headers->expires(time);
 }
 
+# Action added for Elsevier linking - issue #2086
+# Returns WormBase logo if paper with corresponding doi is located
+# Otherwise returns transparent png
+sub elsevier :Path("/elsevier/wblogo.png") Args(0) {
+    my ( $self, $c ) = @_;
+    my $doi = (split '\/', $c->req->param('doi'))[-1];
+    my $path = "transparent";
+
+    if($doi){
+      my $api = $c->model('WormBaseAPI');
+      my $object = $api->xapian->_get_tag_info($c, $doi, 'paper');
+      if($object->{id} =~ /WBPaper\d{8}/){
+        $object = $api->fetch({ class => 'Paper', name => $object->{id}})
+          or die "Could not fetch object";
+        $path = "wblogo" if $object->doi->{data} =~ /$doi/;
+      }
+    }
+
+    $c->serve_static_file("root/img/buttons/$path.png");
+}
+
 #######################################################
 #
 #     CONFIGURATION - PROBABLY BELONGS ELSEWHERE
@@ -134,7 +155,7 @@ sub me :Path("/me") Args(0) {
 
 
 =head2 end
-    
+
     Attempt to render a view, if needed.
 
 =cut
@@ -144,12 +165,12 @@ sub me :Path("/me") Args(0) {
 #  Namespace collision?  Missing templates?  I can't figure it out.
 
 # This hack requires that the template be specified
-# in the dynamic action itself. 
+# in the dynamic action itself.
 
 
 sub end : ActionClass('RenderView') {
-  my ($self,$c) = @_;      
-  
+  my ($self,$c) = @_;
+
   # Forward to our view FIRST.
   # If we catach any errors, direct to
   # an appropriate error template.
@@ -157,7 +178,7 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
       $c->serve_static_file($c->path_to("root/static/$path"));
   }
-  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw')) {
+  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw' || $path =~ /\.png/)) {
       $c->forward('WormBase::Web::View::TT');
   }
 }
@@ -188,8 +209,10 @@ sub get :Local Args(0) {
 
     $c->stash->{template} = 'species/report.tt2';
 
-    my $requested_class = $c->req->param('class');
-    my $name            = $c->req->param('name');
+    my $doi             = $c->req->param('doi');
+    my $requested_class = $c->req->param('class') || ($doi && 'paper');
+    my $name            = $c->req->param('name') || ($doi && (split '\/', $doi)[-1]);
+
     $name =~ s/^\s+|\s+$//g;
 
     my $api    = $c->model('WormBaseAPI');
@@ -278,13 +301,13 @@ sub gbrowse_popup :Path('gbrowse_popup') :Args(0) {
                 # of this and just use the virtual worm image if possible
                 my ($groupname, $imgs) = each %$cimg;
                 my $img_data = $imgs->[0]->{draw};
-               
+
                 $c->stash(expr_image => $img_data->{class}.'/'.name =>$img_data->{name}.".".$img_data->{format}
 			);
             }
             else {
                 $c->stash(expr_image => $pattern->expression_image->{data}
-				     
+
 			);
             }
 

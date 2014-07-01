@@ -119,6 +119,18 @@ sub _build_type {
 # laboratory { }
 # Supplied by Role
 
+
+sub identity{
+    my ($self) = @_;
+    my $cds = $self->object;
+    my $description = $cds->Brief_identification;
+    my $evidence = $self->_get_evidence($description);
+    return {
+      description => 'Brief description of the CDS',
+      data        => $description ? { text => "$description", evidence => $evidence } : undef
+    };
+}
+
 sub partial{
     my ($self) = @_;
     my $cds = $self->object;

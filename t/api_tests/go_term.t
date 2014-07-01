@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# This is a unit test for Gene_class object
+# This is a unit test for go_term (Gene Ontology) API class that work
 # with a running WormBase Website instance.
 #
 # Unit tests are called automagically, just adhere to the following:
@@ -9,13 +9,10 @@
 # 2. the filename and package name coincide (sans suffix)
 # 3. unit test names have the prefix "test_"
 #
-# Actual tests are implemented at the bottom of this file. Please see:
-#
-
 
 {
     # Package name is the same as the filename (sans suffix, i.e. no .t ending)
-    package gene_class;
+    package go_term;
 
     # Limit the use of unsafe Perl constructs.
     use strict;
@@ -32,19 +29,22 @@
         $api = $_[0];
     }
 
-    # This is a test that checks whether former_laboratory attribute is correctly returned
-    # related to #2551
-    sub test_former_designating_laboratory {
-        my $gene_class = $api->fetch({ class => 'Gene_class', name => 'daf' });
+    # Test associated genes and corresponding species are returned for a GO term
+    sub test_associated_gene {
+        my $go = $api->fetch({ class => 'Go_term', name => 'GO:0007411' });
 
-        can_ok('WormBase::API::Object::Gene_class', ('former_laboratory'));
+        can_ok('WormBase::API::Object::Go_term', ('genes'));
 
-        my $former_designating_laboratory = $gene_class->former_laboratory();
+        my $genes = $go->genes();
 
         # Please keep test names/descriptions all lower case.
-        isnt($former_designating_laboratory->{'data'}, undef, 'data returned');
-        is($former_designating_laboratory->{'data'}->{'lab'}->{'id'}, 'DR', 'correct lab returned');
-        #is($former_designating_laboratory->{'data'}{'time'}, '19 Mar 2014', 'correct time returned');
+        isnt($genes->{'data'}, undef, 'data returned');
+        is(ref($genes->{'data'}), 'ARRAY', 'gets array of genes');
+
+        my $aGene = shift($genes->{'data'});
+        isnt($aGene, undef, 'Data is returned for a gene');
+        isnt($aGene->{'gene'}, undef, 'A gene is specified');
+        isnt($aGene->{'species'}, undef, 'A species is specified');
     }
 
 }

@@ -55,7 +55,7 @@ use WormBase::API::Service::rserve;
     }
 
     # Test whether subs that are required by all charting/plotting implementations
-    # are present and 
+    # are present and
     sub test__framework {
         can_ok('WormBase::API::Service::rserve', ('init_chart'));
         can_ok('WormBase::API::Service::rserve', ('execute_r_program'));
@@ -65,7 +65,7 @@ use WormBase::API::Service::rserve;
     sub test__barchart {
         can_ok('WormBase::API::Service::rserve', ('barchart'));
 
-        my $plot_result = WormBase::API::Service::rserve->barchart($testdata, $plot_parameters);
+        my $plot_result = $api->_tools->{rserve}->barchart($testdata, $plot_parameters);
         isnt($plot_result, undef, 'plot result nonempty');
         is  (exists $plot_result->{'uri'}, 1, '"uri" key present in result set');
         isnt($plot_result->{'uri'}, undef, '"uri" key-value present in result set');
@@ -76,7 +76,7 @@ use WormBase::API::Service::rserve;
     sub test__boxplot {
         can_ok('WormBase::API::Service::rserve', ('boxplot'));
 
-        my $plot_result = WormBase::API::Service::rserve->boxplot($testdata, $plot_parameters);
+        my $plot_result = $api->_tools->{rserve}->boxplot($testdata, $plot_parameters);
         isnt($plot_result, undef, 'plot result nonempty');
         is  (exists $plot_result->{'uri'}, 1, '"uri" key present in result set');
         isnt($plot_result->{'uri'}, undef, '"uri" key-value present in result set');
