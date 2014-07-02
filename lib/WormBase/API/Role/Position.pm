@@ -247,8 +247,10 @@ sub _build_genetic_position {
         else {
             # Try fetching from the gene
             if (my $gene = $object->Gene) {
-                $chromosome = $gene->get(Map=>1);
-                $position   = $gene->get(Map=>3);
+                #$chromosome = $gene->get(Map=>1);
+                #$position   = $gene->get(Map=>3);
+		# Let's include the error, too.
+		($chromosome,undef,$position,undef,$error) = eval{$gene->Map(1)->row};
                 $method = 'interpolated';
             }
 	    
