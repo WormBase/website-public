@@ -62,7 +62,7 @@
 	    passed_data=genes_biology_data);
   END;
 
-  WRAPPER $field_block title="Genes by orthology to human disease gene" key="genes_orthology";
+  WRAPPER $field_block title="Genes identified as potential models" key="genes_orthology";
     genes_orthology_data = fields.genes_orthology.data;
     
     FOREACH gene_obj IN genes_orthology_data;
