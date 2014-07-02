@@ -14,7 +14,7 @@
       END;
 
       WRAPPER $field_block title="Type" key="type";
-        tags2link(fields.type.data);
+        tags2link(fields.type.data).join('<br />');
       END;
 
       WRAPPER $field_block title="Mapping to OMIM ID" key="omim";

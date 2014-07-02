@@ -69,11 +69,11 @@ sub child {
 
 sub type {
     my ($self) = @_;
-    my $type = $self ~~ 'Type';
-    $type =~ s/_/ /g;
+    my @types = map {"$_"} $self->object->Type;
+    map {s/_/ /g} @types;
     return {
         description => 'Type of this disease',
-        data        => $type && "$type",
+        data        => @types ? \@types : undef,
     };
 }
 
