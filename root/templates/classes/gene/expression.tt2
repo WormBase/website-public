@@ -82,9 +82,7 @@ END;
 
 
 WRAPPER $field_block title="Microarray \"topography map\" data" key="microarray_topology_map_position";
-    FOREACH topo IN fields.microarray_topology_map_position.data;
-        tags2link(topo); "</br>";
-    END;
+    tags2link(fields.microarray_topology_map_position.data);
 END;
 
 WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) _ " of Action" key="anatomy_function";

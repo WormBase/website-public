@@ -885,11 +885,10 @@ sub microarray_topology_map_position {
     my @p = map {  $_->info } @profiles or return $datapack;
 
     my @data = map {{
-        'expr_profile' => {
             'class' => 'expr_profile',
             'label' => $_,
-            'id' => $_}
-            }} @p;
+            'id' => $_
+       }} @p;
 
     $datapack->{data} = \@data if @data;
     return $datapack;
