@@ -592,7 +592,7 @@ sub feed_POST {
                               title   => $title,
                               url     => $url,
                               issue_url    => $issue_url,
-                              issue_title  => $issue_title,
+                              issue_title  => $title . ": " . $issue_title,
                               issue_number => $issue_number});
         my $message = "<p>You can track the progress on your question, <a href='$issue_url' target='_blank'>$issue_title (#$issue_number)</a> on our <a href='$issue_url' target='_blank'>issue tracker</a>.</p>";
         $self->status_ok(
@@ -1115,10 +1115,10 @@ END
 # Create a more informative title
   my $trim_content = "$content";
   $trim_content =~ s/\<[^\>]*\>/\ /g;
-  my $pseudo_title = substr($trim_content,0,35) . '...';
-  my $data = { title => $title . ': ' . $pseudo_title,
+  my $pseudo_title = substr($trim_content,0,50) . '...';
+  my $data = { title => $pseudo_title,
 	       body  => "$content",
-	       labels => [ 'HelpDesk' ],
+	       labels => [ 'HelpDesk', $title ],
   };
 
   my $request_json = $json->encode($data);
