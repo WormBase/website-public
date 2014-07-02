@@ -19,13 +19,14 @@ END;
 
 
 '<div class="description">';
-	markup(fields.description.data);
-
-    id_data = fields.identity.data;
-	evidence(id_data.evidence, 'Brief_identification', '<span>' _ id_data.text _ '</span>');
     
+    WRAPPER $field_block key='identity';
+        id_data = fields.identity.data;
+	    evidence(id_data.evidence, 'Brief_identification', "<span>$id_data.text</span>");
+    END;
+    
+    markup(fields.description.data);
     remarks;
-
 '</div>';
 %]
 
