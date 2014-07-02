@@ -5,15 +5,13 @@
 
 
 WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patterns";
-    FOREACH i IN fields.anatomic_expression_patterns.data
-    gene_image = i.image;
+    gene_image = fields.anatomic_expression_patterns.data.image;
     IF gene_image;
       '<div style="max-width:500px;">';
         '<a href="'_ gene_image _ '" target="_blank">' _
            '<img src="' _ gene_image _ '" width="100%">' _
         '</a>';
       '</div>';
-      END;
     END;
            build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={

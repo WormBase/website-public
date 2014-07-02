@@ -123,6 +123,7 @@
         my $fpkm_expression = $gene->fpkm_expression_summary_ls();
 
         isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{label}, undef, 'data returned');
+        isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{label}->{label}, undef, 'data returned');
     }
 }
 
