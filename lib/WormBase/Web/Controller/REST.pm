@@ -1137,7 +1137,6 @@ END
 }
 
 sub _issue_email{
-#  my ($self,$c,$page,$new,$content,$change,$email, $name, $title) = @_;
     my ($self,$params) = @_;
 
     my $c       = $params->{c};
