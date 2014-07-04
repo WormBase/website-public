@@ -354,7 +354,7 @@ sub _build__gene {
     my $object = $self->object;
     my @genes = $object->Gene;
 
-    return @genes;
+    return \@genes;
 }
 
 sub _build_sequences {

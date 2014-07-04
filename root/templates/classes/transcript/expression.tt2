@@ -5,27 +5,30 @@
 
 
 WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patterns";
-    gene_image = fields.anatomic_expression_patterns.data.image;
-    IF gene_image;
-      '<div style="max-width:500px;">';
-        '<a href="'_ gene_image _ '" target="_blank">' _
-           '<img src="' _ gene_image _ '" width="100%">' _
-        '</a>';
-      '</div>';
+    FOREACH i IN fields.anatomic_expression_patterns.data
+      gene_image = i.image;
+      IF gene_image;
+        '<div style="max-width:500px;">';
+          '<a href="'_ gene_image _ '" target="_blank">' _
+             '<img src="' _ gene_image _ '" width="100%">' _
+          '</a>';
+        '</div>';
+      END;
     END;
-           build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
-                      columns={
-                          expression_pattern => 'Pattern',
-                          description  => 'Description',
-                          database => 'Database',
-                          type => 'Type',
-                          expressed_in => 'Expressed in',
-                          life_stage => 'Life stage',
-                          go_term => 'GO term',
-                          transgene => 'Transgene'
-                             },
-                    key='expression_patterns');
-
+          FOREACH gene_table IN expression_patterns
+             build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
+                        columns={
+                            expression_pattern => 'Pattern',
+                            description  => 'Description',
+                            database => 'Database',
+                            type => 'Type',
+                            expressed_in => 'Expressed in',
+                            life_stage => 'Life stage',
+                            go_term => 'GO term',
+                            transgene => 'Transgene'
+                               },
+                      passed_data='gene_table');
+          END;
 END;
 
 

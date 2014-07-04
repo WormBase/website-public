@@ -1776,7 +1776,7 @@ sub _build__gene {
     my @gene_array ;
     push @gene_array, $object; 
 
-    return @gene_array;
+    return \@gene_array;
 }
 
 # TODO: Logically this might reside in Model::GFF although I don't know if it is used elsewhere

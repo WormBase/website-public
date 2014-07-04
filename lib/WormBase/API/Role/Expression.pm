@@ -30,6 +30,7 @@ use File::Spec::Functions qw(catfile catdir);
 
 has '_gene' => (
     is       => 'ro',
+    isa      => 'ArrayRef[Ace::Object]',
     required => 1,
     lazy     => 1,
     builder  => '_build__gene',
@@ -45,7 +46,7 @@ requires '_build__gene'; # no fallback to build segments... yet (or ever?).
 
 sub anatomic_expression_patterns {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my @genes;
 
 
@@ -77,7 +78,7 @@ sub anatomic_expression_patterns {
 
 sub expression_patterns {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my @genes;
     my @data;
 
@@ -99,7 +100,7 @@ sub expression_patterns {
 
 sub expression_profiling_graphs {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my @genes;
     my @data;
 
@@ -184,7 +185,7 @@ sub _expression_pattern_details {
 
 sub anatomy_terms {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my %unique_anatomy_terms;
 
     foreach my $obj (@object){
@@ -209,7 +210,7 @@ sub anatomy_terms {
 
 sub expression_cluster {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my @data;
     my @genes;
 
@@ -233,7 +234,7 @@ sub expression_cluster {
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
 sub fourd_expression_movies {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my @genes;
 
     my $author;
@@ -266,7 +267,7 @@ sub fourd_expression_movies {
 
 sub microarray_topology_map_position {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
 
     my $datapack = {
         description => 'microarray topology map',
@@ -294,7 +295,7 @@ sub microarray_topology_map_position {
 
 sub anatomy_function {
     my $self   = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my @data_pack;
     my @genes;
 
@@ -339,7 +340,7 @@ sub fpkm_expression_summary_ls {
 sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
-    my @object = $self->_gene;
+    my @object = @{$self->_gene};
     my @genes;
 
     my $rserve = $self->_api->_tools->{rserve};
