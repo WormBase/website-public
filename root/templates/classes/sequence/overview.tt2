@@ -41,7 +41,8 @@ WRAPPER $field_block title="Method" key='method';
 END;
 
 WRAPPER $field_block title="Identity" key='identity';
-	 fields.identity.data;
+        id_data = fields.identity.data;
+	    evidence(id_data.evidence, 'Brief_identification', id_data.text);	 
 END;
 
 
