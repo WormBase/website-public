@@ -1,7 +1,7 @@
 [% ref = c.req.referer.split('/').last %]
 [% IF c.user_exists %]
   <li><a href="[% c.uri_for('/me').path %]" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">Welcome [% c.user.username %]<span href="/me" id="bench-status"></span></a></li>
-  <li><a id="logout" href="#">Logout</a></li>
+  <li><a id="logout" href="javascript:void(0)">Logout</a></li>
 [% ELSE %]
   <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench-status"></span></a></li>
   <li id="login-box"><a id="login">Login</a>
@@ -11,4 +11,3 @@
   </li>
 [% END %]
 
- 
