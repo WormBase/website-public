@@ -216,20 +216,23 @@ sub type_description{
     my $object = $self->object;
     
     my $type = $object->Type;
-    my $type_desc;
+    my $type_desc; 
+    my $type_name;
 
     if($type == "Coding_pseudogene"){
-        $type_desc = "A Coding pseudogene is a pseudogenic loci that appears to have once been coding"
+        $type_desc = "A Coding pseudogene is a pseudogenic loci that appears to have once been coding";
+        $type_name = "Coding pseudogene";
     }
     elsif( $type == "RNA_pseudogene"){
-        $type_desc = " A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA"
+        $type_desc = " A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA";
+        $type_name = "RNA pseudogene";
     }
     else{
         $type_desc = undef;
     } 
 
     return {
-        description => "The description of the $type type",
+        description => "The description of the $type_name type",
         data => "$type_desc"  
     };
 }
