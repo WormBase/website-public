@@ -211,6 +211,29 @@ sub type{
     };
 }
 
+sub type_description{
+    my ($self) = @_;
+    my $object = $self->object;
+    
+    my $type = $object->Type;
+    my $type_desc;
+
+    if($type == "Coding_pseudogene"){
+        $type_desc = "A Coding pseudogene is a pseudogenic loci that appears to have once been coding"
+    }
+    elsif( $type == "RNA_pseudogene"){
+        $type_desc = " A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA"
+    }
+    else{
+        $type_desc = undef;
+    } 
+
+    return {
+        description => "The description of the $type type",
+        data => "$type_desc"  
+    };
+}
+
 sub related_seqs{
     my ($self) = @_;
     my $object = $self->object;

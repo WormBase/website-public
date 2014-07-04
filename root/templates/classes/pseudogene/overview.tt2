@@ -34,6 +34,7 @@ WRAPPER highlight_box;
     END;
 
      WRAPPER $field_block title="Type" key="type";
+
         fields.type.data;
     END;
    
@@ -45,6 +46,11 @@ remarks;
 
 %]
 
+[%
+        WRAPPER $field_block title="Type Description" key="type_description";
+            fields.type_description.data;
+        END
+%]        
 
 [%
 
