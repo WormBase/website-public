@@ -838,6 +838,7 @@ a#fade:hover {
   border-right:1px dotted gray;
   float:left;
   display:flex;
+  display:-webkit-box;  /*flex width for Safari*/
   margin: 0.4em;
   position:relative;
   background:white;
@@ -864,7 +865,7 @@ a#fade:hover {
 }
 
 #searchForm input.text, #searchResultForm input.text{
-  float:right;
+  float:none;
   width:8em;
   color: #565656;
   border:none;
