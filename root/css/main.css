@@ -767,7 +767,8 @@ tr.odd .ev-more-text span {
 }
 
 .ev-more-line {
-  width: inherit;
+  width: 80%;
+  left: 10%;
   border-top:1px solid black;
   position:absolute;
   top:0.7em;
@@ -2492,7 +2493,6 @@ div.description {
   clear:left;
   padding:0.5em 0;
   max-width:35em;
-  margin-right:25em; #avoid overlapping with highlight box
 }
 
 div.description div.result{
