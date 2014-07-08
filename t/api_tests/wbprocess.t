@@ -24,9 +24,9 @@
         my $pathway = $wbprocess->pathway();
 
         isnt($pathway->{'data'}, undef, 'data returned');
-        isnt($pathway->{'data'}->{'pathway_id'}, undef, 'Defined');
-        isnt($pathway->{'data'}->{'revision'}, undef, 'Found Revision');
-        is($pathway->{'data'}->{'pathway_id'}, 'WP2313', 'Found Id');
+        isnt($pathway->{'data'}[0]->{'pathway_id'}, undef, 'Defined');
+        isnt($pathway->{'data'}[0]->{'revision'}, undef, 'Found Revision');
+        is($pathway->{'data'}[0]->{'pathway_id'}, 'WP2313', 'Found Id');
     }
 
     sub test_unfolded_protein {
@@ -35,9 +35,24 @@
         my $pathway = $wbprocess->pathway();
 
         isnt($pathway->{'data'}, undef, 'data returned');
-        isnt($pathway->{'data'}->{'pathway_id'}, undef, 'Defined');
-        is($pathway->{'data'}->{'pathway_id'}, 'WP2578', 'Found Id');
+        isnt($pathway->{'data'}[0]->{'pathway_id'}, undef, 'Defined');
+        is($pathway->{'data'}[0]->{'pathway_id'}, 'WP2578', 'Found Id');
     }
+
+    # This is a test for the Wikipathways in the Pathways widget in teh Topis page 
+    # related to issue #2856
+    sub test_pathways {
+        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000039' });
+
+        can_ok('WormBase::API::Object::Wbprocess', ('pathway'));
+
+        my $pathway = $wbprocess->pathway();
+
+        
+        isnt($pathway->{'data'}, undef, 'data returned');
+        isnt($pathway->{'data'}[0]->{'pathway_id'}, undef, 'Defined');
+        is($pathway->{'data'}[0]->{'pathway_id'}, 'WP2233', 'correct id returned');
+    }    
 
 }
 

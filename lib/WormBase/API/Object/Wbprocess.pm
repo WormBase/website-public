@@ -320,7 +320,7 @@ sub go_term{
 
 #######################################
 #
-# Interaction widget
+# Pathways widget
 #
 #######################################
 
@@ -329,49 +329,66 @@ sub pathway{
 	my $object = $self->object;
 	my $pathway = $object->Pathway;
 	my $data;
+	my @data;
 
 	if($pathway){
 		my @row = $pathway->row; 
-		my $pathway_id = ($row[0]->{".right"}->{".right"}->row)[2]->name;
-        my $present_row=$row[0]->{".right"}->{".right"};
-        if (($present_row->name)ne"WikiPathways"){
+		my @pathway_ids;
+		my $pathway_id ;
+		my $present_row=$row[0]->{".right"}->{".right"};
+
+		if ($present_row->name eq "WikiPathways"){
+
+			@pathway_ids = $object->at('Pathway.DB_info.Database.wikipathways.Pathway');
+
+		}
+		else{
             while(1){
                 $present_row = $present_row->{".down"};
                 if(!($present_row)){
                     last;
                 }
+
                 print Dumper($present_row->name);
                 if($present_row->name eq "WikiPathways"){
-                    $pathway_id = ($present_row->row)[2]->name;
+                    
+                    @pathway_ids = $object->at('Pathway.DB_info.Database.wikipathways.Pathway');
+
                     last;
                 }
             }
         }
-        my $revision;
-	    my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
-        my $req = HTTP::Request->new(GET => $url);
-        my $lwp       = LWP::UserAgent->new;
-        my $response  = $lwp->request($req);
-        my $response_content = $response->content;
 
-        my $xml_file = XMLin($response_content);
-        my @tags = @{ ($xml_file->{'ns1:tags'})[0] };
-        foreach(@tags){
-            if($_->{'ns2:pathway'}->{'ns2:id'} eq "$pathway_id"){
-                $revision = $_->{'ns2:pathway'}->{'ns2:revision'};
-            }
-        }
-		$data = {
-			pathway_id		=> "$pathway_id",
-            revision        => $revision
-		};
+        foreach my $id (@pathway_ids){
+	        my $revision;
+		    my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
+	        my $req = HTTP::Request->new(GET => $url);
+	        my $lwp       = LWP::UserAgent->new;
+	        my $response  = $lwp->request($req);
+	        my $response_content = $response->content;
+
+	        my $xml_file = XMLin($response_content);
+	        my @tags = @{ ($xml_file->{'ns1:tags'})[0] };
+	        foreach(@tags){
+	            if($_->{'ns2:pathway'}->{'ns2:id'} eq "$id"){
+	                $revision = $_->{'ns2:pathway'}->{'ns2:revision'};
+	            }
+	        }
+			$data = {
+				pathway_id		=> "$id",
+	            revision        => $revision
+			};
+
+			push @data, $data;
+
+		}
 
 	}
 
 	return {
 		description => "Related wikipathway link",
-		data => $data ? $data : undef
-};
+		data => @data ? \@data : undef,
+	};
 }
 
 
