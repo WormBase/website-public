@@ -763,6 +763,11 @@
  	search      = 'http://www.rnai.org/movies/%s'
  	}
 
+ ScanProsite = {
+  	description = 'ScanSite'
+ 	base        = 'http://prosite.expasy.org/scanprosite'
+  	}
+    
  Science = {
 	description = 'Science'
 	base        = 'http://www.sciencemag.org/'

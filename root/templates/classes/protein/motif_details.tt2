@@ -1,15 +1,48 @@
 [% 
 
+motif_dat = fields.motif_details.data;
+
+FOREACH motif IN motif_dat;
+    source = motif.source;  # motif.values.join('<br/>');
+    link = '';
+
+    IF ref(source) == 'HASH';
+
+        FOREACH db IN source.keys;
+            FOREACH dbt IN source.$db.keys.grep('_ID$');
+                FOREACH id IN source.$db.$dbt.ids; 
+                    # We'll use description info from the website and not the DB.
+                    # Should be a table of resource, ID linked to page description, maintainer.
+                    link = link _ external_link(db,id,id,dbt) _ '<br />';
+                END;
+                IF !link;
+                    link = link _ external_link(db,dbt,dbt) _ '<br />';
+                END;
+            END;
+            
+            BREAK;  # not expecting more than one element/database in source_data
+        END;
+
+    ELSE;
+        dbname = match_link(source);
+        link = link _ (external_link(dbname) || source);
+    END;
+    
+    motif.source_new = link;
+END;
+
 build_data_table(
-	order=['source','desc','feat','start','stop','score'],
-	columns={
-		feat 	=> 'Feature',
-		start 	=> 'Start',
-		stop	=> 'Stop',
-		score	=> 'Score',
-		source	=> 'Source',
-		desc 	=> 'Description'
-	},
-	key='motif_details'
+    order=['feat','desc','source_new','start','stop','score'],
+    columns={
+            		feat 	=> 'Feature',
+            		start 	=> 'Start',
+            		stop	=> 'Stop',
+            		score	=> 'Score',
+            		source_new 	=> 'Source',
+            		desc 	=> 'Description'
+            	},
+    #key='motif_details',
+   	passed_data = motif_dat,
 );
+
 %]

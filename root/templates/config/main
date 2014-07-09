@@ -314,12 +314,14 @@
     END;
 
     MACRO match_link(link) BLOCK;
-      IF !site.external_urls.defined(link);
-        llink = link FILTER lower;
-        IF site.external_urls.defined(llink); link = llink; END;
-        IF llink.match('^(sw|sptrembl|tr)$'); link = 'uniprot'; END;
+      link_regex = "(?i)$link";  # search case insensitively for the database
+      link_name  = site.external_urls.keys.grep(link_regex);
+      link_name = link_name && link_name.pop;
+      IF !link_name;
+        llink = link FILTER lower;  
+        IF llink.match('(?i)^(sw|sptrembl|tr)$'); link_name = 'UniProt'; END;
       END;
-      link;
+      link_name;  # return a false value if no matched link is found
     END;
 
 

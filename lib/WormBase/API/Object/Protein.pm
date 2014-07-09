@@ -620,10 +620,9 @@ sub motif_details {
 
 			my $start = $motif_homol->right(3);
 			my $stop  = $motif_homol->right(4);
-			my $source = $motif_homol->right ||"";
-			$source  ||= 'interpro' if $motif_homol =~ /IPR/;
+            my $motif_ace = $motif_homol->fetch;
+            my $source = $self->_build_xrefs($motif_ace)->{'data'} || $motif_homol->right;;
 			my $label = "$motif_homol";
-			$source = { class=>"$source", label=>"$source", id=>"$source"} if $source;
 			my $desc = $motif_homol->Title ||$motif_homol ;
 
 			# Are there multiple occurences of this motif_homol?
@@ -662,10 +661,12 @@ sub motif_details {
 		}
 
     }
+
     my $data = { description => 'The motif details of the protein',
 #		 data        => @tot_positions ? \@tot_positions : undef,
-		data => (scalar @data) > 0 ? \@data : undef
+		data => @data ? \@data : undef
 	};
+    return $data;
 
 }
 
