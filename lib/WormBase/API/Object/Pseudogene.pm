@@ -219,12 +219,28 @@ sub type_description{
     my $type_desc; 
     my $type_name;
 
+ 
     if($type == "Coding_pseudogene"){
-        $type_desc = "A Coding pseudogene is a pseudogenic loci that appears to have once been coding";
+        $type_desc = {
+        'Description' => [
+            {
+              'class' => undef,
+              'label' => 'A pseudogenic loci that appears to have once been coding',
+              'id' => 'description'
+            }
+        ]
+        };
         $type_name = "Coding pseudogene";
     }
     elsif( $type == "RNA_pseudogene"){
-        $type_desc = " A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA";
+        $type_desc = {
+        'Description' => 
+            {
+              'class' => undef,
+              'label' => 'A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA',
+              'id' => 'description'
+            }
+        };
         $type_name = "RNA pseudogene";
     }
     else{
@@ -233,7 +249,7 @@ sub type_description{
 
     return {
         description => "The description of the $type_name type",
-        data => "$type_desc"  
+        data => $type_desc,  
     };
 }
 
