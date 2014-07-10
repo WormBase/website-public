@@ -5,7 +5,6 @@ use HTTP::Request;
 use Moose;
 use WormBase::API::Object::Gene qw/classification/; 
 use Switch;
-use Data::Dumper;
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Interaction';
 extends 'WormBase::API::Object';
@@ -84,29 +83,29 @@ http://wormbase.org/species/*
 
 
 sub related_process{
-	my ($self) = @_;
-	my $object = $self->object;
-	
-	my @related_proc = map { 
-		$self->_pack_obj($_)
-		} $object->Related_process;
-	
-	return {
-		description => "Topics related to this record",
-		data	=> @related_proc ? \@related_proc : undef
-	};
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my @related_proc = map { 
+        $self->_pack_obj($_)
+        } $object->Related_process;
+
+    return {
+        description => "Topics related to this record",
+        data    => @related_proc ? \@related_proc : undef
+    };
 }
 
 sub other_name{ 
-	my ($self) = @_;
-	my $object = $self->object;
-	
-	my $other_name = $object->Other_name;
-		
-	return {  
-		description => "Term alias",
-		data => $other_name ? "$other_name" : undef
-	};
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my $other_name = $object->Other_name;
+        
+    return {  
+        description => "Term alias",
+        data => $other_name ? "$other_name" : undef
+    };
 }
 
 
@@ -197,37 +196,37 @@ sub genes{
 #######################################
 
 sub expression_cluster {
-	my ($self) = @_;
-	my $object = $self->object;
-	my @e_clusters = $object->Expression_cluster;
-	
-	
-	my @data;
-	foreach my $e_cluster(@e_clusters){
-		push @data, $self->_process_e_cluster($e_cluster);
-	}
-	
-	return {
-		description => "Expression cluster(s) related to this topic",
-		data        => @data ? \@data : undef 
-	};
+    my ($self) = @_;
+    my $object = $self->object;
+    my @e_clusters = $object->Expression_cluster;
+
+
+    my @data;
+    foreach my $e_cluster(@e_clusters){
+        push @data, $self->_process_e_cluster($e_cluster);
+    }
+
+    return {
+        description => "Expression cluster(s) related to this topic",
+        data        => @data ? \@data : undef 
+    };
 
 }
 sub _process_e_cluster{
-	my ($self, $e_cluster) = @_;
-	my $desc = $e_cluster->Description;
-	my $evidence = $self->_get_evidence($e_cluster);
-	
-	my %data = (
-		id				=> $self->_pack_obj($e_cluster),
-		
-		evidence		=> {
-				evidence => $evidence,
-				text	 => $desc
-			}
-	); 
-	
-	return \%data;
+my ($self, $e_cluster) = @_;
+my $desc = $e_cluster->Description;
+my $evidence = $self->_get_evidence($e_cluster);
+
+my %data = (
+    id           => $self->_pack_obj($e_cluster),
+
+    evidence        => {
+            evidence => $evidence,
+            text     => $desc
+        }
+); 
+
+return \%data;
 }
 
 #######################################
@@ -237,50 +236,50 @@ sub _process_e_cluster{
 #######################################
 
 sub interaction {
-	my ($self) = @_;
-	my $object = $self->object;
-	my @interactions = $object->Interaction;
-	
-	
-	my @data;
-	foreach my $interaction (@interactions){
-		push @data, $self->_process_interaction($interaction);
-	}
-	
-	return {
-		description => "Interactions relating to this topic",
-		data        => @data ? \@data : undef 
-	};
+    my ($self) = @_;
+    my $object = $self->object;
+    my @interactions = $object->Interaction;
+
+
+    my @data;
+    foreach my $interaction (@interactions){
+        push @data, $self->_process_interaction($interaction);
+    }
+
+    return {
+        description => "Interactions relating to this topic",
+        data        => @data ? \@data : undef 
+    };
 
 }
 sub _process_interaction{
-	my ($self, $interaction) = @_;
-	my $type = $interaction->Interaction_type;
-	my $summary = $interaction->Interaction_summary;
-	
-	my $log = $self->log;
-	
-	# Interactors
-	# Different case for each kind of interaction
-	my @interactors;
-	my $interactor_type = $interaction->Interactor;
-	switch ($interactor_type->name) {
-		case("Interactor_overlapping_gene"){
-			my @interacting_genes = $interaction->Interactor_overlapping_gene;
-			foreach my $gene_obj (@interacting_genes){
-				push (@interactors, $self->_pack_obj($gene_obj));
-			}
-		}
-	}
-	
-	
-	my %data = (
-		type		=> $type,
-		summary		=> $summary,
-		interactors	=> \@interactors
-	);
-	
-	return \%data;
+    my ($self, $interaction) = @_;
+    my $type = $interaction->Interaction_type;
+    my $summary = $interaction->Interaction_summary;
+
+    my $log = $self->log;
+
+    # Interactors
+    # Different case for each kind of interaction
+    my @interactors;
+    my $interactor_type = $interaction->Interactor;
+    switch ($interactor_type->name) {
+        case("Interactor_overlapping_gene"){
+            my @interacting_genes = $interaction->Interactor_overlapping_gene;
+            foreach my $gene_obj (@interacting_genes){
+                push (@interactors, $self->_pack_obj($gene_obj));
+            }
+        }
+    }
+
+
+    my %data = (
+        type        => $type,
+        summary     => $summary,
+        interactors => \@interactors
+    );
+
+    return \%data;
 }
 
 
@@ -293,28 +292,28 @@ sub _process_interaction{
 
 
 sub go_term{
-	my ($self) = @_;
-	my $object = $self->object;
-	my @go_objs = $object->GO_term;
-	
-	my @data;
-	
-	foreach my $go_obj ( @go_objs ){
-		my $name 	= $go_obj->Term;
-		my $type 	= $go_obj->Type;
-		my $def		= $go_obj->Definition;
-		
-		push @data, {
-			name	=> $self->_pack_obj($go_obj), 
-			type	=> "$type",
-			def		=> "$def"
-		};
-	}
-		
-	return {
-		description => "Gene Ontology Term",
-		data => \@data
-	};
+    my ($self) = @_;
+    my $object = $self->object;
+    my @go_objs = $object->GO_term;
+
+    my @data;
+
+    foreach my $go_obj ( @go_objs ){
+        my $name    = $go_obj->Term;
+        my $type    = $go_obj->Type;
+        my $def     = $go_obj->Definition;
+
+        push @data, {
+            name    => $self->_pack_obj($go_obj), 
+            type    => "$type",
+            def     => "$def"
+        };
+    }
+        
+    return {
+        description => "Gene Ontology Term",
+        data => \@data
+    };
 
 }
 
@@ -325,70 +324,50 @@ sub go_term{
 #######################################
 
 sub pathway{
-	my ($self) = @_;
-	my $object = $self->object;
-	my $pathway = $object->Pathway;
-	my $data;
-	my @data;
+    my ($self) = @_;
+    my $object = $self->object;
+    my $pathway = $object->Pathway;
+    my $data;
+    my @data;
 
-	if($pathway){
-		my @row = $pathway->row; 
-		my @pathway_ids;
-		my $pathway_id ;
-		my $present_row=$row[0]->{".right"}->{".right"};
+    if($pathway){
+        my @row = $pathway->row; 
+        my @pathway_ids;
 
-		if ($present_row->name eq "WikiPathways"){
+        @pathway_ids = $object->at('Pathway.DB_info.Database.WikiPathways.Pathway');
+        
+        foreach my $id (@pathway_ids){
+            use Data::Dumper; print Dumper $id;
+            my $revision;
+            my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
+            my $req = HTTP::Request->new(GET => $url);
+            my $lwp       = LWP::UserAgent->new;
+            my $response  = $lwp->request($req);
+            my $response_content = $response->content;
 
-			@pathway_ids = $object->at('Pathway.DB_info.Database.wikipathways.Pathway');
-
-		}
-		else{
-            while(1){
-                $present_row = $present_row->{".down"};
-                if(!($present_row)){
-                    last;
-                }
-
-                print Dumper($present_row->name);
-                if($present_row->name eq "WikiPathways"){
-                    
-                    @pathway_ids = $object->at('Pathway.DB_info.Database.wikipathways.Pathway');
-
-                    last;
+            my $xml_file = XMLin($response_content);
+            my @tags = @{ ($xml_file->{'ns1:tags'})[0] };
+            foreach(@tags){
+                if($_->{'ns2:pathway'}->{'ns2:id'} eq "$id"){
+                    $revision = $_->{'ns2:pathway'}->{'ns2:revision'};
                 }
             }
+            $data = {
+                pathway_id      => "$id",
+                revision        => $revision
+            };
+
+            push @data, $data;
+
         }
 
-        foreach my $id (@pathway_ids){
-	        my $revision;
-		    my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
-	        my $req = HTTP::Request->new(GET => $url);
-	        my $lwp       = LWP::UserAgent->new;
-	        my $response  = $lwp->request($req);
-	        my $response_content = $response->content;
+    }
 
-	        my $xml_file = XMLin($response_content);
-	        my @tags = @{ ($xml_file->{'ns1:tags'})[0] };
-	        foreach(@tags){
-	            if($_->{'ns2:pathway'}->{'ns2:id'} eq "$id"){
-	                $revision = $_->{'ns2:pathway'}->{'ns2:revision'};
-	            }
-	        }
-			$data = {
-				pathway_id		=> "$id",
-	            revision        => $revision
-			};
+    return {
+        description => "Related wikipathway link",
+        data => @data ? \@data : undef,
+    };
 
-			push @data, $data;
-
-		}
-
-	}
-
-	return {
-		description => "Related wikipathway link",
-		data => @data ? \@data : undef,
-	};
 }
 
 
@@ -412,9 +391,9 @@ sub pathway{
 #######################################
 
 sub anatomy_term {
-	my $self = shift;
-	my $object = $self->object;
-	my @data;
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
     foreach my $anatomy_term ($object->Anatomy_term){
         my $description = $anatomy_term->Definition;
         push @data, {
@@ -422,10 +401,10 @@ sub anatomy_term {
             description => $description && "$description",
         }
     }
-	return {
-		description => "Anatomy terms related to this topic",
-		data => @data ? \@data : undef
-	}
+    return {
+        description => "Anatomy terms related to this topic",
+        data => @data ? \@data : undef
+    }
 }
 
 ############################################################
