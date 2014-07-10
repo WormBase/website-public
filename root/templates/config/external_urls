@@ -764,8 +764,9 @@
  	}
 
  ScanProsite = {
-  	description = 'ScanSite'
- 	base        = 'http://prosite.expasy.org/scanprosite'
+  	description = 'Prosite'
+ 	base        = 'http://prosite.expasy.org/'
+    search      = 'http://prosite.expasy.org/%s'
   	}
     
  Science = {
