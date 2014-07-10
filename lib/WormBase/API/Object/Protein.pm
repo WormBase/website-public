@@ -610,12 +610,12 @@ sub motif_details {
 
     if (@motif_homol > 0) {
 
-		# Now deal with the motif_homol features
-		foreach my $motif_homol (@motif_homol) {
-			my $score = $motif_homol->right->col;
+        # Now deal with the motif_homol features
+        foreach my $motif_homol (@motif_homol) {
+            my $score = $motif_homol->right->col;
 
-			my $start = $motif_homol->right(3);
-			my $stop  = $motif_homol->right(4);
+            my $start = $motif_homol->right(3);
+            my $stop  = $motif_homol->right(4);
             my $source_db = $motif_homol->right;
             my ($source_id) = "$motif_homol" =~ m/[^\:]*\:(.+)/ or ("$motif_homol");
             my $source = {
@@ -623,49 +623,49 @@ sub motif_details {
                 db => "$source_db",
             };
 
-			my $desc = $motif_homol->Title || $motif_homol;
+            my $desc = $motif_homol->Title || $motif_homol;
 
-			# Are there multiple occurences of this motif_homol?
-			# Gets all scores for the current motif
-			my @scores = $motif_homol->right->col;
+            # Are there multiple occurences of this motif_homol?
+            # Gets all scores for the current motif
+            my @scores = $motif_homol->right->col;
 
-			if ( (scalar @scores) > 1) {
-				foreach my $score (@scores) {
-					my $start = $score->right;
-					my $stop = $start->right;
+            if ( (scalar @scores) > 1) {
+                foreach my $score (@scores) {
+                    my $start = $score->right;
+                    my $stop = $start->right;
 
-					push( @data, {
-					    feat	=>
-						$self->_pack_obj($motif_homol,"$motif_homol"),
-						start	=> "$start",
-						stop	=> "$stop",
-						score	=> "$score",
-						source	=> $source,
-						desc	=> "$desc"
-					      });
+                    push( @data, {
+                        feat	=>
+                        $self->_pack_obj($motif_homol,"$motif_homol"),
+                        start	=> "$start",
+                        stop	=> "$stop",
+                        score	=> "$score",
+                        source	=> $source,
+                        desc	=> "$desc"
+                    });
 
 
-				}
-			} else {
-				push( @data, {
-					feat	=>
-						$self->_pack_obj($motif_homol,"$motif_homol"),
-					start	=> "$start",
-					stop	=> "$stop",
-					score	=> (scalar @scores) == 1 ? "$scores[0]" : undef,
-					source	=> $source,
-					desc	=> "$desc"
-				});
+                }
+            } else {
+                push( @data, {
+                    feat	=>
+                        $self->_pack_obj($motif_homol,"$motif_homol"),
+                    start	=> "$start",
+                    stop	=> "$stop",
+                    score	=> (scalar @scores) == 1 ? "$scores[0]" : undef,
+                    source	=> $source,
+                    desc	=> "$desc"
+                });
 
-			}
-		}
+            }
+        }
 
     }
 
     my $data = { description => 'The motif details of the protein',
-#		 data        => @tot_positions ? \@tot_positions : undef,
-		data => @data ? \@data : undef
-	};
+#        data        => @tot_positions ? \@tot_positions : undef,
+        data => @data ? \@data : undef
+    };
     return $data;
 
 }
