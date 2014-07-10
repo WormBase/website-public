@@ -604,10 +604,6 @@ sub motif_details {
     my $object = $self->object;
     my @motif_homol = $object->Motif_homol;
 
-    use Data::Dumper; # DELETE
-
-    #  return unless $obj->Feature;
-
     # Summary by Motif
     my @tot_positions;
     my @data = ();
@@ -620,10 +616,14 @@ sub motif_details {
 
 			my $start = $motif_homol->right(3);
 			my $stop  = $motif_homol->right(4);
-            my $motif_ace = $motif_homol->fetch;
-            my $source = $self->_build_xrefs($motif_ace)->{'data'} || $motif_homol->right;;
-			my $label = "$motif_homol";
-			my $desc = $motif_homol->Title ||$motif_homol ;
+            my $source_db = $motif_homol->right;
+            my ($source_id) = "$motif_homol" =~ m/[^\:]*\:(.+)/ or ("$motif_homol");
+            my $source = {
+                id => $source_id,
+                db => "$source_db",
+            };
+
+			my $desc = $motif_homol->Title || $motif_homol;
 
 			# Are there multiple occurences of this motif_homol?
 			# Gets all scores for the current motif
