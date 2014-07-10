@@ -290,9 +290,9 @@
        END;
     END;
 
-    MACRO get_external_url(link, id, dbt) BLOCK;
+    MACRO get_external_url(db, id, dbt) BLOCK;
        ext_url = "";
-       link = match_link(link);
+       link = match_link(db) || db;
 
        IF(site.external_urls.defined(link));
           desc = site.external_urls.$link.description;
@@ -305,12 +305,10 @@
               ELSE;
                 ext_url = String(id) FILTER url;
               END;
-          ELSE;
-              ext_url = site.external_urls.$link.base FILTER url;
           END;
+          ext_url = ext_url || site.external_urls.$link.base FILTER url;
         END;
-        UNLESS (ext_url.length > 1); ext_url = link; END;
-        ext_url;
+        ext_url || link;
     END;
 
     MACRO match_link(link) BLOCK;
