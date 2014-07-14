@@ -110,7 +110,7 @@ sub _get_gene_relevance{
     my $relevance;
     my $data = {
         gene => $self->_pack_obj($gene),
-        human_orthologs => $self->get_omims(\@omim),
+        human_orthologs => $self->markup_omims(\@omim),
         relevance => @relevance ? \@relevance : undef
     };
 

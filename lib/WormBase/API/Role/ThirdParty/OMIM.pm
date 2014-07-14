@@ -36,7 +36,7 @@ sub _extract {
     my ($self, $response_json) = @_;
     my $result = {};
     my $json = new JSON;
-    print($response_json);
+
     my $parsed = $json->allow_nonref->utf8->relaxed->decode($response_json);
     my $entries = $parsed->{'omim'}->{'entryList'};
     foreach my $entry (@{$entries}){
@@ -64,13 +64,14 @@ sub _select_unknown {
             push @unknowns, $id;
         }
     }
-    return \@unknowns;
+    return @unknowns ? \@unknowns : undef;
 }
 
 # call external api and update the local hash of previously requested items
 sub _omim_external {
     my ($self, $omim_ids) = @_;
-    return $self->known_omims unless @{$omim_ids};
+    my $unknown_omim_ids = $self->_select_unknown($omim_ids);
+    return $self->known_omims unless $unknown_omim_ids;
 
     my $path = WormBase::Web->path_to('/') . '/credentials';
     my $api_key = `cat $path/omim_apikey.txt`;
@@ -78,7 +79,7 @@ sub _omim_external {
     return unless $api_key;
 
     my $header_opts = {
-        mimNumber => $omim_ids,
+        mimNumber => $unknown_omim_ids,
         include => 'text:description',
         format => 'json',
     };
@@ -108,11 +109,10 @@ sub short_title {
 }
 
 # for each ID in a list of omim IDs, create special label (that include data requested from external API)
-sub get_omims {
+sub markup_omims {
     my ($self, $omim_ids) = @_;
 #    $omim_ids = ['300494', '300497'];  # for texting
-    my $unknown_omim_ids = $self->_select_unknown($omim_ids);
-    $self->_omim_external($unknown_omim_ids);
+    $self->_omim_external($omim_ids);
     my @data = ();
     foreach my $oid (@{$omim_ids}){
         next unless exists $self->known_omims->{$oid};  # move on
