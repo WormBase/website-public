@@ -3,7 +3,7 @@ package WormBase::API::Object::Wbprocess;
 use XML::Simple;
 use HTTP::Request;
 use Moose;
-use WormBase::API::Object::Gene qw/classification/; 
+use WormBase::API::Object::Gene qw/classification/;
 use Switch;
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Interaction';
@@ -86,9 +86,9 @@ sub related_process{
     my ($self) = @_;
     my $object = $self->object;
 
-    my @related_proc = map { 
+    my @related_proc = map {
         $self->_pack_obj($_)
-        } $object->Related_process;
+        } $object->Related_topic;
 
     return {
         description => "Topics related to this record",
@@ -96,13 +96,13 @@ sub related_process{
     };
 }
 
-sub other_name{ 
+sub other_name{
     my ($self) = @_;
     my $object = $self->object;
 
     my $other_name = $object->Other_name;
-        
-    return {  
+
+    return {
         description => "Term alias",
         data => $other_name ? "$other_name" : undef
     };
@@ -110,7 +110,7 @@ sub other_name{
 
 
 # historical_gene { }
-# This mehtod will return a data structure containing the 
+# This mehtod will return a data structure containing the
 # historical reocrd of the dead gene originally associated with this Topic
 
 
@@ -118,7 +118,7 @@ sub historical_gene {
     my $self = shift;
     my $object = $self->object;
 
-    my @historical_gene = map { {text => $self->_pack_obj($_), 
+    my @historical_gene = map { {text => $self->_pack_obj($_),
                               evidence => $self->_get_evidence($_)} } $object->Historical_gene;
     return { description => 'Historical record of the dead genes originally associated with this topic',
              data        => @historical_gene ? \@historical_gene : undef,
@@ -129,7 +129,7 @@ sub life_stage {
     my $self = shift;
     my $object = $self->object;
 
-    my @life_stages = map { {text => $self->_pack_obj($_), 
+    my @life_stages = map { {text => $self->_pack_obj($_),
                               evidence => $self->_get_evidence($_)} } $object->Life_stage;
     return { description => 'Life stages associated with this topic',
              data        => @life_stages ? \@life_stages : undef,
@@ -142,7 +142,7 @@ sub life_stage {
 #
 #######################################
 
-sub genes{ 
+sub genes{
     my $self   = shift;
     my $object = $self->object;
     my @genes = $object->Gene;
@@ -152,17 +152,17 @@ sub genes{
         my $type = WormBase::API::Object::Gene->
         classification($gene)->{data}->{type};
         foreach ($gene->Anatomy_function){
-            my @bp_inv = map { 
+            my @bp_inv = map {
                 if ("$_" eq "$gene") {
                     my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}
-                } else { 
+                } else {
                     { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}
                 }
             } $_->Involved;
             next unless @bp_inv;
             my @assay = map { my $as = $_->right;
                 if ($as) {
-                    my @geno = $as->Genotype;                   
+                    my @geno = $as->Genotype;
                     {evidence => { genotype => join('<br /> ', @geno) },
                     text => "$_",}
                 }
@@ -172,7 +172,7 @@ sub genes{
             push @data, {
                 name      => $self->_pack_obj($gene),
                 type      => $type,
-                phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+                phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
                     {    evidence => $pev,
                          text     => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
                 assay     => @assay ? \@assay : undef,
@@ -183,9 +183,9 @@ sub genes{
 
     }
 
-    return { 
+    return {
         description => 'genes found within this topic',
-        data        => @data ? \@data : undef 
+        data        => @data ? \@data : undef
     };
 }
 
@@ -208,7 +208,7 @@ sub expression_cluster {
 
     return {
         description => "Expression cluster(s) related to this topic",
-        data        => @data ? \@data : undef 
+        data        => @data ? \@data : undef
     };
 
 }
@@ -224,7 +224,7 @@ my %data = (
             evidence => $evidence,
             text     => $desc
         }
-); 
+);
 
 return \%data;
 }
@@ -248,7 +248,7 @@ sub interaction {
 
     return {
         description => "Interactions relating to this topic",
-        data        => @data ? \@data : undef 
+        data        => @data ? \@data : undef
     };
 
 }
@@ -304,12 +304,12 @@ sub go_term{
         my $def     = $go_obj->Definition;
 
         push @data, {
-            name    => $self->_pack_obj($go_obj), 
+            name    => $self->_pack_obj($go_obj),
             type    => "$type",
             def     => "$def"
         };
     }
-        
+
     return {
         description => "Gene Ontology Term",
         data => \@data
@@ -331,13 +331,12 @@ sub pathway{
     my @data;
 
     if($pathway){
-        my @row = $pathway->row; 
+        my @row = $pathway->row;
         my @pathway_ids;
 
         @pathway_ids = $object->at('Pathway.DB_info.Database.WikiPathways.Pathway');
-        
+
         foreach my $id (@pathway_ids){
-            use Data::Dumper; print Dumper $id;
             my $revision;
             my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
             my $req = HTTP::Request->new(GET => $url);
