@@ -3,6 +3,7 @@ use Moose;
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
+with    'WormBase::API::Role::ThirdParty::OMIM';
 
 
 =pod 
@@ -105,11 +106,11 @@ sub _get_gene_relevance{
     my @omim = map {"$_";} @omim_ace;
     my @relevance_ace = $gene->Disease_relevance;
     my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
- 
+
     my $relevance;
     my $data = {
         gene => $self->_pack_obj($gene),
-        human_orthologs => @omim ? \@omim : undef,
+        human_orthologs => $self->get_omims(\@omim),
         relevance => @relevance ? \@relevance : undef
     };
 
