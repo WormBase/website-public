@@ -104,11 +104,9 @@ sub genes {
     my $self   = shift;
     my $object = $self->object;
 
-    my $count = $self->_get_count($object, 'Gene');
-
     my @genes = map { $self->_pack_obj($_)} $object->Gene;
     return { description => 'genes contained in the strain',
-             data        => @genes ? \@genes : $count > 0 ? "$count found" : undef };
+             data        => @genes ? \@genes : undef };
 }
 
 # alleles { }
@@ -121,7 +119,7 @@ sub alleles {
     my $object = $self->object;
 
     my $count = $self->_get_count($object, 'Variation');
-    my @alleles = map {$self->_process_variation($_, 1)} $object->Variation if $count < 650;
+    my @alleles = map {$self->_process_variation($_, 1)} $object->Variation if $count < 500;
 
     return { description => 'alleles contained in the strain',
              data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef };

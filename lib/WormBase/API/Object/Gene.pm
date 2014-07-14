@@ -91,29 +91,22 @@ sub _build__alleles {
     my $object = $self->object;
 
     my $count = $self->_get_count($object, 'Allele');
+    my @all = $object->Allele;
     my @alleles;
     my @polymorphisms;
-    unless ($count > 1000) {
-      my @all = $object->Allele;
+    my $alleles_count;
+    my $poly_count;
 
-      if($count < 500){
-          foreach my $allele (@all) {
-              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_process_variation($allele)) :
-                    push(@alleles, $self->_process_variation($allele));
-          }
-      }else{
-          foreach my $allele (@all) {
-              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_pack_obj($allele)) :
-                    push(@alleles, $self->_pack_obj($allele));
-          }
-      }
-    }
+        foreach my $allele (@all) {
+                  (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
+                        push(@polymorphisms, $self->_process_variation($allele)) :
+                        push(@alleles, $self->_process_variation($allele));
+        }
+    
 
     return {
-        alleles        => @alleles ? \@alleles : scalar @alleles,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : scalar @polymorphisms,
+        alleles        => @alleles ? \@alleles : $alleles_count,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : $poly_count,
     };
 
 }
