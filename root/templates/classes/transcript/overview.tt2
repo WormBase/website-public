@@ -25,8 +25,7 @@ END;
     markup(fields.description.data);
 
     WRAPPER $field_block title=none key='identity';
-        id_data = fields.identity.data;
-	    evidence(id_data.evidence, 'Brief_identification', id_data.text);	 
+      cell_content(fields.identity.data);
     END;
 
     remarks;

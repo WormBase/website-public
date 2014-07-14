@@ -199,7 +199,7 @@ sub identity {
 
     return {
       description => 'Brief description of the ' . $self->type,
-      data        => $description ? { text => "$description", evidence => $evidence } : undef
+      data        => $description ? $evidence? { text => "$description", evidence => $evidence } : "$description" : undef
     };
 }
 
