@@ -605,7 +605,6 @@ sub motif_details {
     my @motif_homol = $object->Motif_homol;
 
     # Summary by Motif
-    my @tot_positions;
     my @data = ();
 
     if (@motif_homol > 0) {
@@ -663,7 +662,6 @@ sub motif_details {
     }
 
     my $data = { description => 'The motif details of the protein',
-#        data        => @tot_positions ? \@tot_positions : undef,
         data => @data ? \@data : undef
     };
     return $data;

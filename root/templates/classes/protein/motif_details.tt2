@@ -22,7 +22,6 @@ build_data_table(
             		source_new 	=> 'Source',
             		desc 	=> 'Description'
             	},
-    #key='motif_details',
    	passed_data = motif_dat,
 );
 
