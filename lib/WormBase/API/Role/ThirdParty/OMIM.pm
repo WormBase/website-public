@@ -5,10 +5,6 @@ use HTTP::Request;
 use JSON;
 
 
-use Data::Dumper;
-
-
-
 has 'known_omims' => (
     is      => 'rw',
     isa     => 'HashRef',
