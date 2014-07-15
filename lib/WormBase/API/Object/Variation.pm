@@ -198,11 +198,11 @@ sub corresponding_gene {
     my $count = $self->_get_count($object, 'Gene');
     my @genes = map { $self->_pack_obj($_) } $self->object->Gene if $count < 5000;
 
-    my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count) if $count > 0;
+    my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
 
     return {
         description => 'gene in which this variation is found (if any)',
-        data        => @genes ? \@genes : $comment ? $comment : undef,
+        data        => @genes ? \@genes : $count ? $comment : undef,
     };
 }
 
