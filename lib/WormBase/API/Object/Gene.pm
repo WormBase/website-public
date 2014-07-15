@@ -94,19 +94,16 @@ sub _build__alleles {
     my @all = $object->Allele;
     my @alleles;
     my @polymorphisms;
-    my $alleles_count;
-    my $poly_count;
 
-        foreach my $allele (@all) {
-                  (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                        push(@polymorphisms, $self->_process_variation($allele)) :
-                        push(@alleles, $self->_process_variation($allele));
-        }
-    
+    foreach my $allele (@all) {
+              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
+                    push(@polymorphisms, $self->_process_variation($allele)) :
+                    push(@alleles, $self->_process_variation($allele));
+    }    
 
     return {
-        alleles        => @alleles ? \@alleles : $alleles_count,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : $poly_count,
+        alleles        => @alleles ? \@alleles : undef,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : undef,
     };
 
 }
