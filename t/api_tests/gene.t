@@ -122,7 +122,8 @@
 
         my $fpkm_expression = $gene->fpkm_expression_summary_ls();
 
-        isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{label}, undef, 'data returned');
+        isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
+        is($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.brugia.FR3.WBls:0000081.Unknown.WBbt:0007833.PRJEB2709.ERX026030', 'correct link returned');
     }
 
     #Tests the alleles and polymorphisms methods of Gene 
