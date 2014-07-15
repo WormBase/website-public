@@ -25,6 +25,12 @@ http://wormbase.org/species/*/variation
 
 =cut
 
+has '_genes_affected' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => 'features_affected',
+);
+
 #######################################
 #
 # CLASS METHODS
@@ -188,11 +194,15 @@ sub gene_class {
 # This should return the CGC name, sequence name (if name), and WBGeneID...
 sub corresponding_gene {
     my ($self) = @_;
+    my $object = $self->object;
+    my $count = $self->_get_count($object, 'Gene');
+    my @genes = map { $self->_pack_obj($_) } $self->object->Gene if $count < 5000;
 
-    my @genes = map { $self->_pack_obj($_) } $self->object->Gene;
+    my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
+
     return {
         description => 'gene in which this variation is found (if any)',
-        data        => @genes ? \@genes : undef,
+        data        => @genes ? \@genes : $count ? $comment : undef,
     };
 }
 
