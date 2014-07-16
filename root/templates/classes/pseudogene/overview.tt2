@@ -22,7 +22,7 @@ WRAPPER highlight_box;
     END;
 
     WRAPPER $field_block title="Named by" key="named_by";
-
+        tag2link(fields.named_by.data);
     END;
 
     WRAPPER $field_block title="From laboratory" key="from_lab";
