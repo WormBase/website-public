@@ -40,10 +40,10 @@ WRAPPER highlight_box;
      WRAPPER $field_block title="Type" key="type";
 
         IF ( type == 'Coding pseudogene' );
-            type_desc = {'A pseudogenic loci that appears to have once been coding'=''} ;
+            type_desc = {'description'='A pseudogenic loci that appears to have once been coding'} ;
 
         ELSIF ( type == 'RNA pseudogene' );
-            type_desc = {'A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA'=''} ;
+            type_desc = {'description'='A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA'} ;
 
         END;
 
