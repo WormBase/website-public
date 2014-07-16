@@ -426,6 +426,13 @@
 	base        = 'http://histochemicalsociety.org/'
 	}
 
+ hmmpanther = {
+	description = 'The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System was designed to classify proteins (and their genes) in order to facilitate high-throughput analysis.'
+	base        = 'http://www.pantherdb.org/'
+	email       = 'feedback@pantherdb.org'
+	search      = 'http://www.pantherdb.org/panther/family.do?clsAccession=%s'
+	}
+
  INTERPRO = {
 	description = 'InterPro provides an integrated view of the commonly used signature databases'
 	base        = 'http://www.ebi.ac.uk/interpro/'
@@ -663,7 +670,7 @@
         base        = 'http://orcid.org/'
         search      = 'http://orcid.org/%s'
         }
-
+        
  Pfam = {
 	description = 'Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains and families'
 	base        = 'http://pfam.sanger.ac.uk/'
@@ -763,6 +770,12 @@
  	search      = 'http://www.rnai.org/movies/%s'
  	}
 
+ ScanProsite = {
+  	description = 'Prosite'
+ 	base        = 'http://prosite.expasy.org/'
+    search      = 'http://prosite.expasy.org/%s'
+  	}
+    
  Science = {
 	description = 'Science'
 	base        = 'http://www.sciencemag.org/'
