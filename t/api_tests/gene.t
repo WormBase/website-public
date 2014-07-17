@@ -113,17 +113,56 @@
         is($human_diseases->{'data'}->{'experimental_model'}, undef, 'undef returned when there is no data');
     }
 
-    # Test the analysis link in the fpkm table of the expression method 
-    # issue #2821 
+    # Test the analysis link in the fpkm table of the expression method
+    # issue #2821
     sub test_fpkm_link {
         my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
-        
+
         can_ok('WormBase::API::Object::Gene', ('fpkm_expression_summary_ls'));
 
         my $fpkm_expression = $gene->fpkm_expression_summary_ls();
 
         isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
         is($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.brugia.FR3.WBls:0000081.Unknown.WBbt:0007833.PRJEB2709.ERX026030', 'correct link returned');
+    }
+
+    #Tests the alleles and polymorphisms methods of Gene
+    #Related to issue #2809
+    sub test_alleles {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00006742' });
+
+        can_ok('WormBase::API::Object::Gene', ('alleles'));
+        can_ok('WormBase::API::Object::Gene', ('polymorphisms'));
+
+        my $alleles = $gene->alleles();
+        my $polymorphisms = $gene->polymorphisms();
+
+        my $first_allele = $alleles->{data}[0];
+        my $first_polymorphisms = $polymorphisms->{data}[0];
+
+
+        isnt($first_allele->{variation}->{label}, undef, 'data returned');
+        isnt($first_polymorphisms->{variation}->{label}, undef, 'data returned');
+        is  ($first_allele->{variation}->{label}, 'e2342', 'correct allele returned');
+        is  ($first_polymorphisms->{variation}->{label}, 'WBVar00053707', 'correct polymorphisms returned');
+
+    }
+
+    #Test the gene classification method
+    # Make sure return compiant data - #2906
+
+    sub test_classification {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00014631' });
+
+        can_ok('WormBase::API::Object::Gene', ('classification'));
+
+        my $classification = $gene->classification();
+
+
+        isnt($classification->{data}, undef, 'data returned');
+        isnt($classification->{data}{type}, undef, 'type data returned');
+        is  ($classification->{data}{type}, 'snRNA', 'correct allele returned');
+
     }
 }
 

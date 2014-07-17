@@ -91,29 +91,19 @@ sub _build__alleles {
     my $object = $self->object;
 
     my $count = $self->_get_count($object, 'Allele');
+    my @all = $object->Allele;
     my @alleles;
     my @polymorphisms;
-    unless ($count > 1000) {
-      my @all = $object->Allele;
 
-      if($count < 500){
-          foreach my $allele (@all) {
+    foreach my $allele (@all) {
               (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_process_variation($allele)) :
                     push(@alleles, $self->_process_variation($allele));
-          }
-      }else{
-          foreach my $allele (@all) {
-              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_pack_obj($allele)) :
-                    push(@alleles, $self->_pack_obj($allele));
-          }
-      }
     }
 
     return {
-        alleles        => @alleles ? \@alleles : scalar @alleles,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : scalar @polymorphisms,
+        alleles        => @alleles ? \@alleles : undef,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : undef,
     };
 
 }
@@ -243,7 +233,8 @@ sub classification {
       # Is this a non-coding RNA?
       my @transcripts = $object->Corresponding_transcript;
       foreach (@transcripts) {
-          $data->{type} = $_->Transcript;
+          my $type = $_->Transcript;
+          $data->{type} = $type && "$type";
           last;
       }
     }
