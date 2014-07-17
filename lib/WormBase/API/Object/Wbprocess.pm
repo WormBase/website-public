@@ -86,13 +86,23 @@ sub related_process{
     my ($self) = @_;
     my $object = $self->object;
 
-    my @related_proc = map {
-        $self->_pack_obj($_)
-        } $object->Related_topic;
+    my @topic_groups = $object->Related_topic;
+    my @all_topics;
 
+    foreach my $group (@topic_groups){
+
+        my @topics = map {
+        $self->_pack_obj($_)
+        } $object->$group;
+
+        $group =~ s/_/ /;  
+        push @all_topics, {$group => @topics};
+    }
+
+    use Data::Dumper; print Dumper @all_topics;
     return {
         description => "Topics related to this record",
-        data    => @related_proc ? \@related_proc : undef
+        data    => @all_topics ? \@all_topics : undef
     };
 }
 
