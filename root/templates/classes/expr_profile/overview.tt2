@@ -30,16 +30,18 @@ WRAPPER $field_block title='Expression Map' key='expression_map';
 	fields.expression_map.data;
 END;
 
-WRAPPER $field_block title='RNAi' key='rnai';
-    build_data_table (
-		order = [ 'rnai','strain','genotype', ],
-		columns = {				 		
-			rnai    => 'RNAi',
-			strain => 'Strain',
-			genotype => 'Genotype',
-			},
-		key = 'rnai');
-END;
+
+# # Maybe they will want this back later
+# WRAPPER $field_block title='RNAi' key='rnai';
+#     build_data_table (
+# 		order = [ 'rnai','strain','genotype', ],
+# 		columns = {				 		
+# 			rnai    => 'RNAi',
+# 			strain => 'Strain',
+# 			genotype => 'Genotype',
+# 			},
+# 		key = 'rnai');
+# END;
 
 remarks;
 
