@@ -22,9 +22,11 @@
 	
 	WRAPPER $field_block title="Related processes" key="related_process";
     FOREACH topic IN fields.related_process.data;
-    cell_content( topic.keys );
+    cell_content( topic.key );
     ': ';
-		tags2link( topic );
+    '<br/>';
+		tags2link( topic.value );
+    '<br/>';
     '<br/>';
     END;
 	END;

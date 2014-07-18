@@ -87,7 +87,7 @@ sub related_process{
     my $object = $self->object;
 
     my @topic_groups = $object->Related_topic;
-    my @all_topics;
+    my %all_topics;
 
     foreach my $group (@topic_groups){
 
@@ -95,14 +95,14 @@ sub related_process{
         $self->_pack_obj($_)
         } $object->$group;
 
-        $group =~ s/_/ /;  
-        push @all_topics, {$group => @topics};
+        $group =~ s/_/ /;
+        $all_topics{ $group } = \@topics;
     }
 
-    use Data::Dumper; print Dumper @all_topics;
+    use Data::Dumper; print Dumper \%all_topics;
     return {
         description => "Topics related to this record",
-        data    => @all_topics ? \@all_topics : undef
+        data    => %all_topics ? \%all_topics : undef
     };
 }
 
