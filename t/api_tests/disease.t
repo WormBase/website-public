@@ -65,6 +65,26 @@
 
     }
 
+    sub test_error_response_code_omims {
+        my $fake_response_class = Moose::Meta::Class->create(
+            'FakeResponse',
+                methods => { 
+                code => sub { return '409'}
+            },
+        );
+        my $fake_resp = $fake_response_class->new_object();
+        use Data::Dumper; print Dumper $fake_resp;
+        can_ok($fake_resp, ('code'));
+        is($fake_resp->code, '409', 'Fake response is working, generating a fake error code');
+
+        my $disease = $api->fetch({ class => 'Disease', name => 'DOID:206' });
+        is($disease->resource_error->{'error_time'}, undef, 'Resource error has No error_time');
+        is($disease->_process_response($fake_resp), undef, 'Get undef when error code is generated');
+        ok(defined $disease->resource_error->{'error_time'}, 'Resource error time is updated');
+
+        my $disease2 = $api->fetch({ class => 'Disease', name => 'DOID:0050432' });
+        ok(defined $disease2->resource_error->{'error_time'}, 'Resource error time is updated');
+    }
 }
 
 1;

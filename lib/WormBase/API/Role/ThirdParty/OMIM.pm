@@ -4,11 +4,27 @@ use Moose::Role;
 use HTTP::Request;
 use JSON;
 
+use Data::Dumper;
+
 
 has 'known_omims' => (
     is      => 'rw',
     isa     => 'HashRef',
     default => sub { {} },  # reinitialized for individual objects
+);
+
+has 'min_wait_time' => (
+    is      => 'ro',
+    isa     => 'Int',
+    default => 10,  # minutes wait if external resource responds with an error
+);
+
+our $test = 4;
+our $resource_error = {};  # initialized for the class
+has 'resource_error' => (
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub { return $resource_error },
 );
 
 # takes a hashRef of options (parameters of REST api request) and put it into a string
@@ -63,11 +79,48 @@ sub _select_unknown {
     return @unknowns ? \@unknowns : undef;
 }
 
+# Ensure that if an resource_error has occured, a minimum waiting time has passed
+# After which the resource_error field is reset, and a True value is returned by the subroutine
+sub waited {
+    my ($self) = @_;
+    return 1 unless (exists $self->resource_error->{'error_time'});
+
+    my $time_passed = time() - $self->resource_error->{'error_time'};
+    if ($time_passed >= $self->min_wait_time){
+        $self->resource_error = {};
+    }
+    return $time_passed >= $self->min_wait_time;
+}
+
+# process http response based on the response code
+# unless code equals 200, the $resource_error field is updated
+sub _process_response {
+    my ($self, $response) = @_;
+    my $omim_data_map;
+    if ($response->code eq '200'){
+        my $response_content = $response->content;
+        $omim_data_map = $self->_extract($response_content);
+        foreach my $omim_id (keys %$omim_data_map){
+            $self->known_omims->{$omim_id} = $omim_data_map->{$omim_id};
+        }
+    } else {
+        my $time;
+        my $external_source = __PACKAGE__;
+        $self->resource_error->{'error_time'} = time();
+        $self->resource_error->{'error_code'} = $response->code;
+        $self->resource_error->{'message'} = "$external_source resource abuse";
+        $self->resource_error->{'external_resource'} = "$external_source";
+    }
+    return $omim_data_map;
+}
+
 # call external api and update the local hash of previously requested items
 sub _omim_external {
     my ($self, $omim_ids) = @_;
+    return unless $self->waited();
+
     my $unknown_omim_ids = $self->_select_unknown($omim_ids);
-    return $self->known_omims unless $unknown_omim_ids;
+    return unless $unknown_omim_ids;
 
     my $path = WormBase::Web->path_to('/') . '/credentials';
     my $api_key = `cat $path/omim_apikey.txt`;
@@ -76,7 +129,7 @@ sub _omim_external {
 
     my $header_opts = {
         mimNumber => $unknown_omim_ids,
-        include => 'text:description',
+   #     include => 'text:description',
         format => 'json',
     };
 
@@ -89,12 +142,8 @@ sub _omim_external {
     );
     my $lwp       = LWP::UserAgent->new;
     my $response  = $lwp->request($req);
-    my $response_content = $response->content;
-    my $omim_data_map = $self->_extract($response_content);
-    foreach my $omim_id (keys %$omim_data_map){
-        $self->known_omims->{$omim_id} = $omim_data_map->{$omim_id};
-    }
-    return $self->known_omims;
+
+    return $self->_process_response($response);
 }
 
 # get short title of omim from the preferredTitle field
