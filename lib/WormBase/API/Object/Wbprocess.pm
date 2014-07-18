@@ -99,7 +99,6 @@ sub related_process{
         $all_topics{ $group } = \@topics;
     }
 
-    use Data::Dumper; print Dumper \%all_topics;
     return {
         description => "Topics related to this record",
         data    => %all_topics ? \%all_topics : undef
