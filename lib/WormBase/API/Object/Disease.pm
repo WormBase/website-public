@@ -106,13 +106,15 @@ sub _get_gene_relevance{
     my @omim = map {"$_";} @omim_ace;
     my @relevance_ace = $gene->Disease_relevance;
     my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
+    my ($err, $markedup_omims) = $self->markup_omims(\@omim);
 
     my $relevance;
     my $data = {
         gene => $self->_pack_obj($gene),
-        human_orthologs => $self->markup_omims(\@omim),
-        relevance => @relevance ? \@relevance : undef
+        human_orthologs => $markedup_omims,
+        relevance => @relevance ? \@relevance : undef,
     };
+    $data->{'error'} = $err if $err;
 
     return $data;
 }
@@ -120,9 +122,14 @@ sub _get_gene_relevance{
 sub _build__genes_orthology {
     my ($self) = @_;
     my @data = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_orthology;
+    my $err;
+    foreach (@data){
+        $err = $_->{'error'} if $_->{'error'};
+    }
     return {
         description => 'Genes by orthology to human disease gene',
-        data        => @data ? \@data : undef ,
+        data        => @data ? \@data : undef,
+        error       => $err,
     };
 }
 

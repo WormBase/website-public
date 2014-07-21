@@ -110,6 +110,7 @@ sub _process_response {
         $self->resource_error->{'error_code'} = $response->code;
         $self->resource_error->{'message'} = "$external_source resource abuse";
         $self->resource_error->{'external_resource'} = "$external_source";
+        die 'Failed to retrieve external data';
     }
     return $omim_data_map;
 }
@@ -125,7 +126,7 @@ sub _omim_external {
     my $path = WormBase::Web->path_to('/') . '/credentials';
     my $api_key = `cat $path/omim_apikey.txt`;
     chomp $api_key;
-    return unless $api_key;
+    die 'No API key' unless $api_key;
 
     my $header_opts = {
         mimNumber => $unknown_omim_ids,
@@ -157,7 +158,13 @@ sub short_title {
 sub markup_omims {
     my ($self, $omim_ids) = @_;
 #    $omim_ids = ['300494', '300497'];  # for texting
-    $self->_omim_external($omim_ids);
+    my $err;
+    eval { 
+        $self->_omim_external($omim_ids);
+        1;
+    } || do {
+        $err = 1;
+    };
     my @data = ();
     foreach my $oid (@{$omim_ids}){
         next unless exists $self->known_omims->{$oid};  # move on
@@ -169,7 +176,8 @@ sub markup_omims {
                };
         push @data, $dat;
     }
-    return @data ? \@data : undef;
+
+    return ($err, @data ? \@data : undef);
 }
 
 
