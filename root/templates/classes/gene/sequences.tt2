@@ -25,7 +25,7 @@ IF fields.gene_models.data.table;
     IF fields.gene_models.data.remarks;
       WRAPPER toggle title="Curator comments";
         FOREACH k IN fields.gene_models.data.remarks.keys.nsort;
-          '<div>';
+          '<div class="curator-comment-field">';
             '<sup>' _ k _ '</sup>';
             cell_content(fields.gene_models.data.remarks.$k);
           '</div>';
