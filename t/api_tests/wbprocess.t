@@ -61,13 +61,13 @@
         can_ok('WormBase::API::Object::Wbprocess', ('related_process'));
 
         my $related_process = $wbprocess->related_process();
-        my @first_group = keys $related_process->{'data'}[0];
+        my @keys = keys $related_process->{'data'};
 
         isnt($related_process->{'data'}, undef, 'data returned');
-        isnt($first_group[0], undef, 'related topics group retuned');
-        is($first_group[0], 'Specialisation of', 'correct related topics group retuned');
-        isnt($related_process->{'data'}[0]->{$first_group[0]}->{'id'}, undef, 'related topic returned');
-        is($related_process->{'data'}[0]->{$first_group[0]}->{'id'}, 'WBbiopr:00000026', 'correct related topic returned');
+        isnt($keys[0], undef, 'related topics group retuned');
+        is($keys[0], 'Generalisation of', 'correct related topics group retuned');
+        isnt($related_process->{'data'}->{$keys[0]}[0]->{'id'}, undef, 'related topic returned');
+        is($related_process->{'data'}->{$keys[0]}[0]->{'id'}, 'WBbiopr:00000006', 'correct related topic returned');
 
     } 
 
