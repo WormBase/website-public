@@ -819,7 +819,7 @@ a#fade:hover {
 }
 
 .search-results #searchResultForm #SearchResult {
-  width:100%;
+  width:95%;
 }
 
 .search-results {
@@ -2095,6 +2095,14 @@ div#google-map {
     overflow:hidden;
 }
 
+/* curator comment */
+.curator-comment-field {
+    padding: 0.3em 0;
+}
+
+.curator-comment-field .evidence {
+    display: inline;
+}
 
 
 
@@ -2532,6 +2540,10 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
   position:static;
   vertical-align:top;
   table-layout:fixed;
+}
+
+div.detail-box .ev-more-text span{
+  background-color:#E9EEF2;
 }
 
 .bench-update {

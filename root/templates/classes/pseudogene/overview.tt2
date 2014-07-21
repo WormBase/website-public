@@ -2,6 +2,10 @@
 </span></h2> 
 
 [%
+type = fields.type.data;
+%]
+
+[%
 
 WRAPPER $field_block title="Brief identification" key="brief_id";
     fields.brief_id.data;
@@ -18,7 +22,7 @@ WRAPPER highlight_box;
     END;
 
     WRAPPER $field_block title="Named by" key="named_by";
-        tag2link(fields.named_by.data);
+        tag2link(fields.named_by.data); 
     END;
 
     WRAPPER $field_block title="From laboratory" key="from_lab";
@@ -34,7 +38,16 @@ WRAPPER highlight_box;
     END;
 
      WRAPPER $field_block title="Type" key="type";
-        fields.type.data;
+
+        IF ( type == 'Coding pseudogene' );
+            type_desc = {'description'='A pseudogenic loci that appears to have once been coding'} ;
+
+        ELSIF ( type == 'RNA pseudogene' );
+            type_desc = {'description'='A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA'} ;
+
+        END;
+
+        evidence(type_desc, 'Type_description', fields.type.data, 'details');
     END;
    
 
@@ -44,7 +57,6 @@ remarks;
 
 
 %]
-
 
 [%
 
