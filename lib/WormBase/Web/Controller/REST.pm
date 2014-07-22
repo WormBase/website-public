@@ -694,9 +694,8 @@ sub widget_GET {
                 $c->log->$log("\t$_") foreach @problems;
             }
 
-            # a field can force a widget to not caching
-            if (ref($data->{'data'}) eq 'HASH'
-                    && $data->{'data'}->{'skip_cache'}){
+            # a field can force an entire widget to not caching
+            if ($data->{'error'}){
                 $skip_cache = 1;
             }
 
