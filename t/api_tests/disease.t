@@ -136,6 +136,7 @@
         my $disease = $api->fetch({ class => 'Disease', name => 'DOID:206' });
         is($disease->resource_error->{'error_time'}, undef, 'Resource error has No error_time at the beginning');
         can_ok('WormBase::API::Object::Disease', ('genes_biology'));
+        clear_hash($disease->known_omims);  #force it to call external than using locally stored data
         is($disease->genes_biology->{'error'}, undef, 'No error flag with genes_biology field');
 
         # fake error to disrupt external API
@@ -150,6 +151,7 @@
         # After recovering from error state
         my $an_hour_ago = time() - 3600;
         $disease->resource_error->{'error_time'} = $an_hour_ago;  #fake error time
+        clear_hash($disease->known_omims);  #force it to call external than using locally stored data
         is($disease->genes_biology->{'error'}, undef, 'Again No error flag with genes_biology field');
     }
 
