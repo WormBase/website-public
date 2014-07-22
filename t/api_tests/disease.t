@@ -78,12 +78,33 @@
         is($fake_resp->code, '409', 'Fake response is working, generating a fake error code');
 
         my $disease = $api->fetch({ class => 'Disease', name => 'DOID:206' });
-        is($disease->resource_error->{'error_time'}, undef, 'Resource error has No error_time');
-        is($disease->_process_response($fake_resp), undef, 'Get undef when error code is generated');
+        is($disease->resource_error->{'error_time'}, undef, 'Resource error has No error_time at the beginning');
+
+        my $err;
+        eval {$disease->_process_response($fake_resp)} || do {$err = $@};
+        isnt($err, undef, 'Got an error with fake error response');
         ok(defined $disease->resource_error->{'error_time'}, 'Resource error time is updated');
 
+        my @test_omims = ('133700', '133701');
+        # test data returning when external API is not available
+        my ($err_msg, $markedup_omims) = $disease->markup_omims(\@test_omims);
+        is(scalar @{$markedup_omims}, 2, 'correct number of marked up OMIMs returned');
+        is(@{$markedup_omims}[0]->{'label'}, 'OMIM:133700', 'correct label of the OMIM returned despite error');
+
+        # test persistence of error across objects
         my $disease2 = $api->fetch({ class => 'Disease', name => 'DOID:0050432' });
         ok(defined $disease2->resource_error->{'error_time'}, 'Resource error time is updated');
+
+        # test reset of the error
+        my $an_hour_ago = time() - 3600;
+        $disease->resource_error->{'error_time'} = $an_hour_ago;  #fake error time
+        ok($disease->waited(), 'Waiting has happened');
+        is($disease->resource_error->{'error_time'}, undef, 'Resource error has No error_time after waiting');
+
+        # normality of retrieve external data after resetting the error status
+        my ($err_msg_1, $markedup_omims_1) = $disease->markup_omims(\@test_omims);
+        is(scalar @{$markedup_omims_1}, 2, 'correct number of marked up OMIMs returned');
+        is(@{$markedup_omims_1}[0]->{'label'}, 'OMIM:133700', 'correct label of the OMIM returned with external API back to normal');
     }
 }
 

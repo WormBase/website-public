@@ -20,11 +20,11 @@ has 'min_wait_time' => (
 );
 
 our $test = 4;
-our $resource_error = {};  # initialized for the class
+our $_resource_error = {};  # initialized for the class
 has 'resource_error' => (
     is      => 'rw',
     isa     => 'HashRef',
-    default => sub { return $resource_error },
+    default => sub { return $_resource_error },
 );
 
 # takes a hashRef of options (parameters of REST api request) and put it into a string
@@ -85,11 +85,13 @@ sub waited {
     my ($self) = @_;
     return 1 unless (exists $self->resource_error->{'error_time'});
 
-    my $time_passed = time() - $self->resource_error->{'error_time'};
-    if ($time_passed >= $self->min_wait_time){
-        $self->resource_error = {};
+    my $seconds_passed = time() - $self->resource_error->{'error_time'};
+    my $ok_to_proceed = $seconds_passed >= (60 * $self->min_wait_time);
+print $ok_to_proceed;
+    if ($ok_to_proceed){
+        $_resource_error = {};
     }
-    return $time_passed >= $self->min_wait_time;
+    return $ok_to_proceed;
 }
 
 # process http response based on the response code
@@ -118,10 +120,10 @@ sub _process_response {
 # call external api and update the local hash of previously requested items
 sub _omim_external {
     my ($self, $omim_ids) = @_;
-    return unless $self->waited();
-
     my $unknown_omim_ids = $self->_select_unknown($omim_ids);
     return unless $unknown_omim_ids;
+
+    die 'Request stopped until some time has passed' unless $self->waited();
 
     my $path = WormBase::Web->path_to('/') . '/credentials';
     my $api_key = `cat $path/omim_apikey.txt`;
@@ -163,16 +165,26 @@ sub markup_omims {
         $self->_omim_external($omim_ids);
         1;
     } || do {
-        $err = 1;
+        $err = $@;
     };
     my @data = ();
     foreach my $oid (@{$omim_ids}){
-        next unless exists $self->known_omims->{$oid};  # move on
-        my $name = $self->known_omims->{$oid}->{'title'};
-        $name = $self->short_title($name);
-        my $dat = {id => $oid, 
+        my $name;  #base on external info
+        if ($self->known_omims->{$oid}){
+            $name = $self->known_omims->{$oid}->{'title'};
+            $name = $self->short_title($name);
+        }
+
+        my $label;
+        if ($name){
+            $label = "OMIM:$oid($name)";
+        }else{
+            $label = "OMIM:$oid";
+        }
+
+        my $dat = {id => $oid,
                    class => 'OMIM',
-                   label=> "OMIM:$oid($name)",
+                   label=> $label,
                };
         push @data, $dat;
     }
