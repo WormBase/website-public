@@ -87,9 +87,10 @@ sub waited {
 
     my $seconds_passed = time() - $self->resource_error->{'error_time'};
     my $ok_to_proceed = $seconds_passed >= (60 * $self->min_wait_time);
-print $ok_to_proceed;
     if ($ok_to_proceed){
-        $_resource_error = {};
+        for (keys %{$self->resource_error}) {
+            delete $self->resource_error->{$_};
+        }
     }
     return $ok_to_proceed;
 }

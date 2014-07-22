@@ -41,14 +41,15 @@
     # test OMIM external API stuff
     sub test_markup_omims {
         my $disease = $api->fetch({ class => 'Disease', name => 'DOID:0050432' });
-        
+
         # Test if the object contains this method
         can_ok('WormBase::API::Object::Disease', ('markup_omims'));
         my @test_omims = ('300494', '300497');
         my @test_omims_subset_1 = ($test_omims[0]);
-        my @markedup_omims = @{$disease->markup_omims(\@test_omims_subset_1)};
-        ok(@markedup_omims, "markedup OMIM returned");
-        my $markedup1 = pop @markedup_omims;
+        my ($err, $markedup_omims) = $disease->markup_omims(\@test_omims_subset_1);
+        is($err, undef, 'No error with external API');
+        ok(@$markedup_omims, "markedup OMIM returned");
+        my $markedup1 = pop @$markedup_omims;
         ok($markedup1->{'label'} =~ /ASPGX1/, "correct OMIM markup returned");
 
         # test remembering previously reqeusted items
@@ -59,7 +60,7 @@
         is(grep(/300494/, @unknown_omims), 0, "'300494' HAS been requested before");
 
         # test reqeusting more items
-        @{$disease->markup_omims(\@test_omims)};
+        $disease->markup_omims(\@test_omims);
         ok($disease->known_omims->{$test_omims[0]}, 'first items requested');
         ok($disease->known_omims->{$test_omims[1]}, 'second items requested');
 
@@ -73,7 +74,7 @@
             },
         );
         my $fake_resp = $fake_response_class->new_object();
-        use Data::Dumper; print Dumper $fake_resp;
+use Data::Dumper;
         can_ok($fake_resp, ('code'));
         is($fake_resp->code, '409', 'Fake response is working, generating a fake error code');
 
@@ -82,6 +83,7 @@
 
         my $err;
         eval {$disease->_process_response($fake_resp)} || do {$err = $@};
+
         isnt($err, undef, 'Got an error with fake error response');
         ok(defined $disease->resource_error->{'error_time'}, 'Resource error time is updated');
 
@@ -101,12 +103,14 @@
         ok($disease->waited(), 'Waiting has happened');
         is($disease->resource_error->{'error_time'}, undef, 'Resource error has No error_time after waiting');
 
-        # normality of retrieve external data after resetting the error status
+        # normality of retrieving external data after resetting the error status
         my ($err_msg_1, $markedup_omims_1) = $disease->markup_omims(\@test_omims);
+        is($err_msg_1, undef, 'no error message');
         is(scalar @{$markedup_omims_1}, 2, 'correct number of marked up OMIMs returned');
-        is(@{$markedup_omims_1}[0]->{'label'}, 'OMIM:133700', 'correct label of the OMIM returned with external API back to normal');
-    }
-}
+        is(@{$markedup_omims_1}[0]->{'label'}, 'OMIM:133700(EXOSTOSES, MULTIPLE, TYPE I)',
+           'correct label of the OMIM returned with external API back to normal');
+     }
+ }
 
 1;
 
