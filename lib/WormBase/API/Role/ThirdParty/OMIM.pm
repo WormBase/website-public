@@ -193,5 +193,17 @@ sub markup_omims {
     return ($err, @data ? \@data : undef);
 }
 
+# helper function
+# For an array of hashes, aggregates all errors stored under the key 'error',
+# and put them in an array
+sub summarize_error {
+    my ($self, $data) = @_;
+    my @errors;
+    my $err;
+    foreach (@$data){
+        push(@errors, $_->{'error'}) if $_->{'error'};
+    }
+    return @errors ? \@errors : undef;
+}
 
 1;

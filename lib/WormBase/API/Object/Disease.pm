@@ -88,18 +88,6 @@ sub synonym {
     };
 }
 
-has 'genes_orthology' => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build__genes_orthology',
-);
-
-has 'genes_biology' => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build__genes_biology',
-);
-
 sub _get_gene_relevance{
     my ($self, $gene) = @_;
     my @omim_ace = $gene->DB_info->at('OMIM.gene') if $gene->DB_info;  #human homologs
@@ -107,6 +95,7 @@ sub _get_gene_relevance{
     my @relevance_ace = $gene->Disease_relevance;
     my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
     my ($err, $markedup_omims) = $self->markup_omims(\@omim);
+#    use Data::Dumper; print Dumper @omim; print Dumper $err;
 
     my $relevance;
     my $data = {
@@ -119,13 +108,10 @@ sub _get_gene_relevance{
     return $data;
 }
 
-sub _build__genes_orthology {
+sub genes_orthology {
     my ($self) = @_;
     my @data = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_orthology;
-    my $err;
-    foreach (@data){
-        $err = $_->{'error'} if $_->{'error'};
-    }
+    my $err = $self->summarize_error(\@data);
     return {
         description => 'Genes by orthology to human disease gene',
         data        => @data ? \@data : undef,
@@ -133,17 +119,16 @@ sub _build__genes_orthology {
     };
 }
 
-sub _build__genes_biology {
+sub genes_biology {
     my ($self) = @_;
     my @genes = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_biology;
+    my $err = $self->summarize_error(\@genes);
     return {
         description => 'Genes used as experimental models',
         data        => @genes ? \@genes : undef ,
+        error       => $err,
     };
 }
-
-
-
 
 
 
