@@ -66,7 +66,10 @@
 
     }
 
-    sub test_error_response_code_omims {
+    # test resource_error attribute (a static/class attribute) of the Role OMIM
+    # is updated based on external API response, and
+    # is recovered after waiting
+    sub test_omim_error {
         my $fake_response_class = Moose::Meta::Class->create(
             'FakeResponse',
                 methods => { 
@@ -74,7 +77,7 @@
             },
         );
         my $fake_resp = $fake_response_class->new_object();
-use Data::Dumper;
+
         can_ok($fake_resp, ('code'));
         is($fake_resp->code, '409', 'Fake response is working, generating a fake error code');
 
@@ -90,6 +93,7 @@ use Data::Dumper;
         my @test_omims = ('133700', '133701');
         # test data returning when external API is not available
         my ($err_msg, $markedup_omims) = $disease->markup_omims(\@test_omims);
+        isnt($err_msg, undef, 'Got an error with fake error response');
         is(scalar @{$markedup_omims}, 2, 'correct number of marked up OMIMs returned');
         is(@{$markedup_omims}[0]->{'label'}, 'OMIM:133700', 'correct label of the OMIM returned despite error');
 
@@ -110,7 +114,46 @@ use Data::Dumper;
         is(@{$markedup_omims_1}[0]->{'label'}, 'OMIM:133700(EXOSTOSES, MULTIPLE, TYPE I)',
            'correct label of the OMIM returned with external API back to normal');
      }
- }
+
+    # test error flag, which will be used to decide to cache a widget
+    # ensure error flag is set if and only if external API related error occurred
+    sub test_omim_error_flag {
+        my $fake_response_class = Moose::Meta::Class->create(
+            'FakeResponse',
+                methods => { 
+                code => sub { return '409'}
+            },
+        );
+        my $fake_resp = $fake_response_class->new_object();
+
+        sub clear_hash {
+            my ($h) = @_;
+            for (keys %$h){
+                delete $h->{$_};
+            }
+        }
+
+        my $disease = $api->fetch({ class => 'Disease', name => 'DOID:206' });
+        is($disease->resource_error->{'error_time'}, undef, 'Resource error has No error_time at the beginning');
+        can_ok('WormBase::API::Object::Disease', ('genes_biology'));
+        is($disease->genes_biology->{'error'}, undef, 'No error flag with genes_biology field');
+
+        # fake error to disrupt external API
+        can_ok($fake_resp, ('code'));
+        is($fake_resp->code, '409', 'Fake response is working, generating a fake error code');
+        my $err;
+        clear_hash($disease->known_omims);  #force it to call external than using locally stored data
+        eval {$disease->_process_response($fake_resp)} || do {$err = $@};
+        isnt($err, undef, 'Got an error with fake error response');
+        isnt($disease->genes_biology->{'error'}, undef, 'Error flag specified with genes_biology field');
+
+        # After recovering from error state
+        my $an_hour_ago = time() - 3600;
+        $disease->resource_error->{'error_time'} = $an_hour_ago;  #fake error time
+        is($disease->genes_biology->{'error'}, undef, 'Again No error flag with genes_biology field');
+    }
+
+}
 
 1;
 
