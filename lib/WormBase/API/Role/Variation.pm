@@ -38,8 +38,8 @@ sub _process_variation {
     foreach my $type_affected ( $variation->Affects ) {
         foreach my $item_affected ( $type_affected->col ) {    # is a subtree
           foreach my $val ($item_affected->col){
-              if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
-              else { 
+              if ($val =~ /utr|intron|exon/i) { $locations{$val}++; }
+              else {
                 $effects{$val}++;
                 if ($val =~ /missense/i) {
                   # Not specified for every allele.
@@ -69,16 +69,17 @@ sub _process_variation {
     my @location = keys %locations;
 
     my $method_name = $variation->Method;
-    my $method_remark = $method_name->Remark if $method_name;
+    my $method_remark = $method_name->Remark || "" if $method_name;
 
     my $gene = $self->_pack_obj($variation->Gene) if $get_gene;
     my @strains = map { $self->_pack_obj($_) } $variation->Strain;
 
     # Make string user friendly to read and add tooltip with description:
+    if ($method_name) {
     $method_name = "$method_name";
     $method_name =~ s/_/ /g;
     $method_name = "<a class=\"longtext\" tip=\"$method_remark\">$method_name</a>";
-
+    }
     my %data = (
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
