@@ -877,8 +877,8 @@ sub microarray_topology_map_position {
     my @data = ();
     foreach my $pid (@p){
         my $profile_api_obj = $self->_api->fetch({ class => 'Expr_profile', name => $pid});
-        my $mountain = $profile_api_obj->pcr_data()->{'data'}->{'mountain'};
-        my $label = "$pid Mountain: $mountain";
+        my $mountain = $profile_api_obj->pcr_data()->{'data'}->{'mountain'} if $profile_api_obj;
+        my $label = $mountain ? "$pid Mountain: $mountain" : "$pid";
         my $dat = {
             'class' => 'expr_profile',
             'label' => $label,
