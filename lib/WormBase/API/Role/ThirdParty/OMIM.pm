@@ -6,20 +6,20 @@ use JSON;
 
 use Data::Dumper;
 
-
+# stores locally OMIM objects that has been requested
 has 'known_omims' => (
     is      => 'rw',
     isa     => 'HashRef',
     default => sub { {} },  # reinitialized for individual objects
 );
 
+# minutes wait if external resource responds with an error
 has 'min_wait_time' => (
     is      => 'ro',
     isa     => 'Int',
-    default => 10,  # minutes wait if external resource responds with an error
+    default => 10,
 );
 
-our $test = 4;
 our $_resource_error = {};  # initialized for the class
 has 'resource_error' => (
     is      => 'rw',
@@ -120,6 +120,7 @@ sub _process_response {
 
 # call external api and update the local hash of previously requested items
 sub _omim_external {
+    # die '!!! Automatically dead for testing !!!';  # uncomment to simulate the behavior when the external resource is down
     my ($self, $omim_ids) = @_;
     my $unknown_omim_ids = $self->_select_unknown($omim_ids);
     return unless $unknown_omim_ids;
