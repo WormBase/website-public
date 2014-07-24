@@ -1,4 +1,4 @@
-<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;">
+p<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;">
 [% IF fields.other_name.data %]
   ([% fields.other_name.data %])
 [% END %]
@@ -21,15 +21,12 @@
 [%
 
 	WRAPPER $field_block title="Related processes" key="related_process";
-    '<div style="display:table;">';
     FOREACH topic IN fields.related_process.data.keys;
-    '<div style="display:table-cell;">';
-        WRAPPER $field_block title=topic;
+          '<h4> '_ topic _': </h4>';
           tags2link( fields.related_process.data.$topic );
-        END;
-    '</div>';    
+          '<br/>';
+          '<br/>';  
     END;
-    '</div>';
 	END;
 
 
