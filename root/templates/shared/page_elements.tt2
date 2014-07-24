@@ -960,18 +960,20 @@ END;
       contents = contents _ markup(fields.remarks.data.join('<br />'),0);
    END;
 
-   IF contents != '';
-    IF no_toggle == 1 && contents;
-        #WRAPPER $field_block title="Remarks" key="remarks";
-          '<h4>Remarks:</h4>';
+    IF no_toggle == 1;
+        IF no_field == 1 && contents;
+            '<h4>Remarks:</h4>';
             contents;
-        #END;
-    ELSE;
+        ELSE;
+          WRAPPER $field_block title="Remarks" key="remarks";
+              contents;
+          END;
+        END;
+    ELSIF contents != '';
           WRAPPER toggle title="Curatorial remarks";
                 contents;
           END;
     END;
-   END;
 END;
 %]
 

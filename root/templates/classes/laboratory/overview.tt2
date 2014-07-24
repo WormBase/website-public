@@ -29,6 +29,7 @@ END;
    END;
 
 
+remarks(no_toggle=1);
 
 '</div>';
 
@@ -39,6 +40,7 @@ END;
 WRAPPER $field_block title="Allele designation" key="allele_designation";
     fields.allele_designation.data;
 END;
+
 
 %]
 
