@@ -1,11 +1,11 @@
-[% 
+[%
 
    WRAPPER $field_block title="Homology Groups" key="homology_groups";
       build_data_table(order=['type','id','title'],
      	               columns={type  => 'Type',
 		                title => 'Title',
 				id  => 'Link',
- 		                },	    
+ 		                },
 	               key='homology_groups');
     END;
 
@@ -16,7 +16,7 @@
                                  },
                          key='orthologs');
      END;
-  
+
 
      WRAPPER $field_block title="Protein Schematic" key="homology_image";
           # image(fields.homology_image.data);
@@ -32,7 +32,7 @@
 
 <script>
   WB.getPlugin("pfam", function(){
-    $jq(".pfam_graph_homology").each(function() { 
+    $jq(".pfam_graph_homology").each(function() {
         var p = PfamGraphic;
         p.initialize();
         p.render("#" + this.id, $jq("#" + this.id).data("seq"));

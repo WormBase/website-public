@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -43,7 +43,7 @@ http://wormbase.org/resources/rearrangement
 # Supplied by Role
 
 # type { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # type of the rearrangement, if there is one.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/type
 
@@ -62,7 +62,7 @@ sub type {
 }
 
 # mapping_data { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # mapping_data of the rearrangement, if there is one.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/mapping_data
 
@@ -107,7 +107,7 @@ sub mapping_data {
 }
 
 # positive { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # genes/clones/rearrangements/loci inside the rearrangement.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/positive
 
@@ -120,7 +120,7 @@ sub positive {
 }
 
 # negative { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # genes/clones/rearrangements/loci outside the rearrangement.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/negative
 
@@ -143,7 +143,7 @@ sub _inside_out {
 	if ($type =~ /(Gene|Clone)_(.*)/) { $type = $1 . 's ' . $2 } #pluralize
 	elsif ($type =~ /Locus_(.*)/) { $type = 'Loci ' . $1; }
 	elsif ($type =~ /Rearr_(.*)/ ) { $type = 'Rearrange ' . $1; }
-	
+
 	$data{$type} = @list ? \@list : undef;
     }
 
@@ -152,7 +152,7 @@ sub _inside_out {
 }
 
 # display { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # rearrangements hidden by this rearrangement.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/display
 
@@ -172,7 +172,7 @@ sub display {
 }
 
 # strains { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # strains associated with the rearrangement.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/strains
 
@@ -194,7 +194,7 @@ sub strains {
 }
 
 # reference_strain { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # reference strain associated with the rearrangement.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/reference_strain
 
@@ -210,7 +210,7 @@ sub reference_strain {
 }
 
 # chromosome { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # chromosomal information of the rearrangement.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/chromosome
 
@@ -235,7 +235,7 @@ sub chromosome {
 #
 # The Phenotypes widget
 #
-####################################### 
+#######################################
 
 # phenotypes {}
 # Supplied by Role
@@ -274,7 +274,7 @@ sub _build_phenotypes_data {
 #######################################
 
 # author { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # author associated with the rearrangement, if there is one.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/author
 
@@ -290,7 +290,7 @@ sub author {
 }
 
 # mutagen { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # mutagen associated with the rearrangement, if there is one.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/mutagen
 
@@ -306,7 +306,7 @@ sub mutagen {
 }
 
 # date { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # date associated with the rearrangement, if there is one.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/date
 
@@ -322,7 +322,7 @@ sub date {
 }
 
 # source { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # source rearrangement for the rearrangement, if there is one.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/source
 
@@ -336,7 +336,7 @@ sub source {
 }
 
 # derived { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # rearrangements derived from this rearrangement.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/rearrangement/mnDp11/derived
 
@@ -357,7 +357,7 @@ sub _build_laboratory {
 
     my @data;
 
-    if (my $lab = $object->Location) {    
+    if (my $lab = $object->Location) {
 	my $label = $lab->Mail || "$lab";
 	my $representative = $lab->Representative;
 	my $name = $representative->Standard_name if $representative;

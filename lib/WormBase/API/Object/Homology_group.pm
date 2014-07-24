@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -73,7 +73,7 @@ sub type {
 	    description => 'type of homology group' };
 }
 # gene_ontology_terms { }
-# This method will return a data structure containing 
+# This method will return a data structure containing
 # the gene ontology terms associated with the homology group.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/gene_ontology_terms
 
@@ -87,7 +87,7 @@ sub gene_ontology_terms {
 	    go_term   => $self->_pack_obj($_),
 	    definition => $definition && "$definition",
     	}
-    } 	
+    }
 
     return { data => @data ? \@data : undef,
 	     description => 'gene ontology terms associated to this homology group' };

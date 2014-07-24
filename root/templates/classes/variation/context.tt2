@@ -1,7 +1,7 @@
 [%#
 
-  Widget  : 
-  Section : 
+  Widget  :
+  Section :
   Stash   :     push @data,{ wt_seq   => $wt,
 		 mut_seq   => $mut,
 		 wt_label  => $wt_label,
@@ -27,12 +27,12 @@ TODO: These belong within a toggle section, open link as "View expanded context"
 
 > Wild type N2, with [% context.left_flank.length %] bp flanks
 [% context.wildtype_genomic_expanded %]
-	  
+
 > [% current_object %] with [% context.context_flank %] bp flanks
 [% context.mutant_genomic_expanded %]
     </pre>
 
-    
+
     <pre>
 DEBUGGING:
 [% context.debug.join("<br>") %]

@@ -15,7 +15,7 @@ laboratory(title="Created in lab");
 #
 #      WRAPPER $field_block title="Fragment" key="fragment";
 #         tag2link(fields.fragment.data);
-#      END;  
+#      END;
 #  END;
 
 
@@ -31,13 +31,13 @@ laboratory(title="Created in lab");
 #                END;
 #           END;
 #       END;
-# END; 
- 
+# END;
+
 WRAPPER $field_block title="Rescues" key="rescues";
        FOREACH item IN fields.rescues.data;
            tag2link(item) _ '<br />';
        END;
-END;  
+END;
 
 WRAPPER $field_block title="Integration method" key="integration_method";
       fields.integration_method.data;

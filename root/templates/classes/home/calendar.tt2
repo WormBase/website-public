@@ -11,7 +11,7 @@
  * @param {string} gCalTime is the xs:date or xs:dateTime formatted string
  * @return {string} is the human-readable date or date/time string
  */
-function formatGCalTime(gCalTime) { 
+function formatGCalTime(gCalTime) {
   // text for regex matches
   var remtxt = gCalTime;
 
@@ -34,7 +34,7 @@ function formatGCalTime(gCalTime) {
   var dateMonth = consume('\\d{2}');
   var timeOrNot = consume('T');
 
-  // if a DATE-TIME was matched in the regex 
+  // if a DATE-TIME was matched in the regex
   if (timeOrNot == 'T') {
     var hours = consume('\\d{2}');
     consume(':?');
@@ -49,11 +49,11 @@ function formatGCalTime(gCalTime) {
         var corrHours = consume('\\d{2}');
         consume(':?');
         var corrMins = consume('\\d{2}');
-        totalCorrMins = (corrPlusMinus=='-' ? 1 : -1) * 
-            (Number(corrHours) * 60 + 
+        totalCorrMins = (corrPlusMinus=='-' ? 1 : -1) *
+            (Number(corrHours) * 60 +
 	        (corrMins=='' ? 0 : Number(corrMins)));
       }
-    } 
+    }
 
     // get time since epoch and apply correction, if necessary
     // relies upon Date object to convert the GMT time to the local
@@ -64,11 +64,11 @@ function formatGCalTime(gCalTime) {
 
     // date is originally in YYYY-MM-DD format
     // time is originally in a 24-hour format
-    // this converts it to MM/DD hh:mm (AM|PM) 
-    dateString = (ld.getMonth() + 1) + '/' + ld.getDate() + ' ' + 
+    // this converts it to MM/DD hh:mm (AM|PM)
+    dateString = (ld.getMonth() + 1) + '/' + ld.getDate() + ' ' +
         ((ld.getHours()>12)?(ld.getHours()-12):(ld.getHours()===0?12:
-	ld.getHours())) + ':' + ((ld.getMinutes()<10)?('0' + 
-	ld.getMinutes()):(ld.getMinutes())) + ' ' + 
+	ld.getHours())) + ':' + ((ld.getMinutes()<10)?('0' +
+	ld.getMinutes()):(ld.getMinutes())) + ' ' +
 	((ld.getHours()>=12)?'PM':'AM');
   } else {
     // if only a DATE was matched
@@ -82,14 +82,14 @@ function formatGCalTime(gCalTime) {
  *
  * @param {json} root is the root JSON-formatted content from GData
  * @param {string} divId is the div in which the events are added
- */ 
+ */
 function listEvents(root, divId) {
   var feed = root.feed;
   var events = document.getElementById(divId);
 
   if (events.childNodes.length > 0) {
     events.removeChild(events.childNodes[0]);
-  }   
+  }
 
   // create a new unordered list
   var ul = document.createElement('ul');
@@ -110,7 +110,7 @@ function listEvents(root, divId) {
     }
 
     var dateString = formatGCalTime(start);
-    var endString  = formatGCalTime(end);    
+    var endString  = formatGCalTime(end);
     var li = document.createElement('li');
 
     // if we have a link to the event, create an 'a' element
@@ -122,7 +122,7 @@ function listEvents(root, divId) {
       li.appendChild(document.createTextNode(' - ' + dateString + '-' + endString));
     } else {
       li.appendChild(document.createTextNode(title + ' - ' + dateString));
-    }     
+    }
 
     // append the list item onto the unordered list
     ul.appendChild(li);
@@ -133,9 +133,9 @@ function listEvents(root, divId) {
 /**
  * Callback function for the GData json-in-script call
  * Inserts the supplied list of events into a div of a pre-defined name
- * 
+ *
  * @param {json} root is the JSON-formatted content from GData
- */ 
+ */
 function insertAgenda(root) {
   listEvents(root, 'agenda');
 }

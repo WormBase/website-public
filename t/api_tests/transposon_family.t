@@ -28,21 +28,21 @@
             variations
             motifs
         /);
-        
+
         my $tf = $api->fetch({ class => 'Transposon_family', name => 'Tc4' });
         isnt($tf, undef, 'data returned');
         isnt($tf->title, undef, 'title returned');
         isnt($tf->description, undef, 'description returned');
         isnt($tf->family_members, undef, 'transposons returned');
         isnt($tf->variations, undef, 'variations returned');
-        
-        
+
+
         my $tf_motif = $api->fetch({ class => 'Transposon_family', name => 'Tc6' });
         isnt($tf_motif, undef, 'data returned');
         isnt($tf_motif->motifs, undef, 'motif data returned');
-        
+
     }
-    
+
 
 }
 

@@ -29,7 +29,7 @@
     }
 
     # Retrieves related papers for a given publication. Checks whether:
-    # 
+    #
     #   1. the returned result is not empty
     sub test_related_papers {
         my $host = $configuration->{'host'};

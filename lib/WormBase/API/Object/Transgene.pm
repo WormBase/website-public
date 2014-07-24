@@ -5,7 +5,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -31,10 +31,10 @@ http://wormbase.org/species/*/transgene
   # better yet, this should be designated as a class method, signaled at the
   # controller level for caching
     my $transgenes;
-    
+
     sub tissue_specific_transgenes {
         my $self   = shift;
-	
+
         return $transgenes ||= {
             description => 'tissue-specific transgenes',
             data        => [
@@ -42,16 +42,16 @@ http://wormbase.org/species/*/transgene
 		    my $marker_for = $_->Marker_for;
 		    my $summary    = $_->Summary;
 		    my $ref        = $marker_for->right(2);
-		    
+
 		    {
 			transgene          => $self->_pack_obj($_),
 			marker_for         => $self->_pack_obj($marker_for),
 			summary            => "$summary",
 			reference          => $self->_pack_obj($ref),
 		    };
-		} grep { $_->Marker_for }                
+		} grep { $_->Marker_for }
 		$self->ace_dsn->dbh->fetch(-query => "find Transgene")
-		], 
+		],
 	};
     }
 }
@@ -63,10 +63,10 @@ http://wormbase.org/species/*/transgene
   # better yet, this should be designated as a class method, signaled at the
   # controller level for caching
     my $transgenes;
-    
+
     sub mapped_transgenes {
         my $self   = shift;
-	
+
         return $transgenes ||= {
             description => 'mapped transgenes',
             data        => [
@@ -86,7 +86,7 @@ http://wormbase.org/species/*/transgene
 
 		    my (%unique_ao,@ao);
 		    my (%unique_life_stage,@life_stage);
-		    foreach my $exp ($_->Expr_pattern) {			    
+		    foreach my $exp ($_->Expr_pattern) {
 			my @anatomy_terms = $exp->Anatomy_term;
 			foreach (@anatomy_terms) {
 			    $unique_ao{$_} = $_;
@@ -99,19 +99,19 @@ http://wormbase.org/species/*/transgene
 		    }
 		    foreach (keys %unique_ao) {
 			push @ao,$self->_pack_obj($unique_ao{$_});
-		    }		    
+		    }
 
 		    foreach (keys %unique_life_stage) {
 			push @life_stage,$self->_pack_obj($unique_life_stage{$_});
-		    }		    
+		    }
 
 		    my $marker_for   = $_->Marker_for;
 		    my $ref          = $marker_for->right(2) if $marker_for;
-		    
+
 		    {
 			transgene          => $self->_pack_obj($_),
 			summary            => $summary && "$summary",
-			map_position       => $map_position && "$map_position",			
+			map_position       => $map_position && "$map_position",
 			reporter           => $reporter && "$reporter",
 			expression_patterns => @expr ? \@expr : undef,
 			strains            => @strains ? \@strains : undef,
@@ -120,9 +120,9 @@ http://wormbase.org/species/*/transgene
 			life_stage         => @life_stage ? \@life_stage : undef,
 			reference          => $ref ? $self->_pack_obj($ref) : undef,
 		    };
-		} grep { $_->Map }                
+		} grep { $_->Map }
 		$self->ace_dsn->dbh->fetch(-query => "find Transgene")
-		], 
+		],
 	};
     }
 }
@@ -139,7 +139,7 @@ http://wormbase.org/species/*/transgene
 
 #######################################
 #
-# The Overview widget 
+# The Overview widget
 #
 #######################################
 
@@ -185,7 +185,7 @@ sub driven_by_gene {
 sub driven_by_construct {
     my $self = shift;
     my $object = $self->object;
-    
+
     my $construct = $object->Driven_by_construct;
     return { description => 'construct that drives the transgene',
 	     data        => $construct && "$construct"};
@@ -195,7 +195,7 @@ sub driven_by_construct {
 # Supplied by Role
 
 # reporter_construct { }
-# This method will return a data structure of the 
+# This method will return a data structure of the
 # reporter construct driven by the transgene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
 
@@ -213,7 +213,7 @@ sub reporter_construct {
             $reporters{$_} = "$_";
         }
     }
-    
+
     return { description => 'reporter construct for this transgene',
 	     data        => %reporters ? \%reporters : undef };
 }
@@ -265,7 +265,7 @@ sub coinjection_marker {
 sub construction_summary {
     my $self = shift;
     my $object = $self->object;
-    
+
     my $summary = $object->Construction_summary;
     return { description => 'Construction details for the transgene',
          data        => $summary && "$summary"};
@@ -290,7 +290,7 @@ sub strains {
 
 
 # historical_gene { }
-# This mehtod will return a data structure containing the 
+# This mehtod will return a data structure containing the
 # historical reocrd of the dead gene originally associated with this transgene
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/historical_gene
 
@@ -299,7 +299,7 @@ sub historical_gene {
     my $self = shift;
     my $object = $self->object;
 
-    my @historical_gene = map { {text => $self->_pack_obj($_), 
+    my @historical_gene = map { {text => $self->_pack_obj($_),
                               evidence => $self->_get_evidence($_)} } $object->Historical_gene;
     return { description => 'Historical record of the dead genes originally associated with this transgene',
              data        => @historical_gene ? \@historical_gene : undef,
@@ -328,7 +328,7 @@ sub author {
 	$person = $author->Possible_person;
 	$name = $person->Standard_name if $person;
     }
-    
+
     return { description => 'the person who created the transgene',
 	     data        => $self->_pack_obj($person, $name && "$name") };
 }
@@ -387,7 +387,7 @@ sub fragment {
 # how the transgene was integrated (if it was).
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_by
 
-sub integration_method {    
+sub integration_method {
     my $self   = shift;
     my $object = $self->object;
     my $method = $object->Integration_method;
@@ -401,7 +401,7 @@ sub integration_method {
 # the map position of the transgene if it has been integrated.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_at
 
-sub integrated_at {    
+sub integrated_at {
     my $self   = shift;
     my $object   = $self->object;
     my $position = $object->Map;
@@ -416,10 +416,10 @@ sub integrated_at {
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/rescues
 
 # This tag does not exists in the current ACeDB schema -AC
-# sub rescues {    
+# sub rescues {
 #     my $self = shift;
 #     my $object = $self->object;
-# 
+#
 #     my @genes = map {$self->pack_obj($_) } $object->Rescue;
 #     return { description => 'genes that may be rescued by this transgene',
 # 	     data        => @genes ? \@genes : undef };
@@ -449,7 +449,7 @@ sub integrated_at {
 # Supplied by Role
 
 # marker_for { }
-# This method will return a data structure of the 
+# This method will return a data structure of the
 # describing what the transgene is a marker for.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marker_for
 

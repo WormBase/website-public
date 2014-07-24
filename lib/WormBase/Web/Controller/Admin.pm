@@ -18,7 +18,7 @@ functions at WormBase.
 =cut
 
 
-=head2 index 
+=head2 index
 
 =cut
 
@@ -37,10 +37,10 @@ sub registered_users :Path("registered_users") :Args(0){
           push @users, $user;
       }
       $c->stash->{users}= @users ? \@users : undef;
-      }  
+      }
     }
 
-} 
+}
 
 sub admin_widget :Path("/admin") :Args(1) {
     my ( $self, $c, $widget ) = @_;
@@ -54,10 +54,10 @@ sub admin_widget :Path("/admin") :Args(1) {
 
 
 #     "status_overview"
-# Create a quick system status overview with admin-level information 
+# Create a quick system status overview with admin-level information
 # (ie include names of backend servers)
     # Display a general table of all of our servers.
-    # server, uptime, 12, 24, 48, 72 hour status  
+    # server, uptime, 12, 24, 48, 72 hour status
 
 
 

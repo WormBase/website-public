@@ -14,7 +14,7 @@
 [% END %]
 
 [% WRAPPER highlight_box; %]
-	[% 
+	[%
 	   url = get_url(fields.name.data.class, fields.name.data.id)
 	   title = fields.title.data
     %]

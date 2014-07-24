@@ -11,7 +11,7 @@ END;
 
 # reagent
 WRAPPER $field_block title="Reagent" key="reagent";
-    FOREACH item IN fields.reagent.data;       
+    FOREACH item IN fields.reagent.data;
        tag2link(item.reagent);
        IF item.mrc_id;
           ' (' _ external_link('MRC_geneservice','Source BioScience: ' _ item.mrc_id,item.mrc_id) _ ')';
@@ -23,7 +23,7 @@ END;
 
 # Sequence. Needs better, maybe fasta.
 sequence;
- 
+
 # Assay
 WRAPPER $field_block title="Assay" key="assay";
      fields.assay.data;

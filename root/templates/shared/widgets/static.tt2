@@ -1,24 +1,24 @@
 [% IF edit %]
     To edit the widget, start typing in the box below<br />
     For more sytax options, please visit the [% external_link("http://daringfireball.net/projects/markdown/syntax", "markdown syntax page") %].
-    <textarea id="widget_content" 
-              name="widget_content" 
+    <textarea id="widget_content"
+              name="widget_content"
               style="width:95%;min-height:30em;">[% widget.content.content; %]</textarea>
     order:
     <input type="text" id="widget-order" value="[% widget.widget_order || 0 %]"/>
     <br />
     <br />
-    <input type="submit" 
-           value="[% IF widget; 'Save widget'; ELSE; 'Create widget'; END; %]" 
-           onClick='WB.StaticWidgets.update("[% widget.widget_id %]", "[% path %]");' 
+    <input type="submit"
+           value="[% IF widget; 'Save widget'; ELSE; 'Create widget'; END; %]"
+           onClick='WB.StaticWidgets.update("[% widget.widget_id %]", "[% path %]");'
            id="create_widget"/>
     [% IF widget %]
-      <input type="submit" 
+      <input type="submit"
              value="Cancel"
              onClick='WB.StaticWidgets.reload("[% widget.widget_id %]");'/>
       [% IF c.check_user_roles("admin") %]
-        <input type="submit" 
-               value="Delete" 
+        <input type="submit"
+               value="Delete"
                onClick='WB.StaticWidgets.delete_widget("[% widget.widget_id %]");'/>
       [% END %]
     [% END %]
@@ -32,7 +32,7 @@
     }
     var textarea = widget.find("textarea#widget_content");
     WB.getMarkItUp(function(){ console.log(mySettings); textarea.markItUp(mySettings);});
-//     textarea.style.height = (textarea.scrollHeight*2) + "px"; 
+//     textarea.style.height = (textarea.scrollHeight*2) + "px";
   </script>
 [% ELSIF widget %]
   [% UNLESS rev %]
@@ -44,7 +44,7 @@
   </span>
   [% ELSE %]
     <div class="ui-state-error" style="padding:0.5em;">
-      <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id).path %]?history=1' onClick='WB.StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %]. It may differ from the 
+      <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id).path %]?history=1' onClick='WB.StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %]. It may differ from the
       <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id).path %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id).path %]">current revision</a></span><br />
     </div>
     <br />
@@ -54,17 +54,17 @@
     <br />
     <span id="fade">edited by [% linkUser(rev.user) %] – [% rev_date %] </span>
   [% END %]
-  
+
 [% ELSIF revisions %]
     <br /><br />
     <h3>history</h3>
     [% FOREACH rev IN revisions %]
       <span id="fade">
-        [% IF rev == revisions.last; 'created by'; ELSE; 'edit by'; END; %] 
-        [% linkUser(rev.user) %] – 
-            <a onClick='WB.StaticWidgets.reload("[% widget_id %]", "[% rev.widget_revision_id %]");return false;' 
+        [% IF rev == revisions.last; 'created by'; ELSE; 'edit by'; END; %]
+        [% linkUser(rev.user) %] –
+            <a onClick='WB.StaticWidgets.reload("[% widget_id %]", "[% rev.widget_revision_id %]");return false;'
                href="[% c.uri_for('/rest/widget/static', widget_id).path %]?rev=[% rev.widget_revision_id %]">[% rev.time_lapse %]</a>
-        [% UNLESS first; ' – latest version'; first = 1; END; %] 
+        [% UNLESS first; ' – latest version'; first = 1; END; %]
       </span><br />
     [% END %]
 [% END %]

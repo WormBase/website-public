@@ -1,7 +1,7 @@
-[% 
+[%
 
    IF c.check_user_roles('admin');
-     
+
     'To do:
 
 
@@ -14,7 +14,7 @@
     # - DONE: starman status
     # - cpu load
     # - memory usage
-    
+
     # Would be nice to create RRD of each, too.
     # Other items: analytics, clicktale, browsermob, webmaster tools, etc
 

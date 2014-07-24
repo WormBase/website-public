@@ -20,7 +20,7 @@
 [% VIEW generic_results;
      BLOCK hash;
         "$item is from $item\n";
-     END; 
+     END;
 
      BLOCK list;
           view.print(object) FOREACH object IN item;
@@ -61,7 +61,7 @@ END;
                [%# This should be a linked, and the linker should decide if it needs to be linked %]
                    [%# url.Link(item) %]
                    [% $field.common_name %]
-           [%# END %] 
+           [%# END %]
 
         [% ELSE %]
 	      [%# site.unknown %]

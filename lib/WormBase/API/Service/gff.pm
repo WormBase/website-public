@@ -75,7 +75,7 @@ sub connect {
 #			      -aggregators => $self->aggregators,
 #					      $self->ace ? (-acedb=>$self->ace):()
 #	);
-    
+
     return $db;
 }
 1;

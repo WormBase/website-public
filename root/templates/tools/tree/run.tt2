@@ -1,7 +1,7 @@
 [% target = "_blank" %]
 [% schema = data.object.class == 'Model';
    curr_tool = schema ? 'schema' : 'tree';
-   curr_class = data.object.class; 
+   curr_class = data.object.class;
 IF schema;
     title = 'Schema';
     name = data.object.name.replace('\?', '');
@@ -26,13 +26,13 @@ END; %]
     [% modelclass = "?$modelclass" %]
 [% END %]
 
-[% 
+[%
   MACRO tree_link(url, text) BLOCK;
     IF noboiler; %]
-      <a href="javascript:void(0)" onClick='WB.reloadWidget("[% curr_tool %]", undefined, "[% url %]&inline=1");'>[% text %]</a> 
+      <a href="javascript:void(0)" onClick='WB.reloadWidget("[% curr_tool %]", undefined, "[% url %]&inline=1");'>[% text %]</a>
     [% ELSE;%]
       <a href="[% url %]">[% text %]</a>
-    [% 
+    [%
     END;
   END;
 
@@ -52,20 +52,20 @@ END; %]
 
 <p>
 [% IF schema %]
-  <form method="POST" action="[% c.uri_for('/tools','schema','run').path %]" name"question"> 
+  <form method="POST" action="[% c.uri_for('/tools','schema','run').path %]" name"question">
     <table>
-       <tr><th>Class</th> 
+       <tr><th>Class</th>
            <td><input type="text" name="class" value="[% name %]" size="15" onchange="document.question.submit()" /></td>
            <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
       </tr>
     </table>
   </form>
 [% ELSE %]
-  <form method="POST" action="[% c.uri_for('/tools','tree','run').path %]" name"question"> 
+  <form method="POST" action="[% c.uri_for('/tools','tree','run').path %]" name"question">
     <table>
        <tr><th>Name</th>
            <td><input type="text" name="name" value="[% data.object.name %]" onchange="document.question.submit()" /></td>
-           <th>Class</th> 
+           <th>Class</th>
            <td><input type="text" name="class" value="[% data.object.class %]" size="15" onchange="document.question.submit()" /></td>
            <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
       </tr>

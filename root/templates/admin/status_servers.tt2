@@ -1,4 +1,4 @@
-[% 
+[%
 
    IF c.check_user_roles('admin');
 
