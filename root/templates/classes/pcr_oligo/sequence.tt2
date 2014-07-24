@@ -13,7 +13,7 @@
           substitution fails?) even if provided by the TT would be unwieldy.
 
           So, why not put this into the model? This is fundamentally a view process.
-          Suppose in the future we would like to, in addition to uppercasing the 
+          Suppose in the future we would like to, in addition to uppercasing the
           oligos in the sequence, BOLD the oligos as well. Since the computation
           is in the model, we would have to embed HTML into data provided by the
           model, which is most certainly wrong.

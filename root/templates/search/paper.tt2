@@ -14,7 +14,7 @@
 [% IF item.abstract %]
 <div class="text-min">
   [% ab = item.abstract.join() | html %]
-  [% markup(ab,0) %]    
+  [% markup(ab,0) %]
 </div>
 
 [% END %]

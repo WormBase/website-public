@@ -5,7 +5,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -35,7 +35,7 @@ http://wormbase.org/species/life_stage
 
 #######################################
 #
-# The Overview widget 
+# The Overview widget
 #
 #######################################
 

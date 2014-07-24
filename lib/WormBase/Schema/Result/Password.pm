@@ -27,7 +27,7 @@ __PACKAGE__->add_columns(
   { data_type => "char(50)", default_value => "", is_nullable => 1 },
   "expires",
   { data_type => "integer", default_value => "", is_nullable => 1 },
-  
+
 );
 __PACKAGE__->set_primary_key("user_id");
 

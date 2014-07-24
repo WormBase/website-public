@@ -5,7 +5,7 @@
      <th>GFF</th>
      <th></th>
    </tr>
-  
+
    [% FOREACH option IN c.config.sections.species_list.keys.sort() %]
       <tr>
            <td><a href="/species/[% option %]" class="species">[% c.config.sections.species_list.$option.genus %]

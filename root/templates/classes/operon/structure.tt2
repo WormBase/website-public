@@ -1,4 +1,4 @@
-[% 
+[%
 
 WRAPPER $field_block title="Contains" key='structure';
         build_data_table(

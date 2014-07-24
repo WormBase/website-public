@@ -1,4 +1,4 @@
-[% 
+[%
 
    IF fields.refers_to.data.size == 0;
       '<p style="margin:1em">No items related to this paper</p>';

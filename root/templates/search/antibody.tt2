@@ -2,6 +2,6 @@
     </li>
 
 <div class="text-min">
-  [% summary = item.summary.join(); summary; %]    
-  [% tags2link(item.gene) %]    
+  [% summary = item.summary.join(); summary; %]
+  [% tags2link(item.gene) %]
 </div>

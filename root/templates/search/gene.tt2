@@ -1,11 +1,11 @@
-    [% !item.name.coord.start ? tag2link(item.name, item.name.label) : item.name.id %]   
+    [% !item.name.coord.start ? tag2link(item.name, item.name.label) : item.name.id %]
      [% gbrowselink(item.name); %]
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
     [% IF item.dead %]
         <br />
-        <span class="highlight">This gene is dead.</span> 
+        <span class="highlight">This gene is dead.</span>
         [% IF item.merged_into %]
         Merged into: [% tags2link(item.merged_into) %]
         [% END %]
@@ -19,5 +19,5 @@
      %]
 
 <div class="text-min">
-  [% markup(text.join("<br>"), 1, 1, 1, 0) %]    
+  [% markup(text.join("<br>"), 1, 1, 1, 0) %]
 </div>

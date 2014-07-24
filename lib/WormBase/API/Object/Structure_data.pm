@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -59,9 +59,9 @@ sub sequence {
 sub protein_homology {
 	my $self = shift;
 	my $object = $self->object;
-	
+
 	my @data = map {$self->_pack_obj($_)} $object->Pep_homol;
-	
+
 	return {
 		data => @data ? \@data : undef,
 		description => 'Protein homologs for this structure'

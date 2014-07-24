@@ -2,8 +2,8 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />
     <script src="/js/blast_blat/display_results.js"></script>
- 
-</head> 
+
+</head>
 
 [% count = 0 %]
 [% link = c.uri_for('/tools', 'blast_blat', 'run').path %]
@@ -29,18 +29,18 @@ Jump to BioProject:
       [% FOREACH obj IN run %]
 	  [% count = count + 1  %]
 	  <option id="[% count %]" value="#blast_result_[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>
-      [% END %] 
+      [% END %]
   </select>
 
-    [% count = offset %] 
+    [% count = offset %]
     [% FOREACH obj IN run %]
       [% IF count == offset %]
       <a name="bioproject_[% obj.bioproject %]"></a>
       [% END %]
-      [% count = count + 1  %]  
-      [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
+      [% count = count + 1  %]
+      [% PROCESS tools/blast_blat/display.tt2  obj=obj %]
     [% END %]
   </div>
 [% END %]
 
- 
+

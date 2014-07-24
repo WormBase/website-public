@@ -3,13 +3,13 @@
 WRAPPER $field_block title="Microarray" key="microarray";
 
     build_data_table (
-		order = [ 
+		order = [
 			'microarray',
 			'experiment',
 			'minimum',
 			'maximum',
 			],
-		columns = {				 		
+		columns = {
 			microarray => 'Microarray',
 			experiment => 'Experiment',
 			minimum =>'Minimum',

@@ -356,9 +356,8 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
-        || eval {$object->Corresponding_CDS->Brief_identification}
-        || eval { $object->Gene_class->Description }
-        || $self->name->{data}->{label} . ' gene';
+        || eval { $object->Corresponding_CDS->Brief_identification }
+        || eval { $object->Corresponding_transcript->Brief_identification };
 
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
     my $evidence = $self->_get_evidence($description)

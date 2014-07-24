@@ -32,12 +32,12 @@
         $api = $_[0];
     }
 
-    # This is a test for the Former Gene Class table in the Gene Class widget 
+    # This is a test for the Former Gene Class table in the Gene Class widget
     # rrelated to #2551
     # data entries.
     sub test_single_gene {
         my $lab = $api->fetch({ class => 'Laboratory', name => 'DR' });
-        
+
         isnt($lab, undef, 'There is a lab');
 
         can_ok('WormBase::API::Object::Laboratory', ('former_gene_classes'));

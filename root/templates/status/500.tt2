@@ -1,18 +1,18 @@
-<div id="error-box" class="ui-state-error ui-corner-all">  
+<div id="error-box" class="ui-state-error ui-corner-all">
 
-   <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
+   <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span>
 
    <h3>
        <!--<span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> -->
        We're sorry!
    </h3>
 
-   <p>      
+   <p>
       The WormBase team has been notified of this problem and we are working to resolve the issue.
    </p>
 
    <p>
-      If you'd like us to contact you when this is resolved, send us an 
+      If you'd like us to contact you when this is resolved, send us an
       <a href="mailto:feedback@wormbase.org">email</a> including this error report:
    </p>
 

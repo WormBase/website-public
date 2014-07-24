@@ -1,6 +1,6 @@
 [%- # This is the generic WormBase Report page for resources -%]
 
-[% 
+[%
 
     breadcrumbs = [];
 
