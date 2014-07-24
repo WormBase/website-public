@@ -1,4 +1,4 @@
-[% 
+[%
 
     class = object.name.data.class FILTER lower;
     # Transcripts lone class not placed on genetic map
@@ -13,11 +13,11 @@
                  IF position.method;
                       ' (' _ position.method _ ')';
                  END;
-          ELSE;       
+          ELSE;
                '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
           END;
         END;
-      ELSE;       
+      ELSE;
                '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
       END;
     END;
@@ -47,7 +47,7 @@
                        IF genetic_position.method;
                          ' (' _ genetic_position.method _ ')';
                        END;
-                     ELSE;       
+                     ELSE;
                        '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
                      END;
                    ELSE;
@@ -78,7 +78,7 @@
                  tag2link(genomic_image, image(img_url));
                  '</div>';
                END;
-    ELSE;       
+    ELSE;
                   '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the physical map or its coordinates are unknown.</div>';
     END;
 

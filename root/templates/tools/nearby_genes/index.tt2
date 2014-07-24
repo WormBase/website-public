@@ -15,11 +15,11 @@ Examples:<br />
 					   -onChange=>'document.form1.submit()'),'cM wide'),
 
 <p>
-<form method="POST" action="[% c.uri_for('tools','nearby_genes','run') %]"> 
+<form method="POST" action="[% c.uri_for('tools','nearby_genes','run') %]">
   <table>
      <tr><th>Name</th>
          <td><input type="text" name="name" onchange="document.question.submit()" /></td>
-         <th>Class</th> 
+         <th>Class</th>
          <td><input type="text" name="class" size="15" onchange="document.question.submit()" /></td>
          <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
     </tr>

@@ -5,7 +5,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -87,7 +87,7 @@ sub attribute_of {
 #######################################
 
 # genes { }
-# This method will return a data structure 
+# This method will return a data structure
 # with genes contained in the expression cluster.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/genes
 
@@ -108,7 +108,7 @@ sub genes {
 #######################################
 
 # anatomy_terms { }
-# This method will return a data structure with anatomy 
+# This method will return a data structure with anatomy
 # ontology terms associated with the expression cluster.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/anatomy_terms
 
@@ -184,7 +184,7 @@ sub processes {
 #######################################
 
 # microarray { }
-# This method will return a data structure with 
+# This method will return a data structure with
 # microarray results from the expression cluster.
 # curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/microarray
 
@@ -192,12 +192,12 @@ sub microarray {
     my $self        = shift;
     my $object      = $self->object;
 
-    my @data;      
+    my @data;
     foreach ($object->Microarray_results) {
     	my $experiment = $self->_pack_obj($_->Result) if $_->Result;
     	my $minimum = $_->Min;
     	my $maximum = $_->Max;
-    	
+
 	push @data, {
 	    microarray => $self->_pack_obj($_),
 	    experiment => $experiment,
@@ -212,7 +212,7 @@ sub microarray {
 
 
 # sage_tags { }
-# This method will return a data structure with 
+# This method will return a data structure with
 # sage tags analyzing the expression_cluster.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/sage_tags
 

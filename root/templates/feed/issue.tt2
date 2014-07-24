@@ -7,7 +7,7 @@
 
 
 [% UNLESS c.user_exists %]
-    <table width="60%">               
+    <table width="60%">
             <tr>
                 <th>
                 <a class='lightbox' href="[% c.uri_for('/login').path  %]">Login</a>
@@ -18,7 +18,7 @@
                 <td>
                 Name <input id="name" type="text"   maxlength="30" />
                   <div style="height: 0.4em; overflow: hidden;"> </div>
-                Email <input  id="email" maxlength="50" type="text"/> 
+                Email <input  id="email" maxlength="50" type="text"/>
                 </td>
             </tr>
      </table>
@@ -45,8 +45,8 @@
         </div>
 
         <div id="issue-submit-box">
-          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />   
-          <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />   
+          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
+          <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />
         </div>
       <!-- <div> -->
 <!--       You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create and track an issue on Github') %]

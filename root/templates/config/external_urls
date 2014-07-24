@@ -670,7 +670,7 @@
         base        = 'http://orcid.org/'
         search      = 'http://orcid.org/%s'
         }
-        
+
  Pfam = {
 	description = 'Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains and families'
 	base        = 'http://pfam.sanger.ac.uk/'
@@ -775,7 +775,7 @@
  	base        = 'http://prosite.expasy.org/'
     search      = 'http://prosite.expasy.org/%s'
   	}
-    
+
  Science = {
 	description = 'Science'
 	base        = 'http://www.sciencemag.org/'

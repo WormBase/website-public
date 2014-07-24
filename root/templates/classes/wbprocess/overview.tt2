@@ -27,7 +27,7 @@
         WRAPPER $field_block title=topic;
           tags2link( fields.related_process.data.$topic );
         END;
-    '</div>';    
+    '</div>';
     END;
     '</div>';
 	END;

@@ -1,9 +1,9 @@
 
 
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />  
+    <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />
 </head>
- 
+
 
 <form method="POST" action="[% c.uri_for('/tools','blast_blat','run').path %]">
 
@@ -13,10 +13,10 @@
 
 <div class="spacer">
     &nbsp;
-</div>    
+</div>
 
 <div class="small_container">
-    <font class="bold">1) Enter Your Query Sequence:</font> 
+    <font class="bold">1) Enter Your Query Sequence:</font>
     <p/>
     <img id="sample_nucleotide" src="/img/blast_blat/sample_nucleotide.png"></img>
     <img id="sample_peptide" src="/img/blast_blat/sample_peptide.png"></img>
@@ -30,7 +30,7 @@
 </div>
 
 <div class="small_container">
-    <font class="bold">2) Select an application (BLAST or BLAT) and parameters:</font> 
+    <font class="bold">2) Select an application (BLAST or BLAT) and parameters:</font>
     <p/>
     <input type="radio" checked="checked" id="search_type_blast" name="search_type" value="blast"><font class="search_type">BLAST</font></input>
 
@@ -61,7 +61,7 @@
     </div>
 
     <p/>
-        
+
     <div class="indent_one italic">
         <input type="checkbox" checked="1" name="process_query"> <b>Filter*</b></input>
 <!--        <select name="process_query_type">
@@ -78,9 +78,9 @@
         </select>
 -->
     </div>
-        
+
     <p/>
-        
+
     <input type="radio" id="search_type_blat" name="search_type" value="blat"><font class="search_type">BLAT</font></input>
 
     <p/>
@@ -185,17 +185,17 @@
     <p/>
 
 
-    <div class="to_right">    
+    <div class="to_right">
     <input type="submit" name="submit" value="Submit"/>
     <input type="button" id="reset" name="reset" value="Reset"/>
     </div>
-   
+
 </div>
 
 
 <div class="spacer">
     &nbsp;
-</div>    
+</div>
 
 <div class="to_right">
 Documentation
@@ -210,8 +210,8 @@ Documentation
 </form>
 
 
- 
+
 <script src="/js/blast_blat/search_form.js"></script>
- 
+
 
 

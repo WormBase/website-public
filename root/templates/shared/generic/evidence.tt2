@@ -1,18 +1,17 @@
-  [% FOREACH type IN evidence.keys -%] 
-      <b>[% type.replace('_',' ') %]</b>:  
-      [% FOREACH object IN evidence.$type.keys %] 
-          
+  [% FOREACH type IN evidence.keys -%]
+      <b>[% type.replace('_',' ') %]</b>:
+      [% FOREACH object IN evidence.$type.keys %]
+
         [% IF evidence.$type.$object.class.defined %]
         [% tag2link(evidence.$type.$object) %]
         [% ELSE %]
-        [% evidence.$type.$object.label %]  
+        [% evidence.$type.$object.label %]
         [% END %]
         [% UNLESS loop.last %];[% END %]
-      [% END %] 
+      [% END %]
       [% UNLESS loop.last %]<br>[% END %]
-  [% END %] 
-      
-      
+  [% END %]
 
 
- 
+
+

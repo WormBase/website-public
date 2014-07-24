@@ -5,7 +5,7 @@ use warnings;
 
 sub emit {
     my ($class, $c, $output) = @_;
-    
+
     my $status=$c->config->{'response_status'};
     my $template  = "status/$status.tt2";
 

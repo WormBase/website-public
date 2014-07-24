@@ -31,8 +31,8 @@
       [% CLASSTYPE = fields.interactions.data.class %]
       [% PHENOTYPES = fields.interactions.data.phenotypes %]
       [% OBJTYPE = fields.interaction_type.data %]
-      
-      [% WRAPPER shared/fields/interaction_details.tt2; 
+
+      [% WRAPPER shared/fields/interaction_details.tt2;
            #this is in a wrapper so the js will execute at the bottom of the widget and prevent blocking
            interaction_table;
          END %]

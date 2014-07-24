@@ -5,7 +5,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Interaction';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -72,7 +72,7 @@ sub _build__interactors {
 # Supplied by Role
 
 # Override Role to give a better label for name.
-sub _build__common_name { 
+sub _build__common_name {
     my $self = shift;
     my $object = $self->object;
     my @list;
@@ -101,15 +101,15 @@ sub interaction_summary {
     # Check if this interaction is valid. If not, add a warning to the description.
     # This can be removed when these invalid interactions are cleared from the database
     # See _ignored_interactions in the Interactions Role
-    push @data, '<b>Warning!</b> This Interaction object was <b>incorrectly</b> generated!' if $self->_ignored_interactions($object); 
-    
+    push @data, '<b>Warning!</b> This Interaction object was <b>incorrectly</b> generated!' if $self->_ignored_interactions($object);
+
     return { description => 'Summary of this interaction',
 	     data        => @data ? \@data : undef,
     };
 }
 
 # historical_gene { }
-# This mehtod will return a data structure containing the 
+# This mehtod will return a data structure containing the
 # historical reocrd of the dead gene originally associated with this interaction
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/historical_gene
 
@@ -117,7 +117,7 @@ sub historical_gene {
     my $self = shift;
     my $object = $self->object;
 
-    my @historical_gene = map { {text => $self->_pack_obj($_), 
+    my @historical_gene = map { {text => $self->_pack_obj($_),
                               evidence => $self->_get_evidence($_)} } $object->Historical_gene;
     return { description => 'Historical record of the dead genes originally associated with this interaction',
              data        => @historical_gene ? \@historical_gene : undef,
@@ -268,7 +268,7 @@ sub _build_laboratory {
 sub libraries_screened {
     my $self = shift;
     my $object = $self->object;
-    
+
     my @data;
     foreach my $library ($object->Library_screened){
 	my $library_str = "$library";

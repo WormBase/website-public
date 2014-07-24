@@ -1,4 +1,4 @@
-[% 
+[%
 
    # Antibodies
    WRAPPER $field_block title="Antibodies" key="antibodies";
@@ -52,7 +52,7 @@
     END;
 
     WRAPPER $field_block title="Microarray probes" key="microarray_probes";
-	tags2link(fields.microarray_probes.data, '<br />', "microarray probes");        
+	tags2link(fields.microarray_probes.data, '<br />', "microarray probes");
     END;
 ###
 %]

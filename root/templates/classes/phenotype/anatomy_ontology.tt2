@@ -1,4 +1,4 @@
-[% 
+[%
 
     WRAPPER $field_block title="Anatomy functions" key="associated_anatomy";
       build_data_table( order = ['af_data', 'assay', 'gene', 'phenotype', 'bp_inv', 'bp_not_inv', 'reference'],
@@ -15,6 +15,6 @@
   WRAPPER $field_block title="Anatomy Ontology" key="anatomy_ontology";
         FOREACH data IN fields.anatomy_ontology.data;
             tag2link(data) _ '<br>';
-        END;            
-   END; 
+        END;
+   END;
 %]

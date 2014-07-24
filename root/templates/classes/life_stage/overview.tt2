@@ -1,6 +1,6 @@
 <h2>[% fields.name.data.label %]</h2>
-            
-[% 
+
+[%
 
 WRAPPER highlight_box;
 
@@ -40,7 +40,7 @@ IF (fields.followed_by_life_stage.data.size > 0)
             '</div> ';
             '<div>';
                 '<b>Followed by</b><br />';
-                tags2link(fields.followed_by_life_stage.data, '<br />'); 
+                tags2link(fields.followed_by_life_stage.data, '<br />');
            '</div>';
          END;
      '</div>';
@@ -48,7 +48,7 @@ IF (fields.followed_by_life_stage.data.size > 0)
 END;
 
 WRAPPER $field_block title="Contained in" key="contained_in_life_stage";
-	tags2link(fields.contained_in_life_stage.data, '<br />', 'Life Stages'); 
+	tags2link(fields.contained_in_life_stage.data, '<br />', 'Life Stages');
 END;
 
 WRAPPER $field_block title="Substages" key="substages";

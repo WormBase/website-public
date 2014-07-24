@@ -24,20 +24,20 @@
     # genes_by_biology method unit test
     sub test_genes_by_biology {
         my $disease = $api->fetch({ class => 'Disease', name => 'DOID:9970' });
-        
+
         # Test if the object contains this method
         can_ok('WormBase::API::Object::Disease', ('genes_biology'));
-        
+
         my $genes_biology = $disease->genes_biology;
         isnt( $genes_biology, undef, "data returned");
-        
+
         my $genes_by_biology = $genes_biology->{data};
         is( ref $genes_by_biology, 'ARRAY', "data contains array reference");
-        
+
         # This object should have 7 genes by biology
         is(scalar @$genes_by_biology, 7, 'correct number of genes by biology');
     }
-    
+
 
 }
 

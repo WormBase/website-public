@@ -50,10 +50,10 @@ builder {
     # Might want to add these manually.
     #my $app = WormBase::Web->apply_default_middlewares(WormBase::Web->psgi_app);
     #$app;
-    
+
     # Typically running behind reverse proxy.
     enable "Plack::Middleware::ReverseProxy";
-    
+
     # Add debug panels if we are a development environment.
 #    if ($ENV{PSGI_DEBUG_PANELS}) {
 #	enable 'Debug', panels => [ qw(DBITrace PerlConfig CatalystLog Timer ModuleVersions Memory Environment) ];

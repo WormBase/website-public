@@ -47,11 +47,11 @@
         is  ($ntc->{data}[0]->{wildtype_label}, 'wild type', 'correct wildtype label');
         is  ($ntc->{data}[0]->{wildtype}, '', 'correct wildtype');
         is  ($ntc->{data}[0]->{mutant}, '', 'correct mutant');
-        is  ($ntc->{data}[0]->{mutant_label}, 'mutant', 'correct mutant label');     
+        is  ($ntc->{data}[0]->{mutant_label}, 'mutant', 'correct mutant label');
     }
 
-    # test a Sequence field that contains over 1000000 
-    # related to issue #2788 
+    # test a Sequence field that contains over 1000000
+    # related to issue #2788
     sub test_sequence {
         my $variation = $api->fetch({ class => 'Variation', name => 'WBVar01500129' });
 
@@ -63,8 +63,8 @@
         is($context->{'data'}->{'placeholder'}->{'seqLength'}, '7,566,000', 'The (over 1000000) comment is returned');
     }
 
-    # test a Features Affected field that contains over 500 
-    # related to issue #2788 
+    # test a Features Affected field that contains over 500
+    # related to issue #2788
     sub test_features_affected {
         my $variation = $api->fetch({ class => 'Variation', name => 'WBVar01500129' });
 
@@ -76,7 +76,7 @@
         ok($features_affected->{'data'}->{'Gene'} =~ /Too many features to display/, 'Comment is returned for # genes > 500');
         ok($features_affected->{'data'}->{'Predicted_CDS'} =~ /Too many features to display/, 'Comment is returned for # predicted cds > 500');
         ok($features_affected->{'data'}->{'Transcript'} =~ /Too many features to display/, 'Comment is returned for # transcripts > 500');
-  
+
     }
 
 }

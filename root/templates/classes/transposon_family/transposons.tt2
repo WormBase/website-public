@@ -1,4 +1,4 @@
-[% 
+[%
 
 build_data_table(
     order = ['id','copy_status'],

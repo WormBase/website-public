@@ -69,7 +69,7 @@
         isnt($related_process->{'data'}->{$keys[0]}[0]->{'id'}, undef, 'related topic returned');
         is($related_process->{'data'}->{$keys[0]}[0]->{'id'}, 'WBbiopr:00000006', 'correct related topic returned');
 
-    } 
+    }
 
 }
 
