@@ -575,7 +575,7 @@ sub fpkm_expression {
 
     # Return if no expression data is available.
     # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
-    if (length(keys @fpkm_map) <= 1) {
+    if ((scalar @fpkm_map) <= 1) {
         return {
             description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data -- no data returned.',
             data        => undef
