@@ -24,20 +24,21 @@
     # genes_by_biology method unit test
     sub test_genes_by_biology {
         my $disease = $api->fetch({ class => 'Disease', name => 'DOID:9970' });
-        
+
         # Test if the object contains this method
         can_ok('WormBase::API::Object::Disease', ('genes_biology'));
-        
+
         my $genes_biology = $disease->genes_biology;
         isnt( $genes_biology, undef, "data returned");
-        
+
         my $genes_by_biology = $genes_biology->{data};
         is( ref $genes_by_biology, 'ARRAY', "data contains array reference");
-        
+
         # This object should have 7 genes by biology
         is(scalar @$genes_by_biology, 7, 'correct number of genes by biology');
     }
-    
+
+
     # test OMIM external API stuff
     sub test_markup_omims {
         my $disease = $api->fetch({ class => 'Disease', name => 'DOID:0050432' });
@@ -72,7 +73,7 @@
     sub test_omim_error {
         my $fake_response_class = Moose::Meta::Class->create(
             'FakeResponse',
-                methods => { 
+                methods => {
                 code => sub { return '409'}
             },
         );
@@ -120,7 +121,7 @@
     sub test_omim_error_flag {
         my $fake_response_class = Moose::Meta::Class->create(
             'FakeResponse',
-                methods => { 
+                methods => {
                 code => sub { return '409'}
             },
         );
@@ -158,4 +159,3 @@
 }
 
 1;
-

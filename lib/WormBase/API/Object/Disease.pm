@@ -1,4 +1,4 @@
-package WormBase::API::Object::Disease; 
+package WormBase::API::Object::Disease;
 use Moose;
 
 extends 'WormBase::API::Object';
@@ -6,7 +6,7 @@ with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::ThirdParty::OMIM';
 
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -41,13 +41,13 @@ sub definition {
 }
 
 sub omim {
-	my $self = shift; 
- 	my %data =  %{$self->xrefs->{data}->{OMIM}} if $self->xrefs->{data}->{OMIM};
-	
-	return {
-		description => 'link to OMIM record',
-		data => %data ? \%data : undef 
-	}
+    my $self = shift;
+    my %data =  %{$self->xrefs->{data}->{OMIM}} if $self->xrefs->{data}->{OMIM};
+
+    return {
+        description => 'link to OMIM record',
+        data => %data ? \%data : undef
+    }
 }
 
 sub parent {
@@ -94,10 +94,9 @@ sub _get_gene_relevance{
     my @omim = map {"$_";} @omim_ace;
     my @relevance_ace = $gene->Disease_relevance;
     my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
-    my ($err, $markedup_omims) = $self->markup_omims(\@omim);
-#    use Data::Dumper; print Dumper @omim; print Dumper $err;
 
-    my $relevance;
+    my ($err, $markedup_omims) = $self->markup_omims(\@omim);
+
     my $data = {
         gene => $self->_pack_obj($gene),
         human_orthologs => $markedup_omims,
