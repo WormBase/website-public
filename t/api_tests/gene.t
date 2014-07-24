@@ -113,17 +113,29 @@
         is($human_diseases->{'data'}->{'experimental_model'}, undef, 'undef returned when there is no data');
     }
 
-    # Test the analysis link in the fpkm table of the expression method
-    # issue #2821
-    sub test_fpkm_link {
-        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
-
+    # Tests for the fpkm_expression_summary_ls method
+    sub test_fpkm_expression_summary_ls {
         can_ok('WormBase::API::Object::Gene', ('fpkm_expression_summary_ls'));
+
+        # test fpkm link
+        # Test the analysis link in the fpkm table of the expression method
+        # issue #2821
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
 
         my $fpkm_expression = $gene->fpkm_expression_summary_ls();
 
         isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
         is($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.brugia.FR3.WBls:0000081.Unknown.WBbt:0007833.PRJEB2709.ERX026030', 'correct link returned');
+
+
+        # test O. voluvus fpkm data
+        # issue #2864
+        my $gene_ovol = $api->fetch({ class => 'Gene', name => 'WBGene00243220' });
+
+        my $fpkm_expression_ovol = $gene_ovol->fpkm_expression_summary_ls();
+
+        isnt($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
+        is($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.ovolvulus.O_volvulus_Cameroon_isolate.WBls:0000108.Unknown.WBbt:0007833.PRJEB2965.ERX200392', 'correct o.vol link returned');
     }
 
     #Tests the alleles and polymorphisms methods of Gene

@@ -8,7 +8,7 @@ WRAPPER $field_block title="Current Members" key="current_members";
 			      start_date => 'Start',
 			      end_date => 'End' },
                     key='current_members');
-END; 
+END;
 
 WRAPPER $field_block title="Former Members" key="former_members";
    build_data_table(order=['name','level','start_date','end_date'],

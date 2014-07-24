@@ -1,4 +1,4 @@
-[% 
+[%
    WRAPPER $field_block title="Two Point Data" key="two_pt_data";
         build_data_table(
             order=['genotype','point_1', 'point_2', 'distance', 'mapper', 'raw_data', 'date','comment'],

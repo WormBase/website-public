@@ -4,7 +4,7 @@ use Moose;
 extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
-=pod 
+=pod
 
 =head1 NAME
 

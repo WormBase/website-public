@@ -1,4 +1,4 @@
-[% 
+[%
 
 WRAPPER $field_block title="Motifs" key="motifs";
     tags2link(fields.motifs.data);

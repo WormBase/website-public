@@ -8,6 +8,6 @@ use parent 'Catalyst::Controller::CGIBin';
 # so they function identically to actions created in WormBase.pm
 __PACKAGE__->config->{namespace} = '';
 
- 
+
 
 1;

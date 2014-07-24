@@ -2,7 +2,7 @@
 <h2>[% fields.name.data.label %]</h2>
 
 [% WRAPPER highlight_box %]
-    [% WRAPPER $field_block title="Synonyms" key="synonyms" -%] 
+    [% WRAPPER $field_block title="Synonyms" key="synonyms" -%]
         [% fields.synonyms.data.join(', ') %]
     [% END %]
 [% END %]
@@ -13,13 +13,13 @@
   </div>
 
 
-[% WRAPPER $field_block title="WormAtlas" key="wormatlas" -%] 
+[% WRAPPER $field_block title="WormAtlas" key="wormatlas" -%]
 	[%
 	links ="";
 	dbname="WormAtlas";
 	hash = fields.wormatlas.data;
 	FOREACH dbt IN hash.keys;
-        FOREACH id IN hash.$dbt.ids; 
+        FOREACH id IN hash.$dbt.ids;
             # We'll use description info from the website and not the DB.
             # Should be a table of resource, ID linked to page description, maintainer.
             links = links _ external_link(dbname,id,id,dbt) _ '<br />';
@@ -33,7 +33,7 @@
 	[% links %]
 	</div>
 [% END %]
-  
+
 
 
 

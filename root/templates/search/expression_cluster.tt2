@@ -1,7 +1,7 @@
     [% # Pull in all sections - each of these should be conditional but under what parameters? %]
     [% # Users could just to show or hide empty sections...      %]
-    [%# Sections themselves can optionally be composed of subsections 
-    
+    [%# Sections themselves can optionally be composed of subsections
+
     The template names are actually in the stash.  This should be unnecessary...
 
     %]

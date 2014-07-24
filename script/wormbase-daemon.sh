@@ -16,15 +16,15 @@ source /usr/local/wormbase/wormbase.env
 
 # $ENV{APP} needs to be set during build.
 # It's used here to dynamically configure
-# starman options. 
-# It's also used to over-ride the 
+# starman options.
+# It's also used to over-ride the
 # catalyst local configuration suffix, for example,
 # wormbase_production.conf instead of wormbase_local.conf.
 # (I could probably pitch the environment specific
 # config files, too. They could be checked out by CI)
 
 
-# If the APP environment variable isn't set, 
+# If the APP environment variable isn't set,
 # assume we are running in production.
 if [ ! $APP ]; then
     echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
@@ -42,7 +42,7 @@ if [ ! $APP ]; then
     export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 elif [ $APP == 'staging' ]; then
-    echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"    
+    echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"
 
     # reduce the number of workers.
     export DAEMONIZE=true
@@ -76,7 +76,7 @@ else
     # Assume these to all be set in the local environment
     export PORT=9001
     export WORKERS=3
-    export CATALYST_CONFIG_LOCAL_SUFFIX=local 
+    export CATALYST_CONFIG_LOCAL_SUFFIX=local
     export STARMAN_DEBUG=1
 
 fi
@@ -128,21 +128,21 @@ STARMAN_OPTS="-I$APP_HOME/lib --access-log $ACCESS_LOG --error-log $ERROR_LOG --
 # start_server configuration
 START_SERVER_DAEMON=`which start_server`
 START_SERVER_DAEMON_OPTS="--pid-file=$PIDFILE --status-file=$STATUS --port $PORT -- $STARMAN $STARMAN_OPTS"
- 
+
 # Why?
 #. $HOME/perl5/perlbrew/etc/bashrc
- 
+
 cd $APP_HOME
- 
+
 # Might even consider doing crazy things like:
 # cpanm --installdeps .
 
 # Or running our test suite...
 
 # Or checking out our wormbase_local.conf file.
- 
+
 $START_SERVER_DAEMON --restart $START_SERVER_DAEMON_OPTS
- 
+
 # If the restart failed (2 or 3) then try again. We could put in a kill.
 if [ $? -gt 0 ]; then
     echo "Restart failed, application likely not running. Starting..."

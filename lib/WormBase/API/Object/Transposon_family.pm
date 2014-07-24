@@ -76,9 +76,9 @@ http://wormbase.org/species/*
 sub title{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $title = $object->Title;
-        
+
     return {
         description => "The title of this transposon family",
         data => $title ? "$title" : undef
@@ -88,9 +88,9 @@ sub title{
 sub description{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $desc = $object->Description;
-        
+
     return {
         description => "This transposon family's description",
         data => $desc ? "$desc" : undef
@@ -106,17 +106,17 @@ sub description{
 sub family_members{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my @transposons = $object->Family_members;
     my @rows = ();
-    
+
     foreach my $transposon (@transposons){
         push( @rows, {
             id => $self->_pack_obj($transposon),
             copy_status => $transposon->Copy_status ? $transposon->Copy_status : undef
         } );
     }
-    
+
     return {
         description => "Transposon members of this family",
         data => @rows ? \@rows : undef
@@ -132,9 +132,9 @@ sub family_members{
 sub variations{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my %data;
-    
+
     my @rows = ();
     foreach my $var ($object->In_variation){
         push( @rows, {
@@ -143,7 +143,7 @@ sub variations{
             gene => $self->_pack_obj($var->Gene)
         });
     }
-        
+
     return {
         description => "Variations attached to this record",
         data => @rows ? \@rows : undef
@@ -153,16 +153,16 @@ sub variations{
 sub motifs{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $motifs = [$object->Associated_motif];
-    
+
     my $data = $self->_pack_objects($motifs);
-    
+
     return {
         description => "Motifs attached to this record",
         data => $data
     };
-    
+
 }
 
 # Sample wrapper function to copy
@@ -171,8 +171,8 @@ sub motifs{
 sub xxx{
     my ($self) = @_;
     my $object = $self->object;
-    
-        
+
+
     return {
         description => "xxx",
         data => xxx

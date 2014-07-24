@@ -15,7 +15,7 @@ use namespace::autoclean -except => 'meta';
 use JSON::Parse qw(json_file_to_perl);
 
 use Moose;
-with 'WormBase::API::Role::Object'; 
+with 'WormBase::API::Role::Object';
 
 has 'file_dir' => (
     is => 'ro',
@@ -240,13 +240,13 @@ sub process_input {
         if ($blast_e_value =~ /[^\dE+\-]/) {
             error("Invalid BLAST e-value ($blast_e_value)!");
         }
-	
+
 	my $database_type = $self->_get_database_type($database);
 
 	# database option encodes its location as WSXXX_g_species_file.suffix
 
 	$self->log->error($database_location);
-					
+
         my $expected_query_type = $BLAST_APPLICATIONS{$blast_app}{query_type};
         my $expected_database_type =
           $BLAST_APPLICATIONS{$blast_app}{database_type};
@@ -314,15 +314,15 @@ sub process_input {
         my %seen;
         my @err = split(/\n+/, $err);
         my @nr_err;
-        
+
         foreach (@err) {
             warn($_, "\n");
             push @nr_err, $_ unless $seen{$_};
             $seen{$_}++;
-        }    
-        
+        }
+
         my $nr_err = join('<br/>', @nr_err);
-        
+
         $self->log->debug( "$command_line\n" );
         error("<b>BLAST/BLAT search failed!</b><br/><br/>$!<br/>$nr_err");
     }
@@ -335,7 +335,7 @@ sub process_query_sequence {
 
     # Check query sequence
     check_query_sequence($query_sequence);
-    
+
     # Clean query sequence of extra white space
     $query_sequence =~ s/^\s+//;
     $query_sequence =~ s/\s+$//;
@@ -343,7 +343,7 @@ sub process_query_sequence {
 #     if ($query_sequence =~ /^>/ && $query_sequence !~ /^>[^\n]*\n+[^\n]+/) {
 #         message("Empty sequence!");
 #     }
-    
+
     # Add a header line if not available
     if ($query_sequence !~ />/) {
         $query_sequence = ">Query Sequence\n" . $query_sequence;
@@ -401,7 +401,7 @@ sub display_results {
         $species,
     );
 
-    
+
     my $pattern;
     my @result_file_array;
 #    warn "$address done slurping" if DEBUG;
@@ -410,7 +410,7 @@ sub display_results {
     $blast_app=uc($blast_app);
     foreach my $file (split /$blast_app/, $stream) {
         next unless($file);
-        push @result_file_array, $blast_app.$file;	 
+        push @result_file_array, $blast_app.$file;
     }
     my @final;
 
@@ -435,7 +435,7 @@ sub display_results {
             $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref, $species);
 
         $self->log->debug( "$address: processing results file: done" );
-  
+
         my $vars = {
             query_name 	       => $query_name,
             kviewer_image_content      => $kviewer_image_content,
@@ -455,42 +455,42 @@ sub display_results {
 
 sub result2html {
     my ($self,$result, $genome_links_ref, $expand_links_ref, $species) = @_;
-    
+
     my $address = $ENV{REMOTE_ADDR};
  #   warn "$address: the result file is: $result_file" if DEBUG;
-   
-    
+
+
 #    warn "$address done slurping" if DEBUG;
-    
+
     # BLAST outformat of BLAT contains hard-coded sequece/bp count
     if ($result =~ /BLAT - The BLAST-like alignment tool/) {
         $result =~ s/23 sequences; 3,000,000,000 total letters//;
-    }    
-    
+    }
+
     $result =~ s/\n{3,}/\n\n/g;
     $result =~ s/\n/<br\/>\n/g;
     $result =~ s/ /&nbsp;/g;
-    
+
     my @content;
-    
+
     my $current_idx      = 0;
     my $current_hit      = "";
     my $current_type     = "header";
     my $current_sub_type = "";
-    
+
     my $end_header_parsing = 0;
     my $end_parsing        = 0;
-    
+
     my $anchor_counter      = 0;
     my $expand_area_counter = 0;
-    
-    
+
+
     # WARNING!  THIS IS INCREDIBLY BRITTLE.
     # IF THE FORMAT OF OUR FASTA HEADERS CHANGES
     # THIS PARSING CODE WILL LIKELY BREAK.
     # CHECK BELOW FOR "FASTA WARNING"
 
-    # Reformat the summary table of the BLAST report    
+    # Reformat the summary table of the BLAST report
     my ($hash);
     foreach my $line (split("<br/>\n", $result)) {
 	my $link;
@@ -499,24 +499,24 @@ sub result2html {
             if ($line =~ /^WARNING/) {
                 $end_header_parsing = 1;
             }
-	    
+
 	    # FASTA WARNING!
 #            if (!$end_header_parsing && $line =~ /^([^&>]+?)\#/) {
-            if (!$end_header_parsing && $line =~ /^([^&>]+?)[\#&]+?/) { 
+            if (!$end_header_parsing && $line =~ /^([^&>]+?)[\#&]+?/) {
                 my $hit = $1;
 #		print STDERR "HERE: hit is $hit\n" if DEBUG;
-		
+
 		# Try and fasta headers that contain re-unfriendly characters.
 		$hit =~ s/[\[\]]/--/g;
-		
+
                 $expand_area_counter++;
-		
+
                 my ($sequence_link, $gene_link, $protein_link,
                     $corr_gene_link) = $self->make_links($hit);
-		
+
                 my $expand_link    = $expand_links_ref->{$hit};
                 my $alignment_link = "#hit_anchor_${hit}";
-		my $genome_link;     
+		my $genome_link;
                 $genome_link = {class=>'genomic_location', id=>$genome_links_ref->{$hit} , label=>'[Genome View]', taxonomy=>$species} if $genome_links_ref->{$hit};
 
 		# Replace the Gene name in the report with a link to the sequence.
@@ -524,9 +524,9 @@ sub result2html {
 		$line =~ s/\#/ /g;
 
 		# Highlight the hit.
-=pod 
+=pod
 		$line = qq[<font class="bold">] . $line . qq[</font>];
- 
+
 		$line .= qq[<br/>\n];
  		$line .=
 		    qq[<img class="expand_button" expand_area_count="$expand_area_counter" src="/blast_blat/blank.png"/>]
@@ -541,7 +541,7 @@ sub result2html {
 		    qq[<div class="expand_area"  expand_area_count="$expand_area_counter" expand_link="$expand_link"></div>\n]
 		    if $expand_link;
 =cut
-		$link= $hash->{$hit} = {	
+		$link= $hash->{$hit} = {
 							     expand_area_counter=>$expand_area_counter,
 								sequence_link=> $sequence_link,
 								expand_link=>$expand_link,
@@ -553,22 +553,22 @@ sub result2html {
 							  };
             }
         }
-	 
+
 #	print STDERR "TYPE: $current_type; SUBTYPE: $current_sub_type\n" if DEBUG;
-	
+
         if ($current_type eq 'hit' && $line !~ /^>/) {
             $line =~ s!/([^&=]+)=!<font class="red">$1</font>=!g;
         }
 
         if ($end_parsing) {
-	    
+
             # Do nothing
         } elsif ($line =~ /^Sequences&nbsp;producing&nbsp;/) {    # Do not create a new type/section
             $current_sub_type = "summary";
 
 	    # FASTA WARNING!
 #         } elsif ($line =~ /^>([^&>].+?)\#/) {
-#         } elsif ($line =~ /^>([^&>]+?)[\#&]?/) {  --this one doesn't work... 
+#         } elsif ($line =~ /^>([^&>]+?)[\#&]?/) {  --this one doesn't work...
          } elsif ($line =~ /^>([^&>]+?)([\#&]|$)/) {
             $current_hit = $1;
 #	    print STDERR "CURRENT HIT: $current_hit\n" if DEBUG;
@@ -577,7 +577,7 @@ sub result2html {
 
 #             my ($sequence_link, $gene_link, $protein_link, $corr_gene_link) =
 # 		$self->make_links($current_hit);
-	    
+
 	    $current_hit =~ s/[\[\]]/--/g;
 
             $line =~ s/^>$current_hit//;
@@ -592,19 +592,19 @@ sub result2html {
 # 	    qq[<a name="hit_anchor_${current_hit}"></a>\n];
         } elsif ($line =~ /Length\&nbsp;=/) {
 # 	   $line .= qq[<br/>\n];
-           
+
 =pod
             my ($sequence_link, $gene_link, $protein_link, $corr_gene_link) =
 		$self->make_links($current_hit);
-	    
+
             $expand_area_counter++;
-	    
+
             my $expand_link = $expand_links_ref->{$current_hit};
             my $genome_link = a(
 				 $genome_links_ref->{$current_hit} ,
 				'[Genome View]'
 				);
-	    
+
             $line .= qq[<br/>\n];
             $line .=
 		qq[<img class="expand_button" expand_area_count="$expand_area_counter" src="/blast_blat/blank.png"/>]
@@ -617,17 +617,17 @@ sub result2html {
             $line .=
 		qq[<div class="expand_area"  expand_area_count="$expand_area_counter" expand_link="$expand_link"></div>\n]
 		if $expand_link;
-=cut	
-	  
+=cut
+
 	   $link= $hash->{$current_hit};
 
         } elsif ($line =~ /Strand\&nbsp;HSPs:/) {
-	    
+
             # $current_idx++;
             # $current_type = "info";
             next;
         } elsif ($line =~ /^\&nbsp;Score/) {
-	    
+
             # $current_idx++;
             $current_type = "hit";
             $anchor_counter++;
@@ -638,15 +638,15 @@ sub result2html {
             $current_type = "footer";
             $end_parsing  = 1;
         }
-	
+
         $content[$current_idx]->{type} = $current_type;
-	 
+
 	$line={ line=>$line,link=>$link} if($link) ;
-	 
+
         push @{$content[$current_idx]->{html}}, $line;
     }
-    
-#    warn "$address: done parsing blast report" if DEBUG; 
+
+#    warn "$address: done parsing blast report" if DEBUG;
     return \@content;
 }
 
@@ -662,49 +662,49 @@ sub make_links {
     } else {
         $hit = $id3;
     }
-    
-    
+
+
     # check_output($hit);
-    
+
     my $sequence_link;
     my $gene_link;
     my $protein_link;
     my $corr_gene_link;
-    
+
     # elegans
     if ($hit =~ /^(CHROMOSOME_|)([IVX]+|MtDNA)/) {
         $sequence_link = { class=>"sequence", id=>"CHROMOSOME_$2", label=>$hit};
     }
-    
+
     # cb3
     elsif ($hit =~ /^chr/) {
         $sequence_link = $hit;
     }
-    
+
     # pb2801
     elsif ($hit =~ /^contig/i) {
         $sequence_link = $hit;
     }
-    
+
     # cb25
     elsif ($hit =~ /^cb25/) {
         $sequence_link = $hit;
     }
-    
+
     # briggpep
     elsif ($hit =~ /^BP:/i) {
         $sequence_link =  { class=>"sequence", id=>$hit, label=>$hit};
         $gene_link =  { class=>"gene", id=>$hit, label=>'[Gene Summary]'};
         $protein_link = { class=>"protein", id=>$hit, label=>'[Protein Summary]'};
     }
-    
+
     # remanei
     elsif ($hit =~ /sctg/i) {
         $sequence_link = "$hit";
         $gene_link     = '';
         $protein_link  = '';
     }
-    
+
     # wormpep
     elsif ($object = $self->dsn->{acedb}->fetch('Transcript' => $hit) || $self->dsn->{acedb}->fetch('CDS' => $hit)) {
         my $protein = $object->Corresponding_CDS ? $object->Corresponding_CDS->Corresponding_protein : $object->Corresponding_protein;
@@ -713,7 +713,7 @@ sub make_links {
         $gene_link = $self->_pack_obj($gene || undef, '[Gene Summary]');
         $protein_link = $self->_pack_obj($protein || undef, '[Protein Summary]');
     }
-    
+
     # est
     elsif($object = $self->dsn->{acedb}->fetch('Sequence' => $hit)){
         $sequence_link = $self->_pack_obj($object);
@@ -732,8 +732,8 @@ sub make_links {
     return ($sequence_link, $gene_link, $protein_link, $corr_gene_link);
 }
 
- 
- 
+
+
 
 sub process_result_file {
     my ($self,$query_file, $query_type, $result_file, $search_type, $blast_app, $species) =
@@ -754,29 +754,29 @@ sub process_result_file {
     # Determine query length
     my $in = Bio::SeqIO->new(-file => $query_file, -format => "Fasta");
     for (my $count=1;my $query_seq = $in->next_seq;$count++) {
-    
+
 	my $query_length = $query_seq->length;
 	my $query_name   = $query_seq->id;
-	
+
 	# Generate score key colors
 	my @score_key_colors;
 	for my $i (0 .. 4) {
 	    my $h_value = 251 * (255 / 360);
 	    my $s_value = $i * 25 * (255 / 100);
 	    my $v_value = 100 * (255 / 100);
-	    
+
 	    my @rgb_values = GD::Simple->HSVtoRGB($h_value, $s_value, $v_value);
-	    
+
 	    push @score_key_colors, sprintf("#%.2x%.2x%.2x", @rgb_values);
 	}
-	
+
 	# Store hits
 	my @piece_refs;
-	
+
 	# Store genome links/positions during processing
 	my %genome_links;
 	my %expand_links;
-	
+
 	# Create image panels
 	my $panel = Bio::Graphics::Panel->new(
 					      -length     => $query_length,
@@ -787,7 +787,7 @@ sub process_result_file {
 					      -pad_bottom => 10,
 					      -key_style  => "left",
 					      );
-	
+
 	my $score_key = Bio::Graphics::Panel->new(
 						  -length     => $query_length,
 						  -width      => 532,
@@ -797,10 +797,10 @@ sub process_result_file {
 						  -pad_bottom => 1,
 						  -key_style  => "left",
 						  );
-	
+
 	# Score key
 	my @score_key;
-	
+
 	for my $i (0 .. 19) {
 	    my $display_name = ' ';
 	    $display_name = '0 bits'    if $i == 0;
@@ -813,7 +813,7 @@ sub process_result_file {
 							);
 	    push @score_key, $feature;
 	}
-	
+
 	my $track = $score_key->add_track(
 					  -glyph      => 'graded_segments',
 					  -key        => '    SCORE KEY: ',
@@ -827,7 +827,7 @@ sub process_result_file {
 					  -bump       => 0,
 					  );
 	$track->add_feature(@score_key);
-	
+
 	# Query sequence
 	my $query = Bio::SeqFeature::Generic->new(
 						  -start        => 1,
@@ -842,23 +842,23 @@ sub process_result_file {
 			  -double  => 1,
 			  -label   => 1,
 			  );
-	
+
 	# Process BLAST/BLAT output - both are provided in blast format
-	
+
 	    my $result = $searchio->next_result;
-	    
+
 	    if (!$result){    # Blat does not provide output when no hits
 		error("No hits were found!");
 	    } else {
 		my $hsp_counter = 0;
-		
+
 		$result->rewind;
-		
+
 		while (my $hit = $result->next_hit) {
-		    
+
 		    next
 			if $hit->num_hsps < 1;  # Work-around, BLAT producing blank hits
-		    
+
 		    my @hsps_in_track;
 		    my $clustered_plus_strand_hsps  = Bio::SeqFeature::Generic->new;
 		    my $clustered_minus_strand_hsps = Bio::SeqFeature::Generic->new;
@@ -971,7 +971,7 @@ sub process_result_file {
 		    $track->add_feature(@hsps_in_track) if @hsps_in_track;
 		}
 	    }
-          
+
         # Write image to a temp file
         my $temp_file = File::Temp->new(
             TEMPLATE => "alignment_XXXXX",

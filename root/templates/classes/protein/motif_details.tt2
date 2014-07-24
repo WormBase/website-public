@@ -1,11 +1,11 @@
-[% 
+[%
 
 motif_dat = fields.motif_details.data;
 
 FOREACH motif IN motif_dat;
     source = motif.source;
     matched_dbname = match_link(source.db);
-    IF matched_dbname; 
+    IF matched_dbname;
         motif.source_new = external_link(matched_dbname, matched_dbname, source.id);
     ELSE;
         motif.source_new = source.db;

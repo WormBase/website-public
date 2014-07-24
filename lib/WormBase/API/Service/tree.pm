@@ -91,7 +91,7 @@ sub generate_tree {
 	#local(%PAPERS) = ();
 	my $myimage = (($request_class =~ /^Picture/  && $obj->Pick_me_to_call)? $obj->Pick_me_to_call->right->right : 'No_Image') ;
         @data =  $obj->asHTML(\&to_href);
-    } 
+    }
     return \@data;
 }
 
@@ -108,18 +108,18 @@ sub to_href {
 	$dna=~s/(\w{50})/$1\n/g;
 	return (pre({-class=>$obj->class},$dna),0);
     }
-    
+
     if ($obj->class eq 'Text') {
 	return escapeHTML($obj->name);
 #	return GenBankLink(escapeHTML($obj->name));
     }
-    
+
     unless ($obj->isObject or $obj->isTag) {
 	$obj = escapeHTML($obj);
 	$obj =~s/\\n/<BR>/g;
 	return ($obj,0);
     }
-    
+
     # if we get here, we're dealing with an object or tag
     my $name  = $obj->name;
     my $class = $obj->class;
@@ -127,20 +127,20 @@ sub to_href {
     # Which tags/fields should we squash/expand?
     my %squash = map { $_ => 1; } grep(defined $_ && $_ ne '',@squash);
     my %expand = map { $_ => 1; } grep(defined $_ && $_ ne '',@expand);
-    
+
     my %PAPERS;
 
     my ($n,$c) = (CGI::escape($name),CGI::escape($obj->class));
     my ($pn,$pc) = (CGI::escape($request_name),CGI::escape($request_class));
     my $cnt = $obj->col;
-    
+
 
     # special case for papers -- display their titles rather than their IDs
     my ($title);
     if ($obj->class eq 'Paper' and $PAPERS{$name}) {
 	$title = $PAPERS{$name}->Title->at if $PAPERS{$name}->Title;
     }
-    
+
     # set up %PAPERS in one fell swoop
     if ($obj->isTag and $name=~/^(Paper|Reference|Quoted_in)$/ and (!$squash{$name} or $cnt <= MAXEXPAND)) {
 	my @papers = $dsn->find(-query=>qq{$request_class IS "$request_name" ; >$name},
@@ -149,7 +149,7 @@ sub to_href {
 	    $PAPERS{"$_"} = $_;
 	}
     }
-    
+
     # here's a hack case for external images
     if ($obj->isTag && $name eq 'Pick_me_to_call' && $obj->right(2)=~/\.(jpg|jpeg|gif)$/i) {
 	return (td({-colspan=>2},img({-src=>AceImageHackURL($obj->right(2))})),1,1);
@@ -164,10 +164,10 @@ sub to_href {
 	if ($view eq 'collapse' || !$obj->isObject && $squash{$name} || ($cnt > $MAXEXPAND && !$expand{$name})) {
 	    my $to_squash = join('&squash=',map { CGI::escape($_) } grep $name ne $_,keys %squash);
 	    my $to_expand = join('&expand=',map { CGI::escape($_) } (keys %expand,$name));
-#	    return (a({-href=>url(-relative=>1,-path_info=>1) 
-	    return (a({-href=>"/tools/tree/run" 
+#	    return (a({-href=>url(-relative=>1,-path_info=>1)
+	    return (a({-href=>"/tools/tree/run"
 			   . "?name=$pn;class=$pc"
-			   . ($to_squash ? ";squash=$to_squash" : '') 
+			   . ($to_squash ? ";squash=$to_squash" : '')
 			   . ($to_expand ? ";expand=$to_expand" : '')
 			   . "#$name",
 			   -name=>"$name",
@@ -177,10 +177,10 @@ sub to_href {
 	} elsif (!$obj->isObject) {
 	    my $to_squash = join('&squash=',map { CGI::escape($_) } (keys %squash,$name));
 	    my $to_expand = join('&expand=',map { CGI::escape($_) } grep $name ne $_,keys %expand);
-	    return (a({-href=>"/tools/tree/run" 
-#	    return (a({-href=>url(-relative=>1,-path_info=>1,-query=>1) 
+	    return (a({-href=>"/tools/tree/run"
+#	    return (a({-href=>url(-relative=>1,-path_info=>1,-query=>1)
 			   . "?name=$pn;class=$pc"
-			   . ($to_squash ? ";squash=$to_squash" : '') 
+			   . ($to_squash ? ";squash=$to_squash" : '')
 			   . ($to_expand ? ";expand=$to_expand" : '')
 			   . "#$name",
 			   -name=>"$name",
@@ -189,9 +189,9 @@ sub to_href {
 		    0);
 	}
     }
-    
+
     return i($title) if $obj->isComment;
-    
+
     if ($obj->isObject) {
         $name =~ s/^#/?/ if $class eq 'Model';
         if (WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$class}){
@@ -200,14 +200,14 @@ sub to_href {
             return ("$name");
         }
     }
-    
+
     if ($obj->isTag) {
 	return ("<B>$title</B>",0);
     }
   # shouldn't ever get here.
 }
 
- 
+
 sub error {
   return 0;
 }

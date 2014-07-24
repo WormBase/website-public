@@ -31,7 +31,7 @@ WRAPPER $field_block title=pluralize("Subcellular Location", fields.subcellular_
 END;
 
 remarks;
- 
+
 PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_images;
 
 '<br />';

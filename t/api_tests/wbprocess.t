@@ -53,6 +53,24 @@
         is($pathway_unfolded->{'data'}[0]->{'pathway_id'}, 'WP2578', 'found id for protein folding process');
     }
 
+    #Test the related_process in the Overview widget
+    #related to issue #2862
+    sub test_related_topics {
+        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000040' });
+
+        can_ok('WormBase::API::Object::Wbprocess', ('related_process'));
+
+        my $related_process = $wbprocess->related_process();
+        my @keys = keys $related_process->{'data'};
+
+        isnt($related_process->{'data'}, undef, 'data returned');
+        isnt($keys[0], undef, 'related topics group retuned');
+        is($keys[0], 'Generalisation of', 'correct related topics group retuned');
+        isnt($related_process->{'data'}->{$keys[0]}[0]->{'id'}, undef, 'related topic returned');
+        is($related_process->{'data'}->{$keys[0]}[0]->{'id'}, 'WBbiopr:00000006', 'correct related topic returned');
+
+    }
+
 }
 
 1;

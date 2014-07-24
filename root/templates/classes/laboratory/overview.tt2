@@ -1,5 +1,5 @@
 <h2>[% fields.name.data.label %] </h2>
-[% 
+[%
 
 WRAPPER highlight_box;
 
@@ -10,7 +10,7 @@ END;
 WRAPPER $field_block title="Email" key="email";
     fields.email.data;
 END;
-   
+
 
 
 
@@ -18,7 +18,7 @@ END;
 
 '<div class="description">';
 
-   WRAPPER $field_block title="" key="representatives"; 
+   WRAPPER $field_block title="" key="representatives";
        FOREACH rep IN fields.representatives.data;
           tag2link(rep);
        END;
@@ -35,16 +35,16 @@ END;
 WRAPPER $field_block title="Strain designation" key="strain_designation";
     fields.strain_designation.data;
 END;
-   
+
 WRAPPER $field_block title="Allele designation" key="allele_designation";
     fields.allele_designation.data;
 END;
 
 %]
- 
-   
 
-   
+
+
+
 
 
 

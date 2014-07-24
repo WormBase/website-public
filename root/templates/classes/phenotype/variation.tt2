@@ -1,15 +1,15 @@
 [%
 
    WRAPPER $field_block title="Variations associated with this phenotype" key="variation";
-	
+
 	build_data_table (
-		order = [ 
+		order = [
 			'variation',
 			'gene'
-			'type', 
+			'type',
 			'species'
 			],
-		columns = {				 		
+		columns = {
 			variation => 'Variation',
 			gene => 'Gene',
 			type => 'Type',
@@ -17,17 +17,17 @@
 			},
 		key = 'variation');
    END;
-	
+
    WRAPPER $field_block title="Variations NOT associated with this phenotype" key="variation_not";
 
 	  build_data_table (
-		order = [ 
+		order = [
 			'variation',
 			'gene'
-			'type', 
+			'type',
 			'species'
 			],
-		columns = {				 		
+		columns = {
 			variation => 'Variation',
 			gene => 'Gene',
 			type => 'Type',
