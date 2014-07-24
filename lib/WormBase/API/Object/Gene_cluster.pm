@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -42,7 +42,7 @@ http://wormbase.org/species/*/gene_cluster
 
 # name { }
 # Supplied by Role
- 
+
 # title { }
 # This method will return a data structure with title for the gene_cluster.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cluster/HIS3_cluster/title
@@ -68,7 +68,7 @@ sub contains_genes {
     my $self   = shift;
     my $object = $self->object;
     my @data = map {$self->_pack_obj($_)} $object->Contains_gene;
-    
+
     return { data => @data ? \@data : undef,
 	     description => 'genes that are found in this gene cluster' };
 }

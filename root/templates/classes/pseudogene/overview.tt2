@@ -1,5 +1,9 @@
-<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;"> 
-</span></h2> 
+<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;">
+</span></h2>
+
+[%
+type = fields.type.data;
+%]
 
 [%
 
@@ -34,9 +38,18 @@ WRAPPER highlight_box;
     END;
 
      WRAPPER $field_block title="Type" key="type";
-        fields.type.data;
+
+        IF ( type == 'Coding pseudogene' );
+            type_desc = {'description'='A pseudogenic loci that appears to have once been coding'} ;
+
+        ELSIF ( type == 'RNA pseudogene' );
+            type_desc = {'description'='A RNA pseudogene is a pseudogenic loci corresponding to a non-functional non-coding RNA'} ;
+
+        END;
+
+        evidence(type_desc, 'Type_description', fields.type.data, 'details');
     END;
-   
+
 
 END;
 
@@ -45,11 +58,10 @@ remarks;
 
 %]
 
-
 [%
 
         build_data_table( order = ['gene', 'gene_len', 'pseudogene', 'pg_len'],
-                          columns = { 
+                          columns = {
                                         gene => 'Gene',
                                         gene_len => 'Gene length (nt)',
                                         pseudogene => 'Pseudogene',

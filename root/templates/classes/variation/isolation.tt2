@@ -44,7 +44,7 @@ WRAPPER $field_block title="Transposon Insertion" key="transposon_insertion";
 END;
 
 WRAPPER $field_block title="Derived From" key="derived_from";
-     tag2link(fields.derived_from.data);      
+     tag2link(fields.derived_from.data);
 END;
 
 WRAPPER $field_block title="Derivate" key="derivative";

@@ -3,7 +3,7 @@
   [% TYPES = fields.interactions.data.types %]
   [% NODES = fields.interactions.data.nodes %]
   [% EDGES = fields.interactions.data.edges %]
-  [% WRAPPER classes/interaction/interaction_details.tt2; 
+  [% WRAPPER classes/interaction/interaction_details.tt2;
 	   #this is in a wrapper so the js will execute at the bottom of the widget and prevent blocking
 	 END %]
 [% ELSE %]

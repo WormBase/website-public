@@ -3,44 +3,44 @@
 [%
 
 WRAPPER highlight_box;
- 
-   WRAPPER $field_block title="Method" key="method"; 
+
+   WRAPPER $field_block title="Method" key="method";
         fields.method.data;
    END;
 
 END;
 
 IF fields.pcr_data.keys > 0;
-   WRAPPER $field_block title='Location Information' key='pcr_data';	
-	FOREACH key IN fields.pcr_data.data.keys.sort;
-	    key _ ': ' _ fields.pcr_data.data.$key _ '<br />';
+   WRAPPER $field_block title='Location Information' key='pcr_data';
+    FOREACH key IN fields.pcr_data.data.keys.sort;
+        key _ ': ' _ fields.pcr_data.data.$key _ '<br />';
         END;
    END;
 END;
 
 WRAPPER $field_block title='Profiles' key='profiles';
-	tags2link(fields.profiles.data);
+    tags2link(fields.profiles.data);
 END;
 
 WRAPPER $field_block title='PCR Products' key='pcr_products';
-	tags2link(fields.pcr_products.data);
+    tags2link(fields.pcr_products.data);
 END;
-	
+
 WRAPPER $field_block title='Expression Map' key='expression_map';
-	fields.expression_map.data;
+    fields.expression_map.data;
 END;
 
 
 # # Maybe they will want this back later
 # WRAPPER $field_block title='RNAi' key='rnai';
 #     build_data_table (
-# 		order = [ 'rnai','strain','genotype', ],
-# 		columns = {				 		
-# 			rnai    => 'RNAi',
-# 			strain => 'Strain',
-# 			genotype => 'Genotype',
-# 			},
-# 		key = 'rnai');
+#       order = [ 'rnai','strain','genotype', ],
+#       columns = {
+#           rnai    => 'RNAi',
+#           strain => 'Strain',
+#           genotype => 'Genotype',
+#           },
+#       key = 'rnai');
 # END;
 
 remarks;

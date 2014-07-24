@@ -2,29 +2,29 @@
 
 <div>
 <p>
-This searches the underlying ACeDB database using either the old-style 
+This searches the underlying ACeDB database using either the old-style
 <br /><b>WormBase Query Language</b> (<b>WQL</b>) or the new <b>Ace Query Language</b> (<b>AQL</b>)
 
 
 [% WRAPPER toggle title="AQL examples" %]
-<ul><li>Example 1: Find loci between positions 5 and 10 on chromosome IV<pre>select l, pos from l in class Gene, 
+<ul><li>Example 1: Find loci between positions 5 and 10 on chromosome IV<pre>select l, pos from l in class Gene,
      map in l-&gt;Map where map = "IV",
      pos in map[Position] where pos &gt; 5.0 and pos &lt; 10.0
-</pre></li> <li>Example 2: Find Rearrangements with left ends before position 4 on chromosome IV and right ends beyond position 4.5, 
-<pre>select r, left, right from r in class Rearrangement, 
-     map in r->Map where map = "IV", 
+</pre></li> <li>Example 2: Find Rearrangements with left ends before position 4 on chromosome IV and right ends beyond position 4.5,
+<pre>select r, left, right from r in class Rearrangement,
+     map in r->Map where map = "IV",
      left in map[Left] where left < 4.0,
      right in map[right] where right > 4.5
 </pre></li> <li>See the Acedb web site for <a target="_blank" href="http://www.acedb.org/Software/whelp/AQL/">documentation</a> and <a target="_blank" href="http://www.acedb.org/Software/whelp/AQL/examples_worm.shtml">examples</a></li></ul>
 [% END %]
 
 [% WRAPPER toggle title="WQL examples" %]
-<ul><li>Type in a search term using the Ace query language. 
-                      Separate multiple statements with semicolons.</li> 
-<li>Examples: 
-<ul><li><pre>find Author COUNT Paper &gt; 100</pre></li> 
+<ul><li>Type in a search term using the Ace query language.
+                      Separate multiple statements with semicolons.</li>
+<li>Examples:
+<ul><li><pre>find Author COUNT Paper &gt; 100</pre></li>
 <li><pre>find Author IS "Garvin*" ; &gt;Laboratory; &gt;Staff</pre></li></ul>
-</li> 
+</li>
 <li><a href="http://www.acedb.org/Cornell/acequery_examples.html">Examples for querying GrainGenes and MaizeDB databases [external link]</a></li> <li><a href="http://www.acedb.org/Cornell/#query">Documentation and more examples [external link]</a></li></ul>
 [% END %]
 
@@ -72,7 +72,7 @@ This searches the underlying ACeDB database using either the old-style
 
    [% END %]
 [% ELSIF data %]
-   <p>No Data found</p>   
+   <p>No Data found</p>
 [% END %]
 
 [% error; %]

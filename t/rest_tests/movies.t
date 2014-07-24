@@ -23,13 +23,13 @@
     }
 
     sub test_movies {
-        my $ftp = Net::FTP->new('caltech.wormbase.org') 
+        my $ftp = Net::FTP->new('caltech.wormbase.org')
             or die "Cannot connect to some.host.name: $@";
-        $ftp->login('anonymous') 
+        $ftp->login('anonymous')
             or die "Cannot login ", $ftp->message;
-        $ftp->cwd('/pub/OICR/Movies/WBPaper00004811') 
+        $ftp->cwd('/pub/OICR/Movies/WBPaper00004811')
             or die "Cannot change working directory ", $ftp->message;
-        my $size = $ftp->size('001.A06.15c.term.mov') 
+        my $size = $ftp->size('001.A06.15c.term.mov')
             or die "size failed ", $ftp->message;
         $ftp->quit;
 

@@ -9,7 +9,7 @@ use WormBase;
 
 # Test object construction.
 # Object construction also connects to sgifaceserver at localhost::2005
-ok ( 
+ok (
     ( my $wormbase = WormBase->new(
     {mysql_user => 'root',
     mysql_pass  => '-----',
@@ -47,7 +47,7 @@ is (
      'e345',
      "Successfully fetched an object via Ace::fetch $variation");
 
-  
+
 # Try fetching an object via our wrapper get_object method
 # which is really just a wrapper around Ace::fetch
 my $gene_name = $wormbase->get_object('gene_name','unc-26');
@@ -60,7 +60,7 @@ my $gff_dbh = $wormbase->gff_dbh();
 ok($gff_dbh,"Recovered the GFF database handles hash - ugly object implementation here, please fix!");
 
 # Get the C. elegans GFF handle - currently poking inside the object
-my $handle = $gff_dbh->{"c_elegans"}; 
+my $handle = $gff_dbh->{"c_elegans"};
 isa_ok($handle,'Bio::DB::GFF');
 
 # Try fetching a segment from the GFF handle
@@ -70,5 +70,5 @@ ok($segment,"Testing GFF segment fetching");
 my @transcripts = $segment->features("transcript");
 ok(@transcripts,"Testing GFF feature fetching: retrieved "
 			 . scalar @transcripts
-			 . " transcripts"    
+			 . " transcripts"
 			 );

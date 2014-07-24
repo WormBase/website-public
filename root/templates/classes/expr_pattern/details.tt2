@@ -1,10 +1,10 @@
-[% 
+[%
 
 WRAPPER $field_block title="Experiment" key="experimental_details";
 	 details = fields.experimental_details.data; # alias
 	 FOREACH technique IN details.types;
 	 	 IF technique.1;
-    	      technique.0.replace('_',' ') _ ' assay: ' _ technique.1 _ '<br>';		     
+    	      technique.0.replace('_',' ') _ ' assay: ' _ technique.1 _ '<br>';
          ELSE;
 		      technique.0.replace('_',' ') _ '<br>';
 		 END;
@@ -14,7 +14,7 @@ WRAPPER $field_block title="Experiment" key="experimental_details";
 		' used for this assay: '  _ tags2link(details.antibody_info) _ '<br>';
 	 END;
 	 IF details.transgene;
-		pluralize("Transgene", details.transgene.size); 
+		pluralize("Transgene", details.transgene.size);
 			' used for this assay: ' _ tags2link(details.transgene) _ '<br>';
 	 END;
 	 IF details.strain;
@@ -22,7 +22,7 @@ WRAPPER $field_block title="Experiment" key="experimental_details";
 			tags2link(details.strain) _ '<br>';
 	 END;
 	 IF details.author;
-		pluralize("Author", details.author.size) _ ': '; 
+		pluralize("Author", details.author.size) _ ': ';
 			 tags2link(details.author) _ '<br>';
 	 END;
 	 IF details.date;

@@ -99,7 +99,7 @@ sub _build__alleles {
               (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_process_variation($allele)) :
                     push(@alleles, $self->_process_variation($allele));
-    }    
+    }
 
     return {
         alleles        => @alleles ? \@alleles : undef,
@@ -233,7 +233,8 @@ sub classification {
       # Is this a non-coding RNA?
       my @transcripts = $object->Corresponding_transcript;
       foreach (@transcripts) {
-          $data->{type} = $_->Transcript;
+          my $type = $_->Transcript;
+          $data->{type} = $type && "$type";
           last;
       }
     }
@@ -355,9 +356,8 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
-        || eval {$object->Corresponding_CDS->Brief_identification}
-        || eval { $object->Gene_class->Description }
-        || $self->name->{data}->{label} . ' gene';
+        || eval { $object->Corresponding_CDS->Brief_identification }
+        || eval { $object->Corresponding_transcript->Brief_identification };
 
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
     my $evidence = $self->_get_evidence($description)
@@ -575,7 +575,7 @@ sub fpkm_expression {
 
     # Return if no expression data is available.
     # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
-    if (length(keys @fpkm_map) <= 1) {
+    if ((scalar @fpkm_map) <= 1) {
         return {
             description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data -- no data returned.',
             data        => undef

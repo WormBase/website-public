@@ -9,7 +9,7 @@ WRAPPER $field_block title="Gene Classes" key="all_gene_classes";
 			      phenotype      => 'Phenotype',
 			      genes          => 'Number of Genes',
 			      },
-                    key='all_gene_classes'); 
+                    key='all_gene_classes');
 END;
 
 %]

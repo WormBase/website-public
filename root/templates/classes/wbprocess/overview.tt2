@@ -1,29 +1,33 @@
-<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;"> 
-[% IF fields.other_name.data %] 
+<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;">
+[% IF fields.other_name.data %]
   ([% fields.other_name.data %])
 [% END %]
 </span></h2>
 
-[% 
+[%
   WRAPPER highlight_box;
     WRAPPER $field_block title="Life stage" key="life_stage";
       cell_content( fields.life_stage.data );
     END;
   END;
 
-  
+
  %]
- 
+
 <div class="description">
-	[% fields.summary.data %]
+    [% fields.summary.data %]
 </div>
 
 [%
-	
-	WRAPPER $field_block title="Related processes" key="related_process";
-		tags2link( fields.related_process.data );
-	END;
 
+    WRAPPER $field_block title="Related processes" key="related_process";
+    FOREACH topic IN fields.related_process.data.keys;
+          '<h4> '_ topic _': </h4>';
+          tags2link( fields.related_process.data.$topic );
+          '<br/>';
+          '<br/>';
+    END;
+    END;
 
 
   WRAPPER $field_block title="Historical gene" key="historical_gene";
@@ -31,4 +35,3 @@
   END;
 
 %]
-

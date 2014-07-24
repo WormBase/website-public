@@ -59,8 +59,8 @@
           >
           [% wbid = get_star_id(object.name.data.id || c.req.path) %]
           [% make_star(wbid) %]
-        [% ELSE; '>'; END; %]   
-          [% title %]  
+        [% ELSE; '>'; END; %]
+          [% title %]
      [% IF c.request.param('from'); '<span class="note">(redirected from <a href="' _ c.request.param('from') _ '&redirect=no">' _ c.request.param('from') _ '</a>)</span>'; END;%]
 
       </h2>
@@ -70,7 +70,7 @@
 
 
 <div id="widgets">
-     
+
   <div class="navigation navigation-min">
   <div id="navigation">
     <div id="title">
@@ -91,7 +91,7 @@
         <li class="title toggle"><span class="ui-icon ui-icon-triangle-1-s [% IF w.title == 'Page Content'; 'pcontent'; END; %]"></span>[% w.title %]</li>
         <div>
       [% ELSE %]
-        <li id="nav-[% w.id %]" 
+        <li id="nav-[% w.id %]"
             class="module-load [% w.type %]"
             wname="[% w.id %]"
             href="[% w.href %]"><span class="ui-icon ui-icon-close module-close" wname="[% w.id %]"></span>[% w.title %]
@@ -104,16 +104,16 @@
       <div class="user-history small" id="user_history"></div>
       <div class="small">
 [% UNLESS (!(c.user_session.history_on == 1) || (c.req.action == 'me')) %]
-      <li id="nav-user_history" 
-          class="module-load me" 
+      <li id="nav-user_history"
+          class="module-load me"
           wname="user_history"
-          href="[% c.uri_for('/rest','widget','me','user_history').path %]" 
+          href="[% c.uri_for('/rest','widget','me','user_history').path %]"
           load=1>see more...</li>[% END %]</div>
       </div>
 [% UNLESS ((c.req.action == 'me') || (c.req.action == '/')) %]
-      <li class="title module-load tools" 
-          id="nav-comment" 
-          wname="comment" 
+      <li class="title module-load tools"
+          id="nav-comment"
+          wname="comment"
           href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label).path _ '?url=' _ c.req.uri.path %]"><span class="ui-icon ui-icon-close module-close" wname="comment"></span>Comments <a class="comment-count"></a>
       </li>
 [% END %]
@@ -141,7 +141,7 @@
         [% IF static_widgets %]
           data-layout='{"leftlist": ["
             [% swidgets = [];
-              FOREACH widget IN static_widgets.sort(widget_order); 
+              FOREACH widget IN static_widgets.sort(widget_order);
                 swidgets.push('static-widget-' _ widget.widget_id);
               END;
               swidgets.join('", "')
@@ -172,13 +172,13 @@
           [% IF w.type == "title"; NEXT; END; %]
           <li id="[% w.id %]" class="widget">
           [% PROCESS widget_sortable_block type=w.type id=w.id title=w.title -%]
-          </li>   
+          </li>
       [% END %]
 [% UNLESS (!(c.user_session.history_on == 1) || (c.req.action == 'me')) %]
           <li id="user_history" class="widget">
           [% PROCESS widget_sortable_block type="me" id="user_history" title="My History"-%]
           </li>
-[% END %]   
+[% END %]
 [% UNLESS ((c.req.action == 'me') || (c.req.action == '/')) %]
           <li id="comment" class="widget">
 [% cTitle = 'Comments' _ (this_object_label ? ' on ' _ this_object_label : '') %]

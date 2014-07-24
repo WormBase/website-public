@@ -31,6 +31,6 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("message_id");
 
-#__PACKAGE__->has_many(widgets=>'WormBase::Schema::Result::Widgets', 'widget_id'); 
+#__PACKAGE__->has_many(widgets=>'WormBase::Schema::Result::Widgets', 'widget_id');
 
 1;

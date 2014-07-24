@@ -2,5 +2,5 @@
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
 
-       [% markup(item.genotype.join()) %]    
+       [% markup(item.genotype.join()) %]
 

@@ -125,7 +125,7 @@ BEGIN {
         while (my ($wb, $ace) = each %{$WB2ACE_MAP{class}}) {
 			my $fullwb = join('::', OBJ_BASE, $wb);
             my $canonical_ace_class;
-          
+
             foreach my $ace_class (ref $ace eq 'ARRAY' ? @$ace:($ace)) {
                     $canonical_ace_class = _canonize_ace($ace_class);
                     $classmap->{$ace_class}		          ||= $wb;
@@ -133,7 +133,7 @@ BEGIN {
 					$fullclassmap->{$ace_class}           ||= $fullwb;
                     $fullclassmap->{$canonical_ace_class} ||= $fullwb;
                 }
-           
+
         }
 
         $ACE2WB_MAP_DONE = 1;

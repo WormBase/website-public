@@ -10,7 +10,7 @@ use parent 'WormBase::Web::Controller';
 ##############################################################
 #
 #   Simple abut pages.
-# 
+#
 ##############################################################
 
 sub about :Path('/about') :Args(0)   {
@@ -36,11 +36,11 @@ sub about_documentation :Path('/about') :Args   {
 sub _get_pod {
     my ($self,$c,$class) = @_;
     $class = ucfirst($class);
-    open (LIB,"$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Object/$class.pm") || $c->log->debug("Couldn't open the current library file");    
+    open (LIB,"$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Object/$class.pm") || $c->log->debug("Couldn't open the current library file");
 
     my $pod = $self->_get_superclass_pod($c);
     my @code;
-    while (<LIB>) {	
+    while (<LIB>) {
 	if ($_ =~ /^\#\ \<\<\ include\ (.*)\ \>\>/) {
 	    # Get the corresponding pod
 	    push @code,"\n\n\n";
@@ -50,12 +50,12 @@ sub _get_pod {
 	push @code,$_;
     }
     close LIB;
-    
+
     # Write code to temp file
     open (TMP,">/var/tmp/pod.tmp");
     print TMP @code;
     close TMP;
-    
+
     # Now turn it into POD...
     my ($title) = ucfirst($class);
     my $html = `/usr/bin/pod2html --title='WormBase API: $title' /var/tmp/pod.tmp`;
@@ -76,12 +76,12 @@ sub _get_superclass_pod {
 	    $in_stanza = 1;
 	}
 	push @{$pod{$1}},$_ if $in_stanza;
-	
+
 	if ($in_stanza && $_ =~ /^=cut/) {
 	    $in_stanza = undef;
-	}    
+	}
     }
-    close LIB2;    
+    close LIB2;
     return \%pod;
 }
 

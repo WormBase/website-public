@@ -1,6 +1,6 @@
 <h2>[% fields.name.data.label %]</h2>
 
-[% 
+[%
 
      WRAPPER $field_block title="Title" key="title";
          fields.title.data;
@@ -13,21 +13,21 @@
 			'definition',
 			'evidence',
 			],
-                   columns={ 
+                   columns={
         	           go_term => 'GO Term',
                         definition => 'Definition',
-		          evidence => 'Evidence', 
+		          evidence => 'Evidence',
 			   },
                    key='gene_ontology');
      END;
-    
+
      WRAPPER $field_block title="Homologs" key="homologies";
            build_data_table (
 		      order=[
 			     'homolog',
 		     	     'type',
 			     ],
-                    columns={ 
+                    columns={
         	         homolog => 'Homolog',
 			    type => 'Type',
 			     },

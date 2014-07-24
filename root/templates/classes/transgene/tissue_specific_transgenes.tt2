@@ -10,7 +10,7 @@ WRAPPER $field_block title="" key="tissue_specific_transgenes";
 		              summary     => 'Summary',
 			      reference   => 'Reference',
 			      },
-                    key='tissue_specific_transgenes'); 
+                    key='tissue_specific_transgenes');
 END;
 
 %]

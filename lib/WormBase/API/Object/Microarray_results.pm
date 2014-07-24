@@ -5,7 +5,7 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -51,7 +51,7 @@ sub gene {
 
     my @data = map {$self->_pack_obj($_)} $object->Gene;
     my $data = { description => 'The corresponding genes',
-         data        => @data ? \@data : undef, 
+         data        => @data ? \@data : undef,
     };
     return $data;
 }
@@ -148,7 +148,7 @@ sub results {
     foreach my $experiment ($object->Results){
 	my (@clusters, $temp, $life_stage);
 
-	foreach my $tag ($experiment->col){	    
+	foreach my $tag ($experiment->col){
 	    push @clusters, $self->_pack_obj($tag->right) if "$tag" eq 'Expression_cluster';
 	}
 	if (my $sample = $experiment->Microarray_sample){

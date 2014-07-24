@@ -2,7 +2,7 @@ package WormBase::API::Service::print;
 
 use File::Temp;
 use Moose;
-with 'WormBase::API::Role::Object'; 
+with 'WormBase::API::Role::Object';
 
 has 'file_dir' => (
     is => 'ro',
@@ -21,15 +21,15 @@ sub run {
         SUFFIX   => ".pdf",
         UNLINK   => 0,
     );
- 
+
     my $out_file = $temp_file->filename;
     my $command_line = $self->pre_compile->{PRO_EXEC}.qq{ --url='}.$path.qq{' --out=}.$out_file;
     $self->log->debug($command_line);
     my $result = `$command_line`;
-    
+
     return $result ? 0:$out_file;
 }
- 
+
 sub error {
   return 0;
 
