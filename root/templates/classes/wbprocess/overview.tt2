@@ -1,4 +1,4 @@
-p<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;">
+<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;">
 [% IF fields.other_name.data %]
   ([% fields.other_name.data %])
 [% END %]
