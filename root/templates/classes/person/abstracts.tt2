@@ -1,12 +1,12 @@
-   [% WRAPPER $field_block -%] 
+   [% WRAPPER $field_block -%]
 		[% FOREACH year IN fields.meeting_abstracts.data.keys.sort %]
-		
+
 			<b>[% year %]:<br></b>
-			
+
 			[% FOREACH citation IN fields.meeting_abstracts.data.$year %]
-			
+
 				[% tag2link(citation) %]<br>
-				
+
 			[% END %]
 		[% END %]
    [% END %]

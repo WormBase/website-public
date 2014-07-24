@@ -10,7 +10,7 @@
       <th>Page</th>
       <th>Author</th>
       <th>Comment</th>
-      <th>Date</th> 
+      <th>Date</th>
 
 
       <th></th>
@@ -18,11 +18,11 @@
       [% even = 1 %]
       [% FOREACH IS IN comments %]
       <tr [% IF(even == 1); 'class="r0"'; even = 0; ELSE; 'class="r1"'; even =1; END; %]>
-        <td>[% linkPage(IS.page) %]</td> 
+        <td>[% linkPage(IS.page) %]</td>
         <td>[% linkUser(IS.reporter) %]</td>
         <td>[% IS.content %]</td>
 	<td>[%  time_dir.ago(current_time - IS.timestamp, 1)  %]</td>
-        <td>  
+        <td>
           [% IF c.check_user_roles('admin') || c.check_user_roles('curator') || (c.user.id == IS.user_id) %]
             <a tip="delete comment" onClick='WB.comment.cmDelete($jq(this));' class="tip-simple tr comment-delete" id="[% IS.id %]" rel="[% c.uri_for('/rest','feed','comment').path  %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
           [% END %]

@@ -25,7 +25,7 @@ __PACKAGE__->config({
 		     # Automatically pre- and post-chomp to keep
 		     # templates simpler and output cleaner.
 		     # Might want to use "2" instead, which collapses.
-			 
+
 		     PRE_CHOMP    => 2,
 		     POST_CHOMP   => 2,
 		     # NOT CURRENTLY IN USE!

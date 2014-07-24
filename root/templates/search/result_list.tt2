@@ -2,7 +2,7 @@
  [% USE time_dir = Time.Duration %]
 [% MACRO git_user(user) BLOCK %]
   [% IF user.login %]
-<img width="15px" src="[% user.avatar_url %]"/ > [% external_link(user.html_url, user.login)%] 
+<img width="15px" src="[% user.avatar_url %]"/ > [% external_link(user.html_url, user.login)%]
   [% ELSE %]
       [% user %]
   [% END %]
@@ -26,12 +26,12 @@
   <li>
         [% UNLESS nostar %]
           [% wbid = get_star_id(item.name.id) %]
-          [%  name = item.name.label | uri; 
+          [%  name = item.name.label | uri;
               url = (class == 'page') ? item.name.url || item.name.id : get_url(class, item.name.id, item.name.taxonomy) | uri; %]
           [% href = "/rest/workbench/star?wbid=" _ wbid _ "&name=" _ name _ "&class=" _ class _ "&url=" _ url _ "&is_obj=" _ (class == 'page' ? 0 : 1) %]
           [% make_star(wbid, href) %]
         [% END %]
- 
+
 
   [% IF type == 'all' %]
     <span id="fade">[% result_class %]:</span>
@@ -43,7 +43,7 @@
       [% PROCESS "$file" %]
        <span id="fade">[% item.footer %]</span>
   [% CATCH file %]
-     [% !item.name.coord.start ? tag2link(item.name,item.label) : item.name.id %]   
+     [% !item.name.coord.start ? tag2link(item.name,item.label) : item.name.id %]
      [% gbrowselink(item.name,"",1); %]
      </li>
 

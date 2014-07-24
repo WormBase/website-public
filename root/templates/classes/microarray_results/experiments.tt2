@@ -1,4 +1,4 @@
-[% 
+[%
 
     WRAPPER $field_block title="Experiment(s)" key="results";
 	build_data_table (

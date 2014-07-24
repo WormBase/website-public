@@ -44,7 +44,7 @@
         is($brief->{'data'}->{'text'}, 'Guanylate cyclase receptor-type gcy-1', 'Correct brief identification');
         isnt($brief->{'data'}->{'evidence'}, undef, 'evidence returned');
         isnt($brief->{'data'}->{'evidence'}->{'Accession_evidence'}, undef, 'correct type of evidence returned');
-        
+
         my $evs = $brief->{'data'}->{'evidence'}->{'Accession_evidence'};
         ok(\$evs, 'has one Accession_evidence');
         my $evidence = shift $evs;

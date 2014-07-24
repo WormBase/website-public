@@ -1,4 +1,4 @@
-<script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>               
+<script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
 
 [% WRAPPER $field_block title="" %]
 
@@ -22,7 +22,7 @@
 
 [% END %]
 
-[% 
+[%
 
    WRAPPER $field_block title="" key="natural_isolates";
        build_data_table(order=['species','strain','place','landscape','substrate','isolated_by'],
@@ -54,13 +54,13 @@
 
                     function addMarker(point, placeinfo) {
                           var marker = new GMarker(point);
-                          map.addOverlay(marker); 
+                          map.addOverlay(marker);
                           if (placeinfo) {
                                GEvent.addListener(marker, "click", function() {
                                       marker.openInfoWindowHtml("<b>" + placeinfo + "</b>");
                                  });
                           }
- 
+
                     }
 
                       [% FOREACH strain IN fields.natural_isolates.data %]

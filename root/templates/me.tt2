@@ -18,7 +18,7 @@
     [% widgets.push(w) %]
   [% END %]
 
-  
+
   [% IF c.check_user_roles('admin') %]
     [% widgets.push({ id    = 'registered_users',
          	      title = 'Registered Users',
@@ -50,7 +50,7 @@
 
     %]
   [% END %]
- 
+
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets layout="1-0-5"%]
 
 

@@ -1,7 +1,7 @@
 <h1>WormBase Ontology Browser</h1>
 [% UNLESS term %]
 <p>
- 
+
 <table border='1'>
 <tr><th>Types</th><th>Description</th><th>Examples</th></tr>
 <tr><th>Anatomy Ontology</th><td>provide standardized terms to describe cellular anatomy</td>
@@ -15,7 +15,7 @@
 <br />gene ontology ID <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=GO:0004500;class=go_term">GO:0004500</a>
 </td>
 </tr><tr><th>Phenotype</th><td>provides a simple mechanism to search the phenotype ontology</td>
-<td> 
+<td>
 phenotype term <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=embryonic lethal late emb;class=phenotype">embryonic lethal late emb</a>
 <br />phenotype ID <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=WBPhenotype:0000520;class=phenotype">WBPhenotype:0000520</a><br />
 </td>
@@ -25,18 +25,18 @@ phenotype term <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?
 
 <h5>Note: when multiple results were found, you will be redirected to the search page</h5>
 <br />
- 
+
 [% END %]
 
 <p>
-<form method="POST" action="[% c.uri_for('/tools','ontology_browser','run').path %]"> 
+<form method="POST" action="[% c.uri_for('/tools','ontology_browser','run').path %]">
   <table>
-     <tr> 
-          
-         <th>Class</th> 
+     <tr>
+
+         <th>Class</th>
          <td><select name="class" >
 		 [% FOREACH obj IN c.config.sections.tools.ontology_browser.terms.keys.sort %]
-		      <option value="[% obj %]" [% IF term_type == obj %] selected = "1" [% END %]>[% c.config.sections.tools.ontology_browser.terms.$obj %]</option> 
+		      <option value="[% obj %]" [% IF term_type == obj %] selected = "1" [% END %]>[% c.config.sections.tools.ontology_browser.terms.$obj %]</option>
 		      [% END %]
 	      </select>
 	  <th>Name</th>

@@ -2,7 +2,7 @@
 
 <p>This is the Wormbase nucleotide aligner. To use it, enter a WormBase sequence or gene ID.</p>
 [% align_url = c.uri_for('/tools','nucleotide_aligner','run').path %]
-<form method="POST" action="[% align_url %]"> 
+<form method="POST" action="[% align_url %]">
 <input type="text" name="sequence" value="[% c.stash.sequence %]">
 <input type="submit" value="Run" /> <br />
 (e.g. <cite><a href="[% align_url _ '?sequence=AC3.6' %]">AC3.6</a></cite> or <cite><a href="[% align_url _ '?sequence=B0019.1' %]">B0019.1</a></cite>)

@@ -1,8 +1,8 @@
 <h2>[% fields.name.data.label %]</h2>
 
-[% 
+[%
 
-WRAPPER highlight_box;        
+WRAPPER highlight_box;
 
 END;
 
@@ -29,12 +29,12 @@ FOREACH key IN fields.related_phenotypes.data.keys.sort;
 		 UNLESS loop.last;
                       '<br />';
 		  END;
-	   END; 
-     
+	   END;
+
      END;
 END;
 
-  
+
 WRAPPER $field_block  title="Is retired" key="is_dead";
     tag2link(fields.is_dead.data);
 END;

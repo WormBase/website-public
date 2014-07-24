@@ -6,7 +6,7 @@ use JSON;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -56,7 +56,7 @@ http://wormbase.org/species/phenotype
 sub synonyms {
     my $self     = shift;
     my $object   = $self->object;
-    my @synonyms = map { "$_" } $object->Synonym;    
+    my @synonyms = map { "$_" } $object->Synonym;
     return {
         description => 'Synonymous name of the phenotype ',
         data        => @synonyms ? \@synonyms : undef };
@@ -70,7 +70,7 @@ sub is_dead {
     my $self = shift;
     my $object = $self->object;
     my $alternate = $object->Dead->right if $object->Dead(0);
-    
+
     return {
         description => "The Note of the phenotype when it's retired and replaced by another.",
         data        => $alternate ? $self->_pack_obj($alternate,$self->best_phenotype_name($alternate)) : undef,
@@ -91,7 +91,7 @@ sub related_phenotypes {
           ( my $type = $tag ) =~ s/_/ /g;
           my @entries;
           foreach my $ph ( $phenotype->$tag ) {
-            push @entries,$self->_pack_obj($ph);	       
+            push @entries,$self->_pack_obj($ph);
           }
           $result->{$type} = \@entries if (scalar @entries > 0);
         }
@@ -122,13 +122,13 @@ sub go_term {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->GO_term;
-    my @data_pack; 	
-    
+    my @data_pack;
+
     foreach my $tag_object (@tag_objects) {
     	my $term_pack = $self->_pack_obj($tag_object,$tag_object->Term); ## , $tag_object->Term
     	push @data_pack, $term_pack; ## {go_term => $term_pack}
     }
-    
+
     return {
         data        => @data_pack ? \@data_pack : undef,
         description => 'go terms associated with phenotype'
@@ -317,7 +317,7 @@ sub _anatomy_function {
 	# Genotype removed from the evidence hash in WS234?
 	my @assay = map { my $as = $_->right;
 			  if ($as) {
-			      my @geno = $as->Genotype; 			      
+			      my @geno = $as->Genotype;
 			      {evidence => { genotype => join('<br /> ', @geno) },
 			       text => "$_",}
 			  }
@@ -325,7 +325,7 @@ sub _anatomy_function {
 	my $pev;
 	push @data_pack, {
             af_data   => $_ && "$_",
-            phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+            phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
                           { evidence => $pev,
                            text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
             gene      => $self->_pack_obj(scalar $_->Gene),
@@ -412,16 +412,16 @@ sub _transgene {
 	my @oe_genes;
 	push @oe_genes,$oe_gene          if $oe_gene;
 	push @oe_genes,$reporter_product if $reporter_product;
-	
+
 	# Deal with the Phenotype_info hash for the CURRENT phenotype only.
 	# Wow, this is really circular.
 	my @phenotypes = $tag_object->Phenotype;
 	my %tags_with_evidence;
 	my @caused_by;
-	foreach my $phenotype (@phenotypes) {	    
+	foreach my $phenotype (@phenotypes) {
 	    next unless $phenotype eq $object;
 	    my %hash = map { $_ => $_->right } eval { $phenotype->col };
-	    
+
 	    # Keys with evidence
 	    foreach my $tag (qw/Caused_by Caused_by_other Remark/) {
 		if (defined $hash{$tag}) {
@@ -430,14 +430,14 @@ sub _transgene {
 		    # This is a string.
 		    if ($tag eq 'Caused_by_other') {
 			$text = "$hash{$tag}";
-		    } 
+		    }
 
 		    $tags_with_evidence{$tag} = { text     => $text,
 						  evidence => $evidence };
 		}
 	    }
 	}
-	
+
 	push @caused_by,$tags_with_evidence{Caused_by};
 	push @caused_by,$tags_with_evidence{Caused_by_other};
         push @data_pack, {
@@ -457,7 +457,7 @@ sub _variation {
     my $object = $self->object;
     my @data_pack;
     my @tag_objects = $object->$tag;
-    
+
     foreach my $tag_object (@tag_objects) {
         my $tag_info       = $self->_pack_obj($tag_object);
         my $variation_type = $tag_object->Variation_type;
@@ -574,7 +574,7 @@ sub _format_objects {
 		};
             }
             else { push @array, ""; }
-	    
+
             #$is_not = _is_not($_,$phenotype);
             if ( $tag =~ m/not/i ) {
                 $is_not = 0;

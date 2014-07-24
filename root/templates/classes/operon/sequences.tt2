@@ -1,4 +1,4 @@
-[% 
+[%
 
   WRAPPER $field_block title="Predicted Exon Structure" key="print_feature";
   data = fields.print_feature.data.exons;
@@ -24,7 +24,7 @@
 	     '<input type="submit" name="autoload" value="Blast ' _ data.source _  ' against ' _ key _ '" />';
 	END;
     '</form>';
-  END; 
+  END;
 
   WRAPPER $field_block title="Sequence" key="print_sequence";
     data=fields.print_sequence.data;
@@ -45,8 +45,8 @@
 	       '</div>';
         '</div>';
      END;
-  END; 
+  END;
 
 END;
 
-%] 
+%]

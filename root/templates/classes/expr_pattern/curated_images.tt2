@@ -1,6 +1,6 @@
 [% WRAPPER $field_block title="Curated Images" %]
 
-  [% IF curated_images.data %]	
+  [% IF curated_images.data %]
 
      [% FOREACH group IN curated_images.data.sort %]
         <div>

@@ -2,7 +2,7 @@
 
 [% IF noboiler %]
 
-<b><center>Join the online worm community!</center></b> 
+<b><center>Join the online worm community!</center></b>
 <div>
  <div style="margin:1em;">
   <div class="social">
@@ -70,7 +70,7 @@ $jq("#redirect").attr("value", window.location);
 
 
   <div id="default-login" style="overflow:none">
-      <input id="create-account" type="submit" style="font-weight:bold;font-size:1.3em;width:7em;" onClick="register($jq(this));return false;" class="register-button ui-corner-large-all" value="sign up ›"/>  
+      <input id="create-account" type="submit" style="font-weight:bold;font-size:1.3em;width:7em;" onClick="register($jq(this));return false;" class="register-button ui-corner-large-all" value="sign up ›"/>
       <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login') %]">login</a></b></span>
   </div>
   <br />
@@ -110,7 +110,7 @@ $jq("#redirect").attr("value", window.location);
 
 
   function register(r){
-    var reg = r.closest('#register-form'),  
+    var reg = r.closest('#register-form'),
         email = reg.find("#email"),
         wbemail = reg.find("#wbemail"),
         username= reg.find("#name"),
@@ -126,7 +126,7 @@ $jq("#redirect").attr("value", window.location);
           data: {username:username.val(),email:email.val(), wbemail:wbemail.val(), password:password.val(), wbid:wbid.val(), redirect:redirect.val()},
           success: function(data){
                 if(data==0) {
-                alert("The email address has already been registered!"); 
+                alert("The email address has already been registered!");
                 } else {
                   var content = $jq("#content");
                   content.children().not("#spacer").remove();
@@ -134,8 +134,8 @@ $jq("#redirect").attr("value", window.location);
                 }
             },
           error: function(request,status,error) {
-              if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0) 
-                  return; 
+              if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0)
+                  return;
               alert(request + " " + status + " " + error );
             }
       });

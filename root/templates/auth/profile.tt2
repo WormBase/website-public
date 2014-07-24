@@ -3,10 +3,10 @@
 <form id="profile" action="[% c.uri_for('/profile_update').path %]" method="post">
   <fieldset id="basicinfo-field">
     <legend>Basic Information</legend>
-        <dl><dt>Full name <input size="50" type="text" name="username" value ="[% c.user.username %]" /> </dt></dl>            
-	<dl><dt>Emails: 
+        <dl><dt>Full name <input size="50" type="text" name="username" value ="[% c.user.username %]" /> </dt></dl>
+	<dl><dt>Emails:
         [% FOREACH email IN c.user.email_address %]
-          <dd>[% email.email %]          
+          <dd>[% email.email %]
           [% UNLESS email.validated %]
             <span id="fade">unvalidated. <a href="#">(resend email)</a></span>
           [% ELSE %]
@@ -16,13 +16,13 @@
           [% END %]
 </dd>
         [% END %]
-    <dd>Add an additional email address: <input type="text" name="email_address" /> </dd>  
-    </dt></dl> 
+    <dd>Add an additional email address: <input type="text" name="email_address" /> </dd>
+    </dt></dl>
     </form>
 
     <dl><dt>WormBase:
       [% IF c.user.wbid %]
-        [% text2link('person', c.user.wbid, 'View Public Profile') %] 
+        [% text2link('person', c.user.wbid, 'View Public Profile') %]
         [% UNLESS c.user.wb_link_confirm %]
           <span id="fade">unvalidated. <a href="#">(resend email)</a></span>
         [% END %]
@@ -34,7 +34,7 @@
 
 </fieldset>
 
-<fieldset id="social-field">	
+<fieldset id="social-field">
     <legend>Linked Accounts</legend>
 
     <div class="caveat-emptor">
@@ -74,11 +74,11 @@
 	          img = "greendot.gif";
 
 #			    '<td><a href="' _ revoke _ '">revoke access</a></td>';
-#			      '<a href="http://twitter.com/' _ remote_site.screen_name 
-#                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
-#				  _ remote_site.screen_name 
+#			      '<a href="http://twitter.com/' _ remote_site.screen_name
+#                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @'
+#				  _ remote_site.screen_name
 #				  _ '</a>'
-#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';				
+#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
 	       ELSE;
 	          img = "reddot.gif";
 	       END;
@@ -89,9 +89,9 @@
                '<span>' _ title _ '</span></button></div>';
 	       '</td>';
                '<td><a href="' _ profile _ '"><img src="' _ avatar _ '" /></a></td>';
-	      	       
+
 	       '</tr>';
-           
+
          END;
 
 	 '</table>';
@@ -108,5 +108,5 @@
 
 [%#- curator section -%]
 [% IF c.check_user_roles('curator') %]
-[% END %] 
+[% END %]
 

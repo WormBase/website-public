@@ -85,7 +85,7 @@ sub _build_expression_patterns {
     my @data;
     my $obj_label = $self->_common_name;
     my ($certainty, $c_ev);
-    
+
     foreach ($object->Expr_pattern) {
         my $author = $_->Author;
         my @patterns = $_->Pattern

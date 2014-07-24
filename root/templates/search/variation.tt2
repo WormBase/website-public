@@ -8,5 +8,5 @@
 [% END %]
 [% desc = item.remark.join('<br />') %]
 <div class="text-min" >
-  [% markup(desc) %]    
+  [% markup(desc) %]
 </div>

@@ -16,7 +16,7 @@
         $configuration = $_[0];
     }
 
-    # A test for the type description in the Overview widget  
+    # A test for the type description in the Overview widget
     sub test_type_description {
         my $host = $configuration->{'host'};
         my $port = $configuration->{'port'};
@@ -24,7 +24,7 @@
         my $response_html = get($url);
 
         ok($response_html =~ /A pseudogenic loci that appears to have once been coding/, 'contains the type description');
-        
+
     }
 
 }

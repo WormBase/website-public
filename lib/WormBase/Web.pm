@@ -119,7 +119,7 @@ __PACKAGE__->config->{authentication} = {
 
 after setup_finalize => sub {
     my $c = shift;
-    
+
     if ($c->config->{cache}{enabled} and $c->config->{cache}{couchdb}{enabled}) {
         # this is a hack to let the namespace be the db version which
         # is not available until after plugins are setup
@@ -259,7 +259,7 @@ sub _setup_static {
 	    __PACKAGE__->config->{shared_html_base},
 	    ],
 	    #   logging  => 1,
-	    
+
 	       });
 }
 
@@ -267,12 +267,12 @@ sub _setup_static {
 #
 #   Set headers for squid
 #
-################################################## 
+##################################################
 
 # There's a problem with c.uri_for when running behind a reverse proxy.
 # We need to reset the base URL.
 # We set the base URL above (which should probably be dynamic...)
-# This isn't the best way of doing this as it only accounts for 
+# This isn't the best way of doing this as it only accounts for
 # URIs generated with c.uri_for.
 after prepare_path => sub {
     my $c = shift;
@@ -282,17 +282,17 @@ after prepare_path => sub {
 };
 
 sub finalize_error {
-    my $c = shift; 
-	
+    my $c = shift;
+
     $c->config->{'response_status'}=$c->response->status;
-    
+
     $c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["WormBase::Web::ErrorCatcherEmit","Catalyst::Plugin::ErrorCatcher::Email"];
-    
+
 #    if ($c->config->{installation_type} eq 'production') {
 #	# Only server errors get emailed.
-#	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless is_server_error($c->config->{'response_status'}); 
+#	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless is_server_error($c->config->{'response_status'});
 #    } else {
-	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}}; 
+	pop @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}};
 #    }
     $c->maybe::next::method;
 }
@@ -401,7 +401,7 @@ sub secure_uri_for {
 # overloaded from Per_User plugin to move saved items
 sub merge_session_to_user {
    my $c = shift;
-   
+
     $c->log->debug("merging guest session into per user session") if $c->debug;
 
     my $merge_behavior = Hash::Merge::get_behavior;
@@ -490,10 +490,10 @@ sub _get_widget_fields {
 # Small performance tweak to prevent couchdb lookups when not warranted.
 sub _widget_is_precached {
     my ($self,$class,$widget) = @_;
-    my $section = 
+    my $section =
 	$self->config->{sections}{species}{$class}
     || $self->config->{sections}{resources}{$class};
-    
+
     # this is here to prevent a widget section from getting added to config
     unless(defined $section->{widgets}{$widget}){ return (); }
     return 1 if defined $section->{widgets}{$widget}{precache};

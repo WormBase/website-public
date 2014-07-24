@@ -133,9 +133,9 @@ sub barchart {
 
     # If a filename is provided and the plot exists already: do not generate it again!
     return { uri => "/img-static/rplots/" . $self->version . "/"
-		 . $self->_rplot_subdir($filename) . $filename } 
-    if (WormBase::Web->config->{installation_type} ne 'development' 
-	&& defined $filename && 
+		 . $self->_rplot_subdir($filename) . $filename }
+    if (WormBase::Web->config->{installation_type} ne 'development'
+	&& defined $filename &&
 	-e (WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($filename) . $filename));
 
     my $format = "png";

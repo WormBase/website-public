@@ -1,7 +1,7 @@
 [% WRAPPER "boilerplate/field" title="Polymorphisms" -%]
     <!-- LIBRARY-IZE THIS - ORIGINAL USES TABLIEZIE -->
     [% FOREACH allele=alleles.sort %]
-	
+
        [% IF allele.Flanking_sequences %]
           [% class="identity_known" %]
        [% ELSE %]
