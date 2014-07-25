@@ -3,10 +3,6 @@
 
 WRAPPER highlight_box;
 
-WRAPPER $field_block title="Lab Website" key="website";
-    '<a href="http://' _ fields.website.data _ '">' _ fields.website.data _ '</a><br>';
-END;
-
 WRAPPER $field_block title="Email" key="email";
     fields.email.data;
 END;
@@ -39,6 +35,10 @@ END;
 
 WRAPPER $field_block title="Allele designation" key="allele_designation";
     fields.allele_designation.data;
+END;
+
+WRAPPER $field_block title="Lab Website" key="website";
+    '<a href="http://' _ fields.website.data _ '">' _ fields.website.data _ '</a><br>';
 END;
 
 
