@@ -56,7 +56,7 @@ sub anatomic_expression_patterns {
         my $image = catfile($self->pre_compile->{gene_expression_path}, "$obj.jpg") if (-e $file && ! -z $file);
         push @genes , { "image" => $image };
     }
-    
+
     #my %data_pack;
 
     #my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
@@ -91,9 +91,9 @@ sub expression_patterns {
          push @genes, {
             description => "expression patterns associated with the gene:$obj",
             data        => @data ? \@data: undef
-            }; 
+            };
     }
-    
+
     return @genes ? \@genes : undef;
 }
 
@@ -111,12 +111,14 @@ sub expression_profiling_graphs {
             push @data, $self->_expression_pattern_details($expr, $type);
         }
         push @genes, {
-        description => "expression patterns associated with the gene:$obj",
         data        => @data ? \@data: undef
-        }; 
+        };
     }
-    
-    return @genes ? \@genes : undef;
+
+    return {
+        description = "expression patterns associated with the gene:$obj",
+        data = @genes ? \@genes : undef
+    }
 }
 
 sub _expression_pattern_details {
@@ -191,7 +193,7 @@ sub anatomy_terms {
     foreach my $obj (@object){
         for my $ep ( $obj->Expr_pattern ) {
             for my $at ($ep->Anatomy_term) {
-                
+
               $unique_anatomy_terms{"$at"} ||= $self->_pack_obj($at);
             }
         }
@@ -223,7 +225,7 @@ sub expression_cluster {
             }
         }
         push @genes, @data;
-    }    
+    }
     return { data        => @genes ? \@genes : undef,
              description => 'expression cluster data' };
 }
@@ -238,7 +240,8 @@ sub fourd_expression_movies {
     my @genes;
 
     my $author;
-    foreach my $obj (@object){    
+    foreach my $obj (@object){
+        my @expr_patterns = $obj->Expr_pattern;
         my %data = map {
             my $details = $_->Pattern;
             my $url     = $_->MovieURL;
@@ -249,7 +252,7 @@ sub fourd_expression_movies {
             };
         } grep {
             (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
-        } @{$obj->Expr_pattern};
+        } @expr_patterns;
         #} @{$self ~~ '@Expr_pattern'};
         push @genes, %data;
     }
@@ -421,7 +424,7 @@ sub fpkm_expression {
                 # Reversed comparison, so that early stages appear at the top of the barchart.
                 return $label_value[1] <=> $label_value[0];
             } @fpkm_map;
-        
+
 
         my $plot;
 
@@ -461,7 +464,7 @@ sub fpkm_expression {
                 table => { fpkm => { data => \@fpkm_map } }
             };
 
-    }    
+    }
 
         return {
             description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
