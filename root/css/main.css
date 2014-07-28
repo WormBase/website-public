@@ -2823,6 +2823,10 @@ table.venn tr.venn-data td {
   margin:15px;
 }
 
+#issue-box-content #add-new-issue{
+  margin:15px;
+}
+
 #issue-box textarea, #issue-box input, #issue-box select, #issue-box option{
   background: #222;
   padding: 5px;
@@ -2860,7 +2864,7 @@ table.venn tr.venn-data td {
   margin:0 auto;
 }
 
-#issue-box a:link, #issue-box a:visited{
+#issue-box a, #issue-box a:link, #issue-box a:visited{
   color:white;
   text-decoration: underline;
 }
