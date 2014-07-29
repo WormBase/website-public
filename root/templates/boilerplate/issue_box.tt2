@@ -42,7 +42,7 @@
           </div>
       </div>  <!-- closing #issues-new -->
       <div id="add-new-issue">
-          <a onClick="WB.issue.addNewIssue($jq(this));">New feedback</a>
+          <a onClick="WB.issue.addNewIssue($jq(this));">Reload the form</a>
       </div>
     </div>
   </div>
