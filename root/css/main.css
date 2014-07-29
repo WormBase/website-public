@@ -2867,6 +2867,7 @@ table.venn tr.venn-data td {
 #issue-box a, #issue-box a:link, #issue-box a:visited{
   color:white;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 /* = Generic styling added by TH; possibly redundant  ========================== */
