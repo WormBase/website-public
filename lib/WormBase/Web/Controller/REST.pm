@@ -77,7 +77,7 @@ sub workbench_GET {
       if($saved){
             $saved->delete();
             $saved->update();
-      } else{;
+      } else{
             $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
       $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favourites" : "library");
@@ -1329,15 +1329,12 @@ sub field_GET {
 
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
     if($cached_data && (ref $cached_data eq 'HASH')){
-        $c->stash->{$key} = $cached_data;
+        $c->stash->{$field} = $cached_data;
     } else {
       my $api = $c->model('WormBaseAPI');
       my $object = $name eq '*' || $name eq 'all'
                  ? $api->instantiate_empty(ucfirst $class)
                  : $api->fetch({ class => ucfirst $class, name => $name });
-
-      # Supress boilerplate wrapping.
-      $c->stash->{noboiler} = 1;
 
       my $data   = $object->$field();
       $c->stash->{$field} = $data;
@@ -1348,6 +1345,9 @@ sub field_GET {
 
       $c->set_cache($key => $data);
     }
+
+    # Supress boilerplate wrapping.
+    $c->stash->{noboiler} = 1;
 
     my $uri = $c->uri_for( "/species", $class, $name )->path;
 

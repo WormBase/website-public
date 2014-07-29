@@ -55,6 +55,19 @@
 
     }
 
+    # Test that remarks are working for laboratory
+    # #2934
+    sub test_remark {
+        my $lab = $api->fetch({ class => 'Laboratory', name => 'AB' });
+        can_ok('WormBase::API::Object::Laboratory', ('remarks'));
+        my $remarks = $lab->remarks();
+
+        isnt($remarks->{'data'}, undef, 'data returned');
+        isnt($remarks->{'data'}[0], undef, 'remark returned');
+        is  ($remarks->{'data'}[0]->{'text'}, "No longer an active PI", 'correct remark returned');
+
+    }
+
 }
 
 1;
