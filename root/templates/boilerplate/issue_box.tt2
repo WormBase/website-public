@@ -41,8 +41,8 @@
           <div id="issue-message">
           </div>
       </div>  <!-- closing #issues-new -->
-      <div id="add-new-issue">
-          <a onClick="WB.issue.addNewIssue($jq(this));">New feedback</a>
+      <div id="add-new-issue" style="display:none">
+          <a onClick="WB.issue.addNewIssue($jq(this));">Do you have something else to tell us?</a>
       </div>
     </div>
   </div>
