@@ -176,6 +176,22 @@
         is  ($classification->{data}{type}, 'snRNA', 'correct allele returned');
 
     }
+
+    sub test_microarray_topology_map_position {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00015146' });
+
+        can_ok('WormBase::API::Object::Gene', ('microarray_topology_map_position'));
+
+        my $profiles = $gene->microarray_topology_map_position();
+        is($profiles->{'description'}, 'microarray topography map', 'correct description returned');
+        isnt($profiles->{'data'}, undef, 'data returned');
+
+        my $p = shift @{$profiles->{'data'}};
+
+        is($p->{'id'}, 'B0336.6', 'correct profile id returned');
+        is($p->{'class'}, 'expr_profile', 'correct class returned');
+        ok($p->{'label'} =~ /Mountain: 11/, 'correct mountain for expression profile returned');
+    }
 }
 
 1;
