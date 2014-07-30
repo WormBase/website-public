@@ -5,7 +5,7 @@ extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -55,7 +55,7 @@ has 'tracks' => (
 # Supplied by Role
 
 # title { }
-# This method will return a data structure of the 
+# This method will return a data structure of the
 # title for the requested motif.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/title
 

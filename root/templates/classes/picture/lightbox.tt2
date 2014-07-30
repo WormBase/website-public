@@ -18,9 +18,9 @@ END
 [% END %]
 
 [%
-   img = fields.image.data 
+   img = fields.image.data
    img_loc = img.class _ '/' _ img.name _ '.' _ img.format ;
-   
+
    img_src = img.class _ '/' _ img.name _ '_600.' _ img.format ; # 600 thumbnail. img.name MUST be the last thing in img_loc
 %]
 
@@ -42,7 +42,7 @@ END
        Cropped pictures:<br>
           <div style="padding-left:0.5em;">
           [% img2linkAll(fields.cropped_pictures.data).replace('Picture d', 'D') %]
-          [% #tags2link(fields.cropped_pictures.data) 
+          [% #tags2link(fields.cropped_pictures.data)
              # there is experimental support but currently can't make it target the lightbox %]
           </div>
        </div>
@@ -91,7 +91,7 @@ END
 
 <script type="text/javascript">
 $jq('.picture_lightbox a:not([target])').click(function () {
-   parent.location=this.href; 
+   parent.location=this.href;
    return false;
 });
 $jq('a[target="lightbox"]').click(function () {

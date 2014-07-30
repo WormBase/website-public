@@ -1,6 +1,6 @@
 <h2>[% fields.name.data.label %]</h2>
-            
-[% 
+
+[%
 
    WRAPPER highlight_box;
 
@@ -18,9 +18,9 @@
 
    WRAPPER $field_block title="Isolation";
        WRAPPER $field_block title="Antigen" key="antigen";
-             fields.antigen.data.type; 
-             IF fields.antigen.data.comment ; 
-                 ': ' ; fields.antigen.data.comment; 
+             fields.antigen.data.type;
+             IF fields.antigen.data.comment ;
+                 ': ' ; fields.antigen.data.comment;
              END;
        END;
 
@@ -34,7 +34,7 @@
   END;
 
   WRAPPER $field_block title="Isolated by";
-      
+
        laboratory(title="Laboratory");
 
        WRAPPER $field_block title="Constructed by" key="constructed_by";

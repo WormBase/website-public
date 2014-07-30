@@ -63,10 +63,10 @@ http://wormbase.org/species/*
 sub current_assemblies {
     my $self   = shift;
 
-    # Multiple assemblies for a given species are 
+    # Multiple assemblies for a given species are
     # represented by linking from the live Sequence_collection
     # to others.
-    my $data = $self->_get_assemblies('current');  
+    my $data = $self->_get_assemblies('current');
     return {
         description => "current genomic assemblies",
         data => @$data ? $data : undef
@@ -81,10 +81,10 @@ sub current_assemblies {
 sub previous_assemblies {
     my $self   = shift;
 
-    # Multiple assemblies for a given species are 
+    # Multiple assemblies for a given species are
     # represented by linking from the live Sequence_collection
     # to others.
-    my $data = $self->_get_assemblies('previous');  
+    my $data = $self->_get_assemblies('previous');
     return {
         description => "previous genomic assemblies",
         data => @$data ? $data : undef
@@ -93,7 +93,7 @@ sub previous_assemblies {
 
 sub _get_assemblies {
     my ($self,$type) = @_;
-    my $object = $self->object;    
+    my $object = $self->object;
 
     my @assemblies = $object->Assembly;
     my @data;
@@ -107,12 +107,12 @@ sub _get_assemblies {
 
         push @data,$self->_process_assembly($_) unless ($_->Status eq 'Live' && $type eq 'previous');
     }
-    
-    return \@data;   
+
+    return \@data;
 }
 
 
-sub _process_assembly {    
+sub _process_assembly {
     my ($self,$assembly) = @_;
     my $ref    = $assembly->Evidence ? $assembly->Evidence->right : $assembly->Laboratory;
     my $label  = $assembly->Name || "$assembly";
@@ -120,9 +120,9 @@ sub _process_assembly {
     my $superceded_by = $assembly->Superceded_by ? $assembly->Superceded_by : '-';
     my $status        = $superceded_by ? 'superceded' : 'current';
 
-    my $wb_range      = 
+    my $wb_range      =
     "WS" . $assembly->First_WS_release . ' - '
-    . ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : ''); 
+    . ($assembly->Superceded_by ? "WS" . $assembly->Latest_WS_release : '');
 
     my ($bioproject) = map { $_->right(2) } grep {/NCBI_BioProject/} ($assembly->Database);
 
@@ -132,7 +132,7 @@ sub _process_assembly {
     $label->{taxonomy} = lc "${g}_$species";
     $label->{bioproject} = $bioproject;
 
-    my $data = { 
+    my $data = {
         name => $label,
         sequenced_strain  => $self->_pack_obj($assembly->Strain),
         first_wb_release  => "WS" . $assembly->First_WS_release,

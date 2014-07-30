@@ -45,7 +45,7 @@ WRAPPER $field_block title='Regulates' key='';
 	FOREACH regulation IN fields.regulates.data;
 
 	    '<b>' _ regulation.regulation_type _ ":</b><br />";
-	    
+
 	    FOREACH condition_type IN regulation.conditions;
 		# Print out a semi-prose description.
 		tag2link(regulation.target);

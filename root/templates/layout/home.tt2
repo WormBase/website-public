@@ -5,7 +5,7 @@
     <div id="page">
       <div class="status-bar login-menu" ></div>
         <h1><a href="/">[% template.title or c.config.site_byline %]</a></h1>
-           <p>  
+           <p>
                 [% # The current release of the software and its codename %]
                 Software version [% c.config.version %] "[% c.config.codename %]"
                 <br />
@@ -25,7 +25,7 @@
            [% content %]
       <div id="spacer" />
     </div>
-     
- 
-    [% PROCESS footer/default.tt2 %]    
+
+
+    [% PROCESS footer/default.tt2 %]
     </div>

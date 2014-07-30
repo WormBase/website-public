@@ -16,7 +16,7 @@ WRAPPER $field_block title="Description" key="description";
      fields.description.data;
 END;
 
-WRAPPER $field_block title="Genes" key="contains_genes"; 
+WRAPPER $field_block title="Genes" key="contains_genes";
   tags2link(fields.contains_genes.data, '<br />', 'genes found');
 END;
 

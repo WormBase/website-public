@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -55,7 +55,7 @@ http://wormbase.org/species/*/expr_profile
 #######################################
 
 # pcr_data { }
-# This method will return a data structure 
+# This method will return a data structure
 # with PCR data on the expression profile.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_data
 
@@ -92,7 +92,7 @@ sub pcr_data {
 }
 
 # profiles { }
-# This method will return a data structure 
+# This method will return a data structure
 # with specific profiles of the expression profile object.
 # curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/profiles
 
@@ -102,7 +102,7 @@ sub profiles {
     my @data;
     my $dbgff = $self->gff_dsn;
     my $db    = $self->ace_dsn;
-    
+
     if ( $profile->class eq 'Gene' ) {
         my $s;
         eval { $s = $dbgff->segment($profile); };
@@ -127,7 +127,7 @@ sub profiles {
 }
 
 # pcr_products { }
-# This method will return a data structure with 
+# This method will return a data structure with
 # PCR products generated from the expression profile.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_products
 
@@ -142,7 +142,7 @@ sub pcr_products {
 }
 
 # expression_map { }
-# This method will return a data structure 
+# This method will return a data structure
 # containing the expression map associated with the
 # requested expression profile.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/expression_map
@@ -167,7 +167,7 @@ sub rnai {
     foreach my $rnai ($object->RNAi_result) {
     	my $strain   = $self->_pack_obj($rnai->Strain) if $rnai->Strain;
     	my $genotype = $rnai->Genotype;
-    	
+
     	push @data, {
 	    rnai      => $self->_pack_obj($rnai),
 	    strain    => $strain,

@@ -1,4 +1,4 @@
-[% 
+[%
 
 WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays";
     FOREACH key IN fields.orfeome_assays.data.keys.sort;

@@ -15,9 +15,9 @@ Examples:<br />
 
 
 <p>
-<form method="POST" action="[% c.uri_for('/tools','schema','run').path %]"> 
+<form method="POST" action="[% c.uri_for('/tools','schema','run').path %]">
   <table>
-     <tr><th>Class</th> 
+     <tr><th>Class</th>
          <td><input type="text" name="class" size="15" onchange="document.question.submit()" /></td>
          <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
     </tr>

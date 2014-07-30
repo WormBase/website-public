@@ -9,7 +9,7 @@ with 'WormBase::API::Role::Sequence';
 
 use Bio::Graphics::Browser2::Markup;
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -38,7 +38,7 @@ sub _build_method {
     my $details = $method->Remark if $method;
     return {
         description => "the method used to describe the $class",
-        data => ($method || $details) ? { 
+        data => ($method || $details) ? {
 	    method => $method && "$method",
 	    details => $details && "$details",
 	} : undef
@@ -197,7 +197,7 @@ sub pseudogenes{
 #
 # The External Links widget
 #
-############################################################ 
+############################################################
 
 # xrefs {}
 # Supplied by Role

@@ -11,14 +11,14 @@ WRAPPER highlight_box;
         fields.aka.data.join("<br />");
    END;
 
-   # WRAPPER $field_block title="Lab Phone"; 
+   # WRAPPER $field_block title="Lab Phone";
        # fields.lab_phone.data;
    # END;
 
    # WRAPPER $field_block title="Office Phone";
        # fields.office_phone.data.join("<br>");
-   # END; 
-            
+   # END;
+
    # WRAPPER $field_block title="Fax";
           # fields.fax.data;
    # END;

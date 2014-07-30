@@ -28,14 +28,14 @@ sub fetch_gff_gene {
 #    if ($SPECIES =~ /briggsae/) {
 #	($trans)      = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript);
 #    }
-    
+
     my $dbh = $self->dbh;
 
     ($trans) = grep {$_->method eq 'full_transcript'} $dbh->fetch_group(Transcript => $transcript) unless $trans;
-    
+
     # Now pseudogenes
     ($trans) = grep {$_->method eq 'pseudo'} $dbh->fetch_group(Pseudogene => $transcript) unless ($trans);
-    
+
     # RNA transcripts - this is getting out of hand
     ($trans) = $dbh->segment($transcript) unless ($trans);
     return $trans;

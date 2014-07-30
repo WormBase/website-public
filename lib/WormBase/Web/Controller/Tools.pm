@@ -14,14 +14,14 @@ sub index :Path :Args(0) {
 }
 
 sub metric_viewer :Path('metric_viewer') :Args(0) {
-    my ($self, $c) = @_; 
+    my ($self, $c) = @_;
     $c->stash->{template} = "tools/metric_viewer/index.tt2";
     $c->stash->{url} = $c->req->params->{url} || "/";
     return;
 }
 
 sub support :Path('support') :Args(0) {
-    my ($self, $c) = @_; 
+    my ($self, $c) = @_;
     $c->stash->{section}  = "tools";
     $c->stash->{template} = "feed/issue.tt2";
     $c->stash->{class} = "support";
@@ -103,8 +103,8 @@ sub tools :Path Args {
         $c->res->redirect($url, 307);
     }
 
-    if ($tool eq 'tree' || $tool eq 'epic') { 
-        $c->stash->{data} = $data; 
+    if ($tool eq 'tree' || $tool eq 'epic') {
+        $c->stash->{data} = $data;
     } else {
         for my $key (keys %$data) {
             $c->log->debug("save in stash key $key\n");

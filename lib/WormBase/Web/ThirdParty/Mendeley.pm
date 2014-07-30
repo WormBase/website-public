@@ -28,18 +28,18 @@ sub _build_api {
 					    request_token_url => $self->request_token_url,
 					    access_token_url  => $self->access_token_url,
 					});
-    
+
     # HARD-CODED
     $api->callback("http://todd.wormbase.org/auth/mendeley");
 #    my ($access_token, $access_token_secret) = $api->request_access_token;
-    
+
     # in the case of a web app, you want to save the request tokens
     # (and/or set them)
 #    my $request_token        = $api->request_token;
 #    my $request_token_secret = $api->request_token_secret;
 #    $api->request_token( $request_token );
 #    $api->request_token_secret( $request_token_secret );
-    
+
     return $api;
 }
 
@@ -56,16 +56,16 @@ sub _build_api {
 # http://api.mendeley.com/oapi/documents/related/20418868?type=pmid&consumer_key=f67b2a45de14e07cc9658f779dd22a5804d32335b
 sub related_papers {
     my ($self,$id,$type) = @_;
-    
-    my $key = $self->fetch_mendeley_id($id,$type);    
+
+    my $key = $self->fetch_mendeley_id($id,$type);
 
     # Now get related documents.
     my $url    = 'http://api.mendeley.com/oapi/documents/related';
     my $params = "$key";
-    
+
     # Make request
     my $response = $self->public_api_request($url,$params,'get');
-    
+
     my $json = JSON::Any->new();
     my $data = $json->jsonToObj( $response->content );
     return $data;
@@ -74,12 +74,12 @@ sub related_papers {
 
 sub fetch_mendeley_id {
     my ($self,$id,$type) = @_;
-    
+
     # Example:
     # http://api.mendeley.com/oapi/documents/details/doi:10.1038\/nmeth.1454?type=doi;consumer-key=XXXX
     my $url    = 'http://api.mendeley.com/oapi/documents/details';
     my $params = uri_escape($id);
-    
+
     # KLUDGE. Mendeley chokes on single encoded DOIs.
     if ($type eq 'doi') {
 	$params = uri_escape($params) . "?type=$type";
@@ -89,7 +89,7 @@ sub fetch_mendeley_id {
 
     # Make request
     my $response = $self->public_api_request($url,$params,'get');
-    
+
     my $json = JSON::Any->new();
     my $data = $json->jsonToObj( $response->content );
     return $data->{key} if ref($data) eq 'HASH';
@@ -99,12 +99,12 @@ sub fetch_mendeley_id {
 
 
 # Try and find a paper on Mendeley.
-# Provided with a pubmed ID, find the corresponding 
+# Provided with a pubmed ID, find the corresponding
 # Mendeley entry.
 # http://api.mendeley.com/oapi/documents/details/20418868?type=pmid&consumer_key=f67b2a45de14e07cc9658f779dd22a5804d32335b
 sub search_papers {
     my ($self,$id,$type) = @_;
-    
+
     # Example:
     # http://api.mendeley.com/oapi/documents/details/doi:10.1038\/nmeth.1454?type=doi;consumer-key=XXXX
     my $url    = 'http://api.mendeley.com/oapi/documents/details';
@@ -116,28 +116,28 @@ sub search_papers {
     } else {
 	$params = $params . "?type=$type";
     }
-    
+
     # Make request
     my $response = $self->public_api_request($url,$params,'get');
-    
+
     return $response;
 }
 
 sub public_api_request {
     my ($self,$url,$params,$method) = @_;
-    
+
     my $key_join = ($params =~ /\?/) ? '&' : '?';
-    
+
     my $uri     = URI->new("$url/$params$key_join" . "consumer_key=" . $self->consumer_key);
-    
+
     my $ua        = LWP::UserAgent->new() or die;
-    my $response  = $ua->$method($uri);   
+    my $response  = $ua->$method($uri);
 
 #    die $uri;
 #    die $response->content;
 #     return $self->log->warn("$method on $uri failed: " . $response->status_line . " - " . $response->content)
 # 	unless ( $response->is_success );
-    
+
     return $response;
 }
 
@@ -160,7 +160,7 @@ sub send_request {
     my $url     = shift;
     my $method  = uc(shift);
     my @extra   = @_;
-    
+
     my $uri   = URI->new($url);
     my %query = $uri->query_form;
     $uri->query_form({});
@@ -180,20 +180,20 @@ sub send_request {
     $request->sign;
     return $self->_error("Couldn't verify request! Check OAuth parameters.")
 	unless $request->verify;
-    
+
     my $params  = $request->to_hash;
     $uri->query_form(%$params);
     my $req      = HTTP::Request->new( $method => "$uri");
     my $response = $self->{browser}->request($req);
     return $self->_error("$method on ".$request->normalized_request_url." failed: ".$response->status_line." - ".$response->content)
 	unless ( $response->is_success );
-    
+
     return $response;
 }
 
 
 
 1;
-    
+
 
 

@@ -1,11 +1,11 @@
 
 [%#- admin section -%]
 [% IF c.check_user_roles('admin') %]
- 
-<fieldset >
- <legend>All Registered Users</legend> 
 
-    [% 
+<fieldset >
+ <legend>All Registered Users</legend>
+
+    [%
       rows = [];
       FOREACH obj IN users;
 	row = {};
@@ -30,11 +30,11 @@
 	row.username = linkUser(obj);
 	row.email = '<a href="mailto:' _ obj.primary_email.email _ '">' _ obj.primary_email.email _ '</a>';
 	rows.push(row);
-      END 
+      END
     %]
 
 
-    [% 
+    [%
 
        build_data_table(order=['username','email','admin','curator','editor', 'activated'],
                         columns={ username          => 'Username',
@@ -54,7 +54,7 @@
         if($jq(this).attr('checked')){ checked = 'true';}
         $jq.ajax({
               type: "POST",
-              url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+checked, 
+              url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+checked,
               error: function(request,status,error) {
                   alert(request + " " + status + " " + error );
                 }

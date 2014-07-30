@@ -1,4 +1,4 @@
-<div id="error-box" class="ui-state-error ui-corner-all">  
+<div id="error-box" class="ui-state-error ui-corner-all">
    <div id="issues-new">
 
    <!-- <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span>  -->
@@ -17,7 +17,7 @@
      </p>
                [% UNLESS c.user_exists %]
                   <input id="name" value="anonymous error report" type="hidden"/>
-                  <input  id="email" value="[% c.config.issue_email %]" type="hidden"/> 
+                  <input  id="email" value="[% c.config.issue_email %]" type="hidden"/>
                 [% END %]
      <br />
      <textarea id="issue-content" class="error-message-technical" rows="10" cols="80">
@@ -36,8 +36,8 @@
      </textarea>
 
      <div id="issue-submit-box" style="float:right;margin:1em;">
-            <input onClick="history.back()" type='submit' value='Go Back' />   
-            <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send Report' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />     
+            <input onClick="history.back()" type='submit' value='Go Back' />
+            <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send Report' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
      </div>
 
      <p><br />

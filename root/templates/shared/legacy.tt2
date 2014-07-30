@@ -1,4 +1,4 @@
-<div>  
+<div>
 
    <h2>
        Redirect Page
@@ -10,7 +10,7 @@
       <code>
       <a href="[% url %]">[% url %]</a>
       </code>
-  
+
 
       <p>Please update your links and bookmarks!</p>
 
