@@ -362,10 +362,11 @@ sub _build__segments {
 sub _build_remarks {
     my ($self) = @_;
     my $object = $self->object;
+    my @remarks;
 
-    my @remarks = $object->General_remark;
-    @remarks = push(@remarks, $object->Y_remark) if $object->Y_remark;
-    @remarks = push(@remarks, $object->PCR_remark) if $object->PCR_remark;
+    foreach my $remark ($object->Remark){
+        push @remarks, $remark->right();
+    }
 
 #     @remarks = map { {text => "$_"} } ($self ~~ 'Y_remark',
 #                                 $self ~~ 'PCR_remark');
