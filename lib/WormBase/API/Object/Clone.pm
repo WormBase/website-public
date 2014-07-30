@@ -364,9 +364,13 @@ sub _build_remarks {
     my $object = $self->object;
     my @remarks;
 
-    foreach my $remark ($object->Remark){
-        push @remarks, $remark->right();
+    foreach my $group ($object->Remark){
+        foreach my $remark ($group->col()){
+                    push @remarks, $remark;
+        }
     }
+
+    use Data::Dumper; print Dumper $object->Remark;
 
 #     @remarks = map { {text => "$_"} } ($self ~~ 'Y_remark',
 #                                 $self ~~ 'PCR_remark');
