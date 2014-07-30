@@ -371,8 +371,6 @@ sub _build_remarks {
     }
 
 
-#     @remarks = map { {text => "$_"} } ($self ~~ 'Y_remark',
-#                                 $self ~~ 'PCR_remark');
     @remarks = map { {text => "$_"} } @remarks;
 
     return {
