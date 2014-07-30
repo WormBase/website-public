@@ -53,12 +53,13 @@
         gene_obj.formatted_orthologs = ortholog_links.join('</br>');
     END;
 
-    build_data_table( order=['gene', 'formatted_orthologs'],
-	    columns={
+    build_data_table( order=['gene', 'relevance', 'formatted_orthologs'],
+        columns={
             gene => 'Gene',
+            relevance => 'Disease Relevance',
             formatted_orthologs => 'Human Orthologs'
         },  key="genes_biology",
-	    passed_data=genes_biology_data);
+        passed_data=genes_biology_data);
   END;
 
   WRAPPER $field_block title="Genes identified as potential models by orthology" key="genes_orthology";
@@ -74,13 +75,12 @@
         gene_obj.formatted_orthologs = ortholog_links.join('</br>');
     END;
 
-    build_data_table( order=['gene', 'relevance', 'formatted_orthologs'],
-	    columns={
+    build_data_table( order=['gene', 'formatted_orthologs'],
+        columns={
             gene => 'Gene',
-            relevance => 'Disease Relevance',
             formatted_orthologs => 'Human Orthologs'
         }, key="genes_orthology",
-	    passed_data=genes_orthology_data);
+        passed_data=genes_orthology_data);
   END;
 
   remarks;
