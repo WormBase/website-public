@@ -53,7 +53,7 @@ http://wormbase.org/species/*/clone
 
 sub type {
     my ($self) = @_;
-
+    
     my $type = $self ~~ 'Type';
     return { description => 'The type of this clone',
 	     data		=> $type && "$type" };
@@ -61,7 +61,7 @@ sub type {
 
 sub url {
     my ($self) = @_;
-
+    
     my $url = $self ~~ 'Url';
     return { description => 'The website for this clone',
          data       => $url && "$url" };
@@ -69,7 +69,7 @@ sub url {
 
 sub in_strain {
     my ($self) = @_;
-
+    
     my $strain = $self ~~ 'In_strain';
     return { description => 'The current clone is found in this strain',
          data       => $self->_pack_obj($strain) };
@@ -83,7 +83,7 @@ sub in_strain {
 sub sequences {
     my ($self) = @_;
     my @sequences = map { $self->_pack_obj($_) } @{$self ~~ '@Sequence'};
-
+    
     return {
         description => 'sequences associated with this clone',
         data		=> @sequences ? \@sequences : undef,
@@ -92,7 +92,7 @@ sub sequences {
 
 sub _seq2coords {
     my ($self, @seqs) = @_;
-
+    
     return map {[$_->abs_ref, $_->start, $_->stop]}
     map {my $db = $self->gff_dsn($self->_parsed_species($_));
 	 $db->segment($_)}
@@ -122,11 +122,11 @@ sub lengths {
 
 sub maps {
     my ($self) = @_;
-
+    
     # get Maps from object itself, otherwise try for Maps from Pmap
     my $map = $self ~~ '@Map';
     $map = eval {[$self->object->Pmap->Map] } unless @$map;
-
+    
     return {
 	description => 'maps assigned to this clone',
 	data	    => $map && @$map ? $self->_pack_objects($map) : undef,
@@ -248,7 +248,7 @@ sub pcr_product {
     my $pcr = $self->_api->fetch({class=>'Pcr_oligo',name=>"$PCR_product"}) if $PCR_product;
     return {
       description => 'PCR product associated with this clone',
-      data        => $PCR_product ?
+      data        => $PCR_product ? 
         { pcr_product => $self->_pack_obj($PCR_product),
           oligos      => $pcr->oligos() }: undef,
     };
@@ -309,28 +309,28 @@ sub _build__sequence {
 
 sub transcripts {
   my $self = shift;
-  return $self->_sequence ? $self->_sequence->transcripts()
+  return $self->_sequence ? $self->_sequence->transcripts() 
     : { description => 'Transcripts in this region of the sequence', data => undef };
 
 }
 
 sub predicted_units {
   my $self = shift;
-  return $self->_sequence ? $self->_sequence->predicted_units()
+  return $self->_sequence ? $self->_sequence->predicted_units() 
     : { description => 'features contained within the sequence', data => undef };
 
 }
 
 sub strand {
   my $self = shift;
-  return $self->_sequence ? $self->_sequence->strand()
+  return $self->_sequence ? $self->_sequence->strand() 
     : { description => 'strand orientation of the sequence', data => undef };
 
 }
 
 sub print_sequence {
   my $self = shift;
-  return $self->_sequence ? $self->_sequence->print_sequence()
+  return $self->_sequence ? $self->_sequence->print_sequence() 
     : { description => 'the sequence of the sequence', data => undef };
 }
 
@@ -347,7 +347,7 @@ sub _build_tracks {
 
 sub _build__segments {
     my ($self) = @_;
-    # TH: I don't think it's correct to use the method "region" here.
+    # TH: I don't think it's correct to use the method "region" here.  
     # It needs to be either Sequence or Clone.
     # return [$self->gff_dsn->segment(-class => 'region', -name => $self->object)];
 
