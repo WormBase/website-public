@@ -563,7 +563,9 @@ sub fpkm_expression {
             my $label = $fpkm_entry[2];
             my $name = $self->_pack_obj($fpkm_entry[2]);
             my $value = $fpkm_entry[0];
-            my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
+            my $analysis = $label->fetch();
+            my $sample = $analysis->Sample || '';
+            my ($project) = $sample =~ /^([a-zA-Z0-9_-]+)\./;
             {
                 label => $name,
                 value => "$value",
