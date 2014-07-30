@@ -22,5 +22,5 @@
       <td>[% url.Link(entry.curator) %]</td>
       </tr>
    [% END %]
-   </table>   
+   </table>
 [% END %]

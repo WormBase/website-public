@@ -120,7 +120,7 @@ href="http://www.textpresso.org/cgi-bin/wb/textpressoforwormbase.cgi?allabstract
 	       </td>
                <td style="vertical-align:bottom">
                  <a class="nakedlinks"
-                     onmouseover="showTooltip(event,'Suggest')" 
+                     onmouseover="showTooltip(event,'Suggest')"
                     href="http://www.wormbase.org/wiki/index.php/UserGuide:Autocompletion"
                     target="_new">Wormbase Suggest</a>
                </td>

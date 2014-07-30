@@ -33,7 +33,7 @@
                     [% ELSE %]
                         <div class="spacer">&nbsp;</div>
                     [% END %]
-                </div>    
+                </div>
             </td>
             <td valign="top">
                 <div class="report_images">
@@ -58,35 +58,35 @@
                 <div class="fixed_width">
 		    [% expand_area_counter=0 %]
                     [% FOREACH re IN obj.result_file_content %]
-			  <div class="report_[% re.type %]"> 
+			  <div class="report_[% re.type %]">
 			    [% FOREACH line IN re.html %]
 				[% IF line.link.defined %]
-				   
+
 				  [% IF re.type == "header" %]<font class="bold">[% tag2link(line.link.sequence_link) %][% line.line %]</font><br/>
 				  [% ELSIF line.link.hit_sequence_link %]<a name="hit_anchor_[% line.link.current_hit _ '_' _ count %]"></a> >[% tag2link(line.link.hit_sequence_link) %][% line.line %]
 				  [% ELSE %][% line.line %]<br/><br/>
 				  [% END %]
 				  [% IF line.link.expand_link %]
 				     <img class="expand_button" expand_area_count="[% expand_area_counter _ count %]" src="/img/blast_blat/blank.png"/>
-				  [% END %]  
+				  [% END %]
 				  [% IF re.type == "header" %]<a href="[% line.link.alignment_link _ '_' _ count %]">[Alignment]</a>[% END %]
 				  [% IF line.link.genome_link.id %] <a href="[% gbrowse_url(line.link.genome_link.taxonomy, line.link.genome_link.id) %]" target="_blank">[Genome View]</a>[% END %]
 				  [% # tag2link(line.link.genome_link) %]
 				  [% tag2link(line.link.gene_link) %]
 				  [% tag2link(line.link.protein_link) %]
 				  [% tag2link(line.link.corr_gene_link) %]
-				  
+
 				  [% IF line.link.expand_link %]
 				    <br/><div class="expand_area"  expand_area_count="[% expand_area_counter _ count %]" expand_link="[% site.external_urls.gbrowse_image.base _ line.link.expand_link %]"></div>
 				    [% expand_area_counter = expand_area_counter+1 %]
-				   [% END %]  
-				    
+				   [% END %]
+
 				[% ELSE %]	[% line %]
 				[% END %]
 			    [% UNLESS loop.last %]<br/> [% END %]
 			    [% END %]
-			  </div> 
-			  <br/> 
+			  </div>
+			  <br/>
 		    [% END %]
                 </div>
             </td>

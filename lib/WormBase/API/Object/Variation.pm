@@ -1,4 +1,4 @@
-package WormBase::API::Object::Variation;
+  package WormBase::API::Object::Variation;
 
 use Moose;
 use Bio::Graphics::Browser2::Markup;

@@ -12,7 +12,7 @@ source /usr/local/wormbase/wormbase.env
 # $ENV{APP} needs to be set during build.
 
 
-# If the APP environment variable isn't set, 
+# If the APP environment variable isn't set,
 # assume we are running in production.
 if [ ! $APP ]; then
     echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
@@ -24,14 +24,14 @@ if [ ! $APP ]; then
     export PORT=5000
     export WORKERS=10
     export MAX_REQUESTS=500
-     
+
     # The suffix for the configuration file to use.
     # This will take precedence over wormbase_local.conf
     # Primarily used to override the location of the user database.
     export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 elif [ $APP == 'staging' ]; then
-    echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"    
+    echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"
 
     # reduce the number of workers.
     export DAEMONIZE=true
@@ -85,7 +85,7 @@ export GBROWSE_HTDOCS=$ENV{APP_HOME}/root/gbrowse
 export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_HOME}/lib:$PERL5LIB
 export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
 export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
-export PATH="/usr/local/wormbase/extlib/bin:$PATH"  
+export PATH="/usr/local/wormbase/extlib/bin:$PATH"
 
 
 # Fetch local defaults
@@ -139,17 +139,17 @@ _start() {
     echo "     pidfile : $PIDFILE"
     echo "     workers : $WORKERS"
     echo "    max_reqs : $MAX_REQUESTS"
-    echo "        port : $PORT" 
-    
+    echo "        port : $PORT"
+
 #  /sbin/start-stop-daemon --start --pidfile $PIDFILE \
 #  --chdir $APP_HOME --startas $STARMAN "$STARMAN_OPTS"
-    
+
 #  /sbin/start-stop-daemon --start --pidfile $PIDFILE \
 #  --chdir $APP_HOME --exec $STARMAN -- "$STARMAN_OPTS"
-    
+
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_HOME/wormbase.psgi 
+	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_HOME/wormbase.psgi
 #	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_HOME/wormbase.psgi
 
 
@@ -158,10 +158,10 @@ _start() {
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
 	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_HOME/wormbase.psgi
     fi
-    
+
     echo ""
     echo "   Attempting to start..."
-    
+
     for i in 1 2 3 4 ; do
 	sleep 1
 	if check_running ; then
@@ -179,7 +179,7 @@ _start() {
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
 	    --chdir $APP_HOME --exec $STARMAN -- -I$APP_HOME/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_HOME/wormbase.psgi
     fi
-    
+
     for i in 1 2 3 4 ; do
 	sleep 1
 	if check_running ; then
@@ -187,7 +187,7 @@ _start() {
 	    return 0
 	fi
     done
-    
+
     return 1
 }
 

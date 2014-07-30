@@ -14,18 +14,18 @@ requires 'Task::Catalyst';                        # A slew of basic Catalyst Goo
 requires 'parent';
 
 # Catalyst Plugins and extensions
-requires 'Catalyst::Action::REST';           
+requires 'Catalyst::Action::REST';
 requires 'Catalyst::Action::RenderView';
 requires 'Catalyst::Action::RenderView::ErrorHandler';
-requires 'Catalyst::Authentication::Credential::OpenID';   # will need to install Math::BigInt::GMP first 
+requires 'Catalyst::Authentication::Credential::OpenID';   # will need to install Math::BigInt::GMP first
 requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::Controller::CGIBin';
 requires 'Catalyst::Model::Adaptor';
 requires 'Catalyst::Model::Xapian::Result';
 #requires 'Catalyst::Log::Log4perl';
-requires 'Catalyst::Plugin::Authentication';          
-requires 'Catalyst::Plugin::Authorization::Roles';          
+requires 'Catalyst::Plugin::Authentication';
+requires 'Catalyst::Plugin::Authorization::Roles';
 requires 'Catalyst::Plugin::Cache';                # Cache interface
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::ErrorCatcher';
@@ -46,9 +46,9 @@ requires 'Catalyst::View::CSV'                    => '1.3';      # Export as CSV
 # Application dependencies
 requires 'Ace'                                    => '1.92';     # Good 'ole AcePerl.
 #requires 'AnyEvent::CouchDB';                                   #
-requires 'Badge::GoogleTalk';                                    # 
+requires 'Badge::GoogleTalk';                                    #
 requires 'Bio::Perl'                              => '1.006001'; #
-requires 'Bio::Graphics';                                        # 
+requires 'Bio::Graphics';                                        #
 requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
 requires 'CGI::Simple::Cookie';                                  #
@@ -95,7 +95,7 @@ requires 'Number::Format';                                       # Daemon contro
 requires 'namespace::clean';                                     #
 requires 'namespace::autoclean';                                 #
 requires 'Package::DeprecationManager'           => '0.10';      #
-requires 'Package::Stash'                        => '0.21';      # 
+requires 'Package::Stash'                        => '0.21';      #
 requires 'Package::Stash::XS'                    => '0.18';      #
 requires 'Params::Util';                                         #
 requires 'Proc::Wait3';

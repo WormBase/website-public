@@ -21,9 +21,9 @@ a hash of fields and their corresponding templates
                  Bring in all the fields for this widget
                  assuming they are all custom
            %]
-           
+
           [%# mytemplate = "$class/$field" _ '.tt2' %]
- 
+
           [%# Approach 2: CURRRENTLY ACTIVE
              Look up which template the field should use
 	     This is a macro in main
@@ -39,7 +39,7 @@ a hash of fields and their corresponding templates
               [% mytemplate = "$class/$field" _ '.tt2' %]
           [% END %]
 
-           [% PROCESS $mytemplate %]	
+           [% PROCESS $mytemplate %]
 
        [% END %]
    [% END %]

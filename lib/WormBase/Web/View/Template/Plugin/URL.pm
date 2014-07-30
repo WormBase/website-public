@@ -31,21 +31,21 @@ sub object_link {
   my ($self,$object,$text) = @_;
   my $inner_object = $object->object;
   my $href = $self->object_href($inner_object);
-  
+
   # Customize the link text
   if ($inner_object->class eq 'Person') {
       $text = $inner_object->Full_name;
   } else {
       $text ||= $inner_object->name;
   }
-  
+
   return a({-href=>$href},$text);
 }
 
 # Return the HREF for a given object
 sub object_href {
     my ($self,$object) = @_;
-    
+
     my $href = $self->class2url($object);
     return $href;
 }
@@ -61,20 +61,20 @@ sub object_href {
 sub Link {
     my ($self,$hash,$text,$tooltip) = @_;
     return unless $hash;
-    
-    
+
+
     # Hash is actually a hash.
     # It is -- most likely -- a WB::API::Object
     # Turn this into a link using object_link
     if ((eval { $hash->class} && !defined $hash->{action})
-	|| eval { $hash =~ /WormBase::API/ } ) {      
+	|| eval { $hash =~ /WormBase::API/ } ) {
 	return $self->object_link($hash,$text);
     }
-    
+
     my $item = $hash->{item};
     $text ||= $hash->{text} || $hash->{item};
     my $href = $self->href($hash);
-    
+
     if (defined $hash->{href_params}) {
 	my %href_params = $hash->{href_params};
 	return a({-href=>$href,-name=>$item,%href_params},
@@ -90,7 +90,7 @@ sub href {
   my ($self,$hash) = @_;
   my ($action,$item,$href);
 
-  # A link to an external resource, characterized 
+  # A link to an external resource, characterized
   # by a "resource" parameter.
   if ($hash->{resource}) {
 
@@ -136,14 +136,14 @@ sub href {
 sub class2url {
     my ($self,$name,$class) = @_;
     $class ||= $name->class if ref($name) and $name->can('class');
-    
+
     my $name_clean  = CGI::escape($name);
     my $class_clean   = CGI::escape($class);
     my $params = "class=$class_clean;name=$name_clean";
-    
+
     my $context = $self->{_CONTEXT};  # ? Ace holdover?
     my $stash   = $context->stash;
-    
+
     my $target_action = $stash->{site}->{class2action}->{lc($class)};
     my $action        = $target_action->{action};
     return $action unless $params;

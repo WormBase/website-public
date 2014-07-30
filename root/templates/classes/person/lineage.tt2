@@ -1,4 +1,4 @@
-[% 
+[%
 
 WRAPPER $field_block title="Supervised" key="supervised";
       build_data_table(

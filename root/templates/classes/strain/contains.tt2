@@ -1,4 +1,4 @@
-[% 
+[%
   WRAPPER $field_block title="Variations" key="alleles";
                build_data_table(
               order=['variation','molecular_change','locations','effects','aa_change','aa_position','isoform', 'phen_count', 'method_name', 'gene'],
@@ -15,7 +15,7 @@
               },
               key='alleles',
               classsearch='variation');
-  END; 
+  END;
  %]
 
 [% WRAPPER $field_block title=pluralize("Gene", fields.genes.data.size) key="genes" %]

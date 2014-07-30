@@ -130,7 +130,7 @@ sub version {
 
     my $version = readlink ($self->database->{$self->default_datasource}->{root});
     $version =~ s/.*\_(WS\d\d\d)$/$1/g;
-    return $version; 
+    return $version;
 }
 
 # Build a hashref of services, including things like the
@@ -156,7 +156,7 @@ sub _build__services {
         foreach my $source (@sources) {
             # fetch the bioproject id from the config
             my $bp = $conf->{data_sources}->{$source}->{bioproject} unless ($conf->{data_sources}->{$source} && $conf->{data_sources}->{$source} eq "1");
- 
+
             my $service = $service_class->new({
                 conf          => $conf,
                 log           => $self->log,
@@ -189,7 +189,7 @@ sub _build__tools {
             log         => $self->log,
 	    search 	=> $self->xapian,
             _api        => $self,
-            dsn         => $self->_services, 
+            dsn         => $self->_services,
             tmp_base    => $self->tmp_base,
             version     => $self->version,
             # ($tool eq 'aligner' ? (search => $self->search) : ()),
@@ -225,7 +225,7 @@ sub fetch {
         if ($class) { # WB class was provided
             $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{$class}
                      || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class}
-                     || (($self->modelmap->ACE2WB_MAP->{class}->{$class}) ? $class : undef); 
+                     || (($self->modelmap->ACE2WB_MAP->{class}->{$class}) ? $class : undef);
 
             unless ($aceclass) { # don't know which aceclass;
                 $self->log->warn("[API::fetch()]", " class $class, UNKNOWN ace class");
@@ -248,7 +248,7 @@ sub fetch {
             $name = $var_name->Public_name_for || $var_name->Other_name_for || $name;
             $self->log->debug("[API::fetch()]", " Variation hack, $orig_name, found $name");
         }
- 
+
         # Try fetching an object (from the default data source)
 		if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
 			foreach my $ace (@$aceclass) {

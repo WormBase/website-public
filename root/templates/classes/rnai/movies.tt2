@@ -14,7 +14,6 @@ END;
 %]
 
 [%
-  
-  # TODO: add a download button or note eg. "right click to save movie", movie may not play under linux, use gecko-mediaplayer instead of totem 
+
+  # TODO: add a download button or note eg. "right click to save movie", movie may not play under linux, use gecko-mediaplayer instead of totem
 %]
- 

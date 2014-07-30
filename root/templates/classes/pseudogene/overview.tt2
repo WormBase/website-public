@@ -1,5 +1,5 @@
-<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;"> 
-</span></h2> 
+<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;">
+</span></h2>
 
 [%
 type = fields.type.data;
@@ -22,7 +22,7 @@ WRAPPER highlight_box;
     END;
 
     WRAPPER $field_block title="Named by" key="named_by";
-        tag2link(fields.named_by.data); 
+        tag2link(fields.named_by.data);
     END;
 
     WRAPPER $field_block title="From laboratory" key="from_lab";
@@ -49,7 +49,7 @@ WRAPPER highlight_box;
 
         evidence(type_desc, 'Type_description', fields.type.data, 'details');
     END;
-   
+
 
 END;
 
@@ -61,7 +61,7 @@ remarks;
 [%
 
         build_data_table( order = ['gene', 'gene_len', 'pseudogene', 'pg_len'],
-                          columns = { 
+                          columns = {
                                         gene => 'Gene',
                                         gene_len => 'Gene length (nt)',
                                         pseudogene => 'Pseudogene',

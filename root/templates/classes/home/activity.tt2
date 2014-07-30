@@ -23,5 +23,5 @@
 [% PROCESS "search/results.tt2" no_count=1%]
 
 [% END %]
-  
+
 [% PROCESS "shared/generic/how_to_star.tt2" %]

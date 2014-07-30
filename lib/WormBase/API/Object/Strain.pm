@@ -5,7 +5,7 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Variation';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -58,7 +58,7 @@ sub natural_isolates {
               substrate   => $substrate && "$substrate",
       };
     }
-    
+
     return { description => 'a list of wild isolates of strains contained in WormBase',
              data        => @data ? \@data : undef };
 }
@@ -72,7 +72,7 @@ sub natural_isolates {
 
 #######################################
 #
-# The Overview widget 
+# The Overview widget
 #
 #######################################6
 
@@ -83,7 +83,7 @@ sub natural_isolates {
 # Supplied by Role
 
 # genotype { }
-# This method will return a data structure containing 
+# This method will return a data structure containing
 # the genotype of the strain as a string.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/genotype
 
@@ -96,7 +96,7 @@ sub genotype {
 }
 
 # genes { }
-# This method will return a data structure 
+# This method will return a data structure
 # containing the genes in this strain.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/genes
 
@@ -110,7 +110,7 @@ sub genes {
 }
 
 # alleles { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing alleles contained in this strain.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/alleles
 
@@ -127,7 +127,7 @@ sub alleles {
 
 
 # rearrangements { }
-# This method will return a data structure 
+# This method will return a data structure
 # containing rearrangements contained in this strain, if any.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/rearrangements
 
@@ -169,7 +169,7 @@ sub transgenes {
     return { description => 'transgenes carried by the strain',
              data        => @transgenes ? \@transgenes : undef };
 
-} 
+}
 
 
 # mutagen { }
@@ -214,7 +214,7 @@ sub outcrossed {
 
 #######################################
 #
-# The Origin widget 
+# The Origin widget
 #
 #######################################6
 
@@ -255,14 +255,14 @@ sub contact {
 sub date_received {
     my $self   = shift;
     my $object = $self->object;
-    
+
     my $date = $object->CGC_received;
     $date =~ s/ 00:00:00$//;
     return { description => 'date the strain was received at the CGC',
              data        => $date || undef,
     };
 }
-    
+
 # gps_coordinates { }
 # This method will return a data structure containing
 # the gps coordinates from where the strain was isolated.
@@ -276,7 +276,7 @@ sub gps_coordinates {
              data        => { latitude    => $lat && "$lat",
                               longitude   => $lon && "$lon",
              },
-    };    
+    };
 }
 
 
@@ -298,7 +298,7 @@ sub place {
 # the general type of landscape where the strain was isolated.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/landscape
 
-sub landscape { 
+sub landscape {
     my $self   = shift;
     my $landscape  = $self->object->Landscape;
     $landscape =~ s/_/ /g;
@@ -312,7 +312,7 @@ sub landscape {
 # the substrate that the stain was found on.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/subtrate
 
-sub substrate { 
+sub substrate {
     my $self   = shift;
     my $substrate  = $self->object->Substrate;
     $substrate =~ s/_/ /g;
@@ -326,7 +326,7 @@ sub substrate {
 # other organisms present when the strain was isolated.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/associated_organisms
 
-sub associated_organisms { 
+sub associated_organisms {
     my $self = shift;
     my $object = $self->object;
     my @orgs  = map { "$_" } $object->Associated_organisms;
@@ -339,13 +339,13 @@ sub associated_organisms {
 # the life stage the strain was in when isolated.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/life_stage
 
-sub life_stage { 
+sub life_stage {
     my $self = shift;
     my $object = $self->object;
     my $life_stage  = $object->Life_stage;
     return { description => 'the life stage the strain was in when isolated',
              data        => $life_stage ? $self->_pack_obj($life_stage) : undef,
-    };   
+    };
 }
 
 # log_size_of_population { }

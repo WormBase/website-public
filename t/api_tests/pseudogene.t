@@ -23,9 +23,9 @@
 
     sub test_single_pseudogene {
         my $pg = $api->fetch({ class => 'Pseudogene', name => 'Y106G6D.5a' });
-        
+
         can_ok('WormBase::API::Object::Pseudogene', qw/
-            parent_sequence 
+            parent_sequence
             from_lab
             gene
             transposon
@@ -39,7 +39,7 @@
             sage_tags
             predicted_exon_structure
         /);
-        
+
         isnt($pg->parent_sequence,'undef','parent_sequence data returned');
         isnt($pg->from_lab,'undef','from_lab data returned');
         isnt($pg->gene,'undef','gene data returned');
@@ -54,7 +54,7 @@
         isnt($pg->sage_tags,'undef','sage_tags data returned');
         isnt($pg->predicted_exon_structure,'undef','predicted_exon_structure data returned');
     }
-    
+
     # This is an example test that checks whether a particular gene can be
     # returned and whether the resulting data structure contains certain
     # data entries.

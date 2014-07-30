@@ -1,5 +1,5 @@
 
-[% 
+[%
 link_base 	= 'http://www.wikipathways.org/index.php/Pathway:';
 img_path	= '/img-static/wikipathways/';
 %]
@@ -9,12 +9,12 @@ img_path	= '/img-static/wikipathways/';
 WRAPPER $field_block title="Wikipathways" key="pathway";
 
 	FOREACH pathway IN fields.pathway.data;
-		 
+
 		wp_id		= pathway.pathway_id;
 		revision  = pathway.revision;
 
 		IF (wp_id);
-	
+
 			'<a href="'_ link_base _ wp_id _'">'_ link_base _ wp_id _'</a>';
 			'<br/>';
 			'<br/>';
@@ -25,12 +25,12 @@ WRAPPER $field_block title="Wikipathways" key="pathway";
 			ELSE;
 			'<iframe src="http://www.wikipathways.org/wpi/PathwayWidget.php?id='_ wp_id _'" width="800px" height="664px" style="overflow:hidden;"></iframe>';
 			END;
-			
-		END; 
+
+		END;
 		'<br/>';
 		'<br/>';
 	END;
-END; 
+END;
 
 %]
 

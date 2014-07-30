@@ -4,7 +4,7 @@
 WRAPPER $field_block title="Genes" key="genes";
 	build_data_table(
 		order = ['name','type'],
-		columns={ 
+		columns={
 			name	=> "Gene",
 			type	=> "Type"
 		},

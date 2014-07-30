@@ -1,12 +1,12 @@
-[% 
+[%
 
 WRAPPER $field_block title="Anatomy Terms" key="anatomy_terms";
     build_data_table (
-		order = [ 
+		order = [
 			'anatomy_term',
-			'definition', 
+			'definition',
 			],
-		columns = {				 		
+		columns = {
 			anatomy_term => 'Anatomy term',
 			definition => 'Definition',
 			},
@@ -15,11 +15,11 @@ END;
 
 WRAPPER $field_block title="Life Stages" key="life_stages";
     build_data_table (
-		order = [ 
+		order = [
 			'life_stages',
-			'definition', 
+			'definition',
 			],
-		columns = {				 		
+		columns = {
 			life_stages => 'Life Stages',
 			definition => 'Definition',
 			},
@@ -28,11 +28,11 @@ END;
 
 WRAPPER $field_block title="GO_terms" key="go_terms";
     build_data_table (
-		order = [ 
+		order = [
 			'go_terms',
-			'definition', 
+			'definition',
 			],
-		columns = {				 		
+		columns = {
 			go_terms => 'GO_terms',
 			definition => 'Definition',
 			},
@@ -41,11 +41,11 @@ END;
 
 WRAPPER $field_block title="Processes" key="processes";
     build_data_table (
-		order = [ 
+		order = [
 			'processes',
-			'definition', 
+			'definition',
 			],
-		columns = {				 		
+		columns = {
 			processes => 'Processes',
 			definition => 'Definition',
 			},

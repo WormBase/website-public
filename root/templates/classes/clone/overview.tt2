@@ -1,6 +1,6 @@
 <h2>[% fields.name.data.label %]</h2>
 
-[% 
+[%
 
 WRAPPER highlight_box;
 
@@ -47,7 +47,7 @@ END;
 
 WRAPPER $field_block title='Measured length' key='lengths';
      IF fields.lengths.data.Gel_length; fields.lengths.data.Gel_length _ ' kb'; END;
-     IF fields.lengths.data.Seq_length; fields.lengths.data.Seq_length _ ' kb'; END;	
+     IF fields.lengths.data.Seq_length; fields.lengths.data.Seq_length _ ' kb'; END;
 END;
 
 WRAPPER $field_block title=pluralize('Assigned to map', fields.maps.data.size) key='maps';
@@ -100,14 +100,14 @@ WRAPPER $field_block title='PCR product' key='pcr_product';
 END;
 
 IF fields.pcr_product.data.oligos.data;
-      left  = fields.pcr_product.data.oligos.data.0; 
+      left  = fields.pcr_product.data.oligos.data.0;
       right = fields.pcr_product.data.oligos.data.1;
       IF left.obj.id.match('_b$'); tmp = left; left = right; right = tmp; END; # SWAP
 
       WRAPPER $field_block title='Left Oligo' key='';
          tag2link(left.obj) _ ': ' _ left.sequence;
       END;
-   
+
       WRAPPER $field_block title='Right Oligo' key='';
           tag2link(right.obj) _ ': ' _ right.sequence;
       END;

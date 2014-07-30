@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -22,15 +22,15 @@ http://wormbase.org/resources/person
 
 has 'address_data' => (
     is   => 'ro',
-    isa  => 'HashRef',	
+    isa  => 'HashRef',
     lazy => 1,
-    default => sub {	
+    default => sub {
 	my $self = shift;
 	my $object = $self->object;
 	my %address;
-	
+
 	foreach my $tag ($object->Address) {
-	    if ($tag =~ m/street|email|office/i) {		
+	    if ($tag =~ m/street|email|office/i) {
 		my @data = map { $_->name } $tag->col;
 		$address{lc($tag)} = \@data;
 	    } else {
@@ -76,29 +76,29 @@ has 'publication_data' => (
     isa     => 'HashRef',
     lazy    => 1,
     default => sub {
-    	
+
 	my $self   = shift;
 	my $object = $self->object;
-	my %data;       
-	
+	my %data;
+
 	foreach my $paper ($object->Paper) {
 	    my @authors = $paper->Author;
 	    my $brief_citation = $paper->Brief_citation;
-	    
-	    my $date = $paper->Publication_date; 
-	    my ($year, $disc) = split /\-/,$date;	   
+
+	    my $date = $paper->Publication_date;
+	    my ($year, $disc) = split /\-/,$date;
 
 	    my $type = $paper->Meeting_abstract ? 'Meeting_abstract' : 'Paper';
-	    
+
 
 	    push @{$data{$type}{$year}},
 	    { brief_citation => "$brief_citation",
 	      object         => $self->_pack_obj($paper,"$brief_citation")
-	    };	    
-	}	
-	return \%data;	
+	    };
+	}
+	return \%data;
     }
-    
+
 );
 
 #######################################
@@ -123,7 +123,7 @@ has 'publication_data' => (
 # Supplied by Role
 
 # street_address { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # street address of the person, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/street_address
 
@@ -131,16 +131,16 @@ sub street_address {
     my $self    = shift;
     my $address = $self->address_data;
     return { data        => $address->{street_address} || undef,
-	     description => 'street address of the person'}; 
+	     description => 'street address of the person'};
 }
 
 
 # country { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # country that the person lives in, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/country
 
-sub country {    
+sub country {
     my $self = shift;
     my $address = $self->address_data;
     my $data    = { description => 'country of residence of person, if known',
@@ -149,7 +149,7 @@ sub country {
 }
 
 # institution { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # institution of the person, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/institution
 
@@ -162,7 +162,7 @@ sub institution {
 }
 
 # email { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # email addresses of the person, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/email
 
@@ -174,8 +174,8 @@ sub email {
     return $data;
 }
 
-# lab_phone { }  
-# This method returns a data structure containing the 
+# lab_phone { }
+# This method returns a data structure containing the
 # lab phone number of the person, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_phone
 sub lab_phone {
@@ -187,7 +187,7 @@ sub lab_phone {
 }
 
 # office_phone { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # office phone of the person, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/office_phone
 
@@ -213,7 +213,7 @@ sub other_phone {
 }
 
 # fax { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # fax number of the person, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/fax
 
@@ -222,12 +222,12 @@ sub fax {
     my $address = $self->address_data;
     my $data = { description => 'fax number(!) of the person',
 		 data        => $address->{fax} || undef };
-    return $data;   
+    return $data;
 }
 
 
 # web_page { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # web site of the person, if known.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/web_page
 
@@ -235,14 +235,14 @@ sub web_page {
     my $self    = shift;
     my $address = $self->address_data;
     my @urls =  grep { /HTTP:\/\//i } $address->{web_page};
-    
+
     my $data = { description => 'web address of the person',
 		 data        => @urls ? \@urls : undef };
-    return $data;   
+    return $data;
 }
 
 # previous_addresses { }
-# This method returns a data structure containing the 
+# This method returns a data structure containing the
 # previous addresses of the person, if known, with keys
 # of street address, country, institution, email, and date_modified.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_addresses
@@ -251,7 +251,7 @@ sub previous_addresses {
     my $self      = shift;
     my $addresses = $self->previous_address_data;
     return { data        => $addresses || undef,
-	     description => 'previous addresses of the person'}; 
+	     description => 'previous addresses of the person'};
 }
 
 
@@ -275,7 +275,7 @@ sub previous_addresses {
 sub previous_laboratories {
     my $self   = shift;
     my $object = $self->object;
-    
+
     my @labs  = eval{$object->Old_laboratory};
     my @data;
     foreach (@labs) {
@@ -283,10 +283,10 @@ sub previous_laboratories {
 	my $rep = $self->_pack_obj($representative);
 	push @data,[ $self->_pack_obj($_),$rep ];
     }
-       
+
     my $data = { description => 'previous laboratory affiliations',
 		 data        => (@data > 0) ? \@data : undef};
-    return $data;		     
+    return $data;
 }
 
 
@@ -299,26 +299,26 @@ sub previous_laboratories {
 sub strain_designation {
     my $self   = shift;
     my $object = $self->object;
-       
+
     my @labs   = eval{ $object->Laboratory };
     my @table  = (); # passed to data, table = array of hashes
-    
-    
+
+
     foreach my $i (0..$#labs){
-		push( @table, { 
+		push( @table, {
 			lab 	=> $self->_pack_obj($labs[$i], $labs[$i]->Mail),
-			strain 	=> $self->_pack_obj($labs[$i]) 
+			strain 	=> $self->_pack_obj($labs[$i])
 		});
     }
-       
+
     my $data = { description => 'strain designation of the affiliated lab',
 		 data        => (scalar @table) ? \@table : undef };
-    return $data;		     
+    return $data;
 }
 
 # lab_info { }
 # This method returns a data structure containing
-# the allele and strain designations, and lab representative 
+# the allele and strain designations, and lab representative
 # of each lab affiliation of the person.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
 
@@ -327,7 +327,7 @@ sub lab_info {
     my $object = $self->object;
     my @labs   = eval{$object->Laboratory};
     my @table  = (); # passed to data, table = array of hashes
-	
+
 	foreach my $lab (@labs){
 		push( @table, {
 			lab 	=> $self->_pack_obj($lab),
@@ -336,7 +336,7 @@ sub lab_info {
 			rep		=> $self->_pack_obj($lab->Representative)
 		});
 	}
-	
+
     my $data = { description => 'allele designation of the affiliated laboratory',
 		 data        => (scalar @table) ? \@table : undef };
     return $data;
@@ -362,10 +362,10 @@ sub gene_classes {
 			desc		=> sprintf("%s",$_->Description)
 		}} $lab->Gene_classes );
  	}
-    
-    my $data = { 
+
+    my $data = {
 		description => 'gene classes assigned to laboratory',
-		data        => (scalar @table) ? \@table : undef 
+		data        => (scalar @table) ? \@table : undef
 	};
     return $data;
 }
@@ -388,7 +388,7 @@ sub gene_classes {
 sub possibly_publishes_as {
     my $self   = shift;
     my $object = $self->object;
-    
+
     my @names = map { "$_" } $object->Possibly_publishes_as;
     my $data = { description => 'other names that the person might publish under',
 		 data        => @names? \@names : undef };
@@ -430,7 +430,7 @@ sub last_verified {
 # by the query person.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised
 
-sub supervised {    
+sub supervised {
     my $self = shift;
     my $lineage = $self->_get_lineage_data('Supervised');
     my $data    = { description => 'people supervised by this person',
@@ -445,10 +445,10 @@ sub supervised {
 
 sub supervised_by {
     my $self    = shift;
-    my $lineage = $self->_get_lineage_data('Supervised_by');       
+    my $lineage = $self->_get_lineage_data('Supervised_by');
     my $data    = { description => 'people who supervised this person',
 		    data        => $lineage };
-    return $data;    
+    return $data;
 }
 
 # worked_with { }
@@ -458,12 +458,12 @@ sub supervised_by {
 
 sub worked_with {
     my $self = shift;
-    my $lineage = $self->_get_lineage_data('Worked_with');       
+    my $lineage = $self->_get_lineage_data('Worked_with');
     my $data    = { description => 'people with whom this person worked',
 		    data        => $lineage };
-    return $data;    
-} 
-   
+    return $data;
+}
+
 
 
 
@@ -479,9 +479,9 @@ sub publications {
     my $object = $self->object;
     my $publication = $self->publication_data;
     my $data        = $publication->{'Paper'};
-    
+
     return { description => 'Publications by this person',
-	     data        => $data };    
+	     data        => $data };
 }
 
 
@@ -491,9 +491,9 @@ sub meeting_abstracts {
 
     my $publication = $self->publication_data;
     my $data        = $publication->{'Meeting_abstract'};
-    
+
     return { description => 'Publications by this person',
-	     data        => $data };    
+	     data        => $data };
 }
 
 
@@ -509,7 +509,7 @@ sub meeting_abstracts {
 #sub first_name {
 #    my $self = shift;
 #    my $object     = $self->object;
-#    my $first_name = $object->First_name;    
+#    my $first_name = $object->First_name;
 #    my $data = { description => 'first name of the person',
 #		 data        => "$first_name" || undef };
 #    return $data;
@@ -518,7 +518,7 @@ sub meeting_abstracts {
 #sub last_name {
 #    my $self = shift;
 #    my $object = $self->object;
-#    my $last_name = $object->Last_name;    
+#    my $last_name = $object->Last_name;
 #    my $data = { description => 'last name of the person',
 #		 data        => "$last_name" || undef };
 #    return $data;
@@ -527,16 +527,16 @@ sub meeting_abstracts {
 #sub standard_name {
 #    my $self = shift;
 #    my $object = $self->object;
-#    my $standard_name = $object->Standard_name;    
+#    my $standard_name = $object->Standard_name;
 #    my $data = { description => '"standard" name of the person',
 #		 data        => "$standard_name" || undef };
 #    return $data;
-#}    
+#}
 #
 #sub full_name {
 #    my $self = shift;
 #    my $object    = $self->object;
-#    my $full_name = $object->Full_name;    
+#    my $full_name = $object->Full_name;
 #    my $data = { description => 'full name of the person',
 #		 data        => "$full_name" || undef };
 #    return $data;
@@ -565,22 +565,22 @@ sub _get_lineage_data {
     my $self   = shift;
     my $tag    = shift;
     my $object = $self->object;
-    
+
     my @relationship = eval{$object->$tag};
     my @data;
-    foreach my $relation (@relationship) {	
+    foreach my $relation (@relationship) {
 	my $name = $relation->Standard_name;
 	my ($level, $start, $end) = $relation->right->row if $relation->right;
 	my @end_date;
-	
+
 	if ($end && !($end =~ m/present/i)) {
-	    @end_date = split /\ /,$end; 
+	    @end_date = split /\ /,$end;
 	}
-	
+
 	my @start_date = split /\ /,$start if $start;
-	
-	my $duration = ($start_date[2] || "") .  " - " . ($end_date[2] || ""); 
-	
+
+	my $duration = ($start_date[2] || "") .  " - " . ($end_date[2] || "");
+
 	push @data, {
 	    'name'       => $self->_pack_obj($relation, $name && "$name"),
 	    'level'      => $level && "$level",
@@ -588,7 +588,7 @@ sub _get_lineage_data {
 	    'end_date'   => $end && "$end",
 	    'duration'   => $duration && "$duration"
 	};
-    }	
+    }
     return @data ? \@data : undef;
 }
 

@@ -34,7 +34,7 @@
     [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
              title = t
-             href =  c.uri_for('/rest','widget','home',widget_name).path 
+             href =  c.uri_for('/rest','widget','home',widget_name).path
              type = 'home'
             };
     %]

@@ -2,7 +2,7 @@
 
 
 [% WRAPPER highlight_box %]
-  [% WRAPPER $field_block title="type"-%] 
+  [% WRAPPER $field_block title="type"-%]
       [% fields.type.data %]
   [% END %]
 [% END %]

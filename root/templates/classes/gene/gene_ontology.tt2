@@ -1,15 +1,15 @@
-[%# 
+[%#
 
    gene_ontology; custom data table processing used on the Gene Summary.
 
    This is essentially generic processing for a nested data structure
    intended to be multiple tables.
-   
+
    eg. data contains a hash.array.hashrefs (instead of single tier array.hashrefs)
 
 %]
 
-[% 
+[%
        key="gene_ontology";
        # One table for each key (here, a GO facet)
        facets = fields.$key.data.keys.sort;
@@ -18,18 +18,18 @@
        FOREACH facet IN facets;
             IF fields.$key.data.$facet > 0;
                 WRAPPER $field_block title="$facet" key="$key";
-                   table_count = table_count + 1;                 
+                   table_count = table_count + 1;
 
-                  # Here we assume that the inner data structure as an array of hashes  
+                  # Here we assume that the inner data structure as an array of hashes
                   build_data_table(order = ['term','evidence_code','method'],
                              columns = {   method   => 'Method',
                                                  term   => 'Term',
                                         evidence_code   => 'Evidence Code' },
                              passed_data = fields.$key.data.$facet,
-                         key     = "table_${table_count}_go");   
+                         key     = "table_${table_count}_go");
 
                  END; # END of WRAPPER
-              END; # END IF facet contains data    
+              END; # END IF facet contains data
          END; # END of facets
 
 %]

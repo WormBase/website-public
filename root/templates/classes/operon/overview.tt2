@@ -1,6 +1,6 @@
 <h2>[% fields.name.data.label %]</h2>
-	
-[% 
+
+[%
 
 WRAPPER highlight_box;
 

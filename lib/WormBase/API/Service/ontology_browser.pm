@@ -1,14 +1,14 @@
 package WormBase::API::Service::ontology_browser;
 
- 
- 
+
+
 use Moose;
-with 'WormBase::API::Role::Object'; 
+with 'WormBase::API::Role::Object';
 
 has 'term_type' => (
     is => 'rw',
 );
- 
+
 has 'association_count_file' => (
     is => 'ro',
     lazy => 1,
@@ -28,7 +28,7 @@ sub index {
    return $data;
 }
 
- 
+
 
 
 sub run {
@@ -42,10 +42,10 @@ sub run {
 
       unless($name =~ m/WBbt:|GO:|WBPhenotype:/i){
 	# this is a hack for search exact match in xapian,need to index the term or find other way around -xq
- 	$name =~ s/ /:/g ; 
+ 	$name =~ s/ /:/g ;
 	my ($it,$res)= $self->search->search_exact($self, $name, $class);
 
-	if ($it->{pager}->{total_entries} == 1 ){  
+	if ($it->{pager}->{total_entries} == 1 ){
 	    my $o = @{$it->{struct}}[0] ;
 	    $name= $o->get_document->get_value(1);
 	}
@@ -60,7 +60,7 @@ sub run {
      ($object) = $self->ace_dsn->fetch(-class => $class,
 			       -name  => $name,
 			      )   ;
-       
+
     }else{
 	return message("A query term is required!");
     }
@@ -69,11 +69,11 @@ sub run {
     my @parents;
     my $path_count = $self->_get_parent($object,\@parents);
     my $childrens=$self->_get_child($object);
- 
+
     foreach my $list (@parents){
 		my $parent = pop @$list;
 		$parent->{siblings} = $self->_get_child($parent->{obj});
-		push @$list, $parent; 
+		push @$list, $parent;
 	}
     return { parents => \@parents,
 	     childrens=>$childrens,
@@ -82,7 +82,7 @@ sub run {
 	     term_type => $self->term_type,
     };
 }
-  
+
 sub error {
   return 0;
 }
@@ -103,9 +103,9 @@ sub _get_child {
   }
   my @childrens;
   map {map { push @childrens, $self->_pack_obj($_); } $_->col } @c;
-  
+
   return \@childrens;
-   
+
 }
 
 # recursive function always work!
@@ -133,25 +133,25 @@ sub _get_parent {
 		  my $total = scalar(@$array);
 		  for(my $i=0;$i<$node_number;$i++){
 		      my $list = $array->[$total-$i-1];
-		     
+
 		      my $association_count = $self->_association_count($node);
 # 		      my $association_count_total = $association_count + $self->_association_count($node,1);
-		      
+
 		      push @$list,$self->_pack_obj($node,undef,(
 					  "type"=>"$type",
-					  "obj"=>$node, 
+					  "obj"=>$node,
 # 					  "association_count_total"=>$association_count_total,
 					  "association_count"=>$association_count,)) ;
 		  }
 	    }
 	}
 	return $number;
-    } 
+    }
    push @$array, [];
    return 1;
-} 
- 
- 
+}
+
+
 
 sub _association_count {
   my ($self,$obj,$total)=@_;
@@ -160,7 +160,7 @@ sub _association_count {
 =pod
   if($total){
     @childrens = $self->_get_child($obj);
-  
+
     foreach (@childrens) {
 	$count+=$self->_association_count($_,1);
     }

@@ -1,13 +1,13 @@
-     [% tag2link(item.name) %] 
+     [% tag2link(item.name) %]
       <span>[[% external_link('do', item.name.id, item.name.id) %]] </span>
     </li>
-  
+
     [% IF item.gene %]
     <span>Related worm [% pluralize('gene', item.gene) %]:
       [% tags2link(item.gene, ', ') %]
     </span>
     [% END %]
- 
+
     <div class="text-min">
-      [% item.description.join("<br />") %]  
+      [% item.description.join("<br />") %]
     </div>
