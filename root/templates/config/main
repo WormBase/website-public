@@ -135,10 +135,12 @@
    END;
 
     MACRO searchlink(class, id, text) BLOCK;
-        IF  c.stash.object.name.data.defined('taxonomy') &&
-            c.config.sections.species_list.defined( c.stash.object.name.data.taxonomy ); # Don't link out for non-wormbase species
+        IF  !(c.stash.object.name.data.defined('taxonomy')) || (c.stash.object.name.data.defined('taxonomy') &&
+            c.config.sections.species_list.defined( c.stash.object.name.data.taxonomy )); # Don't link out for non-wormbase species
             url = c.uri_for('/search', class, id).path ;
             "<a href=\"$url\" class=\"$class-link\">$text</a>";
+        ELSE;
+            "<span class=\"$class-link\">$text</span>";
         END;
     END;
 
@@ -379,11 +381,11 @@
         "<span class=\"species\">$g $species</span>";
     END;
 
-    MACRO span_class(text, class, ace_class, link) BLOCK;
-      UNLESS link;
-         "<span class=\"$class\">" _ searchlink(ace_class, text, text) _ "</span>";
+    MACRO span_class(text, class, ace_class, no_link) BLOCK;
+      IF no_link;
+        "<span class=\"$class\">$text</span>";
       ELSE;
-      "<span class=\"$class\">$text</span>";
+        "<span class=\"$class\">" _ searchlink(ace_class, text, text) _ "</span>";
       END;
     END;
 
