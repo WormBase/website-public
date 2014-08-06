@@ -13,6 +13,10 @@ use Time::HiRes qw/gettimeofday tv_interval/;
 use Config::General;
 use URI::Escape;
 
+# Xapian search flags
+#  FLAG_BOOLEAN = 1, FLAG_PHRASE = 2, FLAG_LOVEHATE = 4, FLAG_BOOLEAN_ANY_CASE = 8,
+#  FLAG_WILDCARD = 16, FLAG_PURE_NOT = 32, FLAG_PARTIAL = 64, FLAG_SPELLING_CORRECTION = 128,
+#  FLAG_SYNONYM = 256, FLAG_AUTO_SYNONYMS = 512, FLAG_AUTO_MULTIWORD_SYNONYMS = 1024 | FLAG_AUTO_SYNONYMS, FLAG_DEFAULT = FLAG_PHRASE|FLAG_BOOLEAN|FLAG_LOVEHATE
 
 has 'db' => (isa => 'Search::Xapian::Database', is => 'rw');
 has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
@@ -116,6 +120,7 @@ sub search_exact {
     my ($class, $c, $q, $type) = @_;
     my ($query, $enq, @mset);
     if( $type ){
+      # exact match using type/query - will only work if query is the WBObjID
       $query=$class->_setup_query("\"$type$q\" $type..$type", $class->qp,1|2);
       $enq       = $class->db->enquire ( $query );
       @mset = $enq->matches( 0,1 ) if $enq;
@@ -125,26 +130,38 @@ sub search_exact {
         $enq       = $class->db->enquire ( $query );
         @mset = $enq->matches( 0,1 ) if $enq;
       }
-      # reset if result is not the exact query
-      @mset = undef if ($mset[0] && ($mset[0]->get_document()->get_value(1) ne $q ));
+
+      # reset if top result is not the exact query
+      @mset = undef unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
+
     }
 
+    # phrase search in the synonym database
     if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
         my $qu = "$q";
-        $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/));
+        $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
         $qu = $class->_add_type_range($c, "$qu", $type);
-        $query=$class->_setup_query($qu, $class->syn_qp,16|2|256);
+        $query=$class->_setup_query($qu, $class->syn_qp, 2|16|512);
         $enq       = $class->syn_db->enquire ( $query );
-        @mset      = $enq->matches( 0,2 ) if $enq;
+        @mset      = $enq->matches( 0,10 ) if $enq;
+
+        # reset if top result is not the exact query
+        @mset = undef unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
     }
 
+    # search main database
     if(!$mset[0]){
-      $q = "\"$q\"" if(($q =~ m/\s/) && !($q =~ m/_/));
-      $q =~ s/\s/\* /g;
-      $q = $class->_add_type_range($c, "$q", $type);
-      $query=$class->_setup_query($q, $class->qp, 2|16|256|512);
+      my $qu = "$q";
+      $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
+      $qu =~ s/\s/\* /g;
+      $qu = "$qu*";
+      $qu = $class->_add_type_range($c, "$qu", $type);
+      $query=$class->_setup_query($qu, $class->qp, 2|512|16);
       $enq       = $class->db->enquire ( $query );
-      @mset      = $enq->matches( 0,2 );
+      @mset      = $enq->matches( 0,10 );
+
+      # reset if top result is not the exact query
+      @mset = undef unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
     }
 
     return ({ struct=>\@mset,
@@ -153,6 +170,15 @@ sub search_exact {
               query_obj=>$query,
               page=>1,
               page_size=>1 });
+}
+
+sub _check_exact_match {
+  my ($class, $q, $doc) = @_;
+
+  my $label = $doc->get_value(6);
+  my $id = $doc->get_value(1);
+
+  return (($q =~ m/$label/) || ($q =~ m/$id/));
 }
 
 sub random {
