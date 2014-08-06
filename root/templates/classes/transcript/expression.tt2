@@ -5,17 +5,16 @@
 
 
 WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patterns";
-    FOREACH i IN fields.anatomic_expression_patterns.data
-      gene_image = i.image;
-      IF gene_image;
+    FOREACH i IN fields.anatomic_expression_patterns.data;
+      IF i.image;
         '<div style="max-width:500px;">';
-          '<a href="'_ gene_image _ '" target="_blank">' _
-             '<img src="' _ gene_image _ '" width="100%">' _
+          '<a href="'_ i.image _ '" target="_blank">' _
+             '<img src="' _ i.image _ '" width="100%">' _
           '</a>';
         '</div>';
       END;
     END;
-          FOREACH gene_table IN expression_patterns
+          FOREACH table IN fields.expression_patterns.data;
              build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                         columns={
                             expression_pattern => 'Pattern',
@@ -27,12 +26,13 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
                             go_term => 'GO term',
                             transgene => 'Transgene'
                                },
-                      passed_data='gene_table');
+                      passed_data=table);
           END;
 END;
 
 
 WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profiling_graphs";
+        FOREACH table IN fields.expression_profiling_graphs.data;
            build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={
                           expression_pattern => 'Pattern',
@@ -44,36 +44,42 @@ WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profili
                           go_term => 'GO term',
                           transgene => 'Transgene'
                              },
-                    key='expression_profiling_graphs');
+                    passed_data=table);
+        END;
 
 END;
 WRAPPER $field_block title="Anatomy terms" key="anatomy_terms";
-  tags2link(fields.anatomy_terms.data, '<br />', 'anatomy terms');
+    tags2link(fields.anatomy_terms.data, '<br />', 'anatomy terms');
 END;
 
 
 
 # This is BROKEN. Model issue? Returns a one-element empty data structure.
 WRAPPER $field_block title="4D expression movies" key="fourd_expression_movies";
-        '<ul>';
-	FOREACH mv IN fields.fourd_expression_movies.data.keys;
-              '<li>' _ tag2link(mv.value.object) _ ': ' _ mv.value.details _ '<br />';
-	          external_link(mv.value.movie, mv.value.movie);
-              '</li>';
-         END;
-         '</ul>';
+  
+  FOREACH i IN fields.fourd_expression_movies.data;
+          '<ul>';
+    FOREACH mv IN i.keys;
+                '<li>' _ tag2link(mv.value.object) _ ': ' _ mv.value.details _ '<br />';
+              external_link(mv.value.movie, mv.value.movie);
+                '</li>';
+           END;
+           '</ul>';
+  END;
 END;
 
 
 
 WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
-  build_data_table(
-    order=['expression_cluster','description'],
-    columns={
-      expression_cluster => 'Expression clusters',
-      description  => 'Description'
-    },
-    key='expression_cluster');
+  FOREACH table IN fields.expression_cluster.data;
+    build_data_table(
+      order=['expression_cluster','description'],
+      columns={
+        expression_cluster => 'Expression clusters',
+        description  => 'Description'
+      },
+      passed_data=table);
+  END;
 END;
 
 
@@ -89,24 +95,29 @@ WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_to
 END;
 
 WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) _ " of Action" key="anatomy_function";
+    FOREACH table IN fields.anatomy_function.data;
       build_data_table( order = ['bp_inv', 'assay', 'phenotype', 'reference'],
               columns = { 'bp_inv'   => 'Anatomical Sites',
                           'assay' => 'Assay',
                       'phenotype'   => 'Phenotype',
                       'reference' => 'Reference'},
-              key = 'anatomy_function');
+              passed_data = table);
+    END;
 END;
 
 WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
-    '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
-    build_data_table(order = ['label', 'project', 'life_stage', 'value'],
-                     columns = {
-                         label => 'Name',
-                         project => 'Project',
-                         life_stage => 'Life Stage',
-                         value => 'FPKM value'
-                     },
-                     passed_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data);
+    FOREACH expr IN fields.fpkm_expression_summary_ls.data;
+    'hello';
+      '<img width="100%" src="' _ expr.plot _ '" alt="FPKM expression data plot"></img>';
+      build_data_table(order = ['label', 'project', 'life_stage', 'value'],
+                       columns = {
+                           label => 'Name',
+                           project => 'Project',
+                           life_stage => 'Life Stage',
+                           value => 'FPKM value'
+                       },
+                       passed_data = expr.table.fpkm.data);
+    END;                   
 END;
 %]
 <script type="text/javascript" >

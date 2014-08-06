@@ -54,6 +54,7 @@ sub anatomic_expression_patterns {
 
         my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$obj.jpg");
         my $image = catfile($self->pre_compile->{gene_expression_path}, "$obj.jpg") if (-e $file && ! -z $file);
+        #use Data::Dumper; print Dumper $file;
         push @genes , { "image" => $image };
     }
     
@@ -68,6 +69,7 @@ sub anatomic_expression_patterns {
     #    data        => %data_pack ? \%data_pack : undef,
     #};
 
+    
     return {
         description => 'expression patterns for the gene',
         data        => @genes ? \@genes : undef
@@ -89,12 +91,15 @@ sub expression_patterns {
             push @data, $self->_expression_pattern_details($expr, $type);
         }
          push @genes, {
-            description => "expression patterns associated with the gene:$obj",
             data        => @data ? \@data: undef
             }; 
     }
     
-    return @genes ? \@genes : undef;
+    return{
+
+        description => "expression patterns associated with the gene",
+        data => @genes ? \@genes : undef
+    }
 }
 
 
@@ -111,12 +116,17 @@ sub expression_profiling_graphs {
             push @data, $self->_expression_pattern_details($expr, $type);
         }
         push @genes, {
-        description => "expression patterns associated with the gene:$obj",
         data        => @data ? \@data: undef
         }; 
     }
+
+    ##################################################################
+    use Data::Dumper; print Dumper $genes[0]{'data'}[0]{'type'};
     
-    return @genes ? \@genes : undef;
+     return {
+        description => "expression patterns associated with the gene",
+        data => @genes ? \@genes : undef
+     };
 }
 
 sub _expression_pattern_details {
@@ -219,7 +229,7 @@ sub expression_cluster {
             my $description = $expr_cluster->Description;
             push @data, {
                 expression_cluster => $self->_pack_obj($expr_cluster),
-                description => $description && "$description"
+                #description => $description && "$description"
             }
         }
         push @genes, @data;
@@ -238,7 +248,8 @@ sub fourd_expression_movies {
     my @genes;
 
     my $author;
-    foreach my $obj (@object){    
+    foreach my $obj (@object){  
+        my @expr_patterns = $obj->Expr_pattern;  
         my %data = map {
             my $details = $_->Pattern;
             my $url     = $_->MovieURL;
@@ -249,7 +260,7 @@ sub fourd_expression_movies {
             };
         } grep {
             (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
-        } @{$obj->Expr_pattern};
+        } @expr_patterns;
         #} @{$self ~~ '@Expr_pattern'};
         push @genes, %data;
     }
