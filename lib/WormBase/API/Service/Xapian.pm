@@ -132,7 +132,7 @@ sub search_exact {
       }
 
       # reset if top result is not the exact query
-      @mset = undef unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
+      @mset = () unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
 
     }
 
@@ -146,7 +146,7 @@ sub search_exact {
         @mset      = $enq->matches( 0,10 ) if $enq;
 
         # reset if top result is not the exact query
-        @mset = undef unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
+        @mset = () unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
     }
 
     # search main database
@@ -161,7 +161,7 @@ sub search_exact {
       @mset      = $enq->matches( 0,10 );
 
       # reset if top result is not the exact query
-      @mset = undef unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
+      @mset = () unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
     }
 
     return ({ struct=>\@mset,
