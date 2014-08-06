@@ -476,20 +476,24 @@ sub _get_evidence {
                 ($class,$evidence) = split /:/, $evidence;
               }
           } elsif ($type eq 'Accession_evidence') {
-              my ($database,$accession) = $evidence->row;
-              if(defined $accession || $database) {
-                if($accession =~ m/\D*\:(\d*)$/){
-                  $accession = $1;
+              my $database = $evidence;
+
+              foreach my $accession ($evidence->col){
+                if(defined $accession || $database) {
+                  if($accession =~ m/\D*\:(\d*)$/){
+                    $accession = $1;
+                  }
+                  if($database =~ m/^(.*):(\d*)$/){
+                    $accession = $2;
+                    $database = $1;
+                  }
+                  ($evidence,$class) = ($accession,$database);
+                  $label = "$database:$accession";
+
+                  push( @evidences, $packed ? $packed : { id=> "$evidence", label => "$label", class => "sequence" });
                 }
-                if($database =~ m/^(.*):(\d*)$/){
-                  $accession = $2;
-                  $database = $1;
-                }
-                ($evidence,$class) = ($accession,$database);
-                $label = "$database:$accession";
-              }else {
-                next;
               }
+              next;
           } elsif($type eq 'GO_term_evidence') {
               my $desc = $evidence->Term || $evidence->Definition;
               $label .= (($desc) ? "($desc)" : '');
