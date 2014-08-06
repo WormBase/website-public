@@ -165,13 +165,6 @@ sub search_exact {
     }
 
     return $mset[0]->get_document if $mset[0];
-
-    # return ({ struct=>\@mset,
-    #           search=>$class,
-    #           query=>$q,
-    #           query_obj=>$query,
-    #           page=>1,
-    #           page_size=>1 });
 }
 
 sub _check_exact_match {
