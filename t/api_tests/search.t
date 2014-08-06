@@ -26,10 +26,8 @@
 
         # Search for "neurodegenerative disease" in disease class
         # Issue #2971
-        my $it = $api->xapian->search_exact($api, "\"neurodegenerative disease\"", "disease");
-
-        my $o = @{$it->{struct}}[0];
-        my $objs = $api->xapian->_pack_search_obj($api, $o->get_document);
+        my $doc = $api->xapian->search_exact($api, "\"neurodegenerative disease\"", "disease");
+        my $objs = $api->xapian->_pack_search_obj($api, $doc);
 
         isnt($objs, undef, 'data returned');
         is  ($objs->{id}, 'DOID:1289', 'correct id returned - neurodegenerative disease search');
@@ -37,10 +35,8 @@
 
 
         # Search for unc-26 in gene class
-        $it = $api->xapian->search_exact($api, "unc-26", "gene");
-
-        $o = @{$it->{struct}}[0];
-        $objs = $api->xapian->_pack_search_obj($api, $o->get_document);
+        $doc = $api->xapian->search_exact($api, "unc-26", "gene");
+        $objs = $api->xapian->_pack_search_obj($api, $doc);
 
         isnt($objs, undef, 'data returned');
         is  ($objs->{id}, 'WBGene00006763', 'correct id returned - unc-26 search');
@@ -48,10 +44,8 @@
 
 
         # Search for "bag of worms" in phenotype class
-        $it = $api->xapian->search_exact($api, "\"bag of worms\"", "phenotype");
-
-        $o = @{$it->{struct}}[0];
-        $objs = $api->xapian->_pack_search_obj($api, $o->get_document);
+        $doc = $api->xapian->search_exact($api, "\"bag of worms\"", "phenotype");
+        $objs = $api->xapian->_pack_search_obj($api, $doc);
 
         isnt($objs, undef, 'data returned');
         is  ($objs->{id}, 'WBPhenotype:0000007', 'correct id returned - bag of worms');

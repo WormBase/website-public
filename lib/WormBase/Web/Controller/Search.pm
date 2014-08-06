@@ -80,12 +80,11 @@ sub search :Path('/search') Args {
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
       # if it finds an exact match, redirect to the page
-        my $it = $api->xapian->search_exact($c, $tmp_query, $search);
-        if(@{$it->{struct}}[0]){
-          my $o = @{$it->{struct}}[0];
-          my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
+        my $doc = $api->xapian->search_exact($c, $tmp_query, $search);
+        if($doc){
+          my $objs = $api->xapian->_pack_search_obj($c, $doc);
           my $url = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
-          unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
+          unless($query=~m/$doc->get_value(1)/){ $url = $url . "?query=$query";}
           $c->res->redirect($url, 307);
           return;
         }

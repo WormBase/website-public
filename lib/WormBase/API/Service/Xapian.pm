@@ -164,12 +164,14 @@ sub search_exact {
       @mset = () unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
     }
 
-    return ({ struct=>\@mset,
-              search=>$class,
-              query=>$q,
-              query_obj=>$query,
-              page=>1,
-              page_size=>1 });
+    return $mset[0]->get_document if $mset[0];
+
+    # return ({ struct=>\@mset,
+    #           search=>$class,
+    #           query=>$q,
+    #           query_obj=>$query,
+    #           page=>1,
+    #           page_size=>1 });
 }
 
 sub _check_exact_match {
@@ -292,9 +294,8 @@ sub _get_tag_info {
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
-        my ($it,$res)= $self->search_exact($c, $id, lc($ace));
-        if(scalar (@{$it->{struct}}) > 0 ){
-          my $doc = @{$it->{struct}}[0]->get_document();
+        my $doc = $self->search_exact($c, $id, lc($ace));
+        if($doc){
           return $self->_get_obj($c, $doc, $footer) if $fill;
 
           my $ret = $self->_pack_search_obj($c, $doc);
@@ -303,9 +304,8 @@ sub _get_tag_info {
         }
       }
     }else{
-      my ($it,$res)= $self->search_exact($c, $id, $aceclass ? lc($aceclass) : undef);
-      if(scalar (@{$it->{struct}}) > 0 ){
-        my $doc = @{$it->{struct}}[0]->get_document();
+      my $doc = $self->search_exact($c, $id, $aceclass ? lc($aceclass) : undef);
+      if($doc){
           if($fill){
             return $self->_get_obj($c, $doc, $footer);
           }
