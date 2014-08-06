@@ -140,7 +140,7 @@
             url = c.uri_for('/search', class, id).path ;
             "<a href=\"$url\" class=\"$class-link\">$text</a>";
         ELSE;
-            "<span class=\"$class-link\">$text</span>";
+            "$text";
         END;
     END;
 
