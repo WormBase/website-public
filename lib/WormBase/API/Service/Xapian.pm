@@ -112,7 +112,7 @@ sub search_autocomplete {
     my $enq       = $class->syn_db->enquire ( $query );
     my @mset      = $enq->matches( 0, 10 );
 
-    if($mset[0]){
+    unless($mset[0]){
       $query=$class->_setup_query($q, $class->qp,64|16);
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0, 10 );
@@ -127,7 +127,11 @@ sub search_autocomplete {
 }
 
 sub search_exact {
-    my ($class, $q, $type) = @_;
+    my ($class, $args) = @_;
+    my $q = $args->{query};
+    my $type = $args->{class};
+    my $tag = $args->{tag};
+
     my ($query, $enq, @mset);
     if( $type ){
       # exact match using type/query - will only work if query is the WBObjID
@@ -174,7 +178,11 @@ sub search_exact {
       @mset = () unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
     }
 
-    return $mset[0]->get_document if $mset[0];
+    if($mset[0]){
+      my $doc = $mset[0]->get_document;
+      return $tag ? $class->_pack_search_obj($doc) : $doc;
+    }
+
 }
 
 sub _check_exact_match {
@@ -302,7 +310,7 @@ sub _get_tag_info {
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
-        my $doc = $self->search_exact($id, lc($ace));
+        my $doc = $self->search_exact({query => $id, class => lc($ace)});
         if($doc){
           return $self->_get_obj($doc, $footer) if $fill;
 
@@ -312,7 +320,7 @@ sub _get_tag_info {
         }
       }
     }else{
-      my $doc = $self->search_exact($id, $aceclass ? lc($aceclass) : undef);
+      my $doc = $self->search_exact({query => $id, class => $aceclass ? lc($aceclass) : undef });
       return ($fill ? $self->_get_obj($doc, $footer) : $self->_pack_search_obj($doc)) if $doc;
     }
   }

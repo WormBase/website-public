@@ -26,7 +26,7 @@
 
         # Search for "neurodegenerative disease" in disease class
         # Issue #2971
-        my $doc = $api->xapian->search_exact("\"neurodegenerative disease\"", "disease");
+        my $doc = $api->xapian->search_exact({ query => "\"neurodegenerative disease\"", class => "disease"});
         my $objs = $api->xapian->_pack_search_obj($doc);
 
         isnt($objs, undef, 'data returned');
@@ -35,7 +35,7 @@
 
 
         # Search for unc-26 in gene class
-        $doc = $api->xapian->search_exact("unc-26", "gene");
+        $doc = $api->xapian->search_exact({ query => "unc-26", class => "gene"});
         $objs = $api->xapian->_pack_search_obj($doc);
 
         isnt($objs, undef, 'data returned');
@@ -44,7 +44,7 @@
 
 
         # Search for "bag of worms" in phenotype class
-        $doc = $api->xapian->search_exact("\"bag of worms\"", "phenotype");
+        $doc = $api->xapian->search_exact({ query => "\"bag of worms\"", class => "phenotype"});
         $objs = $api->xapian->_pack_search_obj($doc);
 
         isnt($objs, undef, 'data returned');
