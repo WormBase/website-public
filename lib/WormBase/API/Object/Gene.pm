@@ -563,13 +563,25 @@ sub fpkm_expression {
             my $label = $fpkm_entry[2];
             my $name = $self->_pack_obj($fpkm_entry[2]);
             my $value = $fpkm_entry[0];
-            my $analysis = $label->fetch();
-            my $sample = $analysis->Sample || '';
-            my ($project) = $sample =~ /^([a-zA-Z0-9_-]+)\./;
+
+            # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
+            # /PRJ[A-Z]{2}\d+/ matches BioProject accession
+            # everything else treat as NCBI Trace SRA
+            my ($project) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
+            my $source_db = $project =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
+            my $project_info = {
+                id => $project,
+                db => $source_db
+            };
+
+            # my $analysis = $label->fetch();
+            # my $sample = $analysis->Sample || '';
+            # my ($project) = $sample =~ /^([a-zA-Z0-9_-]+)\./;
             {
                 label => $name,
                 value => "$value",
-                project => "$project",
+                project => $project,
+                project_info => $project_info,
                 life_stage => "$life_stage"
             }
         } @fpkm_table;
