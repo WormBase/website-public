@@ -48,10 +48,17 @@ has '_api' => (
 
 
 sub search {
-    my ( $class, $c, $q, $page, $type, $species, $page_size) = @_;
+    my ( $class, $args) = @_;
+
+    my $q = $args->{query};
+    my $page = $args->{page} || 1;
+    my $type = $args->{type};
+    my $species = $args->{species};
+    my $page_size = $args->{page_size} || 10;
+
     my $t=[gettimeofday];
-    $page       ||= 1;
-    $page_size  ||=  10;
+    my $count = $class->search_count_estimate($q, $type, $species);
+
     $q =~ s/\s/\* /g;
     $q = "$q*";
 
@@ -63,14 +70,14 @@ sub search {
     if($type){
       $q = $class->_add_type_range($q, $type);
       if(($type =~ m/paper/) && ($species)){
-        my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
+        my $s = $class->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
         $q .= " ptype:$s..$s" if defined $s;
         $species = undef;
       }
     }
 
     if($species){
-        my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
         $q .= " species:$s..$s" if defined $s;
     }
 
@@ -85,12 +92,15 @@ sub search {
 
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
-    return ({ struct=>\@mset,
+    @mset = map { $class->_get_obj($_->get_document ) } @mset;
+
+    return ({ matches=>\@mset,
               search=>$class,
               query=>$q,
               query_obj=>$query,
               querytime=>$time,
               page=>$page,
+              count=>$count,
               page_size=>$page_size }, $error);
 }
 
@@ -177,12 +187,12 @@ sub _check_exact_match {
 }
 
 sub random {
-    my ( $class, $c) = @_;
-    return $class->_get_obj($c, $class->db->get_document(int(rand($class->_doccount)) + 1));
+    my ( $class) = @_;
+    return $class->_get_obj($class->db->get_document(int(rand($class->_doccount)) + 1));
 }
 
 sub search_count_estimate {
- my ( $class, $c, $q, $type, $species) = @_;
+ my ( $class, $q, $type, $species) = @_;
     $q =~ s/\s/\* /g;
     $q = "$q*";
 
@@ -190,14 +200,14 @@ sub search_count_estimate {
       $q = $class->_add_type_range($q, $type);
 
       if(($type =~ m/paper/) && ($species)){
-        my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
+        my $s = $class->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
         $q .= " ptype:$s..$s" if defined $s;
         $species = undef;
       }
     }
 
     if($species){
-        my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
         $q .= " species:$s..$s" if defined $s;
     }
 
@@ -207,7 +217,6 @@ sub search_count_estimate {
     my $mset      = $enq->get_mset( 0, 0, 500 );
 
     my $amt = $mset->get_matches_estimated();
-    # $amt = ($amt > 500) ? "500+" : "$amt";
     return $amt;
 }
 
@@ -227,18 +236,18 @@ sub extract_data {
 
 
 sub _get_obj {
-  my ($self, $c, $doc, $footer) = @_;
+  my ($self, $doc, $footer) = @_;
 
   my %ret;
   $ret{name} = $self->_pack_search_obj($doc);
   my $species = $ret{name}{taxonomy};
   if($species =~ m/^(.*)_([^_]*)$/){
-    my $s = $c->config->{sections}{species_list}{$species};
+    my $s = $self->_api->config->{sections}{species_list}{$species};
     $ret{taxonomy}{genus} = $s->{genus} || ucfirst($1);
     $ret{taxonomy}{species} = $s->{species} || $2;
   }
   $ret{ptype} = $doc->get_value(7) if $doc->get_value(7);
-  %ret = %{$self->_split_fields($c, \%ret, uri_unescape($doc->get_data()))};
+  %ret = %{$self->_split_fields(\%ret, uri_unescape($doc->get_data()))};
   if($doc->get_value(4) =~ m/^(\d{4})/){
     $ret{year} = $1;
   }
@@ -248,7 +257,7 @@ sub _get_obj {
 }
 
 sub _split_fields {
-  my ($self, $c, $ret, $data) = @_;
+  my ($self, $ret, $data) = @_;
 
   $data =~ s/\\([\;\/\\%\"])/$1/g;
   while($data =~ m/^([^=\s]*)[=](.*)[\n]([\s\S]*)$/){
@@ -257,7 +266,7 @@ sub _split_fields {
     $data = $3;
 
     if($d =~ m/^WB/){
-      $d = $self->_get_tag_info($c, $d, $self->modelmap->WB2ACE_MAP->{$label} ? $label : undef);
+      $d = $self->_get_tag_info({id => $d, class => $self->modelmap->WB2ACE_MAP->{$label} ? $label : undef });
     }elsif($label =~ m/^author$/){
       my ($id, $l);
       if($d =~ m/^(.*)\s(WBPerson\S*)$/){
@@ -275,7 +284,13 @@ sub _split_fields {
 }
 
 sub _get_tag_info {
-  my ($self, $c, $id, $class, $fill, $footer, $aceclass) = @_;
+  my ($self, $args) = @_;
+
+  my $id = $args->{id};
+  my $class = $args->{class};
+  my $fill = $args->{fill};
+  my $footer = $args->{footer};
+  my $aceclass = $args->{aceclass};
 
   if ($class) { # WB class was provided
       $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($class)}
@@ -289,7 +304,7 @@ sub _get_tag_info {
       foreach my $ace (@$aceclass) {
         my $doc = $self->search_exact($id, lc($ace));
         if($doc){
-          return $self->_get_obj($c, $doc, $footer) if $fill;
+          return $self->_get_obj($doc, $footer) if $fill;
 
           my $ret = $self->_pack_search_obj($doc);
           $ret->{class} = $class;
@@ -298,27 +313,17 @@ sub _get_tag_info {
       }
     }else{
       my $doc = $self->search_exact($id, $aceclass ? lc($aceclass) : undef);
-      if($doc){
-          if($fill){
-            return $self->_get_obj($c, $doc, $footer);
-          }
-          return $self->_pack_search_obj($doc);
-      }
+      return ($fill ? $self->_get_obj($doc, $footer) : $self->_pack_search_obj($doc)) if $doc;
     }
   }
 
-  my $api = $self->_api;
-  my $object = $api->fetch({ class => ucfirst $class, name => $id });
+  my $object = $self->_api->fetch({ class => ucfirst $class, name => $id });
   my $tag = $object->name->{data} if ($object > 0);
 
   $tag =  { id => $id,
            class => $class
   } unless $tag;
 
-
-  # my $tag =  { id => $id,
-  #          class => $class
-  # };
   $tag = { name => $tag, footer => $footer } if $fill;
   return $tag;
 }

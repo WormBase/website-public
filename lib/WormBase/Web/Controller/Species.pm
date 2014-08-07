@@ -123,7 +123,7 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{class}      = $class;
 
     my $api = $c->model('WormBaseAPI');
-    my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
+    my $object = $api->xapian->_get_tag_info({id => $name, class => lc($class)});
 
 
     #temporary fix

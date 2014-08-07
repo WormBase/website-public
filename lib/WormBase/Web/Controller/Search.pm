@@ -101,17 +101,19 @@ sub search :Path('/search') Args {
     }
 
     # this is the actual search
-    my ($it, $error) = $api->xapian->search($c, $tmp_query, $page_count, $search, $c->stash->{species});
+    my ($it, $error) = $api->xapian->search({ query => $tmp_query,
+                                              page => $page_count,
+                                              type => $search,
+                                              species => $c->stash->{species} });
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{error} = ($query_error || "") . ($error || "");
-    my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
-    $c->stash->{results} = \@ret;
+    $c->stash->{results} = $it->{matches};
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
 
-    my $count = $api->xapian->search_count_estimate($c, $tmp_query, $search, $c->stash->{species});
+    my $count = $it->{count};
     $c->stash->{count} = $count;
     $c->stash->{count_estimate} = $self->_fuzzy_estimate($count);
 
@@ -123,7 +125,7 @@ sub search :Path('/search') Args {
     # Change the data structure a bit so the CSV converter can read it
     if ( $content_type eq 'text/csv' ) {
       my %seen;
-      @ret = map {
+      my @ret = map {
           my $ret = { id => $_->{name}->{id},
                       label => $_->{name}->{label},
                       class => $_->{name}->{class},
@@ -135,7 +137,7 @@ sub search :Path('/search') Args {
             }
           }
           $ret;
-        } @ret;
+        } @{$c->stash->{results}};
 
       my @columns = (('id', 'label', 'class', 'taxonomy'), keys %seen);
       # unshift(@columns, ('id', 'label', 'class', 'taxonomy'));
@@ -280,7 +282,7 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
   }
 
   my $tmp_query = $self->_prep_query($q);
-  my $count = $api->xapian->search_count_estimate($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
+  my $count = $api->xapian->search_count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
   $count = $self->_fuzzy_estimate($count);
 
   $c->response->body("$count");
