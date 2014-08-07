@@ -15,7 +15,6 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
       END;
     END;
           FOREACH table IN fields.expression_patterns.data;
-            table.data.keys.join(', ');
              build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                         columns={
                             expression_pattern => 'Pattern',
@@ -28,14 +27,13 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
                             transgene => 'Transgene'
                                },
                       passed_data=table,
-                      key='table_one');
+                      key='table_expression_patterns');
           END;
 END;
 
 
 WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profiling_graphs";
         FOREACH table IN fields.expression_profiling_graphs.data;
-        table.data.keys.join(', ');
            build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={
                           expression_pattern => 'Pattern',
@@ -48,7 +46,7 @@ WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profili
                           transgene => 'Transgene'
                              },
                     passed_data=table
-                    key='table_two');
+                    key='table_expression_profiling_graphs');
         END;
 
 END;
@@ -83,7 +81,7 @@ WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
         description  => 'Description'
       },
       passed_data=table,
-      key='table_three');
+      key='table_expression_cluster');
   END;
 END;
 
@@ -95,7 +93,7 @@ WRAPPER $field_block title="Microarray, Tiling Array and RNAseq";
 END;
 
 
-WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_topology_map_position";
+WRAPPER $field_block title="Microarray \"topography map\" data" key="microarray_topology_map_position";
      tags2link(fields.microarray_topology_map_position.data);
 END;
 
@@ -107,7 +105,7 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
                       'phenotype'   => 'Phenotype',
                       'reference' => 'Reference'},
               passed_data = table,
-              key='table_four');
+              key='table_anatomy_function');
     END;
 END;
 
@@ -122,7 +120,7 @@ WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_l
                            value => 'FPKM value'
                        },
                        passed_data = expr.table.fpkm.data,
-                       key='table_five');
+                       key='table_fpkm_expression_summary_ls');
     END;                   
 END;
 %]

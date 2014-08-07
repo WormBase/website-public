@@ -24,19 +24,19 @@ select yourself to link your wormbase information <br /><br />
 <div style="float:left;margin:1em;">
     <div class="login-holder ui-corner-all register-notice" id="system-message" style="width:16em;visibility:hidden;">
     </div>
-    <input id="link-account" onClick="linkAccount();" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›" disabled=1/>  
+    <input id="link-account" onClick="linkAccount();" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›" disabled=1/>
     <br /><br /><span>None of these are you? <a href="[% redirect  || '/' %]">skip this step</a></span>
 </div>
 
 
 <script>
-  
+
 
   function linkAccount(){
     var wbid = $jq("input#wbid").val(),
         email = $jq("input#email").val(),
         confirm = $jq("input#confirm").val();
-    
+
     $jq.ajax({
           type: "POST",
           url: "/rest/link_wbid",
@@ -47,8 +47,8 @@ select yourself to link your wormbase information <br /><br />
                   content.prepend(data);
             },
           error: function(request,status,error) {
-              if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0) 
-                  return; 
+              if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0)
+                  return;
               alert(request + " " + status + " " + error );
             }
       });

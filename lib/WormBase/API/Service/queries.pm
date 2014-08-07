@@ -10,7 +10,7 @@ with 'WormBase::API::Role::Object';
 
 sub aql {
     my ($self, $c, $query) = @_;
-    my $dbh = $self->dsn->{acedb}->dbh;    
+    my $dbh = $self->dsn->{acedb}->dbh;
 
     my @rows = $dbh->aql($query);
     return (\@rows, $dbh->error);

@@ -135,10 +135,7 @@
             });
           }else{
             $jq("#logout").click(function(){
-              // window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
-              // window.location.reload();
-
-              window.location = "/logout";
+              window.location = "/logout?redirect=" + window.location;
             });
           }
         });
@@ -809,37 +806,43 @@
           if((parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10)) < 100000){
             searchSummary.find("#get-breakdown").show().click(function(){
               setLoading($jq(this));
-              searchSummary.find(".count").each(function() {
-                $jq(this).load($jq(this).attr("href"), function(){
-                  if($jq(this).text() === '0'){
-                    $jq(this).parent().remove();
-                  }else {
-                    $jq(this).parent().show().parent().prev(".title").show();
-                    searchSummary.find("#get-breakdown").remove();
-                  }
-                });
-              });
-
+              searchFilter(searchSummary, curr);
               searchSummary.find(".ui-icon-close").click(function(){
                 loadResults(url);
                 searchSummary.find(".ui-selected").removeClass("ui-selected");
-                return false;
-              });
-
-              searchSummary.find(".load-results").click(function(){
-                var button = $jq(this);
-                loadResults(button.attr("href"));
-                searchSummary.find(".ui-selected:not('#current-ref')").removeClass("ui-selected");
-                button.addClass("ui-selected");
-                curr.html(button.html());
                 return false;
               });
              });
           }
         });
       });
+    } else if (widget == 'references') {
+        // give users the option to filter results by paper type
+        searchFilter(searchSummary, curr);
     }
 
+  }
+
+  function searchFilter(searchSummary, curr){
+      searchSummary.find(".count").each(function() {
+        $jq(this).load($jq(this).attr("href"), function(){
+          if($jq(this).text() === '0'){
+            $jq(this).parent().remove();
+          }else {
+            $jq(this).parent().show().parent().prev(".title").show();
+            searchSummary.find("#get-breakdown").remove();
+          }
+        });
+      });
+
+      searchSummary.find(".load-results").click(function(){
+        var button = $jq(this);
+        loadResults(button.attr("href"));
+        searchSummary.find(".ui-selected:not('#current-ref')").removeClass("ui-selected");
+        button.addClass("ui-selected");
+        curr.html(button.html());
+        return false;
+      });
   }
 
 

@@ -3,13 +3,13 @@ package WormBase::API::Service::protein_aligner;
 use Bio::Graphics::Browser2::PadAlignment;
 use Bio::Graphics::Browser2::Markup;
 
- 
+
 use Moose;
-with 'WormBase::API::Role::Object'; 
+with 'WormBase::API::Role::Object';
 
 
 # color table based on malign, but changed for the colour blind
-our %colours = ( 
+our %colours = (
 '*'       =>  'default',        #mismatch          (dark grey)
 '.'       =>  'unknown',        #unknown           (light grey)
  A        =>  'hydrophobic',         #hydrophobic       (bright green)
@@ -37,7 +37,7 @@ our %colours = (
  Z        =>  'default',         #E or Q            (dark grey)
 );
 
- 
+
 sub index {
    my ($self) = @_;
    my $data = {};
@@ -55,7 +55,7 @@ sub run {
     my $dbh = $self->mysql_dsn("clustal")->dbh;
 
     $self->log->debug("prepare the query to clustal db for protein $peptide_id");
-    my $sql = qq{ SELECT alignment FROM clustal WHERE peptide_id = "$peptide_id"}; 
+    my $sql = qq{ SELECT alignment FROM clustal WHERE peptide_id = "$peptide_id"};
     my $sth = $dbh->prepare( $sql );
     $sth->execute();
 
@@ -69,7 +69,7 @@ sub run {
 
     return {data=>\@results, sequence=>$peptide_id};
 }
-  
+
 
 sub _postprocess{
      my ($self,$raw_al)=@_;
@@ -92,11 +92,11 @@ sub _postprocess{
          }
         push @coloured,(join('',@cols)."\n");
      }
-     return \@coloured; 
+     return \@coloured;
 }
 
 
- 
- 
+
+
 
 1;

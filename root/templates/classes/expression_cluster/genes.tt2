@@ -5,11 +5,11 @@ WRAPPER $field_block title="Genes" key="genes";
 END;
 
 #    build_data_table (
-#		order = [ 
+#		order = [
 #			'gene',
-#			'species', 
+#			'species',
 #			],
-#		columns = {				 		
+#		columns = {
 #			gene => 'Gene',
 #			species => 'Species',
 #			},

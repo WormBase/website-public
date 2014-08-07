@@ -1,5 +1,5 @@
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />  
+    <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />
 </head>
 
 <h1>About the BLAT algorithm</h1>
@@ -29,7 +29,7 @@ The following description of BLAT is from the <a href="http://genome.ucsc.edu/cg
     Like most of Jim's software, interactive use on this web server is free to all.
     Sources and executables to run batch jobs on your own server are available free
     for academic, personal, and non-profit purposes.  Non-exclusive commercial
-    licenses are also available. See the 
+    licenses are also available. See the
     <A HREF="http://www.kentinformatics.com" TARGET=_blank>Kent Informatics</A>
     website for details.
     </P>

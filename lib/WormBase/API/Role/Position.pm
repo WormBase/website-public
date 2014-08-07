@@ -156,15 +156,15 @@ sub _seg2posURLpart {
 
 sub _format_coordinates {
     my ($self,%args) = @_;
-    
+
     my ($ref, $start, $stop, $pad_for_gbrowse)
 	= $args{sequence} ? map { $args{sequence}->$_ } qw(abs_ref start stop pad_for_gbrowse)
 	: @args{qw(ref start stop pad_for_gbrowse)};
-    
+
     if (defined $start && defined $stop && $ref) { # definedness sufficient?
         $ref =~ s/^CHROMOSOME_//;
         ($start, $stop) = ($stop, $start) if $start > $stop;
-	
+
 	if ($pad_for_gbrowse) {
 	    $start = int($start - 0.2*($stop-$start));
 	    $stop  = int($stop  + 0.05*($stop-$start));
@@ -233,31 +233,33 @@ sub _build_genetic_position {
     my $object = $self->object;
     my $class  = $self->_api->modelmap->ACE2WB_MAP->{class}->{$object->class};
     my ($chromosome,$position,$error,$method);
- 
+
     # CDSs and Sequence are only interpolated
     # AD: no... only Sequence... (that's what the models suggests)
     #  if ($class eq 'CDS' || $class eq 'Sequence') {
     if ($class eq 'Sequence' || $class eq 'Variation') {
         my $imp = eval {$object->Interpolated_map_position};
-        if ($imp) { 
+        if ($imp) {
             ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
             $method = 'interpolated';
-	     
+
         }
         else {
             # Try fetching from the gene
             if (my $gene = $object->Gene) {
-                $chromosome = $gene->get(Map=>1);
-                $position   = $gene->get(Map=>3);
+                #$chromosome = $gene->get(Map=>1);
+                #$position   = $gene->get(Map=>3);
+		# Let's include the error, too.
+		($chromosome,undef,$position,undef,$error) = eval{$gene->Map(1)->row};
                 $method = 'interpolated';
             }
-	    
+
         }
     }
     else {
         ($chromosome,undef,$position,undef,$error) = eval{$object->Map(1)->row};
         # TH: Can't conclude that this is experimentally determined. Model used inconsistently.
-        #  $method = 'experimentally determined' if $chromosome;  
+        #  $method = 'experimentally determined' if $chromosome;
 	$method = '';
     }
 
@@ -290,7 +292,7 @@ sub make_genetic_position_object {
     else {
         $label = $chromosome;
     }
-    
+
     return {
         description => "the genetic position of the $class:$object",
         data        => {

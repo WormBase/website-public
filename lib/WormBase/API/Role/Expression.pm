@@ -22,11 +22,6 @@ use File::Spec::Functions qw(catfile catdir);
 #
 ############################################################
 
-# anatomic_expression_patterns { }
-# This method will return a complex data structure
-# containing expression patterns described at the
-# anatomic level. Includes links to images.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomic_expression_patterns
 
 has '_gene' => (
     is       => 'ro',
@@ -44,6 +39,12 @@ has 'exp_sequences' => (
 
 requires '_build__gene'; # no fallback to build segments... yet (or ever?).
 
+# anatomic_expression_patterns { }
+# This method will return a complex data structure
+# containing expression patterns described at the
+# anatomic level. Includes links to images.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomic_expression_patterns
+
 sub anatomic_expression_patterns {
     my $self   = shift;
     my @object = @{$self->_gene};
@@ -54,21 +55,8 @@ sub anatomic_expression_patterns {
 
         my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$obj.jpg");
         my $image = catfile($self->pre_compile->{gene_expression_path}, "$obj.jpg") if (-e $file && ! -z $file);
-        #use Data::Dumper; print Dumper $file;
         push @genes , { "image" => $image } if $image ;
     }
-    
-    #my %data_pack;
-
-    #my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
-    #$data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
-
-
-    #return {
-    #    description => 'expression patterns for the gene',
-    #    data        => %data_pack ? \%data_pack : undef,
-    #};
-
     
     return {
         description => 'expression patterns for the gene',
@@ -77,7 +65,7 @@ sub anatomic_expression_patterns {
 }
 
 
-
+# Returns expressions with Microarray and Tiling_array types
 sub expression_patterns {
     my $self   = shift;
     my @object = @{$self->_gene};
@@ -90,20 +78,16 @@ sub expression_patterns {
             next if $type =~ /Microarray|Tiling_array/;
             push @data, $self->_expression_pattern_details($expr, $type);
         }
-        #############################################
         
          push @genes, \@data if @data;
     }
-
-    use Data::Dumper; print Dumper @genes;
     return{
-
-        description => "expression patterns associated with the gene",
+        description => "expression patterns associated with the genes",
         data => @genes ? \@genes : undef
-    }
+    };
 }
 
-
+# Returns expressions without Microarray and Tiling_array types
 sub expression_profiling_graphs {
     my $self   = shift;
     my @object = @{$self->_gene};
@@ -118,12 +102,9 @@ sub expression_profiling_graphs {
         }
         push @genes, \@data if @data; 
     }
-
-    ##################################################################
-    #use Data::Dumper; print Dumper $genes[0]{'data'}[0]{'type'};
     
      return {
-        description => "expression patterns associated with the gene",
+        description => "expression patterns associated with the genes",
         data => @genes ? \@genes : undef
      };
 }
@@ -207,7 +188,7 @@ sub anatomy_terms {
     }
 
     return {
-        description => 'anatomy terms from expression patterns for the gene',
+        description => 'anatomy terms from expression patterns for the genes',
         data        => %unique_anatomy_terms ? \%unique_anatomy_terms : undef,
     };
 }
@@ -228,7 +209,6 @@ sub expression_cluster {
             my $description = $expr_cluster->Description;
             push @data, {
                 expression_cluster => $self->_pack_obj($expr_cluster),
-                #description => $description && "$description"
             }
         }
         push @genes, \@data if @data;
@@ -260,7 +240,6 @@ sub fourd_expression_movies {
         } grep {
             (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
         } @expr_patterns;
-        #} @{$self ~~ '@Expr_pattern'};
         push @genes, \%data if %data;
     }
 
@@ -270,6 +249,20 @@ sub fourd_expression_movies {
     };
 }
 
+# microarray_expression_data { }
+# This method will return a data structure containing
+# microarray expression data.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_expression_data
+
+sub microarray_expression_data {
+    my $self   = shift;
+    my $object = $self->object;
+    my %data;
+    my @microarray_results = $object->Microarray_results;
+    return { data        => @microarray_results ? $self->_pack_objects(\@microarray_results) : undef,
+             description => 'gene expression determined via microarray analysis'};
+}
+
 # microrarray_topology_map_position { }
 # This method will return a data structure containing
 # the microarray "topology" map position.
@@ -277,24 +270,34 @@ sub fourd_expression_movies {
 
 sub microarray_topology_map_position {
     my $self   = shift;
-    my @object = @{$self->_gene};
+    my $object = $self->object;
 
     my $datapack = {
-        description => 'microarray topology map',
+        description => 'microarray topography map',
         data        => undef,
     };
 
     return $datapack unless @{$self->exp_sequences};
     my @segments = $self->_segments && @{$self->_segments};
     return $datapack unless $segments[0];
-    my @p = map { $_->info }
-            $segments[0]->features('experimental_result_region:Expr_profile')
-        or return $datapack;
-    my %data = map {
-        $_ => $self->_pack_obj($_, eval { 'Mountain ' . $_->Expr_map->Mountain })
-    } @p;
 
-    $datapack->{data} = \%data if %data;
+    my @profiles = $segments[0]->features('experimental_result_region:Expr_profile');
+    my @p = map {  $_->info } @profiles or return $datapack;
+
+    my @data = ();
+    foreach my $pid (@p){
+        my $profile_api_obj = $self->_api->fetch({ class => 'Expr_profile', name => $pid});
+        my $mountain = $profile_api_obj->pcr_data()->{'data'}->{'mountain'} if $profile_api_obj;
+        my $label = $mountain ? "$pid Mountain: $mountain" : "$pid";
+        my $dat = {
+            'class' => 'expr_profile',
+            'label' => $label,
+            'id' => $pid,
+        };
+        push @data, $dat;
+    }
+
+    $datapack->{data} = \@data if @data;
     return $datapack;
 }
 

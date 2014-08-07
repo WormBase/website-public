@@ -1,21 +1,38 @@
-[% 
+
+[%
 link_base 	= 'http://www.wikipathways.org/index.php/Pathway:';
-wp_id		= fields.pathway.data.pathway_id;
 img_path	= '/img-static/wikipathways/';
-revision  = fields.pathway.data.revision;
 %]
 
-[% IF fields.pathway.data.pathway_id %]
-Link to WikiPathways: <a href="[% link_base _ wp_id %]">[% link_base _ wp_id %]</a>
-<br />
-<br />
+[%
 
-[% IF fields.pathway.data.revision%]
-<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[%wp_id%]&rev=[%revision%]" width="800px" height="664px" style="overflow:hidden;"></iframe>
-[%ELSE%]
-<iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=[%wp_id%]" width="800px" height="664px" style="overflow:hidden;"></iframe>
-[% END %]
-[% END %]
+WRAPPER $field_block title="Wikipathways" key="pathway";
+
+	FOREACH pathway IN fields.pathway.data;
+
+		wp_id		= pathway.pathway_id;
+		revision  = pathway.revision;
+
+		IF (wp_id);
+
+			'<a href="'_ link_base _ wp_id _'">'_ link_base _ wp_id _'</a>';
+			'<br/>';
+			'<br/>';
+
+			IF (revision);
+			'<iframe src="http://www.wikipathways.org/wpi/PathwayWidget.php?id='_ wp_id _'&rev='_ revision _'" width="800px" height="664px" style="overflow:hidden;"></iframe>';
+
+			ELSE;
+			'<iframe src="http://www.wikipathways.org/wpi/PathwayWidget.php?id='_ wp_id _'" width="800px" height="664px" style="overflow:hidden;"></iframe>';
+			END;
+
+		END;
+		'<br/>';
+		'<br/>';
+	END;
+END;
+
+%]
 
 <script type="text/javascript">
 	$jq('.wp-img').resizable();

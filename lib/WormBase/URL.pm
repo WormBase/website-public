@@ -4,7 +4,7 @@
 #
 # DESCRIPTION
 #
-#   Template Toolkit Plugin for constructing URL's from a base stem 
+#   Template Toolkit Plugin for constructing URL's from a base stem
 #   and adaptable parameters.
 #
 # AUTHOR
@@ -49,11 +49,11 @@ sub new {
                        map  { args($_, $combo->{ $_ }) }
                        grep { defined $combo->{ $_ } && length $combo->{ $_ } }
                        sort keys %$combo);
-    
+
     my $query = $newbase || $base || '';
     $query .= '?' if length $query && length $urlargs;
     $query .= $urlargs if length $urlargs;
-    
+
     return $query
   }
 }
@@ -62,17 +62,17 @@ sub new {
 sub args {
   my ($key, $val) = @_;
   $key = escape($key);
-  
+
   return map {
     "$key=" . escape($_);
   } ref $val eq 'ARRAY' ? @$val : $val;
-  
+
 }
 
 #------------------------------------------------------------------------
 # escape($url)
-# 
-# URL-encode data.  Borrowed with minor modifications from CGI.pm.  
+#
+# URL-encode data.  Borrowed with minor modifications from CGI.pm.
 # Kudos to Lincold Stein.
 #------------------------------------------------------------------------
 
@@ -95,7 +95,7 @@ __END__
 # IMPORTANT NOTE
 #   This documentation is generated automatically from source
 #   templates.  Any changes you make here may be lost.
-# 
+#
 #   The 'docsrc' documentation source bundle is available for download
 #   from http://www.template-toolkit.org/docs.html and contains all
 #   the source templates, XML files, scripts, etc., from which the
@@ -128,7 +128,7 @@ Template::Plugin::URL - Plugin to construct complex URLs
 
 =head1 DESCRIPTION
 
-The URL plugin can be used to construct complex URLs from a base stem 
+The URL plugin can be used to construct complex URLs from a base stem
 and a hash array of additional query parameters.
 
 The constructor should be passed a base URL and optionally, a hash array
@@ -140,7 +140,7 @@ Documents, this would look something like the following:
     [% USE url('/cgi-bin/baz.pl', mode='browse', debug=1) %]
 
 When the plugin is then called without any arguments, the default base
-and parameters are returned as a formatted query string.  
+and parameters are returned as a formatted query string.
 
     [% url %]
 
@@ -178,8 +178,8 @@ producing
     /cgi-bin/waz.pl?mode=browse&amp;test=1
     /cgi-bin/waz.pl?mode=browse&amp;debug=1&amp;test=1
 
-The ordering of the parameters is non-deterministic due to fact that 
-Perl's hashes themselves are unordered.  This isn't a problem as the 
+The ordering of the parameters is non-deterministic due to fact that
+Perl's hashes themselves are unordered.  This isn't a problem as the
 ordering of CGI parameters is insignificant (to the best of my knowledge).
 All values will be properly escaped thanks to some code borrowed from
 Lincoln Stein's CGI.pm.  e.g.

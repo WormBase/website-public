@@ -35,7 +35,7 @@ sub _build__interactions {
 
 =head3 interactions
 
-This method returns a data structure containing the 
+This method returns a data structure containing the
 a data table of gene and protein interactions. Ask us
 to increase the granularity of this method!
 
@@ -94,7 +94,7 @@ sub interactions  {
 
     return {
         description => 'genetic and predicted interactions',
-        data        => $results->{showall} ? {    
+        data        => $results->{showall} ? {
                             edges => @edges ? \@edges : undef,
                             types => $results->{types},
                             nodes => keys %{ $results->{nodes} } ? $results->{nodes} : undef,
@@ -185,13 +185,13 @@ sub _get_interactions {
     my $object = $self->object;
     my @objects;
     #determine object type and extract interactions accordingly
-    if ($nearby){ 
-      @objects = map {$_->Interaction} grep {($_->class =~ /gene/i) && ($data->{nodes}{"$_"}{predicted} == 0)} values %{$data->{nodes_obj}} 
+    if ($nearby){
+      @objects = map {$_->Interaction} grep {($_->class =~ /gene/i) && ($data->{nodes}{"$_"}{predicted} == 0)} values %{$data->{nodes_obj}}
     } elsif ($object->class =~ /gene|wbprocess/i ) { # ELSEIF PROCESS, COPY GENE FUNC
-      @objects = $object->Interaction 
-    } elsif ($object->class =~ /interaction/i ) { 
-      @objects = ($object) 
-    } 
+      @objects = $object->Interaction
+    } elsif ($object->class =~ /interaction/i ) {
+      @objects = ($object)
+    }
     if($nearby && (scalar @objects > 3000)){
         $data->{showall} = 0;
         return $data;
@@ -218,7 +218,7 @@ sub _get_interactions {
           $data->{nodes_obj}{"$affected"} = $affected;
           $data->{ids}{"$interaction"}=1;
           $data->{types}{"$type"}=1;
-            
+
           my $ntype1 = $data->{nodes}{"$effector"}->{class};
           my $ntype2 = $data->{nodes}{"$affected"}->{class};
           $data->{ntypes}{"$ntype1"}=1;
@@ -233,10 +233,10 @@ sub _get_interactions {
             $key .= " $phenotype" if $phenotype;
             $key2 .= " $phenotype" if $phenotype;
           }
-          
+
           my $packInteraction = $self->_pack_obj($interaction);
           my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
-          
+
           if (exists $data->{edgeVals}{$key}){
             push @{$data->{edgeVals}{$key}{interactions}}, $packInteraction;
             push @{$data->{edgeVals}{$key}{citations}}, @papers;
@@ -259,7 +259,7 @@ sub _get_interactions {
       }
     }
     $data->{showall} = scalar keys %{$data->{edgeVals}} < 100 || $nearby;
-    
+
     # Annotate node for this object with main = 1.  Handled downstream.
     foreach my $geneID (keys %{ $data->{nodes} }){
         if ($geneID eq "$object"){
@@ -307,7 +307,7 @@ sub _get_interaction_info {
                 else { push @others, $interactor }
             } else {
                 my $corresponding_gene = $self->_get_gene($interactor, "$intertype");
-                if ($corresponding_gene) { @{$results{"$interactor $corresponding_gene"}} = ('Associated Product', $interactor, $corresponding_gene, 'Other') } 
+                if ($corresponding_gene) { @{$results{"$interactor $corresponding_gene"}} = ('Associated Product', $interactor, $corresponding_gene, 'Other') }
                 else { push @others, $interactor }
             }
           } else { push @others, $interactor }
@@ -317,7 +317,7 @@ sub _get_interaction_info {
       foreach my $obj (@effectors, @others) {
           foreach my $obj2 (@affected) {
             next if "$obj" eq "$obj2";
-            if (!$nearby && $object->class ne 'Interaction' && $object->class ne 'WBProcess') { 
+            if (!$nearby && $object->class ne 'Interaction' && $object->class ne 'WBProcess') {
               next unless ("$obj" eq "$object" || "$obj2" eq "$object")
             };
             @{$results{"$obj $obj2"}} = ($type, $obj, $obj2, 'Effector->Affected', $phenotype);
@@ -327,11 +327,11 @@ sub _get_interaction_info {
       foreach my $obj (@others) {
           foreach my $obj2 (@others) {
             next if "$obj" eq "$obj2";
-            if (!$nearby && $object->class ne 'Interaction') { 
+            if (!$nearby && $object->class ne 'Interaction') {
               next unless ("$obj" eq "$object" || "$obj2" eq "$object")
             };
             my @objs = ("$obj", "$obj2");
-            my $str = join(' ', sort @objs); 
+            my $str = join(' ', sort @objs);
             @{$results{"$str"}} = ($type, $obj, $obj2, 'non-directional', $phenotype);
           }
       }

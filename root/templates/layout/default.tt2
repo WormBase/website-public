@@ -8,7 +8,7 @@
 
 
            [% content %]
-     
- 
-    [% PROCESS footer/default.tt2 %]    
+
+
+    [% PROCESS footer/default.tt2 %]
     [% # INCLUDE olark %]

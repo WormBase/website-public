@@ -1,15 +1,28 @@
-[% 
+[%
+
+motif_dat = fields.motif_details.data;
+
+FOREACH motif IN motif_dat;
+    source = motif.source;
+    matched_dbname = match_link(source.db);
+    IF matched_dbname;
+        motif.source_new = external_link(matched_dbname, matched_dbname, source.id);
+    ELSE;
+        motif.source_new = source.db;
+    END;
+END;
 
 build_data_table(
-	order=['source','desc','feat','start','stop','score'],
-	columns={
-		feat 	=> 'Feature',
-		start 	=> 'Start',
-		stop	=> 'Stop',
-		score	=> 'Score',
-		source	=> 'Source',
-		desc 	=> 'Description'
-	},
-	key='motif_details'
+    order=['feat','desc','source_new','start','stop','score'],
+    columns={
+            		feat 	=> 'Feature',
+            		start 	=> 'Start',
+            		stop	=> 'Stop',
+            		score	=> 'Score',
+            		source_new 	=> 'Source',
+            		desc 	=> 'Description'
+            	},
+   	passed_data = motif_dat,
 );
+
 %]

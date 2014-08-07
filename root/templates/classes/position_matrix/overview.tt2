@@ -10,7 +10,7 @@ WRAPPER $field_block title="Associated feature" key="associated_feature";
 	tag2link(fields.associated_feature.data);
 END;
 
-WRAPPER $field_block title="Associated position matrix" key="associated_position_matrix"; 
+WRAPPER $field_block title="Associated position matrix" key="associated_position_matrix";
 	tag2link(fields.associated_position_matrix.data);
 END;
 

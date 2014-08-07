@@ -10,7 +10,7 @@ with 'WormBase::API::Role::Expression';
 
 use Bio::Graphics::Browser2::Markup;
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -145,25 +145,25 @@ sub _build_type {
 sub feature {
     my ($self) = @_;
     my $obj = $self->object;
-    
+
     my @features = $obj->Associated_feature;
     my @data;
     foreach my $feature (@features){
         push @data, $self->_pack_obj($feature, $feature->Description);
     }
-    
+
     return {
         description => 'feature associated with this transcript',
-        data => scalar @data > 0 ? {map {$_ => $self->_pack_obj($_, $_->Description)} @features} : undef 
+        data => scalar @data > 0 ? {map {$_ => $self->_pack_obj($_, $_->Description)} @features} : undef
     };
-    
+
 }
 
 ############################################################
 #
 # The External Links widget
 #
-############################################################ 
+############################################################
 
 # xrefs {}
 # Supplied by Role
@@ -303,13 +303,13 @@ sub predicted_exon_structure {
 
     my $index = 1;
     my @exons = map {
-		my ($es,$ee) = $_->row; 
-		{ 
+		my ($es,$ee) = $_->row;
+		{
 			no		=> $index++,
 			start	=> "$es" || undef,
 			end		=> "$ee" || undef,
 			len 	=> "$es" && "$ee" ? $ee-$es+1 : undef
-		}; 
+		};
 	} $s->get('Source_Exons');
 
     return { description => 'predicted exon structure within the sequence',

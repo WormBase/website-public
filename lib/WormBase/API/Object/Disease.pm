@@ -1,11 +1,11 @@
-package WormBase::API::Object::Disease; 
+package WormBase::API::Object::Disease;
 use Moose;
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
 
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -40,12 +40,12 @@ sub definition {
 }
 
 sub omim {
-	my $self = shift; 
+	my $self = shift;
  	my %data =  %{$self->xrefs->{data}->{OMIM}} if $self->xrefs->{data}->{OMIM};
-	
+
 	return {
 		description => 'link to OMIM record',
-		data => %data ? \%data : undef 
+		data => %data ? \%data : undef
 	}
 }
 
@@ -69,11 +69,11 @@ sub child {
 
 sub type {
     my ($self) = @_;
-    my $type = $self ~~ 'Type';
-    $type =~ s/_/ /g;
+    my @types = map {"$_"} $self->object->Type;
+    map {s/_/ /g} @types;
     return {
         description => 'Type of this disease',
-        data        => $type && "$type",
+        data        => @types ? \@types : undef,
     };
 }
 
@@ -105,7 +105,7 @@ sub _get_gene_relevance{
     my @omim = map {"$_";} @omim_ace;
     my @relevance_ace = $gene->Disease_relevance;
     my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
- 
+
     my $relevance;
     my $data = {
         gene => $self->_pack_obj($gene),

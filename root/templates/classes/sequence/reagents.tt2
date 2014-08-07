@@ -1,4 +1,4 @@
-[% 
+[%
 
 WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays";
     tags2link(fields.orfeome_assays.data.values, '<br>', 'Results');
@@ -24,7 +24,7 @@ WRAPPER $field_block title="Library" key='library';
      fields.library.data.name _ '<br />';
      '<div class="description">' _ fields.library.data.description _ '</div>';
       IF fields.library.data.vector;
-        '<b>Vector</b>: ' _ 
+        '<b>Vector</b>: ' _
           tag2link(fields.library.data.vector);
       END;
 END;

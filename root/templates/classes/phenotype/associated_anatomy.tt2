@@ -1,8 +1,8 @@
-[% 
+[%
 
     WRAPPER $field_block title="Associated anatomy" key="associated_anatomy";
       build_data_table( order = ['bp_inv', 'bp_not_inv','gene', 'assay', 'reference'],
-			  columns = { 'assay' => 'Assay',				      
+			  columns = { 'assay' => 'Assay',
 				      'gene' => 'Gene',
 				      'bp_inv'   => 'Body Parts Involved',
 				      'bp_not_inv'   => 'Body Parts <br />Not Involved',

@@ -25,5 +25,5 @@ citation  = Native (same species) full length mRNAs and ncRNAs aligned to the
             This track shows non-unique matches, which may represent repetitive sequences.
             For the best single alignment, see the track labeled "mRNAs/ncRNAs (best)".
 
-[MRNA_OTHER:5000]
+[MRNA_OTHER:50000]
 glyph = box

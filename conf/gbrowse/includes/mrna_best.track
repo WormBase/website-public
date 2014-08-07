@@ -27,5 +27,5 @@ citation  = Native (same species) full length cDNAs and ncRNAs aligned to
             of which may represent repetitive elements, are shown in the track labeled
             "mRNAs/ncRNAs (other)".
 
-[MRNA_BEST:5000]
+[MRNA_BEST:50000]
 glyph = box

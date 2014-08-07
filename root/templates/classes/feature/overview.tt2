@@ -33,14 +33,14 @@ WRAPPER $field_block title='Method' key='method';
 END;
 
 
-WRAPPER $field_block title="Defined by" key="defined_by";	
+WRAPPER $field_block title="Defined by" key="defined_by";
 
     build_data_table (
-		order = [ 
+		order = [
 			'label',
 			'object',
 			],
-		columns = {				 		
+		columns = {
 			label => 'Defined via',
 			object => 'Object',
 			},

@@ -441,7 +441,7 @@ sub _build_best_blastp_matches {
         push @hits, {
             taxonomy => $taxonomy,
             # custom packing for linking out to external sources
-            hit      => {   class => "$class",
+            hit      => {   class => $class ? "$class" : $hit->class,
                             id => $id || "$hit",
                             label => "$hit"},
             description => $description && "$description",

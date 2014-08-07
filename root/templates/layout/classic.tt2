@@ -1,8 +1,8 @@
-[%# This is the classic report page layout 
-    It mixes the template directory layout 
+[%# This is the classic report page layout
+    It mixes the template directory layout
     structure a bit since it doesn't have a layout
-    template.  This template is specified by the 
-    action and wrapped in html by wrapper.tt2    
+    template.  This template is specified by the
+    action and wrapped in html by wrapper.tt2
 -%]
 
 [% SET this_object_id    = object.name.data.id %]
@@ -19,7 +19,7 @@
          [% title %]
          [%- IF object -%]
              <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
-         [% END %] 
+         [% END %]
       </div>
 
       [%# Add in the prompt and per-class horizontal nav %]
@@ -36,8 +36,8 @@
                                and markup as a target for an ajax request.
                                This lets us display widget headers above
                                containers which are then filled by ajax.
-			       
-			       For the classic view, this includes building 
+
+			       For the classic view, this includes building
 			       a nested table structure.
 
                                Although we could place the WRAPPER in each widget
@@ -46,20 +46,20 @@
 
 			       The upshot of this is that widgets are not self-contained.
 			       I'm not entirely psyched about that. Something to ponder.
-			       %]                               
+			       %]
                     [% END %]
 
 		    [%# This is a work in progress: I want to sequentially load widgets.
-		        Firefox does this using the existing code, but other browsers do not.			
-			%] 
+		        Firefox does this using the existing code, but other browsers do not.
+			%]
                     <script>
                              $jq("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
    		                   function(response, status, xhr) {
                                           if (status == "error") {
                                              var msg = "Sorry but there was an error: ";
                                              $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
-                                           } 
-                                    })				      
+                                           }
+                                    })
                    </script>
 
 

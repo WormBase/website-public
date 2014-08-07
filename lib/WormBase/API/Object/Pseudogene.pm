@@ -39,19 +39,19 @@ sub _build__alleles {
     my $count = $self->_get_count($object, 'Variation');
     my @alleles;
     my @polymorphisms;
-    unless ($count > 5000) { 
+    unless ($count > 5000) {
       my @all = $object->Variation;
 
       if($count < 1000){
           foreach my $allele (@all) {
-              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
-                    push(@polymorphisms, $self->_process_variation($allele)) : 
+              (grep {/SNP|RFLP/} $allele->Variation_type) ?
+                    push(@polymorphisms, $self->_process_variation($allele)) :
                     push(@alleles, $self->_process_variation($allele));
           }
       }else{
           foreach my $allele (@all) {
-              (grep {/SNP|RFLP/} $allele->Variation_type) ? 
-                    push(@polymorphisms, $self->_pack_obj($allele)) : 
+              (grep {/SNP|RFLP/} $allele->Variation_type) ?
+                    push(@polymorphisms, $self->_pack_obj($allele)) :
                     push(@alleles, $self->_pack_obj($allele));
           }
       }
@@ -139,7 +139,7 @@ sub _build__length{
 
 sub parent_sequence {
     my $self      = shift;
-    my $object = $self->object;  
+    my $object = $self->object;
     return {
         description => 'parent sequence of this gene',
         data        => $self->_pack_obj($object->Sequence),
@@ -154,8 +154,8 @@ sub parent_sequence {
 sub from_lab{
     my ($self) = @_;
     my $object = $self->object;
-    
-        
+
+
     return {
         description => "The laboratory of origin",
         data => $self->_pack_obj($object->From_laboratory)
@@ -165,8 +165,8 @@ sub from_lab{
 sub gene{
     my ($self) = @_;
     my $object = $self->object;
-    
-        
+
+
     return {
         description => "Gene corresponding to this pseudogene",
         data => $self->_pack_obj($object->Gene)
@@ -176,8 +176,8 @@ sub gene{
 sub transposon{
     my ($self) = @_;
     my $object = $self->object;
-    
-        
+
+
     return {
         description => "Transposon corresponding to this pseudogene",
         data => $self->_pack_obj($object->Corresponding_transposon)
@@ -187,11 +187,11 @@ sub transposon{
 sub brief_id{
     my ($self) = @_;
     my $object = $self->object;
-    
-        
+
+
     return {
         description => "Short identification for this pseudogene",
-        data => $object->Brief_identification ? 
+        data => $object->Brief_identification ?
             $object->Brief_identification : undef
     };
 }
@@ -199,12 +199,12 @@ sub brief_id{
 sub type{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $type = $object->Type;
     if($type){
         $type =~ s/_/ /g;
     }
-    
+
     return {
         description => "The type of the pseudogene",
         data => "$type" ? "$type" : undef
@@ -216,13 +216,13 @@ sub related_seqs{
     my $object = $self->object;
 
     my @rows = ();
-    
+
     my @genes = $object->Gene;
     foreach my $gene (@genes){
         foreach my $pg ($gene->Corresponding_pseudogene){
             my %data = ();
             my $gff   = $self->_fetch_gff_gene($gene) or next;
-            
+
             push( @rows, {
                 gene_len    => $gff->stop - $gff->start + 1,
                 pg_len      => $self->_build__length($pg),
@@ -231,7 +231,7 @@ sub related_seqs{
             } );
         }
     }
-    
+
     return {
         description => "Sequences related to this pseudogene",
         data => @rows ? \@rows : undef
@@ -247,7 +247,7 @@ sub related_seqs{
 sub microarray_results{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     return {
         description => "Microarray results",
         data => $self->_pack_objects([$object->Microarray_results])
@@ -261,7 +261,7 @@ sub microarray_results{
 #######################################
 
 # alleles { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing alleles of the gene (but not including
 # polymorphisms or other natural variations.
 sub alleles{
@@ -271,27 +271,27 @@ sub alleles{
     my $count = $self->_alleles->{alleles};
     my @alleles = @{$count} if(ref($count) eq 'ARRAY');
 
-    return { 
+    return {
         description => "Alleles associated with this pseudogene",
-        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef 
+        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef
     };
 }
 
 # polymorphisms { }
-# This method will return a complex data structure 
+# This method will return a complex data structure
 # containing polymorphisms and natural variations
 sub polymorphisms{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my $count = $self->_alleles->{polymorphisms};
     my @polymorphisms = @{$count} if(ref($count) eq 'ARRAY');
 
-    return { 
+    return {
         description => "Polymorphisms associated with this pseudogene",
-        data        => @polymorphisms ? \@polymorphisms : $count > 0 ? "$count found" : undef 
+        data        => @polymorphisms ? \@polymorphisms : $count > 0 ? "$count found" : undef
     };
-    
+
 }
 
 #######################################
@@ -323,9 +323,9 @@ sub matching_cdnas {
 sub sage_tags {
     my $self   = shift;
     my $object = $self->object;
-    
+
     my @sage_tags = map {$self->_pack_obj($_)} $object->SAGE_tag;
-    
+
     return {  description =>  "SAGE tags identified",
               data        =>  @sage_tags ? \@sage_tags : undef
     };
@@ -354,13 +354,13 @@ sub predicted_exon_structure {
 
     my $index = 1;
     my @exons = map {
-        my ($es,$ee) = $_->row; 
-        { 
+        my ($es,$ee) = $_->row;
+        {
             no      => $index++,
             start   => "$es" || undef,
             end     => "$ee" || undef,
             len     => "$es" && "$ee" ? $ee-$es+1 : undef
-        }; 
+        };
     } $object->get('Source_Exons');
 
     return { description => 'predicted exon structure within the sequence',
@@ -399,8 +399,8 @@ sub _build_genomic_position {
 sub xxx{
     my ($self) = @_;
     my $object = $self->object;
-    
-        
+
+
     return {
         description => "xxx",
         data => xxx

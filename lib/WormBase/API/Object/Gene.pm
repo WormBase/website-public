@@ -92,29 +92,19 @@ sub _build__alleles {
     my $object = $self->object;
 
     my $count = $self->_get_count($object, 'Allele');
+    my @all = $object->Allele;
     my @alleles;
     my @polymorphisms;
-    unless ($count > 1000) {
-      my @all = $object->Allele;
 
-      if($count < 500){
-          foreach my $allele (@all) {
+    foreach my $allele (@all) {
               (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_process_variation($allele)) :
                     push(@alleles, $self->_process_variation($allele));
-          }
-      }else{
-          foreach my $allele (@all) {
-              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_pack_obj($allele)) :
-                    push(@alleles, $self->_pack_obj($allele));
-          }
-      }
     }
 
     return {
-        alleles        => @alleles ? \@alleles : scalar @alleles,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : scalar @polymorphisms,
+        alleles        => @alleles ? \@alleles : undef,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : undef,
     };
 
 }
@@ -244,7 +234,8 @@ sub classification {
       # Is this a non-coding RNA?
       my @transcripts = $object->Corresponding_transcript;
       foreach (@transcripts) {
-          $data->{type} = $_->Transcript;
+          my $type = $_->Transcript;
+          $data->{type} = $type && "$type";
           last;
       }
     }
@@ -366,13 +357,12 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
-        || eval {$object->Corresponding_CDS->Concise_description}
-        || eval {$object->Corresponding_CDS->Brief_identification}
-        || eval { $object->Gene_class->Description }
-        || $self->name->{data}->{label} . ' gene';
+        || eval { $object->Corresponding_CDS->Brief_identification }
+        || eval { $object->Corresponding_transcript->Brief_identification };
 
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
-    my $evidence = $self->_get_evidence($evs[0]);
+    my $evidence = $self->_get_evidence($description)
+        || $self->_get_evidence(shift @evs);
 
     return {
       description => "A manually curated description of the gene's function",
@@ -547,23 +537,6 @@ sub merged_into {
         data        => $gene_merged_into ? $self->_pack_obj($gene_merged_into) : undef
     };
 }
-
-
-
-# microarray_expression_data { }
-# This method will return a data structure containing
-# microarray expression data.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_expression_data
-
-sub microarray_expression_data {
-    my $self   = shift;
-    my $object = $self->object;
-    my %data;
-    my @microarray_results = $object->Microarray_results;
-    return { data        => @microarray_results ? $self->_pack_objects(\@microarray_results) : undef,
-             description => 'gene expression determined via microarray analysis'};
-}
-
 
 #######################################
 #

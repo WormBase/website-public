@@ -767,10 +767,10 @@ tr.odd .ev-more-text span {
 }
 
 .ev-more-line {
-  width:80%;
+  width: 80%;
+  left: 10%;
   border-top:1px solid black;
   position:absolute;
-  left:10%;
   top:0.7em;
 }
 
@@ -819,7 +819,7 @@ a#fade:hover {
 }
 
 .search-results #searchResultForm #SearchResult {
-  width:100%;
+  width:95%;
 }
 
 .search-results {
@@ -839,6 +839,7 @@ a#fade:hover {
   border-right:1px dotted gray;
   float:left;
   display:flex;
+  display:-webkit-box;  /*flex width for Safari*/
   margin: 0.4em;
   position:relative;
   background:white;
@@ -865,7 +866,7 @@ a#fade:hover {
 }
 
 #searchForm input.text, #searchResultForm input.text{
-  float:right;
+  float:none;
   width:8em;
   color: #565656;
   border:none;
@@ -2094,6 +2095,14 @@ div#google-map {
     overflow:hidden;
 }
 
+/* curator comment */
+.curator-comment-field {
+    padding: 0.3em 0;
+}
+
+.curator-comment-field .evidence {
+    display: inline;
+}
 
 
 
@@ -2531,6 +2540,10 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
   position:static;
   vertical-align:top;
   table-layout:fixed;
+}
+
+div.detail-box .ev-more-text span{
+  background-color:#E9EEF2;
 }
 
 .bench-update {
