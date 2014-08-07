@@ -574,9 +574,6 @@ sub fpkm_expression {
                 db => $source_db
             };
 
-            # my $analysis = $label->fetch();
-            # my $sample = $analysis->Sample || '';
-            # my ($project) = $sample =~ /^([a-zA-Z0-9_-]+)\./;
             {
                 label => $name,
                 value => "$value",
