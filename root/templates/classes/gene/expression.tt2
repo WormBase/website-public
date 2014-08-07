@@ -15,6 +15,7 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
       END;
     END;
           FOREACH table IN fields.expression_patterns.data;
+            table.data.keys.join(', ');
              build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                         columns={
                             expression_pattern => 'Pattern',
@@ -26,13 +27,15 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patter
                             go_term => 'GO term',
                             transgene => 'Transgene'
                                },
-                      passed_data=table);
+                      passed_data=table,
+                      key='table_one');
           END;
 END;
 
 
 WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profiling_graphs";
         FOREACH table IN fields.expression_profiling_graphs.data;
+        table.data.keys.join(', ');
            build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={
                           expression_pattern => 'Pattern',
@@ -44,7 +47,8 @@ WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profili
                           go_term => 'GO term',
                           transgene => 'Transgene'
                              },
-                    passed_data=table);
+                    passed_data=table
+                    key='table_two');
         END;
 
 END;
@@ -78,7 +82,8 @@ WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
         expression_cluster => 'Expression clusters',
         description  => 'Description'
       },
-      passed_data=table);
+      passed_data=table,
+      key='table_three');
   END;
 END;
 
@@ -101,13 +106,13 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
                           'assay' => 'Assay',
                       'phenotype'   => 'Phenotype',
                       'reference' => 'Reference'},
-              passed_data = table);
+              passed_data = table,
+              key='table_four');
     END;
 END;
 
 WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
     FOREACH expr IN fields.fpkm_expression_summary_ls.data;
-    'hello';
       '<img width="100%" src="' _ expr.plot _ '" alt="FPKM expression data plot"></img>';
       build_data_table(order = ['label', 'project', 'life_stage', 'value'],
                        columns = {
@@ -116,7 +121,8 @@ WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_l
                            life_stage => 'Life Stage',
                            value => 'FPKM value'
                        },
-                       passed_data = expr.table.fpkm.data);
+                       passed_data = expr.table.fpkm.data,
+                       key='table_five');
     END;                   
 END;
 %]

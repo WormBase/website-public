@@ -47,7 +47,7 @@ requires '_build__gene'; # no fallback to build segments... yet (or ever?).
 sub anatomic_expression_patterns {
     my $self   = shift;
     my @object = @{$self->_gene};
-    my @genes;
+    my @genes ;
 
 
     foreach my $obj (@object){
@@ -55,7 +55,7 @@ sub anatomic_expression_patterns {
         my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$obj.jpg");
         my $image = catfile($self->pre_compile->{gene_expression_path}, "$obj.jpg") if (-e $file && ! -z $file);
         #use Data::Dumper; print Dumper $file;
-        push @genes , { "image" => $image };
+        push @genes , { "image" => $image } if $image ;
     }
     
     #my %data_pack;
@@ -90,11 +90,12 @@ sub expression_patterns {
             next if $type =~ /Microarray|Tiling_array/;
             push @data, $self->_expression_pattern_details($expr, $type);
         }
-         push @genes, {
-            data        => @data ? \@data: undef
-            }; 
+        #############################################
+        
+         push @genes, \@data if @data;
     }
-    
+
+    use Data::Dumper; print Dumper @genes;
     return{
 
         description => "expression patterns associated with the gene",
@@ -115,13 +116,11 @@ sub expression_profiling_graphs {
             next unless $type =~ /Microarray|Tiling_array/;
             push @data, $self->_expression_pattern_details($expr, $type);
         }
-        push @genes, {
-        data        => @data ? \@data: undef
-        }; 
+        push @genes, \@data if @data; 
     }
 
     ##################################################################
-    use Data::Dumper; print Dumper $genes[0]{'data'}[0]{'type'};
+    #use Data::Dumper; print Dumper $genes[0]{'data'}[0]{'type'};
     
      return {
         description => "expression patterns associated with the gene",
@@ -232,7 +231,7 @@ sub expression_cluster {
                 #description => $description && "$description"
             }
         }
-        push @genes, @data;
+        push @genes, \@data if @data;
     }    
     return { data        => @genes ? \@genes : undef,
              description => 'expression cluster data' };
@@ -262,7 +261,7 @@ sub fourd_expression_movies {
             (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
         } @expr_patterns;
         #} @{$self ~~ '@Expr_pattern'};
-        push @genes, %data;
+        push @genes, \%data if %data;
     }
 
     return {
@@ -333,7 +332,7 @@ sub anatomy_function {
               reference => $self->_pack_obj(scalar $_->Reference),
           };
         }
-        push @genes, @data_pack;
+        push @genes, \@data_pack if @data_pack;
     }
 
     return {
