@@ -17,7 +17,7 @@ sub run {
     my $query = $param->{name};
 
     my $api = $c->model('WormBaseAPI');
-    my $doc = $api->xapian->search_exact($c, $query, 'gene');
+    my $doc = $api->xapian->search_exact($query, 'gene');
 
 
     my $service_dbh = $api->_services->{$api->default_datasource}->dbh || return 0;

@@ -80,9 +80,9 @@ sub search :Path('/search') Args {
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
       # if it finds an exact match, redirect to the page
-        my $doc = $api->xapian->search_exact($c, $tmp_query, $search);
+        my $doc = $api->xapian->search_exact($tmp_query, $search);
         if($doc){
-          my $objs = $api->xapian->_pack_search_obj($c, $doc);
+          my $objs = $api->xapian->_pack_search_obj($doc);
           my $url = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
           unless($query=~m/$doc->get_value(1)/){ $url = $url . "?query=$query";}
           $c->res->redirect($url, 307);
@@ -244,11 +244,11 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   my $api = $c->model('WormBaseAPI');
 
   $q = $self->_prep_query($q, 1);
-  my $it = $api->xapian->search_autocomplete($c, $q, ($type=~/all/) ? undef : $type);
+  my $it = $api->xapian->search_autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
-    my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
+    my $objs = $api->xapian->_pack_search_obj($o->get_document);
     $objs->{url} = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
     push(@ret, $objs);
   }

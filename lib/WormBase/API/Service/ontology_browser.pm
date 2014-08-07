@@ -43,7 +43,7 @@ sub run {
       unless($name =~ m/WBbt:|GO:|WBPhenotype:/i){
 	# this is a hack for search exact match in xapian,need to index the term or find other way around -xq
  	$name =~ s/ /:/g ;
-	my $doc = $self->search->search_exact($self, $name, $class);
+	my $doc = $self->search->search_exact($name, $class);
 
 	if ($doc ){
 	    $name= $doc->get_value(1);

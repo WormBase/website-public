@@ -113,7 +113,7 @@ sub _build_xapian {
   my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp, _api => $self});
 
   $xapian->search($self, "*", 1, "gene");
-  $xapian->search_autocomplete($self, "*", "gene");
+  $xapian->search_autocomplete("*", "gene");
 
   return $xapian;
 }

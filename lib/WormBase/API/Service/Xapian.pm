@@ -61,7 +61,7 @@ sub search {
     }
 
     if($type){
-      $q = $class->_add_type_range($c, $q, $type);
+      $q = $class->_add_type_range($q, $type);
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
         $q .= " ptype:$s..$s" if defined $s;
@@ -95,8 +95,8 @@ sub search {
 }
 
 sub search_autocomplete {
-    my ( $class, $c, $q, $type) = @_;
-    $q = $class->_add_type_range($c, $q . "*", $type);
+    my ( $class, $q, $type) = @_;
+    $q = $class->_add_type_range($q . "*", $type);
 
     my $query=$class->_setup_query($q, $class->syn_qp,64|16);
     my $enq       = $class->syn_db->enquire ( $query );
@@ -117,7 +117,7 @@ sub search_autocomplete {
 }
 
 sub search_exact {
-    my ($class, $c, $q, $type) = @_;
+    my ($class, $q, $type) = @_;
     my ($query, $enq, @mset);
     if( $type ){
       # exact match using type/query - will only work if query is the WBObjID
@@ -140,7 +140,7 @@ sub search_exact {
     if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
         my $qu = "$q";
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
-        $qu = $class->_add_type_range($c, "$qu", $type);
+        $qu = $class->_add_type_range("$qu", $type);
         $query=$class->_setup_query($qu, $class->syn_qp, 2|16|512);
         $enq       = $class->syn_db->enquire ( $query );
         @mset      = $enq->matches( 0,10 ) if $enq;
@@ -155,7 +155,7 @@ sub search_exact {
       $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
       $qu =~ s/\s/\* /g;
       $qu = "$qu*";
-      $qu = $class->_add_type_range($c, "$qu", $type);
+      $qu = $class->_add_type_range("$qu", $type);
       $query=$class->_setup_query($qu, $class->qp, 2|512|16);
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0,10 );
@@ -187,7 +187,7 @@ sub search_count_estimate {
     $q = "$q*";
 
     if($type){
-      $q = $class->_add_type_range($c, $q, $type);
+      $q = $class->_add_type_range($q, $type);
 
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
@@ -230,7 +230,7 @@ sub _get_obj {
   my ($self, $c, $doc, $footer) = @_;
 
   my %ret;
-  $ret{name} = $self->_pack_search_obj($c, $doc);
+  $ret{name} = $self->_pack_search_obj($doc);
   my $species = $ret{name}{taxonomy};
   if($species =~ m/^(.*)_([^_]*)$/){
     my $s = $c->config->{sections}{species_list}{$species};
@@ -287,22 +287,22 @@ sub _get_tag_info {
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
-        my $doc = $self->search_exact($c, $id, lc($ace));
+        my $doc = $self->search_exact($id, lc($ace));
         if($doc){
           return $self->_get_obj($c, $doc, $footer) if $fill;
 
-          my $ret = $self->_pack_search_obj($c, $doc);
+          my $ret = $self->_pack_search_obj($doc);
           $ret->{class} = $class;
           return $ret;
         }
       }
     }else{
-      my $doc = $self->search_exact($c, $id, $aceclass ? lc($aceclass) : undef);
+      my $doc = $self->search_exact($id, $aceclass ? lc($aceclass) : undef);
       if($doc){
           if($fill){
             return $self->_get_obj($c, $doc, $footer);
           }
-          return $self->_pack_search_obj($c, $doc);
+          return $self->_pack_search_obj($doc);
       }
     }
   }
@@ -349,7 +349,7 @@ sub _setup_query {
 }
 
 sub _pack_search_obj {
-  my ($self, $c, $doc, $label) = @_;
+  my ($self, $doc, $label) = @_;
   my $id = $doc->get_value(1);
   my $class = $doc->get_value(2);
   $class = $self->modelmap->ACE2WB_MAP->{class}->{$class} || $self->modelmap->ACE2WB_MAP->{fullclass}->{$class};
@@ -366,7 +366,7 @@ sub _pack_search_obj {
 }
 
 sub _add_type_range {
-  my ($self, $c, $q, $type) = @_;
+  my ($self, $q, $type) = @_;
   if( $type ){
       my $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($type)}
                 || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($type)};
