@@ -26,30 +26,27 @@
 
         # Search for "neurodegenerative disease" in disease class
         # Issue #2971
-        my $doc = $api->xapian->search_exact({ query => "\"neurodegenerative disease\"", class => "disease"});
-        my $objs = $api->xapian->_pack_search_obj($doc);
+        my $match = $api->xapian->search_exact({ query => "\"neurodegenerative disease\"", class => "disease", tag => 1 });
 
-        isnt($objs, undef, 'data returned');
-        is  ($objs->{id}, 'DOID:1289', 'correct id returned - neurodegenerative disease search');
-        is  ($objs->{label}, 'neurodegenerative disease', 'correct label returned - neurodegenerative disease search');
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'DOID:1289', 'correct id returned - neurodegenerative disease search');
+        is  ($match->{label}, 'neurodegenerative disease', 'correct label returned - neurodegenerative disease search');
 
 
         # Search for unc-26 in gene class
-        $doc = $api->xapian->search_exact({ query => "unc-26", class => "gene"});
-        $objs = $api->xapian->_pack_search_obj($doc);
+        $match = $api->xapian->search_exact({ query => "unc-26", class => "gene", tag => 1 });
 
-        isnt($objs, undef, 'data returned');
-        is  ($objs->{id}, 'WBGene00006763', 'correct id returned - unc-26 search');
-        is  ($objs->{label}, 'unc-26', 'correct label returned - unc-26 search');
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'WBGene00006763', 'correct id returned - unc-26 search');
+        is  ($match->{label}, 'unc-26', 'correct label returned - unc-26 search');
 
 
         # Search for "bag of worms" in phenotype class
-        $doc = $api->xapian->search_exact({ query => "\"bag of worms\"", class => "phenotype"});
-        $objs = $api->xapian->_pack_search_obj($doc);
+        $match = $api->xapian->search_exact({ query => "\"bag of worms\"", class => "phenotype", tag => 1 });
 
-        isnt($objs, undef, 'data returned');
-        is  ($objs->{id}, 'WBPhenotype:0000007', 'correct id returned - bag of worms');
-        is  ($objs->{label}, 'bag of worms', 'correct label returned - bag of worms');
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'WBPhenotype:0000007', 'correct id returned - bag of worms');
+        is  ($match->{label}, 'bag of worms', 'correct label returned - bag of worms');
 
     }
 
