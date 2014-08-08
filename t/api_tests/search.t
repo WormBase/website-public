@@ -50,6 +50,17 @@
 
     }
 
+    sub test_autocompelte {
+        my $it = $api->xapian->autocomplete("neuro", "disease");
+
+        isnt($it, undef, 'data returned');
+        my @matches = @{$it->{struct}};
+        is  (scalar @matches, 10, 'correct amount of results returned');
+        is  ($matches[0]->{id}, 'DOID:169', 'correct result first');
+
+
+    }
+
 }
 
 1;
