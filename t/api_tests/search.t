@@ -50,7 +50,7 @@
 
 
         # Search for a CDS object - wasn't working after refactor
-        $match = $api->xapian->fetch({ query => "JC8.10a", class => "cds"});
+        $match = $api->xapian->fetch({ query => "JC8.10a", class => "cds", label => 1});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'JC8.10a', 'correct id returned - jc810.a cds');
