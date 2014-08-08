@@ -1411,7 +1411,7 @@ sub _build_references {
     # Could also use ModelMap...
     my $tag = $object->at('Reference') || $object->at('Paper') || '';
     my @references = $object->$tag if $tag;
-    @references = map { $self->_api->xapian->_get_tag_info({ id => "$_", class => 'paper', fill => 1}) } @references;
+    @references = map { $self->_api->xapian->fetch({ id => "$_", class => 'paper', fill => 1}) } @references;
     return { description => 'references associated with this object',
              data        => @references ? \@references : undef };
 }

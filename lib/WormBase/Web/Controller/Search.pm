@@ -80,7 +80,7 @@ sub search :Path('/search') Args {
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
       # if it finds an exact match, redirect to the page
-        my $match = $api->xapian->search_exact({ query => $tmp_query, class => $search, tag => 1});
+        my $match = $api->xapian->fetch({ query => $tmp_query, class => $search, tag => 1});
         if($match){
           my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
           unless($query=~m/$match->{id}/){ $url = $url . "?query=$query";}
@@ -245,13 +245,12 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   my $api = $c->model('WormBaseAPI');
 
   $q = $self->_prep_query($q, 1);
-  my $it = $api->xapian->search_autocomplete($q, ($type=~/all/) ? undef : $type);
+  my $it = $api->xapian->autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
-    my $objs = $api->xapian->_pack_search_obj($o->get_document);
-    $objs->{url} = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
-    push(@ret, $objs);
+    $o->{url} = $self->_get_url($c, $o->{class}, $o->{id}, $o->{taxonomy}, $o->{coord}->{start});
+    push(@ret, $o);
   }
 
   $c->req->header('Content-Type' => 'application/json');
@@ -281,7 +280,7 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
   }
 
   my $tmp_query = $self->_prep_query($q);
-  my $count = $api->xapian->search_count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
+  my $count = $api->xapian->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
   $count = $self->_fuzzy_estimate($count);
 
   $c->response->body("$count");

@@ -57,7 +57,7 @@ sub search {
     my $page_size = $args->{page_size} || 10;
 
     my $t=[gettimeofday];
-    my $count = $class->search_count_estimate($q, $type, $species);
+    my $count = $class->count_estimate($q, $type, $species);
 
     $q =~ s/\s/\* /g;
     $q = "$q*";
@@ -104,7 +104,7 @@ sub search {
               page_size=>$page_size }, $error);
 }
 
-sub search_autocomplete {
+sub autocomplete {
     my ( $class, $q, $type) = @_;
     $q = $class->_add_type_range($q . "*", $type);
 
@@ -117,6 +117,7 @@ sub search_autocomplete {
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0, 10 );
     }
+    @mset = map { $class->_pack_search_obj($_->get_document ) } @mset;
 
     return ({ struct=>\@mset,
               search=>$class,
@@ -199,7 +200,7 @@ sub random {
     return $class->_get_obj($class->db->get_document(int(rand($class->_doccount)) + 1));
 }
 
-sub search_count_estimate {
+sub count_estimate {
  my ( $class, $q, $type, $species) = @_;
     $q =~ s/\s/\* /g;
     $q = "$q*";
@@ -289,6 +290,15 @@ sub _split_fields {
     $ret->{$label} = $array;
   }
   return $ret;
+}
+
+sub fetch {
+  my ($self, $args) = @_;
+  my $fill = $args->{fill};
+  my $footer = $args->{footer};
+  my $label = $args->{label};
+
+  return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->search_exact($args);
 }
 
 sub _get_tag_info {

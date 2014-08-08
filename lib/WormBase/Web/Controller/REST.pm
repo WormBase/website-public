@@ -1230,7 +1230,7 @@ sub _get_search_result {
     my $id = uri_unescape($parts[-1]);
     $c->log->debug("class: $class, id: $id");
 
-    my $ret = $api->xapian->_get_tag_info({ id => $id, class => $class, fill => 1, footer => $footer});
+    my $ret = $api->xapian->fetch({ id => $id, class => $class, fill => 1, footer => $footer});
     return $ret unless($ret->{name}{id} ne $id || $ret->{name}{class} ne $class || ($ret->{name}{taxonomy} && $ret->{name}{taxonomy} ne $parts[-3]));
   }
 

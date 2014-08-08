@@ -136,7 +136,7 @@ sub elsevier :Path("/elsevier/wblogo.png") Args(0) {
 
     if($doi){
       my $api = $c->model('WormBaseAPI');
-      my $object = $api->xapian->_get_tag_info({id => $doi, class => 'paper'});
+      my $object = $api->xapian->fetch({id => $doi, class => 'paper', label => 1});
       if($object->{id} =~ /WBPaper\d{8}/){
         $object = $api->fetch({ class => 'Paper', name => $object->{id}})
           or die "Could not fetch object";

@@ -117,7 +117,7 @@ sub _build_xapian {
   my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp, _api => $self});
 
   $xapian->search({ query => "*", page => 1, type => "gene"});
-  $xapian->search_autocomplete("*", "gene");
+  $xapian->autocomplete("*", "gene");
 
   return $xapian;
 }
@@ -191,12 +191,10 @@ sub _build__tools {
         $tools{$tool}  = $class->new({
             pre_compile => $self->tool->{$tool},
             log         => $self->log,
-	    search 	=> $self->xapian,
             _api        => $self,
             dsn         => $self->_services,
             tmp_base    => $self->tmp_base,
             version     => $self->version,
-            # ($tool eq 'aligner' ? (search => $self->search) : ()),
         });
         $self->log->debug( "service $tool registered");
     }
