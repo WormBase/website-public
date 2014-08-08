@@ -34,6 +34,20 @@
         isnt($models->{data}{table}, undef, 'table data structure returned');
         $models = $models->{data}{table};
         is  (scalar @$models, 3, 'two models returned');
+
+        # test curator remarks
+        $gene = $api->fetch({ class => 'Gene', name => 'WBGene00006763' });
+        $models = $gene->gene_models();
+
+        isnt($models, undef, 'data returned');
+        isnt($models->{data}, undef, 'data structure returned');
+        isnt($models->{data}{remarks}, undef, 'remarks data structure returned');
+
+        my $ae = $models->{data}{remarks}{3}{evidence}{Accession_evidence};
+        is  (scalar @$ae, 2, 'two accession evidences returned');
+        is  ($ae->[0]{id}, 'AF283324', 'correct accession returned');
+        is  ($ae->[0]{class}, 'sequence', 'correct class returned');
+
     }
 
     # Tests whether the _longest_segment method works - particularly
