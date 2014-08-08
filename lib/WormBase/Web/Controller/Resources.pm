@@ -141,7 +141,7 @@ sub _get_report {
     $c->log->debug($name);
 
     my $api = $c->model('WormBaseAPI');
-    my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
+    my $object = $api->xapian->fetch({ id => $name, class => lc($class), label => 1 });
 
     if(!($object->{label}) || $object->{id} ne $name || lc($object->{class}) ne lc($class)){
       $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1", 307);

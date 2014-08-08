@@ -37,7 +37,7 @@ BEGIN {
             Person    => [qw(Person Author)],
             Cds       => [qw(CDS cds)],
             Rnai      => 'RNAi',
-            Disease   => [qw(DO_term Do_term do_term)],
+            Disease   => 'DO_term',
             Go_term   => 'GO_term',
             Wbprocess => 'WBProcess',
             Model     => 'Model', #for schema display to work

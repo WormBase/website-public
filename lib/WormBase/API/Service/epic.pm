@@ -60,7 +60,7 @@ sub run {
     if ($request_class =~ /gene/i) {
 	my $api    = $c->model('WormBaseAPI');
 	$request_name =~ s/-/_/g;
-	my $object = $api->xapian->_get_tag_info($c, $request_name, lc($request_class) ,1);
+	my $object = $api->xapian->fetch({ id => $request_name, class => lc($request_class), fill => 1});
 	$request_name = $object->{name}->{id};
     }
 
