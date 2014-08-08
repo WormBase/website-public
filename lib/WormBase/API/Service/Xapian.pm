@@ -409,7 +409,7 @@ sub _add_type_range {
   if( $type ){
       my $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($type)}
                 || $self->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($type)};
-      my %classes = map { $_ => undef } ref($aceclass) eq 'ARRAY' ? map {lc($_)} @{$aceclass} : ($type);
+      my %classes = map { $_ => undef } ref($aceclass) eq 'ARRAY' ? map {lc($_)} @{$aceclass} : (lc($aceclass));
       foreach my $t (keys %classes){
         $q .= " $t..$t";
       }
