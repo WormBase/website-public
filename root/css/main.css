@@ -1070,7 +1070,7 @@ a#fade:hover {
 .ui-icon-pdf {width: 16px; height: 16px; margin-top:0.1em; cursor:pointer; float:right; background-image: url(../img/pdf-icon.png); }
 .ui-icon-pubmed { width: 40px; height: 17px; cursor:pointer;  background-image : url(../img/buttons/pubmed.gif); }
 
-.ui-icon-dna {background-image: url(../img/new-icons.png); background-position: -204px -21px}
+.ui-icon-dna {background-image: url(../img/new-icons.png); background-position: -204px -18px}
 
 .ui-icon-1 { background-position: 0px 0px; }
 .ui-icon-1-1 { background-position: -16px 0px; }
@@ -2897,6 +2897,10 @@ div.inline-columns img {
   float:left;
 }
 
+.button.slink span {
+  float:none;
+}
+
 
 
 .button{
@@ -2918,6 +2922,7 @@ div.inline-columns img {
 .button.slink{
   margin:0 0.5em 0 0;
   height:1em;
+  float:none;
 }
 
 .button.slink .ui-icon{
