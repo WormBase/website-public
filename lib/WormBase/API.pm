@@ -36,6 +36,10 @@ has 'stringified_responses' => (
     default  => 1,
 );
 
+has 'config' => (
+    is      => 'ro',
+);
+
 # This is just the configuration directory
 # for instantiating Log::Log4perl object. Janky.
 has pre_compile => (
@@ -112,8 +116,8 @@ sub _build_xapian {
 
   my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp, _api => $self});
 
-  $xapian->search($self, "*", 1, "gene");
-  $xapian->search_autocomplete($self, "*", "gene");
+  $xapian->search({ query => "*", page => 1, type => "gene"});
+  $xapian->autocomplete("*", "gene");
 
   return $xapian;
 }
@@ -187,12 +191,10 @@ sub _build__tools {
         $tools{$tool}  = $class->new({
             pre_compile => $self->tool->{$tool},
             log         => $self->log,
-	    search 	=> $self->xapian,
             _api        => $self,
             dsn         => $self->_services,
             tmp_base    => $self->tmp_base,
             version     => $self->version,
-            # ($tool eq 'aligner' ? (search => $self->search) : ()),
         });
         $self->log->debug( "service $tool registered");
     }

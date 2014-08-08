@@ -17,12 +17,11 @@ sub run {
     my $query = $param->{name};
 
     my $api = $c->model('WormBaseAPI');
-    my ($it,$res)= $api->xapian->search_exact($c, $query, 'gene');
+    my $match = $api->xapian->fetch({query => $query, class => 'gene'});
 
 
-    my $o = @{$it->{struct}}[0];
     my $service_dbh = $api->_services->{$api->default_datasource}->dbh || return 0;
-    my $sequence = $service_dbh->fetch(-class => $o->get_document->get_value(0), -name => $o->get_document->get_value(1));
+    my $sequence = $service_dbh->fetch(-class => $match->{class}, -name => $match->{id});
 
 
     return {msg=>"No such sequence ID known."} unless $sequence  ;
@@ -252,8 +251,8 @@ sub run {
 
   # Link into gbrowse image using the sequence object (a gene object)
     $self->log->debug("ALIGNER: before print_image: $align_start $align_end\n");
-    my $gene = $api->fetch({aceclass=> $o->get_document->get_value(0),
-                          name => $o->get_document->get_value(1)}) or die "$!";
+    my $gene = $api->fetch({aceclass=> $doc->get_value(0),
+                          name => $doc->get_value(1)}) or die "$!";
 
 #     $hash->{picture}= $self->genomic_picture($sequence, $align_start, $align_end);
     $hash->{picture} = $gene->genomic_image;
