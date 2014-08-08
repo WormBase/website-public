@@ -127,7 +127,7 @@ sub autocomplete {
               page_size=>10 });
 }
 
-sub search_exact {
+sub _search_exact {
     my ($class, $args) = @_;
     my $q = $args->{query};
     my $type = $args->{class};
@@ -305,7 +305,7 @@ sub fetch {
   my $footer = $args->{footer};
   my $label = $args->{label};
 
-  return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->search_exact($args);
+  return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->_search_exact($args);
 }
 
 sub _get_tag_info {
@@ -327,7 +327,7 @@ sub _get_tag_info {
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
-        my $doc = $self->search_exact({query => $id, class => lc($ace)}, doc => 1);
+        my $doc = $self->_search_exact({query => $id, class => lc($ace)}, doc => 1);
         if($doc){
           return $self->_get_obj($doc, $footer) if $fill;
 
@@ -337,7 +337,7 @@ sub _get_tag_info {
         }
       }
     }else{
-      my $doc = $self->search_exact({query => $id, class => $aceclass ? lc($aceclass) : undef, doc => 1 });
+      my $doc = $self->_search_exact({query => $id, class => $aceclass ? lc($aceclass) : undef, doc => 1 });
       return ($fill ? $self->_get_obj($doc, $footer) : $self->_pack_search_obj($doc)) if $doc;
     }
   }
