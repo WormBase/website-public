@@ -48,6 +48,14 @@
         is  ($match->{id}, 'WBPhenotype:0000007', 'correct id returned - bag of worms');
         is  ($match->{label}, 'bag of worms', 'correct label returned - bag of worms');
 
+
+        # Search for a CDS object - wasn't working after refactor
+        $match = $api->xapian->fetch({ query => "JC8.10a", class => "cds"});
+
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'JC8.10a', 'correct id returned - jc810.a cds');
+        is  ($match->{label}, 'JC8.10a', 'correct label returned - jc810.a cds');
+
     }
 
     sub test_autocompelte {

@@ -186,7 +186,7 @@ sub count_estimate {
 
 sub _search_exact {
     my ($class, $args) = @_;
-    my $q = $args->{query};
+    my $q = $args->{query} || $args->{id};
     my $type = $args->{class};
     my $doc = $args->{doc};
 
@@ -320,11 +320,12 @@ sub _split_fields {
 sub _get_tag_info {
   my ($self, $args) = @_;
 
-  my $id = $args->{id};
+  my $id = $args->{id} || $args->{query};
   my $class = $args->{class};
   my $fill = $args->{fill};
   my $footer = $args->{footer};
   my $aceclass = $args->{aceclass};
+  my $tag;
 
   if ($class) { # WB class was provided
       $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($class)}
@@ -349,10 +350,10 @@ sub _get_tag_info {
       my $doc = $self->_search_exact({query => $id, class => $aceclass ? lc($aceclass) : undef, doc => 1 });
       return ($fill ? $self->_get_obj($doc, $footer) : $self->_pack_search_obj($doc)) if $doc;
     }
+  }else{
+    my $object = $self->_api->fetch({ class => ucfirst $class, name => $id });
+    $tag = $object->name->{data} if ($object > 0);
   }
-
-  my $object = $self->_api->fetch({ class => ucfirst $class, name => $id });
-  my $tag = $object->name->{data} if ($object > 0);
 
   $tag =  { id => $id,
            class => $class
