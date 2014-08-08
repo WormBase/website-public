@@ -212,8 +212,8 @@ sub run {
 
     # Link into gbrowse image using the sequence object (a gene object)
     $self->log->debug("ALIGNER: before print_image: $align_start $align_end\n");
-    my $gene = $api->fetch({aceclass=> $doc->get_value(0),
-                          name => $doc->get_value(1)}) or die "$!";
+    my $gene = $api->fetch({aceclass=> $match->{class},
+                          name => $match->{id}) or die "$!";
 
     $hash->{picture} = $gene->genomic_image;
 
