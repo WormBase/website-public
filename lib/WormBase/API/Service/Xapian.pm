@@ -131,7 +131,7 @@ sub search_exact {
     my ($class, $args) = @_;
     my $q = $args->{query};
     my $type = $args->{class};
-    my $tag = $args->{tag};
+    my $doc = $args->{doc};
 
     my ($query, $enq, @mset);
     if( $type ){
@@ -180,8 +180,8 @@ sub search_exact {
     }
 
     if($mset[0]){
-      my $doc = $mset[0]->get_document;
-      return $tag ? $class->_pack_search_obj($doc) : $doc;
+      my $d = $mset[0]->get_document;
+      return $doc ? $d : $class->_pack_search_obj($d);
     }
 
 }
@@ -292,6 +292,13 @@ sub _split_fields {
   return $ret;
 }
 
+
+# This will fetch the object from Xapian and return a hashref containing the id, label and class (similar to _pack_obj)
+# label - return the correct label (important for protein and interaction)
+#       - default returns the label found
+# fill - return more than just the name tag, all info from search results included
+# footer - if a filled tag is returns, will insert this info as a footer
+
 sub fetch {
   my ($self, $args) = @_;
   my $fill = $args->{fill};
@@ -320,7 +327,7 @@ sub _get_tag_info {
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
-        my $doc = $self->search_exact({query => $id, class => lc($ace)});
+        my $doc = $self->search_exact({query => $id, class => lc($ace)}, doc => 1);
         if($doc){
           return $self->_get_obj($doc, $footer) if $fill;
 
@@ -330,7 +337,7 @@ sub _get_tag_info {
         }
       }
     }else{
-      my $doc = $self->search_exact({query => $id, class => $aceclass ? lc($aceclass) : undef });
+      my $doc = $self->search_exact({query => $id, class => $aceclass ? lc($aceclass) : undef, doc => 1 });
       return ($fill ? $self->_get_obj($doc, $footer) : $self->_pack_search_obj($doc)) if $doc;
     }
   }

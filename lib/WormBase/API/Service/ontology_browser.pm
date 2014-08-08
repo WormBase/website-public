@@ -43,10 +43,10 @@ sub run {
       unless($name =~ m/WBbt:|GO:|WBPhenotype:/i){
 	# this is a hack for search exact match in xapian,need to index the term or find other way around -xq
  	$name =~ s/ /:/g ;
-	my $doc = $self->_api->xapian->fetch({ query => $name, class => $class});
+	my $match = $self->_api->xapian->fetch({ query => $name, class => $class});
 
-	if ($doc ){
-	    $name= $doc->get_value(1);
+	if ($match ){
+	    $name = $match->{id};
 	}
 	else {
 	    return { msg=>"multiple terms are found",

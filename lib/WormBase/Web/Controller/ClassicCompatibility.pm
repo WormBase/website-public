@@ -64,10 +64,10 @@ sub misc :Path('/db') Args  {
       my $api    = $c->model('WormBaseAPI');
       my $object = $api->fetch({ class => ucfirst $class, name => $name });
       if ( !$object || $object == -1 ){
-        my $doc = $api->xapian->fetch({query => $self->_prep_query($name), class => $class});
-        if($name && $doc && ($name ne '*') && ($name ne 'all')){
-          $url = $self->_get_url($c, $doc->get_value(2), $doc->get_value(1), $doc->get_value(5));
-          unless($name=~m/$doc->get_value(1)/){ $url = $url;}
+        my $match = $api->xapian->fetch({query => $self->_prep_query($name), class => $class});
+        if($name && $match && ($name ne '*') && ($name ne 'all')){
+          $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy});
+          unless($name=~m/$match->{id}/){ $url = $url;}
         }
         $url ||= $c->uri_for('/search',$class,"$name")->path;
       }else{

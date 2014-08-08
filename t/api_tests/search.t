@@ -26,7 +26,7 @@
 
         # Search for "neurodegenerative disease" in disease class
         # Issue #2971
-        my $match = $api->xapian->fetch({ query => "\"neurodegenerative disease\"", class => "disease", tag => 1 });
+        my $match = $api->xapian->fetch({ query => "\"neurodegenerative disease\"", class => "disease"});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'DOID:1289', 'correct id returned - neurodegenerative disease search');
@@ -34,7 +34,7 @@
 
 
         # Search for unc-26 in gene class
-        $match = $api->xapian->fetch({ query => "unc-26", class => "gene", tag => 1 });
+        $match = $api->xapian->fetch({ query => "unc-26", class => "gene"});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'WBGene00006763', 'correct id returned - unc-26 search');
@@ -42,7 +42,7 @@
 
 
         # Search for "bag of worms" in phenotype class
-        $match = $api->xapian->fetch({ query => "\"bag of worms\"", class => "phenotype", tag => 1 });
+        $match = $api->xapian->fetch({ query => "\"bag of worms\"", class => "phenotype"});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'WBPhenotype:0000007', 'correct id returned - bag of worms');

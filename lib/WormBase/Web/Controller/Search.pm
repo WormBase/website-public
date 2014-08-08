@@ -80,7 +80,7 @@ sub search :Path('/search') Args {
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
       # if it finds an exact match, redirect to the page
-        my $match = $api->xapian->fetch({ query => $tmp_query, class => $search, tag => 1});
+        my $match = $api->xapian->fetch({ query => $tmp_query, class => $search});
         if($match){
           my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
           unless($query=~m/$match->{id}/){ $url = $url . "?query=$query";}

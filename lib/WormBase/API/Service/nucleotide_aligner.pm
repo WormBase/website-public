@@ -81,10 +81,10 @@ sub run {
 
     my $api = $c->model('WormBaseAPI');
 
-    my $doc = $api->xapian->fetch({query => $sequence_id, class => 'gene'});
-    return unless $doc;
+    my $match = $api->xapian->fetch({query => $sequence_id, class => 'gene'});
+    return unless $match;
     my $service_dbh = $api->_services->{$api->default_datasource}->dbh;
-    my $sequence = $service_dbh->fetch(-class => $doc->get_value(0), -name => $doc->get_value(1));
+    my $sequence = $service_dbh->fetch(-class => $match->{class}, -name => $match->{id});
 
 
     return {msg=>"No such sequence ID known."} unless $sequence;
