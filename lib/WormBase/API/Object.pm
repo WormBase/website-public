@@ -489,11 +489,9 @@ sub _get_evidence {
                   }
                   ($evidence,$class) = ($accession,$database);
                   $label = "$database:$accession";
-                  my $it = $self->_api->xapian->search_exact($self, "$evidence", "sequence");
-                  my $o = @{$it->{struct}}[0];
-                  my $seq = $o->get_document if $o;
+                  my $match = $self->_api->xapian->fetch({query => "$evidence", class => "sequence"});
 
-                  push( @evidences, { id=> $seq ? $seq->get_value(1) : "$evidence", label => "$label", class => $seq ? "sequence" : "all"});
+                  push( @evidences, { id=> $match ? $match->{id} : "$evidence", label => "$label", class => $match ? "sequence" : "all"});
                 }
               }
               next;
