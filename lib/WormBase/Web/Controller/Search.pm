@@ -80,12 +80,10 @@ sub search :Path('/search') Args {
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
       # if it finds an exact match, redirect to the page
-        my $it = $api->xapian->search_exact($c, $tmp_query, $search);
-        if((scalar (@{$it->{struct}}) == 1 )&& @{$it->{struct}}[0]){
-          my $o = @{$it->{struct}}[0];
-          my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
-          my $url = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
-          unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
+        my $match = $api->xapian->fetch({ query => $tmp_query, class => $search});
+        if($match){
+          my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
+          unless($query=~m/$match->{id}/){ $url = $url . "?query=$query";}
           $c->res->redirect($url, 307);
           return;
         }
@@ -102,17 +100,19 @@ sub search :Path('/search') Args {
     }
 
     # this is the actual search
-    my ($it, $error) = $api->xapian->search($c, $tmp_query, $page_count, $search, $c->stash->{species});
+    my ($it, $error) = $api->xapian->search({ query => $tmp_query,
+                                              page => $page_count,
+                                              type => $search,
+                                              species => $c->stash->{species} });
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{error} = ($query_error || "") . ($error || "");
-    my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
-    $c->stash->{results} = \@ret;
+    $c->stash->{results} = $it->{matches};
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
 
-    my $count = $api->xapian->search_count_estimate($c, $tmp_query, $search, $c->stash->{species});
+    my $count = $it->{count};
     $c->stash->{count} = $count;
     $c->stash->{count_estimate} = $self->_fuzzy_estimate($count);
 
@@ -124,7 +124,7 @@ sub search :Path('/search') Args {
     # Change the data structure a bit so the CSV converter can read it
     if ( $content_type eq 'text/csv' ) {
       my %seen;
-      @ret = map {
+      my @ret = map {
           my $ret = { id => $_->{name}->{id},
                       label => $_->{name}->{label},
                       class => $_->{name}->{class},
@@ -136,7 +136,7 @@ sub search :Path('/search') Args {
             }
           }
           $ret;
-        } @ret;
+        } @{$c->stash->{results}};
 
       my @columns = (('id', 'label', 'class', 'taxonomy'), keys %seen);
       # unshift(@columns, ('id', 'label', 'class', 'taxonomy'));
@@ -245,13 +245,12 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   my $api = $c->model('WormBaseAPI');
 
   $q = $self->_prep_query($q, 1);
-  my $it = $api->xapian->search_autocomplete($c, $q, ($type=~/all/) ? undef : $type);
+  my $it = $api->xapian->autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
-    my $objs = $api->xapian->_pack_search_obj($c, $o->get_document);
-    $objs->{url} = $self->_get_url($c, $objs->{class}, $objs->{id}, $objs->{taxonomy}, $objs->{coord}->{start});
-    push(@ret, $objs);
+    $o->{url} = $self->_get_url($c, $o->{class}, $o->{id}, $o->{taxonomy}, $o->{coord}->{start});
+    push(@ret, $o);
   }
 
   $c->req->header('Content-Type' => 'application/json');
@@ -281,7 +280,7 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
   }
 
   my $tmp_query = $self->_prep_query($q);
-  my $count = $api->xapian->search_count_estimate($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
+  my $count = $api->xapian->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
   $count = $self->_fuzzy_estimate($count);
 
   $c->response->body("$count");

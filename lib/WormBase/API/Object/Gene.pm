@@ -876,11 +876,18 @@ sub microarray_topology_map_position {
     my @profiles = $segments[0]->features('experimental_result_region:Expr_profile');
     my @p = map {  $_->info } @profiles or return $datapack;
 
-    my @data = map {{
+    my @data = ();
+    foreach my $pid (@p){
+        my $profile_api_obj = $self->_api->fetch({ class => 'Expr_profile', name => $pid});
+        my $mountain = $profile_api_obj->pcr_data()->{'data'}->{'mountain'} if $profile_api_obj;
+        my $label = $mountain ? "$pid Mountain: $mountain" : "$pid";
+        my $dat = {
             'class' => 'expr_profile',
-            'label' => $_,
-            'id' => $_
-       }} @p;
+            'label' => $label,
+            'id' => $pid,
+        };
+        push @data, $dat;
+    }
 
     $datapack->{data} = \@data if @data;
     return $datapack;

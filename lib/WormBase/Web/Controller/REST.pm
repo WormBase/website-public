@@ -14,6 +14,7 @@ use JSON;
 use URI::Escape;
 use Text::MultiMarkdown 'markdown';
 use DateTime;
+use Encode;
 
 __PACKAGE__->config(
     'default'          => 'text/x-yaml',
@@ -585,14 +586,14 @@ sub feed_POST {
         $self->_issue_email({ c       => $c,
                               page    => $page,
                               new     => 1,
-                              content => $content,
+                              content => encode('utf8', $content),
                               change  => undef,
                               reporter_email   => $email,
-                              reporter_name    => $name,
+                              reporter_name    => encode('utf8', $name),
                               title   => $title,
                               url     => $url,
                               issue_url    => $issue_url,
-                              issue_title  => $title . ": " . $issue_title,
+                              issue_title  => encode('utf8', $title . ": " . $issue_title),
                               issue_number => $issue_number});
         my $message = "<p>You can track the progress on your question, <a href='$issue_url' target='_blank'>$issue_title (#$issue_number)</a> on our <a href='$issue_url' target='_blank'>issue tracker</a>.</p>";
         $self->status_ok(
@@ -927,7 +928,7 @@ sub widget_home_GET {
       if($c->check_any_user_role(qw/admin curator/)){
         $c->stash->{recent} = $self->_recently_saved($c,3);
       }
-      my @rand = ($c->model('WormBaseAPI')->xapian->random($c));
+      my @rand = ($c->model('WormBaseAPI')->xapian->random());
       $c->stash->{random} = \@rand;
 
     } elsif($widget eq 'discussion') {
@@ -1121,7 +1122,7 @@ END
 	       labels => [ 'HelpDesk', $title ],
   };
 
-  my $request_json = $json->encode($data);
+  my $request_json = $json->utf8(1)->encode($data);
   $req->content($request_json);
 
   # Send request, get response.
@@ -1229,7 +1230,7 @@ sub _get_search_result {
     my $id = uri_unescape($parts[-1]);
     $c->log->debug("class: $class, id: $id");
 
-    my $ret = $api->xapian->_get_tag_info($c, $id, $class, 1, $footer);
+    my $ret = $api->xapian->fetch({ id => $id, class => $class, fill => 1, footer => $footer});
     return $ret unless($ret->{name}{id} ne $id || $ret->{name}{class} ne $class || ($ret->{name}{taxonomy} && $ret->{name}{taxonomy} ne $parts[-3]));
   }
 
