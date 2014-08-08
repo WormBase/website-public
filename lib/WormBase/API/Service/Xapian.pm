@@ -47,6 +47,7 @@ has '_api' => (
 );
 
 
+# Main search - returns a page of results
 sub search {
     my ( $class, $args) = @_;
 
@@ -104,6 +105,7 @@ sub search {
               page_size=>$page_size }, $error);
 }
 
+# Autocomplete - returns 10 results
 sub autocomplete {
     my ( $class, $q, $type) = @_;
     $q = $class->_add_type_range($q . "*", $type);
@@ -125,6 +127,61 @@ sub autocomplete {
               query_obj=>$query,
               page=>1,
               page_size=>10 });
+}
+
+
+
+# This will fetch the object from Xapian and return a hashref containing the id, label and class (similar to _pack_obj)
+# label - return the correct label (important for protein and interaction)
+#       - default returns the label stored in Xapian
+# fill - return more than just the name tag, all info from search results included
+# footer - if a filled tag is returns, will insert this info as a footer
+
+sub fetch {
+  my ($self, $args) = @_;
+  my $fill = $args->{fill};
+  my $footer = $args->{footer};
+  my $label = $args->{label};
+
+  return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->_search_exact($args);
+}
+
+# Returns a random filled object from the database
+
+sub random {
+    my ( $class) = @_;
+    return $class->_get_obj($class->db->get_document(int(rand($class->_doccount)) + 1));
+}
+
+# Estimates the search results amount - accurate up to 500
+
+sub count_estimate {
+ my ( $class, $q, $type, $species) = @_;
+    $q =~ s/\s/\* /g;
+    $q = "$q*";
+
+    if($type){
+      $q = $class->_add_type_range($q, $type);
+
+      if(($type =~ m/paper/) && ($species)){
+        my $s = $class->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
+        $q .= " ptype:$s..$s" if defined $s;
+        $species = undef;
+      }
+    }
+
+    if($species){
+        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        $q .= " species:$s..$s" if defined $s;
+    }
+
+    my $query=$class->_setup_query($q, $class->qp, 2|512|16);
+    my $enq       = $class->db->enquire ( $query );
+
+    my $mset      = $enq->get_mset( 0, 0, 500 );
+
+    my $amt = $mset->get_matches_estimated();
+    return $amt;
 }
 
 sub _search_exact {
@@ -195,40 +252,6 @@ sub _check_exact_match {
   return (($q =~ m/$label/) || ($q =~ m/$id/));
 }
 
-sub random {
-    my ( $class) = @_;
-    return $class->_get_obj($class->db->get_document(int(rand($class->_doccount)) + 1));
-}
-
-sub count_estimate {
- my ( $class, $q, $type, $species) = @_;
-    $q =~ s/\s/\* /g;
-    $q = "$q*";
-
-    if($type){
-      $q = $class->_add_type_range($q, $type);
-
-      if(($type =~ m/paper/) && ($species)){
-        my $s = $class->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
-        $q .= " ptype:$s..$s" if defined $s;
-        $species = undef;
-      }
-    }
-
-    if($species){
-        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s" if defined $s;
-    }
-
-    my $query=$class->_setup_query($q, $class->qp, 2|512|16);
-    my $enq       = $class->db->enquire ( $query );
-
-    my $mset      = $enq->get_mset( 0, 0, 500 );
-
-    my $amt = $mset->get_matches_estimated();
-    return $amt;
-}
-
 
 =item extract_data <item> <query>
 
@@ -293,20 +316,6 @@ sub _split_fields {
 }
 
 
-# This will fetch the object from Xapian and return a hashref containing the id, label and class (similar to _pack_obj)
-# label - return the correct label (important for protein and interaction)
-#       - default returns the label found
-# fill - return more than just the name tag, all info from search results included
-# footer - if a filled tag is returns, will insert this info as a footer
-
-sub fetch {
-  my ($self, $args) = @_;
-  my $fill = $args->{fill};
-  my $footer = $args->{footer};
-  my $label = $args->{label};
-
-  return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->_search_exact($args);
-}
 
 sub _get_tag_info {
   my ($self, $args) = @_;
