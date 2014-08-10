@@ -47,20 +47,16 @@ requires '_build__gene'; # no fallback to build segments... yet (or ever?).
 
 sub anatomic_expression_patterns {
     my $self   = shift;
-    my @object = @{$self->_gene};
-    my @genes ;
+    my $object = $self->_gene;
+    my %data_pack;
+
+    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
+    $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
 
 
-    foreach my $obj (@object){
-
-        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$obj.jpg");
-        my $image = catfile($self->pre_compile->{gene_expression_path}, "$obj.jpg") if (-e $file && ! -z $file);
-        push @genes , { "image" => $image } if $image ;
-    }
-    
     return {
         description => 'expression patterns for the gene',
-        data        => @genes ? \@genes : undef
+        data        => %data_pack ? \%data_pack : undef,
     };
 }
 
