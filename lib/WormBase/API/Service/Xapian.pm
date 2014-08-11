@@ -337,7 +337,7 @@ sub _get_tag_info {
                            # contain the display name for the protein
     if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
       foreach my $ace (@$aceclass) {
-        my $doc = $self->_search_exact({query => $id, class => lc($ace)}, doc => 1);
+        my $doc = $self->_search_exact({query => $id, class => lc($ace), doc => 1});
         if($doc){
           return $self->_get_obj($doc, $footer) if $fill;
 
