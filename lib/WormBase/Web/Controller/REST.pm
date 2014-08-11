@@ -678,6 +678,7 @@ sub widget_GET {
         my @fields = $c->_get_widget_fields( $class, $widget );
 
         my $fatal_non_compliance = 0;
+        my $skip_cache;
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
@@ -694,6 +695,11 @@ sub widget_GET {
                 $c->log->$log("\t$_") foreach @problems;
             }
 
+            # a field can force an entire widget to not caching
+            if ($data->{'error'}){
+                $skip_cache = 1;
+            }
+
             # Conditionally load up the stash (for now) for HTML requests.
             $c->stash->{fields}->{$field} = $data;
         }
@@ -704,7 +710,7 @@ sub widget_GET {
             die "Non-compliant data. See log for fatal error.\n";
         }
 
-        $c->set_cache($key => $c->stash->{fields});
+        $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
     }
 
     # Forward to the view to render HTML, set stash variables
@@ -928,7 +934,7 @@ sub widget_home_GET {
       if($c->check_any_user_role(qw/admin curator/)){
         $c->stash->{recent} = $self->_recently_saved($c,3);
       }
-      my @rand = ($c->model('WormBaseAPI')->xapian->random($c));
+      my @rand = ($c->model('WormBaseAPI')->xapian->random());
       $c->stash->{random} = \@rand;
 
     } elsif($widget eq 'discussion') {
@@ -1230,7 +1236,7 @@ sub _get_search_result {
     my $id = uri_unescape($parts[-1]);
     $c->log->debug("class: $class, id: $id");
 
-    my $ret = $api->xapian->_get_tag_info($c, $id, $class, 1, $footer);
+    my $ret = $api->xapian->fetch({ id => $id, class => $class, fill => 1, footer => $footer});
     return $ret unless($ret->{name}{id} ne $id || $ret->{name}{class} ne $class || ($ret->{name}{taxonomy} && $ret->{name}{taxonomy} ne $parts[-3]));
   }
 
