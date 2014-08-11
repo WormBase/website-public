@@ -84,7 +84,8 @@ sub barboxchart_parameters {
     my $height = $customization->{height};
     if ($customization->{adjust_height_for_less_than_X_facets}) {
         my $normally_assumed_facets = $customization->{adjust_height_for_less_than_X_facets};
-        $height = "$height / ($normally_assumed_facets - length(levels(factor(projects))) + 1)";
+        my $actual_num_facets = 'length(levels(factor(projects)))';
+        $height = "min($height, $height * $actual_num_facets / $normally_assumed_facets )";
     }
 
     # Pretty-ization:
@@ -219,7 +220,7 @@ life_stages = c($life_stage_list);
 data = data.frame(labels, values, projects, life_stages);
 
 # Preserve ordering:
-data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE)
+data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE);
 
 $format("$image_tmp_path", width = $width, height = $height);
 print(ggplot(data, aes(factor(life_stages), y = values, fill = projects)) + geom_boxplot()$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + $coloring$facets_guides)$facets_grid);
@@ -242,4 +243,3 @@ sub _rplot_subdir {
 }
 
 1;
-
