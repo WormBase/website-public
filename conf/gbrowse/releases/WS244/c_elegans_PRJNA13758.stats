@@ -1,0 +1,173 @@
+gff_version: 3
+file: /usr/local/ftp/pub/wormbase/releases/WS244/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS244.annotations.gff3.gz
+feature	children	source	method	track	count
+CDS:GeneMarkHMM		GeneMarkHMM	CDS	Prediction: GeneMarkHMM (prediction_genemarkhmm)	132967
+CDS:Genefinder		Genefinder	CDS	Prediction: GeneFinder (prediction_genefinder)	133896
+CDS:WormBase		WormBase	CDS	Genes (protein coding) (genes_protein_coding)	179784
+	CDS:WormBase_imported	WormBase_imported	CDS	Genes (protein coding) (genes_protein_coding)	0
+CDS:mGene		mGene	CDS	Prediction: mGene (prediction_mgene)	134050
+CDS:mSplicer_orf		mSplicer_orf	CDS	Prediction: mSplicer-ORF (prediction_msplicer_orf)	168585
+CDS:mSplicer_transcript		mSplicer_transcript	CDS	Prediction: mSplicer (prediction_msplicer_transcript)	171688
+DNAseI_hypersensitive_site:DNAseI_hypersensitive_site		DNAseI_hypersensitive_site	DNAseI_hypersensitive_site	DNAseI hypersensitive site (dnaseI_hypersensitive_site)	7095
+G_quartet:pmid18538569		pmid18538569	G_quartet	G4 Motif (g4_motif)	2907
+PCR_product:GenePair_STS		GenePair_STS	PCR_product	PCR Assays (pcr_products)	79511
+PCR_product:Orfeome		Orfeome	PCR_product	ORFeome PCR Products (orfeome_pcr_products)	22176
+RNAi_reagent:RNAi_primary		RNAi_primary	RNAi_reagent	RNAi experiments (primary targets) (variations_rnai_best)	235451
+	experimental_result_region:cDNA_for_RNAi	cDNA_for_RNAi	experimental_result_region	RNAi experiments (primary targets) (variations_rnai_best)	2828
+RNAi_reagent:RNAi_secondary		RNAi_secondary	RNAi_reagent	RNAi experiments (secondary targets) (variations_rnai_other)	71640
+SAGE_tag:SAGE_tag		SAGE_tag	SAGE_tag	SAGE tags (sage_tags)	167711
+SL1_acceptor_site:SL1		SL1	SL1_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	18461
+	SL2_acceptor_site:SL2	SL2	SL2_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	7475
+TF_binding_site:TF_binding_site		TF_binding_site	TF_binding_site	Transcription factor binding sites (transcription_factor_binding_site)	496
+TF_binding_site:TF_binding_site_region		TF_binding_site_region	TF_binding_site	Transcription factor binding regions (transcription_factor_binding_region)	325743
+assembly_component:Genbank		Genbank	assembly_component	Genbank submissions (genbank_entries)	3267
+assembly_component:Genomic_canonical		Genomic_canonical	assembly_component	Contig submissions (genomic_canonical)	3267
+assembly_component:Link		Link	assembly_component	Links and Superlinks (links_and_superlinks)	25
+	assembly_component:Genomic_canonical	Genomic_canonical	assembly_component	Links and Superlinks (links_and_superlinks)	3267
+base_call_error_correction:RNASeq		RNASeq	base_call_error_correction	Genome sequence corrections (genome_sequence_errors_corrected)	1553
+binding_site:PicTar		PicTar	binding_site	Binding sites (predicted) (binding_sites_predicted)	11184
+	binding_site:miRanda	miRanda	binding_site	Binding sites (predicted) (binding_sites_predicted)	71796
+	binding_site:cisRed	cisRed	binding_site	Binding sites (predicted) (binding_sites_predicted)	7929
+binding_site:binding_site		binding_site	binding_site	Binding sites (curated) (binding_sites_curated)	56
+binding_site:binding_site_region		binding_site_region	binding_site	Binding regions (binding_regions)	307
+deletion:KO_consortium		KO_consortium	deletion	High-throughput alleles (variations_high_throughput_alleles)	2409
+	deletion:CGH_allele	CGH_allele	deletion	High-throughput alleles (variations_high_throughput_alleles)	68
+	complex_substitution:KO_consortium	KO_consortium	complex_substitution	High-throughput alleles (variations_high_throughput_alleles)	1056
+	point_mutation:KO_consortium	KO_consortium	point_mutation	High-throughput alleles (variations_high_throughput_alleles)	2698
+	deletion:Variation_project	Variation_project	deletion	High-throughput alleles (variations_high_throughput_alleles)	0
+	insertion_site:Variation_project	Variation_project	insertion_site	High-throughput alleles (variations_high_throughput_alleles)	0
+	point_mutation:Variation_project	Variation_project	point_mutation	High-throughput alleles (variations_high_throughput_alleles)	21643
+	complex_substitution:NBP_knockout	NBP_knockout	complex_substitution	High-throughput alleles (variations_high_throughput_alleles)	1594
+	deletion:NBP_knockout	NBP_knockout	deletion	High-throughput alleles (variations_high_throughput_alleles)	4032
+	transposable_element_insertion_site:NemaGENETAG_consortium	NemaGENETAG_consortium	transposable_element_insertion_site	High-throughput alleles (variations_high_throughput_alleles)	15298
+deletion:PCoF_Allele		PCoF_Allele	deletion	Change-of-function alleles (variations_change_of_function_alleles)	622
+	complex_substitution:PCoF_Allele	PCoF_Allele	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	78
+	insertion_site:PCoF_Allele	PCoF_Allele	insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	29
+	substitution:PCoF_Allele	PCoF_Allele	substitution	Change-of-function alleles (variations_change_of_function_alleles)	3946
+	point_mutation:PCoF_Allele	PCoF_Allele	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	35
+	transposable_element_insertion_site:PCoF_Allele	PCoF_Allele	transposable_element_insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	0
+	deletion:PCoF_CGH_allele	PCoF_CGH_allele	deletion	Change-of-function alleles (variations_change_of_function_alleles)	67
+	complex_substitution:PCoF_KO_consortium	PCoF_KO_consortium	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	989
+	deletion:PCoF_KO_consortium	PCoF_KO_consortium	deletion	Change-of-function alleles (variations_change_of_function_alleles)	2263
+	point_mutation:PCoF_KO_consortium	PCoF_KO_consortium	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	505
+	point_mutation:PCoF_Million_mutation	PCoF_Million_mutation	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	186876
+	deletion:PCoF_Million_mutation	PCoF_Million_mutation	deletion	Change-of-function alleles (variations_change_of_function_alleles)	2007
+	insertion_site:PCoF_Million_mutation	PCoF_Million_mutation	insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	208
+	complex_substitution:PCoF_Million_mutation	PCoF_Million_mutation	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	483
+	sequence_alteration:PCoF_Million_mutation	PCoF_Million_mutation	sequence_alteration	Change-of-function alleles (variations_change_of_function_alleles)	1273
+	deletion:PCoF_Variation_project	PCoF_Variation_project	deletion	Change-of-function alleles (variations_change_of_function_alleles)	0
+	point_mutation:PCoF_Variation_project	PCoF_Variation_project	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	2420
+	complex_substitution:PCoF_NBP_knockout	PCoF_NBP_knockout	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	1406
+	deletion:PCoF_NBP_knockout	PCoF_NBP_knockout	deletion	Change-of-function alleles (variations_change_of_function_alleles)	3597
+	transposable_element_insertion_site:PCoF_NemaGENETAG_consortium	PCoF_NemaGENETAG_consortium	transposable_element_insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	0
+deletion:PCoF_Variation_project_Polymorphism		PCoF_Variation_project_Polymorphism	deletion	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	5773
+	deletion:PCoF_CGH_allele_Polymorphism	PCoF_CGH_allele_Polymorphism	deletion	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	222
+	insertion_site:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	insertion_site	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	2151
+	SNP:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	SNP	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	69542
+	substitution:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	substitution	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	2
+	complex_substitution:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	complex_substitution	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	6795
+	sequence_alteration:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	sequence_alteration	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	1523
+duplication:segmental_duplication		segmental_duplication	duplication	Segmental duplication (segmental_duplications)	3484
+exon:history		history	exon	Gene Models (historical) (historical_genes)	106287
+	pseudogenic_transcript:history	history	pseudogenic_transcript	Gene Models (historical) (historical_genes)	331
+	transposable_element:history	history	transposable_element	Gene Models (historical) (historical_genes)	3
+	protein_coding_primary_transcript:history	history	protein_coding_primary_transcript	Gene Models (historical) (historical_genes)	14390
+	primary_transcript:history	history	primary_transcript	Gene Models (historical) (historical_genes)	0
+	nc_primary_transcript:history	history	nc_primary_transcript	Gene Models (historical) (historical_genes)	176
+experimental_result_region:Expr_profile		Expr_profile	experimental_result_region	Expression chip profiles (expression_chip_profiles)	17360
+expressed_sequence_match:BLAT_Caen_EST_BEST		BLAT_Caen_EST_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	286072
+	expressed_sequence_match:BLAT_Caen_mRNA_BEST	BLAT_Caen_mRNA_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	22059
+expressed_sequence_match:BLAT_Caen_EST_OTHER		BLAT_Caen_EST_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	1270223
+	expressed_sequence_match:BLAT_Caen_mRNA_OTHER	BLAT_Caen_mRNA_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	118042
+expressed_sequence_match:BLAT_EST_BEST		BLAT_EST_BEST	expressed_sequence_match	ESTs (best) (est_best)	1258115
+expressed_sequence_match:BLAT_EST_OTHER		BLAT_EST_OTHER	expressed_sequence_match	ESTs (other) (est_other)	583501
+expressed_sequence_match:BLAT_OST_BEST		BLAT_OST_BEST	expressed_sequence_match	C. elegans OSTs (orfeome_sequence_tags)	106445
+expressed_sequence_match:BLAT_RST_BEST		BLAT_RST_BEST	expressed_sequence_match	C.elegans RSTs (race_sequence_tags)	7367
+expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	22348
+	expressed_sequence_match:BLAT_ncRNA_BEST	BLAT_ncRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	5974
+expressed_sequence_match:BLAT_ncRNA_OTHER		BLAT_ncRNA_OTHER	expressed_sequence_match	mRNAs/ncRNAs (other) (mrna_other)	572
+	expressed_sequence_match:BLAT_mRNA_OTHER	BLAT_mRNA_OTHER	expressed_sequence_match	mRNAs/ncRNAs (other) (mrna_other)	7619
+expressed_sequence_match:EMBL_nematode_cDNAs-BLAT		EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_nematode_cdnas)	1688928
+expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT		NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	1179018
+expressed_sequence_match:NEMBASE_cDNAs-BLAT		NEMBASE_cDNAs-BLAT	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	237478
+five_prime_open_reading_frame:micro_ORF		micro_ORF	five_prime_open_reading_frame	Micro ORF (micro_orf)	1
+gene:WormBase		WormBase	gene	Genes (genes)	46723
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	30888
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	24479
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	25408
+gene:interpolated_pmap_position		interpolated_pmap_position	gene	Genetic limits (genetic_limits)	978
+	gene:absolute_pmap_position	absolute_pmap_position	gene	Genetic limits (genetic_limits)	25817
+histone_binding_site:histone_binding_site_region		histone_binding_site_region	histone_binding_site	Histone binding sites (histone_binding_sites)	5164
+intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	276548
+inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	65691
+	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	53024
+low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	189148
+mRNA_region:Polysome_profiling		Polysome_profiling	mRNA_region	Polysomes (polysomes)	227070
+ncRNA:RNAz		RNAz	ncRNA	RNAz non-coding RNA genes (prediction_rnaz)	3672
+ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	7700
+	miRNA:WormBase	WormBase	miRNA	Curated Genes (noncoding) (genes_noncoding)	376
+	rRNA:WormBase	WormBase	rRNA	Curated Genes (noncoding) (genes_noncoding)	22
+	scRNA:WormBase	WormBase	scRNA	Curated Genes (noncoding) (genes_noncoding)	1
+	snRNA:WormBase	WormBase	snRNA	Curated Genes (noncoding) (genes_noncoding)	130
+	snoRNA:WormBase	WormBase	snoRNA	Curated Genes (noncoding) (genes_noncoding)	345
+	tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	637
+	exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	242662
+	intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	178522
+	piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	15365
+	lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	176
+	antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	101
+nucleotide_match:TEC_RED		TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	7993
+nucleotide_match:Vancouver_fosmid		Vancouver_fosmid	nucleotide_match	YACs, Fosmids, & Cosmids (clones)	12874
+	assembly_component:Genomic_canonical	Genomic_canonical	assembly_component	YACs, Fosmids, & Cosmids (clones)	3267
+operon:deprecated_operon		deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	75
+operon:operon		operon	operon	Operons (operons)	1390
+point_mutation:Million_mutation		Million_mutation	point_mutation	Million Mutation Project (variations_million_mutation_project)	845066
+	complex_substitution:Million_mutation	Million_mutation	complex_substitution	Million Mutation Project (variations_million_mutation_project)	1218
+	deletion:Million_mutation	Million_mutation	deletion	Million Mutation Project (variations_million_mutation_project)	11938
+	insertion_site:Million_mutation	Million_mutation	insertion_site	Million Mutation Project (variations_million_mutation_project)	4332
+	sequence_alteration:Million_mutation	Million_mutation	sequence_alteration	Million Mutation Project (variations_million_mutation_project)	1328
+polyA_signal_sequence:polyA_signal_sequence		polyA_signal_sequence	polyA_signal_sequence	PolyA sites and signal sequences (polya_sites)	2454
+	polyA_site:polyA_site	polyA_site	polyA_site	PolyA sites and signal sequences (polya_sites)	85690
+possible_base_call_error:RNASeq		RNASeq	possible_base_call_error	Genome sequence errors (genome_sequence_errors)	955
+promoter:promoter		promoter	promoter	Promoter regions (promoter_regions)	76
+protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	308416
+protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	160416
+protein_match:cbrenneri_proteins-BLASTX		cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	307803
+protein_match:cbriggsae_proteins-BLASTX		cbriggsae_proteins-BLASTX	protein_match	C. briggsae proteins (sequence_similarity_cbriggsae_proteins_blastx)	277417
+protein_match:celegans_proteins-BLASTX		celegans_proteins-BLASTX	protein_match	C. elegans proteins (sequence_similarity_celegans_proteins_blastx)	325860
+protein_match:cjaponica_proteins-BLASTX		cjaponica_proteins-BLASTX	protein_match	C. japonica proteins (sequence_similarity_cjaponica_proteins_blastx)	253799
+protein_match:cremanei_proteins-BLASTX		cremanei_proteins-BLASTX	protein_match	C. remanei proteins (sequence_similarity_cremanei_proteins_blastx)	317378
+protein_match:dmelanogaster_proteins-BLASTX		dmelanogaster_proteins-BLASTX	protein_match	D. melanogaster proteins (sequence_similarity_dmelanogaster_proteins_blastx)	159085
+protein_match:hsapiens_proteins-BLASTX		hsapiens_proteins-BLASTX	protein_match	H. sapiens proteins (sequence_similarity_hsapiens_proteins_blastx)	324216
+protein_match:ppacificus_proteins-BLASTX		ppacificus_proteins-BLASTX	protein_match	P. pacificus proteins (sequence_similarity_ppacificus_proteins_blastx)	189713
+protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	54097
+pseudogenic_transcript:WormBase		WormBase	pseudogenic_transcript	Genes (pseudogenes) (genes_pseudogenes)	1595
+reagent:Expr_pattern		Expr_pattern	reagent	Expression patterns (expression_patterns)	2934
+reagent:Oligo_set		Oligo_set	reagent	Microarray oligo probes (microarray_oligo_probes)	387962
+regulatory_region:regulatory_region		regulatory_region	regulatory_region	Regulatory regions (regulatory_regions)	64
+repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	116933
+sequence_motif:translated_feature		translated_feature	sequence_motif	Protein motifs (protein_motifs)	401561
+substitution:Allele		Allele	substitution	Classical alleles (variations_classical_alleles)	4460
+	deletion:Allele	Allele	deletion	Classical alleles (variations_classical_alleles)	718
+	insertion_site:Allele	Allele	insertion_site	Classical alleles (variations_classical_alleles)	36
+	complex_substitution:Allele	Allele	complex_substitution	Classical alleles (variations_classical_alleles)	85
+	transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	Classical alleles (variations_classical_alleles)	563
+	point_mutation:Allele	Allele	point_mutation	Classical alleles (variations_classical_alleles)	47
+substitution:Variation_project_Polymorphism		Variation_project_Polymorphism	substitution	Polymorphisms (variations_polymorphisms)	4
+	deletion:CGH_allele_Polymorphism	CGH_allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	239
+	deletion:Variation_project_Polymorphism	Variation_project_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	112049
+	SNP:Variation_project_Polymorphism	Variation_project_Polymorphism	SNP	Polymorphisms (variations_polymorphisms)	661265
+	insertion_site:Variation_project_Polymorphism	Variation_project_Polymorphism	insertion_site	Polymorphisms (variations_polymorphisms)	97654
+	complex_substitution:Variation_project_Polymorphism	Variation_project_Polymorphism	complex_substitution	Polymorphisms (variations_polymorphisms)	37843
+	sequence_alteration:Variation_project_Polymorphism	Variation_project_Polymorphism	sequence_alteration	Polymorphisms (variations_polymorphisms)	2280
+	deletion:Allele_Polymorphism	Allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	11
+transcribed_fragment:TranscriptionallyActiveRegion		TranscriptionallyActiveRegion	transcribed_fragment	Transcriptionally Active Region (transcriptionally_active_region)	4095280
+transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	363076
+	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	355608
+transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	551879
+transcription_end_site:RNASeq		RNASeq	transcription_end_site	Transcription end site (transcription_end_site)	92672
+translated_nucleotide_match:mass_spec_genome		mass_spec_genome	translated_nucleotide_match	Mass spec peptides (mass_spec_peptides)	137877
+transposable_element:WormBase_transposon		WormBase_transposon	transposable_element	Transposons (transposons)	755
+transposable_element_insertion_site:Allele		Allele	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	563
+	transposable_element_insertion_site:Mos_insertion_allele	Mos_insertion_allele	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	16
+	transposable_element_insertion_site:NemaGENETAG_consortium	NemaGENETAG_consortium	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	15298
