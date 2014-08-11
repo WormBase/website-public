@@ -503,7 +503,9 @@ table {
     border-spacing: 0;
 }
 
-
+table ul {
+    padding: 0 0 0 0.5em;
+}
 
 
 

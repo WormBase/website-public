@@ -77,7 +77,7 @@
           result.join(separator || '<br />');
         END;
       ELSE;
-      result.join(separator || '<br />');
+        result.join(separator || '<br />');
       END;
    END;
 

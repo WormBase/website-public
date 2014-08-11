@@ -45,7 +45,13 @@ fields.omim_external;
     genes_biology_data = fields.genes_biology.data;
 
     FOREACH gene_obj IN genes_biology_data;
-        gene_obj.formatted_orthologs = tags2link(gene_obj.human_orthologs, ';<br/>');
+        lines = ['<ul>'];
+        FOREACH ortho IN gene_obj.human_orthologs;
+            ortho_link = external_link(ortho.db, ortho.label, ortho.id);
+            lines.push('<li>' _ ortho_link _ '</li>');
+        END;
+        lines.push('</ul>');
+        gene_obj.formatted_orthologs = tags2link(lines.join(''));
     END;
 
     build_data_table( order=['gene', 'relevance', 'formatted_orthologs'],
@@ -61,7 +67,13 @@ fields.omim_external;
     genes_orthology_data = fields.genes_orthology.data;
 
     FOREACH gene_obj IN genes_orthology_data;
-        gene_obj.formatted_orthologs = tags2link(gene_obj.human_orthologs, ';<br/>');
+        lines = ['<ul>'];
+        FOREACH ortho IN gene_obj.human_orthologs;
+            ortho_link = external_link(ortho.db, ortho.label, ortho.id);
+            lines.push('<li>' _ ortho_link _ '</li>');
+        END;
+        lines.push('</ul>');
+        gene_obj.formatted_orthologs = tags2link(lines.join(''));
     END;
 
     build_data_table( order=['gene', 'formatted_orthologs'],
