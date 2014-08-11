@@ -44,6 +44,20 @@
 
     }
 
+    # Lab affiliation test - #3004
+    sub test_laboratory {
+        my $person = $api->fetch({ class => 'Person', name => 'WBPerson3249' });
+
+        can_ok('WormBase::API::Object::Person', ('laboratory'));
+
+        my $laboratory = $person->laboratory();
+
+        isnt($laboratory->{'data'}, undef, 'data returned');
+          is(scalar @{$laboratory->{'data'}[0]->{'representative'}}, 2, 'correct amt of lab affliation');
+          is($laboratory->{'data'}[0]->{'representative'}[1]->{id}, "WBPerson3249", 'correct person returned, lab affiliation');
+
+    }
+
 }
 
 1;
