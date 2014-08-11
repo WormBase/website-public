@@ -56,6 +56,13 @@
         is  ($match->{id}, 'JC8.10a', 'correct id returned - jc810.a cds');
         is  ($match->{label}, 'JC8.10a', 'correct label returned - jc810.a cds');
 
+        # Search for a person object - mult class search wasn't working (Author/Person)
+        $match = $api->xapian->fetch({ query => "WBPerson3249", class => "person", label => 1});
+
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'WBPerson3249', 'correct id returned - wbperson3249 person');
+        is  ($match->{label}, 'Joshua N Bembenek', 'correct label returned - wbperson3249 person');
+
     }
 
     sub test_autocompelte {
