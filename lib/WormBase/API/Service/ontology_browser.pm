@@ -43,13 +43,12 @@ sub run {
       unless($name =~ m/WBbt:|GO:|WBPhenotype:/i){
 	# this is a hack for search exact match in xapian,need to index the term or find other way around -xq
  	$name =~ s/ /:/g ;
-	my ($it,$res)= $self->search->search_exact($self, $name, $class);
+	my $match = $self->_api->xapian->fetch({ query => $name, class => $class});
 
-	if ($it->{pager}->{total_entries} == 1 ){
-	    my $o = @{$it->{struct}}[0] ;
-	    $name= $o->get_document->get_value(1);
+	if ($match ){
+	    $name = $match->{id};
 	}
-	elsif($it->{pager}->{total_entries} > 1 ){
+	else {
 	    return { msg=>"multiple terms are found",
 		     redirect => 'Ontology Browser',
 		     class => $class,

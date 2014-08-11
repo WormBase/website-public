@@ -1423,11 +1423,14 @@ var Scrolling = (function(){
             url = is.attr("url"),
             page = is.attr("page"),
             feed = is.closest('#issues-new'),
+            message = is.closest("#issue-box-content").find("#issue-message"),
+            addNewLink = is.closest("#issue-box-content").find("#add-new-issue"),
             name = feed.find("#name"),
             dc = feed.find("#desc-content"),
             email = feed.find("#email"),
             anon = feed.find("#anon").is(':checked'),
             content = feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : '');
+
         if (!anon && !validate_fields(email, name))
           return;
         if(!content){
@@ -1448,16 +1451,25 @@ var Scrolling = (function(){
                 hash: location.hash,
                 userAgent: window.navigator.userAgent},
           success: function(data){
-                  feed.append(data.message);
+                  message.append(data.message);
               },
           error: function(xhr,status,error) {
-                  feed.append(ajaxError(xhr));
+                  message.append(ajaxError(xhr));
               }
         });
-        feed.children().remove();
-        feed.append("<p><h2>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>")
+        feed.children().not('#issue-message').hide();
+        addNewLink.show();
+        message.append("<p><h2>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>");
         return false;
-   }
+   },
+
+   addNewIssue: function(link){
+        var issue = link.closest('#issue-box-content').find('#issues-new');
+        issue.children().not('.anon').show();
+        issue.find('#issue-message').children().remove();
+        issue.find("input[type=text], textarea").val("");
+        link.closest('#add-new-issue').hide();
+   },
   }
 
 

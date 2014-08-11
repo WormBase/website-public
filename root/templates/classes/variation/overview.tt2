@@ -23,7 +23,7 @@ END;
     '</div>';
     END;
 
-remarks(no_toggle=1);
+remarks(no_toggle=1 no_field=1);
 
 '</div>';
 

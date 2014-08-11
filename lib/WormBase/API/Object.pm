@@ -476,20 +476,27 @@ sub _get_evidence {
                 ($class,$evidence) = split /:/, $evidence;
               }
           } elsif ($type eq 'Accession_evidence') {
-              my ($database,$accession) = $evidence->row;
-              if(defined $accession || $database) {
-                if($accession =~ m/\D*\:(\d*)$/){
-                  $accession = $1;
+              my $database = $evidence;
+
+              foreach my $accession ($evidence->col){
+                if(defined $accession || $database) {
+                  if($accession =~ m/\D*\:(\d*)$/){
+                    $accession = $1;
+                  }
+                  if($database =~ m/^(.*):(\d*)$/){
+                    $accession = $2;
+                    $database = $1;
+                  }
+                  ($evidence,$class) = ($accession,$database);
+                  $label = "$database:$accession";
+                  my $match = $self->_api->xapian->fetch({query => "$evidence", class => "sequence"});
+
+                  push( @evidences, { id=> $match ? $match->{id} : "$evidence",
+                                      label => "$label",
+                                      class => $match ? "sequence" : "$class" });
                 }
-                if($database =~ m/^(.*):(\d*)$/){
-                  $accession = $2;
-                  $database = $1;
-                }
-                ($evidence,$class) = ($accession,$database);
-                $label = "$database:$accession";
-              }else {
-                next;
               }
+              next;
           } elsif($type eq 'GO_term_evidence') {
               my $desc = $evidence->Term || $evidence->Definition;
               $label .= (($desc) ? "($desc)" : '');

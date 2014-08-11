@@ -82,6 +82,22 @@
         is($mo_x->{'source'}->{'id'}, 'IPR006212', 'correct id for the source database');
     }
 
+
+    # Test class in hits - best_blastp_matches
+    # issue #2950
+    sub test_best_blastp_matches {
+        my $protein = $api->fetch({ class => 'Protein', name => 'BM:BM25559' });
+
+        can_ok('WormBase::API::Object::Protein', ('best_blastp_matches'));
+
+        my $hits = $protein->best_blastp_matches();
+
+        isnt($hits, undef, 'data returned');
+        isnt($hits->{'data'}, undef, 'data hash not empty');
+        is  (@{$hits->{'data'}{'hits'}}[0]->{'hit'}{'class'}, 'Protein', 'hit returned correct class')
+
+    }
+
 }
 
 1;
