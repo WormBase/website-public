@@ -809,11 +809,11 @@ sub _build_laboratory {
     if (eval {$object->$tag}) {
 	foreach my $lab ($object->$tag) {
 	    my $label = $lab->Mail || "$lab";
-	    my $representative = $lab->Representative;
-	    my $name           = $representative->Standard_name if $representative;
+	    my @representative = $lab->Representative;
+        @representative = map { $self->_pack_obj($_) } @representative;
 	    push @data, {
 		laboratory => $self->_pack_obj($lab, "$label"),
-		representative => $self->_pack_obj($representative, "$name"),
+		representative => \@representative
 	    };
 	}
     }
