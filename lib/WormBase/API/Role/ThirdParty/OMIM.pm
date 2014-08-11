@@ -4,7 +4,6 @@ use Moose::Role;
 use HTTP::Request;
 use JSON;
 
-use Data::Dumper;
 
 # stores locally OMIM objects that has been requested
 has 'known_omims' => (
@@ -161,9 +160,9 @@ sub short_title {
 # for each ID in a list of omim IDs, create special label (that include data requested from external API)
 sub markup_omims {
     my ($self, $omim_ids) = @_;
-#    $omim_ids = ['300494', '300497'];  # for texting
+
     my $err;
-    eval { 
+    eval {
         $self->_omim_external($omim_ids);
         1;
     } || do {
