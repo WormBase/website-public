@@ -491,7 +491,9 @@ sub _get_evidence {
                   $label = "$database:$accession";
                   my $match = $self->_api->xapian->fetch({query => "$evidence", class => "sequence"});
 
-                  push( @evidences, { id=> $match ? $match->{id} : "$evidence", label => "$label", class => $match ? "sequence" : "all"});
+                  push( @evidences, { id=> $match ? $match->{id} : "$evidence",
+                                      label => "$label",
+                                      class => $match ? "sequence" : "$class" });
                 }
               }
               next;

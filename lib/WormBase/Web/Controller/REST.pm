@@ -678,6 +678,7 @@ sub widget_GET {
         my @fields = $c->_get_widget_fields( $class, $widget );
 
         my $fatal_non_compliance = 0;
+        my $skip_cache;
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
@@ -694,6 +695,11 @@ sub widget_GET {
                 $c->log->$log("\t$_") foreach @problems;
             }
 
+            # a field can force an entire widget to not caching
+            if ($data->{'error'}){
+                $skip_cache = 1;
+            }
+
             # Conditionally load up the stash (for now) for HTML requests.
             $c->stash->{fields}->{$field} = $data;
         }
@@ -704,7 +710,7 @@ sub widget_GET {
             die "Non-compliant data. See log for fatal error.\n";
         }
 
-        $c->set_cache($key => $c->stash->{fields});
+        $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
     }
 
     # Forward to the view to render HTML, set stash variables

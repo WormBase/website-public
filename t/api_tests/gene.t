@@ -150,6 +150,13 @@
 
         isnt($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
         is($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.ovolvulus.O_volvulus_Cameroon_isolate.WBls:0000108.Unknown.WBbt:0007833.PRJEB2965.ERX200392', 'correct o.vol link returned');
+
+        #test project name
+        my $gene_1 = $api->fetch({ class => 'Gene', name => 'WBGene00001530' });
+
+        my $fpkm_expression_1 = $gene_1->fpkm_expression_summary_ls();
+        isnt($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0], undef, 'data returned');
+        is($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'project'}, 'RNASeq_Hillier', 'correct project returned');
     }
 
     #Tests the alleles and polymorphisms methods of Gene
