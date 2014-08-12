@@ -25,7 +25,7 @@ use File::Spec::Functions qw(catfile catdir);
 
 has '_gene' => (
     is       => 'ro',
-    isa      => 'ArrayRef[Ace::Object]',
+    isa => 'Maybe[Ace::Object]',
     required => 1,
     lazy     => 1,
     builder  => '_build__gene',
@@ -53,7 +53,6 @@ sub anatomic_expression_patterns {
     my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
     $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
 
-
     return {
         description => 'expression patterns for the gene',
         data        => %data_pack ? \%data_pack : undef,
@@ -64,45 +63,37 @@ sub anatomic_expression_patterns {
 # Returns expressions with Microarray and Tiling_array types
 sub expression_patterns {
     my $self   = shift;
-    my @object = @{$self->_gene};
-    my @genes;
+    my $object = $self->_gene;
     my @data;
 
-    foreach my $obj (@object){
-        foreach my $expr ($obj->Expr_pattern) {
-            my $type = $expr->Type;
-            next if $type =~ /Microarray|Tiling_array/;
-            push @data, $self->_expression_pattern_details($expr, $type);
-        }
-        
-         push @genes, \@data if @data;
+    foreach my $expr ($object->Expr_pattern) {
+        my $type = $expr->Type;
+        next if $type =~ /Microarray|Tiling_array/;
+        push @data, $self->_expression_pattern_details($expr, $type);
     }
-    return{
-        description => "expression patterns associated with the genes",
-        data => @genes ? \@genes : undef
+
+    return {
+        description => "expression patterns associated with the gene:$object",
+        data        => @data ? \@data : undef
     };
 }
 
-# Returns expressions without Microarray and Tiling_array types
+# Returns expressions other than Microarray and Tiling_array types
 sub expression_profiling_graphs {
     my $self   = shift;
-    my @object = @{$self->_gene};
-    my @genes;
+    my $object = $self->_gene;
     my @data;
 
-    foreach my $obj (@object){
-        foreach my $expr ($obj->Expr_pattern) {
-            my $type = $expr->Type;
-            next unless $type =~ /Microarray|Tiling_array/;
-            push @data, $self->_expression_pattern_details($expr, $type);
-        }
-        push @genes, \@data if @data; 
+    foreach my $expr ($object->Expr_pattern) {
+        my $type = $expr->Type;
+        next unless $type =~ /Microarray|Tiling_array/;
+        push @data, $self->_expression_pattern_details($expr, $type);
     }
-    
-     return {
-        description => "expression patterns associated with the genes",
-        data => @genes ? \@genes : undef
-     };
+
+    return {
+        description => "expression patterns associated with the gene:$object",
+        data        => @data ? \@data : undef
+    };
 }
 
 sub _expression_pattern_details {
@@ -171,20 +162,17 @@ sub _expression_pattern_details {
 
 sub anatomy_terms {
     my $self   = shift;
-    my @object = @{$self->_gene};
+    my $object = $self->_gene;
     my %unique_anatomy_terms;
 
-    foreach my $obj (@object){
-        for my $ep ( $obj->Expr_pattern ) {
-            for my $at ($ep->Anatomy_term) {
-                
-              $unique_anatomy_terms{"$at"} ||= $self->_pack_obj($at);
-            }
+    for my $ep ( $object->Expr_pattern ) {
+        for my $at ($ep->Anatomy_term) {
+          $unique_anatomy_terms{"$at"} ||= $self->_pack_obj($at);
         }
     }
 
     return {
-        description => 'anatomy terms from expression patterns for the genes',
+        description => 'anatomy terms from expression patterns for the gene',
         data        => %unique_anatomy_terms ? \%unique_anatomy_terms : undef,
     };
 }
@@ -196,20 +184,19 @@ sub anatomy_terms {
 
 sub expression_cluster {
     my $self   = shift;
-    my @object = @{$self->_gene};
+    my $object = $self->_gene;
     my @data;
-    my @genes;
 
-    foreach my $obj (@object){
-        foreach my $expr_cluster ($obj->Expression_cluster){
-            my $description = $expr_cluster->Description;
-            push @data, {
-                expression_cluster => $self->_pack_obj($expr_cluster),
-            }
+    foreach my $expr_cluster ($object->Expression_cluster){
+        my $description = $expr_cluster->Description;
+        push @data, {
+            expression_cluster => $self->_pack_obj($expr_cluster),
+            description => $description && "$description"
         }
-        push @genes, \@data if @data;
-    }    
-    return { data        => @genes ? \@genes : undef,
+    }
+
+
+    return { data        => @data ? \@data : undef,
              description => 'expression cluster data' };
 }
 
@@ -219,29 +206,25 @@ sub expression_cluster {
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
 sub fourd_expression_movies {
     my $self   = shift;
-    my @object = @{$self->_gene};
-    my @genes;
+    my $object = $self->_gene;
 
-    my $author;
-    foreach my $obj (@object){  
-        my @expr_patterns = $obj->Expr_pattern;  
-        my %data = map {
-            my $details = $_->Pattern;
-            my $url     = $_->MovieURL;
-            $_ => {
-                movie   => $url && "$url",
-                details => $details && "$details",
-                object  => $self->_pack_obj($_),
-            };
-        } grep {
-            (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
-        } @expr_patterns;
-        push @genes, \%data if %data;
-    }
+    my $author; 
+    my @expr_patterns = $object->Expr_pattern;  
+    my %data = map {
+        my $details = $_->Pattern;
+        my $url     = $_->MovieURL;
+        $_ => {
+            movie   => $url && "$url",
+            details => $details && "$details",
+            object  => $self->_pack_obj($_),
+        };
+    } grep {
+        (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
+    } @expr_patterns;
 
     return {
         description => 'interactive 4D expression movies',
-        data        => @genes ? \@genes : undef,
+        data        => %data ? \%data : undef,
     };
 }
 
@@ -255,6 +238,7 @@ sub microarray_expression_data {
     my $object = $self->object;
     my %data;
     my @microarray_results = $object->Microarray_results;
+
     return { data        => @microarray_results ? $self->_pack_objects(\@microarray_results) : undef,
              description => 'gene expression determined via microarray analysis'};
 }
@@ -266,7 +250,7 @@ sub microarray_expression_data {
 
 sub microarray_topology_map_position {
     my $self   = shift;
-    my $object = $self->object;
+    my $object = $self->_gene;
 
     my $datapack = {
         description => 'microarray topography map',
@@ -304,38 +288,33 @@ sub microarray_topology_map_position {
 
 sub anatomy_function {
     my $self   = shift;
-    my @object = @{$self->_gene};
+    my $object = $self->_gene;
     my @data_pack;
-    my @genes;
-
-    foreach my $obj (@object){
-        foreach ($obj->Anatomy_function){
-          my @bp_inv = map { if ("$_" eq "$obj") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
-                    else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
-                    } $_->Involved;
-          next unless @bp_inv;
-          my @assay = map { my $as = $_->right;
-                      if ($as) {
-                          my @geno = $as->Genotype;
-                          {evidence => { genotype => join('<br /> ', @geno) },
-                          text => "$_",}
-                      }
-                    } $_->Assay;
-          my $pev;
-          push @data_pack, {
-              phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
-                                { evidence => $pev,
-                                text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
-              assay    => @assay ? \@assay : undef,
-              bp_inv    => @bp_inv ? \@bp_inv : undef,
-              reference => $self->_pack_obj(scalar $_->Reference),
-          };
-        }
-        push @genes, \@data_pack if @data_pack;
+    foreach ($object->Anatomy_function){
+      my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+                else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
+                } $_->Involved;
+      next unless @bp_inv;
+      my @assay = map { my $as = $_->right;
+                  if ($as) {
+                      my @geno = $as->Genotype;
+                      {evidence => { genotype => join('<br /> ', @geno) },
+                      text => "$_",}
+                  }
+                } $_->Assay;
+      my $pev;
+      push @data_pack, {
+          phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
+                            { evidence => $pev,
+                            text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
+          assay    => @assay ? \@assay : undef,
+          bp_inv    => @bp_inv ? \@bp_inv : undef,
+          reference => $self->_pack_obj(scalar $_->Reference),
+      };
     }
 
     return {
-        data        => @genes ? \@genes : undef,
+        data        => @data_pack ? \@data_pack : undef,
         description => 'anatomy functions associatated with this gene',
     };
 }
@@ -349,133 +328,126 @@ sub fpkm_expression_summary_ls {
 sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
-    my @object = @{$self->_gene};
-    my @genes;
+    my $object = $self->_gene;
 
-    my $rserve = $self->_api->_tools->{rserve};
-
-    foreach my $obj (@object){
-            my @fpkm_map = map {
-                my $life_stage = $_->Public_name;
-                my @fpkm_table = $_->col;
-                map {
-                    my @fpkm_entry = $_->row;
-                    my $label = $fpkm_entry[2];
-                    my $value = $fpkm_entry[0];
-                    my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
-                    {
-                        label => "$label",
-                        value => "$value",
-                        project => "$project",
-                        life_stage => "$life_stage"
-                    }
-                } @fpkm_table;
-            } $obj->RNASeq_FPKM;
-
-            # Return if no expression data is available.
-            # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
-            if (length(keys @fpkm_map) <= 1) {
-                return {
-                    description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data -- no data returned.',
-                    data        => undef
-                };
+     my $rserve = $self->_api->_tools->{rserve};
+    my @fpkm_map = map {
+        my $life_stage = $_->Public_name;
+        my @fpkm_table = $_->col;
+        map {
+            my @fpkm_entry = $_->row;
+            my $label = $fpkm_entry[2];
+            my $name = $self->_pack_obj($fpkm_entry[2]);
+            my $value = $fpkm_entry[0];
+            my $analysis = $label->fetch();
+            my $sample = $analysis->Sample || '';
+            my ($project) = $sample =~ /^([a-zA-Z0-9_-]+)\./;
+            {
+                label => $name,
+                value => "$value",
+                project => "$project",
+                life_stage => "$life_stage"
             }
+        } @fpkm_table;
+    } $object->RNASeq_FPKM;
 
-            # Sort by project (primary order) and developmental stage (secondary order):
-            @fpkm_map = sort {
-                # Primary sorting order: project
-                # Reverse comparison, so that projects that come first in the alphabet appear at the top of the barchart.
-                return $b->{project} cmp $a->{project} if $a->{project} ne $b->{project};
+    # Return if no expression data is available.
+    # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
+    if ((scalar @fpkm_map) <= 1) {
+        return {
+            description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data -- no data returned.',
+            data        => undef
+        };
+    }
 
-                # Secondary sorting order: developmental stage
-                my @sides = ($a, $b);
-                my @label_value = (50, 50); # Entries that cannot be matched to the regexps will go to the bottom of the barchart.
-                for my $i (0 .. 1) {
-                    # UNAPPLIED
-                    # Possible keywords? Not seen in data yet (browsing only).
-                    #$label_value[$i] =  0 if ($sides[$i]->{label} =~ m/gastrula/i);
-                    #$label_value[$i] =  1 if ($sides[$i]->{label} =~ m/comma/i);
-                    #$label_value[$i] =  2 if ($sides[$i]->{label} =~ m/15_fold/i);
-                    #$label_value[$i] =  3 if ($sides[$i]->{label} =~ m/2_fold/i);
-                    #$label_value[$i] =  4 if ($sides[$i]->{label} =~ m/3_fold/i);
+    # Sort by project (primary order) and developmental stage (secondary order):
+    @fpkm_map = sort {
+        # Primary sorting order: project
+        # Reverse comparison, so that projects that come first in the alphabet appear at the top of the barchart.
+        return $b->{project} cmp $a->{project} if $a->{project} ne $b->{project};
 
-                    # EMBRYO STAGES
-                    $label_value[$i] = 30 if ($sides[$i]->{label} =~ m/embryo/i); # May be overwritten by the next two rules.
-                    if ($sides[$i]->{label} =~ m/\.([0-9]+)-cell_embryo/) {
-                        # Assuming an upper bound of 40 cells (for ordering below).
-                        $sides[$i]->{label} =~ /\.([0-9]+)-cell_embryo/;
-                        $label_value[$i] = "$1";
-                    }
-                    $label_value[$i] =  0 if ($sides[$i]->{label} =~ m/early_embryo/i);
-                    $label_value[$i] = 40 if ($sides[$i]->{label} =~ m/late_embryo/i);
+        # Secondary sorting order: developmental stage
+        my @sides = ($a, $b);
+        my @label_value = (50, 50); # Entries that cannot be matched to the regexps will go to the bottom of the barchart.
+        for my $i (0 .. 1) {
+            # UNAPPLIED
+            # Possible keywords? Not seen in data yet (browsing only).
+            #$label_value[$i] =  0 if ($sides[$i]->{label} =~ m/gastrula/i);
+            #$label_value[$i] =  1 if ($sides[$i]->{label} =~ m/comma/i);
+            #$label_value[$i] =  2 if ($sides[$i]->{label} =~ m/15_fold/i);
+            #$label_value[$i] =  3 if ($sides[$i]->{label} =~ m/2_fold/i);
+            #$label_value[$i] =  4 if ($sides[$i]->{label} =~ m/3_fold/i);
 
-                    # LARVA STAGES
-                    $label_value[$i] = 41 if ($sides[$i]->{label} =~ m/L1_(l|L)arva/);
-                    $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L2_(l|L)arva/);
-                    $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/L2d_(l|L)arva/i);
-                    $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L3_(l|L)arva/);
-                    $label_value[$i] = 45 if ($sides[$i]->{label} =~ m/L4_(l|L)arva/);
+            # EMBRYO STAGES
+            $label_value[$i] = 30 if ($sides[$i]->{label} =~ m/embryo/i); # May be overwritten by the next two rules.
+            if ($sides[$i]->{label} =~ m/\.([0-9]+)-cell_embryo/) {
+                # Assuming an upper bound of 40 cells (for ordering below).
+                $sides[$i]->{label} =~ /\.([0-9]+)-cell_embryo/;
+                $label_value[$i] = "$1";
+            }
+            $label_value[$i] =  0 if ($sides[$i]->{label} =~ m/early_embryo/i);
+            $label_value[$i] = 40 if ($sides[$i]->{label} =~ m/late_embryo/i);
 
-                    # DAUER STAGES
-                    $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/dauer/i); # May be overwritten by the next two rules.
-                    $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/dauer_entry/);
-                    $label_value[$i] = 44 if ($sides[$i]->{label} =~ m/dauer_exit/);
-                    $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/predauer/i);
+            # LARVA STAGES
+            $label_value[$i] = 41 if ($sides[$i]->{label} =~ m/L1_(l|L)arva/);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L2_(l|L)arva/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/L2d_(l|L)arva/i);
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L3_(l|L)arva/);
+            $label_value[$i] = 45 if ($sides[$i]->{label} =~ m/L4_(l|L)arva/);
 
-                    # ADULTHOOD
-                    $label_value[$i] = 47 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
-                    $label_value[$i] = 46 if ($sides[$i]->{label} =~ m/young_adult/);
-                }
+            # DAUER STAGES
+            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/dauer/i); # May be overwritten by the next two rules.
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/dauer_entry/);
+            $label_value[$i] = 44 if ($sides[$i]->{label} =~ m/dauer_exit/);
+            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/predauer/i);
 
-                # Reversed comparison, so that early stages appear at the top of the barchart.
-                return $label_value[1] <=> $label_value[0];
-            } @fpkm_map;
-        
-
-        my $plot;
-
-
-        if ($mode eq 'summary_ls') {
-        # This is NOT consistently returning an ID, resulting in fpkm_.png
-        # and breaking the expression widget.
-        # filename => "fpkm_" . $self->name->{data}{id} . ".png",
-        #my $obj = $self->object;
-            $plot = $rserve->boxplot(\@fpkm_map, {
-                                        filename => "fpkm_$obj.png",
-                                        xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-                                        ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-                                        width    => WormBase::Web->config->{fpkm_expression_chart_width},
-                                        height   => WormBase::Web->config->{fpkm_expression_chart_height},
-                                        rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
-                                        bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                        facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
-                                        adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
-                                     })->{uri};
-        } else {
-            $plot = $rserve->barchart(\@fpkm_map, {
-                                        filename => "fpkm_$obj.png",
-                                        xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-                                        ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-                                        width    => WormBase::Web->config->{fpkm_expression_chart_width},
-                                        height   => WormBase::Web->config->{fpkm_expression_chart_height},
-                                        rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
-                                        bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                        facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
-                                        adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
-                                     })->{uri};
+            # ADULTHOOD
+            $label_value[$i] = 47 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
+            $label_value[$i] = 46 if ($sides[$i]->{label} =~ m/young_adult/);
         }
 
-        push @genes, {
-                plot => $plot,
-                table => { fpkm => { data => \@fpkm_map } }
-            };
+        # Reversed comparison, so that early stages appear at the top of the barchart.
+        return $label_value[1] <=> $label_value[0];
+    } @fpkm_map;
 
-    }    
+    my $plot;
+    if ($mode eq 'summary_ls') {
+    # This is NOT consistently returning an ID, resulting in fpkm_.png
+    # and breaking the expression widget.
+    # filename => "fpkm_" . $self->name->{data}{id} . ".png",
+    my $obj = $self->object;
+        $plot = $rserve->boxplot(\@fpkm_map, {
+                                    filename => "fpkm_$object.png",
+                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
+                                 })->{uri};
+    } else {
+        $plot = $rserve->barchart(\@fpkm_map, {
+                                    filename => "fpkm_$object.png",
+                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
+                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
+                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
+                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
+                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
+                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
+                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
+                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
+                                 })->{uri};
+    }
 
-        return {
-            description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
-            data        =>  @genes ? \@genes : undef,
-        };
+    return {
+        description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
+        data        => {
+            plot => $plot,
+            table => { fpkm => { data => \@fpkm_map } }
+        }
+    };
 
 }
 

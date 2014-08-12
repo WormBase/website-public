@@ -1745,11 +1745,9 @@ sub _build__segments {
 
 sub _build__gene {
     my ($self) = @_;
-    my $object = $self->object;
-    my @gene_array ;
-    push @gene_array, $object; 
+    my $object = $self->object; 
 
-    return \@gene_array;
+    return $object;
 }
 
 # TODO: Logically this might reside in Model::GFF although I don't know if it is used elsewhere

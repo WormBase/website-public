@@ -352,9 +352,9 @@ sub _build__segments {
 sub _build__gene {
     my ($self) = @_;
     my $object = $self->object;
-    my @genes = $object->Gene;
+    my $gene = $object->Gene;
 
-    return \@genes;
+    return $gene;
 }
 
 sub _build_sequences {
