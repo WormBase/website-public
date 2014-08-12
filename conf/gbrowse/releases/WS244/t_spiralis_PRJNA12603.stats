@@ -1,6 +1,7 @@
 gff_version: 3
 file: /usr/local/ftp/pub/wormbase/releases/WS244/species/t_spiralis/PRJNA12603/t_spiralis.PRJNA12603.WS244.annotations.gff3.gz
 feature	children	source	method	track	count
+expressed_sequence_match:NEMBASE_cDNAs-STAR		NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	8055
 gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	16380
 	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	16380
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0

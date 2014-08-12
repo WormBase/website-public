@@ -3,6 +3,8 @@ file: /usr/local/ftp/pub/wormbase/releases/WS244/species/s_ratti/PRJEA62033/s_ra
 feature	children	source	method	track	count
 CDS:WormBase		WormBase	CDS	Genes (protein coding) (genes_protein_coding)	876
 	CDS:WormBase_imported	WormBase_imported	CDS	Genes (protein coding) (genes_protein_coding)	16894
+expressed_sequence_match:EMBL_cDNAs-STAR		EMBL_cDNAs-STAR	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_insdc_cdnas)	29058
+expressed_sequence_match:NEMBASE_cDNAs-STAR		NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	4596
 gene:WormBase		WormBase	gene	Genes (genes)	252
 	mRNA:WormBase	WormBase	mRNA	Genes (genes)	394
 	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	0

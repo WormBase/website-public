@@ -1,6 +1,8 @@
 gff_version: 3
 file: /usr/local/ftp/pub/wormbase/releases/WS244/species/n_americanus/PRJNA72135/n_americanus.PRJNA72135.WS244.annotations.gff3.gz
 feature	children	source	method	track	count
+expressed_sequence_match:EMBL_cDNAs-STAR		EMBL_cDNAs-STAR	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_insdc_cdnas)	6045
+expressed_sequence_match:NEMBASE_cDNAs-STAR		NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	2173
 gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	19663
 	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	19153
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	43

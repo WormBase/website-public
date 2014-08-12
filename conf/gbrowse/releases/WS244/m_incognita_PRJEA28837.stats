@@ -1,6 +1,9 @@
 gff_version: 3
 file: /usr/local/ftp/pub/wormbase/releases/WS244/species/m_incognita/PRJEA28837/m_incognita.PRJEA28837.WS244.annotations.gff3.gz
 feature	children	source	method	track	count
+expressed_sequence_match:EMBL_cDNAs-STAR		EMBL_cDNAs-STAR	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_insdc_cdnas)	50037
+expressed_sequence_match:NEMATODE.NET_cDNAs-STAR		NEMATODE.NET_cDNAs-STAR	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	6084
+expressed_sequence_match:NEMBASE_cDNAs-STAR		NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	4454
 gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	19212
 	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	20365
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	6331

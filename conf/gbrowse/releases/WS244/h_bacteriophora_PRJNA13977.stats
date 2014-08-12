@@ -1,6 +1,8 @@
 gff_version: 3
 file: /usr/local/ftp/pub/wormbase/releases/WS244/species/h_bacteriophora/PRJNA13977/h_bacteriophora.PRJNA13977.WS244.annotations.gff3.gz
 feature	children	source	method	track	count
+expressed_sequence_match:EMBL_cDNAs-STAR		EMBL_cDNAs-STAR	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_insdc_cdnas)	52974
+expressed_sequence_match:NEMBASE_cDNAs-STAR		NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	9650
 gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	20964
 	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	20964
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0

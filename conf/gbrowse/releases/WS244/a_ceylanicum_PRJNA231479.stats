@@ -1,6 +1,9 @@
 gff_version: 3
 file: /usr/local/ftp/pub/wormbase/releases/WS244/species/a_ceylanicum/PRJNA231479/a_ceylanicum.PRJNA231479.WS244.annotations.gff3.gz
 feature	children	source	method	track	count
+expressed_sequence_match:EMBL_cDNAs-STAR		EMBL_cDNAs-STAR	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_insdc_cdnas)	9771
+expressed_sequence_match:NEMATODE.NET_cDNAs-STAR		NEMATODE.NET_cDNAs-STAR	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	3999
+expressed_sequence_match:NEMBASE_cDNAs-STAR		NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	3197
 gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	36687
 	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	65583
 	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0
