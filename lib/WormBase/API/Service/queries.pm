@@ -28,7 +28,7 @@ sub wql {
     my $api = $c->model('WormBaseAPI');
     my $it = $dbh->fetch_many(-query => $query); # count, offset, total ?
 
-    return { next => sub { my $i = $it->next; return $api->xapian->_get_tag_info($c, "$i", $i->class, 1) if $i } };
+    return { next => sub { my $i = $it->next; return $api->xapian->fetch({id => "$i", class => $i->class, fill => 1}) if $i } };
 }
 
 sub objs2text {

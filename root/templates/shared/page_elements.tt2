@@ -888,7 +888,7 @@ END;
 
             # Include the lab representative, if one exists
             IF lab.representative;
-              "(" _ tag2link(lab.representative) _ ")" ;
+              "(" _ tags2link(lab.representative, ', ') _ ")" ;
             END;
 
             IF !loop.last;

@@ -35,9 +35,9 @@ BEGIN {
         class => {     # HAS DEFAULT
             Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
             Person    => [qw(Person Author)],
-            Cds       => [qw(CDS cds)],
+            Cds       => 'CDS',
             Rnai      => 'RNAi',
-            Disease   => [qw(DO_term Do_term do_term)],
+            Disease   => 'DO_term',
             Go_term   => 'GO_term',
             Wbprocess => 'WBProcess',
             Model     => 'Model', #for schema display to work

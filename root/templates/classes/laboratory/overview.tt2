@@ -15,9 +15,7 @@ END;
 '<div class="description">';
 
    WRAPPER $field_block title="" key="representatives";
-       FOREACH rep IN fields.representatives.data;
-          tag2link(rep);
-       END;
+        tags2link(fields.representatives.data, ", ");
    END;
 
    WRAPPER $field_block title="" key="affiliation";

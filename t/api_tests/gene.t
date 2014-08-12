@@ -34,6 +34,20 @@
         isnt($models->{data}{table}, undef, 'table data structure returned');
         $models = $models->{data}{table};
         is  (scalar @$models, 3, 'two models returned');
+
+        # test curator remarks
+        $gene = $api->fetch({ class => 'Gene', name => 'WBGene00006763' });
+        $models = $gene->gene_models();
+
+        isnt($models, undef, 'data returned');
+        isnt($models->{data}, undef, 'data structure returned');
+        isnt($models->{data}{remarks}, undef, 'remarks data structure returned');
+
+        my $ae = $models->{data}{remarks}{3}{evidence}{Accession_evidence};
+        is  (scalar @$ae, 2, 'two accession evidences returned');
+        is  ($ae->[0]{id}, 'AF283324', 'correct accession returned');
+        is  ($ae->[0]{class}, 'sequence', 'correct class returned');
+
     }
 
     # Tests whether the _longest_segment method works - particularly
@@ -113,30 +127,37 @@
         is($human_diseases->{'data'}->{'experimental_model'}, undef, 'undef returned when there is no data');
     }
 
-    # # Tests for the fpkm_expression_summary_ls method
-    # sub test_fpkm_expression_summary_ls {
-    #     can_ok('WormBase::API::Object::Gene', ('fpkm_expression_summary_ls'));
+    # Tests for the fpkm_expression_summary_ls method
+    sub test_fpkm_expression_summary_ls {
+        can_ok('WormBase::API::Object::Gene', ('fpkm_expression_summary_ls'));
 
-    #     # test fpkm link
-    #     # Test the analysis link in the fpkm table of the expression method
-    #     # issue #2821
-    #     my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
+        # test fpkm link
+        # Test the analysis link in the fpkm table of the expression method
+        # issue #2821
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
 
-    #     my $fpkm_expression = $gene->fpkm_expression_summary_ls();
+        my $fpkm_expression = $gene->fpkm_expression_summary_ls();
 
-    #     isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
-    #     is($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.brugia.FR3.WBls:0000081.Unknown.WBbt:0007833.PRJEB2709.ERX026030', 'correct link returned');
+        isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
+        is($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.brugia.FR3.WBls:0000081.Unknown.WBbt:0007833.PRJEB2709.ERX026030', 'correct link returned');
 
 
-    #     # test O. voluvus fpkm data
-    #     # issue #2864
-    #     my $gene_ovol = $api->fetch({ class => 'Gene', name => 'WBGene00243220' });
+        # test O. voluvus fpkm data
+        # issue #2864
+        my $gene_ovol = $api->fetch({ class => 'Gene', name => 'WBGene00243220' });
 
-    #     my $fpkm_expression_ovol = $gene_ovol->fpkm_expression_summary_ls();
+        my $fpkm_expression_ovol = $gene_ovol->fpkm_expression_summary_ls();
 
-    #     isnt($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
-    #     is($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.ovolvulus.O_volvulus_Cameroon_isolate.WBls:0000108.Unknown.WBbt:0007833.PRJEB2965.ERX200392', 'correct o.vol link returned');
-    # }
+        isnt($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
+        is($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.ovolvulus.O_volvulus_Cameroon_isolate.WBls:0000108.Unknown.WBbt:0007833.PRJEB2965.ERX200392', 'correct o.vol link returned');
+
+        #test project name
+        my $gene_1 = $api->fetch({ class => 'Gene', name => 'WBGene00001530' });
+
+        my $fpkm_expression_1 = $gene_1->fpkm_expression_summary_ls();
+        isnt($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0], undef, 'data returned');
+        is($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'project'}, 'RNASeq_Hillier', 'correct project returned');
+    }
 
     #Tests the alleles and polymorphisms methods of Gene
     #Related to issue #2809

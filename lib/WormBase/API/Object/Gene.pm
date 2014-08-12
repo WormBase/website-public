@@ -1745,7 +1745,7 @@ sub _build__segments {
 
 sub _build__gene {
     my ($self) = @_;
-    my $object = $self->object; 
+    my $object = $self->object;
 
     return $object;
 }
