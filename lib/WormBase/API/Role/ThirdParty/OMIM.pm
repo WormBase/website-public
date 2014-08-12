@@ -154,7 +154,7 @@ sub _omim_external {
 sub short_title {
     my ($self, $orig_title) = @_;
     my @titles = split(/;\s*/, $orig_title);
-    return @titles? pop(@titles) : undef;
+    return @titles? shift(@titles) : undef;
 }
 
 # for each ID in a list of omim IDs, create special label (that include data requested from external API)
@@ -178,7 +178,7 @@ sub markup_omims {
 
         my $label;
         if ($name){
-            $label = "OMIM:$oid($name)";
+            $label = $name;
         }else{
             $label = "OMIM:$oid";
         }
