@@ -804,6 +804,7 @@ sub _build_laboratory {
     my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP->{laboratory};
 
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
+
     my @data;
 
     if (eval {$object->$tag}) {
@@ -817,8 +818,10 @@ sub _build_laboratory {
 	    };
 	}
     }
+    my $description = "$class" =~ /Person/i ? "the laboratory associated with the $class"
+        : "the laboratory where the $class was isolated, created, or named";
     return {
-        description => "the laboratory where the $class was isolated, created, or named",
+        description => $description,
         data        => @data ? \@data : undef,
     };
 }
