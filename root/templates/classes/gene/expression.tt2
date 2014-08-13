@@ -99,8 +99,8 @@ WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_l
 
     fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
     FOREACH analysis IN fpkm_data;
-        analysis.project_link = external_link(analysis.project_info.db,
-                                              analysis.project, analysis.project_info.id);
+        analysis.project_link = external_link(analysis.project_info.class,
+                                              analysis.project_info.label, analysis.project_info.id);
     END;
     build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],
                      columns = {

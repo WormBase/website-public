@@ -325,6 +325,75 @@ sub fpkm_expression_summary_ls {
     return $self->fpkm_expression('summary_ls');
 }
 
+# Mapping expresion study accession to a description
+# Ugly hack!! This is a temporary solution before WS245/WS246 database build
+our $_study2label_str =<<END;
+brenneri
+
+PRJNA75295	Hillier_modENCODE
+SRP016006	Thomas_Male_Female_comparison
+
+briggsae
+
+PRJNA75295	Hillier_modENCODE
+PRJNA104933	Uyar_Briggsae_transcriptome
+SRP016006	Thomas_Male_Female_comparison
+
+brugia
+
+PRJEB2709	Choi_Brugia_transcriptome
+
+elegans
+
+PRJEB4208	Engstrom_evaluation_of_alignment_programs
+PRJNA128465	Lamm_Multimodal_RNASeq_methods
+PRJNA148023	Maxwell_Timecourse_of_recovery_from_L1_arrest
+PRJNA151765	Zarse_Impaired_insulin_signaling
+PRJNA159607	Nam_Small_RNAs_in_L4_and_Adult
+PRJNA168961	Hillier_modENCODE_RNA_profiling
+PRJNA170771	Jungkamp_mRNA_GLD-1_targets
+PRJNA171306	Ma_Sperm_transcriptome
+PRJNA174814	Schwarz_Linker_cell_transcriptome
+PRJNA184024	Tamayo_Effect_of_MAB-5
+PRJNA221531	Gout_Transcription_errors
+PRJNA33023	Hillier_modENCODE_deep_sequencing
+PRJNA51225	Mortazavi_Comparison_of_elegans_and_angaria
+PRJNA79387	Shin_L1_transcriptome
+PRJNA79457	Ramani_Effect_of_NMD
+SRP010374	Stadler_Ribosome_profiling
+SRP016006	Thomas_Male_Female_comparison
+SRP026198	Stadler_Comparison_of_Starved_and_Fed
+
+japonica
+
+PRJNA75295	Hillier_modENCODE
+SRP016006	Thomas_Male_Female_comparison
+
+ovolvulus
+
+PRJEB2965	Berriman_Onchocerca_transcriptome
+
+remanei
+
+PRJNA75295	Hillier_modENCODE
+SRP016006	Thomas_Male_Female_comparison
+END
+
+
+our sub _extract_study2label {
+    my $study2label = {};
+
+    my @lines = split /\n/, $_study2label_str;
+    foreach my $line (@lines) {
+        my ($id, $label) = $line =~ /^(PRJ[A-Z]{2}\d+|SRP\d+)\s+(\w+)/;
+        next unless $id;  #remove empty lines or species name lines
+        $study2label->{$id} = $label;
+    }
+    return $study2label;
+}
+
+our $_study2label = _extract_study2label();
+
 sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
@@ -343,17 +412,23 @@ sub fpkm_expression {
             # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
             # /PRJ[A-Z]{2}\d+/ matches BioProject accession
             # everything else treat as NCBI Trace SRA
-            my ($project) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
-            my $source_db = $project =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
+            my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
+            my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
+            my $project_label = $_study2label->{$project_acc} || $project_acc;
+            $project_label = join(' ', split('_', $project_label));
+
+
+
             my $project_info = {
-                id => $project,
-                db => $source_db
+                id => $project_acc,
+                class => $source_db,
+                label => $project_label
             };
 
             {
                 label => $name,
                 value => "$value",
-                project => $project,
+                project => $project_label,
                 project_info => $project_info,
                 life_stage => "$life_stage"
             }
