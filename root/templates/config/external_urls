@@ -829,6 +829,18 @@
 	search      = 'http://www.ncbi.nlm.nih.gov/sra?term=%s'
 	}
 
+ sra_trace = {
+    description = 'Sequence Read Archive (SRA) in NCBI Trace Archives'
+    base        = 'http://www.ncbi.nlm.nih.gov/Traces/sra'
+    search      = 'http://www.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?study=%s'
+    }
+
+ BioProject ={
+    description = 'A BioProject is a collection of biological data related to a single initiative, originating from a single organization or from a consortium. A BioProject record provides users a single place to find links to the diverse data types generated for that project'
+    base        = 'http://www.ncbi.nlm.nih.gov/bioproject/'
+    search      = 'http://www.ncbi.nlm.nih.gov/bioproject/?term=%s'
+    }
+
  SwissProt = {
 	description = 'SwissProt is a curated protein sequence database which strives to provide a high level of annotation (such as the description of the function of a protein, its domains structure, post-translational modifications, variants, etc.), a minimal level of redundancy and high level of integration with other databases'
 	base        = 'http://expasy.org/sprot'
