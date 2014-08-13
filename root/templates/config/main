@@ -314,7 +314,7 @@
     END;
 
     MACRO match_link(link) BLOCK;
-      link_regex = "(?i)$link";  # search case insensitively for the database
+      link_regex = "^(?i)$link$";  # search case insensitively for the database
       link_name  = site.external_urls.keys.grep(link_regex);
       link_name = link_name && link_name.pop;
       IF !link_name;
