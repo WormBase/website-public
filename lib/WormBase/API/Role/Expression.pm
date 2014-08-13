@@ -397,7 +397,7 @@ our $_study2label = _extract_study2label();
 sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
-    my $object = $self->object;
+    my $object = $self->_gene;
 
     my $rserve = $self->_api->_tools->{rserve};
     my @fpkm_map = map {
