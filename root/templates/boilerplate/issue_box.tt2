@@ -38,6 +38,11 @@
           <div id="issue-submit-box">
             <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% template_title | uri %]" url="[% c.req.uri.path %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
           </div>
+          <div id="issue-message">
+          </div>
+      </div>  <!-- closing #issues-new -->
+      <div id="add-new-issue" style="display:none">
+          <a onClick="WB.issue.addNewIssue($jq(this));">New form</a>
       </div>
     </div>
   </div>

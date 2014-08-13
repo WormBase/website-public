@@ -3,6 +3,7 @@ use Moose;
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
+with    'WormBase::API::Role::ThirdParty::OMIM';
 
 
 =pod
@@ -40,13 +41,13 @@ sub definition {
 }
 
 sub omim {
-	my $self = shift;
- 	my %data =  %{$self->xrefs->{data}->{OMIM}} if $self->xrefs->{data}->{OMIM};
+    my $self = shift;
+    my %data =  %{$self->xrefs->{data}->{OMIM}} if $self->xrefs->{data}->{OMIM};
 
-	return {
-		description => 'link to OMIM record',
-		data => %data ? \%data : undef
-	}
+    return {
+        description => 'link to OMIM record',
+        data => %data ? \%data : undef
+    }
 }
 
 sub parent {
@@ -87,18 +88,6 @@ sub synonym {
     };
 }
 
-has 'genes_orthology' => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build__genes_orthology',
-);
-
-has 'genes_biology' => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build__genes_biology',
-);
-
 sub _get_gene_relevance{
     my ($self, $gene) = @_;
     my @omim_ace = $gene->DB_info->at('OMIM.gene') if $gene->DB_info;  #human homologs
@@ -106,36 +95,39 @@ sub _get_gene_relevance{
     my @relevance_ace = $gene->Disease_relevance;
     my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
 
-    my $relevance;
+    my ($err, $markedup_omims) = $self->markup_omims(\@omim);
+
     my $data = {
         gene => $self->_pack_obj($gene),
-        human_orthologs => @omim ? \@omim : undef,
-        relevance => @relevance ? \@relevance : undef
+        human_orthologs => $markedup_omims,
+        relevance => @relevance ? \@relevance : undef,
     };
+    $data->{'error'} = $err if $err;
 
     return $data;
 }
 
-sub _build__genes_orthology {
+sub genes_orthology {
     my ($self) = @_;
     my @data = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_orthology;
+    my $err = $self->summarize_error(\@data);
     return {
         description => 'Genes by orthology to human disease gene',
-        data        => @data ? \@data : undef ,
+        data        => @data ? \@data : undef,
+        error       => $err,
     };
 }
 
-sub _build__genes_biology {
+sub genes_biology {
     my ($self) = @_;
     my @genes = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_biology;
+    my $err = $self->summarize_error(\@genes);
     return {
         description => 'Genes used as experimental models',
         data        => @genes ? \@genes : undef ,
+        error       => $err,
     };
 }
-
-
-
 
 
 
