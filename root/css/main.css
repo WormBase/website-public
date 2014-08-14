@@ -1204,9 +1204,17 @@ div#header p {
 
 div#header div#title {
   padding:0.4em 1.4em;
+  height:34px;
 }
 
-div#header .release_date { }
+div#header div#title img {
+/*    float:left; */
+    vertical-align:bottom;
+}
+
+div#header .release_date { 
+    padding-left:8px;
+}
 
 
 
