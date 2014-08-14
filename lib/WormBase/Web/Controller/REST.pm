@@ -1125,7 +1125,7 @@ END
   my $pseudo_title = substr($trim_content,0,50) . '...';
   my $data = { title => $pseudo_title,
 	       body  => "$content",
-	       labels => [ 'HelpDesk', $title ],
+	       labels => $title ? [ 'HelpDesk', $title ] : ['HelpDesk']
   };
 
   my $request_json = $json->utf8(1)->encode($data);
