@@ -1,48 +1,34 @@
 <h1>WormBase Ontology Browser</h1>
-[% UNLESS term %]
-<p>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script>
+  function togglePlusMinus(element) {
+    document.getElementById(element).innerHTML = (document.getElementById(element).innerHTML == "&nbsp;+&nbsp;") ? "&nbsp;-&nbsp;" : "&nbsp;+&nbsp;";
+    return false;
+  }
+  function toggleQuestionMinus(element) {
+    var questionInnerHtml = '&nbsp;<span style="font-size: 8pt">?</span>&nbsp;';
+    document.getElementById(element).innerHTML = (document.getElementById(element).innerHTML == questionInnerHtml) ? "&nbsp;-&nbsp;" : questionInnerHtml;
+    return false;
+  }
+  function toggleShowHide(element) {
+    document.getElementById(element).style.display = (document.getElementById(element).style.display == "none") ? "" : "none";
+    return false;
+  }
+  function expandTermId(termId, nodeCount) {         // get the values of the children of the termId and load them in the children_ element
+    if (document.getElementById('notQueried_' + nodeCount + '_' + termId)) {	// this node has not been queried
+      var highestNodeCount  = document.getElementById('highestNodeCount').value;	// get currently highest node count
+//       document.getElementById('highestNodeCount').remove();			// older browsers don't support this
+      var elementToRemove = document.getElementById('highestNodeCount');
+      elementToRemove.parentNode.removeChild(elementToRemove);
+        // going to create more nodes and have a new html element highestNodeCount from ajax, remove current from DOM to prevent duplicate with newer value
+      var url = '/tools/ontology_browser/query_children?inline=1&termId=' + termId + '&highestNodeCount=' + highestNodeCount;
+      $(document.getElementById('children_' + nodeCount + '_' + termId)).load(url);	// load the children_<nodeCount>_<termId> UL with the list from the url
+    }
+    toggleShowHide('children_' + nodeCount + '_' + termId);			// always toggle to show or hide the UL children_<nodeCount>_<termId>
+  }
+</script>
 
-<table border='1'>
-<tr><th>Types</th><th>Description</th><th>Examples</th></tr>
-<tr><th>Anatomy Ontology</th><td>provide standardized terms to describe cellular anatomy</td>
-<td>term name <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=GABAergic neuron;class=Anatomy_term">GABAergic neuron</a>
-<br />AO accession number <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=WBbt:0005784;class=Anatomy_term">WBbt:0005784</a>
-</td>
-</tr><tr><th>Gene Ontology</th><td>aims to provide a controlled vocabulary to describe biology, falling into three areas:<br />
- biological process, cellular compartment, and molecular function</td>
-<td>brief text description <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=ubiquitin-dependent endocytosis;class=go_term">ubiquitin-dependent endocytosis</a>
+[% treeExpand %]
 
-<br />gene ontology ID <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=GO:0004500;class=go_term">GO:0004500</a>
-</td>
-</tr><tr><th>Phenotype</th><td>provides a simple mechanism to search the phenotype ontology</td>
-<td>
-phenotype term <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=embryonic lethal late emb;class=phenotype">embryonic lethal late emb</a>
-<br />phenotype ID <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=WBPhenotype:0000520;class=phenotype">WBPhenotype:0000520</a><br />
-</td>
-</tr>
-</table>
-</p>
-
-<h5>Note: when multiple results were found, you will be redirected to the search page</h5>
-<br />
-
-[% END %]
-
-<p>
-<form method="POST" action="[% c.uri_for('/tools','ontology_browser','run').path %]">
-  <table>
-     <tr>
-
-         <th>Class</th>
-         <td><select name="class" >
-		 [% FOREACH obj IN c.config.sections.tools.ontology_browser.terms.keys.sort %]
-		      <option value="[% obj %]" [% IF term_type == obj %] selected = "1" [% END %]>[% c.config.sections.tools.ontology_browser.terms.$obj %]</option>
-		      [% END %]
-	      </select>
-	  <th>Name</th>
-	  <td><input type="text" name="name" value="[% term.id %]" /></td>
-         <td><input type="submit" name="Submit"  style="background: white" /></td>
-    </tr>
-  </table>
-</form>
-</p>
+<hr>
+<div id="o_browser">click a term to load it</div>

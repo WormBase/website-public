@@ -1,48 +1,24 @@
-[% INCLUDE tools/ontology_browser/index.tt2 UNLESS noboiler %]
+[% INCLUDE tools/ontology_browser/index.tt2 UNLESS noboiler %] 
 
+<script>
+  function toggleShowHide(element) {
+    document.getElementById(element).style.display = (document.getElementById(element).style.display == "none") ? "" : "none";
+    return false;
+  }
+  function togglePlusMinus(element) {
+    document.getElementById(element).innerHTML = (document.getElementById(element).innerHTML == "&nbsp;+&nbsp;") ? "&nbsp;-&nbsp;" : "&nbsp;+&nbsp;";
+    return false;
+  }
+</script>
+
+  
 [% IF msg %]
    <div class="not-found">[% msg %]</div>
 [% ELSE %]
-<p>   <a id="ontology_top"></a>
-      <h4>[% path_count %] [% pluralize('path', path_count) %] found for [% tag2link(term) %] <br><br>
-      Go to path:<br><br>
-
-       [% FOREACH path IN parents %]
-	  <a href="javascript:void(0)" onClick="WB.goToAnchor('b[% loop.count %]')">[% loop.count %]</a>
-	  [% UNLESS loop.last %]&nbsp;&nbsp;[% END %]
-
-      [% END %]
-
-
-
-      [% FOREACH path IN parents %]
-	   <a id = "b[% loop.count %]">&nbsp;&nbsp;</a><hr />
-	    [% IF term_type == 'go_term' %] [% random=path.shift %] [% END %]
-	    path number:[% loop.count %]
-	    [% padding = '&nbsp;&nbsp;&nbsp;&nbsp' %]
-	      [% FOREACH parent IN path %]
-		    <br>[% padding %]<b>[% parent.type %]</b> [% tag2link(parent) %]
-		    [% padding = padding _ '&nbsp;&nbsp;&nbsp;&nbsp;' %]
-		    [% IF parent.association_count || parent.association_count_total %]
-		      ([% parent.association_count %] [% pluralize('association',parent.association_count) %] to term)
-		    [% END %]
-			[% IF loop.last %]
-				<br>[% padding %]- [% tag2link(term) %]
-				[% child_padding = padding _ '&nbsp;&nbsp;&nbsp;&nbsp;' %]
-				[% FOREACH child IN childrens %]
-					<br>[% child_padding %]-- [% tag2link(child) %]
-				[% END %]
-				[% FOREACH sibling IN parent.siblings %]
-					[% UNLESS sibling.id == term.id %]
-					<br>[% padding %]- [% tag2link(sibling) %]
-					[% END %]
-				[% END %]
-			[% END %]
-	      [% END %]
-	    <br>
-      <a href="javascript:void(0)" onClick="WB.goToAnchor('ontology_top')">Go to top</a>
-
-	[% END %]
-</p>
-
+   [% inferred_tree_view %]
+   <br/><br/>
+   [% svg_markup %]
+   [% svg_legend_markup %]
+   <br/><br/><br/>
+   [% parent_table %]
 [% END %]
