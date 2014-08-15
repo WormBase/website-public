@@ -1203,7 +1203,7 @@ div#header p {
 }
 
 div#header div#title {
-  padding:0.4em 1.4em;
+  padding:0.6em 1.4em 0.3em;
   height:34px;
 }
 
@@ -1212,8 +1212,10 @@ div#header div#title img {
     vertical-align:bottom;
 }
 
-div#header .release_date { 
+div#header .release_date {
     padding-left:8px;
+    padding-bottom: 0.3em;
+    display: inline-block;
 }
 
 
