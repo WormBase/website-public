@@ -343,11 +343,7 @@ sub run {
     $colorMap{child_nucleus_of_in_hermaphrodite} = 'pink';
     $colorMap{child_nucleus_of_in_male}          = 'pink';
     $colorMap{union_of}                          = 'brown';
-    $colorMap{daughter_of}                       = 'pink';
-    $colorMap{daughter_of_in_hermaphrodite}      = 'pink';
-    $colorMap{daughter_of_in_male}               = 'pink';
     $colorMap{develops_from}                     = 'brown';
-    $colorMap{xunion_of}                         = 'brown';
     $colorMap{exclusive_union_of}                = 'brown';
     my %edgeTypeExists;							# track which relationships exist, to show in legend
    
