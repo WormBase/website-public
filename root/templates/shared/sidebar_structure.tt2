@@ -61,7 +61,13 @@
           [% make_star(wbid) %]
         [% ELSE; '>'; END; %]
           [% title %]
-     [% IF c.request.param('from'); '<span class="note">(redirected from <a href="' _ c.request.param('from') _ '&redirect=no">' _ c.request.param('from') _ '</a>)</span>'; END;%]
+    [% IF (from_url = c.request.param('from'));
+        IF (from_url.match('^http'));
+            '<span class="note">(redirected from external site ' _ from_url _ ')</span>';
+        ELSE;
+            '<span class="note">(redirected from <a href="' _ c.uri_for(from_url, {redirect=>'no'}) _ '">' _ from_url _ '</a>)</span>';
+        END;
+    END; %]
 
       </h2>
 
