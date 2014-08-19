@@ -4,10 +4,10 @@
         height: 750px;
         margin:0 auto;
         position: absolute;
-    }	
-    
+    }
+
 </style>
-[%# If these values are asserted, they are given by Interaction->interactions,  
+[%# If these values are asserted, they are given by Interaction->interactions,
 otherwise find them in Interaction->interaction_details %]
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
@@ -15,7 +15,7 @@ otherwise find them in Interaction->interaction_details %]
 [% NTYPES = NTYPES || interaction_details.data.ntypes %]
 [% CLASSTYPE = (CLASSTYPE == 'WBProcess') ? CLASSTYPE : OBJTYPE %]
 [% PHENOTYPES = PHENOTYPES || interaction_details.data.phenotypes %]
-[% 
+[%
     # Legend supertypes specification #
     master = [
         { Physical => 1 },
@@ -56,11 +56,11 @@ otherwise find them in Interaction->interaction_details %]
             { 'No interaction' => 1 },
         ]},
     ];
-    
-    edgeHash = {}; # keys are edge types 
+
+    edgeHash = {}; # keys are edge types
     FOREACH obj IN EDGES;
         type = obj.type;
-        edgeHash.$type = 1; 
+        edgeHash.$type = 1;
     END;
     edgeColors = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E"];
     colorBinding = {};
@@ -68,10 +68,10 @@ otherwise find them in Interaction->interaction_details %]
         ind = loop.index;
         colorBinding.$key = key == 'Predicted' ? '#888' : edgeColors.$ind;
     END;
-    
+
 %]
 
-[%  
+[%
 colorIndex = 0;
 
 # Expects: name, value, color
@@ -80,8 +80,8 @@ color = value == 'Predicted' ? '#888' : color;
 colorBinding.$value = color;
 %]
 <input type="checkbox" name="[% name %]" value="[% value %]" [% IF value == 'Predicted'; 'class="cyto_predict"'; END; %]>
-<span style="color:[% color %]"> 
-[% value == 'Predicted' ? '<small><b>- -</b></small>' : '<b>&ndash;</b>' %][% value %] 
+<span style="color:[% color %]">
+[% value == 'Predicted' ? '<small><b>- -</b></small>' : '<b>&ndash;</b>' %][% value %]
 </span><br />
 [% END %]
 
@@ -91,12 +91,12 @@ colorBinding.$value = color;
       <div id="cyto_legend" style="width:15em;position:absolute;right:0;z-index:1001" class="detail-box ui-corner-all">
         <p><center><h3>Legend</h3></center></p>
         [% IF TYPES.keys %]
-            
+
             <h4> Interaction types</h4>
             <p style="margin:0px">
-            
+
             <input type="checkbox" name="interactionToggle">  <span style="font-weight:bold">All ON/OFF</span><br />
-            [% 
+            [%
             FOREACH type1 IN master;
                 key = type1.keys.0;
                 IF type1.$key == 1 && edgeHash.$key == 1;
@@ -128,7 +128,7 @@ colorBinding.$value = color;
                                 [% FOREACH phenotype IN PHENOTYPES.keys.sort %]
                                     <input type="checkbox" name="phenotype" value="[% PHENOTYPES.$phenotype.label %]">
                                     <span><b>&ndash;</b> [% PHENOTYPES.$phenotype.label %] </span><br />
-                                    
+
                                 [% END %]
                                 </div>
                             [% END %]
@@ -137,7 +137,7 @@ colorBinding.$value = color;
                     '</div><br />';
                 END;
             END;
-            
+
             FOREACH type IN edgeHash.keys;
                 IF edgeHash.$type == 1;
                     INCLUDE cyto_checkbox
@@ -147,13 +147,13 @@ colorBinding.$value = color;
                     colorIndex = colorIndex + 1;
                 END;
             END;
-            
-        END; 
+
+        END;
         %]
         </p>
-        
-        
-        
+
+
+
         <h4>Directions</h4>
         <p>
           <input type="checkbox" name="direction" value="Effector->Affected"> <b>&#8594;</b> Effector -> Affected<br />
@@ -164,10 +164,10 @@ colorBinding.$value = color;
         <h4>Interactor types</h4>
         <p>
             [% FOREACH obj IN NTYPES.keys.sort %]
-            <input type="checkbox" name="nodes" value="[% obj %]"> [% 
-                val = obj.replace('_', ' '); 
-                IF val == 'Text'; val = 'Other'; END; 
-                val; %] 
+            <input type="checkbox" name="nodes" value="[% obj %]"> [%
+                val = obj.replace('_', ' ');
+                IF val == 'Text'; val = 'Other'; END;
+                val; %]
             <br />
             [% END %]
         </p>
@@ -182,30 +182,30 @@ colorBinding.$value = color;
       </div>
 
 
-      
+
       <div id="resizable" class="ui-widget-content" style="float:left">
-      
+
           <div id="cy" >
-			
+
           </div>
-      
+
       </div>
-      
+
 
       <br style="clear:both"/>
 
 [%- content -%]
-    [%# Must implement arbor.js here, it uses web workers and 
+    [%# Must implement arbor.js here, it uses web workers and
     will not work when combined with other JS %]
     <script src="/js/jquery/plugins/cytoscapejs/arbor.js"></script>
     <script type="text/javascript">
     (function(){
       var data = {
-            nodes: [  
+            nodes: [
                 [% FOREACH node IN NODES.keys.sort %]
-                    { data: { 
-                        id: "[% NODES.$node.label %]", 
-                        name: "[% NODES.$node.label %]", 
+                    { data: {
+                        id: "[% NODES.$node.label %]",
+                        name: "[% NODES.$node.label %]",
                         number:[% loop.index %],
                         ntype: "[%  NODES.$node.class.replace('_', ' ') %]",
                         link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
@@ -216,14 +216,14 @@ colorBinding.$value = color;
                     }},
                 [% END %]
             ],
-            edges:[ 
+            edges:[
                 [% FOREACH obj IN EDGES %]
-                    { data: { 
-                    id: "e[% loop.count %]", 
+                    { data: {
+                    id: "e[% loop.count %]",
                     label: "[% obj.interaction.id %]" ,
-                    source: "[% obj.effector.label %]", 
+                    source: "[% obj.effector.label %]",
                     target: "[% obj.affected.label %]",
-                    type: "[% obj.type %]", 
+                    type: "[% obj.type %]",
                     direction:"[% obj.direction %]",
                     width: [% obj.interactions.size %],
                     phenotype: "[% obj.phenotype.label %]",
@@ -232,7 +232,7 @@ colorBinding.$value = color;
                     }},
                 [% END %]
             ],
-            [%# 
+            [%#
                 = Custom cytoscape mappers =
                 * elementType: nodes or edges
                 * attr: some key under data[elementType][i].data
@@ -258,6 +258,6 @@ colorBinding.$value = color;
                           "[% obj %]",
                     [% END %] ]
         WB.setupCytoscape(data, types [% IF CLASSTYPE; ', "'; CLASSTYPE; '"'; END; %]);
-      
+
     })();
     </script>

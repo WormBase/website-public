@@ -25,7 +25,6 @@
         END;
       END;
 
-
       WRAPPER $field_block title="Parent" key="parent";
         tags2link(fields.parent.data);
       END;
@@ -35,18 +34,62 @@
       END;
   END;
 
+fields.omim_external;
+
   '<div class="description">';
     markup(fields.definition.data);
-
-   WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
-     tags2link(fields.genes_biology.data);
-   END;
-
-   WRAPPER $field_block title="Genes by orthology to human disease gene" key="genes_orthology";
-     tags2link(fields.genes_orthology.data);
-   END;
-
   '</div>';
-  remarks;
+
+  WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
+
+    genes_biology_data = fields.genes_biology.data;
+
+    FOREACH gene_obj IN genes_biology_data;
+        lines = ['<ul>'];
+        FOREACH ortho IN gene_obj.human_orthologs;
+            ortho_link = external_link(ortho.db, ortho.label, ortho.id);
+            lines.push('<li>' _ ortho_link _ '</li>');
+        END;
+        lines.push('</ul>');
+        gene_obj.formatted_orthologs = tags2link(lines.join(''));
+    END;
+
+    build_data_table( order=['gene', 'relevance', 'formatted_orthologs'],
+        columns={
+            gene => 'Gene',
+            relevance => 'Disease Relevance',
+            formatted_orthologs => '<div style="width:150px;">Human Orthologs</div>'
+        },  key="genes_biology",
+        passed_data=genes_biology_data);
+  END;
+
+  WRAPPER $field_block title="Genes identified as potential models<sup>1</sup>" key="genes_orthology";
+    genes_orthology_data = fields.genes_orthology.data;
+
+    FOREACH gene_obj IN genes_orthology_data;
+        lines = ['<ul>'];
+        FOREACH ortho IN gene_obj.human_orthologs;
+            ortho_link = external_link(ortho.db, ortho.label, ortho.id);
+            lines.push('<li>' _ ortho_link _ '</li>');
+        END;
+        lines.push('</ul>');
+        gene_obj.formatted_orthologs = tags2link(lines.join(''));
+    END;
+
+    build_data_table( order=['gene', 'formatted_orthologs'],
+        columns={
+            gene => 'Gene',
+            formatted_orthologs => 'Human Orthologs'
+        }, key="genes_orthology",
+        passed_data=genes_orthology_data);
+
+
+        '<div class="curator-comment-field">';
+            '<sup>' _ 1 _ ' </sup>';
+            '<b>Inferred automatically:</b> Inferred by orthology to human genes with OMIM annotation';
+        '</div>';
+
+
+  END;
 
 %]

@@ -600,7 +600,8 @@ END; %]
       LAST;
     END;
   END; %]
-  [% UNLESS (not_empty || (widget == 'overview') || (widget == 'expression')) %]
+  [% UNLESS (not_empty || (widget == 'overview') || (widget == 'expression') || (widget == 'ontology_browser')) %]
+
     <span class="caveat-emptor">No [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] data for [% object.name.data.label %]</span>
   [% END %]
 [% END %]
@@ -888,7 +889,7 @@ END;
 
             # Include the lab representative, if one exists
             IF lab.representative;
-              "(" _ tag2link(lab.representative) _ ")" ;
+              "(" _ tags2link(lab.representative, ', ') _ ")" ;
             END;
 
             IF !loop.last;
@@ -960,18 +961,20 @@ END;
       contents = contents _ markup(fields.remarks.data.join('<br />'),0);
    END;
 
-   IF contents != '';
-    IF no_toggle == 1 && contents;
-        #WRAPPER $field_block title="Remarks" key="remarks";
-          '<h4>Remarks:</h4>';
+    IF no_toggle == 1;
+        IF no_field == 1 && contents;
+            '<h4>Remarks:</h4>';
             contents;
-        #END;
-    ELSE;
+        ELSE;
+          WRAPPER $field_block title="Remarks" key="remarks";
+              contents;
+          END;
+        END;
+    ELSIF contents != '';
           WRAPPER toggle title="Curatorial remarks";
                 contents;
           END;
     END;
-   END;
 END;
 %]
 

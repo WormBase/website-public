@@ -9,7 +9,7 @@ WRAPPER highlight_box;
         fields.title.data;
     END;
 
-      
+
 END;
 
 '<div class="description">';

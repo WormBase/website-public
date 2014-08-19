@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -71,7 +71,7 @@ sub intron {
 }
 
 # predicted_five_prime { }
-# This method will return a data structure 
+# This method will return a data structure
 # containing objects 5' of the curent feature.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/CO871145:polyA_site/predicted_five_prime
 

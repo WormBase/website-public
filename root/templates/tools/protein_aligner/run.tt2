@@ -13,7 +13,7 @@
 </table>
 </div>
 
-[% INCLUDE tools/protein_aligner/index.tt2 UNLESS noboiler %] 
+[% INCLUDE tools/protein_aligner/index.tt2 UNLESS noboiler %]
 
 [% msg %]
 

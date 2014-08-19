@@ -1,12 +1,12 @@
 <h2>[% fields.historical_name.data %]</h2>
 
-[% 
+[%
 
 WRAPPER highlight_box;
-  
+
    WRAPPER $field_block title="Experiment" key="historical_name";
         fields.historical_name.data;
-   END;  
+   END;
 
 END;
 
@@ -27,5 +27,5 @@ END;
 
 remarks;
 
-'</div>'	 
+'</div>'
 %]

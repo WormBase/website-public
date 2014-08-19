@@ -31,18 +31,18 @@
   </div>
 </div>
 
-<script> 
-[% IF reload || error_notice  %] 
+<script>
+[% IF reload || error_notice  %]
    [% IF error_notice %]
       alert("Login not successful! [% error_notice %]");
       window.location = "/";
    [% ELSIF prompt_wbid %]
-      opener.location.href="[% c.uri_for('/auth/wbid').path %]?redirect=[% redirect %]";
+      window.location.href="[% c.uri_for('/auth/wbid').path %]?redirect=[% redirect %]";
    [% ELSE %]
-      opener.location.reload(1);
-  [% END %] 
+      window.location.reload(1);
+  [% END %]
   window.close();
-[% END %]  
+[% END %]
 
 if(WB){
       WB.getPlugin("placeholder", function(){

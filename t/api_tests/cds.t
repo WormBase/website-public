@@ -35,6 +35,23 @@
 
     }
 
+    sub test_brief_identification {
+        my $cds = $api->fetch({ class => 'Cds', name => 'AH6.1'});
+        can_ok('WormBase::API::Object::Cds', ('identity'));
+
+        my $brief = $cds->identity();
+        isnt($brief->{'data'}, undef, 'data returned');
+        is($brief->{'data'}->{'text'}, 'Guanylate cyclase receptor-type gcy-1', 'Correct brief identification');
+        isnt($brief->{'data'}->{'evidence'}, undef, 'evidence returned');
+        isnt($brief->{'data'}->{'evidence'}->{'Accession_evidence'}, undef, 'correct type of evidence returned');
+
+        my $evs = $brief->{'data'}->{'evidence'}->{'Accession_evidence'};
+        ok(\$evs, 'has one Accession_evidence');
+        my $evidence = shift $evs;
+        is($evidence->{'class'}, 'UniProt', 'Correct external database specified');
+        is($evidence->{'id'}, 'Q09435', 'Correct cross-referecne id specified');
+    }
+
 }
 
 1;

@@ -6,7 +6,7 @@
       <p><i>This widget displays a count of all objects in WormBase for each species. Note that some species are maintained solely as Genome Browser instances and not integrated into WormBase directly.</i></p>
   [% FOREACH s IN c.config.sections.species_list.keys.sort %]
     [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
-      <li><a href="[% c.uri_for('/species',s, class).path %]" class="species">[% c.config.sections.species_list.$s.title %]</a>: 
+      <li><a href="[% c.uri_for('/species',s, class).path %]" class="species">[% c.config.sections.species_list.$s.title %]</a>:
         <span class="count" href="/search/count/[% s %]/[% class %]/*"></span>
       </li>
     [% END %]
@@ -15,7 +15,7 @@
     <br />
     [% FOREACH cls IN c.config.sections.species.keys.sort %]
         [% IF cls == 'title'; NEXT; END; %]
-        <li><a href="[% c.uri_for('/species',species,cls).path %]">[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title %]</a>: 
+        <li><a href="[% c.uri_for('/species',species,cls).path %]">[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title %]</a>:
           <span class="count" href="/search/count/[% species %]/[% cls %]/*"></span>
         </li>
     [% END %]
@@ -23,7 +23,7 @@
 [% ELSIF class == 'all'; %]
   [% IF species %]
     [% FOREACH cls IN c.config.sections.species_list.$species.available_classes.class %]
-        <li><a href="[% c.uri_for('/species',species,cls).path %]">[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title %]</a>: 
+        <li><a href="[% c.uri_for('/species',species,cls).path %]">[% c.config.sections.species.$cls.title || c.config.sections.resources.$cls.title %]</a>:
           <span class="count" href="/search/count/[% species %]/[% cls %]/*"></span>
         </li>
     [% END %]
@@ -31,7 +31,7 @@
     [% FOREACH cls IN c.config.sections.resources.keys.sort %]
         [% IF cls == 'title'; NEXT; END; %]
         [% IF c.config.sections.resources.$cls.display_in_dropdown == 'yes' %]
-        <li><a href="[% c.uri_for('/resources',cls).path %]">[% c.config.sections.resources.$cls.title %]</a>: 
+        <li><a href="[% c.uri_for('/resources',cls).path %]">[% c.config.sections.resources.$cls.title %]</a>:
           <span class="count" href="/search/count/all/[% cls %]/*"></span>
         </li>
         [% END %]

@@ -1,4 +1,4 @@
-[% 
+[%
 
   IF fields.xrefs.data;
 
@@ -9,7 +9,7 @@
 
       links = "";
       FOREACH dbt IN hash.$db.keys;
-        FOREACH id IN hash.$db.$dbt.ids; 
+        FOREACH id IN hash.$db.$dbt.ids;
             # We'll use description info from the website and not the DB.
             # Should be a table of resource, ID linked to page description, maintainer.
             links = links _ external_link(dbname,id,id,dbt) _ '<br />';
@@ -29,7 +29,7 @@
 
 	build_data_table(
 		order=['name','link','full_description','maintainer'],
-		columns={ 
+		columns={
 			name        		=> 'Name',
 			link        		=> 'Entry',
 			full_description 	=> 'Description',

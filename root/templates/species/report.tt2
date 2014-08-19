@@ -1,6 +1,6 @@
 [%- # This is the generic report page for species-associated entitities at WormBase -%]
 
-[% 
+[%
       species = species || object.name.data.taxonomy;
       breadcrumbs = [];
       IF (species == 'all' && class=='all');

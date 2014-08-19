@@ -21,15 +21,14 @@ STDIN.each { |line|
     next unless line.chomp.end_with?(';')
 
     # Feed the line to R and output the result.
-    # puts buffer
+    # puts buffer   # uncomment when debugging
     rserve.eval(buffer)
     buffer = ''
   rescue => error
     # If there was an error (a.k.a. "exception"), then print this instead
     # and exit this script with an error code of 1.
-    puts "WOOPS"
+    puts "OOPS! an error occurred at: #{buffer}"
     puts "#{error}"
     exit 1
   end
 }
-

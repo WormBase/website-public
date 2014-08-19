@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -65,7 +65,7 @@ http://wormbase.org/species/gene_class
 #######################################
 
 ########################################
-# The Overview widget 
+# The Overview widget
 #
 #######################################
 
@@ -102,7 +102,7 @@ sub former_laboratory {
     my $former_lab_time = $object->Former_designating_laboratory;
     my ($former_lab_day) = ($former_lab_time =~ /(\d+\s\w+\s\d+)\s.+/);
     my $former_lab = $former_lab_time && $former_lab_time->right;
-    my $data = 	{ description => 'Former_designating_laboratory',
+    my $data = 	{ description => 'Former designating laboratory for the gene class and the date of retirement',
 		  data => $former_lab ? { lab => $self->_pack_obj($former_lab),
 					  time => "$former_lab_day" } : undef };
     return $data;
@@ -115,7 +115,7 @@ sub former_laboratory {
 
 #######################################
 #
-# The Current Genes widget 
+# The Current Genes widget
 #
 #######################################
 
@@ -126,24 +126,24 @@ sub former_laboratory {
 
 sub current_genes {
     my $self   = shift;
-    my $object = $self->object; 
-    
+    my $object = $self->object;
+
     my %data;
     foreach my $gene ($object->Genes) {
-	
+
 	my $species = $gene->Species;
-	
+
 	my $sequence_name = $gene->Sequence_name;
 # 	my $locus_name    = $gene->Public_name;
 # 	my $name = ($locus_name ne $sequence_name) ? "$locus_name ($locus_name)" : "$locus_name";
-	
+
 	# Some redundancy in the data structure here while
 	# we decide how to format this data.
 	push @{$data{$species}},
 	{ species  => $self->_split_genus_species($species),
 	  locus    => $self->_pack_obj($gene),
 	  sequence => $self->_pack_obj($sequence_name),
-	};		     
+	};
     }
     return { description => 'genes assigned to the gene class, organized by species',
 	     data        => scalar keys %data ? \%data : undef };
@@ -151,7 +151,7 @@ sub current_genes {
 
 #######################################
 #
-# The Previous Genes widget 
+# The Previous Genes widget
 #
 #######################################
 
@@ -166,19 +166,19 @@ sub current_genes {
 sub former_genes {
     my $self   = shift;
     my $object = $self->object;
-        
+
     my %data;
     foreach my $old_gene ($object->Old_member) {
 	my $gene = $old_gene->Other_name_for || $old_gene->Public_name_for;
 	next unless $gene;
 	my $stashed = $self->_stash_former_member($gene,$old_gene,'reassigned to new class');
-	
+
 	my $species = $gene->Species;
 	push @{$data{$species}},$stashed;
     }
-    
+
     return { description => 'genes formerly in the class that have been reassigned to a new class',
-		 data        => scalar keys %data ? \%data : undef };    
+		 data        => scalar keys %data ? \%data : undef };
 }
 
 
@@ -191,12 +191,12 @@ sub reassigned_genes {
     my $self   = shift;
     my $object = $self->object;
     my $dbh = $self->ace_dsn->dbh;
-    
+
     my @genes = eval {$dbh->fetch(-query=>qq{find Gene where Other_name="$object*"})};
     my %data;
     foreach my $gene (@genes) {
 	my $species = $gene->Species;
-	
+
 	# Only keep them if their current locus name matches the object name
 	# We're looking for genes that have been reassigned
 	my $public_name = $gene->Public_name;
@@ -207,7 +207,7 @@ sub reassigned_genes {
 	}
     }
     return { description => 'genes that have been reassigned a new name in the same class',
-	      data        => scalar keys %data ? \%data : undef };    
+	      data        => scalar keys %data ? \%data : undef };
 }
 
 

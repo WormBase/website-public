@@ -1,0 +1,222 @@
+FEATURE	SOURCE	TYPE	TRACK	a_ceylanicum_PRJNA231479	a_suum_PRJNA62057	a_suum_PRJNA80881	b_malayi_PRJNA10729	b_xylophilus_PRJEA64437	c_angaria_PRJNA51225	c_brenneri_PRJNA20035	c_briggsae_PRJNA10731	c_elegans_PRJNA13758	c_japonica_PRJNA12591	c_remanei_PRJNA53967	c_sp5_PRJNA194557	c_tropicalis_PRJNA53597	d_immitis_PRJEB1797	h_bacteriophora_PRJNA13977	h_contortus_PRJEB506	h_contortus_PRJNA205202	l_loa_PRJNA60051	m_hapla_PRJNA29083	m_incognita_PRJEA28837	n_americanus_PRJNA72135	o_volvulus_PRJEB513	p_exspectatus_PRJEB6009	p_pacificus_PRJNA12644	p_redivivus_PRJNA186477	s_ratti_PRJEA62033	t_spiralis_PRJNA12603	t_suis_PRJNA208415	t_suis_PRJNA208416
+CDS:GeneMarkHMM	GeneMarkHMM	CDS	Prediction: GeneMarkHMM (prediction_genemarkhmm)	0	0	0	0	0	0	0	0	132967	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:Genefinder	Genefinder	CDS	Prediction: GeneFinder (prediction_genefinder)	0	0	0	0	0	0	0	0	133896	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:RNASEQ.Hillier	RNASEQ.Hillier	CDS	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	1541006	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:RNASEQ.Hillier.Aggregate	RNASEQ.Hillier.Aggregate	CDS	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	342659	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:WormBase	WormBase	CDS	Genes (protein coding) (genes_protein_coding)	0	0	0	137330	0	0	159307	121684	179784	135514	157453	0	0	0	0	0	0	0	0	0	0	103128	0	249872	0	876	0	0	0
+CDS:WormBase_imported	WormBase_imported	CDS	Genes (protein coding) (genes_protein_coding)	439432	121416	119166	0	81552	116961	0	0	0	0	0	243751	141651	100116	123238	242047	194152	104089	88160	135688	122794	0	277072	0	105127	16894	87853	72801	72656
+CDS:genBlastG	genBlastG	CDS	NO CONFIG AVAILABLE	0	0	0	0	0	0	163522	161357	0	145788	167358	0	0	0	0	0	0	0	0	0	0	0	0	153776	0	0	0	0	0
+CDS:jigsaw	jigsaw	CDS	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	123207	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:mGene	mGene	CDS	Prediction: mGene (prediction_mgene)	0	0	0	0	0	0	0	0	134050	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:mSplicer_orf	mSplicer_orf	CDS	Prediction: mSplicer-ORF (prediction_msplicer_orf)	0	0	0	0	0	0	0	0	168585	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:mSplicer_transcript	mSplicer_transcript	CDS	Prediction: mSplicer (prediction_msplicer_transcript)	0	0	0	0	0	0	0	0	171688	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CDS:twinscan	twinscan	CDS	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	124073	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+DNAseI_hypersensitive_site:DNAseI_hypersensitive_site	DNAseI_hypersensitive_site	DNAseI_hypersensitive_site	DNAseI hypersensitive site (dnaseI_hypersensitive_site)	0	0	0	0	0	0	0	0	7095	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+G_quartet:pmid18538569	pmid18538569	G_quartet	G4 Motif (g4_motif)	0	0	0	0	0	0	0	0	2907	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+PCR_product:GenePair_STS	GenePair_STS	PCR_product	PCR Assays (pcr_products)	0	0	0	0	0	0	0	0	79511	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+PCR_product:Orfeome	Orfeome	PCR_product	ORFeome PCR Products (orfeome_pcr_products)	0	0	0	0	0	0	0	0	22176	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+PCR_product:Promoterome	Promoterome	PCR_product	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	6851	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+RNAi_reagent:RNAi_primary	RNAi_primary	RNAi_reagent	RNAi experiments (primary targets) (variations_rnai_best)	0	0	0	0	0	0	0	0	235451	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+RNAi_reagent:RNAi_secondary	RNAi_secondary	RNAi_reagent	RNAi experiments (secondary targets) (variations_rnai_other)	0	0	0	0	0	0	0	0	71640	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+SAGE_tag:SAGE_tag	SAGE_tag	SAGE_tag	SAGE tags (sage_tags)	0	0	0	0	0	0	0	0	167711	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+SAGE_tag:SAGE_tag_genomic_unique	SAGE_tag_genomic_unique	SAGE_tag	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	121473	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+SAGE_tag:SAGE_tag_most_three_prime	SAGE_tag_most_three_prime	SAGE_tag	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	21	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+SAGE_tag:SAGE_tag_unambiguously_mapped	SAGE_tag_unambiguously_mapped	SAGE_tag	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	3066	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+SL1_acceptor_site:SL1	SL1	SL1_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	0	0	0	19968	0	0	0	4517	18461	0	0	0	0	0	0	0	0	0	0	0	0	25711	0	0	0	0	0	0	0
+SL2_acceptor_site:SL2	SL2	SL2_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	0	0	0	0	0	0	0	1639	7475	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+SNP:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	SNP	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	6588	69542	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+SNP:Variation_project_Polymorphism	Variation_project_Polymorphism	SNP	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	57495	661265	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+TF_binding_site:TF_binding_site	TF_binding_site	TF_binding_site	Transcription factor binding sites (transcription_factor_binding_site)	0	0	0	0	0	0	0	0	496	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+TF_binding_site:TF_binding_site_region	TF_binding_site_region	TF_binding_site	Transcription factor binding regions (transcription_factor_binding_region)	0	0	0	0	0	0	0	0	325743	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+TSS_region:TSS_region	TSS_region	TSS_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	73499	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	0	0	101	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+assembly_component:Genbank	Genbank	assembly_component	Genbank submissions (genbank_entries)	0	0	0	9779	0	0	0	638	3267	18817	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+assembly_component:Genomic_canonical	Genomic_canonical	assembly_component	Contig submissions (genomic_canonical)	0	0	0	9779	0	0	3305	1264	3267	18817	3670	0	0	0	0	0	0	0	0	0	0	1870	0	18083	0	0	0	0	0
+assembly_component:Link	Link	assembly_component	Links and Superlinks (links_and_superlinks)	0	0	0	0	0	0	0	12	25	0	0	0	0	0	0	0	0	0	0	0	0	708	0	0	0	0	0	0	0
+base_call_error_correction:RNASeq	RNASeq	base_call_error_correction	Genome sequence corrections (genome_sequence_errors_corrected)	0	0	0	0	0	0	0	0	1553	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+binding_site:PicTar	PicTar	binding_site	Binding sites (predicted) (binding_sites_predicted)	0	0	0	0	0	0	0	0	11184	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+binding_site:binding_site	binding_site	binding_site	Binding sites (curated) (binding_sites_curated)	0	0	0	0	0	0	0	0	56	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+binding_site:binding_site_region	binding_site_region	binding_site	Binding regions (binding_regions)	0	0	0	0	0	0	0	0	307	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+binding_site:cisRed	cisRed	binding_site	Binding sites (predicted) (binding_sites_predicted)	0	0	0	0	0	0	0	0	7929	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+binding_site:miRanda	miRanda	binding_site	Binding sites (predicted) (binding_sites_predicted)	0	0	0	0	0	0	0	0	71796	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:Allele	Allele	complex_substitution	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	0	85	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:KO_consortium	KO_consortium	complex_substitution	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	1056	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:Million_mutation	Million_mutation	complex_substitution	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	0	1218	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:NBP_knockout	NBP_knockout	complex_substitution	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	1594	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:PCoF_Allele	PCoF_Allele	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	78	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:PCoF_KO_consortium	PCoF_KO_consortium	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	989	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:PCoF_Million_mutation	PCoF_Million_mutation	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	483	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:PCoF_NBP_knockout	PCoF_NBP_knockout	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	1406	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	complex_substitution	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	0	6795	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+complex_substitution:Variation_project_Polymorphism	Variation_project_Polymorphism	complex_substitution	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	1	37843	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+conserved_region:c_brenneri_LASTZ_NET	c_brenneri_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	131050	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+conserved_region:c_briggsae_LASTZ_NET	c_briggsae_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	98266	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+conserved_region:c_elegans_LASTZ_NET	c_elegans_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	131050	98266	0	92948	106967	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+conserved_region:c_japonica_LASTZ_NET	c_japonica_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	92948	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+conserved_region:c_remanei_LASTZ_NET	c_remanei_LASTZ_NET	conserved_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	106967	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:Allele	Allele	deletion	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	0	718	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:Allele_Polymorphism	Allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	0	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:CGH_allele	CGH_allele	deletion	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	68	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:CGH_allele_Polymorphism	CGH_allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	0	239	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:KO_consortium	KO_consortium	deletion	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	2409	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:Million_mutation	Million_mutation	deletion	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	0	11938	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:NBP_knockout	NBP_knockout	deletion	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	4032	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_Allele	PCoF_Allele	deletion	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	622	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_Allele_Polymorphism	PCoF_Allele_Polymorphism	deletion	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_CGH_allele	PCoF_CGH_allele	deletion	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	67	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_CGH_allele_Polymorphism	PCoF_CGH_allele_Polymorphism	deletion	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	0	222	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_KO_consortium	PCoF_KO_consortium	deletion	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	2263	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_Million_mutation	PCoF_Million_mutation	deletion	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	2007	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_NBP_knockout	PCoF_NBP_knockout	deletion	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	3597	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	deletion	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	0	5773	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:Polymorphism	Polymorphism	deletion	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:Somatic_diminution	Somatic_diminution	deletion	Diminuted regions (somatic_diminutions)	0	11037	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+deletion:Variation_project_Polymorphism	Variation_project_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	0	112049	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+duplication:segmental_duplication	segmental_duplication	duplication	Segmental duplication (segmental_duplications)	0	0	0	0	0	0	0	0	3484	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+enhancer:enhancer	enhancer	enhancer	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	2417	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	0	0	0	141043	0	0	163168	123352	242662	138897	159983	0	0	0	0	0	0	0	0	0	0	104117	0	250459	0	876	0	0	0
+exon:WormBase_imported	WormBase_imported	exon	NO CONFIG AVAILABLE	439432	121416	119166	0	81552	116961	0	0	0	0	0	243751	141651	100116	123238	243667	203819	104226	88160	138333	123359	0	277072	0	105127	16894	87853	81143	80919
+exon:WormBase_transposon	WormBase_transposon	exon	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	31	926	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+exon:history	history	exon	Gene Models (historical) (historical_genes)	0	0	0	236022	0	0	42912	100742	106287	3021	5301	0	0	0	0	0	0	0	0	0	0	7213	0	212	0	0	0	0	0
+experimental_result_region:Expr_profile	Expr_profile	experimental_result_region	Expression chip profiles (expression_chip_profiles)	0	0	0	0	0	0	0	0	17360	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+experimental_result_region:cDNA_for_RNAi	cDNA_for_RNAi	experimental_result_region	RNAi experiments (primary targets) (variations_rnai_best)	0	0	0	0	0	0	0	0	2828	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_EST_BEST	BLAT_Caen_EST_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	0	0	0	520494	0	0	1070532	1128420	286072	945982	1121724	0	0	0	0	0	0	0	0	0	0	572451	0	682672	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_EST_OTHER	BLAT_Caen_EST_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	0	0	0	2471788	0	0	5771957	2908976	1270223	5409201	4115895	0	0	0	0	0	0	0	0	0	0	1488436	0	5990118	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_OST_BEST	BLAT_Caen_OST_BEST	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	15284	0	0	66648	67302	0	56983	69391	0	0	0	0	0	0	0	0	0	0	15801	0	24430	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_OST_OTHER	BLAT_Caen_OST_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	24810	0	0	303253	180780	0	252681	212365	0	0	0	0	0	0	0	0	0	0	18193	0	70276	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_RST_BEST	BLAT_Caen_RST_BEST	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	1400	0	0	6204	5941	0	5003	6375	0	0	0	0	0	0	0	0	0	0	1440	0	2100	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_RST_OTHER	BLAT_Caen_RST_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	16511	0	0	19300	9248	0	13016	11071	0	0	0	0	0	0	0	0	0	0	10917	0	8160	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_mRNA_BEST	BLAT_Caen_mRNA_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	0	0	0	45726	0	0	30011	29969	22059	25692	27633	0	0	0	0	0	0	0	0	0	0	14985	0	17919	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_mRNA_OTHER	BLAT_Caen_mRNA_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	0	0	0	148641	0	0	58166	26410	118042	39494	35902	0	0	0	0	0	0	0	0	0	0	12193	0	23893	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_ncRNA_BEST	BLAT_Caen_ncRNA_BEST	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	50	0	0	121	122	0	122	145	0	0	0	0	0	0	0	0	0	0	57	0	50	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_ncRNA_OTHER	BLAT_Caen_ncRNA_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	813	0	0	1518	753	0	2782	1020	0	0	0	0	0	0	0	0	0	0	151	0	1960	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_tc1_BEST	BLAT_Caen_tc1_BEST	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	42	0	0	105	91	0	90	123	0	0	0	0	0	0	0	0	0	0	32	0	49	0	0	0	0	0
+expressed_sequence_match:BLAT_Caen_tc1_OTHER	BLAT_Caen_tc1_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	1855	0	0	523	652	0	1538	279	0	0	0	0	0	0	0	0	0	0	2017	0	4849	0	0	0	0	0
+expressed_sequence_match:BLAT_EST_BEST	BLAT_EST_BEST	expressed_sequence_match	ESTs (best) (est_best)	0	0	0	81243	0	0	88314	12046	1258115	88118	109445	0	0	0	0	0	0	0	0	0	0	23	0	137208	0	0	0	0	0
+expressed_sequence_match:BLAT_EST_OTHER	BLAT_EST_OTHER	expressed_sequence_match	ESTs (other) (est_other)	0	0	0	163140	0	0	179672	3579	583501	598579	84782	0	0	0	0	0	0	0	0	0	0	1	0	1301706	0	0	0	0	0
+expressed_sequence_match:BLAT_OST_BEST	BLAT_OST_BEST	expressed_sequence_match	C. elegans OSTs (orfeome_sequence_tags)	0	0	0	0	0	0	0	0	106445	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:BLAT_OST_OTHER	BLAT_OST_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	100146	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:BLAT_RST_BEST	BLAT_RST_BEST	expressed_sequence_match	C.elegans RSTs (race_sequence_tags)	0	0	0	0	0	0	0	0	7367	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:BLAT_RST_OTHER	BLAT_RST_OTHER	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	4971	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:BLAT_mRNA_BEST	BLAT_mRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	0	0	0	1335	0	0	553	626	22348	46	3104	0	0	0	0	0	0	0	0	0	0	64034	0	950	0	0	0	0	0
+expressed_sequence_match:BLAT_mRNA_OTHER	BLAT_mRNA_OTHER	expressed_sequence_match	mRNAs/ncRNAs (other) (mrna_other)	0	0	0	2277	0	0	598	118	7619	29	859	0	0	0	0	0	0	0	0	0	0	185115	0	1471	0	0	0	0	0
+expressed_sequence_match:BLAT_ncRNA_BEST	BLAT_ncRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	0	0	0	0	0	0	0	0	5974	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:BLAT_ncRNA_OTHER	BLAT_ncRNA_OTHER	expressed_sequence_match	mRNAs/ncRNAs (other) (mrna_other)	0	0	0	0	0	0	0	0	572	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:EMBL_cDNAs-STAR	EMBL_cDNAs-STAR	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_insdc_cdnas)	9771	121658	123881	0	13668	6	0	0	0	0	0	0	0	24057	52974	20947	13915	915	23289	50037	6045	0	0	0	5	29058	0	0	0
+expressed_sequence_match:EMBL_nematode_cDNAs-BLAT	EMBL_nematode_cDNAs-BLAT	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	7901863	0	0	3485447	1723861	1688928	4920439	2135527	0	0	0	0	0	0	0	0	0	0	5349275	0	7499267	0	0	0	0	0
+expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT	NEMATODE.NET_cDNAs-BLAT	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	10145723	0	0	1937518	1014156	1179018	2907672	1331247	0	0	0	0	0	0	0	0	0	0	3257938	0	4528878	0	0	0	0	0
+expressed_sequence_match:NEMATODE.NET_cDNAs-STAR	NEMATODE.NET_cDNAs-STAR	expressed_sequence_match	Nematode.net cDNAs (sequence_similarity_nematode_net_cdnas)	3999	4372	4446	0	0	0	0	0	0	0	0	0	0	2188	0	8147	5636	0	8959	6084	0	0	0	0	0	0	0	0	0
+expressed_sequence_match:NEMBASE_cDNAs-BLAT	NEMBASE_cDNAs-BLAT	expressed_sequence_match	NO CONFIG AVAILABLE	0	0	0	1187663	0	0	452973	249421	237478	378828	293201	0	0	0	0	0	0	0	0	0	0	484286	0	671706	0	0	0	0	0
+expressed_sequence_match:NEMBASE_cDNAs-STAR	NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	3197	11837	11982	0	6474	0	0	0	0	0	0	2178	0	1713	9650	4747	3448	22	6493	4454	2173	0	0	0	0	4596	8055	0	0
+five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	0	0	0	2475	0	0	3246	183	24479	3750	2651	0	0	0	0	0	0	0	0	0	0	1095	0	928	0	0	0	0	0
+five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	20945	0	0	6331	43	0	0	0	0	0	0	10920	10922
+five_prime_open_reading_frame:micro_ORF	micro_ORF	five_prime_open_reading_frame	Micro ORF (micro_orf)	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+gene:WormBase	WormBase	gene	Genes (genes)	0	0	0	15573	0	0	33627	23426	46723	32409	33089	0	0	0	0	0	0	0	0	0	0	12936	0	24216	0	252	0	0	0
+gene:WormBase_imported	WormBase_imported	gene	Genes (genes)	36687	15260	18542	0	18074	27970	0	0	0	0	0	34696	22326	12857	20964	23489	23610	15045	14420	19212	19663	0	24642	0	24249	7825	16380	14435	14261
+gene:WormBase_transposon	WormBase_transposon	gene	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	13	339	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+gene:absolute_pmap_position	absolute_pmap_position	gene	Genetic limits (genetic_limits)	0	0	0	0	0	0	0	0	25817	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+gene:interpolated_pmap_position	interpolated_pmap_position	gene	Genetic limits (genetic_limits)	0	0	0	0	0	0	0	0	978	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+gene:landmark	landmark	gene	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	116	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+histone_binding_site:histone_binding_site_region	histone_binding_site_region	histone_binding_site	Histone binding sites (histone_binding_sites)	0	0	0	0	0	0	0	0	5164	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+insertion_site:Allele	Allele	insertion_site	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	1	36	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+insertion_site:Million_mutation	Million_mutation	insertion_site	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	0	4332	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+insertion_site:PCoF_Allele	PCoF_Allele	insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	1	29	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+insertion_site:PCoF_Million_mutation	PCoF_Million_mutation	insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	208	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+insertion_site:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	insertion_site	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	0	2151	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+insertion_site:Variation_project_Polymorphism	Variation_project_Polymorphism	insertion_site	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	0	97654	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+intron:RNASeq_splice	RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	0	0	0	114364	0	0	148630	110714	276548	94097	119569	0	0	0	0	0	0	0	0	0	0	171082	0	0	0	0	0	0	0
+intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	0	0	0	121373	0	0	129387	99844	178522	100267	126744	0	0	0	0	0	0	0	0	0	0	91059	0	226216	0	0	0	0	0
+inverted_repeat:inverted	inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	0	0	0	42005	0	0	81687	76338	65691	199751	76873	0	0	0	0	0	0	0	0	0	0	0	0	70916	0	0	0	0	0
+lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	0	0	176	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+low_complexity_region:dust	dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	228161	307569	311770	189673	84039	290511	235624	170449	189148	362590	159221	141577	97051	201349	38454	201467	153467	179105	162400	188476	273764	202917	146923	141332	41549	184851	91322	15702	14811
+mRNA:WormBase	WormBase	mRNA	Genes (genes)	0	0	0	18001	0	0	30745	21850	30888	36118	31526	0	0	0	0	0	0	0	0	0	0	12594	0	24243	0	394	0	0	0
+mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	65583	15260	18542	0	18074	33934	0	0	0	0	0	46280	27721	12857	20964	24747	24942	15445	14420	20365	19153	0	24642	0	26372	7794	16380	14435	14261
+mRNA:WormBase_transposon	WormBase_transposon	mRNA	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	13	330	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+mRNA_region:Polysome_profiling	Polysome_profiling	mRNA_region	Polysomes (polysomes)	0	0	0	0	0	0	0	0	227070	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+miRNA:WormBase	WormBase	miRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	168	0	0	0	0	376	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+ncRNA:RNAz	RNAz	ncRNA	RNAz non-coding RNA genes (prediction_rnaz)	0	0	0	0	0	0	0	0	3672	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+ncRNA:WormBase	WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	67	0	0	283	116	7700	94	118	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0
+ncRNA:WormBase_imported	WormBase_imported	ncRNA	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	85	0	0	0	0	0	0	0	0
+nc_primary_transcript:WormBase	WormBase	nc_primary_transcript	NO CONFIG AVAILABLE	0	0	0	2	0	0	0	0	322	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nc_primary_transcript:history	history	nc_primary_transcript	Gene Models (historical) (historical_genes)	0	0	0	0	0	0	0	180	176	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:BLAT_TC1_BEST	BLAT_TC1_BEST	nucleotide_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	1043	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:BLAT_TC1_OTHER	BLAT_TC1_OTHER	nucleotide_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	3579	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:Brugia_BAC	Brugia_BAC	nucleotide_match	NO CONFIG AVAILABLE	0	0	0	3799	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:EMBL_cDNAs-STAR	EMBL_cDNAs-STAR	nucleotide_match	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	21188	0	0
+nucleotide_match:EXONERATE_BAC_END_BEST	EXONERATE_BAC_END_BEST	nucleotide_match	 (bac_ends)	0	0	0	0	0	0	0	36872	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:EXONERATE_BAC_END_OTHER	EXONERATE_BAC_END_OTHER	nucleotide_match	 (bac_ends)	0	0	0	0	0	0	0	12895	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:TEC_RED	TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	0	0	0	0	0	0	0	7064	7993	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:TIGR_BEST	TIGR_BEST	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models)	0	0	0	54103	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:TIGR_OTHER	TIGR_OTHER	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models_other)	0	0	0	267197	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:Vancouver_fosmid	Vancouver_fosmid	nucleotide_match	YACs, Fosmids, & Cosmids (clones)	0	0	0	0	0	0	0	0	12874	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+operon:deprecated_operon	deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	0	0	0	1	0	0	0	0	75	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+operon:operon	operon	operon	Operons (operons)	0	0	0	1738	0	0	0	0	1390	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	0	0	15365	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:Allele	Allele	point_mutation	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	0	47	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:KO_consortium	KO_consortium	point_mutation	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	2698	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:Million_mutation	Million_mutation	point_mutation	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	0	845066	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:PCoF_Allele	PCoF_Allele	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	35	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:PCoF_KO_consortium	PCoF_KO_consortium	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	505	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:PCoF_Million_mutation	PCoF_Million_mutation	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	186876	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:PCoF_Variation_project	PCoF_Variation_project	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	2420	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+point_mutation:Variation_project	Variation_project	point_mutation	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	21643	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+polyA_signal_sequence:polyA_signal_sequence	polyA_signal_sequence	polyA_signal_sequence	PolyA sites and signal sequences (polya_sites)	0	0	0	0	0	0	0	0	2454	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+polyA_site:polyA_site	polyA_site	polyA_site	PolyA sites and signal sequences (polya_sites)	0	0	0	0	0	0	0	0	85690	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+possible_base_call_error:RNASeq	RNASeq	possible_base_call_error	Genome sequence errors (genome_sequence_errors)	0	0	0	0	0	0	0	0	955	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+pre_miRNA:WormBase	WormBase	pre_miRNA	NO CONFIG AVAILABLE	0	0	0	1	0	0	244	130	227	88	150	0	0	0	0	0	0	0	0	0	0	10	0	0	0	0	0	0	0
+primary_transcript:history	history	primary_transcript	Gene Models (historical) (historical_genes)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	25	0	0	0	0	0
+promoter:promoter	promoter	promoter	Promoter regions (promoter_regions)	0	0	0	0	0	0	0	0	76	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+protein_coding_primary_transcript:history	history	protein_coding_primary_transcript	Gene Models (historical) (historical_genes)	0	0	0	22501	0	0	8769	16970	14390	585	1529	0	0	0	0	0	0	0	0	0	0	968	0	0	0	0	0	0	0
+protein_match:UniProt-BLASTX	UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	327720	1215212	1230008	244726	557294	767900	556605	335308	308416	338618	414138	807201	577696	230611	354047	529018	414585	606828	234147	230468	267518	257502	455656	452841	296746	239243	440475	191842	190808
+protein_match:bmalayi_proteins-BLASTX	bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	166279	0	206743	111238	0	0	251209	163050	160416	154545	189606	0	0	156487	0	233785	206102	0	104728	118104	144259	175884	217220	206882	140375	0	0	86379	87947
+protein_match:cbrenneri_proteins-BLASTX	cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	263699	222605	228837	135043	171896	264129	587465	316696	307803	311497	453373	325340	224560	122480	195162	488265	329653	130577	130939	148568	207847	139216	351932	336066	230864	86753	92512	90537	91255
+protein_match:cbriggsae_proteins-BLASTX	cbriggsae_proteins-BLASTX	protein_match	C. briggsae proteins (sequence_similarity_cbriggsae_proteins_blastx)	216612	188476	192012	117734	151478	230808	474146	317862	277417	280384	363125	267312	188692	101189	166179	333966	261208	108730	124502	127852	169914	123929	301025	302422	214013	75575	77775	76712	77836
+protein_match:celegans_proteins-BLASTX	celegans_proteins-BLASTX	protein_match	C. elegans proteins (sequence_similarity_celegans_proteins_blastx)	281233	253157	258404	162343	191395	291276	559284	339815	325860	292116	431592	323058	234648	141930	203072	383520	343043	152159	142236	160291	226872	167032	391312	366060	245511	86635	102882	108723	111186
+protein_match:cjaponica_proteins-BLASTX	cjaponica_proteins-BLASTX	protein_match	C. japonica proteins (sequence_similarity_cjaponica_proteins_blastx)	242881	202301	208164	124701	150062	230020	421840	263735	253799	444139	344388	241791	155276	110154	196288	655028	335394	116273	118724	131003	203109	127297	302924	296334	188943	74981	71655	80800	82180
+protein_match:cremanei_proteins-BLASTX	cremanei_proteins-BLASTX	protein_match	C. remanei proteins (sequence_similarity_cremanei_proteins_blastx)	257591	206888	214735	123099	159746	257712	615177	331512	317378	385719	547757	335918	223230	108958	193642	676285	336446	115306	126121	142045	206970	127378	328548	318202	205882	79904	85365	82592	83863
+protein_match:dmelanogaster_proteins-BLASTX	dmelanogaster_proteins-BLASTX	protein_match	D. melanogaster proteins (sequence_similarity_dmelanogaster_proteins_blastx)	126536	136244	138339	92112	130571	136392	288752	180697	159085	149100	206212	153326	110120	78086	89488	176014	141134	83194	84242	92552	98386	94825	193082	186272	208480	72519	78820	79289	79935
+protein_match:hsapiens_proteins-BLASTX	hsapiens_proteins-BLASTX	protein_match	H. sapiens proteins (sequence_similarity_hsapiens_proteins_blastx)	288915	349699	355681	212075	266544	281320	536674	333825	324216	309299	395369	303212	239847	195928	224698	454230	351326	212880	177913	190891	232279	220154	412664	396188	395943	130098	182289	184998	184806
+protein_match:ovolvulus_proteins-BLASTX	ovolvulus_proteins-BLASTX	protein_match	NO CONFIG AVAILABLE	144550	0	0	148064	0	0	0	0	137646	0	0	0	0	0	0	0	0	0	0	101347	122024	107390	188646	0	0	0	0	69230	71088
+protein_match:ppacificus_proteins-BLASTX	ppacificus_proteins-BLASTX	protein_match	P. pacificus proteins (sequence_similarity_ppacificus_proteins_blastx)	181376	155906	160720	96253	127211	154851	312967	201192	189713	228120	241021	163859	119948	83055	138242	424881	231238	87966	95778	103121	145196	97667	471672	380066	167572	64587	61267	62517	62825
+protein_match:scerevisiae_proteins-BLASTX	scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	35572	37005	36963	31622	40624	50889	97165	59925	54097	48177	70977	54811	35515	25733	25534	48790	35795	25948	31232	33961	28586	31556	49843	45369	94255	34404	24244	21891	21903
+pseudogene:WormBase_imported	WormBase_imported	pseudogene	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	20	0	0	0	0	0	0	0	0
+pseudogenic_transcript:WormBase	WormBase	pseudogenic_transcript	Genes (pseudogenes) (genes_pseudogenes)	0	0	0	10	0	0	821	362	1595	593	320	0	0	0	0	0	0	0	0	0	0	19	0	0	0	0	0	0	0
+pseudogenic_transcript:WormBase_transposon	WormBase_transposon	pseudogenic_transcript	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	18	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+pseudogenic_transcript:history	history	pseudogenic_transcript	Gene Models (historical) (historical_genes)	0	0	0	0	0	0	0	0	331	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+rRNA:WormBase	WormBase	rRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	407	0	0	34	8	22	219	38	0	0	0	0	0	0	0	0	0	0	11	0	0	0	0	0	0	0
+rRNA:WormBase_imported	WormBase_imported	rRNA	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	38	0	13	0	0	1	0	0	0	0	0	0	0	0
+reagent:Chronogram	Chronogram	reagent	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	1974	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+reagent:Expr_pattern	Expr_pattern	reagent	Expression patterns (expression_patterns)	0	0	0	0	0	0	0	0	2934	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+reagent:Oligo_set	Oligo_set	reagent	Microarray oligo probes (microarray_oligo_probes)	0	0	0	0	0	0	43791	85642	387962	40758	43792	0	0	0	0	0	0	0	0	0	0	0	0	110043	0	0	0	0	0
+regulatory_region:regulatory_region	regulatory_region	regulatory_region	Regulatory regions (regulatory_regions)	0	0	0	0	0	0	0	0	64	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+repeat_region:RepeatMasker	RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	715822	143063	105658	100931	67769	119358	170518	188816	116933	455838	152570	135730	61118	120937	27385	55772	23677	95848	11764	157147	308929	114947	166175	144825	30196	139103	78753	82656	74120
+scRNA:WormBase	WormBase	scRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+sequence_alteration:Million_mutation	Million_mutation	sequence_alteration	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	0	1328	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+sequence_alteration:PCoF_Million_mutation	PCoF_Million_mutation	sequence_alteration	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	0	1273	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+sequence_alteration:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	sequence_alteration	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	134	1523	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+sequence_alteration:Variation_project_Polymorphism	Variation_project_Polymorphism	sequence_alteration	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	564	2280	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+sequence_motif:translated_feature	translated_feature	sequence_motif	Protein motifs (protein_motifs)	0	0	0	268635	0	0	191145	145510	401561	128748	195571	0	0	0	0	0	0	0	0	0	0	263876	0	354937	0	0	0	0	0
+snRNA:WormBase	WormBase	snRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	709	0	0	259	113	130	352	130	0	0	0	0	0	0	0	0	0	0	231	0	0	0	0	0	0	0
+snoRNA:WormBase	WormBase	snoRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	63	0	0	148	104	345	106	98	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0
+substitution:Allele	Allele	substitution	Classical alleles (variations_classical_alleles)	0	0	0	0	0	0	0	10	4460	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+substitution:PCoF_Allele	PCoF_Allele	substitution	Change-of-function alleles (variations_change_of_function_alleles)	0	0	0	0	0	0	0	7	3946	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+substitution:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	substitution	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+substitution:Variation_project_Polymorphism	Variation_project_Polymorphism	substitution	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	0	4	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	167	0	0	1179	777	637	1014	799	0	0	0	0	0	0	0	0	0	0	127	0	0	0	0	0	0	0
+tRNA:WormBase_imported	WormBase_imported	tRNA	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1582	0	124	0	0	404	0	0	0	0	0	0	0	0
+tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	97625	67771	70908	73871	21659	49236	64358	59754	53024	120788	55071	58415	34819	53376	7196	70884	115828	65560	60447	82330	49865	55851	70528	60624	8166	32391	24496	13658	12512
+three_prime_UTR:UTRome	UTRome	three_prime_UTR	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	21358	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	0	0	0	1853	0	0	3573	40	25408	3347	2521	0	0	0	0	0	0	0	0	0	0	860	0	946	0	0	0	0	0
+three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (genes)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	19605	0	0	6566	28	0	0	0	0	0	0	7932	7819
+transcribed_fragment:TranscriptionallyActiveRegion	TranscriptionallyActiveRegion	transcribed_fragment	Transcriptionally Active Region (transcriptionally_active_region)	0	0	0	0	0	0	0	0	4095280	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transcript_region:RNASeq_F_asymmetry	RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	0	0	0	488865	0	0	316004	221617	363076	377586	250362	0	0	0	0	0	0	0	0	0	0	398471	0	0	0	0	0	0	0
+transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	0	0	0	473667	0	0	308881	215640	355608	336082	244507	0	0	0	0	0	0	0	0	0	0	398585	0	0	0	0	0	0	0
+transcript_region:RNASeq_reads	RNASeq_reads	transcript_region	RNASeq (rnaseq)	0	0	0	1095949	0	0	883555	506825	551879	1092341	647718	0	0	0	0	0	0	0	0	0	0	1180478	0	0	0	0	0	0	0
+transcript_region:RNASeq_stranded	RNASeq_stranded	transcript_region	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	732553	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transcription_end_site:RNASeq	RNASeq	transcription_end_site	Transcription end site (transcription_end_site)	0	0	0	0	0	0	0	0	92672	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+translated_nucleotide_match:mass_spec_genome	mass_spec_genome	translated_nucleotide_match	Mass spec peptides (mass_spec_peptides)	0	0	0	0	0	0	0	0	137877	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transposable_element:WormBase_transposon	WormBase_transposon	transposable_element	Transposons (transposons)	0	0	0	0	0	0	0	13	755	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transposable_element:history	history	transposable_element	Gene Models (historical) (historical_genes)	0	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transposable_element_insertion_site:Allele	Allele	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	0	0	0	0	0	0	0	0	563	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transposable_element_insertion_site:Mos_insertion_allele	Mos_insertion_allele	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	0	0	0	0	0	0	0	0	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+transposable_element_insertion_site:NemaGENETAG_consortium	NemaGENETAG_consortium	transposable_element_insertion_site	Transposon insert sites (variations_transposon_insertion_sites)	0	0	0	0	0	0	0	0	15298	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

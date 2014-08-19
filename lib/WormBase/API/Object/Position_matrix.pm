@@ -7,7 +7,7 @@ use namespace::autoclean -except => 'meta';
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod  
+=pod
 
 =head1 NAME
 
@@ -43,7 +43,7 @@ has 'pm_datadir' => (
 #         return "/usr/local/wormbase/databases/$version/position_matrix";
 #     }
 # );
-# 
+#
 # has 'image_directory' => (
 #     is      => 'ro',
 #     lazy    => 1,
@@ -60,11 +60,11 @@ has 'pm_datadir' => (
 #         my $data_dir       = $self->data_directory;
 #         my $datafile       = $data_dir . "/pm_id2consensus_seq.txt";
 #         my %name2consensus = _build_hash($datafile);
-# 
+#
 #         return \%name2consensus;
 #     }
 # );
-# 
+#
 # has 'image_pointer_file' => (
 #     is      => 'ro',
 #     lazy    => 1,
@@ -73,7 +73,7 @@ has 'pm_datadir' => (
 #         my $data_dir      = $self->data_directory;
 #         my $datafile      = $data_dir . "/pm_id2source_pm.txt";
 #         my %image_pointer = _build_hash($datafile);
-# 
+#
 #         return \%image_pointer;
 #     }
 # );
@@ -165,7 +165,7 @@ sub consensus {
 
 
 # bound_by_gene_product { }
-# This method will return a data structure containing 
+# This method will return a data structure containing
 # a list of genes that to bind to the motif;
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/bound_by_gene_product
 

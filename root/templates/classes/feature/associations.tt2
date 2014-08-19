@@ -3,17 +3,17 @@
 WRAPPER $field_block title="Associations" key="associations";
 
     build_data_table (
-		order = [ 
+		order = [
 			'label',
 			'association',
 			],
-		columns = {				 		
+		columns = {
 			label => 'Association Type',
 			association => 'Associate',
 			},
 		key = 'associations');
 END;
-	
+
 
 WRAPPER $field_block title='Bound by product of' key ='binds_gene_product';
      tags2link(fields.binds_gene_product.data);

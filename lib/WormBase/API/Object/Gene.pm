@@ -10,6 +10,7 @@ with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
 with    'WormBase::API::Role::Interaction';
 with    'WormBase::API::Role::Variation';
+with    'WormBase::API::Role::Expression';
 
 =pod
 
@@ -91,29 +92,19 @@ sub _build__alleles {
     my $object = $self->object;
 
     my $count = $self->_get_count($object, 'Allele');
+    my @all = $object->Allele;
     my @alleles;
     my @polymorphisms;
-    unless ($count > 1000) {
-      my @all = $object->Allele;
 
-      if($count < 500){
-          foreach my $allele (@all) {
+    foreach my $allele (@all) {
               (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
                     push(@polymorphisms, $self->_process_variation($allele)) :
                     push(@alleles, $self->_process_variation($allele));
-          }
-      }else{
-          foreach my $allele (@all) {
-              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_pack_obj($allele)) :
-                    push(@alleles, $self->_pack_obj($allele));
-          }
-      }
     }
 
     return {
-        alleles        => @alleles ? \@alleles : scalar @alleles,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : scalar @polymorphisms,
+        alleles        => @alleles ? \@alleles : undef,
+        polymorphisms  => @polymorphisms ? \@polymorphisms : undef,
     };
 
 }
@@ -208,7 +199,7 @@ sub named_by {
     my $name = $self->_get_evidence($object->CGC_name, ['Person_evidence']);
     return {
         description => 'the person who named this gene',
-        data        => $name ? @{$name->{Person_evidence}}[0] : undef,
+        data        => $name ? \@{$name->{Person_evidence}} : undef,
     };
 }
 
@@ -243,7 +234,8 @@ sub classification {
       # Is this a non-coding RNA?
       my @transcripts = $object->Corresponding_transcript;
       foreach (@transcripts) {
-          $data->{type} = $_->Transcript;
+          my $type = $_->Transcript;
+          $data->{type} = $type && "$type";
           last;
       }
     }
@@ -365,12 +357,12 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
-        || eval {$object->Corresponding_CDS->Concise_description}
-        || eval { $object->Gene_class->Description }
-        || $self->name->{data}->{label} . ' gene';
+        || eval { $object->Corresponding_CDS->Brief_identification }
+        || eval { $object->Corresponding_transcript->Brief_identification };
 
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
-    my $evidence = $self->_get_evidence($evs[0]);
+    my $evidence = $self->_get_evidence($description)
+        || $self->_get_evidence(shift @evs);
 
     return {
       description => "A manually curated description of the gene's function",
@@ -545,410 +537,6 @@ sub merged_into {
         data        => $gene_merged_into ? $self->_pack_obj($gene_merged_into) : undef
     };
 }
-
-#######################################
-#
-# The Expression Widget
-#   template: classes/gene/expression.tt2
-#
-#######################################
-
-sub fpkm_expression_summary_ls {
-    my $self = shift;
-    return $self->fpkm_expression('summary_ls');
-}
-
-sub fpkm_expression {
-    my $self = shift;
-    my $mode = shift;
-    my $object = $self->object;
-
-    my $rserve = $self->_api->_tools->{rserve};
-    my @fpkm_map = map {
-        my $life_stage = $_->Public_name;
-        my @fpkm_table = $_->col;
-        map {
-            my @fpkm_entry = $_->row;
-            my $label = $fpkm_entry[2];
-            my $value = $fpkm_entry[0];
-            my ($project) = $label =~ /^([a-zA-Z0-9_-]+)\./;
-            {
-                label => "$label",
-                value => "$value",
-                project => "$project",
-                life_stage => "$life_stage"
-            }
-        } @fpkm_table;
-    } $object->RNASeq_FPKM;
-
-    # Return if no expression data is available.
-    # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
-    if (length(keys @fpkm_map) <= 1) {
-        return {
-            description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data -- no data returned.',
-            data        => undef
-        };
-    }
-
-    # Sort by project (primary order) and developmental stage (secondary order):
-    @fpkm_map = sort {
-        # Primary sorting order: project
-        # Reverse comparison, so that projects that come first in the alphabet appear at the top of the barchart.
-        return $b->{project} cmp $a->{project} if $a->{project} ne $b->{project};
-
-        # Secondary sorting order: developmental stage
-        my @sides = ($a, $b);
-        my @label_value = (50, 50); # Entries that cannot be matched to the regexps will go to the bottom of the barchart.
-        for my $i (0 .. 1) {
-            # UNAPPLIED
-            # Possible keywords? Not seen in data yet (browsing only).
-            #$label_value[$i] =  0 if ($sides[$i]->{label} =~ m/gastrula/i);
-            #$label_value[$i] =  1 if ($sides[$i]->{label} =~ m/comma/i);
-            #$label_value[$i] =  2 if ($sides[$i]->{label} =~ m/15_fold/i);
-            #$label_value[$i] =  3 if ($sides[$i]->{label} =~ m/2_fold/i);
-            #$label_value[$i] =  4 if ($sides[$i]->{label} =~ m/3_fold/i);
-
-            # EMBRYO STAGES
-            $label_value[$i] = 30 if ($sides[$i]->{label} =~ m/embryo/i); # May be overwritten by the next two rules.
-            if ($sides[$i]->{label} =~ m/\.([0-9]+)-cell_embryo/) {
-                # Assuming an upper bound of 40 cells (for ordering below).
-                $sides[$i]->{label} =~ /\.([0-9]+)-cell_embryo/;
-                $label_value[$i] = "$1";
-            }
-            $label_value[$i] =  0 if ($sides[$i]->{label} =~ m/early_embryo/i);
-            $label_value[$i] = 40 if ($sides[$i]->{label} =~ m/late_embryo/i);
-
-            # LARVA STAGES
-            $label_value[$i] = 41 if ($sides[$i]->{label} =~ m/L1_(l|L)arva/);
-            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L2_(l|L)arva/);
-            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/L2d_(l|L)arva/i);
-            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/L3_(l|L)arva/);
-            $label_value[$i] = 45 if ($sides[$i]->{label} =~ m/L4_(l|L)arva/);
-
-            # DAUER STAGES
-            $label_value[$i] = 43 if ($sides[$i]->{label} =~ m/dauer/i); # May be overwritten by the next two rules.
-            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/dauer_entry/);
-            $label_value[$i] = 44 if ($sides[$i]->{label} =~ m/dauer_exit/);
-            $label_value[$i] = 42 if ($sides[$i]->{label} =~ m/predauer/i);
-
-            # ADULTHOOD
-            $label_value[$i] = 47 if ($sides[$i]->{label} =~ m/adult/); # May be overwritten by the next rule.
-            $label_value[$i] = 46 if ($sides[$i]->{label} =~ m/young_adult/);
-        }
-
-        # Reversed comparison, so that early stages appear at the top of the barchart.
-        return $label_value[1] <=> $label_value[0];
-    } @fpkm_map;
-
-    my $plot;
-    if ($mode eq 'summary_ls') {
-	# This is NOT consistently returning an ID, resulting in fpkm_.png
-	# and breaking the expression widget.
-	# filename => "fpkm_" . $self->name->{data}{id} . ".png",
-	my $obj = $self->object;
-        $plot = $rserve->boxplot(\@fpkm_map, {
-                                    filename => "fpkm_$object.png",
-                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
-                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
-                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
-                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
-                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
-                                 })->{uri};
-    } else {
-        $plot = $rserve->barchart(\@fpkm_map, {
-                                    filename => "fpkm_$object.png",
-                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
-                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
-                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
-                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
-                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
-                                 })->{uri};
-    }
-
-    return {
-        description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
-        data        => {
-            plot => $plot,
-            table => { fpkm => { data => \@fpkm_map } }
-        }
-    };
-}
-
-# fourd_expression_movies { }
-# This method will return a data structure containing
-# links to four-dimensional expression movies.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
-sub fourd_expression_movies {
-    my $self   = shift;
-
-    my $author;
-    my %data = map {
-        my $details = $_->Pattern;
-        my $url     = $_->MovieURL;
-        $_ => {
-            movie   => $url && "$url",
-            details => $details && "$details",
-            object  => $self->_pack_obj($_),
-        };
-    } grep {
-        (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
-    } @{$self ~~ '@Expr_pattern'};
-
-    return {
-        description => 'interactive 4D expression movies',
-        data        => %data ? \%data : undef,
-    };
-}
-
-
-# anatomic_expression_patterns { }
-# This method will return a complex data structure
-# containing expression patterns described at the
-# anatomic level. Includes links to images.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomic_expression_patterns
-
-sub anatomic_expression_patterns {
-    my $self   = shift;
-    my $object = $self->object;
-    my %data_pack;
-
-    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
-    $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
-
-
-    return {
-        description => 'expression patterns for the gene',
-        data        => %data_pack ? \%data_pack : undef,
-    };
-}
-
-
-
-sub expression_patterns {
-    my ($self) = @_;
-    my $object = $self->object;
-    my @data;
-
-    foreach my $expr ($object->Expr_pattern) {
-        my $type = $expr->Type;
-        next if $type =~ /Microarray|Tiling_array/;
-        push @data, $self->_expression_pattern_details($expr, $type);
-    }
-
-    return {
-        description => "expression patterns associated with the gene:$object",
-        data        => @data ? \@data : undef
-    };
-}
-
-
-sub expression_profiling_graphs {
-    my ($self) = @_;
-    my $object = $self->object;
-    my @data;
-
-    foreach my $expr ($object->Expr_pattern) {
-        my $type = $expr->Type;
-        next unless $type =~ /Microarray|Tiling_array/;
-        push @data, $self->_expression_pattern_details($expr, $type);
-    }
-
-    return {
-        description => "expression patterns associated with the gene:$object",
-        data        => @data ? \@data : undef
-    };
-}
-
-sub _expression_pattern_details {
-    my ($self, $expr, $type) = @_;
-
-    my $author = $expr->Author;
-    my @patterns = $expr->Pattern
-        || $expr->Subcellular_localization
-        || $expr->Remark;
-    my $desc = join("<br />", @patterns) if @patterns;
-    $type =~ s/_/ /g if $type;
-    my $reference = $self->_pack_obj($expr->Reference);
-
-    my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
-    my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
-    my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
-    my @transgene = map {
-            my @cs =map { "$_" } $_->Construction_summary;
-            @cs ?   {   text=>$self->_pack_obj($_),
-                        evidence=>{'Construction summary'=> \@cs }
-                    } : $self->_pack_obj($_)
-        } $expr->Transgene;
-    my $expr_packed = $self->_pack_obj($expr, "$expr");
-
-
-    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
-    $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
-    foreach($expr->Picture) {
-        next unless($_->class eq 'Picture');
-        my $pic = $self->_api->wrap($_);
-        if( $pic->image->{data}) {
-            $expr_packed->{curated_images} = 1;
-            last;
-        }
-    }
-    my $sub = $expr->Subcellular_localization;
-
-    my @dbs;
-    foreach my $db ($expr->DB_info) {
-        # assuming we don't have any other fields other than id
-        foreach my $id (map { $_->col } $db->col) {
-            push @dbs, { class => "$db",
-                         label => "$db",
-                         id    => "$id" };
-        }
-    }
-
-    return {
-        expression_pattern =>  $expr_packed,
-        description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
-        type             => $type && "$type",
-        database         => @dbs ? \@dbs : undef,
-        expressed_in    => @expressed_in ? \@expressed_in : undef,
-        life_stage    => @life_stage ? \@life_stage : undef,
-        go_term => @go_term ? {text => \@go_term, evidence=>{'Subcellular localization' => "$sub"}} : undef,
-        transgene => @transgene ? \@transgene : undef
-
-    };
-}
-
-# anatomy_terms { }
-# This method will return a hash
-# containing unique anatomy terms described from the
-# expression patterns associated with this gene
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_terms
-
-sub anatomy_terms {
-    my $self   = shift;
-    my $object = $self->object;
-
-
-    my %unique_anatomy_terms;
-    for my $ep ( $object->Expr_pattern ) {
-        for my $at ($ep->Anatomy_term) {
-          $unique_anatomy_terms{"$at"} ||= $self->_pack_obj($at);
-        }
-    }
-
-    return {
-        description => 'anatomy terms from expression patterns for the gene',
-        data        => %unique_anatomy_terms ? \%unique_anatomy_terms : undef,
-    };
-}
-
-# microarray_expression_data { }
-# This method will return a data structure containing
-# microarray expression data.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_expression_data
-
-sub microarray_expression_data {
-    my $self   = shift;
-    my $object = $self->object;
-    my %data;
-    my @microarray_results = $object->Microarray_results;
-    return { data        => @microarray_results ? $self->_pack_objects(\@microarray_results) : undef,
-             description => 'gene expression determined via microarray analysis'};
-}
-
-# microrarray_topology_map_position { }
-# This method will return a data structure containing
-# the microarray "topology" map position.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_topology_map_position
-
-sub microarray_topology_map_position {
-    my $self   = shift;
-    my $object = $self->object;
-
-    my $datapack = {
-        description => 'microarray topology map',
-        data        => undef,
-    };
-
-    return $datapack unless @{$self->sequences};
-    my @segments = $self->_segments && @{$self->_segments};
-    return $datapack unless $segments[0];
-    my @p = map { $_->info }
-            $segments[0]->features('experimental_result_region:Expr_profile')
-        or return $datapack;
-    my %data = map {
-        $_ => $self->_pack_obj($_, eval { 'Mountain ' . $_->Expr_map->Mountain })
-    } @p;
-
-    $datapack->{data} = \%data if %data;
-    return $datapack;
-}
-
-# expression_cluster { }
-# This method will return a data structure containing
-# microarray expression clusters.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/expression_cluster
-
-sub expression_cluster {
-    my $self   = shift;
-    my $object = $self->object;
-    my @data;
-
-    foreach my $expr_cluster ($object->Expression_cluster){
-        my $description = $expr_cluster->Description;
-        push @data, {
-            expression_cluster => $self->_pack_obj($expr_cluster),
-            description => $description && "$description"
-        }
-    }
-    return { data        => @data ? \@data : undef,
-             description => 'expression cluster data' };
-}
-
-
-# anatomy_function { }
-# This method will return a data structure containing
-# the anatomy function of the gene.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_function
-
-sub anatomy_function {
-    my ($self) = @_;
-    my $object = $self->object;
-    my @data_pack;
-    foreach ($object->Anatomy_function){
-      my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
-                else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
-                } $_->Involved;
-      next unless @bp_inv;
-      my @assay = map { my $as = $_->right;
-                  if ($as) {
-                      my @geno = $as->Genotype;
-                      {evidence => { genotype => join('<br /> ', @geno) },
-                      text => "$_",}
-                  }
-                } $_->Assay;
-      my $pev;
-      push @data_pack, {
-          phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
-                            { evidence => $pev,
-                            text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
-          assay    => @assay ? \@assay : undef,
-          bp_inv    => @bp_inv ? \@bp_inv : undef,
-          reference => $self->_pack_obj(scalar $_->Reference),
-      };
-    }
-
-    return {
-        data        => @data_pack ? \@data_pack : undef,
-        description => 'anatomy functions associatated with this gene',
-    };
-}
-
 
 #######################################
 #
@@ -1393,7 +981,7 @@ sub human_diseases {
     $data{'potential_model'} = @diseases ? \@diseases : undef;
 
     my @exp_diseases = map { my $o = $self->_pack_obj($_); $o->{ev}=$self->_get_evidence($_->right); $o} $object->Experimental_model;
-    $data{'experimental_model'} = \@exp_diseases;
+    $data{'experimental_model'} = @exp_diseases ? \@exp_diseases : undef;
   }
 
   if($data[0]){
@@ -2153,6 +1741,13 @@ sub _build__segments {
     }
 
     return;
+}
+
+sub _build__gene {
+    my ($self) = @_;
+    my $object = $self->object;
+
+    return $object;
 }
 
 # TODO: Logically this might reside in Model::GFF although I don't know if it is used elsewhere

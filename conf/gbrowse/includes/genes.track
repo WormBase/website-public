@@ -9,14 +9,20 @@ title = sub {
 	 return "Curated transcript " . $f->display_name . "<br /><i>click for details";
 	 }
 label    = sub { 
+	       # This is bizarre but it has to do with the
+	       # differing use of the Alias tag between species.
 		my $f = shift;
 		my ($locus)  = $f->attributes('Alias');
 		my ($name) = $f->attributes('sequence_name');
 		if ($name eq $locus) {
 		    return $name;
-		} else {
-		    return $locus ? "$locus ($name)" : $name;
-                }
+		} elsif ($name && $locus) {
+		   return "$locus ($name)";
+		} elsif ($locus) {
+		   return $locus;
+                } else {
+		   return $name;
+		}
 	}
 label_transcripts = 1
 description  = sub {	     

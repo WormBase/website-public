@@ -64,8 +64,8 @@ sub print_results_by_sts {
     my ($name,$left,$right,$length) = split /\s+/;
     next unless defined $name;
     next if lc($name) eq 'name';  # in case they followed directions too literally
-    
-    $length ||= 1500; 
+
+    $length ||= 1500;
     unless ($left  =~ /^[gatcn]+$/i && $right =~ /^[gatcn]+$/i && $length =~ /^\d+$/) {
       push @invalid,$_;
       next;
@@ -290,18 +290,18 @@ sub segment2goodstuff {
   # This will need to be changed for WS126
   # Each partial gene is an exon...consolidate these into unique genes
   # This is astoundingly baroque
-  my $full_genes = {}; 
+  my $full_genes = {};
   foreach my $partial_gene (@{$features{curated}}) {
     # fetch the full gene, please
     my ($full_gene) = grep {$_->name eq $partial_gene->name} $partial_gene->features('mRNA:WormBase');
      $segment->ref($full_gene);
 
-    my $full_cds = $GFFDB->segment($full_gene);    
+    my $full_cds = $GFFDB->segment($full_gene);
 
     my @exons = $full_cds->features('exon:WormBase');
 
     $full_genes->{$full_gene->name}->{total} = scalar @exons;
-    
+
     foreach (@exons) { $_->ref($full_gene);  }
     @exons  = sort {$a && $b ? $a->start<=>$b->start : 0} @exons;
     for (my $e=0; $e < @exons; $e++) {
@@ -316,7 +316,7 @@ sub segment2goodstuff {
      # one-based indexing for biologists!
      push(@{ $full_genes->{$full_gene->name}->{covered}},$e+1);
     }
-    
+
 #    my @total_exons = $segment->features('coding_exon:curated');
 #    my @total_exons = $full_cds->features('coding_exon:curated');
 #    $full_genes->{$full_gene->name}->{total} = scalar @total_exons;
@@ -351,7 +351,7 @@ sub segment2goodstuff {
     next unless $c->contains($segment);  # must contain segment completely
     $shortest_canonical = $c if !defined($shortest_canonical) || $c->length < $shortest_canonical->length;
   }
-  
+
   $c = [undef,undef,undef];
   if ($shortest_canonical) {
     $segment->ref($shortest_canonical);

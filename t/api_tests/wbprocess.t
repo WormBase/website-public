@@ -24,19 +24,51 @@
         my $pathway = $wbprocess->pathway();
 
         isnt($pathway->{'data'}, undef, 'data returned');
-        isnt($pathway->{'data'}->{'pathway_id'}, undef, 'Defined');
-        isnt($pathway->{'data'}->{'revision'}, undef, 'Found Revision');
-        is($pathway->{'data'}->{'pathway_id'}, 'WP2313', 'Found Id');
+        isnt($pathway->{'data'}[0]->{'pathway_id'}, undef, 'defined');
+        isnt($pathway->{'data'}[0]->{'revision'}, undef, 'found revision');
+        is($pathway->{'data'}[0]->{'pathway_id'}, 'WP2313', 'found id');
     }
 
-    sub test_unfolded_protein {
-        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000046' });
+
+    # This is a test for the Wikipathways in the Pathways widget in the Topics page
+    # related to issue #2856
+    sub test_pathways {
+        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000039' });
+
         can_ok('WormBase::API::Object::Wbprocess', ('pathway'));
+
         my $pathway = $wbprocess->pathway();
 
         isnt($pathway->{'data'}, undef, 'data returned');
-        isnt($pathway->{'data'}->{'pathway_id'}, undef, 'Defined');
-        is($pathway->{'data'}->{'pathway_id'}, 'WP2578', 'Found Id');
+        isnt($pathway->{'data'}[0]->{'pathway_id'}, undef, 'pathway id defined');
+        is($pathway->{'data'}[0]->{'pathway_id'}, 'WP2233', 'correct pathway id returned');
+
+
+        # formerly test_unfolded_protein
+        my $wbprocess_unfolded = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000046' });
+        my $pathway_unfolded = $wbprocess_unfolded->pathway();
+
+        isnt($pathway_unfolded->{'data'}, undef, 'data returned');
+        isnt($pathway_unfolded->{'data'}[0]->{'pathway_id'}, undef, 'pathway id defined');
+        is($pathway_unfolded->{'data'}[0]->{'pathway_id'}, 'WP2578', 'found id for protein folding process');
+    }
+
+    #Test the related_process in the Overview widget
+    #related to issue #2862
+    sub test_related_topics {
+        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000040' });
+
+        can_ok('WormBase::API::Object::Wbprocess', ('related_process'));
+
+        my $related_process = $wbprocess->related_process();
+        my @keys = keys $related_process->{'data'};
+
+        isnt($related_process->{'data'}, undef, 'data returned');
+        isnt($keys[0], undef, 'related topics group retuned');
+        is($keys[0], 'Generalisation of', 'correct related topics group retuned');
+        isnt($related_process->{'data'}->{$keys[0]}[0]->{'id'}, undef, 'related topic returned');
+        is($related_process->{'data'}->{$keys[0]}[0]->{'id'}, 'WBbiopr:00000006', 'correct related topic returned');
+
     }
 
 }

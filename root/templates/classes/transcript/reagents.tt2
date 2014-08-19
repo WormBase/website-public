@@ -1,4 +1,4 @@
-[% 
+[%
 
 WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays";
     tags2link(fields.orfeome_assays.data.values, '<br>', 'Results');

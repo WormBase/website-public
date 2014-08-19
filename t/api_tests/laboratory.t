@@ -32,12 +32,12 @@
         $api = $_[0];
     }
 
-    # This is a test for the Former Gene Class table in the Gene Class widget 
+    # This is a test for the Former Gene Class table in the Gene Class widget
     # rrelated to #2551
     # data entries.
     sub test_single_gene {
         my $lab = $api->fetch({ class => 'Laboratory', name => 'DR' });
-        
+
         isnt($lab, undef, 'There is a lab');
 
         can_ok('WormBase::API::Object::Laboratory', ('former_gene_classes'));
@@ -52,6 +52,19 @@
         is($former_gene_classes->{'data'}[0]->{'former_gene_class'}->{'id'}, 'daf', 'correct former gene class returned');
         is($former_gene_classes->{'data'}[0]->{'description'}, 'abnormal DAuer Formation', 'correct description returned');
         #is  ($$data2[0]->{'data'}->{'taxonomy'}, 'c_elegans', 'species with associated gene correct');
+
+    }
+
+    # Test that remarks are working for laboratory
+    # #2934
+    sub test_remark {
+        my $lab = $api->fetch({ class => 'Laboratory', name => 'AB' });
+        can_ok('WormBase::API::Object::Laboratory', ('remarks'));
+        my $remarks = $lab->remarks();
+
+        isnt($remarks->{'data'}, undef, 'data returned');
+        isnt($remarks->{'data'}[0], undef, 'remark returned');
+        is  ($remarks->{'data'}[0]->{'text'}, "No longer an active PI", 'correct remark returned');
 
     }
 

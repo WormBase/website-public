@@ -1,0 +1,4 @@
+IV	Million_mutation	sequence_alteration	126001	2591002	.	+	.	variation=WBVar01499166;public_name=gk963025;strain=VC20705;consequence=Coding_exon
+IV	PCoF_Million_mutation	sequence_alteration	126001	2591002	.	+	.	variation=WBVar01499166;public_name=gk963025;strain=VC20705;consequence=Coding_exon
+IV	Million_mutation	point_mutation	1721552	1721552	.	+	.	variation=WBVar00417928;public_name=gk194685;strain=VC30017;substitution=C/T;consequence=Missense;aachange=P to S
+IV	PCoF_Million_mutation	point_mutation	1721552	1721552	.	+	.	variation=WBVar00417928;public_name=gk194685;strain=VC30017;substitution=C/T;consequence=Missense;aachange=P to S

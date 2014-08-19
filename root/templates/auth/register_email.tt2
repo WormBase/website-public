@@ -2,7 +2,7 @@
 </p>
 <p>
 You supplied the following registration information:
-</p> 
+</p>
 &nbsp;&nbsp;&nbsp;&nbsp;Name: [% info.username %]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;E-mail:   [% info.email %]<br>
 <p>
@@ -17,10 +17,10 @@ You will also be linked to the following WormBase identity:
 [% END %]
 To activate your account and validate this email (<b>[% info.email %]</b>), please click on the following link:<br>
   <a href="[% digest %]">[% digest %]</a><br>
-</p> 
+</p>
 <p>
 Thank you,<br /><br />
 
 The WormBase Consortium<br />
 help@wormbase.org
-</p> 
+</p>

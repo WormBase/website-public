@@ -31,16 +31,20 @@
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
   <div id="title">
-       <h1><a href="/" title="WormBase Home">[% template.title or c.config.site_name %]</a></h1>
-     <p>  
-          [% # The current release of the software %]
-          Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[% constants.acedb_version %]</a>
+      <a href="/" title="WormBase Home">
+          <img src="/img/logo/logo_wormbase_gradient_small.png" />
+          <!-- <h1>[%# template.title or c.config.site_name %]</h1> -->
+      </a>
+    <div class="release_date">
+      <p>
+         Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a>
       </p>
+    </div>
   </div>
 
 [% MACRO nav_species(species_name,display_title) BLOCK %]
   <li><a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' %] class="species" [% END %]> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$species_name.title %]</a>
-              <ul class="wb-dropdown">  
+              <ul class="wb-dropdown">
                 [% FOREACH bioproject IN c.config.sections.species_list.$species_name.bioprojects.keys %]
                   <li>[% text2link('genomic_location','','Browse Genome: ' _ c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, species_name _ '_' _ bioproject) %]</li>
                 [% END %]
@@ -80,13 +84,13 @@
               [% g_sort = g_sort.unique %]
 
 
-             
+
               <li>[% text2link('genomic_location','all','<span class="ui-icon ui-icon-triangle-1-e"></span><b>Browse Genomes</b>') %]
                 <ul class="wb-dropdown">
                   <li class="species">
                     [% text2link('genomic_location', '' ,c.config.sections.species_list.c_elegans.title, '', 'c_elegans') %]</li>
                   [% FOREACH option IN c.config.sections.species_list.keys.sort %]
-                    [% NEXT IF (option == 'all' || option == 'c_elegans') %] 
+                    [% NEXT IF (option == 'all' || option == 'c_elegans') %]
                     <li class="species">
                     [% text2link('genomic_location', '' ,c.config.sections.species_list.$option.title, '', option) %]</li>
                   [% END %]
@@ -102,7 +106,7 @@
                   <a class="species">
                     <span class="ui-icon ui-icon-triangle-1-e"></span>[% option %]
                   </a>
-                  <ul class="wb-dropdown">  
+                  <ul class="wb-dropdown">
                       [% FOREACH s IN genus_list.$option %]
                         [% nav_species(s); %]
                       [% END %]
@@ -116,7 +120,7 @@
             [% IF option == 'title'; NEXT; END; %]
             [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
             <li>
-              <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]"> 
+              <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]">
             [% IF title == 'resources'; pluralize(c.config.sections.$title.$option.title); ELSE; c.config.sections.$title.$option.title; END; %]</a></li>
           [% END %]
           [% IF title == 'tools' %]
@@ -131,7 +135,7 @@
               [% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
               [% IF ((option == 'epic') && (!c.check_any_user_role("admin"))); NEXT; END; %]
               <li>
-                <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]"> 
+                <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]">
                     [% c.config.sections.$title.$option.title;%]</a></li>
             [% END %]
             </ul>
@@ -144,16 +148,16 @@
   <span class="status-bar"></span>
     </ul>
   </div>
- 
+
   [% PROCESS timer %]
 </div>
 
 
 
-  
+
 
 <!-- END boilerplate/banner -->
-   
-    
+
+
 
     <div id="content">

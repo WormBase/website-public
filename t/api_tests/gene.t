@@ -34,6 +34,20 @@
         isnt($models->{data}{table}, undef, 'table data structure returned');
         $models = $models->{data}{table};
         is  (scalar @$models, 3, 'two models returned');
+
+        # test curator remarks
+        $gene = $api->fetch({ class => 'Gene', name => 'WBGene00006763' });
+        $models = $gene->gene_models();
+
+        isnt($models, undef, 'data returned');
+        isnt($models->{data}, undef, 'data structure returned');
+        isnt($models->{data}{remarks}, undef, 'remarks data structure returned');
+
+        my $ae = $models->{data}{remarks}{3}{evidence}{Accession_evidence};
+        is  (scalar @$ae, 2, 'two accession evidences returned');
+        is  ($ae->[0]{id}, 'AF283324', 'correct accession returned');
+        is  ($ae->[0]{class}, 'sequence', 'correct class returned');
+
     }
 
     # Tests whether the _longest_segment method works - particularly
@@ -81,7 +95,177 @@
         isnt($mpt_data, undef, 'data returned');
         isnt($mpt_data->{data}, undef, 'data structure returned');
     }
+
+        # Tests the named_by method of Gene
+    sub test_named_by {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00004679' });
+
+        can_ok('WormBase::API::Object::Gene', ('named_by'));
+
+        my $names = $gene->named_by();
+
+        # issue #2521 - mapping data when Combined undef
+        isnt($names, undef, 'data returned');
+        isnt($names->{data}, undef, 'data structure returned');
+        is  (scalar @{$names->{data}}, 2, 'correct amount of names returned');
+        is  (@{$names->{data}}[0]->{id}, 'WBPerson36', 'correct name returned');
+        is  (@{$names->{data}}[1]->{id}, 'WBPerson10953', 'correct name returned');
+
+    }
+
+    # This is an example test that checks whether a particular gene can be
+    # returned and whether the resulting data structure contains certain
+    # data entries.
+    sub test_diseases {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00000900' });
+
+        can_ok('WormBase::API::Object::Gene', ('human_diseases'));
+
+        my $human_diseases = $gene->human_diseases();
+
+        # Please keep test names/descriptions all lower case.
+        is($human_diseases->{'data'}->{'experimental_model'}, undef, 'undef returned when there is no data');
+    }
+
+    # Tests for the fpkm_expression_summary_ls method
+    sub test_fpkm_expression_summary_ls {
+        can_ok('WormBase::API::Object::Gene', ('fpkm_expression_summary_ls'));
+
+        # test fpkm link
+        # Test the analysis link in the fpkm table of the expression method
+        # issue #2821
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00227744' });
+
+        my $fpkm_expression = $gene->fpkm_expression_summary_ls();
+
+        isnt($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
+        is($fpkm_expression->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.brugia.FR3.WBls:0000081.Unknown.WBbt:0007833.PRJEB2709.ERX026030', 'correct link returned');
+
+
+        # test O. voluvus fpkm data
+        # issue #2864
+        my $gene_ovol = $api->fetch({ class => 'Gene', name => 'WBGene00243220' });
+
+        my $fpkm_expression_ovol = $gene_ovol->fpkm_expression_summary_ls();
+
+        isnt($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}, undef, 'data returned');
+        is($fpkm_expression_ovol->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'label'}->{'label'}, 'RNASeq.ovolvulus.O_volvulus_Cameroon_isolate.WBls:0000108.Unknown.WBbt:0007833.PRJEB2965.ERX200392', 'correct o.vol link returned');
+
+        #test project name
+        my $gene_1 = $api->fetch({ class => 'Gene', name => 'WBGene00001530' });
+
+        my $fpkm_expression_1 = $gene_1->fpkm_expression_summary_ls();
+        isnt($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0], undef, 'data returned');
+        is($fpkm_expression_1->{'description'}, 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data' , 'correct description returned ');
+        is($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
+        is($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'project_info'}->{'id'}, 'SRP016006', 'correct project accesssion returned');
+        is($fpkm_expression_1->{'data'}->{'plot'}, '/img-static/rplots/WS244/1559/fpkm_WBGene00001530.png' , 'correct plot path returned');
+
+    }
+
+    #Tests the alleles and polymorphisms methods of Gene
+    #Related to issue #2809
+    sub test_alleles {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00006742' });
+
+        can_ok('WormBase::API::Object::Gene', ('alleles'));
+        can_ok('WormBase::API::Object::Gene', ('polymorphisms'));
+
+        my $alleles = $gene->alleles();
+        my $polymorphisms = $gene->polymorphisms();
+
+        my $first_allele = $alleles->{data}[0];
+        my $first_polymorphisms = $polymorphisms->{data}[0];
+
+
+        isnt($first_allele->{variation}->{label}, undef, 'data returned');
+        isnt($first_polymorphisms->{variation}->{label}, undef, 'data returned');
+        is  ($first_allele->{variation}->{label}, 'e2342', 'correct allele returned');
+        is  ($first_polymorphisms->{variation}->{label}, 'WBVar00053707', 'correct polymorphisms returned');
+
+    }
+
+    #Test the gene classification method
+    # Make sure return compiant data - #2906
+
+    sub test_classification {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00014631' });
+
+        can_ok('WormBase::API::Object::Gene', ('classification'));
+
+        my $classification = $gene->classification();
+
+
+        isnt($classification->{data}, undef, 'data returned');
+        isnt($classification->{data}{type}, undef, 'type data returned');
+        is  ($classification->{data}{type}, 'snRNA', 'correct allele returned');
+
+    }
+
+        #related to issue #2710
+    sub test_expression_widget {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00015146' });
+
+        #test microarray_topology_map_position
+        can_ok('WormBase::API::Object::Gene', ('microarray_topology_map_position'));
+
+        my $profiles = $gene->microarray_topology_map_position();
+        is($profiles->{'description'}, 'microarray topography map', 'correct description returned');
+        isnt($profiles->{'data'}, undef, 'data returned');
+
+        my $p = shift @{$profiles->{'data'}};
+
+        is($p->{'id'}, 'B0336.6', 'correct profile id returned');
+        is($p->{'class'}, 'expr_profile', 'correct class returned');
+        ok($p->{'label'} =~ /Mountain: 11/, 'correct mountain for expression profile returned');
+
+
+        #test anatomic_expression_patterns
+        can_ok('WormBase::API::Object::Gene', ('anatomic_expression_patterns'));
+
+        my $patterns = $gene->anatomic_expression_patterns();
+        isnt($patterns->{'data'}, undef, 'data returned');
+        is($patterns->{'description'}, 'expression patterns for the gene' , 'correct description returned ');
+        is($patterns->{'data'}->{'image'}, '/img-static/virtualworm/Gene_Expr_Renders/WBGene00015146.jpg' , 'correct image returned');
+
+
+        #test expression_patterns
+        can_ok('WormBase::API::Object::Gene', ('expression_patterns'));
+        my $expressions = $gene->expression_patterns();
+        isnt($expressions->{'data'}, undef, 'data returned');
+        is($expressions->{'description'}, 'expression patterns associated with the gene:WBGene00015146' , 'correct description returned ');
+        is($expressions->{'data'}[0]->{'description'}->{'text'}, 'Collectively, these approaches revealed that ABI-1 is expressed in a number of neurons within the nerve ring and head, including the amphid interneurons AIYL/R, the RMEL/R motoneurons, coelomocytes, and several classes of ventral cord motoneuron.' , 'correct expression description returned' );
+        is($expressions->{'data'}[0]->{'type'}, 'Reporter gene', 'correct type returned');
+        is($expressions->{'data'}[0]->{'expression_pattern'}->{'id'}, 'Expr8549', 'correct expression pattern returned');
+
+        #test expression_profiling_graphs
+        can_ok('WormBase::API::Object::Gene', ('expression_profiling_graphs'));
+        my $graphs = $gene->expression_profiling_graphs();
+        isnt($graphs->{'data'}, undef, 'data returned');
+        is($graphs->{'description'}, 'expression patterns associated with the gene:WBGene00015146' , 'correct description returned ');
+        is($graphs->{'data'}[0]->{'description'}->{'text'}, 'Developmental gene expression time-course.  Raw data can be downloaded from ftp://caltech.wormbase.org/pub/wormbase/datasets-published/levin2012' , 'correct expression description returned' );
+        is($graphs->{'data'}[0]->{'type'}, 'Microarray', 'correct type returned');
+        is($graphs->{'data'}[0]->{'expression_pattern'}->{'id'}, 'Expr1011958', 'correct expression pattern returned');
+
+        #test anatomy_terms
+        can_ok('WormBase::API::Object::Gene', ('anatomy_terms'));
+        my $anatomy_terms = $gene->anatomy_terms();
+        isnt($anatomy_terms->{'data'}, undef, 'data returned');
+        is($anatomy_terms->{'description'}, 'anatomy terms from expression patterns for the gene' , 'correct description returned ');
+        is($anatomy_terms->{'data'}->{'WBbt:0005751'}->{'class'}, 'anatomy_term' , 'correct anatomy term class returned');
+        is($anatomy_terms->{'data'}->{'WBbt:0005751'}->{'label'}, 'coelomocyte' , 'correct anatomy term label returned');
+        is($anatomy_terms->{'data'}->{'WBbt:0005751'}->{'id'}, 'WBbt:0005751' , 'correct anatomy term id returned');
+
+        #test expression_cluster
+        can_ok('WormBase::API::Object::Gene', ('expression_cluster'));
+        my $expression_cluster = $gene->expression_cluster();
+        isnt($expression_cluster->{'data'}, undef, 'data returned');
+        is($expression_cluster->{'description'}, 'expression cluster data' , 'correct description returned ');
+        is($expression_cluster->{'data'}[0]->{'expression_cluster'}->{'id'}, 'cgc4489_group_2' , 'correct expression cluster id returned');
+        is($expression_cluster->{'data'}[0]->{'description'}, 'Genome-wide analysis of developmental and sex-regulated gene expression profile.' , 'correct expression cluster description returned');
+
+
+    }
 }
 
 1;
-

@@ -1,8 +1,8 @@
 package WormBase::API::Service::nearby_genes;
 
-use Ace; 
+use Ace;
 use Moose;
-with 'WormBase::API::Role::Object'; 
+with 'WormBase::API::Role::Object';
 
 # The index page.
 sub index {
@@ -17,12 +17,11 @@ sub run {
     my $query = $param->{name};
 
     my $api = $c->model('WormBaseAPI');
-    my ($it,$res)= $api->xapian->search_exact($c, $query, 'gene');
+    my $match = $api->xapian->fetch({query => $query, class => 'gene'});
 
 
-    my $o = @{$it->{struct}}[0];
     my $service_dbh = $api->_services->{$api->default_datasource}->dbh || return 0;
-    my $sequence = $service_dbh->fetch(-class => $o->get_document->get_value(0), -name => $o->get_document->get_value(1));
+    my $sequence = $service_dbh->fetch(-class => $match->{class}, -name => $match->{id});
 
 
     return {msg=>"No such sequence ID known."} unless $sequence  ;
@@ -34,7 +33,7 @@ sub run {
     $gff_dsn->reconnect();
     my $dbgff =  $gff_dsn->dbh ;
     $self->log->debug("GFF database:",$dbgff);
-    $dbgff->add_aggregator('waba_alignment') if ($dbgff); 
+    $dbgff->add_aggregator('waba_alignment') if ($dbgff);
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
     return {msg=>"Sequence is not a transcript."} unless ($is_transcript) ;
 
@@ -61,20 +60,20 @@ sub run {
 		 'No genetic mapping information is yet available for this locus or sequence.'));
     return;
   }
-  
+
   my ($x1, $x2) ;
   $x1 = $position - $window ; $x2 = $position + $window ;
-  
+
   my @genes = $DB->fetch(-query=>"FIND Map $chromosome ; FOLLOW Gene ; Map = $chromosome # (Position > $x1 AND HERE < $x2)",
 			 -fill=>1);
-  
+
   unless (@genes) {
     print b(font({-color=>'red'},
 		 "There are no mapped loci within $window cM of $obj (position $chromosome:$position)",
 		 "Try a larger window."));
     return;
   }
-  
+
   (my $pos = $chromosome) =~ s/\./\\./g;
   $pos = "$pos.Position";
 
@@ -85,7 +84,7 @@ sub run {
       $positions{$obj} = $position;
       push @genes,$obj;
   }
-  
+
 
   foreach my $gene (sort {$positions{$a}+0 <=> $positions{$b}+0} @genes) {
       print "\n"; # for readability
@@ -102,15 +101,15 @@ sub run {
       } else {
 	  my $z =  $positions{$gene};
 	  # Regular 'ol locus
-	  my @clones = map { a({-href=>Url('pic',"class=Clone&name=".escape("$_")) },$_) } 
+	  my @clones = map { a({-href=>Url('pic',"class=Clone&name=".escape("$_")) },$_) }
 	  $gene->get('Positive_clone') ;
-	  print 
+	  print
 	      p,
 	      span({'-style'=>'font-size: 14pt'},
 		   a({-href => Url('pic',"class=Locus&name=$gene") },b("$chromosome:"),$z),
 		   i("locus"),span({-class=>'gene'},ObjectLink($gene->Public_name)),
 		   @clones ? " mapped on clone @clones " : "");
-	  
+
 	  if (my @phs = eval { $gene->Phenotype } ) {
 	      print blockquote({-class=>'description'}, $phs[$#phs]);
 	  }
@@ -125,7 +124,7 @@ sub run {
 
 
 
-    
+
     my ($align_start,$align_end);
 
     #allow for offsets
@@ -134,7 +133,7 @@ sub run {
     my $flip_user  = $param->{"flip"};
     my $user_ragged =  defined $param->{"ragged"} ? $param->{"ragged"} : BLUMENTHAL_FACTOR;
     my $user_override = defined $user_start && defined $user_end && ($user_start || $user_end);
-    my $hash = {	
+    my $hash = {
 		sequence => $sequence_id,
 		size => length($param->{"sequence"})||8,
 		start => $user_start,
@@ -153,8 +152,8 @@ sub run {
     my ($seq) = $dbgff->segment(-name => $sequence,
 			    $user_override ? (-start	=>	$user_start,
 					      -stop	=>	$user_end) : ());
-				       
-    
+
+
     my  @alignments;
 
     foreach (sort keys %{$self->algorithms}){
@@ -230,15 +229,15 @@ sub run {
     # WHAT IS THIS BEING USED FOR?
     my @dnas   = ($genomic->display_name => $genomic->dna);
     # Determine if the plugin should flip the alignment
-    my $calculated_flip = $genomic->abs_strand == -1 ? 1 : 0; 
-     
+    my $calculated_flip = $genomic->abs_strand == -1 ? 1 : 0;
+
     # Flip it by default if genomic sequence is on neg strand and request comes from outside of the page
     $calculated_flip = $flip_user if $param->{override_flip};
      #in case of flip, the image also flip orientation
     if ($calculated_flip){
       ($align_start, $align_end) = ($align_end, $align_start);
     }
-     
+
     $hash->{start} = $align_start;
     $hash->{end} = $align_end;
     $hash->{flip}=$calculated_flip;
@@ -249,11 +248,11 @@ sub run {
       push @align_types,$LABELS{$_};
     }
 
-    
+
   # Link into gbrowse image using the sequence object (a gene object)
     $self->log->debug("ALIGNER: before print_image: $align_start $align_end\n");
-    my $gene = $api->fetch({aceclass=> $o->get_document->get_value(0),
-                          name => $o->get_document->get_value(1)}) or die "$!";
+    my $gene = $api->fetch({aceclass=> $doc->get_value(0),
+                          name => $doc->get_value(1)}) or die "$!";
 
 #     $hash->{picture}= $self->genomic_picture($sequence, $align_start, $align_end);
     $hash->{picture} = $gene->genomic_image;
@@ -264,11 +263,11 @@ sub run {
     my $flip_format = "Aligner.flip=" . $calculated_flip;
     my $ragged = "Aligner.ragged=". $user_ragged || "Aligner.ragged=BLUMENTHAL_FACTOR";
     my $test =  "$sequence:$start..$end";
-    
+
     my $url_root = 'http://www.wormbase.org/db/gb2/gbrowse/c_elegans_PRJNA13758?';
     #my $plugin_url = $url_root . "name=$test;plugin=Aligner;plugin_action=Go;label=ESTB;Aligner.upcase=CDS;Aligner.align=ESTB;". $ragged . ";" . $flip_format;
     my $plugin_url = $url_root . "name=$test;plugin=Aligner;plugin_action=Go;label=ESTB;Aligner.upcase=CDS;Aligner.align=ESTB;";
-   
+
     $plugin_url .= 'Aligner.align=ESTO;' if $self->algorithms->{BLAT_EST_OTHER};
     $plugin_url .= $ragged . ";" . $flip_format;
 
@@ -276,20 +275,20 @@ sub run {
     my $content = get $plugin_url;
     return {msg=>"Couldn't get $plugin_url" } unless defined $content;
     $hash->{content}=$content;
- 
+
     return $hash;
 }
- 
- 
- 
+
+
+
 sub clean_fasta {
   my $stringref = shift;
   $$stringref =~ s/^>.*//;
   $$stringref =~ s/\n//g;
 }
 
- 
- 
+
+
 
 
 1;

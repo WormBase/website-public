@@ -21,7 +21,7 @@ has 'tracks' => (
 
 # Some good examples: WBsf000001, WBsf027925
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -191,13 +191,13 @@ sub flanking_sequences {
 
 sub annotation {
     my $self   = shift;
-    my $object = $self->object; 
+    my $object = $self->object;
 
     my $annotation;
     if ($annotation = $object->Annotation) {
         $annotation = $annotation->right;
     }
-    
+
     return { description => 'annotation of the feature',
 	     data        => $annotation && "$annotation", };
 }
@@ -241,13 +241,13 @@ sub sequence {
 #######################################
 
 # defined_by { }
-# This method returns a data structure detailing 
+# This method returns a data structure detailing
 # how the sequence feature was defined.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/defined_by
 
 sub defined_by {
     my $self   = shift;
-    my $object = $self->object; 
+    my $object = $self->object;
 
     my @data;
     foreach my $definer ($object->Defined_by) {
@@ -259,7 +259,7 @@ sub defined_by {
 	    };
     	}
     }
-    
+
     return { description => 'how the sequence feature was defined',
 	     data        => @data ? \@data : undef, };
 }
@@ -274,7 +274,7 @@ sub associations {
     my $object = $self->object;
     my @data;
     my @association_types = $object->Associations;
-    
+
     foreach my $assoc_type (@association_types) { # assoc_type is tag
     	foreach my $association_object ($assoc_type->col) {
 	    (my $label = "$assoc_type") =~ s/Associated_with_(.)/\u$1/;
@@ -289,7 +289,7 @@ sub associations {
 
 
 # binds_gene_product { }
-# This method will return a data structure containing 
+# This method will return a data structure containing
 # the gene whose product binds the feature.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/binds_gene_product
 
