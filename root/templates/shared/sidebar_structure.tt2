@@ -61,7 +61,8 @@
           [% make_star(wbid) %]
         [% ELSE; '>'; END; %]
           [% title %]
-    [% IF (from_url = c.request.param('from'));
+    [% IF c.request.param('from');
+        from_url = c.request.param('from');
         IF (from_url.match('^http'));
             '<span class="note">(redirected from external site ' _ from_url _ ')</span>';
         ELSE;
