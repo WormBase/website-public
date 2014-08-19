@@ -55,7 +55,7 @@ sub _build__common_name {
     my $object   = $self->object;
     my $gene     = $object->Gene;
     my $bestname = $gene->Public_name if $gene;
-    
+
     return "Expression pattern for $bestname" if $bestname;
     return "Source Image";
 #    return $self->object->name;
@@ -94,7 +94,7 @@ sub subcellular_locations {
 }
 
 # historical_gene { }
-# This mehtod will return a data structure containing the 
+# This mehtod will return a data structure containing the
 # historical reocrd of the dead gene originally associated with this Expression pattern
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/historical_gene
 
@@ -102,7 +102,7 @@ sub historical_gene {
     my $self = shift;
     my $object = $self->object;
 
-    my @historical_gene = map { {text => $self->_pack_obj($_), 
+    my @historical_gene = map { {text => $self->_pack_obj($_),
                               evidence => $self->_get_evidence($_)} } $object->Historical_gene;
     return { description => 'Historical record of the dead genes originally associated with this expression pattern',
              data        => @historical_gene ? \@historical_gene : undef,
@@ -131,11 +131,11 @@ sub expression_image {
 sub ep_movies{
     my ($self) = @_;
     my $object = $self->object;
-    
+
     my @movies = $object->Movie;
     my $reference = $object->Reference;
     my @filenames = map { my $name = $_->Name; "$reference/$name" } @movies;
-    
+
     return {
         description => 'Movies showcasing this expression pattern',
         data        => @filenames ? \@filenames : undef
@@ -241,7 +241,7 @@ sub anatomy_ontology {
 
 sub gene_ontology {
     my ($self) = @_;
-    
+
     my @go_terms = map {
 	my $name = $_->Definition->name;
 	{
@@ -249,7 +249,7 @@ sub gene_ontology {
 	  definition => $name && "$name",
 	};
     } $self->object->GO_term;
-    
+
     return {
 	description => 'gene ontology terms associated with this expression pattern',
 	data	    => @go_terms ? \@go_terms : undef,
@@ -294,7 +294,7 @@ sub experimental_details {
 #
 #######################################
 
-# curated_images { } 
+# curated_images { }
 # This method will return a data structure containing
 # curated expression pattern images in the Picture::image format.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/curated_images

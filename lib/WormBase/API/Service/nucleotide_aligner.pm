@@ -1,13 +1,13 @@
 package WormBase::API::Service::nucleotide_aligner;
 
 use Bio::Graphics::Browser2::Util;
-use Ace 1.51; 
+use Ace 1.51;
 use Bio::Graphics::Browser2::PadAlignment;
 use LWP::Simple;
 use Bio::Graphics::Browser2::Markup;
 
 use Moose;
-with 'WormBase::API::Role::Object'; 
+with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
@@ -41,7 +41,7 @@ our %LABELS   = (
          BLAT_mRNA_BEST => 'full-length mRNAs Aligned with BLAT (best)',
 #         BRIGGSAE   => 'Briggsae Alignments (WABA)',
          );
- 
+
 our %TRACKS   = (
          BLAT_EST_BEST  => 'EST_BEST',
          BLAT_EST_OTHER => 'EST_OTHER',
@@ -60,7 +60,7 @@ sub index {
 sub run {
     my ($self,$c,$param) = @_;
     my $sequence_id = $param->{"sequence"};
- 
+
     my @array;
     if($param->{algorithm}) {
       if (ref $param->{algorithm} eq 'ARRAY' ) {
@@ -72,7 +72,7 @@ sub run {
       push @array, DEFAULT_ALGORITHM;
     }
     $self->algorithms({map {$_=>1} @array});
-    
+
     my @types = 'GENES';
     foreach (sort keys %TRACKS) {
       push @types,$TRACKS{$_}  if $self->algorithms->{$_};
@@ -81,10 +81,10 @@ sub run {
 
     my $api = $c->model('WormBaseAPI');
 
-    my ($it,$res)= $api->xapian->search_exact($c, $sequence_id, 'gene');
-    my $o = @{$it->{struct}}[0] || return;
+    my $match = $api->xapian->fetch({query => $sequence_id, class => 'gene'});
+    return unless $match;
     my $service_dbh = $api->_services->{$api->default_datasource}->dbh;
-    my $sequence = $service_dbh->fetch(-class => $o->get_document->get_value(0), -name => $o->get_document->get_value(1));
+    my $sequence = $service_dbh->fetch(-class => $match->{class}, -name => $match->{id});
 
 
     return {msg=>"No such sequence ID known."} unless $sequence;
@@ -94,7 +94,7 @@ sub run {
     my $gff_dsn = $self->gff_dsn;
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
     return {msg=>"Sequence is not a transcript."} unless ($is_transcript) ;
-    
+
     my ($align_start,$align_end);
 
     #allow for offsets
@@ -103,7 +103,7 @@ sub run {
     my $flip_user  = $param->{"flip"};
     my $user_ragged =  defined $param->{"ragged"} ? $param->{"ragged"} : BLUMENTHAL_FACTOR;
     my $user_override = defined $user_start && defined $user_end && ($user_start || $user_end);
-    my $hash = {    
+    my $hash = {
         sequence => $sequence_id,
         size => length($param->{"sequence"})||8,
         start => $user_start,
@@ -142,7 +142,7 @@ sub run {
         next if $dna{$target};  # already got it or some reasn
         my ($segment) = $gff_dsn->segment($target->{seqid}, $target->start, $target->end);
         my $dna = $segment->dna;
-        
+
         unless ($dna) {
           $self->log->debug( "ALIGNER missing target = $target" );
           push @missing,$target;
@@ -197,23 +197,23 @@ sub run {
     # WHAT IS THIS BEING USED FOR?
     # my @dnas   = ($genomic->display_name => $genomic->dna);
     # Determine if the plugin should flip the alignment
-    my $calculated_flip = $genomic->strand == -1 ? 1 : 0; 
-     
+    my $calculated_flip = $genomic->strand == -1 ? 1 : 0;
+
     # Flip it by default if genomic sequence is on neg strand and request comes from outside of the page
     $calculated_flip = $flip_user if $param->{override_flip};
      #in case of flip, the image also flip orientation
     if ($calculated_flip){
       ($align_start, $align_end) = ($align_end, $align_start);
     }
-     
+
     $hash->{start} = $align_start;
     $hash->{end} = $align_end;
     $hash->{flip}=$calculated_flip;
 
     # Link into gbrowse image using the sequence object (a gene object)
     $self->log->debug("ALIGNER: before print_image: $align_start $align_end\n");
-    my $gene = $api->fetch({aceclass=> $o->get_document->get_value(0),
-                          name => $o->get_document->get_value(1)}) or die "$!";
+    my $gene = $api->fetch({aceclass=> $match->{class},
+                          name => $match->{id}}) or die "$!";
 
     $hash->{picture} = $gene->genomic_image;
 
@@ -228,7 +228,7 @@ sub run {
 
     my $plugin_url = "http://www.wormbase.org/tools/genome/gbrowse/" . $source . "/?";
     $plugin_url .= "name=$name;plugin=Aligner;plugin_action=Go;label=EST_BEST;Aligner.upcase=CDS;Aligner.align=EST_BEST;";
-   
+
     $plugin_url .= 'Aligner.align=EST_OTHER;' if $self->algorithms->{BLAT_EST_OTHER};
     $plugin_url .= $ragged . ";" . $flip_format;
 
@@ -240,20 +240,20 @@ sub run {
       $content = "Couldn't fetch alignment";
     }
     $hash->{content}=$content;
- 
+
     return $hash;
 }
- 
- 
- 
+
+
+
 sub clean_fasta {
   my $stringref = shift;
   $$stringref =~ s/^>.*//;
   $$stringref =~ s/\n//g;
 }
 
- 
- 
+
+
 
 
 1;

@@ -5,7 +5,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -72,7 +72,7 @@ sub definition {
 }
 
 # synonyms { }
-# This method will return a data structure containing the 
+# This method will return a data structure containing the
 # synonyms of this anatomy term object.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/synonyms
 
@@ -87,16 +87,16 @@ sub synonyms {
 }
 
 # wormatlas {}
-# This method will return a data structure containing the 
+# This method will return a data structure containing the
 # wormatlas link of this anatomy term object.
 
 sub wormatlas {
-    my $self = shift; 
+    my $self = shift;
     my %data =  %{$self->xrefs->{data}->{WormAtlas}} if $self->xrefs->{data}->{WormAtlas};
 
     return {
         description => 'link to WormAtlas record',
-        data => %data ? \%data : undef 
+        data => %data ? \%data : undef
     }
 }
 
@@ -110,7 +110,7 @@ sub wormatlas {
 #######################################
 
 # transgenes { }
-# This method will return a data structure of 
+# This method will return a data structure of
 # transgenes annotated with this anatomy term.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/transgenes
 
@@ -233,7 +233,7 @@ sub _anatomy_function {
 	# Genotype removed from the evidence hash in WS234?
 	my @assay = map { my $as = $_->right;
 			  if ($as) {
-			      my @geno = $as->Genotype; 			      
+			      my @geno = $as->Genotype;
 			      {evidence => { genotype => join('<br /> ', @geno) },
 			       text => "$_",}
 			  } else { "$_" }
@@ -241,7 +241,7 @@ sub _anatomy_function {
 	my $pev;
 	push @data_pack, {
             af_data   => $_ && "$_",
-            phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+            phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
                           { evidence => $pev,
                            text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
             gene      => $self->_pack_obj(scalar $_->Gene),

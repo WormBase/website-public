@@ -190,14 +190,17 @@ B<Response example>
 
 sub identity {
     my ($self) = @_;
+    my $description = $self->object->get('Brief_identification')
+        && $self->object->Brief_identification;
+    my $evidence = $self->_get_evidence($description);
 
-    # Cull a brief identification from each gene. Redundant with gene page and
-    # not necessarily accurate if we are looking at a splice variant.
-    my $data = join(', ', @{$self->genes}, $self ~~ 'Brief_identification' || ());
-    $data .= ' (pseudogene)' if $data && $self->type eq 'pseudogene';
+    $description = $description || join(', ', @{$self->genes});
+    $description .= ' (pseudogene)' if $description && $self->type eq 'pseudogene';
 
-    return { description => 'the identity of the sequence',
-	     data        => $data || undef   };
+    return {
+      description => 'Brief description of the ' . $self->type,
+      data        => $description ? $evidence? { text => "$description", evidence => $evidence } : "$description" : undef
+    };
 }
 
 =head3 available_from

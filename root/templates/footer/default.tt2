@@ -9,11 +9,11 @@
         <ul>
           <li><span>Nematodes</span></li>
           <li><a href="[% c.uri_for('/about','userguide', 'nomenclature').path  %]">Nomenclature</a></li>
-        </ul>                
-        
+        </ul>
+
         <ul>
           <li><span>WormBase</span></li>
-          <li><a href="[% c.uri_for('/about').path  _ '#0--10' %]">Mission</a></li> 
+          <li><a href="[% c.uri_for('/about').path  _ '#0--10' %]">Mission</a></li>
           <li><a href="[% c.uri_for('/about','advisory_board').path  _ '#01--10' %]">Advisory Board</a></li>
           <li><a href="[% c.uri_for('/about','policies').path  _ '#1--10' %]">Privacy</a></li>
           <li><a href="[% c.uri_for('/about','policies').path  _ '#0--10' %]">Acceptable Use</a></li>
@@ -22,7 +22,7 @@
           <li><a href="[% c.uri_for('/about','citing_wormbase').path  _ '#012--10' %]">How to Cite</a></li>
           <li><a href="[% c.uri_for('/about','staff').path  _ '#01--10' %]">WormBase Staff</a></li>
           <li>[% external_link("http://legacy.wormbase.org/", 'Legacy Site') %]</li>
-        </ul>  
+        </ul>
       </div>
 
 
@@ -34,7 +34,7 @@
           <li><a href="[% c.uri_for('/about','Frequently_asked_questions').path  %]">FAQ</a></li>
           <li><a href="[% c.uri_for('/about','userguide').path  %]">User Guide</a></li>
           <li><a href="[% c.uri_for('/tools', 'support').path  _ '?url=' _ c.req.uri.path %]">Contact Help</a></li>
-        </ul>     
+        </ul>
       </div>
 
       <div class="footer-column">
@@ -49,13 +49,13 @@
 
         <ul>
           <li><span>Friends</span></li>
-          <li>[% external_link("http://www.cbs.umn.edu/research/resources/cgc", 'CGC') %]</li> 
-          <li>[% external_link("http://www.wormatlas.org", 'WormAtlas') %]</li> 
+          <li>[% external_link("http://www.cbs.umn.edu/research/resources/cgc", 'CGC') %]</li>
+          <li>[% external_link("http://www.wormatlas.org", 'WormAtlas') %]</li>
           <li>[% external_link("http://www.nematodes.org/", 'Nematodes.org') %]</li>
           <li>[% external_link("http://www.ipm.ucdavis.edu/NEMABASE/", 'NEMABASE') %]</li>
           <li>[% external_link("http://nematode.net/", 'Nematode.net') %]</li>
           <li>[% external_link("http://www.smid-db.org/", 'SMID-DB') %]</li>
-        </ul>  
+        </ul>
       </div>
 
 
@@ -81,25 +81,25 @@
         <div class="footer-title">Data Freezes</div>
         <ul>
           <li>
-            <select id="data-freezes" onchange="window.location.href = this.options[this.selectedIndex].value"> 
-                <option selected="selected" value="--">--</option> 
-                <option value="http://legacy.wormbase.org">WS230 (Mar 2012)</option> 
-                <option value="http://ws220.wormbase.org">WS220 (16 Dec 2010)</option> 
-                <option value="http://ws210.wormbase.org">WS210 (15 Jan 2010)</option> 
-                <option value="http://ws205.wormbase.org">WS205 (18 Sep 2009)</option> 
-                <option value="http://ws204.wormbase.org">WS204 (13 Aug 2009)</option> 
-                <option value="http://ws200.wormbase.org">WS200 (16 Mar 2009)</option> 
-                <option value="http://ws190.wormbase.org">WS190 (07 May 2008)</option> 
-                <option value="http://ws180.wormbase.org">WS180 (07 Sep 2007)</option> 
-                <option value="http://ws170.wormbase.org">WS170 (09 Feb 2007)</option> 
-                <option value="http://ws160.wormbase.org">WS160 (31 Jul 2006)</option> 
-                <option value="http://ws150.wormbase.org">WS150 (30 Nov 2005)</option> 
-                <option value="http://ws140.wormbase.org">WS140 (26 Mar 2005)</option> 
-                <option value="http://ws130.wormbase.org">WS130 (16 Aug 2004)</option> 
-                <option value="http://ws120.wormbase.org">WS120 (07 Mar 2004)</option> 
-                <option value="http://ws110.wormbase.org">WS110 (01 Oct 2003)</option> 
-                <option value="http://ws100.wormbase.org">WS100 (10 May 2003)</option> 
-            </select>  
+            <select id="data-freezes" onchange="window.location.href = this.options[this.selectedIndex].value">
+                <option selected="selected" value="--">--</option>
+                <option value="http://legacy.wormbase.org">WS230 (Mar 2012)</option>
+                <option value="http://ws220.wormbase.org">WS220 (16 Dec 2010)</option>
+                <option value="http://ws210.wormbase.org">WS210 (15 Jan 2010)</option>
+                <option value="http://ws205.wormbase.org">WS205 (18 Sep 2009)</option>
+                <option value="http://ws204.wormbase.org">WS204 (13 Aug 2009)</option>
+                <option value="http://ws200.wormbase.org">WS200 (16 Mar 2009)</option>
+                <option value="http://ws190.wormbase.org">WS190 (07 May 2008)</option>
+                <option value="http://ws180.wormbase.org">WS180 (07 Sep 2007)</option>
+                <option value="http://ws170.wormbase.org">WS170 (09 Feb 2007)</option>
+                <option value="http://ws160.wormbase.org">WS160 (31 Jul 2006)</option>
+                <option value="http://ws150.wormbase.org">WS150 (30 Nov 2005)</option>
+                <option value="http://ws140.wormbase.org">WS140 (26 Mar 2005)</option>
+                <option value="http://ws130.wormbase.org">WS130 (16 Aug 2004)</option>
+                <option value="http://ws120.wormbase.org">WS120 (07 Mar 2004)</option>
+                <option value="http://ws110.wormbase.org">WS110 (01 Oct 2003)</option>
+                <option value="http://ws100.wormbase.org">WS100 (10 May 2003)</option>
+            </select>
           </li>
         </ul>
       </div>
@@ -110,7 +110,7 @@
 
 
 
-    <div id="footercredit"> 
+    <div id="footercredit">
 
      <div id="footermeta">
       <a id="footer-mail" href="mailto:help@wormbase.org"><div class="social-icons"></div></a>
@@ -124,11 +124,11 @@
       </span><br />
       [% END %]
         <span>
-          WormBase is supported by grant #U41 HG002223 from the 
+          WormBase is supported by grant #U41 HG002223 from the
           [% external_link("http://www.genome.gov/", "National Human Genome Research Institute") %]
         </span><br />
-        <span>at the [% external_link("http://www.nih.gov/", "US National Institutes of Health") %], 
-          the [% external_link("http://www.mrc.ac.uk/", "UK Medical Research Council") %] and the 
+        <span>at the [% external_link("http://www.nih.gov/", "US National Institutes of Health") %],
+          the [% external_link("http://www.mrc.ac.uk/", "UK Medical Research Council") %] and the
           [% external_link("http://www.bbsrc.ac.uk/home/home.aspx", "UK Biotechnology and Biological Sciences Research Council") %].
         </span>
     </div>

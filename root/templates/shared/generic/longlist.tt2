@@ -1,16 +1,16 @@
 <script type="text/javascript">
 	  $jq('.thetable').tableScroll();
-</script>  
-<table class="thetable"> 
-  
-      <thead> 
+</script>
+<table class="thetable">
+
+      <thead>
 	    <tr>
 	       [% FOREACH header IN data.header %]
-		  <td>[% header %]</td> 
+		  <td>[% header %]</td>
 		[% END %]
 	    </tr>
-      </thead> 
-      <tbody> 
+      </thead>
+      <tbody>
 	    [% FOREACH obj IN data.content.keys.sort %]
 	      <tr>
 		  [% FOREACH item IN data.content.$obj %]
@@ -21,7 +21,7 @@
 		     [% END %]
 		  </td>
 		  [% END %]
-	      </tr>     
+	      </tr>
 	    [% END %]
       </tbody>
       <tfoot>
@@ -29,9 +29,8 @@
 	      [% IF data.detail.defined %]
 		out of total:[% data.number %] <a class="update table_[% field %]"  href="[% c.uri_for('/rest','field','phenotype','WBPhenotype:0000039',field,'longlist') %]">(show full list)</a>
 	      [% END %]
-	   
+
       </tfoot>
 </table>
 
 
- 

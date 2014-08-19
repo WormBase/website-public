@@ -9,7 +9,7 @@ with 'WormBase::API::Role::Sequence';
 
 use Bio::Graphics::Browser2::Markup;
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -119,20 +119,21 @@ sub _build_type {
 # laboratory { }
 # Supplied by Role
 
+
 sub partial{
     my ($self) = @_;
     my $cds = $self->object;
-    
+
     my $data = defined $cds->get('Start_not_found') || defined $cds->get('End_not_found') ?
-        sprintf("%s%s%s not found", 
+        sprintf("%s%s%s not found",
             defined $cds->get('Start_not_found') ? "start" : "",
             defined $cds->get('Start_not_found') && defined $cds->get('End_not_found') ? " and " : "",
             defined $cds->get('End_not_found') ? "end" : ""
         ) : undef;
-    
+
     print "start not found\n" if defined $cds->get('Start_not_found') ;
     print "end not found\n" if defined $cds->get('End_not_found');
-    
+
     return {
         description => "Whether the start or end of the CDS is found",
         data => $data
@@ -140,7 +141,7 @@ sub partial{
 }
 
 # gene_history { }
-# This mehtod will return a data structure containing the 
+# This mehtod will return a data structure containing the
 # historical record of the dead gene originally associated with this
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/gene_history
 
@@ -160,7 +161,7 @@ sub gene_history {
 #
 # The External Links widget
 #
-############################################################ 
+############################################################
 
 # xrefs {}
 # Supplied by Role
@@ -182,7 +183,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ 
+        data => $self->_parsed_species =~ /elegans/
 	    ? ($self->method->{data}{method} eq 'history') ?  [qw(HISTORICAL_GENES)] : [qw(GENES TRANSPOSONS TRANSPOSON_GENES EST_BEST PROTEIN_MOTIFS)] : undef,
     };
 }
@@ -304,13 +305,13 @@ sub predicted_exon_structure {
 
     my $index = 1;
     my @exons = map {
-		my ($es,$ee) = $_->row; 
-		{ 
+		my ($es,$ee) = $_->row;
+		{
 			no		=> $index++,
 			start	=> "$es" || undef,
 			end		=> "$ee" || undef,
 			len 	=> "$es" && "$ee" ? $ee-$es+1 : undef
-		}; 
+		};
 	} $s->get('Source_Exons');
 
     return { description => 'predicted exon structure within the sequence',
@@ -383,7 +384,7 @@ sub _print_unspliced {
             sequence=>$unspliced,
             length => $length,
             style=> 1,
-            
+
         };
     }
 }
@@ -412,7 +413,7 @@ sub _print_spliced {
     my $name = eval { $features[0]->refseq->name } ;
 #   my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
     $markup->markup(\$spliced,\@markup);
-     
+
     return {                    # download => $download ,
         header=>"spliced + UTR",
         sequence=>$spliced,

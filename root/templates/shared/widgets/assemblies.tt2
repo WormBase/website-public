@@ -9,9 +9,9 @@ species = first_char _ '_' _ tokens.1;
 IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; END;
 
       '<p><div class="caveat-emptor">Current Assemblies</div></p>';
-   
+
       build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference'],
-                        columns={ 
+                        columns={
                             name              => 'Name',
                             sequenced_strain  => 'Sequenced strain',
                             wb_release_range  => 'WormBase releases',
@@ -27,7 +27,7 @@ IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; 
       '<p><div class="caveat-emptor">Prior Assemblies</div></p>';
 
       build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference'],
-                        columns={ 
+                        columns={
                             name              => 'Name',
                             sequenced_strain  => 'Sequenced strain',
                             wb_release_range  => 'WormBase releases',

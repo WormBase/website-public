@@ -2,7 +2,7 @@
 #Genes
 build_data_table(
     order = ['name','type', 'bp_inv', 'assay', 'phenotype', 'reference'],
-    columns={ 
+    columns={
         name        => "Gene",
         type        => "Type",
         'bp_inv'    => 'Anatomical Sites',

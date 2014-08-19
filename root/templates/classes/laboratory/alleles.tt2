@@ -1,4 +1,4 @@
-[% 
+[%
 
 WRAPPER $field_block title="" key="alleles";
 
@@ -11,4 +11,4 @@ WRAPPER $field_block title="" key="alleles";
 
 END;
 
-%] 
+%]

@@ -1,4 +1,4 @@
-[% 
+[%
 
 sequence('print_sequence');
 
@@ -9,7 +9,7 @@ END;
 WRAPPER $field_block title="Predicted Exon Structure" key="predicted_exon_structure";
 
     build_data_table( order = ['no','start','end','len'],
-                        columns = { 
+                        columns = {
                                     no     => 'Exon #',
                                     start  => 'Start',
                                     end    => 'End',
@@ -22,4 +22,4 @@ END;
 
 
 
-%] 
+%]

@@ -59,8 +59,8 @@ sub run {
 
     if ($request_class =~ /gene/i) {
 	my $api    = $c->model('WormBaseAPI');
-	$request_name =~ s/-/_/g;	
-	my $object = $api->xapian->_get_tag_info($c, $request_name, lc($request_class) ,1);
+	$request_name =~ s/-/_/g;
+	my $object = $api->xapian->fetch({ id => $request_name, class => lc($request_class), fill => 1});
 	$request_name = $object->{name}->{id};
     }
 
@@ -195,17 +195,17 @@ sub print_map {
 
     my $max = 100;
 
-    foreach my $box (@$boxes) {  
+    foreach my $box (@$boxes) {
 	my $center = center($box->{'coordinates'});
 	next if $centers{$center} > $max;
-	
+
 	my $coords = join(',',@{$box->{'coordinates'}});
 	(my $jcomment = $box->{'comment'} || "$box->{class}:$box->{name}" )
 	    =~ s/'/\\'/g; # escape single quotes for javascript
 
 	CASE :
 	{
-	    if ($box->{name} =~ /gi\|(\d+)/ or 
+	    if ($box->{name} =~ /gi\|(\d+)/ or
 		($box->{class} eq 'System' and $box->{'comment'}=~/([NP])ID:g(\d+)/)) {
 		my($db) = $2 ? $1 : 'n';
 		my($gid) = $2 || $1;
@@ -372,7 +372,7 @@ sub center {
 }
 
 
- 
+
 sub error {
   return 0;
 }

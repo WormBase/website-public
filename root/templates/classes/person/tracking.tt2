@@ -1,11 +1,11 @@
-[% WRAPPER $field_block title="Status" key="status" %] 
+[% WRAPPER $field_block title="Status" key="status" %]
     [% fields.status.data %]
 [% END %]
 
-[% WRAPPER $field_block title="Last verified" key="last_verified" %] 
+[% WRAPPER $field_block title="Last verified" key="last_verified" %]
     [% fields.last_verified.data %]
 [% END %]
 
-[% WRAPPER $field_block title="Possibly publishes as" key="possibly_publishes_as" %] 
+[% WRAPPER $field_block title="Possibly publishes as" key="possibly_publishes_as" %]
     [% fields.possibly_publishes_as.data.join(', ') %]
 [% END %]

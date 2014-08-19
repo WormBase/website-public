@@ -52,7 +52,7 @@ sub reactome_knowledgebase {
   foreach my $protein (@$proteins) {
     my @db_entry = $protein->at('DB_info.Database');
     my ($reactome_name,$reactome_id);
-    
+
     foreach (@db_entry) {
       next unless $_ eq 'Reactome';
       my @fields = $_->row;
@@ -90,7 +90,7 @@ sub alleles {
     my $object = $self->object;
     # Typically fetching alleles from gene, but might also be from variation
     $object = ($object->class eq 'Gene') ? $object : $object->Gene;
-    
+
     my @clean;
     foreach ($object->Allele) {
 	unless ($_->SNP) {
@@ -119,7 +119,7 @@ sub polymorphisms {
 # This grosses me out.
 sub wb_protein {
   my ($self,$species) = @_;
-  
+
   return 1 if ($species =~ /elegans|briggsae|pacificus|brenneri|jacchus|hapla|japonica|remanei|malayi|brenneri|incognita|contortus/i);
 
   return 0;
@@ -131,7 +131,7 @@ sub wb_protein {
 # This is used in Gene::inparanoid_groups();
 sub id2species {
   my ($self,$id) = @_;
-  
+
   # Ordered according to (guesstimated) probability
   # It *seems* like this belongs in configuration but
   # it requires regexps...
@@ -166,9 +166,9 @@ sub id2species {
 # This is typically called by genomic_environs() ina subclass...
 sub build_gbrowse_img {
   my ($self,$segment,$tracks,$options,$width) = @_;
-  
-  my $species = $self->_parsed_species(); 
-  
+
+  my $species = $self->_parsed_species();
+
   # open the browser for drawing pictures
   my $BROWSER = Bio::Graphics::Browser->new or die;
 
@@ -177,16 +177,16 @@ sub build_gbrowse_img {
 
   $BROWSER->source($species);
   $BROWSER->width($width || '500');
-  
+
   $BROWSER->config->set('general','empty_tracks' => 'suppress');
   $BROWSER->config->set('general','keystyle'     => 'none');
-  
+
   my $absref   = $segment->abs_ref;
   my $absstart = $segment->start;
   my $absend   = $segment->stop;
   ($absstart,$absend) = ($absend,$absstart) if $absstart>$absend;
   my $length = $segment->length;
-  
+
   # add another 10% to left and right
   my $start = int($absstart - 0.1*$length);
   my $stop  = int($absend   + 0.1*$length);
@@ -199,7 +199,7 @@ sub build_gbrowse_img {
 
   my ($img,$junk) = $BROWSER->render_panels({segment     => $new_segment,
 					     options     => \%$options,
-					     labels      => $tracks, 
+					     labels      => $tracks,
 					     title       => "Genomic segment: $absref:$absstart..$absend",
 					     keystyle    => 'between',
 					     do_map      => 0,
@@ -210,7 +210,7 @@ sub build_gbrowse_img {
   $img =~ s/border="0"/border="1"/;
   $img =~ s/detailed view/browse region/g;
   $img =~ s/usemap=\S+//;
-  
+
   my %data = (
 	      img     => $img,
 	      start   => $start,
@@ -250,11 +250,11 @@ sub _get_phenotypes {
   my ($self,$object,$not) = @_;
   my $positives = [];
   my $negatives = [];
-  
+
   my (@phenotypes) = $object->Phenotype;
   my $data = $self->_parse_hash(\@phenotypes);
   ($positives,$negatives) = $self->_is_NOT_phene($data);
-  
+
   my $parsed;
   if ($not) {
     $parsed = $self->_parse_phenotype_hash($negatives);
@@ -271,14 +271,14 @@ sub _is_NOT_phene {
   my ($self,$data) = @_;
   my $positives = [];
   my $negatives = [];
-  
+
   foreach my $entry (@$data) {
     if ($entry->{is_not}) {
       push @$negatives,$entry;
     } else {
       push @$positives,$entry;
     }
-    
+
   }
   return ($positives,$negatives);
 }
@@ -329,12 +329,12 @@ sub _cross_reference_remarks {
     $d =~ s/;\s+([A-Z]{2})(?=[;\]])
 	   /"; ".ObjectLink($1,undef,'Laboratory')
 	     /exg;
-    
+
     # cross-reference genes
 ####    $d =~ s/\b([a-z]+-\d+)\b
 ####	   /ObjectLink($1,undef,'Locus')
 ####	     /exg;
-    
+
     # cross-reference other stuff
 ####    my %xref = map {$_=>$_} @xref;
 ####    $d =~ s/\b(.+?)\b/$xref{$1} ? ObjectLink($xref{$1}) : $1/gie;
@@ -359,7 +359,7 @@ sub fasta {
 
 
 # insert HTML tags into a string without disturbing order
-sub markup {	
+sub markup {
   my ($self,$string,$markups) = @_;
   for my $m (sort {$b->[0]<=>$a->[0]} @$markups) { #insert later tags first so position remains correct
     my ($position,$markup) = @$m;
@@ -476,28 +476,35 @@ sub _get_evidence {
                 ($class,$evidence) = split /:/, $evidence;
               }
           } elsif ($type eq 'Accession_evidence') {
-              my ($database,$accession) = $evidence->row;
-              if(defined $accession || $database) {
-                if($accession =~ m/\D*\:(\d*)$/){
-                  $accession = $1;
+              my $database = $evidence;
+
+              foreach my $accession ($evidence->col){
+                if(defined $accession || $database) {
+                  if($accession =~ m/\D*\:(\d*)$/){
+                    $accession = $1;
+                  }
+                  if($database =~ m/^(.*):(\d*)$/){
+                    $accession = $2;
+                    $database = $1;
+                  }
+                  ($evidence,$class) = ($accession,$database);
+                  $label = "$database:$accession";
+                  my $match = $self->_api->xapian->fetch({query => "$evidence", class => "sequence"});
+
+                  push( @evidences, { id=> $match ? $match->{id} : "$evidence",
+                                      label => "$label",
+                                      class => $match ? "sequence" : "$class" });
                 }
-                if($database =~ m/^(.*):(\d*)$/){
-                  $accession = $2;
-                  $database = $1;
-                }
-                ($evidence,$class) = ($accession,$database);
-                $label = "$database:$accession";
-              }else {
-                next;
-              }     
+              }
+              next;
           } elsif($type eq 'GO_term_evidence') {
               my $desc = $evidence->Term || $evidence->Definition;
               $label .= (($desc) ? "($desc)" : '');
           } elsif ($type eq 'Protein_id_evidence') {
               $class = "Entrezp";
           } elsif ($type eq 'RNAi_evidence') {
-              $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;    
-          } elsif ($type eq 'Date_last_updated') { 
+              $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;
+          } elsif ($type eq 'Date_last_updated') {
               $label =~ s/\s00:00:00//;
               undef $class;
           } elsif ($type eq 'Affected_by'){
@@ -509,9 +516,9 @@ sub _get_evidence {
               $packed = "$evidence";
           } else {
               $packed = $self->_pack_obj($evidence);
-          } 
+          }
 
-          $class = (defined $class) ? lc("$class") : undef;
+          $class = (defined $class) ? "$class" : undef;
           push( @evidences, $packed ? $packed : { id=> "$evidence", label => "$label", class => $class });
       }
       $type =~ s/(Curator)_confirmed/$1/;
@@ -523,13 +530,13 @@ sub _get_evidence {
 
 sub _parse_hash {
   my ($self,$nodes) = @_;
-  
+
   # Mimic the passing of an array reference. Blech.
   $nodes = [$nodes] unless ref $nodes eq 'ARRAY';
-  
+
   # The data structure - a hash of hashes, each pointing to an array
   my $data = [];
-  
+
   # Collect all the hashes available for each node
   foreach my $node (@$nodes) {
     # Save all the top level tags as keys in a perl
@@ -550,7 +557,7 @@ sub _parse_hash {
 ## THIS COULD MOVE TO THE VIEW...
 sub _parse_phenotype_hash {
   my ($self,$data) = @_;
-  
+
   # These tags have a single entry following them
   # They should *not* have any evidence hashes, either
   # The contents of these entries can be fetched as
@@ -564,14 +571,14 @@ sub _parse_phenotype_hash {
 	Haplo_insufficient
 	Paternal
       /;
-  
+
   my %simple = map { $_ => 1 }
     qw/
 	Quantity_description
       /;
-  
+
   my %nested = map { $_ => 1 }
-    qw/ 
+    qw/
 	Penetrance
 	Quantity
 	Loss_of_function
@@ -581,9 +588,9 @@ sub _parse_phenotype_hash {
 	Maternal
 	Phenotype_assay
       /;
-  
+
   my %is_row = map { $_ => 1 } qw/Quantity Range/;
-  
+
   # Prioritize display of tags
   my @tags = qw/
 		 Not
@@ -602,9 +609,9 @@ sub _parse_phenotype_hash {
 		 Person_evidence
 		 Remark
 	       /;
-  
+
   my $stash = [];
-  foreach my $entry (@$data) {    
+  foreach my $entry (@$data) {
     my @this_data = ();
     my $hash  = $entry->{hash};
     my $node  = $entry->{node};   # Node is the originating object
@@ -613,13 +620,13 @@ sub _parse_phenotype_hash {
       next unless (my $tag = $hash->{$tag_priority});
       my $formatted_tag = $tag;
       $formatted_tag =~ s/_/ /g;
-      
+
       # Fetch the first entries to the right of each tag
       my @sources = eval { $tag->col };
       # Add appropriate markup for each tag seen
       # Lots of redundancy here - first we parse the data, then add primary formatting
       # then secondary formatting (ie table, etc)
-      
+
       if ($tag eq 'Paper_evidence') {
 	# We will format the papers elswhere
 #	@sources = _format_paper_evidence(\@sources);
@@ -643,18 +650,18 @@ sub _parse_phenotype_hash {
 	# Handle tags that contain substructure
       } elsif (defined $nested{$tag}) {
 	my @subtags = $tag->col;
-	
-	@subtags = $tag if $tag eq 'Quantity';	
+
+	@subtags = $tag if $tag eq 'Quantity';
 	my @cells;
 	foreach my $subtag (@subtags) {
 	  # Ignore the value if we have an Evidence hash
 	  # to the right. All set to fetch evidence
 	  my ($value,$evi);
-	  if ($subtag->right =~ /evidence/) {   
+	  if ($subtag->right =~ /evidence/) {
 	  } else {
 	    # HACK - Range and Quantity are rows
-	    if (defined ($is_row{$subtag})) {  
-	      
+	    if (defined ($is_row{$subtag})) {
+
 	      my (@values) = $subtag->row;
 	      $value = join("-",$values[1],$values[2]);
 	      $value = '100%' if $value eq '100-100';
@@ -662,7 +669,7 @@ sub _parse_phenotype_hash {
 	      $value = $subtag->right;
 	    }
 	  }
-	  
+
 	  $subtag =~ s/_/ /g;
 
 	  $formatted_tag = "$formatted_tag: $subtag";
@@ -673,7 +680,7 @@ sub _parse_phenotype_hash {
     }
     push @{$stash},{ node => $node,
 		     rows => \@this_data };
-    
+
   }
   return $stash;
 }
@@ -686,10 +693,10 @@ sub _parse_molecular_change_hash {
   # Generically parse the hash
   my $data  = $self->_parse_hash($entry);
   return unless keys %{$data} >= 1;   # Nothing to build a table from
-  
+
   my @types     = qw/Missense Nonsense Frameshift Silent Splice_site/;
   my @locations = qw/Intron Coding_exon Noncoding_exon Promoter UTR_3 UTR_5 Genomic_neighbourhood/;
-    
+
   # Select items that we will try and translate
   # Currently, this needs to be
   # 1. Affects Predicted_CDS
@@ -701,10 +708,10 @@ sub _parse_molecular_change_hash {
 
   # Under no circumstances try and translate the following
   my %no_translation = map { $_ => 1 } (qw/Frameshift Deletion Insertion/);
-  
+
   # The following entries should be examined for the presence
   # of associated Evidence hashes
-  my @with_evidence = 
+  my @with_evidence =
     qw/
 	Missense
 	Silent
@@ -716,19 +723,19 @@ sub _parse_molecular_change_hash {
 	Noncoding_exon
 	Promoter
 	UTR_3
-	UTR_5	
+	UTR_5
 	Genomic_neighbourhood
-      /; 
-  
+      /;
+
   my (@protein_effects,@contained_in);
-  
-  foreach my $entry (@$data) {  
+
+  foreach my $entry (@$data) {
     my $hash  = $entry->{hash};
     my $node  = $entry->{node};
-    
+
     # Conditionally format the data for each type of evidence
     # Curation often has the type of change and its location
-    
+
     # What type of change is this?
     foreach my $type (@types) {
       my $obj = $hash->{$type};
@@ -737,18 +744,18 @@ sub _parse_molecular_change_hash {
       my $clean_tag = ucfirst($type);
       $clean_tag    =~ s/_/ /g;
       $parameters_seen{$type}++;
-      
+
       my ($pos,$text,$evi,$evi_method,$kind);
       if ($type eq 'Missense') {
 	($type,$pos,$text,$evi) = @data;
       } elsif ($type eq 'Nonsense' || $type eq 'Splice_site') {
-	($type,$kind,$text,$evi) = @data;		
+	($type,$kind,$text,$evi) = @data;
       } elsif ($type eq 'Frameshift') {
 	($type,$text,$evi) = @data;
-      } else { 
+      } else {
 	($type,$text,$evi) = @data;
-      }	    
-      
+      }
+
       if ($evi) {
 ###	    ($evi_method) = GetEvidenceNew(-object => $text,
 ###					       -format => 'inline',
@@ -758,7 +765,7 @@ sub _parse_molecular_change_hash {
       push @protein_effects,[$clean_tag,$pos || undef,$text,
 			     $evi_method ? " ($evi_method)" : undef];
     }
-	
+
     # Where is this change located?
     foreach my $location (@locations) {
       my $obj = $hash->{$location};
@@ -777,7 +784,7 @@ sub _parse_molecular_change_hash {
 		   $evidence ? " ($evidence)" : undef];
     }
   }
-    
+
   my $do_translation;
   foreach (keys %parameters_seen) {
     $do_translation++ if (defined $do_translation{$_}  && !defined $no_translation{$_});

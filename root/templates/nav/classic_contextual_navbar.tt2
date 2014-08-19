@@ -21,8 +21,8 @@
                <a target="_top" href="/db/gb2/gbrowse/c_elegans?name=[% this_object_id %];class=[% class %]">Genome Browser</a>
        </td>
 
-  [% END %]  
- 
+  [% END %]
+
 
    [%# Default navbar elements %]
    <td class="small" align="center">

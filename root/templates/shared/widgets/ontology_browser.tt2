@@ -1,6 +1,16 @@
 [% link='/tools/ontology_browser/run?inline=1&class=' _ object.name.data.class _ '&name=' _ object.name.data.id  %]
-   <div id="o_browser"></div>
+   <!--<div><a href="[% link %]" target="new">open this widget in a new browser window</a></div><br/>-->
+   <div id="o_browser">loading</div>
 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script>
-  WB.ajaxGet($jq("#o_browser"), "[% link %]");
+  if (typeof WB != 'undefined') {
+       // http://juancarlos.wormbase.org/tools/ontology_browser/run?name=WBbt:0005784;class=Anatomy_term
+       // WB object doesn't exist if called from download link (browser error console), so using jquery below
+       // http://juancarlos.wormbase.org/rest/widget/go_term/GO:0033554/ontology_browser?download=1&content-type=text%2Fhtml
+     WB.ajaxGet($jq("#o_browser"), "[% link %]");	
+   }
+   else {
+     $('#o_browser').load('[% link %]');	// this makes a slow load from the widget, even if it does work from the download button, although the search doesn't work on the download button
+  }
 </script>

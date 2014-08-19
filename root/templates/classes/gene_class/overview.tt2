@@ -6,7 +6,7 @@
 WRAPPER highlight_box;
 
 
-        
+
 END;
 
 
@@ -21,7 +21,7 @@ WRAPPER $field_block title="Other names" key="other_names";
        	FOREACH name IN fields.other_names.data;
        		name _ '<br />';
        	END;
-	
+
 END;
 
 laboratory(title="Designating laboratory");

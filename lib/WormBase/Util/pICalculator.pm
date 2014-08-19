@@ -71,7 +71,7 @@ sub iep{
     return calculate_iep( $this->{-pKset}
                          ,$this->{-places}
                          ,$this->{-seq}
-                         ,$this->{-count} 
+                         ,$this->{-count}
                         );
 }
 
@@ -104,14 +104,14 @@ sub calculate_iep{
         my $charge = calculate_charge_at_pH( $pH, $pK, $count );
         last if sprintf($format,$charge) == sprintf($format,$last_charge);
         $charge > 0 ? ( $pH += $step ) : ( $pH -= $step );
-        $step /= 2.0; 
+        $step /= 2.0;
         $last_charge = $charge;
     }
     return sprintf( $format, $pH );
 }
 
-sub calculate_charge_at_pH{ 
-# its the sum of all the partial charges for the 
+sub calculate_charge_at_pH{
+# its the sum of all the partial charges for the
 # termini and all of the charged aa's!
     my( $pH, $pK, $count ) = @_;
     foreach (qw(K R H D E C Y)) {
@@ -129,7 +129,7 @@ sub calculate_charge_at_pH{
     return $charge;
 }
 
-# Concentration Ratio is 10**(pK - pH) for positive groups 
+# Concentration Ratio is 10**(pK - pH) for positive groups
 # and 10**(pH - pK) for negative groups
 sub partial_charge{
     my $cr = 10 ** ( $_[0] - $_[1] );
@@ -144,7 +144,7 @@ pICalculator
 
 =head1 DESCRIPTION
 
-Calculates the isoelectric point of a protein, the pH at which there is no 
+Calculates the isoelectric point of a protein, the pH at which there is no
 overall charge on the protein.
 
 Calculates the charge on a protein at a given pH.
@@ -163,9 +163,9 @@ my $calc = pICalculator->new(-places => 2);
 while ( my $seq = $in->next_seq ) {
 
     $calc->seq( $seq );
-    
+
     my $iep = $calc->iep;
-    
+
     print sprintf( "%s\t%s\t%.2f\n"
                   ,$seq->id
                   ,$iep
@@ -179,7 +179,7 @@ while ( my $seq = $in->next_seq ) {
                       ,$calc->charge_at_pH($i)
                      );
 
-    }   
+    }
 
 }
 
@@ -187,11 +187,11 @@ while ( my $seq = $in->next_seq ) {
 
 B<new>
 
-$calc = pICalculator->new( [ [ -pKset => \%pKvalues ] 
-                             [ -pKset => 'valid_string' ] 
+$calc = pICalculator->new( [ [ -pKset => \%pKvalues ]
+                             [ -pKset => 'valid_string' ]
                            ]
                           ,-seq    => $seq # Bio::Seq
-                          ,-places => 2 
+                          ,-places => 2
                          );
 
 Constructs a new pICalculator. Arguments are a flattened hash. Valid =
@@ -201,12 +201,12 @@ B<-pKset>        A reference to a hash with key value pairs for the pK =
 values of
 
                  the charged amino acids. Required keys are;
-                 
+
                  N_term   C_term   K   R   H   D   E   C   Y
 
 B<-pKset>        A valid string ( 'DTASelect' or 'EMBOSS' ) that will =
 specify an
-                 
+
                  internal set of pK values to be used. The default is =
 'EMBOSS'
 
@@ -249,7 +249,7 @@ Please report them!
 =head1 LIMITATIONS
 
 There are various sources for the pK values of the amino acids. The set =
-of pK 
+of pK
 values chosen will affect the pI reported.
 
 The charge state of each residue is assumed to be independent of the =
@@ -262,7 +262,7 @@ are ignored
 
 Mark Southern ([23]mark_southern@merck.com)
 
-From an algorithm by David Tabb found at 
+From an algorithm by David Tabb found at
 L<http://fields.scripps.edu/DTASelect/20010710-pI-Algorithm.pdf>
 
 =head1 COPYRIGHT

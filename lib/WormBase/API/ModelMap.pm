@@ -35,9 +35,9 @@ BEGIN {
         class => {     # HAS DEFAULT
             Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
             Person    => [qw(Person Author)],
-            Cds       => [qw(CDS cds)],
+            Cds       => 'CDS',
             Rnai      => 'RNAi',
-            Disease   => [qw(DO_term Do_term do_term)],
+            Disease   => 'DO_term',
             Go_term   => 'GO_term',
             Wbprocess => 'WBProcess',
             Model     => 'Model', #for schema display to work
@@ -125,7 +125,7 @@ BEGIN {
         while (my ($wb, $ace) = each %{$WB2ACE_MAP{class}}) {
 			my $fullwb = join('::', OBJ_BASE, $wb);
             my $canonical_ace_class;
-          
+
             foreach my $ace_class (ref $ace eq 'ARRAY' ? @$ace:($ace)) {
                     $canonical_ace_class = _canonize_ace($ace_class);
                     $classmap->{$ace_class}		          ||= $wb;
@@ -133,7 +133,7 @@ BEGIN {
 					$fullclassmap->{$ace_class}           ||= $fullwb;
                     $fullclassmap->{$canonical_ace_class} ||= $fullwb;
                 }
-           
+
         }
 
         $ACE2WB_MAP_DONE = 1;

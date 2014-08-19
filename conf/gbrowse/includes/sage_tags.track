@@ -13,7 +13,7 @@ height        = 7
 description   = sub {
 		  my $f = shift;
 		  return 0 if $f->source eq 'SAGE_tag';
-		  my $name = $f->name;
+		  my ($name) = $f->name;
 		  $name =~ s/SAGE://;
 	  	  return $name;
 	  	}
@@ -34,11 +34,13 @@ label         = sub {
 	          my ($gene) = $f->attributes('Gene', 'Transcript', 'Pseudogene');
 		  return "$gene count:$cnt" if $gene && $cnt; 
   		}
-link          = sub {
-                  my $f = shift;
-	          my $name = $f->name;
-	          return "/db/seq/sage?name=$name;class=SAGE_tag";
-               }
+link = 0
+#link          = sub {
+#                  my $f = shift;
+#	          my ($name) = $f->name;
+#	          return "/db/seq/sage?name=$name;class=SAGE_tag";
+#
+#               }
 citation      = This track indicates the location of Serial Analysis of Gene Expression (SAGE)
         patterns associated with a tag and its associated genes.  Tags shown in grey are
 	either unambiguously mapped to a gene elsewhere or are ambigous due to multiple occurences

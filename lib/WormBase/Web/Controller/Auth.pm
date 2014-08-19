@@ -40,7 +40,7 @@ sub password_index : Chained('password') PathPart('index')  Args(0){
             $user->update();
           }
 
-          $c->stash->{template} = "shared/generic/message.tt2"; 
+          $c->stash->{template} = "shared/generic/message.tt2";
           $c->stash->{message} = "the link has expired";
       }
     }
@@ -49,8 +49,8 @@ sub password_index : Chained('password') PathPart('index')  Args(0){
 sub password_email : Chained('password') PathPart('email')  Args(0){
     my ( $self, $c ) = @_;
     my $email = $c->req->param("email");
-    $c->stash->{template} = "shared/generic/message.tt2"; 
-    
+    $c->stash->{template} = "shared/generic/message.tt2";
+
     my @users = $c->model('Schema::Email')->search({email=>$email, validated=>1});
     if(@users){
       my $guid = Data::GUID->new;
@@ -76,23 +76,23 @@ sub password_email : Chained('password') PathPart('email')  Args(0){
       $c->stash->{email} = {
           to       => $email,
           from     => $c->config->{register_email},
-          subject  => "WormBase Password", 
+          subject  => "WormBase Password",
           template => "auth/password_email.tt2",
       };
       $c->forward( $c->view('Email::Template') );
       $c->stash->{message} = "You should be receiving an email shortly describing how to reset your password.";
     }
-    $c->stash->{message} ||= "no WormBase account is associated with this email"; 
+    $c->stash->{message} ||= "no WormBase account is associated with this email";
     $c->stash->{noboiler} = 0;
 }
 
- 
+
 
 sub password_reset : Chained('password') PathPart('reset')  Args(0){
     my ( $self, $c ) = @_;
     my $token = $c->req->body_parameters->{token};
     my $new_password = $c->req->body_parameters->{password};
-    $c->stash->{template} = "shared/generic/message.tt2"; 
+    $c->stash->{template} = "shared/generic/message.tt2";
 
     my $pass = $c->model('Schema::Password')->search({token=>$token, expires => { '>', time() } }, {rows=>1})->next;
     if($pass && (my $user = $pass->user)){
@@ -107,7 +107,7 @@ sub password_reset : Chained('password') PathPart('reset')  Args(0){
     }
     $c->stash->{message} ||= "The link to reset your password has expired. Please try again.";
 }
- 
+
 
 sub register :Path("/register")  :Args(0){
   my ( $self, $c ) = @_;
@@ -117,8 +117,8 @@ sub register :Path("/register")  :Args(0){
   }elsif($c->req->body_parameters){
      $c->stash->{email}     = $c->req->body_parameters->{email};
      $c->stash->{full_name} = $c->req->body_parameters->{name};
-     $c->stash->{password}  = $c->req->body_parameters->{password}; 
-     $c->stash->{redirect}  = $c->req->body_parameters->{redirect}; 
+     $c->stash->{password}  = $c->req->body_parameters->{password};
+     $c->stash->{redirect}  = $c->req->body_parameters->{redirect};
   }
 }
 
@@ -127,10 +127,10 @@ sub confirm :Path("/confirm")  :Args(0){
     my $user=$c->model('Schema::User')->find($c->req->params->{u});
     my $wb = $c->req->params->{wb};
 
-    $c->stash->{template} = "shared/generic/message.tt2"; 
+    $c->stash->{template} = "shared/generic/message.tt2";
 
     my $message;
-    if(($user && !$user->active) || ($user && $wb && !$user->wb_link_confirm) || ( $user && ($user->valid_emails < $user->email_address))) { 
+    if(($user && !$user->active) || ($user && $wb && !$user->wb_link_confirm) || ( $user && ($user->valid_emails < $user->email_address))) {
       my @emails = $user->email_address;
       my $seen_email;
       foreach my $email (@emails) {
@@ -141,29 +141,29 @@ sub confirm :Path("/confirm")  :Args(0){
 	      $email->validated(1);
 	      $email->update();
 	      $user->active(1);
-	      $message = $message . "Your account is now activated, please login! "; 
+	      $message = $message . "Your account is now activated, please login! ";
 	      $seen_email = 1;
           }
-	  
+
           if ($wb) {
 	      if(Crypt::SaltedHash->validate("{SSHA}".$wb, $email->email."_".$user->wbid)){
 		  $user->wb_link_confirm(1);
-		  $message = $message . "Your account is now linked to " . $user->wbid; 
+		  $message = $message . "Your account is now linked to " . $user->wbid;
 		  $seen_email = 1;
 	      }
           }
           last if $seen_email;
       }
       $user->update();
-    } 
-    
+    }
+
     $c->stash->{message} = $message || "This link is not valid or has already expired.";
     $c->forward('WormBase::Web::View::TT');
 }
 
 sub auth : Chained('/') PathPart('auth')  CaptureArgs(0) {
      my ( $self, $c) = @_;
-     $c->stash->{noboiler} = 1;  
+     $c->stash->{noboiler} = 1;
      $c->stash->{template} = 'auth/login.tt2';
      $c->stash->{redirect} = $c->req->params->{redirect};
 }
@@ -193,20 +193,20 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
 sub auth_login : Chained('auth') PathPart('login')  Args(0){
      my ( $self, $c) = @_;
      my $email     = $c->req->body_parameters->{email};
-     my $password = $c->req->body_parameters->{password}; 
+     my $password = $c->req->body_parameters->{password};
 
      if ( $email && $password ) {
         my $rs = $c->model('Schema::User')->search({active=>1, email=>$email, validated=>1, password => { '!=', undef }},
-                {   select => [ 
+                {   select => [
                       'me.user_id',
-                      'password', 
+                      'password',
                       'username',
                     ],
                     as => [ qw/
                       user_id
                       password
                       username
-                    /], 
+                    /],
                     join=>'email_address'
                 });
 
@@ -248,7 +248,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 
      # Facebook: OAuth
      if (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ 'facebook') {
-        my $fb = $self->connect_to_facebook($c); 
+        my $fb = $self->connect_to_facebook($c);
         $c->response->redirect($fb->authorize->uri_as_string);
 
      # Mendeley: OAuth
@@ -260,7 +260,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
         # The URL that the user will be returned to after authenticating.
         $mendeley->callback($c->uri_for('/auth/mendeley'));
         $c->response->redirect($url);
-           
+
      # Twitter uses OAUTH, not openid.
      } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /twitter/i) {
         my $nt = $self->connect_to_twitter($c);
@@ -327,7 +327,7 @@ sub connect_to_twitter {
     my $consumer_key    = $c->config->{twitter_consumer_key};
     my $consumer_secret = $c->config->{twitter_consumer_secret};
 
-    my $nt = Net::Twitter->new(traits          => [qw/API::REST OAuth/], 
+    my $nt = Net::Twitter->new(traits          => [qw/API::REST OAuth/],
                                consumer_key    => $consumer_key,
                                consumer_secret => $consumer_secret,
                               );
@@ -341,9 +341,9 @@ sub auth_facebook_callback : Chained('auth') PathPart('facebook')  Args(0){
     my ($self,$c) = @_;
 
     my $authorization_code = $c->req->params->{code};
-   
+
     my $fb = $self->connect_to_facebook($c);
-    
+
     $fb->request_access_token($authorization_code);
     my $access_token = $fb->access_token;
 
@@ -353,8 +353,8 @@ sub auth_facebook_callback : Chained('auth') PathPart('facebook')  Args(0){
     my $response   = $fb->query->find('me')->request;
     my $user       = $response->as_hashref;
     my $email      = $user->{email};  # can throw errors if not authorized by user
-    
-    $self->auth_local({c           => $c, 
+
+    $self->auth_local({c           => $c,
                        provider    => 'facebook',
                        oauth_access_token   => $access_token,
                        first_name  => $user->{first_name},
@@ -371,16 +371,16 @@ sub auth_twitter_callback : Chained('auth') PathPart('twitter')  Args(0){
     my($self, $c) = @_;
     my %cookie   = $c->request->cookies->{oauth}->value;
     my $verifier = $c->req->params->{oauth_verifier};
-    
+
     my $nt = $self->connect_to_twitter($c);
 
     $nt->request_token($cookie{token});
     $nt->request_token_secret($cookie{token_secret});
-    
+
     my ($access_token, $access_token_secret, $user_id, $screen_name)
         = $nt->request_access_token(verifier => $verifier);
-        
-    $self->auth_local({c          => $c, 
+
+    $self->auth_local({c          => $c,
                        provider   => 'twitter',
                        oauth_access_token        => $access_token,
                        oauth_access_token_secret => $access_token_secret,
@@ -395,12 +395,12 @@ sub auth_mendeley_callback : Chained('auth') PathPart('mendeley')  Args(0){
     my($self, $c) = @_;
 
     my %cookie   = $c->request->cookies->{oauth}->value;
-    my $verifier = $c->req->params->{oauth_verifier};    
+    my $verifier = $c->req->params->{oauth_verifier};
 
     my $mendeley = $c->model('Mendeley')->private_api;
     my ($access_token, $access_token_secret) = $mendeley->request_access_token;
-        
-    $self->auth_local({c          => $c, 
+
+    $self->auth_local({c          => $c,
                        provider   => 'mendeley',
                        oauth_access_token        => $access_token,
                        oauth_access_token_secret => $access_token_secret,
@@ -424,13 +424,13 @@ sub auth_local {
                                                               oauth_access_token_secret => $params->{oauth_access_token_secret}
                                                            });
     }
-  
+
     my $first_name = $params->{first_name};
     my $last_name  = $params->{last_name};
     my $email      = $params->{email};
     my $redirect   = $params->{redirect};
 
-    my $user;  
+    my $user;
     # If we haven't yet associated a user_id to the new openid/oauth entry, do so now.
     unless ($authid->user_id) {
 
@@ -461,7 +461,7 @@ sub auth_local {
       foreach (@users){
         next unless $_;
         next if( $_->active eq 0);
-        $user=$_; 
+        $user=$_;
         last;
       }
 
@@ -491,7 +491,7 @@ sub auth_local {
                         todd\@hiline\.co               |
                         abby\@wormbase\.org            |
                         abigail\.cabunoc\@oicr\.on\.ca |
-                        lincoln\.stein\@gmail\.com     | 
+                        lincoln\.stein\@gmail\.com     |
                         me\@todd\.co                   |
                         xshi\@wormbase\.org
                        }x) {
@@ -512,7 +512,7 @@ sub auth_local {
           $authid->update();
       }
     }
-    
+
     # Re-authenticate against local DBIx store
     $c->config->{user_session}->{migrate}=1;
     if ( $c->authenticate({ user_id=>$authid->user_id }, 'members') ) {
@@ -527,19 +527,11 @@ sub auth_local {
 
 }
 
-sub reload {
-    my ($self, $c,$logout) = @_;
-    $c->stash->{logout}= $logout ? 1 : 0;
-    $c->stash->{reload}=1;
-    return;
-}
- 
 sub logout :Path("/logout") :Args(0){
     my ($self, $c) = @_;
     # Clear the user's state
     $c->logout;
-    $c->stash->{noboiler} = 1;  
-
+    $c->stash->{noboiler} = 1;
     $c->stash->{'template'}='auth/login.tt2';
 
     if($c->config->{wormmine_path}){
@@ -547,7 +539,8 @@ sub logout :Path("/logout") :Args(0){
       $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/logout.do');
     }
 
-    $self->reload($c,1);
+    # return to url
+    $c->res->redirect($c->req->params->{'redirect'});
 }
 
 
@@ -570,7 +563,7 @@ sub profile :Path("/profile") :Args(0) {
     }
 
     # Facebook information
-    
+
     # Google information
 
     # Mendeley
@@ -578,8 +571,8 @@ sub profile :Path("/profile") :Args(0) {
     # $c->stash->{mendeley} = $mendeley;
 
     $c->stash->{template} = 'auth/profile.tt2';
-} 
- 
+}
+
 
 sub profile_update :Path("/profile_update")  :Args(0) {
     my ( $self, $c ) = @_;
@@ -605,8 +598,8 @@ sub profile_update :Path("/profile_update")  :Args(0) {
         $message= $message . "Your name has been updated to $username";
     }
 
-    $c->stash->{message} = $message; 
-    $c->stash->{template} = "shared/generic/message.tt2"; 
+    $c->stash->{message} = $message;
+    $c->stash->{template} = "shared/generic/message.tt2";
     $c->stash->{redirect} = $c->uri_for("me")->path;
     $c->forward('WormBase::Web::View::TT');
 }
@@ -626,11 +619,11 @@ sub is_linked_to_twitter {
         $nt->access_token_secret($twitter->access_token_secret);
 
         if ( $nt->authorized ) {
-            # Get the avatar URL.	     
+            # Get the avatar URL.
             my $data = $nt->show_user($twitter->screen_name);
             $c->stash->{twitter_avatar_url} = $data->{profile_image_url};
             $c->stash->{twitter_screen_name} = $twitter->screen_name;    # Here or just in view?
-        } else { 
+        } else {
             # Privs have been revoked. Remove entry from open_id;
             $twitter->delete;
         }

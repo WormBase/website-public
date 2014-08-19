@@ -1,0 +1,14 @@
+[SEQUENCE_SIMILARITY_INSDC_CDNAS]
+key            = INSDC nematode cDNAs
+category       = Sequence Similarity:Nucleotide
+feature        = expressed_sequence_match:EMBL_cDNAs-STAR
+split_on_cigar = 1
+glyph          = segments
+title          = $name
+fgcolor        = black
+height         = 4
+connector      = solid
+citation       = cDNAs from this species from INSDC that have been aligned to the genome using STAR.
+
+[SEQUENCE_SIMILARITY_INSDC_CDNAS:50000]
+glyph = box

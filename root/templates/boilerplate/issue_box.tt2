@@ -12,7 +12,7 @@
     <div id="issue-box-content" class="ui-corner-tl">
       <div id="issues-new">
           <div>
-            Send us an email and we'll get back to you ASAP. Or you can search through our <a href="[% c.uri_for('/search','issue','*') %]">current issues</a>.
+            Send us an email and we'll get back to you ASAP. Or you can read our <a href="[% c.uri_for('/about','Frequently_asked_questions') %]">Frequently Asked Questions</a>.
           </div>
 
           [% UNLESS c.user_exists %]
@@ -38,8 +38,13 @@
           <div id="issue-submit-box">
             <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% template_title | uri %]" url="[% c.req.uri.path %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
           </div>
+          <div id="issue-message">
+          </div>
+      </div>  <!-- closing #issues-new -->
+      <div id="add-new-issue" style="display:none">
+          <a onClick="WB.issue.addNewIssue($jq(this));">New form</a>
       </div>
     </div>
   </div>
-</div> 
+</div>
 [% END %]

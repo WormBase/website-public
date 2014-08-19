@@ -1,6 +1,6 @@
 [%
 
-   # DOI? 
+   # DOI?
    IF fields.pmid.data;
        id   = fields.pmid.data;
        type = 'pmid';
@@ -12,16 +12,16 @@
    '<div style="float:right"><a href="http://mendeley.com/"><img src="/img/thirdparty/mendeley-vertical.png" /></a></div>';
 
    '<h3>Related papers provided by <a href="http://mendeley.com">Mendeley</a>.</h3><br />';
-   
+
 
    related = c.model('Mendeley').related_papers(id,type);
    '<div id="results"><ul>';
    FOREACH paper IN related.documents;
        '<div class="result"><li>'
-      _ '<a href="' 
+      _ '<a href="'
       _ paper.mendeley_url
       _ '">'
-      _ paper.title 
+      _ paper.title
       _ '</a></li>';
           # Authors
        	  FOREACH author IN paper.authors;

@@ -8,7 +8,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Expr_pattern';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 

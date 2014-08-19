@@ -31,13 +31,13 @@
 [%
     user_login_info;
    IF c.user_exists;
-      linkUser(c.user,'suppress_social_links'); 
+      linkUser(c.user,'suppress_social_links');
       ' says: <input style="display:none" id="display-name" value="' _ c.user.username _ '" />';
    END;
 %]
 </td>
 		</tr>
-				 
+
 		<tr>
 			<td>
 				<textarea class="issue-text comment-content" id="comment-content-[% widget %]" placeholder="write a comment..." rows="10" [% UNLESS c.user_exists; 'disabled=1'; END %]></textarea>
@@ -45,7 +45,7 @@
 		</tr>
 	</table>
 
-	    <input type='submit' onClick='WB.comment.submit($jq(this));' value='Comment' id="comment-submit-[% widget %]" class="comment-submit"  /> 
+	    <input type='submit' onClick='WB.comment.submit($jq(this));' value='Comment' id="comment-submit-[% widget %]" class="comment-submit"  />
 </div>
   </div>
 

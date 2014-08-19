@@ -5,7 +5,7 @@
 [% END %]
 
 [%#- This will only be populated for genes that reside within an operon -#%]
-[% IF genomic_position.operons %]   
+[% IF genomic_position.operons %]
      [% WRAPPER "boilerplate/field" title="Part of operon" -%]
         [% genomic_position.operons.join(', ') %]
      [% END %]

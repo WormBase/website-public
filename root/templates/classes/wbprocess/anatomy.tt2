@@ -2,7 +2,7 @@
 WRAPPER $field_block title="Anatomy term" key="anatomy_term";
   build_data_table(
     order=['anatomy_term','description'],
-    columns={ 
+    columns={
       anatomy_term => 'Expression clusters',
       description  => 'Description'
     },

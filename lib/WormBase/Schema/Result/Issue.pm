@@ -43,7 +43,7 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("issue_id");
 
-__PACKAGE__->has_many(threads=>'WormBase::Schema::Result::IssueThread', 'issue_id'); 
+__PACKAGE__->has_many(threads=>'WormBase::Schema::Result::IssueThread', 'issue_id');
 __PACKAGE__->belongs_to(reporter=>'WormBase::Schema::Result::User','reporter_id');
 __PACKAGE__->belongs_to(responsible=>'WormBase::Schema::Result::User','responsible_id');
 __PACKAGE__->belongs_to(page=>'WormBase::Schema::Result::Page','page_id');

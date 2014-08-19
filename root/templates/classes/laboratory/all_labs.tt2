@@ -10,7 +10,7 @@ WRAPPER $field_block title="Labs" key="all_labs";
 			      allele_designation => 'Allele ID',
 			      url                => 'URL',
 			      },
-                    key='all_labs'); 
+                    key='all_labs');
 END;
 
 %]

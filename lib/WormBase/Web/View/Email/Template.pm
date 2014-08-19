@@ -20,7 +20,7 @@ WormBase::Web::View::Email::Template - Templated Email View for WormBase::Web
 
 =head1 DESCRIPTION
 
-View for sending template-generated email from WormBase::Web. 
+View for sending template-generated email from WormBase::Web.
 
 =head1 AUTHOR
 

@@ -18,14 +18,14 @@ use parent 'WormBase::Web::Controller';
 #   /species/guide   -> NOTHING
 #   /species/guide/SPECIES -> Species info page
 #   /species/guide/component
-# 
+#
 ##############################################################
 
 
 ##############################################################
-#   
+#
 #   /species
-# 
+#
 #        --> Redirects to the species summary: /species/all
 #
 ##############################################################
@@ -40,8 +40,8 @@ sub species_summary :Path('/species') :Args(0)   {
 
 ##############################################################
 #
-#   /species/[SPECIES] : The species index page 
-#    
+#   /species/[SPECIES] : The species index page
+#
 #            all     -> all species
 #            SPECIES -> an individual species
 #
@@ -58,8 +58,8 @@ sub species_index :Path('/species') :Args(1)   {
 
     $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
     $c->stash->{class}      = 'all';
-    $c->stash->{is_class_index} = 1;   
-    $c->stash->{species}    = $species;           # Class is the subsection	
+    $c->stash->{is_class_index} = 1;
+    $c->stash->{species}    = $species;           # Class is the subsection
     $c->stash->{template}   = 'species/report.tt2';
 }
 
@@ -68,7 +68,7 @@ sub species_index :Path('/species') :Args(1)   {
 ##############################################################
 #
 #   /species/[SPECIES]/[CLASS]:
-#    
+#
 #      Class Summary pages, general and species specific.
 #
 ##############################################################
@@ -105,7 +105,7 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{section}  = 'species';
     $c->stash->{species}  = $species,
     $c->stash->{class}    = $class;
-    $c->stash->{is_class_index} = 0;  
+    $c->stash->{is_class_index} = 0;
     $c->stash->{template} = 'species/report.tt2';
 
     if($class eq 'species'){
@@ -123,7 +123,7 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{class}      = $class;
 
     my $api = $c->model('WormBaseAPI');
-    my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
+    my $object = $api->xapian->fetch({id => $name, class => lc($class), label => 1});
 
 
     #temporary fix

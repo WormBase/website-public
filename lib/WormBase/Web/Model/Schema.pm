@@ -3,7 +3,7 @@ package WormBase::Web::Model::Schema;
 use strict;
 use base 'Catalyst::Model::DBIC::Schema';
 
- 
+
 
 =head1 NAME
 

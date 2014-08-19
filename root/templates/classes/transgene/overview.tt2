@@ -19,8 +19,8 @@ END;
 w = [];
 IF fields.driven_by_gene.data.defined;
     w.push(tags2link(fields.driven_by_gene.data, ', '));
-END; 
-  
+END;
+
 IF fields.driven_by_construct.data.defined;
     w.push(fields.driven_by_construct.data);
 END;
@@ -37,7 +37,7 @@ END;
 
 WRAPPER $field_block title=pluralize('Reporter product', fields.reporter_construct.data.keys.size) key="reporter_construct";
    rp = [];
-   FOREACH reporter IN fields.reporter_construct.data.keys;   
+   FOREACH reporter IN fields.reporter_construct.data.keys;
        IF reporter == "gene";
           rp.push(tag2link(fields.reporter_construct.data.$reporter));
        ELSE;

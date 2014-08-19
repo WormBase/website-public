@@ -3,13 +3,13 @@
 WRAPPER $field_block title="Genes" key="genes";
 
     build_data_table (
-		order = [ 
+		order = [
 			'gene',
             'species',
 			'evidence_code',
 			'description'
 			],
-		columns = {				 		
+		columns = {
 			gene => 'Gene',
             species => 'Species',
 			evidence_code => 'Evidence Code',
@@ -20,7 +20,7 @@ END;
 
 WRAPPER $field_block title="CDS" key="cds";
 	build_data_table (
-		order = [ 
+		order = [
 			'cds',
             'species',
 			'evidence_code'
@@ -36,7 +36,7 @@ END;
 WRAPPER $field_block title="Phenotypes" key="phenotype";
 
     build_data_table (
-		order = [ 
+		order = [
 			'phenotype_info',
 			'description'
 			],
@@ -50,7 +50,7 @@ END;
 
 WRAPPER $field_block title="Sequences" key="sequence";
     build_data_table (
-		order = [ 
+		order = [
 			'data',
 			'description',
 			'evidence_code'
@@ -66,7 +66,7 @@ END;
 WRAPPER $field_block title="Anatomy Terms" key="anatomy_term";
 
     build_data_table (
-		order = [ 
+		order = [
 			'term',
 			'evidence_code'
 			],
@@ -78,9 +78,9 @@ WRAPPER $field_block title="Anatomy Terms" key="anatomy_term";
 END;
 
 WRAPPER $field_block title="Transcripts" key="transcript";
-  
+
     build_data_table (
-		order = [ 
+		order = [
 			'data',
 			'description',
 			'evidence_code'
@@ -96,7 +96,7 @@ END;
 
 WRAPPER $field_block title="Homology Groups" key="homology_group";
     build_data_table (
-		order = [ 
+		order = [
 			'data',
 			'description',
 			'evidence_code'
@@ -112,7 +112,7 @@ END;
 
 WRAPPER $field_block title="Cells" key="cell";
     build_data_table (
-		order = [ 
+		order = [
 			'data',
 			'description',
 			'evidence_code'

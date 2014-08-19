@@ -1,16 +1,20 @@
 [SEQUENCE_SIMILARITY_NEMATODE_NET_CDNAS]
 key            = Nematode.net cDNAs
 category       = Sequence Similarity:Nucleotide
-feature        = expressed_sequence_match:NEMATODE.NET_cDNAs-BLAT
+feature        = expressed_sequence_match:NEMATODE.NET_cDNAs-STAR
 glyph          = segments
 split_on_cigar = 1
 title          = $name
 fgcolor        = black
 height         = 4
 connector      = solid
-citation       = cDNAs provided by <a href="http://www.nematode.net">Nematode.net</a>,
- 		 a web-accessible resource for investigating gene sequences
- 		 from nematode genomes. Aligned using <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>.
+citation       = Clustered cDNAs from this species provided by Nematode.net
+                 that have been aligned to the genome using STAR.
+                 Nematode.net (http://nematode.net/) is a part of the parasitic
+                 nematode EST project at The Genome Institute at Washington
+                 University in St. Louis. The site was established in 2000 as a
+                 component of the NIH-NIAID grant "A Genomic Approach to Parasites
+                 from the Phylum Nematoda".
 
 [SEQUENCE_SIMILARITY_NEMATODE_NET_CDNAS:50000]
 glyph = box
