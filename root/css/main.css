@@ -979,7 +979,7 @@ a#fade:hover {
 
 
 #notifications {
-  display:flex;
+  display:none;
   position:fixed;
   top:0em;
   left:50%;
