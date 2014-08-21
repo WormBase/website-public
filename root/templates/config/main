@@ -124,13 +124,15 @@
         END;
 
         IF downloadable(class);
-          "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences').path  _ '?colorbox=1' _ "' class='button ui-corner-all tl slink' data-class='$class' tip='view sequence'>";
+          "<span class='slink-box'><a href='" _ c.uri_for('/rest/widget', class, id, 'sequences').path  _ '?colorbox=1' _ "' class='button ui-corner-all tl slink' data-class='$class' tip='view sequence'>";
             "<span class='ui-icon ui-icon-dna ui-button'></span>";
           "</a>";
         END;
 
         url ? "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>" : "$text";
-
+        IF downloadable(class);
+          "</span>";
+        END;
       END;
    END;
 
@@ -314,7 +316,7 @@
     END;
 
     MACRO match_link(link) BLOCK;
-      link_regex = "(?i)$link";  # search case insensitively for the database
+      link_regex = "^(?i)$link$";  # search case insensitively for the database
       link_name  = site.external_urls.keys.grep(link_regex);
       link_name = link_name && link_name.pop;
       IF !link_name;

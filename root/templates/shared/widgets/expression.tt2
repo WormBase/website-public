@@ -96,14 +96,20 @@ END;
 
 WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
     '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
-    build_data_table(order = ['label', 'project', 'life_stage', 'value'],
+
+    fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
+    FOREACH analysis IN fpkm_data;
+        analysis.project_link = external_link(analysis.project_info.class,
+                                              analysis.project_info.label, analysis.project_info.id);
+    END;
+    build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],
                      columns = {
                          label => 'Name',
-                         project => 'Project',
+                         project_link => 'Project',
                          life_stage => 'Life Stage',
                          value => 'FPKM value'
                      },
-                     passed_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data);
+                     passed_data = fpkm_data);
 END;
 %]
 <script type="text/javascript" >

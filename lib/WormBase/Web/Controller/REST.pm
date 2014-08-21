@@ -500,7 +500,7 @@ sub feed_GET {
       $c->stash->{search} = 1 if ($widget eq 'references' && $wbid =~ m/^WB/);
       if($widget=~m/^static-widget-([\d]+)/){
         $c->stash->{url} = $c->uri_for('widget/static', $1)->path;
-      }elsif ($widget=~m/browse/){
+      }elsif ( ($widget=~m/browse/) && ($widget ne 'ontology_browser') ) {
         $c->stash->{search} = 1;
         $c->stash->{url} = $c->uri_for("/search", $class, "*")->path;
       }else{
@@ -1125,7 +1125,7 @@ END
   my $pseudo_title = substr($trim_content,0,50) . '...';
   my $data = { title => $pseudo_title,
 	       body  => "$content",
-	       labels => [ 'HelpDesk', $title ],
+	       labels => $title ? [ 'HelpDesk', $title ] : ['HelpDesk']
   };
 
   my $request_json = $json->utf8(1)->encode($data);

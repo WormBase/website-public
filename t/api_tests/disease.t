@@ -51,7 +51,7 @@
         is($err, undef, 'No error with external API');
         ok(@$markedup_omims, "markedup OMIM returned");
         my $markedup1 = pop @$markedup_omims;
-        ok($markedup1->{'label'} =~ /ASPGX1/, "correct OMIM markup returned");
+        ok($markedup1->{'label'} =~ /ASPERGER SYNDROM/, "correct OMIM markup returned");
 
         # test remembering previously reqeusted items
         my $ref_unknown = $disease->_select_unknown(\@test_omims);
@@ -112,7 +112,7 @@
         my ($err_msg_1, $markedup_omims_1) = $disease->markup_omims(\@test_omims);
         is($err_msg_1, undef, 'no error message');
         is(scalar @{$markedup_omims_1}, 2, 'correct number of marked up OMIMs returned');
-        is(@{$markedup_omims_1}[0]->{'label'}, 'OMIM:133700(EXOSTOSES, MULTIPLE, TYPE I)',
+        is(@{$markedup_omims_1}[0]->{'label'}, 'EXOSTOSES, MULTIPLE, TYPE I',
            'correct label of the OMIM returned with external API back to normal');
      }
 

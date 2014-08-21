@@ -1,0 +1,5 @@
+[% IF geneLists %]
+   [% FOREACH geneList IN geneLists %]
+      <div>[% geneList %]</div><br/>
+   [% END %]
+[% END %]

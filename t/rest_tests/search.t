@@ -45,6 +45,20 @@
            'contains link in description to gene dpy-3');
     }
 
+    # test external linking - #3025
+    sub test_external_link {
+        my $host = $configuration->{'host'};
+        my $port = $configuration->{'port'};
+        my $url_html = "http://$host:$port/search/disease/bone/1?download=1&content-type=text%2Fhtml";
+        my $response_html = get($url_html);
+
+        isnt($response_html, undef, 'data returned');
+        ok($response_html =~ /DOID\:184/, 'contains doid:184');
+
+        ok($response_html =~ /http:\/\/disease-ontology.org\/term\/DOID:184/,
+           'contains links to doid:184');
+    }
+
 }
 
 1;

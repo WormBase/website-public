@@ -45,23 +45,35 @@ fields.omim_external;
     genes_biology_data = fields.genes_biology.data;
 
     FOREACH gene_obj IN genes_biology_data;
-        gene_obj.formatted_orthologs = tags2link(gene_obj.human_orthologs);
+        lines = ['<ul>'];
+        FOREACH ortho IN gene_obj.human_orthologs;
+            ortho_link = external_link(ortho.db, ortho.label, ortho.id);
+            lines.push('<li>' _ ortho_link _ '</li>');
+        END;
+        lines.push('</ul>');
+        gene_obj.formatted_orthologs = tags2link(lines.join(''));
     END;
 
     build_data_table( order=['gene', 'relevance', 'formatted_orthologs'],
         columns={
             gene => 'Gene',
             relevance => 'Disease Relevance',
-            formatted_orthologs => 'Human Orthologs'
+            formatted_orthologs => '<div style="width:150px;">Human Orthologs</div>'
         },  key="genes_biology",
         passed_data=genes_biology_data);
   END;
 
-  WRAPPER $field_block title="Genes identified as potential models by orthology" key="genes_orthology";
+  WRAPPER $field_block title="Genes identified as potential models<sup>1</sup>" key="genes_orthology";
     genes_orthology_data = fields.genes_orthology.data;
 
     FOREACH gene_obj IN genes_orthology_data;
-        gene_obj.formatted_orthologs = tags2link(gene_obj.human_orthologs);
+        lines = ['<ul>'];
+        FOREACH ortho IN gene_obj.human_orthologs;
+            ortho_link = external_link(ortho.db, ortho.label, ortho.id);
+            lines.push('<li>' _ ortho_link _ '</li>');
+        END;
+        lines.push('</ul>');
+        gene_obj.formatted_orthologs = tags2link(lines.join(''));
     END;
 
     build_data_table( order=['gene', 'formatted_orthologs'],
@@ -70,8 +82,14 @@ fields.omim_external;
             formatted_orthologs => 'Human Orthologs'
         }, key="genes_orthology",
         passed_data=genes_orthology_data);
-  END;
 
-  remarks;
+
+        '<div class="curator-comment-field">';
+            '<sup>' _ 1 _ ' </sup>';
+            '<b>Inferred automatically:</b> Inferred by orthology to human genes with OMIM annotation';
+        '</div>';
+
+
+  END;
 
 %]
