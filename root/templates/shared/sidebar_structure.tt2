@@ -62,11 +62,11 @@
         [% ELSE; '>'; END; %]
           [% title %]
     [% IF c.request.param('from');
-        from_url = c.request.param('from');
-        IF (from_url.match('^http'));
-            '<span class="note">(redirected from external site ' _ from_url _ ')</span>';
+        from_uri = c.request.param('from');
+        IF (from_uri.match('^http'));
+            '<span class="note">(redirected from external site ' _ from_uri _ ')</span>';
         ELSE;
-            '<span class="note">(redirected from <a href="' _ c.uri_for(from_url, {redirect=>'no'}) _ '">' _ from_url _ '</a>)</span>';
+            '<span class="note">(redirected from <a href="' _ c.uri_for(from_uri, {redirect=>'no'}) _ '">' _ from_uri _ '</a>)</span>';
         END;
     END; %]
 
