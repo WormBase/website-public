@@ -983,7 +983,7 @@ a#fade:hover {
   position:fixed;
   top:0em;
   left:50%;
-  min-width:15em;
+/*  min-width:15em; */
   margin-left: -12.5em;
   padding: 0.5em;
   background: #FFFFBB;
