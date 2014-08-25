@@ -331,20 +331,20 @@ sub run {
     my %parents  = %$parentsHashref;					# parent relationships to focusTermId
    
     my %colorMap;							# colours to use for each relationship in graph
-    $colorMap{"is_a"}                          = 'black';
-    $colorMap{"part_of"}                       = 'blue';
-    $colorMap{"has_part"}                      = 'purple';
-    $colorMap{"preceded_by"}                   = 'purple';
-    $colorMap{"regulates"}                     = 'orange';
-    $colorMap{"positively_regulates"}          = 'green';
-    $colorMap{"negatively_regulates"}          = 'red';
-    $colorMap{"occurs_in"}                     = '#006699';
-    $colorMap{"daughter_of"}                   = 'pink';
-    $colorMap{"daughter_of_in_hermaphrodite"}  = 'pink';
-    $colorMap{"daughter_of_in_male"}           = 'pink';
-    $colorMap{"develops_from"}                 = 'brown';
-    $colorMap{"xunion_of"}                     = 'brown';
-    $colorMap{"exclusive_union_of"}            = 'brown';
+    $colorMap{is_a}                              = 'black';
+    $colorMap{part_of}                           = 'blue';
+    $colorMap{has_part}                          = 'purple';
+    $colorMap{preceded_by}                       = 'purple';
+    $colorMap{regulates}                         = 'orange';
+    $colorMap{positively_regulates}              = 'green';
+    $colorMap{negatively_regulates}              = 'red';
+    $colorMap{occurs_in}                         = '#006699';
+    $colorMap{child_nucleus_of}                  = 'pink';
+    $colorMap{child_nucleus_of_in_hermaphrodite} = 'pink';
+    $colorMap{child_nucleus_of_in_male}          = 'pink';
+    $colorMap{union_of}                          = 'brown';
+    $colorMap{develops_from}                     = 'brown';
+    $colorMap{exclusive_union_of}                = 'brown';
     my %edgeTypeExists;							# track which relationships exist, to show in legend
    
     my (@edges) = @{ $topo{"edges"} };					# get edges from topology_graph_json

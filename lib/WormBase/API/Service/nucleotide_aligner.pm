@@ -23,32 +23,29 @@ has 'tracks' => (
 
 use constant TOO_BIG => 50_000;
 use constant BLUMENTHAL_FACTOR => 23; # rough size of trans-spliced leader
-use constant DEFAULT_ALGORITHM => "BLAT_EST_BEST";
+use constant DEFAULT_ALGORITHM => "EST_BEST";
 use constant TARGET    => 0;
 use constant SRC_START => 1;
 use constant SRC_END   => 2;
 use constant TGT_START => 3;
 use constant TGT_END   => 4;
 
-our %TYPES    = (BLAT_EST_BEST  => [qw(expressed_sequence_match:BLAT_EST_BEST)],
-        BLAT_EST_OTHER  => [qw(alignment:BLAT_EST_OTHER)],
-        BLAT_mRNA_BEST => [qw(alignment:BLAT_mRNA_BEST)],
-#        BRIGGSAE   => [qw(waba_alignment)]
-           );
+our %TYPES = (
+    EST_BEST  => [qw(expressed_sequence_match:BLAT_EST_BEST)],
+    EST_OTHER  => [qw(expressed_sequence_match:BLAT_EST_OTHER)],
+    MRNA_BEST => [qw(expressed_sequence_match:BLAT_mRNA_BEST)],
+    );
 our %LABELS   = (
-         BLAT_EST_BEST  => 'ESTs Aligned with BLAT (best)',
-         BLAT_EST_OTHER => 'ESTs aligned by BLAT (other)',
-         BLAT_mRNA_BEST => 'full-length mRNAs Aligned with BLAT (best)',
-#         BRIGGSAE   => 'Briggsae Alignments (WABA)',
-         );
+    EST_BEST  => 'ESTs Aligned with BLAT (best)',
+    EST_OTHER => 'ESTs aligned by BLAT (other)',
+    MRNA_BEST => 'full-length mRNAs Aligned with BLAT (best)',
+    );
 
 our %TRACKS   = (
-         BLAT_EST_BEST  => 'EST_BEST',
-         BLAT_EST_OTHER => 'EST_OTHER',
-         BLAT_mRNA_BEST => 'MRNA_BEST',
-    # WS240 - this track / data no longer exist
-#         BRIGGSAE   => 'WABA',
-         );
+    EST_BEST  => 'EST_BEST',
+    EST_OTHER => 'EST_OTHER',
+    MRNA_BEST => 'MRNA_BEST',
+    );
 
 sub index {
    my ($self) = @_;
@@ -229,7 +226,7 @@ sub run {
     my $plugin_url = "http://www.wormbase.org/tools/genome/gbrowse/" . $source . "/?";
     $plugin_url .= "name=$name;plugin=Aligner;plugin_action=Go;label=EST_BEST;Aligner.upcase=CDS;Aligner.align=EST_BEST;";
 
-    $plugin_url .= 'Aligner.align=EST_OTHER;' if $self->algorithms->{BLAT_EST_OTHER};
+    $plugin_url .= 'Aligner.align=EST_OTHER;' if $self->algorithms->{EST_OTHER};
     $plugin_url .= $ragged . ";" . $flip_format;
 
     $self->log->debug( "ALIGNER: URL: $plugin_url\n");
