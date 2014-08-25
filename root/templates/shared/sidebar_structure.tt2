@@ -61,7 +61,12 @@
           [% make_star(wbid) %]
         [% ELSE; '>'; END; %]
           [% title %]
-     [% IF c.request.param('from'); '<span class="note">(redirected from <a href="' _ c.request.param('from') _ '&redirect=no">' _ c.request.param('from') _ '</a>)</span>'; END;%]
+    [% IF c.request.param('from');
+        from_uri = c.request.param('from');
+        UNLESS (from_uri.match('^(?i)http'));  # case insensitive match for 'http' at start of a uri, Not display these external redirects
+            '<span class="note">(redirected from <a href="' _ c.uri_for(from_uri, {redirect=>'no'}) _ '">' _ from_uri _ '</a>)</span>';
+        END;
+    END; %]
 
       </h2>
 
@@ -75,7 +80,7 @@
   <div id="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]
-        <h2 onClick="WB.scrollToTop();return false;" title="scroll to top">WormBase</h2>
+        <h2 onClick="WB.scrollToTop();return false;" title="scroll to top"><img src="/img/logo/logo_wormbase_gradient_small.png" alt="WormBase" style="height:27px; width:146px; padding-top:3px;"></h2>
       [% ELSE %]
         [% UNLESS c.req.action == 'me'; make_star(wbid); END %]
         <h4 class="ellipsis" onClick="WB.scrollToTop();return false;"  title="scroll to top">

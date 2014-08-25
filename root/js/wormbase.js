@@ -519,6 +519,7 @@
           notifyTimer = undefined;
         }
         var notification = $jq("#notifications");
+        notification.css({"display":"flex"});
         notification.show().children("#notification-text").text(message);
 
         notifyTimer = setTimeout(function() {

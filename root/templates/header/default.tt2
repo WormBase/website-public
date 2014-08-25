@@ -26,16 +26,40 @@
 [% wbid = get_star_id(object.name.data.id || c.req.path) %]
 [% label = label.remove('[\'"]') %]
 
-<div id="header" data-page='{"ref": "[% url %]", "wbid": "[% wbid || class %]", "name": "[% label | uri %]", "id" : "[% object.name.data.id | uri %]", "class" : "[% object.name.data.class FILTER lower %]", "type" : "[% c.stash.section | uri %]", "is_obj": "[% is_obj %]", "save": "[% save %]", "history": "[% c.user_session.history_on ? '1' : '0' %]" [% IF (c.request.param('query') || c.request.param('from') ); ', "notify": "redirected from ' _ c.request.param('from') _ ' ' _ c.request.param('query') _ '"'; END; %]}'>
+<div id="header" data-page='{
+    "ref": "[% url %]",
+    "wbid": "[% wbid || class %]",
+    "name": "[% label | uri %]",
+    "id" : "[% object.name.data.id | uri %]",
+    "class" : "[% object.name.data.class FILTER lower %]",
+    "type" : "[% c.stash.section | uri %]",
+    "is_obj": "[% is_obj %]",
+    "save": "[% save %]",
+    "history": "[% c.user_session.history_on ? '1' : '0' %]"
+    [%  param_from_uri = c.request.param('from');
+        param_query = c.request.param('query');
+        IF (param_query || param_from_uri );
+            IF (param_from_uri.match('^(?i)http'));  # case insensitive match for 'http' at start of a uri
+                ', "notify": "redirected from external site"';
+            ELSE;
+                ', "notify": "redirected from ' _ param_from_uri _ ' ' _ param_query _ '"';
+            END;
+        END;
+    %]
+}'>
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
   <div id="title">
-       <h1><a href="/" title="WormBase Home">[% template.title or c.config.site_name %]</a></h1>
-     <p>
-          [% # The current release of the software %]
-          Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[% constants.acedb_version %]</a>
+      <a href="/" title="WormBase Home">
+          <img src="/img/logo/logo_wormbase_gradient_small.png" />
+          <!-- <h1>[%# template.title or c.config.site_name %]</h1> -->
+      </a>
+    <div class="release_date">
+      <p>
+         Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a>
       </p>
+    </div>
   </div>
 
 [% MACRO nav_species(species_name,display_title) BLOCK %]

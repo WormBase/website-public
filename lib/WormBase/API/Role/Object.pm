@@ -804,21 +804,24 @@ sub _build_laboratory {
     my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP->{laboratory};
 
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
+
     my @data;
 
     if (eval {$object->$tag}) {
 	foreach my $lab ($object->$tag) {
 	    my $label = $lab->Mail || "$lab";
-	    my $representative = $lab->Representative;
-	    my $name           = $representative->Standard_name if $representative;
+	    my @representative = $lab->Representative;
+        @representative = map { $self->_pack_obj($_) } @representative;
 	    push @data, {
 		laboratory => $self->_pack_obj($lab, "$label"),
-		representative => $self->_pack_obj($representative, "$name"),
+		representative => \@representative
 	    };
 	}
     }
+    my $description = "$class" =~ /Person/i ? "the laboratory associated with the $class"
+        : "the laboratory where the $class was isolated, created, or named";
     return {
-        description => "the laboratory where the $class was isolated, created, or named",
+        description => $description,
         data        => @data ? \@data : undef,
     };
 }

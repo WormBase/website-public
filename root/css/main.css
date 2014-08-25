@@ -503,7 +503,9 @@ table {
     border-spacing: 0;
 }
 
-
+table ul {
+    padding: 0 0 0 1em;
+}
 
 
 
@@ -981,7 +983,7 @@ a#fade:hover {
   position:fixed;
   top:0em;
   left:50%;
-  min-width:15em;
+/*  min-width:15em; */
   margin-left: -12.5em;
   padding: 0.5em;
   background: #FFFFBB;
@@ -1070,7 +1072,7 @@ a#fade:hover {
 .ui-icon-pdf {width: 16px; height: 16px; margin-top:0.1em; cursor:pointer; float:right; background-image: url(../img/pdf-icon.png); }
 .ui-icon-pubmed { width: 40px; height: 17px; cursor:pointer;  background-image : url(../img/buttons/pubmed.gif); }
 
-.ui-icon-dna {background-image: url(../img/new-icons.png); background-position: -204px -18px}
+.ui-icon-dna {background-image: url(../img/new-icons.png); background-position: -204px -21px}
 
 .ui-icon-1 { background-position: 0px 0px; }
 .ui-icon-1-1 { background-position: -16px 0px; }
@@ -1203,10 +1205,20 @@ div#header p {
 }
 
 div#header div#title {
-  padding:0.4em 1.4em;
+  padding:0.6em 1.4em 0.3em;
+  height:34px;
 }
 
-div#header .release_date { }
+div#header div#title img {
+/*    float:left; */
+    vertical-align:bottom;
+}
+
+div#header .release_date {
+    padding-left:8px;
+    padding-bottom: 0.3em;
+    display: inline-block;
+}
 
 
 
@@ -2897,11 +2909,6 @@ div.inline-columns img {
   float:left;
 }
 
-.button.slink span {
-  float:none;
-}
-
-
 
 .button{
   float:left;
@@ -2922,11 +2929,20 @@ div.inline-columns img {
 .button.slink{
   margin:0 0.5em 0 0;
   height:1em;
-  float:none;
 }
 
 .button.slink .ui-icon{
   margin:0;
+}
+
+.slink-box:before{
+  content: ' ';
+  clear:both;
+  display:block;
+}
+
+.slink-box {
+  position:relative;
 }
 
 div.title {

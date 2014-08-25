@@ -53,9 +53,9 @@ END;
 # This is BROKEN. Model issue? Returns a one-element empty data structure.
 WRAPPER $field_block title="4D expression movies" key="fourd_expression_movies";
         '<ul>';
-	FOREACH mv IN fields.fourd_expression_movies.data.keys;
+  FOREACH mv IN fields.fourd_expression_movies.data.keys;
               '<li>' _ tag2link(mv.value.object) _ ': ' _ mv.value.details _ '<br />';
-	          external_link(mv.value.movie, mv.value.movie);
+            external_link(mv.value.movie, mv.value.movie);
               '</li>';
          END;
          '</ul>';
@@ -96,14 +96,20 @@ END;
 
 WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
     '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
-    build_data_table(order = ['label', 'project', 'life_stage', 'value'],
+
+    fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
+    FOREACH analysis IN fpkm_data;
+        analysis.project_link = external_link(analysis.project_info.class,
+                                              analysis.project_info.label, analysis.project_info.id);
+    END;
+    build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],
                      columns = {
                          label => 'Name',
-                         project => 'Project',
+                         project_link => 'Project',
                          life_stage => 'Life Stage',
                          value => 'FPKM value'
                      },
-                     passed_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data);
+                     passed_data = fpkm_data);
 END;
 %]
 <script type="text/javascript" >

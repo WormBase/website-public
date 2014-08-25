@@ -20,12 +20,9 @@
 
     [%- content -%]
 
-    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="js/jquery-1.9.1.min.js"><\/script>')</script>
-
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
-    <script>window.jQuery.ui || document.write('<script src="js/jquery-ui-1.10.1.custom.min.js"><\/script>')</script>
+    <!-- Grab jQuery from local -->
+    <script src="/js/jquery-1.9.1.min.js"></script>
+    <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
 
     <script src="/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v[% git_commit_id %]"></script>
     <script>

@@ -6,6 +6,7 @@ extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
 with 'WormBase::API::Role::Sequence';
+with 'WormBase::API::Role::Expression';
 
 use Bio::Graphics::Browser2::Markup;
 
@@ -346,6 +347,30 @@ sub _build__segments {
         }
     }
     return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object)];
+}
+
+sub _build__gene {
+    my ($self) = @_;
+    my $object = $self->object;
+    my $gene = $object->Gene;
+
+    return $gene;
+}
+
+sub _build_sequences {
+    my $self = shift;
+    my $gene = $self->object;
+    my %seen;
+    my @seqs = grep { !$seen{$_}++} $gene->Corresponding_transcript;
+
+    for my $cds ($gene->Corresponding_CDS) {
+        next if defined $seen{$cds};
+        my @transcripts = grep {!$seen{$cds}++} $cds->Corresponding_transcript;
+
+        push (@seqs, @transcripts ? @transcripts : $cds);
+    }
+    return \@seqs if @seqs;
+    return [$gene->Corresponding_Pseudogene];
 }
 
 __PACKAGE__->meta->make_immutable;
