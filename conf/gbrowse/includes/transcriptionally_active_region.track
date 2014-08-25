@@ -4,12 +4,12 @@ category      = Transcription:Supporting Evidence
 glyph         = box
 bgcolor       = green
 fgcolor       = black
-label         = sub {
-	      my $f = shift;
-	      my $name = $f->name;
-	      my $notes = $f->notes;
-	      return "$notes";
-	      }
+#label         = sub {
+#	      my $f = shift;
+#	      my $name = $f->name;
+#	      my $notes = $f->notes;
+#	      return "$notes";
+#	      }
 link          = sub {
 	      my $f = shift;
 	      my ($modencode)  = $f->attributes('Note');
