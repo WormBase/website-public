@@ -81,7 +81,7 @@ sub workbench_GET {
       } else{
             $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
-      $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favourites" : "library");
+      $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favorites" : "library");
     }
     $c->stash->{noboiler} = 1;
     $c->stash->{count} = $session->pages->count || 0;
