@@ -70,7 +70,7 @@ has 'tracks' => (
         my $self = shift;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/GENES VARIATIONS_CLASSICAL_ALLELES/],
+            data        => $self->object->Corresponding_transposon ? [qw/TRANSPOSONS TRANSPOSON_GENES/] : [qw/GENES VARIATIONS_CLASSICAL_ALLELES CLONES/],
         };
     }
 );
