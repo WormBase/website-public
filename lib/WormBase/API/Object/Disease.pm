@@ -88,6 +88,7 @@ sub synonym {
     };
 }
 
+use Data::Dumper;
 sub _get_gene_relevance{
     my ($self, $gene) = @_;
     my @omim_ace = $gene->DB_info->at('OMIM.gene') if $gene->DB_info;  #human homologs
@@ -95,22 +96,31 @@ sub _get_gene_relevance{
     my @relevance_ace = $gene->Disease_relevance;
     my @relevance = map { {text => "$_", evidence=>$self->_get_evidence($_->right) } } @relevance_ace;
 
-    my ($err, $markedup_omims) = $self->markup_omims(\@omim);
 
     my $data = {
         gene => $self->_pack_obj($gene),
-        human_orthologs => $markedup_omims,
+        human_orthologs => \@omim,
         relevance => @relevance ? \@relevance : undef,
     };
-    $data->{'error'} = $err if $err;
 
+ #   use Data::Dumper; print Dumper $markedup_omims;
+    print Dumper  $self->resource_error;
     return $data;
 }
 
 sub genes_orthology {
-    my ($self) = @_;
+    my ($self) = @_;            #
     my @data = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_orthology;
-    my $err = $self->summarize_error(\@data);
+
+    my @omims = map { @{$_->{'human_orthologs'}} } @data;
+    my ($err, $markedup_omims) = $self->markup_omims(\@omims);
+
+    foreach my $g (@data){
+       my @ids = @{ $g->{'human_orthologs'} };
+       my @omims_per_gene = map { $markedup_omims->{$_} } @ids;
+       $g->{'human_orthologs'} = \@omims_per_gene;
+    }
+print Dumper $err;
     return {
         description => 'Genes by orthology to human disease gene',
         data        => @data ? \@data : undef,
@@ -118,10 +128,22 @@ sub genes_orthology {
     };
 }
 
+
 sub genes_biology {
     my ($self) = @_;
     my @genes = map { _get_gene_relevance($self, $_) } $self->object->Gene_by_biology;
-    my $err = $self->summarize_error(\@genes);
+
+    my @omims = map { @{$_->{'human_orthologs'}} } @genes;
+    my ($err, $markedup_omims) = $self->markup_omims(\@omims);
+
+    foreach my $g (@genes){
+       my @ids = @{ $g->{'human_orthologs'} };
+       my @omims_per_gene = map { $markedup_omims->{$_} } @ids;
+       $g->{'human_orthologs'} = \@omims_per_gene;
+    }
+
+    #my $err = $self->summarize_error(\@data);
+print Dumper $err;
     return {
         description => 'Genes used as experimental models',
         data        => @genes ? \@genes : undef ,
