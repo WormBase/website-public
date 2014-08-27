@@ -49,8 +49,8 @@
         my @test_omims_subset_1 = ($test_omims[0]);
         my ($err, $markedup_omims) = $disease->markup_omims(\@test_omims_subset_1);
         is($err, undef, 'No error with external API');
-        ok(@$markedup_omims, "markedup OMIM returned");
-        my $markedup1 = pop @$markedup_omims;
+        ok(%$markedup_omims, "markedup OMIM returned");
+        my $markedup1 = $markedup_omims->{$test_omims[0]};
         ok($markedup1->{'label'} =~ /ASPERGER SYNDROM/, "correct OMIM markup returned");
 
         # test remembering previously reqeusted items
@@ -95,8 +95,8 @@
         # test data returning when external API is not available
         my ($err_msg, $markedup_omims) = $disease->markup_omims(\@test_omims);
         isnt($err_msg, undef, 'Got an error with fake error response');
-        is(scalar @{$markedup_omims}, 2, 'correct number of marked up OMIMs returned');
-        is(@{$markedup_omims}[0]->{'label'}, 'OMIM:133700', 'correct label of the OMIM returned despite error');
+        is(scalar keys %$markedup_omims, 2, 'correct number of marked up OMIMs returned');
+        is($markedup_omims->{$test_omims[0]}->{'label'}, 'OMIM:133700', 'correct label of the OMIM returned despite error');
 
         # test persistence of error across objects
         my $disease2 = $api->fetch({ class => 'Disease', name => 'DOID:0050432' });
@@ -111,8 +111,8 @@
         # normality of retrieving external data after resetting the error status
         my ($err_msg_1, $markedup_omims_1) = $disease->markup_omims(\@test_omims);
         is($err_msg_1, undef, 'no error message');
-        is(scalar @{$markedup_omims_1}, 2, 'correct number of marked up OMIMs returned');
-        is(@{$markedup_omims_1}[0]->{'label'}, 'EXOSTOSES, MULTIPLE, TYPE I',
+        is(scalar keys %{$markedup_omims_1}, 2, 'correct number of marked up OMIMs returned');
+        is($markedup_omims_1->{$test_omims[0]}->{'label'}, 'EXOSTOSES, MULTIPLE, TYPE I',
            'correct label of the OMIM returned with external API back to normal');
      }
 
