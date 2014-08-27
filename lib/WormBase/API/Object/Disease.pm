@@ -107,10 +107,11 @@ sub _get_gene_relevance{
         push @data, $data;
     }
 
+    # instead of making multiple requests to OMIM, collect all the omim ids, and make a single request
     my @omims = map { @{$_->{'human_orthologs'}} } @data;
     my ($err, $markedup_omims) = $self->markup_omims(\@omims);
-
     foreach my $data (@data){
+        # update human_orthologs to have marked up OMIM items, instead of the IDs
         my @omims_of_gene = map { $markedup_omims->{$_} } @{ $data->{'human_orthologs'} };
         $data->{'human_orthologs'} = @omims_of_gene ? \@omims_of_gene : undef;
     }
