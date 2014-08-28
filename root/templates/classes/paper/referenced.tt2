@@ -9,9 +9,7 @@
             WRAPPER $field_block title="$name";
 
             IF fields.refers_to.data.$reftype;
-                FOREACH it IN fields.refers_to.data.$reftype;
-                    cell_content(it) _ '<br/>';
-                END;
+                cell_content(fields.refers_to.data.$reftype, '<br/>');
             ELSE;
                 fields.refers_to.data.$reftype _ " $name referenced";
             END;
