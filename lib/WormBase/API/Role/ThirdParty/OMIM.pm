@@ -168,7 +168,7 @@ sub markup_omims {
     } || do {
         $err = $@;
     };
-    my @data = ();
+    my $data = {};
     foreach my $oid (@{$omim_ids}){
         my $name;  #base on external info
         if ($self->known_omims->{$oid}){
@@ -187,10 +187,10 @@ sub markup_omims {
                    class => 'OMIM',
                    label=> $label,
                };
-        push @data, $dat;
+        $data->{$oid} = $dat;
     }
 
-    return ($err, @data ? \@data : undef);
+    return ($err, $data);
 }
 
 # helper function
