@@ -470,17 +470,32 @@ sub contained_in {
 sub refers_to {
     my ($self) = @_;
     my %data;
+    my @evidence_types = qw /Published_as/;
     foreach my $ref_type ($self->object->Refers_to) {
-      # modified to just get count - breaking on large amounts of xrefs - AC
-      $data{$ref_type} = $self->_get_count($self->object, $ref_type);
 
-      $data{$ref_type} = $self->_pack_objects([$ref_type->col]) if $data{$ref_type} < 10000;
+        my $counts = $self->_get_count($self->object, $ref_type);
+
+        if ($counts >= 10000) {
+            # modified to just get count - breaking on large amounts of xrefs - AC
+            $data{$ref_type} = $counts;
+        } else {
+
+            # $data{$ref_type} = $self->_pack_objects([$ref_type->col]);
+
+            my @ref_items = map {
+                my $ev = $self->_get_evidence($_, \@evidence_types);
+                $ev ? { text => $self->_pack_obj($_), evidence => $ev } : $self->_pack_obj($_);
+            } $ref_type->col;
+
+            $data{$ref_type} = @ref_items ? \@ref_items : undef;
+
         # Or build some data tables for different object types
         #	foreach $ref_type ($ref_type->col) {
         #	    if ($ref_type eq '') {
         #		# ...
         #	    }
         #	}
+        }
     }
 
     return {
@@ -552,5 +567,3 @@ sub strains {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-
