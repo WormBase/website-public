@@ -153,13 +153,15 @@
 
         #test project name
         my $gene_1 = $api->fetch({ class => 'Gene', name => 'WBGene00001530' });
-
+        my $version = $api->version;
         my $fpkm_expression_1 = $gene_1->fpkm_expression_summary_ls();
-        isnt($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0], undef, 'data returned');
         is($fpkm_expression_1->{'description'}, 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data' , 'correct description returned ');
-        is($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
-        is($fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'project_info'}->{'id'}, 'SRP016006', 'correct project accesssion returned');
-        is($fpkm_expression_1->{'data'}->{'plot'}, '/img-static/rplots/WS244/1559/fpkm_WBGene00001530.png' , 'correct plot path returned');
+
+        my @data = @{ $fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'} };
+        my @data_sub = grep { $_->{'project_info'}->{'id'} eq 'SRP016006' } @data;
+        isnt($data_sub[0], undef, 'data returned');
+        is($data_sub[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
+        is($fpkm_expression_1->{'data'}->{'plot'}, '/img-static/rplots/' . $version . '/1559/fpkm_WBGene00001530.png' , 'correct plot path returned');
 
     }
 
