@@ -1,0 +1,64 @@
+gff_version: 3
+file: /usr/local/ftp/pub/wormbase/releases/WS245/species/b_malayi/PRJNA10729/b_malayi.PRJNA10729.WS245.annotations.gff3.gz
+feature	children	source	method	track	count
+CDS:WormBase		WormBase	CDS	Genes (protein coding) (genes_protein_coding)	136194
+	CDS:WormBase_imported	WormBase_imported	CDS	Genes (protein coding) (genes_protein_coding)	0
+SL1_acceptor_site:SL1		SL1	SL1_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	19968
+	SL2_acceptor_site:SL2	SL2	SL2_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	0
+assembly_component:Genbank		Genbank	assembly_component	Genbank submissions (genbank_entries)	9779
+assembly_component:Genomic_canonical		Genomic_canonical	assembly_component	Contig submissions (genomic_canonical)	9779
+exon:history		history	exon	Gene Models (historical) (historical_genes)	240946
+	pseudogenic_transcript:history	history	pseudogenic_transcript	Gene Models (historical) (historical_genes)	0
+	transposable_element:history	history	transposable_element	Gene Models (historical) (historical_genes)	0
+	protein_coding_primary_transcript:history	history	protein_coding_primary_transcript	Gene Models (historical) (historical_genes)	23020
+	primary_transcript:history	history	primary_transcript	Gene Models (historical) (historical_genes)	0
+	nc_primary_transcript:history	history	nc_primary_transcript	Gene Models (historical) (historical_genes)	0
+expressed_sequence_match:BLAT_Caen_EST_BEST		BLAT_Caen_EST_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	520597
+	expressed_sequence_match:BLAT_Caen_mRNA_BEST	BLAT_Caen_mRNA_BEST	expressed_sequence_match	WormBase nematode mRNAs/ESTs (best) (sequence_similarity_wormbase_core_ests_and_mrnas_best)	45606
+expressed_sequence_match:BLAT_Caen_EST_OTHER		BLAT_Caen_EST_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	2476477
+	expressed_sequence_match:BLAT_Caen_mRNA_OTHER	BLAT_Caen_mRNA_OTHER	expressed_sequence_match	WormBase nematode mRNAs/ESTs (other) (sequence_similarity_wormbase_core_ests_and_mrnas_other)	148215
+expressed_sequence_match:BLAT_EST_BEST		BLAT_EST_BEST	expressed_sequence_match	ESTs (best) (est_best)	81243
+expressed_sequence_match:BLAT_EST_OTHER		BLAT_EST_OTHER	expressed_sequence_match	ESTs (other) (est_other)	163140
+expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	1335
+	expressed_sequence_match:BLAT_ncRNA_BEST	BLAT_ncRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	0
+gene:WormBase		WormBase	gene	Genes (genes)	15468
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	17824
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	2490
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	1845
+intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	114364
+inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	42005
+	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	73871
+low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	189673
+ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	67
+	miRNA:WormBase	WormBase	miRNA	Curated Genes (noncoding) (genes_noncoding)	168
+	rRNA:WormBase	WormBase	rRNA	Curated Genes (noncoding) (genes_noncoding)	407
+	scRNA:WormBase	WormBase	scRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	snRNA:WormBase	WormBase	snRNA	Curated Genes (noncoding) (genes_noncoding)	709
+	snoRNA:WormBase	WormBase	snoRNA	Curated Genes (noncoding) (genes_noncoding)	63
+	tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	167
+	exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	139869
+	intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	120371
+	piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	0
+nucleotide_match:TIGR_BEST		TIGR_BEST	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models)	54103
+nucleotide_match:TIGR_OTHER		TIGR_OTHER	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models_other)	267197
+operon:deprecated_operon		deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	1
+operon:operon		operon	operon	Operons (operons)	1718
+protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	245101
+protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	111040
+protein_match:cbrenneri_proteins-BLASTX		cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	135043
+protein_match:cbriggsae_proteins-BLASTX		cbriggsae_proteins-BLASTX	protein_match	C. briggsae proteins (sequence_similarity_cbriggsae_proteins_blastx)	117874
+protein_match:celegans_proteins-BLASTX		celegans_proteins-BLASTX	protein_match	C. elegans proteins (sequence_similarity_celegans_proteins_blastx)	162535
+protein_match:cjaponica_proteins-BLASTX		cjaponica_proteins-BLASTX	protein_match	C. japonica proteins (sequence_similarity_cjaponica_proteins_blastx)	124701
+protein_match:cremanei_proteins-BLASTX		cremanei_proteins-BLASTX	protein_match	C. remanei proteins (sequence_similarity_cremanei_proteins_blastx)	123099
+protein_match:dmelanogaster_proteins-BLASTX		dmelanogaster_proteins-BLASTX	protein_match	D. melanogaster proteins (sequence_similarity_dmelanogaster_proteins_blastx)	92109
+protein_match:hsapiens_proteins-BLASTX		hsapiens_proteins-BLASTX	protein_match	H. sapiens proteins (sequence_similarity_hsapiens_proteins_blastx)	212075
+protein_match:ppacificus_proteins-BLASTX		ppacificus_proteins-BLASTX	protein_match	P. pacificus proteins (sequence_similarity_ppacificus_proteins_blastx)	96253
+protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	31622
+pseudogenic_transcript:WormBase		WormBase	pseudogenic_transcript	Genes (pseudogenes) (genes_pseudogenes)	11
+repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	100931
+sequence_motif:translated_feature		translated_feature	sequence_motif	Protein motifs (protein_motifs)	267777
+transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	488865
+	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	473667
+transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	1095949
