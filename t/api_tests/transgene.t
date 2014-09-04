@@ -89,19 +89,19 @@
 
     }
 
+# Commented out in WS245, tag no longer exists
+    # sub test_driven_by_gene {
+    #     my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00000975' });
+    #     can_ok('WormBase::API::Object::Transgene', ('driven_by_gene'));
 
-    sub test_driven_by_gene {
-        my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00000975' });
-        can_ok('WormBase::API::Object::Transgene', ('driven_by_gene'));
+    #     my $driven_by_gene = $transgene->driven_by_gene();
 
-        my $driven_by_gene = $transgene->driven_by_gene();
+    #     isnt($driven_by_gene->{'data'}, undef, 'data returned');
+    #     isnt($driven_by_gene->{'data'}[0], undef, 'gene returned');
+    #     isnt($driven_by_gene->{'data'}[0]->{'id'}, undef, 'gene data returned');
+    #     is  ($driven_by_gene->{'data'}[0]->{'id'}, 'WBGene00002988', 'correct gene returned');
 
-        isnt($driven_by_gene->{'data'}, undef, 'data returned');
-        isnt($driven_by_gene->{'data'}[0], undef, 'gene returned');
-        isnt($driven_by_gene->{'data'}[0]->{'id'}, undef, 'gene data returned');
-        is  ($driven_by_gene->{'data'}[0]->{'id'}, 'WBGene00002988', 'correct gene returned');
-
-    }
+    # }
 
     sub test_construction_summary {
         my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00015972' });
@@ -118,4 +118,3 @@
 }
 
 1;
-
