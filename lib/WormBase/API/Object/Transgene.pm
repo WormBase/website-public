@@ -171,7 +171,7 @@ sub driven_by_gene {
     my $self = shift;
     my $object = $self->object;
 
-    my @genes = map { $self->_pack_obj($_) } eval { $object->Driven_by_gene };
+    my @genes = map { $self->_pack_obj($_) } $object->Driven_by_gene ;
     return { description => 'gene that drives the transgene',
 	     data        => @genes ? \@genes : undef,
     };

@@ -19,77 +19,77 @@
     sub config {
         $api = $_[0];
     }
-
-    # Tests whether the reporter_construct sub returns two values for WBTransgene00009878.
-    sub test__reporter_construct {
-        my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00009878' });
-
-        can_ok('WormBase::API::Object::Transgene', ('reporter_construct'));
-
-        my $products = $transgene->reporter_construct();
-
-        isnt($products, undef, 'data returned');
-        isnt($products->{'data'}, undef, 'data hash not empty');
-        $products = $products->{'data'};
-        is  (keys %$products, 2, 'has two reporter product');
-    }
-
-
-    # Test the historical gene method
-    sub test_historical_gene {
-        my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00002161' });
-
-        can_ok('WormBase::API::Object::Transgene', ('historical_gene'));
-
-        my $gene = $transgene->historical_gene();
-
-        isnt($gene->{'data'}, undef, 'data returned');
-        isnt($gene->{'data'}[0], undef, 'historcal gene returned');
-        isnt($gene->{'data'}[0]->{'text'}, undef, 'historcal gene data returned');
-        is  ($gene->{'data'}[0]->{'text'}->{'id'}, 'WBGene00043320', 'correct historcal gene returned');
-    }
-
-    sub test_gene_product {
-        my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00005297' });
-        can_ok('WormBase::API::Object::Transgene', ('gene_product'));
-
-        my $gene_product = $transgene->gene_product();
-
-        isnt($gene_product->{'data'}, undef, 'data returned');
-        isnt($gene_product->{'data'}[0], undef, 'gene product returned');
-        isnt($gene_product->{'data'}[0]->{'id'}, undef, 'gene product data returned');
-        is  ($gene_product->{'data'}[0]->{'id'}, 'WBGene00001402', 'correct gene product returned');
-
-    }
-
-    sub test_utr {
-        my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00005294' });
-        can_ok('WormBase::API::Object::Transgene', ('utr'));
-
-        my $utr = $transgene->utr();
-
-        isnt($utr->{'data'}, undef, 'data returned');
-        isnt($utr->{'data'}[0], undef, '3_UTR returned');
-        isnt($utr->{'data'}[0]->{'id'}, undef, '3_UTR data returned');
-        is  ($utr->{'data'}[0]->{'id'}, 'WBGene00001862', 'correct 3_UTR returned');
-
-
-    }
-
-    sub test_coinjection_marker {
-        my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00015972' });
-        can_ok('WormBase::API::Object::Transgene', ('coinjection_marker'));
-
-        my $coinjection_marker = $transgene->coinjection_marker();
-
-        isnt($coinjection_marker->{'data'}, undef, 'data returned');
-        isnt($coinjection_marker->{'data'}[0], undef, 'coinjection marker returned');
-        isnt($coinjection_marker->{'data'}[0]->{'id'}, undef, 'coinjection marker data returned');
-        is  ($coinjection_marker->{'data'}[0]->{'id'}, 'lin-15(+)', 'correct coinjection marker returned');
-
-    }
-
 # Commented out in WS245, tag no longer exists
+
+    # # Tests whether the reporter_construct sub returns two values for WBTransgene00009878.
+    # sub test__reporter_construct {
+    #     my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00009878' });
+
+    #     can_ok('WormBase::API::Object::Transgene', ('reporter_construct'));
+
+    #     my $products = $transgene->reporter_construct();
+
+    #     isnt($products, undef, 'data returned');
+    #     isnt($products->{'data'}, undef, 'data hash not empty');
+    #     $products = $products->{'data'};
+    #     is  (keys %$products, 2, 'has two reporter product');
+    # }
+
+
+    # # Test the historical gene method
+    # sub test_historical_gene {
+    #     my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00002161' });
+
+    #     can_ok('WormBase::API::Object::Transgene', ('historical_gene'));
+
+    #     my $gene = $transgene->historical_gene();
+
+    #     isnt($gene->{'data'}, undef, 'data returned');
+    #     isnt($gene->{'data'}[0], undef, 'historcal gene returned');
+    #     isnt($gene->{'data'}[0]->{'text'}, undef, 'historcal gene data returned');
+    #     is  ($gene->{'data'}[0]->{'text'}->{'id'}, 'WBGene00043320', 'correct historcal gene returned');
+    # }
+
+    # sub test_gene_product {
+    #     my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00005297' });
+    #     can_ok('WormBase::API::Object::Transgene', ('gene_product'));
+
+    #     my $gene_product = $transgene->gene_product();
+
+    #     isnt($gene_product->{'data'}, undef, 'data returned');
+    #     isnt($gene_product->{'data'}[0], undef, 'gene product returned');
+    #     isnt($gene_product->{'data'}[0]->{'id'}, undef, 'gene product data returned');
+    #     is  ($gene_product->{'data'}[0]->{'id'}, 'WBGene00001402', 'correct gene product returned');
+
+    # }
+
+    # sub test_utr {
+    #     my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00005294' });
+    #     can_ok('WormBase::API::Object::Transgene', ('utr'));
+
+    #     my $utr = $transgene->utr();
+
+    #     isnt($utr->{'data'}, undef, 'data returned');
+    #     isnt($utr->{'data'}[0], undef, '3_UTR returned');
+    #     isnt($utr->{'data'}[0]->{'id'}, undef, '3_UTR data returned');
+    #     is  ($utr->{'data'}[0]->{'id'}, 'WBGene00001862', 'correct 3_UTR returned');
+
+
+    # }
+
+    # sub test_coinjection_marker {
+    #     my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00015972' });
+    #     can_ok('WormBase::API::Object::Transgene', ('coinjection_marker'));
+
+    #     my $coinjection_marker = $transgene->coinjection_marker();
+
+    #     isnt($coinjection_marker->{'data'}, undef, 'data returned');
+    #     isnt($coinjection_marker->{'data'}[0], undef, 'coinjection marker returned');
+    #     isnt($coinjection_marker->{'data'}[0]->{'id'}, undef, 'coinjection marker data returned');
+    #     is  ($coinjection_marker->{'data'}[0]->{'id'}, 'lin-15(+)', 'correct coinjection marker returned');
+
+    # }
+
     # sub test_driven_by_gene {
     #     my $transgene = $api->fetch({ class => 'Transgene', name => 'WBTransgene00000975' });
     #     can_ok('WormBase::API::Object::Transgene', ('driven_by_gene'));
