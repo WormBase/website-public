@@ -611,10 +611,7 @@ sub motif_details {
 
         # Now deal with the motif_homol features
         foreach my $motif_homol (@motif_homol) {
-            my $score = $motif_homol->right->col;
 
-            my $start = $motif_homol->right(3);
-            my $stop  = $motif_homol->right(4);
             my $source_db = $motif_homol->right;
             my ($source_id) = "$motif_homol" =~ m/[^\:]*\:(.+)/ or ("$motif_homol");
             my $source = {
@@ -624,13 +621,13 @@ sub motif_details {
 
             my $desc = $motif_homol->Title || $motif_homol;
 
-            # Are there multiple occurences of this motif_homol?
-            # Gets all scores for the current motif
-            my @scores = $motif_homol->right->col;
+            my @scores = $motif_homol->col(2);
 
-            if ( (scalar @scores) > 1) {
-                foreach my $score (@scores) {
-                    my $start = $score->right;
+            foreach my $score (@scores) {
+                # some motif mappings don't have a score, so $score->col() gets all these mappings,
+                # by getting their start positions first
+                my @start_positions = $score->col();
+                foreach my $start (@start_positions){
                     my $stop = $start->right;
 
                     push( @data, {
@@ -643,20 +640,10 @@ sub motif_details {
                         desc	=> "$desc"
                     });
 
-
+                    $score = undef; #the remaining motifs don't have a score. Assign undef.
                 }
-            } else {
-                push( @data, {
-                    feat	=>
-                        $self->_pack_obj($motif_homol,"$motif_homol"),
-                    start	=> "$start",
-                    stop	=> "$stop",
-                    score	=> (scalar @scores) == 1 ? "$scores[0]" : undef,
-                    source	=> $source,
-                    desc	=> "$desc"
-                });
-
             }
+
         }
 
     }
@@ -1144,4 +1131,3 @@ sub hit_to_url {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
