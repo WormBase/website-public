@@ -640,7 +640,6 @@ sub motif_details {
                         desc	=> "$desc"
                     });
 
-                    $score = undef; #the remaining motifs don't have a score. Assign undef.
                 }
             }
 
