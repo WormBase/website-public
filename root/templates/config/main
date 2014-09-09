@@ -305,12 +305,12 @@
               IF (link == 'ensembl');
                 UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
                 array=id.split('&');
-                ext_url = String(array.first array.last) FILTER url;
+                ext_url = String(array.first array.last);
               ELSE;
-                ext_url = String(id) FILTER url;
+                ext_url = String(id);
               END;
           END;
-          ext_url = ext_url || site.external_urls.$link.base FILTER url;
+          ext_url = (ext_url || site.external_urls.$link.base) FILTER url;
         END;
         ext_url || link;
     END;
