@@ -114,10 +114,11 @@ sub _build__phenotypes {
 
     my %phenotypes;
 
-    foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
+    # This needs to be updated for the construct model
+    foreach my $type ('Drives_construct', 'Transgene_product', 'Allele', 'RNAi_result'){
 
         my $type_name; #label that shows in the evidence column above each list of that object type
-        if ($type =~ /Transgene/) { $type_name = 'Transgene:'; }
+        if ($type =~ /Transgene/i) { $type_name = 'Transgene:'; }
         elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
         else { $type_name = $type . ':'; }
 
@@ -126,7 +127,7 @@ sub _build__phenotypes {
             # Don't include phenotypes that result from
             # the current gene driving overexpression of another gene.
             # These are displayed in the overexpression phenotypes table.
-            if ($type eq 'Drives_Transgene') {
+            if ($type eq 'Drives_construct') {
                 my $gene = $obj->Gene;
                 next unless ($gene && "$gene" eq "$object");
             }
