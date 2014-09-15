@@ -162,11 +162,11 @@ sub synonym {
 # summary { }
 # Supplied by Role
 
-# construct 
+# construct
 sub construct {
     my $self = shift;
     my $object = $self->object;
-    my $construct = $object->construct;
+    my $construct = $object->Construct;
     return { description => 'gene that drives the transgene',
 	     data        => $construct ? $self->_pack_obj($construct) : undef,
     };
@@ -406,7 +406,7 @@ sub recombination_site {
     my $self   = shift;
     my $object   = $self->object;
     my $construct = $object->Construct;
-    my $position = $construct->Map;
+    my $position = $construct->Recombination_site;
 
     return { description => 'map position of the integrated transgene',
 	     data        => $position ? "$position" : undef};

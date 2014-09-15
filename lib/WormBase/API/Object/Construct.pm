@@ -76,7 +76,7 @@ sub type_of_construct {
     my @types  = $object->Type_of_construct;
     return { description => 'type of construct',
              data        => @types ? \@types : undef };
-}    
+}
 
 # fusion_reporter {}
 sub fusion_reporter {
@@ -151,7 +151,7 @@ sub person {
     my $self   = shift;
     my $object = $self->object;
     my $person = $object->Person;
-    
+
     my $name;
     if ($person) {
 	$name = $person->Standard_name if $person;
@@ -181,7 +181,7 @@ sub clone {
 sub recombination_site {
     my $self   = shift;
     my $object   = $self->object;
-    my $position = $object->Map;
+    my $position = $object->Recombination_site;
 
     return { description => 'map position of the integrated transgene',
 	     data        => $position ? "$position" : undef};
@@ -198,6 +198,8 @@ sub recombination_site {
 
 # expression_patterns { }
 # Supplied by Role
+
+sub _build_expr_pattern_tag_name { return 'Expression_pattern'; };
 
 # marker_for { }
 sub marker_for {
