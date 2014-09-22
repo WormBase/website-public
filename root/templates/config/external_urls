@@ -806,6 +806,12 @@
 	search      = 'http://smid-db.org/search?term=%s'
 	}
 
+ so_term = {
+	description = 'SO is a collaborative ontology project for the definition of sequence features used in biological sequence annotation.'
+    base          = 'http://sequenceontology.org'
+	search        = 'http://sequenceontology.org/browser/current_svn/term/%s'
+}
+
  SocietyofNeuroscience = {
 	description = 'Society of Neuroscience'
 	base        = 'www.sfn.org'

@@ -1,0 +1,21 @@
+[%
+
+WRAPPER $field_block title="Defined by" key="defined_by";
+
+    build_data_table (
+		order = [
+			'label',
+			'object',
+			],
+		columns = {
+			label => 'Defined via',
+			object => 'Object',
+			},
+		key = 'defined_by');
+END;
+
+WRAPPER $field_block title="" key="remarks";
+   remarks(no_toggle=1);
+END;
+
+%]
