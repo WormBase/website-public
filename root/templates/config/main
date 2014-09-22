@@ -149,7 +149,7 @@
     # return true for a downloadable object
     MACRO downloadable(class) BLOCK;
       cls = (class || object.name.data.class) | lower;
-      cls.match('sequence|protein|transcript|cds|clone');
+      cls.match('^(sequence|protein|transcript|cds|clone)$');
     END;
 
     # generate the gbrowse url. Figure out which bioproject (cannonical) to use if none supplied
