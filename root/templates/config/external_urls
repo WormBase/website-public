@@ -795,9 +795,9 @@
 	}
 
  SGD = {
-	description = 'GO Term finder - Stanford University. SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
-	search      = 'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
-	base        = 'http://genome-www4.stanford.edu'
+	description = 'SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
+	search      = 'http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=%s'
+	base        = 'http://www/yeasygenome.org'
 	}
 
  'SMID-DB' = {
