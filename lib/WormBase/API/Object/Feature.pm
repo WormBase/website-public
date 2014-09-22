@@ -217,7 +217,11 @@ sub sequence_ontology_terms {
     my $self   = shift;
     my $object = $self->object;
 
-    my @terms = map {"$_"} $object->SO_term;
+    my @terms = map {{
+        id       => "$_",
+        label    => "$_",
+        class    => 'so_term'
+    }} $object->SO_term;
     return { description => 'sequence ontology terms describing the feature',
 	     data        => @terms ? \@terms : undef, };
 }
@@ -322,8 +326,31 @@ sub _build__segments {
     return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object)];
 }
 
+#######################################
+#
+# The History widget
+#
+#######################################
+
+sub history_lite {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $action ('Merged_into', 'Acquires_merge') {
+      (my $a = $action) =~ s/_/ /;
+      push @data, map {
+        { action  => $a,
+        remark    => $self->_pack_obj($_)}
+      } $object->$action;
+    }
+
+    return {
+        description => 'the curatorial history of the gene',
+        data        => @data ? \@data : undef,
+    };
+}
 
 __PACKAGE__->meta->make_immutable;
 
 1;
-
