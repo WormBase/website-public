@@ -2550,7 +2550,7 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
   display:table-cell;
   float:none;
   position:static;
-  vertical-align:top;
+  vertical-align:middle;
   table-layout:fixed;
 }
 
