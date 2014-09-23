@@ -57,6 +57,31 @@
         is($a2->{'class'}, 'gene', 'Correct type of interaction is returned');
     }
 
+    sub test_binds_gene_product {
+        my $feature = $api->fetch({ class => 'Feature', name => 'WBsf919593' });
+
+        can_ok('WormBase::API::Object::Feature', ('binds_gene_product'));
+        my $genes = $feature->binds_gene_product();
+
+        # check that a known association is found
+        isnt($genes->{'data'}, undef, 'Data is returned');
+        my ($gene1) = grep { $_->{'label'} =~ /lin-1/ } @{$genes->{'data'}};
+        isnt($gene1, undef, 'Correct association is returned');
+
+    }
+
+    sub test_transcription_factor {
+        my $feature = $api->fetch({ class => 'Feature', name => 'WBsf919593' });
+
+        can_ok('WormBase::API::Object::Feature', ('transcription_factor'));
+        my $tf = $feature->transcription_factor();
+
+        # check that a known association is found
+        isnt($tf->{'data'}, undef, 'Data is returned');
+        is($tf->{'data'}->{'class'}, 'transcription_factor', 'Correct class returned');
+        is($tf->{'data'}->{'label'}, 'WBTranscriptionFactor000135', 'Correct transcription factor is returned');
+    }
+
 }
 
 1;
