@@ -35,7 +35,53 @@
         is  ($strand->{'data'}, '+', 'feature correctly located on forward strand');
     }
 
+    sub test_associations {
+        my $feature = $api->fetch({ class => 'Feature', name => 'WBsf919593' });
+
+        can_ok('WormBase::API::Object::Feature', ('associations'));
+        my $all_associations = $feature->associations();
+
+        # check that a known association is found
+        isnt($all_associations->{'data'}, undef, 'Data is returned');
+        my ($a1) = grep { $_->{'association'}->{'label'} =~ /lin-39/ } @{$all_associations->{'data'}};
+        isnt($a1, undef, 'Correct association is returned');
+        is($a1->{'association'}->{'class'}, 'gene', 'Correct type of interaction is returned');
+
+
+        # check for the same associated gene is returned by associated_gene sub
+        can_ok('WormBase::API::Object::Feature', ('associated_gene'));
+        isnt($all_associations->{'data'}, undef, 'Data is returned');
+        my $associated_genes = $feature->associated_gene();
+        isnt($associated_genes->{'data'}, undef, 'Correct associatied gene is returned');
+        my ($a2) = @{$associated_genes->{'data'}};
+        is($a2->{'class'}, 'gene', 'Correct type of interaction is returned');
+    }
+
+    sub test_binds_gene_product {
+        my $feature = $api->fetch({ class => 'Feature', name => 'WBsf919593' });
+
+        can_ok('WormBase::API::Object::Feature', ('binds_gene_product'));
+        my $genes = $feature->binds_gene_product();
+
+        # check that a known association is found
+        isnt($genes->{'data'}, undef, 'Data is returned');
+        my ($gene1) = grep { $_->{'label'} =~ /lin-1/ } @{$genes->{'data'}};
+        isnt($gene1, undef, 'Correct association is returned');
+
+    }
+
+    sub test_transcription_factor {
+        my $feature = $api->fetch({ class => 'Feature', name => 'WBsf919593' });
+
+        can_ok('WormBase::API::Object::Feature', ('transcription_factor'));
+        my $tf = $feature->transcription_factor();
+
+        # check that a known association is found
+        isnt($tf->{'data'}, undef, 'Data is returned');
+        is($tf->{'data'}->{'class'}, 'transcription_factor', 'Correct class returned');
+        is($tf->{'data'}->{'label'}, 'WBTranscriptionFactor000135', 'Correct transcription factor is returned');
+    }
+
 }
 
 1;
-
