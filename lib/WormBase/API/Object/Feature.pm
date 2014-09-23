@@ -238,6 +238,15 @@ sub sequence {
     };
 }
 
+sub associated_gene {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data = map { $self->_pack_obj($_) } $object->Associated_with_gene;
+
+    return { description => 'Associated gene of the sequence feature',
+	     data        => @data ? \@data : undef, };
+}
+
 #######################################
 #
 # The Associations widget

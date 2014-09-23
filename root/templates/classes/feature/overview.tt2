@@ -9,12 +9,16 @@ WRAPPER highlight_box;
         fields.method.data;
     END;
 
-    WRAPPER $field_block title='Sequence Ontology Terms' key='sequence_ontology_terms';
+    WRAPPER $field_block title='Sequence ontology terms' key='sequence_ontology_terms';
         tags2link(fields.sequence_ontology_terms.data);
     END;
 
     WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
         markup_locus(fields.other_names.data.join(', '), 1);
+    END;
+
+    WRAPPER $field_block title='Associated gene' key='associated_gene';
+        tags2link(fields.associated_gene.data);
     END;
 
 END;
