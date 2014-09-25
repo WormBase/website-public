@@ -95,7 +95,8 @@ sub flanking_sequences {
     # Some features have sequences associated with them that denote splice sites
     # or other removed genomic content. In those cases, there is no sequence as
     # such.
-    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
+#    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
+    if (eval { $object->Sequence->asDNA }) {
         my $fasta = $object->Sequence->asDNA;
         my @fasta_sequences = (split "\n", $fasta);
         shift @fasta_sequences;
@@ -238,6 +239,15 @@ sub sequence {
     };
 }
 
+sub dna_text {
+    my ($self) = @_;
+
+    return {
+        description => 'DNA text of the sequence feature',
+        data => $self ~~ 'DNA_text',
+    };
+}
+
 sub associated_gene {
     my $self   = shift;
     my $object = $self->object;
@@ -345,13 +355,25 @@ sub history_lite {
     my $self   = shift;
     my $object = $self->object;
     my @data;
+    my @actions = $object->History;
 
-    foreach my $action ('Merged_into', 'Acquires_merge') {
+    foreach my $action (@actions) {
       (my $a = $action) =~ s/_/ /;
-      push @data, map {
-        { action  => $a,
-        remark    => $self->_pack_obj($_)}
-      } $object->$action;
+      my @hist_entries;
+      if ($object->$action){
+          @hist_entries = map {
+              my $evidence = $self->_get_evidence($_);
+              my $remark = $evidence ?
+                  { text => $self->_pack_obj($_), evidence => $evidence } : $self->_pack_obj($_);
+
+              { action  => $a,
+                remark    => $remark }
+          } $object->$action;
+      } else {
+          @hist_entries = ({ action => $a, remark => undef });
+      }
+
+      push @data, @hist_entries;
     }
 
     return {
