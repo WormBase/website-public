@@ -345,13 +345,25 @@ sub history_lite {
     my $self   = shift;
     my $object = $self->object;
     my @data;
+    my @actions = $object->History;
 
-    foreach my $action ('Merged_into', 'Acquires_merge') {
+    foreach my $action (@actions) {
       (my $a = $action) =~ s/_/ /;
-      push @data, map {
-        { action  => $a,
-        remark    => $self->_pack_obj($_)}
-      } $object->$action;
+      my @hist_entries;
+      if ($object->$action){
+          @hist_entries = map {
+              my $evidence = $self->_get_evidence($_);
+              my $remark = $evidence ?
+                  { text => $self->_pack_obj($_), evidence => $evidence } : $self->_pack_obj($_);
+
+              { action  => $a,
+                remark    => $remark }
+          } $object->$action;
+      } else {
+          @hist_entries = ({ action => $a, remark => undef });
+      }
+
+      push @data, @hist_entries;
     }
 
     return {
