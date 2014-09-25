@@ -115,7 +115,8 @@ sub _build__phenotypes {
     my %phenotypes;
 
     # This needs to be updated for the construct model
-    foreach my $type ('Drives_construct', 'Transgene_product', 'Allele', 'RNAi_result'){
+    # Shall do this when Drives_construct and Construct_product tags are populated
+    foreach my $type ('Drives_construct', 'Construct_product', 'Allele', 'RNAi_result'){
 
         my $type_name; #label that shows in the evidence column above each list of that object type
         if ($type =~ /Transgene/i) { $type_name = 'Transgene:'; }
@@ -1253,7 +1254,7 @@ sub drives_overexpression {
     my $object = $self->object;
 
     my %phenotypes;
-    foreach my $type ('Drives_Transgene', 'Transgene_product'){
+    foreach my $type ('Drives_construct', 'Construct_product'){
         foreach my $transgene ($object->$type){
 
             # Only include those transgenes where the Driven_by_gene
