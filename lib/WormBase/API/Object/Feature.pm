@@ -239,6 +239,15 @@ sub sequence {
     };
 }
 
+sub dna_text {
+    my ($self) = @_;
+
+    return {
+        description => 'DNA text of the sequence feature',
+        data => $self ~~ 'DNA_text',
+    };
+}
+
 sub associated_gene {
     my $self   = shift;
     my $object = $self->object;

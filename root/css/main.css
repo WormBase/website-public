@@ -2170,7 +2170,7 @@ div#google-map {
     font-size: 0.8em;
     overflow: hidden;
     clear: both;
-    margin: 5px;
+    /* margin: 5px; */
     width:55em;
 }
 
