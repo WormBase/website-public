@@ -1439,12 +1439,12 @@ sub sage_tags {
 # trasngenes driven by the gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/transgenes
 
-sub transgenes {
+sub constructs {
     my $self   = shift;
     my $object = $self->object;
 
     my @data;
-    foreach ($object->Drives_transgene) {
+    foreach ($object->Drives_construct) {
         my $summary = $_->Summary;
         my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
         push @data, { transgene  => $self->_pack_obj($_),
@@ -1463,12 +1463,12 @@ sub transgenes {
 # trasngenes that express this gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/transgene_products
 
-sub transgene_products {
+sub construct_products {
     my $self   = shift;
     my $object = $self->object;
 
     my @data;
-    foreach ($object->Transgene_product) {
+    foreach ($object->Construct_product) {
         my $summary = $_->Summary;
             my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
         push @data, { transgene  => $self->_pack_obj($_),
