@@ -1,0 +1,14 @@
+[%
+
+expression_patterns;
+
+WRAPPER $field_block title="Marker for" key="marker_for";
+    fields.marker_for.data;
+END;
+
+
+WRAPPER $field_block title="Marker Rearrangement" key="marker_rearrangement";
+    fields.marker_rearrangement.data;
+END;
+
+%]

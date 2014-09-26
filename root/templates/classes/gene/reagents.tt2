@@ -14,23 +14,31 @@
    # Transgenes
    t = pluralize("Drives Transgene", fields.transgenes.data.size);
    WRAPPER $field_block title="$t" key="transgenes";
-   build_data_table(order=['transgene','summary','laboratory'],
-		    columns={ transgene    => 'Transgene',
-			      summary      => 'Summary',
-			      laboratory   => 'Laboratory',
-			     },
+       build_data_table(
+            order=['construct','used_in_type','used_in','use_summary','use_lab'],
+            columns={
+                'construct'  => 'Construct',
+				'used_in_type' => 'Construct type',
+                'used_in' => 'Used in',
+                'use_summary' => 'Summary',
+                'use_lab'	=> 'Laboratory'
+			},
 		    key='transgenes');
    END;
 
    # Drive by transgene
    t = pluralize("Expressed in Transgene", fields.transgene_products.data.size);
    WRAPPER $field_block title="$t" key="transgene_products";
-   build_data_table(order=['transgene','summary','laboratory'],
-		     columns={ transgene    => 'Transgene',
-			      summary      => 'Summary',
-			      laboratory   => 'Laboratory',
-                            },
-		     key='transgene_products');
+       build_data_table(
+        	order=['construct','used_in_type','used_in','use_summary','use_lab'],
+        	columns={
+                'construct'  => 'Construct',
+				'used_in_type' => 'Construct type',
+                'used_in' => 'Used in',
+                'use_summary' => 'Summary',
+                'use_lab'	=> 'Laboratory'
+			},
+		    key='transgene_products');
     END;
 
 ### Jan 27, 2012: These fields were changed to use the tags2link macro and return the actual objects rather than linking to search results (which were sometimes invalid)
