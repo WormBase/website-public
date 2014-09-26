@@ -114,10 +114,12 @@ sub _build__phenotypes {
 
     my %phenotypes;
 
-    foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
+    # This needs to be updated for the construct model
+    # Shall do this when Drives_construct and Construct_product tags are populated
+    foreach my $type ('Drives_construct', 'Construct_product', 'Allele', 'RNAi_result'){
 
         my $type_name; #label that shows in the evidence column above each list of that object type
-        if ($type =~ /Transgene/) { $type_name = 'Transgene:'; }
+        if ($type =~ /Transgene/i) { $type_name = 'Transgene:'; }
         elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
         else { $type_name = $type . ':'; }
 
@@ -126,7 +128,7 @@ sub _build__phenotypes {
             # Don't include phenotypes that result from
             # the current gene driving overexpression of another gene.
             # These are displayed in the overexpression phenotypes table.
-            if ($type eq 'Drives_Transgene') {
+            if ($type eq 'Drives_construct') {
                 my $gene = $obj->Gene;
                 next unless ($gene && "$gene" eq "$object");
             }
@@ -1252,7 +1254,7 @@ sub drives_overexpression {
     my $object = $self->object;
 
     my %phenotypes;
-    foreach my $type ('Drives_Transgene', 'Transgene_product'){
+    foreach my $type ('Drives_construct', 'Construct_product'){
         foreach my $transgene ($object->$type){
 
             # Only include those transgenes where the Driven_by_gene
@@ -1443,13 +1445,18 @@ sub transgenes {
     my $object = $self->object;
 
     my @data;
-    foreach ($object->Drives_transgene) {
-        my $summary = $_->Summary;
-        my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
-        push @data, { transgene  => $self->_pack_obj($_),
-                laboratory => @labs ? \@labs : undef,
-                summary    => "$summary",
-        };
+    foreach ($object->Drives_construct) {
+        my $cnst_api_obj = $self->_api->fetch({ class => 'Construct', name => "$_"});
+        my $used_for = $cnst_api_obj->used_for->{'data'} if $cnst_api_obj;
+        my $cnst_packed = $self->_pack_obj($_);
+
+        my @entries = grep {
+            (my $t = $_->{'used_in_type'} ) =~ s/ /_/;
+            $t =~ /^Transgene_construct|Transgene_coinjection|Engineered_variation$/
+        } @$used_for if $used_for;
+        map { $_->{'construct'} = $cnst_packed } @entries;
+
+        push @data, @entries;
     }
 
     return {
@@ -1467,13 +1474,18 @@ sub transgene_products {
     my $object = $self->object;
 
     my @data;
-    foreach ($object->Transgene_product) {
-        my $summary = $_->Summary;
-            my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
-        push @data, { transgene  => $self->_pack_obj($_),
-                laboratory => @labs ? \@labs : undef,
-                summary    => "$summary",
-        };
+    foreach ($object->Construct_product) {
+        my $cnst_api_obj = $self->_api->fetch({ class => 'Construct', name => "$_"});
+        my $used_for = $cnst_api_obj->used_for->{'data'} if $cnst_api_obj;
+        my $cnst_packed = $self->_pack_obj($_);
+
+        my @entries = grep {
+            (my $t = $_->{'used_in_type'} ) =~ s/ /_/;
+            $t =~ /^Transgene_construct|Transgene_coinjection|Engineered_variation$/
+        } @$used_for if $used_for;
+        map { $_->{'construct'} = $cnst_packed } @entries;
+
+        push @data, @entries;
     }
 
     return {
