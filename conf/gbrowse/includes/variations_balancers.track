@@ -42,6 +42,6 @@ link          = sub {
 		     $name =~ s/Rearrangement//;
                      return "/db/get?name=$name;class=Rearrangement";
          }
-citation      = This track shows the approximate location of duplication rearrangements.
+citation      = This track shows the approximate location of balancers.
                 Mouse over the feature for additional details.
 
