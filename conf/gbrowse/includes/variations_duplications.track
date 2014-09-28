@@ -1,0 +1,46 @@
+[VARIATIONS_DUPLICATIONS]
+feature      = tandem_duplication:Allele
+category     = Alleles, Variations, RNAi
+key          = Large duplications
+label        = sub {
+	     my $f = shift;
+	     my %attributes = $f->attributes;
+	     my ($name) = $attributes{balancer} || $f->name;
+	     return $name;
+       }
+description  = sub {
+		my $f = shift;
+     	        my %attributes = $f->attributes;
+	        my ($type) = $attributes{balancer_type} || 'duplication';
+	        return $type;		
+ 	}
+glyph        = box
+bgcolor      = gray
+fgcolor      = black
+font2color   = blue
+height       = 8
+balloon hover = sub {
+	           my $f    = shift;
+        	   my %attributes = $f->attributes;
+	           my ($type)  = $attributes{balancer_type} || 'duplication';
+    	           my ($name)  = $attributes{balancer} || $f->name;
+		   $name =~ s/Rearrangement//;
+    	           my ($notes) = $attributes{Note};
+
+		   my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
+
+		   my @notes = ("<b>Duplication: $name</b>");
+		   push (@notes,"<b>type:</b> $type: ") if $type;
+		   push (@notes,"<b>location:</b> $ref:$start..$stop");
+		   push (@notes,"<b>notes:</b> $notes") if $notes;
+		   return join('<br />',@notes);
+	}
+link          = sub { 
+ 	             my $f = shift;
+ 		     my ($name) = $f->attributes('duplication') || $f->name;
+		     $name =~ s/Rearrangement//;
+                     return "/db/get?name=$name;class=Rearrangement";
+         }
+citation      = This track shows the approximate location of duplication rearrangements.
+                Mouse over the feature for additional details.
+
