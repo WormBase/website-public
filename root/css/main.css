@@ -813,7 +813,7 @@ a#fade:hover {
 }
 
 .result.evidence{
-  padding:0;
+  padding: 0 0 0.2em 0;
 }
 
 .result:hover {
@@ -2170,7 +2170,7 @@ div#google-map {
     font-size: 0.8em;
     overflow: hidden;
     clear: both;
-    margin: 5px;
+    /* margin: 5px; */
     width:55em;
 }
 
@@ -2550,7 +2550,7 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
   display:table-cell;
   float:none;
   position:static;
-  vertical-align:top;
+  vertical-align:middle;
   table-layout:fixed;
 }
 

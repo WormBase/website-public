@@ -5,6 +5,21 @@
 
 WRAPPER highlight_box;
 
+    WRAPPER $field_block title='Method' key='method';
+        fields.method.data;
+    END;
+
+    WRAPPER $field_block title='Sequence ontology terms' key='sequence_ontology_terms';
+        tags2link(fields.sequence_ontology_terms.data);
+    END;
+
+    WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
+        markup_locus(fields.other_names.data.join(', '), 1);
+    END;
+
+    WRAPPER $field_block title='Associated gene' key='associated_gene';
+        tags2link(fields.associated_gene.data);
+    END;
 
 END;
 
@@ -12,10 +27,23 @@ END;
    markup(fields.description.data);
 '</div>';
 
+
+WRAPPER $field_block title='Bound by product of' key ='binds_gene_product';
+     tags2link(fields.binds_gene_product.data);
+END;
+
+WRAPPER $field_block title='Transcription factor' key ='transcription_factor';
+         tag2link(fields.transcription_factor.data);
+END;
+
         sequence('flanking_sequences');
 
 WRAPPER $field_block title='Flanking sequence' key='flanking_sequences';
 	'<div style="white-space:nowrap;">' _ tag2link(fields.flanking_sequences.data.seq) _ '</div>';
+END;
+
+WRAPPER $field_block title='DNA text' key='dna_text';
+    '<div class="sequence-container">' _ fields.dna_text.data _ '</div>';
 END;
 
 
@@ -23,31 +51,8 @@ WRAPPER $field_block title='Annotation' key='annotation';
    fields.annotation.data;
 END;
 
-WRAPPER $field_block title='Sequence Ontology Terms' key='sequence_ontology_terms';
-   fields.sequence_ontology_terms.data.join("<br />");
-END;
-
-
-WRAPPER $field_block title='Method' key='method';
-    fields.method.data;
-END;
-
-
-WRAPPER $field_block title="Defined by" key="defined_by";
-
-    build_data_table (
-		order = [
-			'label',
-			'object',
-			],
-		columns = {
-			label => 'Defined via',
-			object => 'Object',
-			},
-		key = 'defined_by');
-END;
-
 WRAPPER $field_block title="" key="remarks";
-    remarks(no_toggle=1);
+   remarks();
 END;
+
 %]

@@ -531,7 +531,12 @@ sub api_tests {
         my $pkg = basename($test, '.t') . '::';
         &{$pkg->{'config'}}($api);
         for my $sub (keys %$pkg) {
-            subtest("$pkg::$sub", \&{$pkg->{$sub}}) if $sub =~ /^test_/;
+            subtest("$pkg::$sub",  sub {
+                       eval { &{$pkg->{$sub}}(); 1; } || do {
+                           my $err = $@;
+                           fail("$err");
+                       };
+                   }) if $sub =~ /^test_/;
         }
     }
 

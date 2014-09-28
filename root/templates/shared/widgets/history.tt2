@@ -13,8 +13,8 @@ IF object.name.data.class == 'protein';
         );
     END;
 
-ELSIF fields.history.data.size > 0;
-    '<h4>Curatorial history</h4><br />';
+ELSE;
+    WRAPPER $field_block title="Curatorial History" key="history";
 		build_data_table(
 			order=['version','date','action','remark','gene','curator'],
             columns={
@@ -27,10 +27,20 @@ ELSIF fields.history.data.size > 0;
             },
 			key='history'
 		);
+    END;
 
-	IF object.name.data.class == 'gene' && (fields.old_annot.data.size > 0);
+    WRAPPER $field_block title="Curatorial History" key="history_lite";
+		build_data_table(
+			order=['action','remark'],
+            columns={
+			    action  => 'Action',
+ 				remark  => 'Remark'
+            },
+			key='history_lite'
+		);
+    END;
 
-		'<br /><h4>Historical annotations:</h4><br />';
+	WRAPPER $field_block title="Curatorial Annotations" key="old_annot";
 		build_data_table(
 			order=['class','name'],
 			columns={
