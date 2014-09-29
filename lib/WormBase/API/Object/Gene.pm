@@ -1686,6 +1686,29 @@ sub other_sequences {
     };
 }
 
+#######################################
+#
+# The Features Widget
+#
+#######################################
+
+has 'features' => (
+    is  => 'ro',
+    lazy => 1,
+    builder => '_build_features',
+);
+
+sub _build_features {
+    my $self = shift;
+    my $gene = $self->object;
+    my @data;
+
+    return {
+        description => 'Features associated with gene',
+        data        => @data ? \@data : undef,
+    };
+}
+
 #########################################
 #
 #   INTERNAL METHODS
