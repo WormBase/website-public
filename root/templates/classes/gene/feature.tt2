@@ -1,13 +1,14 @@
 [%
-        build_data_table( order = ['gene', 'model', 'length_unspliced','type', 'cds', 'length_spliced','protein','length_protein'],
-                          columns = { gene => 'Gene',
-                                      model => 'Transcript',
-                                      type => 'Type',
-                                      length_spliced   => 'Coding<br />Sequence<br />Length (nt)',
-                                      length_unspliced => 'Transcript<br />Length (nt)',
-                                      cds => 'Coding<br />Sequence<br />(CDS)',
-                                      protein => 'Protein',
-                                      length_protein => 'Protein<br />Length (aa)'},
+    build_data_table(
+        order = ['name', 'description', 'method', 'association', 'bound_by', 'tf'],
+        columns = {
+            name => 'Feature',
+            description => 'Description',
+            method => 'Method',
+            association => 'Association',
+            bound_by => 'Bound by',
+            tf => 'Transcription factor'
+        },
                           passed_data = fields.features.data);
                    #       key = 'gene_models_constructed' );
 
