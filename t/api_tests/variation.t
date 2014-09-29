@@ -20,35 +20,35 @@
         $api = $_[0];
     }
 
-    # # Tests nucleotide change method
-    # sub test_nucleotide_change {
-    #     my $var = $api->fetch({ class => 'Variation', name => 'WBVar00068686' });
+    # Tests nucleotide change method
+    sub test_nucleotide_change {
+        my $var = $api->fetch({ class => 'Variation', name => 'WBVar00068686' });
 
-    #     can_ok('WormBase::API::Object::Variation', ('nucleotide_change'));
+        can_ok('WormBase::API::Object::Variation', ('nucleotide_change'));
 
-    #     my $ntc = $var->nucleotide_change();
+        my $ntc = $var->nucleotide_change();
 
-    #     isnt($ntc->{data}, undef, 'data returned');
-    #     is  ($ntc->{data}[0]->{wildtype_label}, 'reference', 'correct wildtype label');
-    #     is  ($ntc->{data}[0]->{wildtype}, 'A', 'correct wildtype');
-    #     is  ($ntc->{data}[0]->{mutant}, 'C', 'correct mutant');
-    #     is  ($ntc->{data}[0]->{mutant_label}, 'HK104', 'correct mutant label');
-    # }
+        isnt($ntc->{data}, undef, 'data returned');
+        is  ($ntc->{data}[0]->{wildtype_label}, 'reference', 'correct wildtype label');
+        is  ($ntc->{data}[0]->{wildtype}, 'A', 'correct wildtype');
+        is  ($ntc->{data}[0]->{mutant}, 'C', 'correct mutant');
+        is  ($ntc->{data}[0]->{mutant_label}, 'HK104', 'correct mutant label');
+    }
 
-    # # test nucleotide change - sparse data #2603
-    # sub test_sparse_nucleotide_change {
-    #     my $var = $api->fetch({ class => 'Variation', name => 'WBVar00274963' });
+    # test nucleotide change - sparse data #2603
+    sub test_sparse_nucleotide_change {
+        my $var = $api->fetch({ class => 'Variation', name => 'WBVar00274963' });
 
-    #     can_ok('WormBase::API::Object::Variation', ('nucleotide_change'));
+        can_ok('WormBase::API::Object::Variation', ('nucleotide_change'));
 
-    #     my $ntc = $var->nucleotide_change();
+        my $ntc = $var->nucleotide_change();
 
-    #     isnt($ntc->{data}, undef, 'data returned');
-    #     is  ($ntc->{data}[0]->{wildtype_label}, 'wild type', 'correct wildtype label');
-    #     is  ($ntc->{data}[0]->{wildtype}, '', 'correct wildtype');
-    #     is  ($ntc->{data}[0]->{mutant}, '', 'correct mutant');
-    #     is  ($ntc->{data}[0]->{mutant_label}, 'mutant', 'correct mutant label');
-    # }
+        isnt($ntc->{data}, undef, 'data returned');
+        is  ($ntc->{data}[0]->{wildtype_label}, 'wild type', 'correct wildtype label');
+        is  ($ntc->{data}[0]->{wildtype}, '', 'correct wildtype');
+        is  ($ntc->{data}[0]->{mutant}, '', 'correct mutant');
+        is  ($ntc->{data}[0]->{mutant_label}, 'mutant', 'correct mutant label');
+    }
 
     # test a Sequence field that contains over 1000000
     # related to issue #2788
