@@ -30,7 +30,7 @@ binding_site:PicTar		PicTar	binding_site	Binding sites (predicted) (binding_site
 	binding_site:cisRed	cisRed	binding_site	Binding sites (predicted) (binding_sites_predicted)	7929
 binding_site:binding_site		binding_site	binding_site	Binding sites (curated) (binding_sites_curated)	1577
 binding_site:binding_site_region		binding_site_region	binding_site	Binding regions (binding_regions)	307
-biological_region:Balanced_by_balancer		Balanced_by_balancer	biological_region	 (variations_balancers)	37
+biological_region:Balanced_by_balancer		Balanced_by_balancer	biological_region	Balancers (variations_balancers)	37
 deletion:KO_consortium		KO_consortium	deletion	High-throughput alleles (variations_high_throughput_alleles)	2411
 	deletion:CGH_allele	CGH_allele	deletion	High-throughput alleles (variations_high_throughput_alleles)	68
 	complex_substitution:KO_consortium	KO_consortium	complex_substitution	High-throughput alleles (variations_high_throughput_alleles)	1056
