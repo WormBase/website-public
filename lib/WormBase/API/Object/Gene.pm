@@ -1709,15 +1709,29 @@ sub _build_features {
 
         # create a list of associations
         my @associations;
-        foreach my $as ($feature->Associations){
+        foreach my $as_tag ($feature->Associations){
             push @associations, map {
-                (my $as_str = "$as") =~ s/_/ /g;
-                {
-                    text => $self->_pack_obj($_),
-                    evidence => { type => $as_str },
-                };
-            } $as->col();
+                my ($type) = "$as_tag" =~ /Associated_with_(\w+)/;
+                $type =~ s/_/ /g;
+                my $packed_as = $self->_pack_obj($_);
+                my $label = $packed_as->{label};
+                $packed_as->{label} = "$type: " . $label unless $label =~ /$type/i;
+                $packed_as;
+            } $as_tag->col();
+
+            # (my $type = "$as_tag") =~ s/_/ /g;
+            # my @as = map { $self->_pack_obj($_) } $as_tag->col();
+            # push @associations, {
+            #     text => \@as,
+            #     evidence => { type => $type },
+            # };
         }
+        sub priority {
+            # a greater priority value is considered high priority
+            my $as = shift;
+            return $as->{label} =~ /^(Interaction|expression pattern)/i;
+        }
+        @associations = sort { priority($b) cmp priority($a) } @associations;  #sort by descending priority
 
         my @bound_by = map { $self->_pack_obj($_) } $feature->Bound_by_product_of;
         my $tf => $feature->Transcription_factor;
