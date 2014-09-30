@@ -507,8 +507,13 @@ table ul {
     padding: 0 0 0 1em;
 }
 
-
-
+.dataTable td > *:before {
+  /*  display: flex; */
+  /*  clear: both; */
+    content: '';
+    display: block;
+    height: 0.3em;
+}
 
 
 

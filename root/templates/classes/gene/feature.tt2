@@ -9,7 +9,9 @@
             bound_by => 'Bound by',
             tf => 'Transcription factor'
         },
-                          passed_data = fields.features.data);
+        passed_data = fields.features.data,
+        separator = ';'
+    );
                    #       key = 'gene_models_constructed' );
 
 
