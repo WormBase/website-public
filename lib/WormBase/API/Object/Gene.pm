@@ -1698,7 +1698,6 @@ has 'features' => (
     builder => '_build_features',
 );
 
-use Data::Dumper;
 sub _build_features {
     my $self = shift;
     my $gene = $self->object;
@@ -1736,9 +1735,6 @@ sub _build_features {
         my @bound_by = map { $self->_pack_obj($_) } $feature->Bound_by_product_of;
         my $tf => $feature->Transcription_factor;
 
-
-print Dumper @associations;
-
         push @data, {
             name => $self->_pack_obj($feature),
             description => $method && "$description",
@@ -1748,13 +1744,6 @@ print Dumper @associations;
             tf => $tf && "$tf"
         };
     }
-
-#             Public Name [Public_name]; WormBase Id [WBsfID]; Description [Description (1)]; Method [Method]; Sequence [Mapping_target(2)]; Associations [Associated_with_(3)]; Bound By [Bound_by_product (4)]; Transcription Factor [Transcription_factor(5)]
-# (1) Should be collapsed by default if more than a few words long.
-# (2) Should have the View Sequences button, which will display Sequence with Flanking_sequences high-lighted in either orange or yellow nb. I am not sure whether there is a standard.
-# (3) There are 12 Associated_with_* tags. Akin to #3161, we wonder whether it is possible only to display Associated_with tags if populated. Some Features have large numbers of Associated_with tags. These should be collapsed. WBsf's with Associated_with_Interaction and/or Associated_with_expression_pattern should be displayed at the top of the table.
-# (4) Display Public_name of WBGene.
-# (5) Display Name of Transcription_factor
 
     return {
         description => 'Features associated with gene',
