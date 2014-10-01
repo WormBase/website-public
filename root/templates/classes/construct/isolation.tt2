@@ -1,16 +1,17 @@
 [%
 
-WRAPPER $field_block title="Constructed by" key="person";
-    fields.person.data;
+WRAPPER $field_block title="Construction summary" key="construction_summary";
+    fields.construction_summary.data;
+END;
+
+WRAPPER $field_block title="Clone" key="clone";
+    fields.clone.data;
 END;
 
 laboratory(title="Created in lab");
 
-
-WRAPPER $field_block title="Rescues" key="rescues";
-       FOREACH item IN fields.rescues.data;
-           tag2link(item) _ '<br />';
-       END;
+WRAPPER $field_block title="Constructed by" key="person";
+    fields.person.data;
 END;
 
 %]
