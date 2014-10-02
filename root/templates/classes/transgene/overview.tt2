@@ -40,15 +40,6 @@ WRAPPER $field_block title=pluralize("3'UTR", fields.utr.data.size) key="utr";
   tags2link(fields.utr.data);
 END;
 
-
-WRAPPER $field_block title=pluralize("Coinjection marker", fields.coinjection_marker.data.size) key="coinjection_marker";
-  tags2link(fields.coinjection_marker.data);
-END;
-
-WRAPPER $field_block title=pluralize("Coinjection marker (other)", fields.coinjection_marker_other.data.size) key="coinjection_marker_other";
-  tags2link(fields.coinjection_marker_other.data);
-END;
-
 WRAPPER $field_block title=pluralize("Integrated from", fields.integrated_from.data.size) key="integrated_from";
   tags2link(fields.integrated_from.data);
 END;
@@ -71,6 +62,10 @@ END;
 
 WRAPPER $field_block title=pluralize("Marked rearrangement", fields.marked_rearrangement.data.size) key='marked_rearrangement';
   tags2link(fields.marked_rearrangement.data);
+END;
+
+WRAPPER $field_block title="Recombination site" key="recombination_site";
+      fields.recombination_site.data;
 END;
 
 '</div>';
