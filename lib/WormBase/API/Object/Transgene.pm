@@ -291,6 +291,16 @@ sub construction_summary {
 }
 
 
+# corresponding_variation { }
+sub corresponding_variation {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $summary = $object->Corresponding_variation;
+    return { description => 'Corresponding variation of the transgene',
+         data        => $summary && "$summary"};
+}
+
 
 # strains { }
 # This method will return a data structure of all
@@ -309,6 +319,23 @@ sub strains {
     }
 }
 
+sub genetic_info_tags {
+    my $self   = shift;
+    my $object = $self->object;
+    my @genetic_tags = $object->Genetic_information;
+    my @data;
+
+    foreach my $tag (@genetic_tags) {
+      unless ($object->Genetic_information->$tag){
+          push @data, $tag;
+      }
+    }
+
+    return {
+        description => 'genetic information of the transgene',
+        data        => @data ? \@data : undef,
+    };
+}
 
 
 #######################################

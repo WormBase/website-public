@@ -1800,9 +1800,35 @@ sub _build_xrefs {
     };
 }
 
+has 'used_for' => (
+    is       => 'ro',
+    lazy     => 1,
+    builder  => '_build__used_for',
+);
 
+sub _build__used_for {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @data;
+    foreach my $type ($object->Used_for){
+        (my $type_name = "$type") =~ s/_/ /;
+        my @entries = map {
+            my @labs = eval {  map { $self->_pack_obj($_) } $_->Laboratory; };
+            {
+                used_in_type => $type_name,
+                used_in      => $self->_pack_obj($_),
+                use_summary  => eval { $_->Summary . ""} || undef,
+                use_lab      => \@labs,
+            };
+        } $object->$type;
+        push @data, @entries;
+    }
 
-
+    my $class_name = $object->class;
+    return {
+        description => "The $class_name is used for",
+        data        => @data ? \@data : undef };
+}
 
 
 

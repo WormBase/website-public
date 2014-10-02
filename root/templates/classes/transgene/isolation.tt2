@@ -1,12 +1,5 @@
 [%
 
-WRAPPER $field_block title="Author" key="author";
-    fields.author.data;
-END;
-
-laboratory(title="Created in lab");
-
-
 # Clone and Fragment: disabled 2011.03.18 at curator request;
 #WRAPPER $field_block title="Construction";
 #      WRAPPER $field_block title="Clone" key="clone";
@@ -33,10 +26,25 @@ laboratory(title="Created in lab");
 #       END;
 # END;
 
-WRAPPER $field_block title="Rescues" key="rescues";
-       FOREACH item IN fields.rescues.data;
-           tag2link(item) _ '<br />';
-       END;
+WRAPPER $field_block title="Construct" key="construct";
+  tags2link(fields.construct.data);
+END;
+
+
+WRAPPER $field_block title="Construction details" key="construction_summary";
+  fields.construction_summary.data;
+END;
+
+WRAPPER $field_block title=pluralize("Coinjection marker", fields.coinjection_marker.data.size) key="coinjection_marker";
+  tags2link(fields.coinjection_marker.data);
+END;
+
+WRAPPER $field_block title=pluralize("Coinjection marker", fields.coinjection_marker_other.data.size) _ " (other)" key="coinjection_marker_other";
+  tags2link(fields.coinjection_marker_other.data);
+END;
+
+WRAPPER $field_block title=pluralize("Integrated from", fields.integrated_from.data.size) key="integrated_from";
+  tags2link(fields.integrated_from.data);
 END;
 
 WRAPPER $field_block title="Integration method" key="integration_method";
@@ -48,5 +56,11 @@ WRAPPER $field_block title="Integrated at" key="integrated_at";
          item _ '<br />';
       END;
 END;
+
+WRAPPER $field_block title="Author" key="author";
+    fields.author.data;
+END;
+
+laboratory(title="Created in lab");
 
 %]
