@@ -61,11 +61,32 @@ WRAPPER $field_block title="Construction details" key="construction_summary";
   fields.construction_summary.data;
 END;
 
+WRAPPER $field_block title="Genetic information" key="genetic_info_tags";
+  fields.genetic_info_tags.data;
+END;
+
 WRAPPER $field_block title=pluralize("Strain", fields.strains.data.size) key='strains';
   tags2link(fields.strains.data, '<br />', 'Strains');
 END;
 
+WRAPPER $field_block title=pluralize("Marked rearrangement", fields.marked_rearrangement.data.size) key='marked_rearrangement';
+  tags2link(fields.marked_rearrangement.data);
+END;
+
+'</div>';
+
+WRAPPER $field_block title="Used for" key="used_for";
+    build_data_table(
+			order=['used_in_type','used_in','use_summary'],
+			columns={
+				'used_in_type' => 'Type',
+                'used_in' => 'Used in',
+                'use_summary' => 'Summary',
+			},
+			key = 'used_for'
+	);
+END;
 
 remarks;
-'</div>';
+
 %]
