@@ -779,11 +779,11 @@ END;
 
 
 
-[% MACRO expression_patterns BLOCK ;
+[% MACRO expression_patterns(column_order) BLOCK ;
 
    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
 
-       build_data_table(order=['expression_pattern','gene', 'description','author'],
+       build_data_table(order=column_oder || ['expression_pattern','gene', 'description','author'],
                       columns={
                           expression_pattern => 'Pattern',
                           gene => 'Gene',
