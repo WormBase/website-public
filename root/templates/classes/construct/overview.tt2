@@ -52,12 +52,11 @@ END;
 
 WRAPPER $field_block title="Used for" key="used_for";
     build_data_table(
-			order=['used_in_type','used_in','use_summary','use_lab'],
+			order=['used_in_type','used_in','use_summary'],
 			columns={
 				'used_in_type' => 'Type',
                 'used_in' => 'Used in',
                 'use_summary' => 'Summary',
-                'use_lab'	=> 'Laboratory'
 			},
 			key = 'used_for'
 	);
