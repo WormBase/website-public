@@ -402,21 +402,15 @@ sub _transgene {
     my $tag    = shift;
     my $object = $self->object;
     my @data_pack;
-    my @tag_objects = $object->$tag;
+    my @transgenes = $object->$tag;
+    my $pheno_tag_name = $tag =~ /not/i ? 'Phenotype_not_observed' : 'Phenotype';
 
-    foreach my $tag_object (@tag_objects) {
+    foreach my $tag_object (@transgenes) {
         my $tag_info = $self->_pack_obj($tag_object);
-        # use Data::Dumper;
-        # my $oe_gene          = $tag_object->Gene ? $self->_pack_obj($tag_object->Gene) : '';
-        # my $reporter_product = $tag_object->Reporter_product ? $self->_pack_obj($tag_object->Reporter_product) : '';
-
-        # my @oe_genes;
-        # push @oe_genes,$oe_gene          if $oe_gene;
-        # push @oe_genes,$reporter_product if $reporter_product;
 
         # Deal with the Phenotype_info hash for the CURRENT phenotype only.
         # Wow, this is really circular.
-        my @phenotypes = $tag_object->Phenotype;
+        my @phenotypes = $tag_object->$pheno_tag_name;
         my %tags_with_evidence;
         my @caused_by;
         foreach my $phenotype (@phenotypes) {
@@ -444,9 +438,7 @@ sub _transgene {
         push @caused_by,$tags_with_evidence{Caused_by_other};
         push @data_pack, {
             transgene => $tag_info,
-            # overexpressed_genes => \@oe_genes,
             remark             => $tags_with_evidence{Remark},
-            # caused_by          => $tags_with_evidence{Caused_by},
             caused_by          => \@caused_by,
         };
     }
