@@ -4,16 +4,15 @@
 
 WRAPPER highlight_box;
 
-   WRAPPER $field_block title="Type of construct" key="Type of construct";
-        join(',',fields.type_of_construct.data);
-   END;
-
 END;
 
 '<div class="description">';
 fields.summary.data;
 '<br /><br />';
 
+WRAPPER $field_block title="Type of construct" key="Type of construct";
+        join(',',fields.type_of_construct.data);
+END;
 
 WRAPPER $field_block title=pluralize('Promoter', fields.driven_by_gene.data.size) key="driven_by_gene";
  	    tags2link(fields.driven_by_gene.data, ', ');
@@ -28,7 +27,7 @@ WRAPPER $field_block title="Fusion Reporter" key="fusion_reporter";
 END;
 
 WRAPPER $field_block title="Other Reporters" key="other_reporter";
-  join(',',fields.fusion_reporter.data);
+  cell_content(fields.fusion_reporter.data, ', ');
 END;
 
 WRAPPER $field_block title=pluralize("3' UTR", fields.utr.data.size) key="utr";
@@ -36,16 +35,7 @@ WRAPPER $field_block title=pluralize("3' UTR", fields.utr.data.size) key="utr";
 END;
 
 WRAPPER $field_block title=pluralize("Selection marker", fields.selection_marker.data.size) key="selection_marker";
-  join('-',fields.selection_marker.data);
-END;
-
-WRAPPER $field_block title="Construction details" key="construction_summary";
-  fields.construction_summary.data;
-END;
-
-
-WRAPPER $field_block title="Historical gene" key="historical_gene";
-  cell_content(fields.historical_gene.data);
+  cell_content(fields.selection_marker.data, ', ');
 END;
 
 '</div>';
@@ -63,5 +53,5 @@ WRAPPER $field_block title="Used for" key="used_for";
 END;
 
 remarks;
-'</div>';
+
 %]
