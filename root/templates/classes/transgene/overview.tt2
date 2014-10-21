@@ -25,19 +25,23 @@ WRAPPER $field_block title=pluralize('Promoter', fields.driven_by_gene.data.size
 END;
 
 WRAPPER $field_block title=pluralize('Gene product', fields.gene_product.data.size) key="gene_product";
-  tags2link(fields.gene_product.data);
+  tags2link(fields.gene_product.data, ', ');
 END;
 
 WRAPPER $field_block title="Fusion Reporter" key="fusion_reporter";
-  fields.fusion_reporter.data;
+  tags2link(fields.fusion_reporter.data, ', ');
 END;
 
 WRAPPER $field_block title="Other Reporters" key="other_reporter";
-  join(',',fields.fusion_reporter.data);
+  cell_content(fields.other_reporter.data, ', ');
 END;
 
 WRAPPER $field_block title=pluralize("3'UTR", fields.utr.data.size) key="utr";
   tags2link(fields.utr.data);
+END;
+
+WRAPPER $field_block title=pluralize("Purification tag", fields.purification_tag.data.size) key="purification_tag";
+  tags2link(fields.purification_tag.data);
 END;
 
 WRAPPER $field_block title=pluralize("Integrated from", fields.integrated_from.data.size) key="integrated_from";
@@ -64,8 +68,8 @@ WRAPPER $field_block title=pluralize("Marked rearrangement", fields.marked_rearr
   tags2link(fields.marked_rearrangement.data);
 END;
 
-WRAPPER $field_block title="Recombination site" key="recombination_site";
-      fields.recombination_site.data;
+WRAPPER $field_block title=pluralize("Recombination site", fields.recombination_site.data.size) key="recombination_site";
+   cell_content(fields.recombination_site.data, ', ');
 END;
 
 '</div>';

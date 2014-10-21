@@ -1275,24 +1275,19 @@ sub drives_overexpression {
 
                     $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
                     my $evidence = $self->_get_evidence($phene);
-                    $evidence->{Summary}   = "$summary" if $summary;
+                    # $evidence->{Summary}   = "$summary" if $summary;
                     $evidence->{Transgene} = $self->_pack_obj($transgene);
 
-
-                    # my ($key,$caused_by);
-                    # if ($transgene->Gene) {
-                    #     $caused_by = join(", ",map { $_->Public_name } $transgene->Gene);
-                    #     $key       = "Overexpressed gene: " . $caused_by;
-                    # } elsif ($transgene->Reporter_product) {
-                    #     $caused_by = join(", ",$transgene->Reporter_product);
-                    #     $key       = "Reporter product: " . $caused_by;
-                    # }
-
-                    # push @{$phenotypes{$obs}{$phene}{evidence}{$key}}, { text     => $self->_pack_obj($transgene,$transgene->Public_name ),
-                    #                                                      evidence => $evidence } if $evidence && %$evidence;
-
-                    push @{$phenotypes{$obs}{$phene}{evidence}}, { text     => $self->_pack_obj($transgene,$transgene->Public_name ),
-                                                                          evidence => $evidence } if $evidence && %$evidence;
+                    if ($evidence && %$evidence){
+                        my $transgene_label = $transgene->Public_name;
+                        my $ev = {
+                            text  => [$self->_pack_obj($transgene, $transgene_label),
+                                      "<em>$summary</em><br/> ",
+                                      $evidence->{Remark}],
+                            evidence => $evidence
+                        };
+                        push @{$phenotypes{$obs}{$phene}{evidence}}, $ev;
+                    }
 
                 }
             }

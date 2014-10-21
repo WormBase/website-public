@@ -574,7 +574,8 @@ END; %]
       ELSE;
         FOREACH item IN cell;
           cell_content(item);
-          IF !item.defined('evidence') && !loop.last;
+          IF !(ref(item) && item.defined('evidence')) && !loop.last;
+              # scalar.defined always return true, so check item is ref
               separator || '<br />';
           END;
         END;
