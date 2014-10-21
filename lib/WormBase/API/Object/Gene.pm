@@ -1282,7 +1282,7 @@ sub drives_overexpression {
                         my $transgene_label = $transgene->Public_name;
                         my $ev = {
                             text  => [$self->_pack_obj($transgene, $transgene_label),
-                                      "<em>$summary</em><br/> ",
+                                      "<em>$summary</em>",
                                       $evidence->{Remark}],
                             evidence => $evidence
                         };
