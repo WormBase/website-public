@@ -27,7 +27,7 @@
 # END;
 
 WRAPPER $field_block title="Construct" key="construct";
-  tags2link(fields.construct.data);
+    cell_content(fields.construct.data);
 END;
 
 

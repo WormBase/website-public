@@ -166,9 +166,12 @@ sub synonym {
 sub construct {
     my $self = shift;
     my $object = $self->object;
-    my $construct = $object->Construct;
+    my @constructs = map {
+        my $cnst_summary = $_->Summary;
+        ($self->_pack_obj($_), "$cnst_summary");
+    } $object->Construct;
     return { description => 'gene that drives the transgene',
-	     data        => $construct ? $self->_pack_obj($construct) : undef,
+	     data        => @constructs ? \@constructs : undef,
     };
 }
 
