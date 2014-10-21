@@ -179,9 +179,8 @@ sub construct {
 sub driven_by_gene {
     my $self = shift;
     my $object = $self->object;
-    my $construct = $object->Construct;
-
-    my @genes = map { $self->_pack_obj($_) } $construct->Driven_by_gene ;
+    my @genes = map { $_->Driven_by_gene } $object->Construct;
+    @genes = map { $self->_pack_obj($_) } @genes;
     return { description => 'gene that drives the transgene',
 	     data        => @genes ? \@genes : undef,
     };
@@ -194,8 +193,8 @@ sub driven_by_gene {
 sub gene_product {
     my $self = shift;
     my $object = $self->object;
-    my $construct = $object->Construct;
-    my @genes = map { $self->_pack_obj($_); } $construct->Gene;
+    my @genes = map { $_->Gene } $object->Construct;
+    @genes = map { $self->_pack_obj($_); } @genes;
     return { description => 'gene products for this transgene',
              data        => @genes ? \@genes : undef };
 }
@@ -204,10 +203,10 @@ sub gene_product {
 sub utr {
     my $self = shift;
     my $object = $self->object;
-    my $construct = $object->Construct;
-    my @utr = map { $self->_pack_obj($_); } $construct->get('3_UTR'); #$object->get('3_UTR')->fetch();
+    my @utrs = map { $_->get('3_UTR') } $object->Construct;
+    @utrs = map { $self->_pack_obj($_); } @utrs;
     return { description => '3\' UTR for this transgene',
-             data        => @utr ? \@utr : undef };
+             data        => @utrs ? \@utrs : undef };
 }
 
 
@@ -215,30 +214,30 @@ sub utr {
 sub fusion_reporter {
     my $self   = shift;
     my $object = $self->object;
-    my $construct = $object->Construct;
-    my $reporter = $construct->Fusion_reporter;
+    my @reporters = map { $_->Fusion_reporter } $object->Construct;
+    @reporters = map { $self->_pack_obj($_); } @reporters;
     return { description => 'reporter construct for this construct',
-	     data        => $reporter ? $reporter : undef };
+	     data        => @reporters ? \@reporters : undef };
 }
 
 # other_reporter {}
 sub other_reporter {
     my $self   = shift;
     my $object = $self->object;
-    my $construct  = $object->Construct;
-    my $reporter = $construct->Other_reporter;
+    my @reporters = map { $_->Other_reporter } $object->Construct;
+    @reporters = map { "$_"; } @reporters;
     return { description => 'other reporters of this construct',
-	     data        => $reporter ? $reporter : undef };
+	     data        => @reporters ? \@reporters : undef };
 }
 
 # fusion_reporter {}
 sub purification_tag {
     my $self   = shift;
     my $object = $self->object;
-    my $construct = $object->Construct;
-    my $o = $construct->Purification_tag;
+    my @ptags = map { $_->Purification_tag } $object->Construct;
+    @ptags = map { "$_" } @ptags;
     return { description => 'the purification tag for the construct',
-	     data        => $o ? $o : undef };
+	     data        => @ptags ? \@ptags : undef };
 }
 
 # coinjection_marker { }
@@ -435,11 +434,10 @@ sub integration_method {
 sub recombination_site {
     my $self   = shift;
     my $object   = $self->object;
-    my $construct = $object->Construct;
-    my $position = $construct->Recombination_site;
-
+    my @positions = map { $_->Recombination_site } $object->Construct;
+    @positions = map { "$_" } @positions;
     return { description => 'map position of the integrated transgene',
-	     data        => $position ? "$position" : undef};
+	     data        => @positions ? \@positions : undef};
 }
 
 # rescues { }
