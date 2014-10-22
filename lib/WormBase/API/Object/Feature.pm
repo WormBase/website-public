@@ -94,9 +94,8 @@ sub flanking_sequences {
 
     # Some features have sequences associated with them that denote splice sites
     # or other removed genomic content. In those cases, there is no sequence as
-    # such.
-#    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
-    if (eval { $object->Sequence->asDNA }) {
+    # such. And the coordinates mark bases before and after the site, a bit misleading.
+    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_site' || $method eq 'history_feature') {
         my $fasta = $object->Sequence->asDNA;
         my @fasta_sequences = (split "\n", $fasta);
         shift @fasta_sequences;
