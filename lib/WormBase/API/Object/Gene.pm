@@ -1282,7 +1282,7 @@ sub drives_overexpression {
                         my $transgene_label = $transgene->Public_name;
                         my $ev = {
                             text  => [$self->_pack_obj($transgene, $transgene_label),
-                                      "<em>$summary</em><br/> ",
+                                      "<em>$summary</em>",
                                       $evidence->{Remark}],
                             evidence => $evidence
                         };
@@ -1613,7 +1613,14 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-        my $gff   = $self->_fetch_gff_gene($sequence) or next;
+
+        my $gff   = $self->_fetch_gff_gene($sequence);
+        unless ($gff) {
+            # a hack to handle AceDB sequence name, which differs from gff seq name by a species ID prefix
+            my ($seq_name_alt) = "$sequence" =~ m/\d?+:(.+)/g;
+            $gff = $self->_fetch_gff_gene($seq_name_alt) if $seq_name_alt;
+        }
+        next unless $gff;
 
         my $cds
             = ( $sequence->class eq 'CDS' )
@@ -1664,8 +1671,8 @@ sub gene_models {
         } @sequences;
 
 
-        $data{type} = $type && "$type";
         $data{model}   = \@sequences;
+        $data{type} = $type && "$type" if @sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
 
         $data{cds} = $status ? {    text => ($cds ? (@remarks ? $self->_pack_obj($cds, "$cds", footnotes => \@remarks) : $self->_pack_obj($cds)) : '(no CDS)'),
