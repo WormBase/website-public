@@ -40,7 +40,7 @@ WRAPPER $field_block title=pluralize("Coinjection marker", fields.coinjection_ma
 END;
 
 WRAPPER $field_block title=pluralize("Coinjection marker", fields.coinjection_marker_other.data.size) _ " (other)" key="coinjection_marker_other";
-  tags2link(fields.coinjection_marker_other.data);
+  cell_content(fields.coinjection_marker_other.data);
 END;
 
 WRAPPER $field_block title=pluralize("Integrated from", fields.integrated_from.data.size) key="integrated_from";
