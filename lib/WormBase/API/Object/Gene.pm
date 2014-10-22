@@ -1671,8 +1671,8 @@ sub gene_models {
         } @sequences;
 
 
-        $data{type} = $type && "$type";
         $data{model}   = \@sequences;
+        $data{type} = $type && "$type" if @sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
 
         $data{cds} = $status ? {    text => ($cds ? (@remarks ? $self->_pack_obj($cds, "$cds", footnotes => \@remarks) : $self->_pack_obj($cds)) : '(no CDS)'),
