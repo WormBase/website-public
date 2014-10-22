@@ -270,9 +270,14 @@ sub experimental_details {
         $data{types} = [map ["$_", $_->right . ''], @types];
     }
 
-    foreach (qw(Antibody_info Transgene Strain Author)) {
+    foreach (qw(Antibody_info Transgene Construct Strain Author)) {
         my $val = $self ~~ "\@$_";
-        $data{lc($_)} = $self->_pack_objects($val) if @$val;
+        my @vals_packed = map {
+            my $v = $self->_pack_obj($_);
+            my $summary = eval { $_->Summary };
+            $summary ? ($v, "$summary") : ($v);
+        } @$val;
+        $data{lc($_)} = @vals_packed ? \@vals_packed : undef;
     }
 
     if (my $date = $self ~~ 'Date') {
@@ -350,4 +355,3 @@ sub movies {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
