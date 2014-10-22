@@ -244,7 +244,10 @@ sub purification_tag {
 sub coinjection_marker {
     my $self = shift;
     my $object = $self->object;
-    my @marker = map { $self->_pack_obj($_); } $object->Coinjection;
+    my @marker = map {
+        my $cnst_summary = $_->Summary;
+        ($self->_pack_obj($_), "$cnst_summary");
+    } $object->Coinjection;
     return { description => 'Coinjection marker for this transgene',
              data        => @marker ? \@marker : undef };
 }
