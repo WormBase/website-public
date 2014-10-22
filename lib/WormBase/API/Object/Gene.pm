@@ -1613,7 +1613,14 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-        my $gff   = $self->_fetch_gff_gene($sequence) or next;
+
+        my $gff   = $self->_fetch_gff_gene($sequence);
+        unless ($gff) {
+            # a hack to handle AceDB sequence name, which differs from gff seq name by a species ID prefix
+            my ($seq_name_alt) = "$sequence" =~ m/\d?+:(.+)/g;
+            $gff = $self->_fetch_gff_gene($seq_name_alt) if $seq_name_alt;
+        }
+        next unless $gff;
 
         my $cds
             = ( $sequence->class eq 'CDS' )
