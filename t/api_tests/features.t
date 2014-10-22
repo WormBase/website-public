@@ -82,6 +82,30 @@
         is($tf->{'data'}->{'label'}, 'WBTranscriptionFactor000135', 'Correct transcription factor is returned');
     }
 
+    sub test_feature_sequence {
+        can_ok('WormBase::API::Object::Feature', ('flanking_sequences'));
+
+        my $polyA_site = $api->fetch({ class => 'Feature', name => 'WBsf629640' });
+        my $seqs_polyA_site = $polyA_site->flanking_sequences();
+        isnt($seqs_polyA_site->{'data'}, undef, 'Data is returned');
+        is($seqs_polyA_site->{'data'}->{'feature_seq'}, '', 'Correct 0 length feature sequence for polyA_site');
+
+        my $polyA_signal = $api->fetch({ class => 'Feature', name => 'WBsf014010' });
+        my $seqs_polyA_signal = $polyA_signal->flanking_sequences();
+        isnt($seqs_polyA_signal->{'data'}, undef, 'Data is returned');
+        is($seqs_polyA_signal->{'data'}->{'feature_seq'}, 'AATAAA', 'Correct feature sequence for polyA_signal_sequence feature');
+
+        my $history_feature = $api->fetch({ class => 'Feature', name => 'WBsf016253' });
+        my $err;
+        my $seqs_history_feature = eval {
+            $history_feature->flanking_sequences();
+        } || do { $err = $@; };
+        is($err, undef, 'No error for accessing history_feature');
+        is($seqs_history_feature->{'data'}, undef, 'As expected, no sequence retrieved for history_feature');
+
+    }
+
+
 }
 
 1;
