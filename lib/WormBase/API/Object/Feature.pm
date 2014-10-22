@@ -95,7 +95,8 @@ sub flanking_sequences {
     # Some features have sequences associated with them that denote splice sites
     # or other removed genomic content. In those cases, there is no sequence as
     # such.
-    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
+#    unless ($method eq 'SL1' || $method eq 'SL2' || $method eq 'polyA_signal_sequence') {
+    if (eval { $object->Sequence->asDNA }) {
         my $fasta = $object->Sequence->asDNA;
         my @fasta_sequences = (split "\n", $fasta);
         shift @fasta_sequences;
@@ -217,7 +218,11 @@ sub sequence_ontology_terms {
     my $self   = shift;
     my $object = $self->object;
 
-    my @terms = map {"$_"} $object->SO_term;
+    my @terms = map {{
+        id       => "$_",
+        label    => "$_",
+        class    => 'so_term'
+    }} $object->SO_term;
     return { description => 'sequence ontology terms describing the feature',
 	     data        => @terms ? \@terms : undef, };
 }
@@ -232,6 +237,24 @@ sub sequence {
         description => 'TODO',
         data => $self->_pack_obj($self ~~ 'Sequence'),
     };
+}
+
+sub dna_text {
+    my ($self) = @_;
+
+    return {
+        description => 'DNA text of the sequence feature',
+        data => $self ~~ 'DNA_text',
+    };
+}
+
+sub associated_gene {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data = map { $self->_pack_obj($_) } $object->Associated_with_gene;
+
+    return { description => 'Associated gene of the sequence feature',
+	     data        => @data ? \@data : undef, };
 }
 
 #######################################
@@ -322,8 +345,43 @@ sub _build__segments {
     return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object)];
 }
 
+#######################################
+#
+# The History widget
+#
+#######################################
+
+sub history_lite {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+    my @actions = $object->History;
+
+    foreach my $action (@actions) {
+      (my $a = $action) =~ s/_/ /;
+      my @hist_entries;
+      if ($object->$action){
+          @hist_entries = map {
+              my $evidence = $self->_get_evidence($_);
+              my $remark = $evidence ?
+                  { text => $self->_pack_obj($_), evidence => $evidence } : $self->_pack_obj($_);
+
+              { action  => $a,
+                remark    => $remark }
+          } $object->$action;
+      } else {
+          @hist_entries = ({ action => $a, remark => undef });
+      }
+
+      push @data, @hist_entries;
+    }
+
+    return {
+        description => 'the curatorial history of the gene',
+        data        => @data ? \@data : undef,
+    };
+}
 
 __PACKAGE__->meta->make_immutable;
 
 1;
-

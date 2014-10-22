@@ -4,14 +4,12 @@
        build_data_table (
 		order = [
 			'transgene',
-			'overexpressed_genes',
 			'caused_by',
 			'remark',
 			],
 		columns = {
 			transgene => 'Transgene',
-			overexpressed_genes => 'Overexpressed genes',
-			caused_by           => 'Caused by',
+			caused_by           => 'Overexpressed genes',
 			remark              => 'Remark',
 			},
 		key = 'transgene');
@@ -21,14 +19,12 @@
 	build_data_table (
 		order = [
 			'transgene',
-			'overexpressed_genes',
 			'caused_by',
 			'remark',
 			],
 		columns = {
 			transgene => 'Transgene',
-			overexpressed_genes => 'Overexpressed genes',
-			caused_by           => 'Caused by',
+			caused_by           => 'Overexpressed genes',
 			remark              => 'Remark',
 			},
 		key = 'transgene_not');

@@ -22,7 +22,7 @@
     MACRO tag2link(data,text,title) BLOCK;
       IF data.defined;
         UNLESS text; text = data.label; END;
-        IF data.class.defined;
+        IF data.class.defined && data.class != 'text';
           ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy);
           IF data.style;
             '<span style="'_ data.style _ "\">$ln</span>";
@@ -149,7 +149,7 @@
     # return true for a downloadable object
     MACRO downloadable(class) BLOCK;
       cls = (class || object.name.data.class) | lower;
-      cls.match('sequence|protein|transcript|cds|clone');
+      cls.match('^(sequence|protein|transcript|cds|clone)$');
     END;
 
     # generate the gbrowse url. Figure out which bioproject (cannonical) to use if none supplied
@@ -305,12 +305,12 @@
               IF (link == 'ensembl');
                 UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
                 array=id.split('&');
-                ext_url = String(array.first array.last) FILTER url;
+                ext_url = String(array.first array.last);
               ELSE;
-                ext_url = String(id) FILTER url;
+                ext_url = String(id);
               END;
           END;
-          ext_url = ext_url || site.external_urls.$link.base FILTER url;
+          ext_url = (ext_url || site.external_urls.$link.base) FILTER url;
         END;
         ext_url || link;
     END;

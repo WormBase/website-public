@@ -1,0 +1,14 @@
+[%
+
+expression_patterns(['expression_pattern','gene', 'description','reference']);
+
+WRAPPER $field_block title="Marker for" key="marker_for";
+    fields.marker_for.data;
+END;
+
+
+WRAPPER $field_block title="Marker Rearrangement" key="marked_rearrangement";
+    fields.marked_rearrangement.data;
+END;
+
+%]

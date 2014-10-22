@@ -32,6 +32,7 @@
         # Please keep test names/descriptions all lower case.
         isnt($refers_to->{'data'}, undef, 'data returned');
         isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');
+        is($refers_to->{'data'}->{'Gene'}->[0]->{'label'}, 'air-1', 'a correct gene returned');
 
         # test for count accuracy
         $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00041190' });
@@ -40,6 +41,23 @@
         # Please keep test names/descriptions all lower case.
         isnt($refers_to->{'data'}, undef, 'data returned');
           is($refers_to->{'data'}->{'Expr_pattern'}, '19052', 'correct amount of expression patterns found');
+
+    }
+
+    sub test__refers_to_evidence {
+        my $paper = $api->fetch({ class => 'Paper', name => 'WBPaper00041128' });
+
+        can_ok('WormBase::API::Object::Paper', ('refers_to'));
+
+        my $refers_to = $paper->refers_to();
+
+        isnt($refers_to->{'data'}, undef, 'data returned');
+        isnt($refers_to->{'data'}->{'Gene'}, undef, 'genes refered to found');
+
+        my @ref_genes = @{$refers_to->{'data'}->{'Gene'}};
+        my ($g) = grep { eval { $_->{'text'}->{'label'} eq 'nduo-2' } } @ref_genes;
+        isnt($g, undef, 'gene with different Published_as name returned');
+        is($g->{'evidence'}->{'Published_as'}->[0]->{'id'}, 'ND2', 'correct published_as name returned');
 
     }
 
@@ -96,4 +114,3 @@
 }
 
 1;
-

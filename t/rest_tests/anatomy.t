@@ -49,7 +49,25 @@
         is($response_run  =~ /child_nucleus_of/, 1, "contains child_nucleus_of");
     }
 
+    # Check WormAtlas url
+    sub test_anatomy_wormatlas {
+        my $host = $configuration->{'host'};
+        my $port = $configuration->{'port'};
+        my $anatomy_id    = 'WBbt:0008218';
+        my $url_base      = "http://$host:$port";
+
+        my $url_rest      = $url_base . "/rest/widget/anatomy_term/$anatomy_id/overview";
+        my $response_rest = get($url_rest);
+        ok($response_rest =~ /$anatomy_id/, "contains $anatomy_id");
+
+        my $wa_link      = "http://wormatlas.org/hermaphrodite/somatic%20gonad/Somframeset.html";
+        my $wa_escaped   = $wa_link; $wa_escaped =~ s/\//\\\//g; $wa_escaped =~ s/\?/\\\?/g;	# escape characters for regex
+        ok($response_rest =~ /$wa_escaped/, "contains single escaped WormAtlas link $anatomy_id");
+
+        my $wa_response  = get($wa_link); #get returns undef if failed
+        isnt($wa_response, undef, "WormAtlas url is working");
+    }
+
 }
 
 1;
-

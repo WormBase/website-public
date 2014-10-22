@@ -8,12 +8,12 @@ glyph         = sub {
 		return 'box';
 	}	
 height        = 4
-fgcolor       = black
+fgcolor = sub { my f = shift; 
+       my ($amp) = $f->attributes('amplified'); 
+       return 'cyan' if $amp; 
+       return 'red'; 
+    }
 connect       = 1
-#connect_color = \&ostp_color
-#font2color    = \&ostp_color
-#fgcolor       = \&ostp_color
-#description   = \&ostp_amplifies
 citation      = This track contains Orfeome Project primer pairs and RACE tags.  These primers were used to amplify
 	C. elegans cDNAs.  A positive amplification, shown in green, is evidence that the region
 	between the two primers is transcribed.  Failure to amplify, shown in red, suggests

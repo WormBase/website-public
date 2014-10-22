@@ -574,7 +574,8 @@ END; %]
       ELSE;
         FOREACH item IN cell;
           cell_content(item);
-          IF !item.defined('evidence') && !loop.last;
+          IF !(ref(item) && item.defined('evidence')) && !loop.last;
+              # scalar.defined always return true, so check item is ref
               separator || '<br />';
           END;
         END;
@@ -779,11 +780,11 @@ END;
 
 
 
-[% MACRO expression_patterns BLOCK ;
+[% MACRO expression_patterns(column_order) BLOCK ;
 
    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
 
-       build_data_table(order=['expression_pattern','gene', 'description','author'],
+       build_data_table(order=column_oder || ['expression_pattern','gene', 'description','author'],
                       columns={
                           expression_pattern => 'Pattern',
                           gene => 'Gene',

@@ -77,6 +77,13 @@ has 'expression_patterns' => (
     builder  => '_build_expression_patterns',
 );
 
+has 'expr_pattern_tag_name' => (
+    is         => 'ro',
+    builder    =>'_build_expr_pattern_tag_name'
+);
+
+sub _build_expr_pattern_tag_name { return 'Expr_pattern'; };
+
 # TODO: use hash instead; make expression_patterns macro compatibile with hash
 sub _build_expression_patterns {
     my ($self) = @_;
@@ -85,8 +92,9 @@ sub _build_expression_patterns {
     my @data;
     my $obj_label = $self->_common_name;
     my ($certainty, $c_ev);
+    my $expr_pattern_tag = $self->expr_pattern_tag_name;
 
-    foreach ($object->Expr_pattern) {
+    foreach ($object->$expr_pattern_tag) {
         my $author = $_->Author;
         my @patterns = $_->Pattern
             || $_->Subcellular_localization

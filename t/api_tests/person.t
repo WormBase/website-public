@@ -53,12 +53,16 @@
         my $laboratory = $person->laboratory();
 
         isnt($laboratory->{'data'}, undef, 'data returned');
-          is(scalar @{$laboratory->{'data'}[0]->{'representative'}}, 2, 'correct amt of lab affliation');
-          is($laboratory->{'data'}[0]->{'representative'}[1]->{id}, "WBPerson3249", 'correct person returned, lab affiliation');
+        is($laboratory->{'data'}->[0]->{'laboratory'}->{'id'}, 'JAB', 'correct lab affliation returned');
+        my $lab_reps = $laboratory->{'data'}[0]->{'representative'};
+        isnt($lab_reps, undef, 'representatives returned');
+        my @rep1 = grep { $_->{'id'} eq 'WBPerson3249'} @$lab_reps;
+        ok(@rep1, 'a correct lab representative returned');
+        my @rep2 = grep { $_->{'id'} eq 'WBPerson9833'} @$lab_reps;
+        ok(@rep2, 'another correct lab representative returned - making sure Not just fetch one representative');
 
     }
 
 }
 
 1;
-
