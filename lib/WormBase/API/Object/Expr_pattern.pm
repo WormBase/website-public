@@ -134,7 +134,7 @@ sub ep_movies{
 
     my @movies = $object->Movie;
     my $reference = $object->Reference;
-    my @filenames = map { my $name = $_->Name; "$reference/$name" } @movies;
+    my @filenames = map { my $name = $_->Public_name; "$reference/$name" } @movies;
 
     return {
         description => 'Movies showcasing this expression pattern',
