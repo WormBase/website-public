@@ -129,7 +129,7 @@ sub object_report :Path("/species") Args(3) {
 
     #temporary fix
     if ((lc($class) eq 'pcr_oligo' && $object->{id} ne $name) ||
-        (lc($class) eq 'antibody' && !($object->{label}) )){
+        (lc($class) =~ /^antibody|expression_cluster$/ && !($object->{label}) )){
       $object->{id} = $name;
       $object->{label} = $object->{id};
       $object->{taxonomy} = $species;
