@@ -426,27 +426,32 @@ WB.getPlugin("dataTables", function(){
         });
         WB.getPlugin("tabletools", function(){
           setTimeout(function(){
-          $jq('#[% table_name %]').dataTable({
-            "bPaginate"        : [% paginate %],
-            "bLengthChange"    : [% length   %],
-            "sPaginationType"  : "[% pagination_type %]",
-            "bFilter"          : [% filter %],
-            "bInfo"            : [% info %],
-            "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
-            "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
-            "oTableTools": {
-              "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_csv_xls_pdf.swf",
-              "aButtons": [
-                {
-                  "sExtends": "collection",
-                  "sButtonText": "Save table",
-                  "aButtons": [ "copy", "csv", "pdf", "print" ]
-                }
-              ]
-            },
-            [% style %]
+            if($jq.fn.dataTable.fnIsDataTable('#[% table_name %]')){
+              // Hack! avoid warning of reinitializing table seen by some users, not sure why
+              $jq('#[% table_name %]').dataTable();
+            }else{
+              $jq('#[% table_name %]').dataTable({
+                "bPaginate"        : [% paginate %],
+                "bLengthChange"    : [% length   %],
+                "sPaginationType"  : "[% pagination_type %]",
+                "bFilter"          : [% filter %],
+                "bInfo"            : [% info %],
+                "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
+                "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
+                "oTableTools": {
+                  "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_csv_xls_pdf.swf",
+                  "aButtons": [
+                    {
+                      "sExtends": "collection",
+                      "sButtonText": "Save table",
+                      "aButtons": [ "copy", "csv", "pdf", "print" ]
+                    }
+                  ]
+                },
+                [% style %]
 
-          });
+              });
+            }
           }, 1);
         });
 	});
