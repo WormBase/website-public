@@ -87,7 +87,6 @@ sub interactions  {
     my $class = $object->class;
 
     my @edges = values %{$self->_interactions->{edgeVals}};
-
     my $results = $self->_get_interactions($self->_interactions, 1, 1);
     my @edges_all = values %{$results->{edgeVals}};
 
@@ -275,68 +274,92 @@ sub _get_interaction_info {
     return \%results if $self->_ignored_interactions($interaction);
     my $object = $self->object;
     my $type = $interaction->Interaction_type;
-    $type = $type->right ? $type->right . '' : "$type";
-    return \%results if(($type eq 'No_interaction'));
-    $type =~ s/_/ /g;
-    if ($type eq 'Regulatory') {
-    if ( my $reg_result = $interaction->Regulation_result ) {
-        if ("$reg_result" =~ /^(.*tive)_regulate$/) { $type = $1 . "ly Regulates" }
-        elsif ("$reg_result" eq 'Does_not_regulate') { $type = "Does Not Regulate" }
-    }
-    }
+    return \%results if(("$type" eq 'No_interaction'));
     # Filter low confidence predicted interactions.
     return \%results if ($interaction->Log_likelihood_score || 1000) <= 1.5 && $object->class ne 'Interaction' && $type =~ m/predicted/i;
 
-    my $phenotype = $interaction->Interaction_phenotype;
-    my ( @effectors, @affected, @others );
-    my %elements;
-    foreach my $intertype ($interaction->Interactor) {
-      my $count = 0;
-      foreach my $interactor ($intertype->col) {
-          my @interactors = $intertype->col;
-          my @tags = eval { $interactors[$count++]->col };
+    my $interactors_all_type;
+    #classifiy interactors into roles ('effector','affected','associated_product','other')
+    foreach my $interactor_model ($interaction->Interactor) {
+      foreach my $interactor ($interactor_model->col) {
+        my $role = $self->_get_interactor_role($interactor, $interactor_model);
+        push @{$interactors_all_type->{$role}}, $interactor;
 
-          my %info;
-          $info{obj} = $interactor;
-          if ( @tags ) {
-            map { $info{"$_"} = $_->at; } @tags;
-            if ("$intertype" eq 'Interactor_overlapping_gene') {
-                my $role = $info{Interactor_type};
-                if ($role && $role =~ /Effector|.*regulator/) {   push @effectors, $interactor }
-                elsif ($role && $role =~ /Affected|.*regulated/)  { push @affected, $interactor }
-                else { push @others, $interactor }
-            } else {
-                my $corresponding_gene = $self->_get_gene($interactor, "$intertype");
-                if ($corresponding_gene) { @{$results{"$interactor $corresponding_gene"}} = ('Associated Product', $interactor, $corresponding_gene, 'Other') }
-                else { push @others, $interactor }
-            }
-          } else { push @others, $interactor }
+        # a hack for associated product
+        if ($role eq 'associated_product') {
+          my $corresponding_gene = $self->_get_gene($interactor, $interactor_model);
+          @{$results{"$interactor $corresponding_gene"}} = ('Associated Product', $interactor, $corresponding_gene, 'Other');
+        }
       }
     }
-    if (@effectors || @affected) {
-      foreach my $obj (@effectors, @others) {
-          foreach my $obj2 (@affected) {
+
+    my ($effectors, $affected, $others) = @{$interactors_all_type}{('effector','affected','other')};
+    ($effectors, $affected, $others) = map {$_ ? $_ : [] } ($effectors, $affected, $others);
+
+    my $type_name = $self->_get_interaction_type_name($interaction);
+    my $phenotype = $interaction->Interaction_phenotype;
+
+   if (@$effectors || @$affected) {
+      foreach my $obj (@$effectors, @$others) {
+          foreach my $obj2 (@$affected) {
             next if "$obj" eq "$obj2";
             if (!$nearby && $object->class ne 'Interaction' && $object->class ne 'WBProcess') {
               next unless ("$obj" eq "$object" || "$obj2" eq "$object")
             };
-            @{$results{"$obj $obj2"}} = ($type, $obj, $obj2, 'Effector->Affected', $phenotype);
+            @{$results{"$obj $obj2"}} = ($type_name, $obj, $obj2, 'Effector->Affected', $phenotype);
           }
       }
     } else {
-      foreach my $obj (@others) {
-          foreach my $obj2 (@others) {
+      foreach my $obj (@$others) {
+          foreach my $obj2 (@$others) {
             next if "$obj" eq "$obj2";
             if (!$nearby && $object->class ne 'Interaction') {
-              next unless ("$obj" eq "$object" || "$obj2" eq "$object")
             };
             my @objs = ("$obj", "$obj2");
             my $str = join(' ', sort @objs);
-            @{$results{"$str"}} = ($type, $obj, $obj2, 'non-directional', $phenotype);
+            @{$results{"$str"}} = ($type_name, $obj, $obj2, 'non-directional', $phenotype);
           }
       }
     }
     return \%results;
+}
+
+sub _get_interaction_type_name {
+    my ($self, $interaction) = @_;
+    my $type = $interaction->Interaction_type;
+    $type = $type->right ? $type->right . '' : "$type";
+    $type =~ s/_/ /g;
+    if ($type eq 'Regulatory') {
+        if ( my $reg_result = $interaction->Regulation_result ) {
+            if ("$reg_result" =~ /^(.*tive)_regulate$/) { $type = $1 . "ly Regulates" }
+            elsif ("$reg_result" eq 'Does_not_regulate') { $type = "Does Not Regulate" }
+        }
+    }
+    return $type;
+}
+
+##
+## private helper function for
+## interactor & #interaction_info for interactor
+##
+
+sub _get_interactor_role {
+    my ($self, $interactor_obj, $interactor_model) = @_;
+    my $interactor_type = eval { $interactor_obj->Interactor_type } || '';
+
+    my $role;
+
+    if ("$interactor_model" eq 'Interactor_overlapping_gene') {
+      if ("$interactor_type" =~ /Effector|.*regulator/) {
+        $role = 'effector';
+      } elsif ("$interactor_type" =~ /Affected|.*regulated/) {
+        $role = 'affected';
+      }
+    } elsif (my $corresponding_gene = $self->_get_gene($interactor_obj, $interactor_model)){
+      $role = 'associated_product';
+    }
+
+    return $role || 'other';
 }
 
 sub _get_gene {
@@ -355,6 +378,10 @@ sub _get_gene {
       return $corr_gene;
     }
 }
+
+##
+##  exeptions, are they still used?
+##
 
 sub _ignored_interactions {
     my ($self, $interaction) = @_;
