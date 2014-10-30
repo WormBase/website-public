@@ -201,7 +201,7 @@ sub _get_interactions {
     foreach my $interaction ( @objects ) {
       next if($data->{ids}{"$interaction"});
       if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_} || ($data->{nodes}{"$_"}{predicted} == 1)} map {$_->col} $interaction->Interactor; }
-      my $edgeList = $self->_get_interaction_info($interaction, $nearby);
+      my $edgeList = $self->_get_interaction_info($interaction->fetch(), $nearby);
       foreach my $key (keys %{$edgeList}) {
           my ($type, $effector, $affected, $direction, $phenotype)= @{$edgeList->{$key}};
           next unless($effector);
@@ -270,10 +270,11 @@ sub _get_interactions {
 
 sub _get_interaction_info {
     my ($self, $interaction, $nearby) = @_;
-    my %results;
-    return \%results if $self->_ignored_interactions($interaction);
     my $object = $self->object;
     my $type = $interaction->Interaction_type;
+
+    my %results;
+    return \%results if $self->_ignored_interactions("$interaction");
     return \%results if(("$type" eq 'No_interaction'));
     # Filter low confidence predicted interactions.
     return \%results if ($interaction->Log_likelihood_score || 1000) <= 1.5 && $object->class ne 'Interaction' && $type =~ m/predicted/i;
@@ -281,7 +282,7 @@ sub _get_interaction_info {
     my $interactors_all_type;
     #classifiy interactors into roles ('effector','affected','associated_product','other')
     foreach my $interactor_model ($interaction->Interactor) {
-      foreach my $interactor ($interactor_model->col) {
+      foreach my $interactor ($interactor_model->col()) {
         my $role = $self->_get_interactor_role($interactor, $interactor_model);
         push @{$interactors_all_type->{$role}}, $interactor;
 
@@ -299,7 +300,7 @@ sub _get_interaction_info {
     my $type_name = $self->_get_interaction_type_name($interaction);
     my $phenotype = $interaction->Interaction_phenotype;
 
-   if (@$effectors || @$affected) {
+    if (@$effectors || @$affected) {
       foreach my $obj (@$effectors, @$others) {
           foreach my $obj2 (@$affected) {
             next if "$obj" eq "$obj2";
@@ -344,21 +345,21 @@ sub _get_interaction_type_name {
 ##
 
 sub _get_interactor_role {
-    my ($self, $interactor_obj, $interactor_model) = @_;
-    my $interactor_type = eval { $interactor_obj->Interactor_type } || '';
+    my ($self, $interactor, $interactor_model) = @_;
+
+    my ($interactor_type) = $interactor->get('Interactor_type');
+    $interactor_type = $interactor_type || '';  # avoid unitialized string warning
 
     my $role;
-
     if ("$interactor_model" eq 'Interactor_overlapping_gene') {
       if ("$interactor_type" =~ /Effector|.*regulator/) {
         $role = 'effector';
       } elsif ("$interactor_type" =~ /Affected|.*regulated/) {
         $role = 'affected';
       }
-    } elsif (my $corresponding_gene = $self->_get_gene($interactor_obj, $interactor_model)){
+    } elsif (my $corresponding_gene = $self->_get_gene($interactor, $interactor_model)){
       $role = 'associated_product';
     }
-
     return $role || 'other';
 }
 
