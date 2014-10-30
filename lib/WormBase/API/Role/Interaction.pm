@@ -315,6 +315,7 @@ sub _get_interaction_info {
           foreach my $obj2 (@$others) {
             next if "$obj" eq "$obj2";
             if (!$nearby && $object->class ne 'Interaction') {
+                next unless ("$obj" eq "$object" || "$obj2" eq "$object")
             };
             my @objs = ("$obj", "$obj2");
             my $str = join(' ', sort @objs);
