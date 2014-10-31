@@ -51,7 +51,7 @@
 	maintainer  = 'NCBI',
 	base        = 'http://www.ncbi.nlm.nih.gov/RefSeq/',
 	email       = '',
-	search      = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept'
+	search      = 'http://www.ncbi.nlm.nih.gov/%s'
 	}
 
  AmerChemicalSoc = {

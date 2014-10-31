@@ -8,7 +8,8 @@ fgcolor       = black
 label         = sub {
 	      my $f = shift;
 	      my $name = $f->name;
-	      return $name;
+	      my ($tf_name) = $f->attributes('tf_name');
+	      return $tf_name ? $tf_name : $name;
 	      }
 link         = sub {
 		my $f = shift;		
