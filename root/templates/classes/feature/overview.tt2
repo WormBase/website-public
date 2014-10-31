@@ -24,11 +24,12 @@ WRAPPER highlight_box;
 END;
 
 '<div class="description">';
+WRAPPER $field_block title='' key ='description';
    markup(fields.description.data);
-'</div>';
+END;
 
 
-WRAPPER $field_block title='Bound by product of' key ='binds_gene_product';
+WRAPPER $field_block title='Bound by<br/> product of' key ='binds_gene_product';
      tags2link(fields.binds_gene_product.data);
 END;
 
@@ -39,6 +40,8 @@ END;
 WRAPPER $field_block title='Annotation' key='annotation';
    fields.annotation.data;
 END;
+
+'</div>';
 
 WRAPPER $field_block title="" key="remarks";
    remarks();
