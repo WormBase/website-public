@@ -27,7 +27,7 @@ sub _build_features {
     my @data = $self->_get_feature_associations($feature_tag_name);
 
     return {
-        description => 'Features associated with gene',
+        description => 'Features associated with this ' . $self->object->class,
         data        => @data ? \@data : undef,
     };
 }
