@@ -10,7 +10,7 @@
             tf => 'Transcription factor'
         },
         passed_data = fields.features.data,
-        separator = ';'
+        separator = ';<br/>'
     );
                    #       key = 'gene_models_constructed' );
 
