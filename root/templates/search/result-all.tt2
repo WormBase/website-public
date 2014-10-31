@@ -9,7 +9,36 @@
    <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">
     <div id="searchBody" class="ui-corner-all">
 
-    [% cls_list = c.config.sections.species.keys.merge(c.config.sections.resources.keys).sort.grep('[^title]') %]
+[% 
+    config_species = c.config.sections.species;
+    config_resources = c.config.sections.resources;
+%]
+    
+[% PERL %]
+
+    # Sort the classes by their display names
+    my $config_species = $stash->get('config_species');
+    my $config_resources = $stash->get('config_resources');
+
+    sub name2keys {
+        my ($config_classes) = @_;
+        my @nameKeyPairs = map { 
+            my $display_name = eval { $config_classes->{$_}->{'title'} };
+            $display_name ? ({   name => $display_name, 
+                 key => $_ }) : ();
+        } keys %$config_classes;
+        return @nameKeyPairs;
+    }
+
+    my @classes = name2keys($config_species);
+    push @classes, name2keys($config_resources);
+    
+    my @classes_sorted = sort { $a->{name} cmp $b->{name} } @classes;
+    my @class_keys = map { $_->{key} } @classes_sorted;
+
+    $stash->set(cls_list => \@class_keys);
+
+[% END %]
 
       <input class="text" id="SearchResult" name="query" type="text" placeholder="search..." value="[% query %]">
 
