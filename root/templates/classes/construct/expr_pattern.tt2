@@ -1,6 +1,6 @@
 [%
 
-expression_patterns;
+expression_patterns(['expression_pattern','gene', 'description','reference']);
 
 WRAPPER $field_block title="Marker for" key="marker_for";
     fields.marker_for.data;

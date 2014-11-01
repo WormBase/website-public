@@ -63,7 +63,13 @@
   </div>
 
 [% MACRO nav_species(species_name,display_title) BLOCK %]
-  <li><a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' %] class="species" [% END %]> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$species_name.title %]</a>
+  <li>
+    <a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' || species_name == 'others' %] class="species" [% END %]> 
+     [%- UNLESS species_name == 'others' -%]
+         <span class="ui-icon ui-icon-triangle-1-e"></span>
+     [%- END -%]
+     [% c.config.sections.species_list.$species_name.title %]
+    </a>
               <ul class="wb-dropdown">
                 [% FOREACH bioproject IN c.config.sections.species_list.$species_name.bioprojects.keys %]
                   <li>[% text2link('genomic_location','','Browse Genome: ' _ c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, species_name _ '_' _ bioproject) %]</li>
@@ -101,16 +107,15 @@
               [% g_sort.unshift('Caenorhabditis') %]
               [% g_sort.unshift('c_elegans') %]
               [% g_sort.unshift('all') %]
+              [% g_sort.push('others') %]
               [% g_sort = g_sort.unique %]
-
-
 
               <li>[% text2link('genomic_location','all','<span class="ui-icon ui-icon-triangle-1-e"></span><b>Browse Genomes</b>') %]
                 <ul class="wb-dropdown">
                   <li class="species">
                     [% text2link('genomic_location', '' ,c.config.sections.species_list.c_elegans.title, '', 'c_elegans') %]</li>
                   [% FOREACH option IN c.config.sections.species_list.keys.sort %]
-                    [% NEXT IF (option == 'all' || option == 'c_elegans') %]
+                    [% NEXT IF (option == 'all' || option == 'c_elegans' || option == 'others') %]
                     <li class="species">
                     [% text2link('genomic_location', '' ,c.config.sections.species_list.$option.title, '', option) %]</li>
                   [% END %]

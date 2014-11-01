@@ -1,0 +1,15 @@
+[%
+
+WRAPPER $field_block title="Transgenes" key="transgenes";
+
+    build_data_table(
+        order=['transgene','summary','strain','reference' ],
+        columns={ transgene   => 'Transgene',
+		          summary     => 'Summary',
+                  strain      => 'Strain',
+			      reference   => 'Reference',
+			     },
+        key='transgenes');
+END;
+
+%]

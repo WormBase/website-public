@@ -507,8 +507,9 @@ table ul {
     padding: 0 0 0 1em;
 }
 
-
-
+.dataTable td > br {
+    line-height: 150%;
+}
 
 
 
@@ -2170,7 +2171,7 @@ div#google-map {
     font-size: 0.8em;
     overflow: hidden;
     clear: both;
-    margin: 5px;
+    /* margin: 5px; */
     width:55em;
 }
 
@@ -2550,7 +2551,7 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
   display:table-cell;
   float:none;
   position:static;
-  vertical-align:top;
+  vertical-align:middle;
   table-layout:fixed;
 }
 
