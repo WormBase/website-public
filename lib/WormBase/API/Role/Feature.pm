@@ -47,42 +47,25 @@ sub _get_feature_associations {
     my @data;
     foreach my $feature ($gene->$feature_tag_name){
         my $description = $feature->Description;
-        my $method = $feature->Method;
+        (my $method = $feature->Method) =~ s/_/ /g;
         my @bound_by = map { $self->_pack_obj($_) } $feature->Bound_by_product_of;
         my $tf = $feature->Transcription_factor;
+        my @interactions = map { $self->_pack_obj($_) } $feature->Associated_with_Interaction;
 
-        # create a list of associations
-        my @associations;
-        foreach my $as_tag ($feature->Associations){
-            push @associations, map {
-                my ($type) = "$as_tag" =~ /Associated_with_(\w+)/;
-                $type =~ s/_/ /g;
-                my $packed_as = $self->_pack_obj($_);
-                my $label = $packed_as->{label};
-                $packed_as->{label} = "$type: " . $label unless $label =~ /$type/i;
-                $packed_as;
-            } $as_tag->col();
-
-            # (my $type = "$as_tag") =~ s/_/ /g;
-            # my @as = map { $self->_pack_obj($_) } $as_tag->col();
-            # push @associations, {
-            #     text => \@as,
-            #     evidence => { type => $type },
-            # };
-        }
-        sub priority {
-            # a greater priority value is considered high priority
-            my $as = shift;
-            return $as->{label} =~ /^(Interaction|expression pattern)/i;
-        }
-        @associations = sort { priority($b) cmp priority($a) } @associations;  #sort by descending priority
-
+        my @expr_pattern = map {
+            my @anatomy = $self->_pack_list([$_->Anatomy_term], sort => 1);
+            {
+                text => \@anatomy,
+                evidence => { by => $self->_pack_obj($_) }
+            } if @anatomy;
+        } $feature->Associated_with_expression_pattern;
 
         push @data, {
             name => $self->_pack_obj($feature),
-            description => $method && "$description",
+            description => $description,
             method => $method && "$method",
-            association => \@associations,
+            interaction => \@interactions,
+            expr_pattern => \@expr_pattern,
             bound_by => \@bound_by,
             tf => $tf && "$tf"
         };
@@ -90,5 +73,6 @@ sub _get_feature_associations {
     return @data;
 
 }
+
 
 1;
