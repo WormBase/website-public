@@ -457,5 +457,32 @@
    USE image  = format('<img src="%s" valign="middle" width="100%">');
    USE toggle = format('<img border="0" height="11" src="%s" width="6" alt="&gt;" valign="middle"> %s');
 
-
 -%]
+
+[%################################
+  # Convenience perl macros
+  ################################
+%]
+
+[%# Sort a keys of a hash by an expression on its value.
+  # Returns a string of keys joined by the specified separator.
+  # Args:
+  # hash_ref - hash
+  # sub_as_str - expression on the value, denoted by $_
+               - Ex. '$_->{title}' or 'lc($_)'
+  # seperator  - default to ';;'
+%]
+[% MACRO sort_keys_by(hash_ref, sub_as_str, seperator)  PERL %]
+    my $hash_ref = $stash->get('hash_ref');
+    my $sub_as_str = $stash->get('sub_as_str');
+    my $separator = $stash->get('separator') || ';;';
+    sub ssub {
+        my ($key) = @_;
+        $_ = $hash_ref->{$key};
+
+        return $key unless $sub_as_str;
+        return eval($sub_as_str);
+    }
+    my @sorted_keys = sort { ssub($a) cmp ssub($b) } keys %$hash_ref;
+    print join($separator, @sorted_keys);
+[% END %]
