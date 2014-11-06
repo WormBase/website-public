@@ -4,8 +4,7 @@
 [%
   MACRO interaction_table BLOCK;
   WRAPPER $field_block title="Interactions" key="interactions";
-      'Found ';
-      searchlink('interaction', object.name.data.id, (fields.interactions.data.edges.size || '0') _ " " _ pluralize("interaction", fields.interactions.data.size));
+      'Found ' _ (fields.interactions.data.edges.size || 0) _ pluralize(" interaction", fields.interactions.data.edges.size);
 
       build_data_table(order=['interactions','type','effector','affected','direction','phenotype','citations'],
                        columns={type  => 'Interaction Type',
@@ -44,6 +43,8 @@
   [% interaction_table %]
 [% END %]
 
+
+[% IF fields.interactions.data.edges.size> 0 %]
 <a href="http://genemania.org/link?o=6239&g=[%
 FOREACH edge IN fields.interactions.data.edges.sort;
     IF edge.effector.class == 'gene';
@@ -55,3 +56,4 @@ FOREACH edge IN fields.interactions.data.edges.sort;
     "$name|";
     END;
 END; %]" target="_blank">View Interaction Network in GeneMANIA</a>
+[% END %]
