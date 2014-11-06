@@ -7,7 +7,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
 with 'WormBase::API::Role::Variation';
 with 'WormBase::API::Role::Sequence';
-
+with 'WormBase::API::Role::Feature';
 
 
 =pod
@@ -408,6 +408,16 @@ sub xxx{
 }
 SAMPLE_FUNC
 
+#######################################
+#
+# The Features Widget
+#
+#######################################
+
+# features {}
+# Supplied by Role
+
+
 ############################################################
 #
 # PRIVATE METHODS
@@ -459,4 +469,3 @@ sub _build_tracks {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

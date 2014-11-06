@@ -5,7 +5,7 @@ extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
 with    'WormBase::API::Role::Sequence';
-
+with    'WormBase::API::Role::Feature';
 
 has 'tracks' => (
     is      => 'ro',
@@ -377,6 +377,26 @@ sub history_lite {
 
     return {
         description => 'the curatorial history of the gene',
+        data        => @data ? \@data : undef,
+    };
+}
+
+#######################################
+#
+# The Features Widget
+#
+#######################################
+
+# override _build_features {}
+# Supplied by Role
+
+sub _build_features {
+    my $self = shift;
+    my $feature_tag_name = 'Associated_with_Feature';
+    my @data = $self->_get_feature_associations($feature_tag_name);
+
+    return {
+        description => 'Other sequence features associated with it',
         data        => @data ? \@data : undef,
     };
 }

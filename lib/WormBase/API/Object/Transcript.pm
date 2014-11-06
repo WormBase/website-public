@@ -7,6 +7,7 @@ with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
 with 'WormBase::API::Role::Sequence';
 with 'WormBase::API::Role::Expression';
+with    'WormBase::API::Role::Feature';
 
 use Bio::Graphics::Browser2::Markup;
 
@@ -315,6 +316,15 @@ sub predicted_exon_structure {
     return { description => 'predicted exon structure within the sequence',
              data        => @exons ? \@exons : undef };
 }
+
+#######################################
+#
+# The Features Widget
+#
+#######################################
+
+# features {}
+# Supplied by Role
 
 ############################################################
 #

@@ -4,6 +4,7 @@ use Moose;
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
+with    'WormBase::API::Role::Feature';
 
 =pod
 
@@ -159,6 +160,15 @@ sub sequence {
 
 #######################################
 #
+# The Features Widget
+#
+#######################################
+
+# features {}
+# Supplied by Role
+
+#######################################
+#
 # The External Links widget
 #
 #######################################
@@ -170,5 +180,3 @@ sub sequence {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-
