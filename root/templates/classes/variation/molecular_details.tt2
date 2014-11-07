@@ -92,7 +92,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
        END;
 
        WRAPPER $field_block title="Strain" key ="reference_strain";
-                tag2link(fields.reference_strain.data);
+                tags2link(fields.reference_strain.data, ', ', 'strains');
        END;
 
        WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status";
