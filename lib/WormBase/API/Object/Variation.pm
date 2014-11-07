@@ -1003,10 +1003,13 @@ sub polymorphism_status {
 
 sub reference_strain {
     my ($self) = @_;
+    my $object = $self->object;
+
+    my @strains = $self->_pack_list([$object->Strain]);
 
     return {
         description => 'the reference strain for the polymorphism',
-        data        => $self->_pack_obj($self ~~ 'Strain'),
+        data        => @strains ? \@strains : undef,
     };
 }
 
