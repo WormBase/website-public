@@ -204,7 +204,9 @@ sub _build__tools {
 # Fetches a WormBase object corresponding to an Ace object
 # or the Ace object itself if nowrap is specified.
 # TODO: Standardize return values. Currently returns object if fetched,
-#       0 if can't get DB handle, and -1 if can't seem to fetch object.
+#       0 if can't get DB handle, and
+#       Historically, -1 if can't seem to fetch object, I changed it to 0,
+#     because -1 is has boolean value of true, easily mistaken an object is fetched.
 #       Consider throwing an exception and return;, respectively. Will
 #       Require modifying places where $api->fetch is called.
 sub fetch {
@@ -267,7 +269,7 @@ sub fetch {
 
     unless (defined $object) { #&& ($name eq 'all' || $name eq '*'));
         $self->log->warn("[API::fetch()]", " could NOT fetch object");
-        return -1;
+        return 0;
     }
 
     return $object if $nowrap;
@@ -327,4 +329,3 @@ sub wrap {
 }
 
 1;
-
