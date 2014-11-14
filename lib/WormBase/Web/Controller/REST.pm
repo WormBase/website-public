@@ -579,7 +579,10 @@ sub feed_POST {
         my $userAgent = $c->req->params->{userAgent};
         my $page = $c->req->params->{page} || $self->_get_page($c, $url);
         $url = $url . $hash;
-        $content =~ s/\n/<br \/>/g;
+
+        # $content is html in a string, avoid spaces an return
+        $content =~ s/^\s+|\s+$|\n//gm;
+
         my ($issue_url,$issue_title,$issue_number) =
         $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
         $c->stash->{userAgent} = $userAgent;
@@ -1102,7 +1105,9 @@ sub _post_to_github {
 # Obscure names and emails.
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
-  my $contact = ($obscured_name && $obscured_email && "Reported by: $obscured_name ($obscured_email)  (obscured for privacy)") || "Anonymous error report";
+  my $contact = $obscured_email ? $obscured_name ? "Reported by: $obscured_name ($obscured_email)  (obscured for privacy))" :
+    "Reported by: $obscured_email  (obscured for privacy)" :
+    "Anonymous error report";
   my $ptitle = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->title : $page;
   my $purl = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->url || $u : $u;
 

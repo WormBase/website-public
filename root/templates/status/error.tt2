@@ -1,41 +1,49 @@
-<div id="error-box" class="ui-state-error ui-corner-all">
+<div id="error-box" class="ui-state-error ui-corner-all ">
    <div id="issues-new">
 
    <!-- <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span>  -->
      <h3>
-         Something's gone horribly wrong.
+         Something has gone horribly wrong.
      </h3>
-
-     <p>
-         WormBase has encountered an error.
-     </p>
+<br/>
      <h4>
         Please send us an error report.
      </h4>
-     <p>
-        We have created an error report to help us fix this issue:
-     </p>
-               [% UNLESS c.user_exists %]
-                  <input id="name" value="anonymous error report" type="hidden"/>
-                  <input  id="email" value="[% c.config.issue_email %]" type="hidden"/>
-                [% END %]
-     <br />
-     <textarea id="issue-content" class="error-message-technical" rows="10" cols="80">
+
+     <p>We have created an error report to help us fix this issue:</p>
+
+
+     <select name="email[subject]" id="issue-title" class="valid" style="display:none">
+        <option value="Bug Report">Bug Report</option>
+     </select>
+
+     <!-- <textarea  rows="10" cols="80">
         Expected URL: [%- c.req.uri -%]&#10;
         Server Error: 500&#10;
         Error Message:&#10;
                [% c.error.join('<br />').replace('\n','<br />') %]
-     </textarea>
-     <br />
-     <br />
-     <p>
-        What were you doing? (optional):
-     </p>
+     </textarea> -->
+     <div id="issue-content" class="error-message-technical">
+        <p>Server Error: 500 at <a href="[%- c.req.uri -%]">[%- c.req.path -%]</a><p>
+        <p>Error Message:<br/>
+               [% c.error.join('<br />').replace('\n','<br />') %]
+        </p>
+     </div>
 
-     <textarea id="desc-content" rows="3" cols="80">
+     <p>What were you doing? (optional) </p>
+
+     <textarea id="desc-content">
      </textarea>
 
-     <div id="issue-submit-box" style="float:right;margin:1em;">
+     <p>How do we contact you?</p>
+     [% UNLESS c.user_exists %]
+     <div>
+     <input id="name" type="text" placeholder="Name (optional)"/>
+     <input id="email" type="text" size="40" placeholder="Email (so we can get back to you)"/>
+     </div>
+     [% END %]
+
+     <div id="issue-submit-box" style="float:right;margin-top:2em;">
             <input onClick="history.back()" type='submit' value='Go Back' />
             <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send Report' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
      </div>
@@ -44,4 +52,5 @@
         You can also <a href="mailto:help@wormbase.org">email us</a> or search through our <a href="[% c.uri_for('/search','issue','*') %]">current issues</a>
       </p>
   </div>
+  <div id="issue-message"></div>
 </div>

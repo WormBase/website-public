@@ -1312,19 +1312,31 @@ div#error-box {
     font-size:1.0em;
 }
 
+div#error-box p{
+    margin: 10px 0 5px 0;
+}
+
+div#error-box #desc-content {
+    width: 100%;
+}
+
 div.ui-state-error {
   padding:1em;
   margin-bottom:1em;
 }
 
-
 /* This is the ACTUAL error message */
 /* root/templates/status/404.tt2 */
 div.error-message-technical {
     font-family:Courier;
-    margin-left:2em;
-    font-size:0.6em;
+    padding:0.5em 0 0.5em 2em;
+    border: 1px solid;
+    font-size:0.8em;
+    overflow-wrap: break-word;
+    background-color: white;
+    line-height: 100%;
 }
+
 
 
 
@@ -2747,7 +2759,7 @@ table.venn tr.venn-data td {
   padding: 1em;
 }
 
-#issues-new, #issues-new>div {
+#issues-new, #issue-box-content #issues-new>div {
   margin-top:1em;
 }
 

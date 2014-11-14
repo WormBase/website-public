@@ -1424,15 +1424,16 @@ var Scrolling = (function(){
             url = is.attr("url"),
             page = is.attr("page"),
             feed = is.closest('#issues-new'),
-            message = is.closest("#issue-box-content").find("#issue-message"),
-            addNewLink = is.closest("#issue-box-content").find("#add-new-issue"),
+            container = feed.parent(),
+            message = container.find("#issue-message"),
+            addNewLink = container.find("#add-new-issue"),
             name = feed.find("#name"),
             dc = feed.find("#desc-content"),
             email = feed.find("#email"),
             anon = feed.find("#anon").is(':checked'),
-            content = feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : '');
+            content = feed.find("#issue-content").html() + (dc && dc.val().length > 0 ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
 
-        if (!anon && !validate_fields(email, name))
+        if (!anon && !validate_fields(email))
           return;
         if(!content){
           feed.find("#issue-content").focus();
