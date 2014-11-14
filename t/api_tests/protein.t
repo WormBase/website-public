@@ -86,7 +86,7 @@
     # Test class in hits - best_blastp_matches
     # issue #2950
     sub test_best_blastp_matches {
-        my $protein = $api->fetch({ class => 'Protein', name => 'BM:BM25559' });
+        my $protein = $api->fetch({ class => 'Protein', name => 'BM:BM38825' });
 
         can_ok('WormBase::API::Object::Protein', ('best_blastp_matches'));
 
@@ -94,11 +94,10 @@
 
         isnt($hits, undef, 'data returned');
         isnt($hits->{'data'}, undef, 'data hash not empty');
-        is  (@{$hits->{'data'}{'hits'}}[0]->{'hit'}{'class'}, 'Protein', 'hit returned correct class')
+        is  (@{$hits->{'data'}{'hits'}}[0]->{'hit'}{'class'}, 'protein', 'hit returned correct class')
 
     }
 
 }
 
 1;
-
