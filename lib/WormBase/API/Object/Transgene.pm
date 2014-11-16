@@ -162,106 +162,130 @@ sub synonym {
 # summary { }
 # Supplied by Role
 
-# driven_by_gene { }
-# This method will return a data structure containing
-# the gene that drives the gene.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_gene
+# construct
+sub construct {
+    my $self = shift;
+    my $object = $self->object;
+    my @constructs = map {
+        my $cnst_summary = $_->Summary;
+        ($self->_pack_obj($_), "$cnst_summary");
+    } $object->Construct;
+    return { description => 'gene that drives the transgene',
+	     data        => @constructs ? \@constructs : undef,
+    };
+}
 
+# driven_by_gene { }
 sub driven_by_gene {
     my $self = shift;
     my $object = $self->object;
-
-    my @genes = map { $self->_pack_obj($_) } $object->Driven_by_gene;
+    my @genes = map { $_->Driven_by_gene } $object->Construct;
+    @genes = map { $self->_pack_obj($_) } @genes;
     return { description => 'gene that drives the transgene',
 	     data        => @genes ? \@genes : undef,
     };
 }
 
-# driven_by_construct { }
-# This method will return a data structure containing
-# the construct driving the transgene.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_construct
-
-sub driven_by_construct {
-    my $self = shift;
-    my $object = $self->object;
-
-    my $construct = $object->Driven_by_construct;
-    return { description => 'construct that drives the transgene',
-	     data        => $construct && "$construct"};
-}
-
 # remarks {}
 # Supplied by Role
 
-# reporter_construct { }
-# This method will return a data structure of the
-# reporter construct driven by the transgene.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
-
-sub reporter_construct {
-    my $self   = shift;
-    my $object = $self->object;
-    my %reporters;
-    foreach ($object->Reporter_product) {
-        if ($_ eq 'Gene') {
-            $reporters{gene} = $self->_pack_obj($_);
-        } elsif ($_ eq 'Other_reporter') {
-            my $val = $_->right;
-            $reporters{'other reporter'} = "$val";
-        } else {
-            $reporters{$_} = "$_";
-        }
-    }
-
-    return { description => 'reporter construct for this transgene',
-	     data        => %reporters ? \%reporters : undef };
-}
-
 # gene_product { }
-# This method will return a data structure of all
-# gene products for this transgene
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/gene_product
-
 sub gene_product {
     my $self = shift;
     my $object = $self->object;
-    my @genes = map { $self->_pack_obj($_); } $object->Gene;
+    my @genes = map { $_->Gene } $object->Construct;
+    @genes = map { $self->_pack_obj($_); } @genes;
     return { description => 'gene products for this transgene',
              data        => @genes ? \@genes : undef };
 }
 
 # utr { }
-# This method will return a data structure of all
-# 3' UTR for this transgene
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/utr
-
 sub utr {
     my $self = shift;
     my $object = $self->object;
-    my @utr = map { $self->_pack_obj($_); } $object->get('3_UTR'); #$object->get('3_UTR')->fetch();
+    my @utrs = map { $_->get('3_UTR') } $object->Construct;
+    @utrs = map { $self->_pack_obj($_); } @utrs;
     return { description => '3\' UTR for this transgene',
-             data        => @utr ? \@utr : undef };
+             data        => @utrs ? \@utrs : undef };
+}
+
+
+# fusion_reporter {}
+sub fusion_reporter {
+    my $self   = shift;
+    my $object = $self->object;
+    my @reporters = map { $_->Fusion_reporter } $object->Construct;
+    @reporters = map { $self->_pack_obj($_); } @reporters;
+    return { description => 'reporter construct for this construct',
+	     data        => @reporters ? \@reporters : undef };
+}
+
+# other_reporter {}
+sub other_reporter {
+    my $self   = shift;
+    my $object = $self->object;
+    my @reporters = map { $_->Other_reporter } $object->Construct;
+    @reporters = map { "$_"; } @reporters;
+    return { description => 'other reporters of this construct',
+	     data        => @reporters ? \@reporters : undef };
+}
+
+# fusion_reporter {}
+sub purification_tag {
+    my $self   = shift;
+    my $object = $self->object;
+    my @ptags = map { $_->Purification_tag } $object->Construct;
+    @ptags = map { "$_" } @ptags;
+    return { description => 'the purification tag for the construct',
+	     data        => @ptags ? \@ptags : undef };
 }
 
 # coinjection_marker { }
-# This method will return a data structure of all
-# coinjection markers for this transgene
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/coinjection_marker
-
 sub coinjection_marker {
     my $self = shift;
     my $object = $self->object;
-    my @marker = map { $self->_pack_obj($_); } $object->Coinjection_marker;
+    my @marker = map {
+        my $cnst_summary = $_->Summary;
+        ($self->_pack_obj($_), "$cnst_summary");
+    } $object->Coinjection;
     return { description => 'Coinjection marker for this transgene',
              data        => @marker ? \@marker : undef };
 }
 
-# construction_summary { }
-# This method will return a data structure with
-# the construction summary for this transgene
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/construction_summary
 
+sub coinjection_marker_other {
+    my $self = shift;
+    my $object = $self->object;
+    my @marker = map { $self->_pack_obj($_); } $object->Coinjection_other;
+    return { description => 'Coinjection marker for this transgene',
+             data        => @marker ? \@marker : undef };
+}
+
+
+# integrated from
+sub integrated_from {
+    my $self = shift;
+    my $object = $self->object;
+    my @o = map { $self->_pack_obj($_); } $object->Integrated_from;
+    return { description => 'integrated from',
+             data        => @o ? \@o : undef,
+    };
+}
+
+
+# trasngene_derivation
+sub transgene_derivation {
+    my $self = shift;
+    my $object = $self->object;
+    my @o = map { $self->_pack_obj($_); } $object->Transgene_derivation;
+    return { description => 'derived_from',
+             data        => @o ? \@o : undef,
+    };
+}
+
+
+
+# construction_summary { }
 sub construction_summary {
     my $self = shift;
     my $object = $self->object;
@@ -270,6 +294,18 @@ sub construction_summary {
     return { description => 'Construction details for the transgene',
          data        => $summary && "$summary"};
 }
+
+
+# corresponding_variation { }
+sub corresponding_variation {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $summary = $object->Corresponding_variation;
+    return { description => 'Corresponding variation of the transgene',
+         data        => $summary && "$summary"};
+}
+
 
 # strains { }
 # This method will return a data structure of all
@@ -288,23 +324,24 @@ sub strains {
     }
 }
 
-
-# historical_gene { }
-# This mehtod will return a data structure containing the
-# historical reocrd of the dead gene originally associated with this transgene
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/historical_gene
-
-
-sub historical_gene {
-    my $self = shift;
+sub genetic_info_tags {
+    my $self   = shift;
     my $object = $self->object;
+    my @genetic_tags = $object->Genetic_information;
+    my @data;
 
-    my @historical_gene = map { {text => $self->_pack_obj($_),
-                              evidence => $self->_get_evidence($_)} } $object->Historical_gene;
-    return { description => 'Historical record of the dead genes originally associated with this transgene',
-             data        => @historical_gene ? \@historical_gene : undef,
+    foreach my $tag (@genetic_tags) {
+      unless ($object->Genetic_information->$tag){
+          push @data, $tag;
+      }
+    }
+
+    return {
+        description => 'genetic information of the transgene',
+        data        => @data ? \@data : undef,
     };
 }
+
 
 #######################################
 #
@@ -396,18 +433,14 @@ sub integration_method {
 }
 
 
-# integrated_at { }
-# This method will return a data structure containing
-# the map position of the transgene if it has been integrated.
-# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_at
-
-sub integrated_at {
+# recombination_site
+sub recombination_site {
     my $self   = shift;
     my $object   = $self->object;
-    my $position = $object->Map;
-
+    my @positions = map { $_->Recombination_site } $object->Construct;
+    @positions = map { "$_" } @positions;
     return { description => 'map position of the integrated transgene',
-	     data        => $position ? "$position" : undef};
+	     data        => @positions ? \@positions : undef};
 }
 
 # rescues { }
@@ -479,4 +512,3 @@ sub marked_rearrangement {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

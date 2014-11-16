@@ -282,15 +282,19 @@ sub _get_tag_data {
     return @data_pack ? \@data_pack : undef;
 }
 
+use Data::Dumper;
 sub _get_GO_evidence {
     my ( $self,$term, $gene ) = @_;
-    my $code;
 
-    foreach my $go_term ($gene->GO_Term) {
-        if ( $go_term eq $term ) {
-            $code = $go_term->right;
-        }
-    }
+    my $association = $gene->fetch()->get('GO_term')->at("$term");
+    my $code = $association->right if $association;
+#print Dumper $g;
+#print "$term";
+    # foreach my $go_term ($gene->GO_Term) {
+    #     if ( $go_term eq $term ) {
+    #         $code = $go_term->right;
+    #     }
+    # }
     return {text => $code && "$code", evidence => $self->_get_evidence($code)};
 }
 
@@ -299,5 +303,3 @@ sub _get_GO_evidence {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-

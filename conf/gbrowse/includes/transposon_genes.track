@@ -2,7 +2,7 @@
 # EG: CDS:K10E9.2
 key          = Transposon Genes
 category     = Genes
-feature      = transposable_element_CDS:WormBase_transposon transposable_element_Pseudogene:WormBase_transposon
+feature      = mRNA:WormBase_transposon pseudogenic_transcipt:WormBase_transposon
 # NOT using the gene glyph since there are no CDS components.
 glyph        = transcript
 bgcolor      = gray
@@ -13,8 +13,8 @@ height       = 6
 balloon hover  = sub {
                       my $f    = shift;
 	              my $name = $f->name;                       
-		      my $s    = $f->type;
-		      my $type = $s =~ /CDS/ ? 'transposon CDS' : 'transposon pseudogene';
+		      my $t    = $f->type;
+		      my $type = $t =~ /pseudogenic/ ? 'transposon pseudogene' : 'transposon mRNA';
     		      my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
 		      my $notes = $f->notes;
 		      my $string = join('<br />',"<b>$name</b>",$type,"position: $ref:$start..$stop",
@@ -29,8 +29,8 @@ label    = sub {
 	}
 description  = sub {	     
                       my $f    = shift;
-		      my $s    = $f->type;
-		      my $type = $s =~ /CDS/ ? 'transposon CDS' : 'transposon pseudogene';
+		      my $t    = $f->type;
+		      my $type = $t =~ /pseudogenic/ ? 'transposon pseudogene' : 'transposon mRNA';
 		      return $type;
                 }
 link = sub {

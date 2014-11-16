@@ -182,11 +182,11 @@
         my $fpkm_expression_summary_ls = $transcript->fpkm_expression_summary_ls();
         isnt($fpkm_expression_summary_ls->{'data'}, undef, 'data returned');
         is($fpkm_expression_summary_ls->{'description'}, 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data' , 'correct description returned ');
-        is($fpkm_expression_summary_ls->{'data'}->{'plot'}, '/img-static/rplots/WS244/4876/fpkm_WBGene00015146.png' , 'correct plot returned');
-        is($fpkm_expression_summary_ls->{'data'}->{'table'}->{'fpkm'}->{'data'}[0]->{'project'}, 'Thomas Male Female comparison' , 'correct project returned');
-
-
-
+        is($fpkm_expression_summary_ls->{'data'}->{'plot'}, '/img-static/rplots/' . $api->version . '/4876/fpkm_WBGene00015146.png' , 'correct plot returned');
+        my @data = @{ $fpkm_expression_summary_ls->{'data'}->{'table'}->{'fpkm'}->{'data'} };
+        my @data_sub = grep { $_->{'project_info'}->{'id'} eq 'SRP016006' } @data;
+        isnt($data_sub[0], undef, 'fpkm results returned');
+        is($data_sub[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
     }
 
 }

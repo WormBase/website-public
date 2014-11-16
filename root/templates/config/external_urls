@@ -51,7 +51,7 @@
 	maintainer  = 'NCBI',
 	base        = 'http://www.ncbi.nlm.nih.gov/RefSeq/',
 	email       = '',
-	search      = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept'
+	search      = 'http://www.ncbi.nlm.nih.gov/%s'
 	}
 
  AmerChemicalSoc = {
@@ -284,7 +284,7 @@
  EnsEMBLGenomes = {
 	description = 'Ensembl Genomes produces and maintains annotation on selected genomes across the taxonomic space'
 	base        = 'http://www.ensemblgenomes.org'
-	search      = 'http://www.ensemblgenomes.org/search?site=ensembl&q="%s"&genomic_unit=all'
+	search      = 'http://www.ensemblgenomes.org/search/eg/%s'
 	}
 
  ExperimentalCellResearch = {
@@ -795,9 +795,9 @@
 	}
 
  SGD = {
-	description = 'GO Term finder - Stanford University. SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
-	search      = 'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
-	base        = 'http://genome-www4.stanford.edu'
+	description = 'SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
+	search      = 'http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=%s'
+	base        = 'http://www/yeasygenome.org'
 	}
 
  'SMID-DB' = {
@@ -805,6 +805,12 @@
 	base        = 'http://smid-db.org'
 	search      = 'http://smid-db.org/search?term=%s'
 	}
+
+ so_term = {
+	description = 'SO is a collaborative ontology project for the definition of sequence features used in biological sequence annotation.'
+    base          = 'http://sequenceontology.org'
+	search        = 'http://sequenceontology.org/browser/current_svn/term/%s'
+}
 
  SocietyofNeuroscience = {
 	description = 'Society of Neuroscience'

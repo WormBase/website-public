@@ -733,6 +733,7 @@ sub recurseLongestPath {
   my ($current, $start, $end, $curpath) = @_;                           # current node, starting node, end node, path travelled so far
   foreach my $parent (sort keys %{ $paths{"childToParent"}{$current} }) {
 									# for each parent of the current node
+    next if ($curpath =~ m/$parent/);					# sometimes two terms can be each others's parents, so skip if already in path
     next unless ($transitivityPriority{$paths{"childToParent"}{$current}{$parent}}); 
 									# skip non-transitive edges
     my @curpath = split/\t/, $curpath;                                  # convert current path to array

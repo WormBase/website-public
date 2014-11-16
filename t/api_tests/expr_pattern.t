@@ -50,7 +50,20 @@
         is  (scalar @$genes, 6, 'correct number of historical genes returned');
     }
 
+    sub test_ep_movies {
+        my $expr_pattern = $api->fetch({ class => 'Expr_pattern', name => 'Expr10530' });
+
+        can_ok('WormBase::API::Object::Expr_pattern', ('ep_movies'));
+
+        my $movies = $expr_pattern->ep_movies();
+        $movies = $movies->{'data'};
+
+        isnt($movies, undef, 'data returned');
+        my $mov_path = "WBPaper00040986/20091119_unc-130_9E1_4_L2.mov";
+        my ($mov) = grep { /$mov_path/ } @$movies;
+        is($mov, $mov_path, 'correct path of the movie returned');
+    }
+
 }
 
 1;
-

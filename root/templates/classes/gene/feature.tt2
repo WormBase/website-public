@@ -1,0 +1,19 @@
+[%
+    build_data_table(
+        order = ['name', 'description', 'method', 'association', 'bound_by', 'tf'],
+        columns = {
+            name => 'Feature',
+            description => 'Description',
+            method => 'Method',
+            association => 'Association',
+            bound_by => 'Bound by',
+            tf => 'Transcription factor'
+        },
+        passed_data = fields.features.data,
+        separator = ';<br/>'
+    );
+                   #       key = 'gene_models_constructed' );
+
+
+
+%]

@@ -35,6 +35,11 @@ description  = sub {
 	$method =~ s/_/ /g;
         return "$method";
     }
+link = sub {
+        my $f = shift;
+	my $transcript = $f->name; # Either a WBGene or transcript name
+   	return "/get?name=$transcript;class=Gene";
+     }
 citation = Historical gene predictions.
 
 [HISTORICAL_GENES:150000]

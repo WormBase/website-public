@@ -1,0 +1,21 @@
+[%
+
+WRAPPER $field_block title="Construction details" key="construction_summary";
+    fields.construction_summary.data;
+END;
+
+WRAPPER $field_block title="Clone" key="clone";
+    tag2link(fields.clone.data);
+END;
+
+laboratory(title="Created in lab");
+
+WRAPPER $field_block title="Constructed by" key="person";
+    fields.person.data;
+END;
+
+WRAPPER $field_block title="Historical gene" key="historical_gene";
+  cell_content(fields.historical_gene.data);
+END;
+
+%]

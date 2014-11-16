@@ -402,50 +402,44 @@ sub _transgene {
     my $tag    = shift;
     my $object = $self->object;
     my @data_pack;
-    my @tag_objects = $object->$tag;
+    my @transgenes = $object->$tag;
+    my $pheno_tag_name = $tag =~ /not/i ? 'Phenotype_not_observed' : 'Phenotype';
 
-    foreach my $tag_object (@tag_objects) {
+    foreach my $tag_object (@transgenes) {
         my $tag_info = $self->_pack_obj($tag_object);
-	my $oe_gene          = $tag_object->Gene ? $self->_pack_obj($tag_object->Gene) : '';
-	my $reporter_product = $tag_object->Reporter_product ? $self->_pack_obj($tag_object->Reporter_product) : '';
 
-	my @oe_genes;
-	push @oe_genes,$oe_gene          if $oe_gene;
-	push @oe_genes,$reporter_product if $reporter_product;
+        # Deal with the Phenotype_info hash for the CURRENT phenotype only.
+        # Wow, this is really circular.
+        my @phenotypes = $tag_object->$pheno_tag_name;
+        my %tags_with_evidence;
+        my @caused_by;
+        foreach my $phenotype (@phenotypes) {
 
-	# Deal with the Phenotype_info hash for the CURRENT phenotype only.
-	# Wow, this is really circular.
-	my @phenotypes = $tag_object->Phenotype;
-	my %tags_with_evidence;
-	my @caused_by;
-	foreach my $phenotype (@phenotypes) {
-	    next unless $phenotype eq $object;
-	    my %hash = map { $_ => $_->right } eval { $phenotype->col };
+            next unless $phenotype eq $object;
+            my %hash = map { $_ => $_->right } eval { $phenotype->col };
 
-	    # Keys with evidence
-	    foreach my $tag (qw/Caused_by Caused_by_other Remark/) {
-		if (defined $hash{$tag}) {
-		    my $text     = $self->_pack_obj($hash{$tag});
-		    my $evidence = $self->_get_evidence($hash{$tag});
-		    # This is a string.
-		    if ($tag eq 'Caused_by_other') {
-			$text = "$hash{$tag}";
-		    }
+            # Keys with evidence
+            foreach my $tag (qw/Caused_by Caused_by_other Remark/) {
+                if (defined $hash{$tag}) {
+                    my $text     = $self->_pack_obj($hash{$tag});
+                    my $evidence = $self->_get_evidence($hash{$tag});
+                    # This is a string.
+                    if ($tag eq 'Caused_by_other') {
+                        $text = "$hash{$tag}";
+                    }
 
-		    $tags_with_evidence{$tag} = { text     => $text,
-						  evidence => $evidence };
-		}
-	    }
-	}
+                    $tags_with_evidence{$tag} = { text     => $text,
+                                                  evidence => $evidence };
+                }
+            }
+        }
 
-	push @caused_by,$tags_with_evidence{Caused_by};
-	push @caused_by,$tags_with_evidence{Caused_by_other};
+        push @caused_by,$tags_with_evidence{Caused_by};
+        push @caused_by,$tags_with_evidence{Caused_by_other};
         push @data_pack, {
-	    transgene => $tag_info,
-		overexpressed_genes => \@oe_genes,
-		remark             => $tags_with_evidence{Remark},
-#		caused_by          => $tags_with_evidence{Caused_by},
-		caused_by          => \@caused_by,
+            transgene => $tag_info,
+            remark             => $tags_with_evidence{Remark},
+            caused_by          => \@caused_by,
         };
     }
     return \@data_pack;
@@ -669,4 +663,3 @@ sub _is_not {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

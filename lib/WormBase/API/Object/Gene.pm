@@ -114,22 +114,22 @@ sub _build__phenotypes {
 
     my %phenotypes;
 
-    foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
+    # This needs to be updated for the construct model
+    # Shall do this when Drives_construct and Construct_product tags are populated
+    # Don't look into Drives_construct for phenotypes - source Karen Y
+    foreach my $type ('Construct_product', 'Allele', 'RNAi_result'){
 
         my $type_name; #label that shows in the evidence column above each list of that object type
-        if ($type =~ /Transgene/) { $type_name = 'Transgene:'; }
+        if ($type =~ /construct/i) { $type_name = 'Transgene:'; }
         elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
         else { $type_name = $type . ':'; }
 
-        foreach my $obj ($object->$type){
+        # For Transgene experiements, unlike others, have to get phenotype info from associated constructs
+        my @exp_objs;
+        if ($type =~ /construct/i) { @exp_objs = map { $_->Transgene_construct } $object->$type; }
+        else { @exp_objs = $object->$type; }
 
-            # Don't include phenotypes that result from
-            # the current gene driving overexpression of another gene.
-            # These are displayed in the overexpression phenotypes table.
-            if ($type eq 'Drives_Transgene') {
-                my $gene = $obj->Gene;
-                next unless ($gene && "$gene" eq "$object");
-            }
+        foreach my $obj (@exp_objs){
 
             my $seq_status = eval { $obj->SeqStatus };
             my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
@@ -148,7 +148,13 @@ sub _build__phenotypes {
                         $evidence->{Genotype} = "$genotype" if $genotype;
                         my $strain = $obj->Strain;
                         $evidence->{Strain} = "$strain" if $strain;
+                    }elsif ($type =~ /construct/i) {
+                        # Only include those transgenes where the Caused_by in #Phenotype_info
+                        # is the current gene.
+                        my ($caused_by) = $_->at('Caused_by');
+                        next unless $caused_by eq $object;
                     }
+
                     push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
                 }
             }
@@ -1252,35 +1258,36 @@ sub drives_overexpression {
     my $object = $self->object;
 
     my %phenotypes;
-    foreach my $type ('Drives_Transgene', 'Transgene_product'){
-        foreach my $transgene ($object->$type){
+    foreach my $construct ($object->Construct_product) {
 
-            # Only include those transgenes where the Driven_by_gene
-            # is the current gene.
-            next unless $transgene->Driven_by_gene eq $object;
+        foreach my $transgene ($construct->Transgene_construct){
 
             my $summary = $transgene->Summary;
 
             # Retain in case we also want to add not_observed...
             foreach my $obs ('Phenotype'){
                 foreach my $phene ($transgene->$obs){
+
+                    # Only include those transgenes where the Caused_by in #Phenotype_info
+                    # is the current gene.
+                    my ($caused_by) = $phene->at('Caused_by');
+                    next unless $caused_by eq $object;
+
                     $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
                     my $evidence = $self->_get_evidence($phene);
-                    $evidence->{Summary}   = "$summary" if $summary;
+                    # $evidence->{Summary}   = "$summary" if $summary;
                     $evidence->{Transgene} = $self->_pack_obj($transgene);
 
-
-                    my ($key,$caused_by);
-                    if ($transgene->Gene) {
-                        $caused_by = join(", ",map { $_->Public_name } $transgene->Gene);
-                        $key       = "Overexpressed gene: " . $caused_by;
-                    } elsif ($transgene->Reporter_product) {
-                        $caused_by = join(", ",$transgene->Reporter_product);
-                        $key       = "Reporter product: " . $caused_by;
+                    if ($evidence && %$evidence){
+                        my $transgene_label = $transgene->Public_name;
+                        my $ev = {
+                            text  => [$self->_pack_obj($transgene, $transgene_label),
+                                      "<em>$summary</em>",
+                                      $evidence->{Remark}],
+                            evidence => $evidence
+                        };
+                        push @{$phenotypes{$obs}{$phene}{evidence}}, $ev;
                     }
-
-                    push @{$phenotypes{$obs}{$phene}{evidence}{$key}}, { text     => $self->_pack_obj($transgene,$transgene->Public_name ),
-                                                                         evidence => $evidence } if $evidence && %$evidence;
 
                 }
             }
@@ -1288,7 +1295,7 @@ sub drives_overexpression {
     }
     return { data        => (defined $phenotypes{Phenotype}) ? \%phenotypes : undef ,
              description => 'phenotypes due to overexpression under the promoter of this gene', };
-#    return \%phenotypes;
+
 }
 
 
@@ -1443,13 +1450,18 @@ sub transgenes {
     my $object = $self->object;
 
     my @data;
-    foreach ($object->Drives_transgene) {
-        my $summary = $_->Summary;
-        my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
-        push @data, { transgene  => $self->_pack_obj($_),
-                laboratory => @labs ? \@labs : undef,
-                summary    => "$summary",
-        };
+    foreach ($object->Drives_construct) {
+        my $cnst_api_obj = $self->_api->fetch({ class => 'Construct', name => "$_"});
+        my $used_for = $cnst_api_obj->used_for->{'data'} if $cnst_api_obj;
+        my $cnst_packed = $self->_pack_obj($_);
+
+        my @entries = grep {
+            (my $t = $_->{'used_in_type'} ) =~ s/ /_/;
+            $t =~ /^Transgene_construct|Transgene_coinjection|Engineered_variation$/
+        } @$used_for if $used_for;
+        map { $_->{'construct'} = $cnst_packed } @entries;
+
+        push @data, @entries;
     }
 
     return {
@@ -1467,13 +1479,18 @@ sub transgene_products {
     my $object = $self->object;
 
     my @data;
-    foreach ($object->Transgene_product) {
-        my $summary = $_->Summary;
-            my @labs = map { $self->_pack_obj($_) } $_->Laboratory;
-        push @data, { transgene  => $self->_pack_obj($_),
-                laboratory => @labs ? \@labs : undef,
-                summary    => "$summary",
-        };
+    foreach ($object->Construct_product) {
+        my $cnst_api_obj = $self->_api->fetch({ class => 'Construct', name => "$_"});
+        my $used_for = $cnst_api_obj->used_for->{'data'} if $cnst_api_obj;
+        my $cnst_packed = $self->_pack_obj($_);
+
+        my @entries = grep {
+            (my $t = $_->{'used_in_type'} ) =~ s/ /_/;
+            $t =~ /^Transgene_construct|Transgene_coinjection|Engineered_variation$/
+        } @$used_for if $used_for;
+        map { $_->{'construct'} = $cnst_packed } @entries;
+
+        push @data, @entries;
     }
 
     return {
@@ -1596,7 +1613,14 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-        my $gff   = $self->_fetch_gff_gene($sequence) or next;
+
+        my $gff   = $self->_fetch_gff_gene($sequence);
+        unless ($gff) {
+            # a hack to handle AceDB sequence name, which differs from gff seq name by a species ID prefix
+            my ($seq_name_alt) = "$sequence" =~ m/\d?+:(.+)/g;
+            $gff = $self->_fetch_gff_gene($seq_name_alt) if $seq_name_alt;
+        }
+        next unless $gff;
 
         my $cds
             = ( $sequence->class eq 'CDS' )
@@ -1647,8 +1671,8 @@ sub gene_models {
         } @sequences;
 
 
-        $data{type} = $type && "$type";
         $data{model}   = \@sequences;
+        $data{type} = $type && "$type" if @sequences;
         $data{protein} = $self->_pack_obj($protein) if $coding;
 
         $data{cds} = $status ? {    text => ($cds ? (@remarks ? $self->_pack_obj($cds, "$cds", footnotes => \@remarks) : $self->_pack_obj($cds)) : '(no CDS)'),
@@ -1682,6 +1706,71 @@ sub other_sequences {
 
     return {
         description => 'Other sequences associated with gene',
+        data        => @data ? \@data : undef,
+    };
+}
+
+#######################################
+#
+# The Features Widget
+#
+#######################################
+
+has 'features' => (
+    is  => 'ro',
+    lazy => 1,
+    builder => '_build_features',
+);
+
+sub _build_features {
+    my $self = shift;
+    my $gene = $self->object;
+    my @data;
+    foreach my $feature ($gene->Associated_feature){
+        my $description = $feature->Description;
+        my $method = $feature->Method;
+
+        # create a list of associations
+        my @associations;
+        foreach my $as_tag ($feature->Associations){
+            push @associations, map {
+                my ($type) = "$as_tag" =~ /Associated_with_(\w+)/;
+                $type =~ s/_/ /g;
+                my $packed_as = $self->_pack_obj($_);
+                my $label = $packed_as->{label};
+                $packed_as->{label} = "$type: " . $label unless $label =~ /$type/i;
+                $packed_as;
+            } $as_tag->col();
+
+            # (my $type = "$as_tag") =~ s/_/ /g;
+            # my @as = map { $self->_pack_obj($_) } $as_tag->col();
+            # push @associations, {
+            #     text => \@as,
+            #     evidence => { type => $type },
+            # };
+        }
+        sub priority {
+            # a greater priority value is considered high priority
+            my $as = shift;
+            return $as->{label} =~ /^(Interaction|expression pattern)/i;
+        }
+        @associations = sort { priority($b) cmp priority($a) } @associations;  #sort by descending priority
+
+        my @bound_by = map { $self->_pack_obj($_) } $feature->Bound_by_product_of;
+        my $tf => $feature->Transcription_factor;
+
+        push @data, {
+            name => $self->_pack_obj($feature),
+            description => $method && "$description",
+            method => $method && "$method",
+            association => \@associations,
+            bound_by => \@bound_by,
+            tf => $tf && "$tf"
+        };
+    }
+
+    return {
+        description => 'Features associated with gene',
         data        => @data ? \@data : undef,
     };
 }

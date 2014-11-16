@@ -90,6 +90,17 @@ sub sequences {
     }
 }
 
+sub end_reads {
+    my ($self) = @_;    
+    my @end_reads = map { $self->_pack_obj($_) } @{$self ~~ '@End_sequence'};
+    
+    return {
+        description => 'end reads associated with this clone',
+        data	    => @end_reads ? \@end_reads : undef,
+    }
+}
+
+
 sub _seq2coords {
     my ($self, @seqs) = @_;
 
@@ -302,8 +313,9 @@ has '_sequence' => (
   lazy_build => 1,
 );
 
+
 sub _build__sequence {
-  my $self = shift;
+  my $self = shift; 
   return $self->_api->wrap($self->object->follow(-tag=>'Sequence',-filled=>1));
 }
 

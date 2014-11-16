@@ -16,57 +16,76 @@ WRAPPER $field_block title="Also published as" key="synonym";
   fields.synonym.data.join(', ') | html;
 END;
 
-w = [];
-IF fields.driven_by_gene.data.defined;
-    w.push(tags2link(fields.driven_by_gene.data, ', '));
+IF fields.construct.data.defined;
+    w.push(fields.construct.data);
 END;
 
-IF fields.driven_by_construct.data.defined;
-    w.push(fields.driven_by_construct.data);
-END;
-
-IF (fields.driven_by_gene.data.defined || fields.driven_by_construct.data.defined);
-  WRAPPER $field_block title=pluralize('Promoter', w.size);
-      w.join(', ');
-  END;
+WRAPPER $field_block title=pluralize('Promoter', fields.driven_by_gene.data.size) key="driven_by_gene";
+ 	    tags2link(fields.driven_by_gene.data, ', ');
 END;
 
 WRAPPER $field_block title=pluralize('Gene product', fields.gene_product.data.size) key="gene_product";
-  tags2link(fields.gene_product.data);
+  tags2link(fields.gene_product.data, ', ');
 END;
 
-WRAPPER $field_block title=pluralize('Reporter product', fields.reporter_construct.data.keys.size) key="reporter_construct";
-   rp = [];
-   FOREACH reporter IN fields.reporter_construct.data.keys;
-       IF reporter == "gene";
-          rp.push(tag2link(fields.reporter_construct.data.$reporter));
-       ELSE;
-          rp.push(fields.reporter_construct.data.$reporter);
-       END;
-   END;
-   rp.join(', ');
+WRAPPER $field_block title="Fusion Reporter" key="fusion_reporter";
+  tags2link(fields.fusion_reporter.data, ', ');
+END;
+
+WRAPPER $field_block title="Other Reporters" key="other_reporter";
+  cell_content(fields.other_reporter.data, ', ');
 END;
 
 WRAPPER $field_block title=pluralize("3'UTR", fields.utr.data.size) key="utr";
   tags2link(fields.utr.data);
 END;
 
-WRAPPER $field_block title=pluralize("Coinjection marker", fields.coinjection_marker.data.size) key="coinjection_marker";
-  tags2link(fields.coinjection_marker.data);
+WRAPPER $field_block title=pluralize("Purification tag", fields.purification_tag.data.size) key="purification_tag";
+  tags2link(fields.purification_tag.data);
+END;
+
+WRAPPER $field_block title=pluralize("Integrated from", fields.integrated_from.data.size) key="integrated_from";
+  tags2link(fields.integrated_from.data);
+END;
+
+WRAPPER $field_block title=pluralize("Used for trasngene derivation", fields.transgene_derivation.data.size) key="transgene_derivation";
+  tags2link(fields.transgene_derivation.data);
 END;
 
 WRAPPER $field_block title="Construction details" key="construction_summary";
   fields.construction_summary.data;
 END;
 
+WRAPPER $field_block title="Genetic information" key="genetic_info_tags";
+  fields.genetic_info_tags.data;
+END;
+
 WRAPPER $field_block title=pluralize("Strain", fields.strains.data.size) key='strains';
   tags2link(fields.strains.data, '<br />', 'Strains');
 END;
 
-WRAPPER $field_block title="Historical gene" key="historical_gene";
-  cell_content(fields.historical_gene.data);
+WRAPPER $field_block title=pluralize("Marked rearrangement", fields.marked_rearrangement.data.size) key='marked_rearrangement';
+  tags2link(fields.marked_rearrangement.data);
+END;
+
+WRAPPER $field_block title=pluralize("Recombination site", fields.recombination_site.data.size) key="recombination_site";
+   cell_content(fields.recombination_site.data, ', ');
+END;
+
+'</div>';
+
+WRAPPER $field_block title="Used for" key="used_for";
+    build_data_table(
+			order=['used_in_type','used_in','use_summary'],
+			columns={
+				'used_in_type' => 'Type',
+                'used_in' => 'Used in',
+                'use_summary' => 'Summary',
+			},
+			key = 'used_for'
+	);
 END;
 
 remarks;
-'</div>';
+
 %]

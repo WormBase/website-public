@@ -81,7 +81,7 @@ sub workbench_GET {
       } else{
             $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
-      $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favourites" : "library");
+      $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favorites" : "library");
     }
     $c->stash->{noboiler} = 1;
     $c->stash->{count} = $session->pages->count || 0;
@@ -1278,7 +1278,10 @@ sub _select_template {
     # Normally, the template defaults to action name.
     # However, we have some shared templates which are
     # not located under root/classes/CLASS
-    if (($type eq 'field') && ($config->{common_fields}->{$render_target})) {
+    if (-e WormBase::Web->path_to('root', 'templates', "classes/$class/$render_target.tt2")) {
+        # Check root/classes/CLASS, and use this one if exists
+        return "classes/$class/$render_target.tt2";
+    }elsif (($type eq 'field') && ($config->{common_fields}->{$render_target})) {
         # Some templates are shared across Models
         return "shared/fields/$render_target.tt2";
     }elsif (($type eq 'widget') && ($config->{common_widgets}->{$render_target})){
@@ -1286,7 +1289,7 @@ sub _select_template {
         # Some widgets are shared across Models
         return "shared/widgets/$render_target.tt2";
     } else {
-      return "classes/$class/$render_target.tt2";
+      die "cannot locate template $render_target.tt2";
     }
 }
 
