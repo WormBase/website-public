@@ -22,7 +22,7 @@
                 </td>
             </tr>
      </table>
-                 <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div>
+                <!-- <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div> -->
 
 [% END %]
 
@@ -62,4 +62,3 @@
 <br />
 [% external_link("https://twitter.com/wormbase", "@wormbase") %]
 <br />
-

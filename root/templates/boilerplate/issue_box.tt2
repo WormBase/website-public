@@ -16,9 +16,9 @@
           </div>
 
           [% UNLESS c.user_exists %]
-            <div><input id="name" type="text" size="48" placeholder="Name"/></div>
+            <div><input id="name" type="text" size="48" placeholder="Name (optional)"/></div>
             <div><input id="email" type="text"  size="48" placeholder="Email (so we can get back to you)"/> </div>
-            <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div>
+            <!-- <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div> -->
           [% END %]
 
           <div>

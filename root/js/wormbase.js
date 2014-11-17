@@ -1430,23 +1430,26 @@ var Scrolling = (function(){
             name = feed.find("#name"),
             dc = feed.find("#desc-content"),
             email = feed.find("#email"),
-            anon = feed.find("#anon").is(':checked'),
+            //anon = feed.find("#anon").is(':checked'),
             content = feed.find("#issue-content");
-            if (content.is('input,textarea')){
-                content = content.val().replace(/\n/g, "<br/>");
-            }else{
-                //for pre-generated html report in string, ie in status/error.tt2
-                // trim and remove return, avoid problematic display in github
-                content = content.html().replace(/^\s+|\s+$|\n/mg, '');
-            }
-            content += (dc && dc.val() ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
 
-        if (!anon && !validate_fields(email))
+        if (!validate_fields(email))
           return;
         if(!content){
           feed.find("#issue-content").focus();
           return;
         }
+
+       //prepare content from either
+       // user entered question/feedback, OR
+       // pre-generated html report, ie in status/error.tt2
+       if (content.is('input,textarea')){
+           content = content.val().replace(/\n/g, "<br/>");
+       }else{
+           // trim spaces and remove return, avoid problematic display in github
+           content = content.html().replace(/^\s+|\s+$|\n/mg, '');
+       }
+       content += (dc && dc.val() ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
 
         $jq.ajax({
           type: 'POST',
