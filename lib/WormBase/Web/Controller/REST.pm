@@ -580,9 +580,6 @@ sub feed_POST {
         my $page = $c->req->params->{page} || $self->_get_page($c, $url);
         $url = $url . $hash;
 
-        # $content is html in a string, avoid spaces an return
-        $content =~ s/^\s+|\s+$|\n//gm;
-
         my ($issue_url,$issue_title,$issue_number) =
         $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
         $c->stash->{userAgent} = $userAgent;
@@ -1155,7 +1152,7 @@ sub _issue_email{
 
     my $subject ='New Issue';
     my $bcc     = $params->{reporter_email};
-    $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . $params->{reporter_name} . ')';
+    $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . ($params->{reporter_name} || 'Anonymous') . ')';
 
     foreach (keys %$params) {
       next if $_ eq 'c';

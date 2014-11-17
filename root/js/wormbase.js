@@ -1431,7 +1431,15 @@ var Scrolling = (function(){
             dc = feed.find("#desc-content"),
             email = feed.find("#email"),
             anon = feed.find("#anon").is(':checked'),
-            content = feed.find("#issue-content").html() + (dc && dc.val().length > 0 ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
+            content = feed.find("#issue-content");
+            if (content.is('input,textarea')){
+                content = content.val().replace(/\n/g, "<br/>");
+            }else{
+                //for pre-generated html report in string, ie in status/error.tt2
+                // trim and remove return, avoid problematic display in github
+                content = content.html().replace(/^\s+|\s+$|\n/mg, '');
+            }
+            content += (dc && dc.val() ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
 
         if (!anon && !validate_fields(email))
           return;

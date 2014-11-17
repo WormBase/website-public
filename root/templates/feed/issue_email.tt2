@@ -1,7 +1,7 @@
 <style type="text/css">.fade{font-size:.9em;color:#999}</style>
 
 [% USE date %]
-<p>Question:
+<p>[% issue_title || 'Question:' %]
 <br>&nbsp;&nbsp;[% content %]
 </p>
 
@@ -14,7 +14,8 @@ This issue has been assigned ticket number: #[% issue_number %]. Follow progress
 <p>
 
 <p>
-[% reporter_email ? "Reported by: " _ reporter_name _ "(" _ reporter_email _ ")" : 'Anonymous error report' %]
+[% reporter_name = reporter_name || "Anonymous" %]
+[% reporter_email ? "Reported by: " _ reporter_name _ " (" _ reporter_email _ ")" : 'Anonymous error report' %]
 <br />
 <span class="fade">[% date.format(timestamp, '%d %b %y %H:%M', 'en_GB') %]
 </span><br /><br />
