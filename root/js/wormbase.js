@@ -1449,7 +1449,7 @@ var Scrolling = (function(){
            // trim spaces and remove return, avoid problematic display in github
            content = content.html().replace(/^\s+|\s+$|\n/mg, '');
        }
-       content += (dc && dc.val() ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
+       content += (dc && $jq.trim(dc.val())  ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
 
         $jq.ajax({
           type: 'POST',

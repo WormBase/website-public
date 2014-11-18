@@ -1,5 +1,16 @@
 [% UNLESS c.req.uri.path.match('tools/support') %]
 
+[%# load defined blocks and variable in
+  # shared/report_issue.tt2%]
+[% PROCESS shared/report_issue.tt2 %]
+
+[%# override variables %]
+[% issue_header = BLOCK %]
+    <div>
+        Send us an email and we'll get back to you ASAP. Or you can read our <a href="[% c.uri_for('/about','Frequently_asked_questions') %]">Frequently Asked Questions</a>.
+    </div>
+[% END %]
+
 <div id="operator-box-wrap">
 
   <div id="issue-box" class="minimize">
@@ -10,40 +21,13 @@
        </span>
     </div>
     <div id="issue-box-content" class="ui-corner-tl">
-      <div id="issues-new">
-          <div>
-            Send us an email and we'll get back to you ASAP. Or you can read our <a href="[% c.uri_for('/about','Frequently_asked_questions') %]">Frequently Asked Questions</a>.
-          </div>
 
-          [% UNLESS c.user_exists %]
-            <div><input id="name" type="text" size="48" placeholder="Name (optional)"/></div>
-            <div><input id="email" type="text"  size="48" placeholder="Email (so we can get back to you)"/> </div>
-            <!-- <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div> -->
-          [% END %]
-
-          <div>
-            <select name="email[subject]" id="issue-title" class="valid">
-              <option value="" style="display:none">Type of Question / Comment</option>
-              <option value="Bug Report">Bug Report</option>
-              <option value="Feature Request">Feature Request</option>
-              <option value="Content Correction">Content Correction</option>
-              <option value="How Do I ...?">How Do I ...?</option>
-              <option value="My Account">My Account</option>
-              <option value="Everything's broken!">Everything's broken!</option>
-            </select>
-          </div>
-          <div>
-            <textarea class="issue-text" id="issue-content" rows="6" name="content" placeholder="Question?"></textarea>
-          </div>
-          <div id="issue-submit-box">
-            <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% template_title | uri %]" url="[% c.req.uri.path %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
-          </div>
-          <div id="issue-message">
-          </div>
-      </div>  <!-- closing #issues-new -->
-      <div id="add-new-issue" style="display:none">
-          <a onClick="WB.issue.addNewIssue($jq(this));">New form</a>
-      </div>
+    [% WRAPPER report_issue_block %]
+        [% issue_header %]
+        [% issue_name_email %]
+        <div>[% issue_title_options %]</div>
+        <div>[% issue_content %]</div>
+    [% END %]
     </div>
   </div>
 </div>
