@@ -58,8 +58,6 @@
         isnt($lab_reps, undef, 'representatives returned');
         my @rep1 = grep { $_->{'id'} eq 'WBPerson3249'} @$lab_reps;
         ok(@rep1, 'a correct lab representative returned');
-        my @rep2 = grep { $_->{'id'} eq 'WBPerson9833'} @$lab_reps;
-        ok(@rep2, 'another correct lab representative returned - making sure Not just fetch one representative');
 
     }
 

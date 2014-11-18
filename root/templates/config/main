@@ -486,6 +486,6 @@
         return $key unless $sub_as_str;
         return eval($sub_as_str);
     }
-    my @sorted_keys = sort { ssub($a) cmp ssub($b) } keys %$hash_ref;
+    my @sorted_keys = sort { ssub($a) cmp ssub($b) } keys %$hash_ref if ref($hash_ref) eq 'HASH';
     print join($separator, @sorted_keys);
 [% END %]
