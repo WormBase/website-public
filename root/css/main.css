@@ -1312,12 +1312,20 @@ div#error-box {
     font-size:1.0em;
 }
 
-div#error-box p{
+div#error-box p, div#help-page-content p{
     margin: 10px 0 5px 0;
 }
 
 div#error-box #desc-content {
     width: 100%;
+}
+
+#error-box #name {
+    width: 35%;
+}
+
+#error-box #email {
+    width: 60%;
 }
 
 div.ui-state-error {
@@ -2759,8 +2767,21 @@ table.venn tr.venn-data td {
   padding: 1em;
 }
 
-#issues-new, #issue-box-content #issues-new>div {
+#issues-new,
+#issue-box-content #issues-new>div,
+#issues-new>div
+{
   margin-top:1em;
+}
+
+#issue-box #name,
+#issue-box #email {
+    margin: 1em 0 0 0;
+    display: inline-block;
+}
+
+#issue-submit-box {
+    display: inline-block;
 }
 
 #operator-box-wrap{
