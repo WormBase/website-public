@@ -566,6 +566,7 @@ sub feed_POST {
         }
       }else{
         my $content    = $c->req->params->{content};
+
         my $title      = $c->req->params->{title};
         my $name = $c->req->params->{name};
         my $email = $c->req->params->{email};
@@ -1107,6 +1108,8 @@ sub _post_to_github {
     "Anonymous error report";
   my $ptitle = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->title : $page;
   my $purl = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->url || $u : $u;
+  $ptitle = URI::Escape::uri_unescape($ptitle);
+  $purl = URI::Escape::uri_unescape($ptitle);
 
 $content .= <<END;
 

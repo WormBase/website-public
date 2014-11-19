@@ -21,7 +21,7 @@
 [% issue_name_email = BLOCK %]
     [% UNLESS c.user_exists %]
         <input id="name" type="text" size="48" placeholder="Name (optional)"/>
-        <input id="email" type="text"  size="48" placeholder=" Email (so we can get back to you)"/>
+        <input id="email" type="text"  size="48" placeholder="Email (so we can get back to you)"/>
         <!-- <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div> -->
     [% END %]
 [% END %]

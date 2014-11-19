@@ -1,12 +1,13 @@
 <style type="text/css">.fade{font-size:.9em;color:#999}</style>
 
 [% USE date %]
-<p>[% issue_title || 'Question:' %]
+<p>[% title || 'Question:' %]
 <br>&nbsp;&nbsp;[% content %]
 </p>
 
+[% page_url = url || page.url %]
 <p>Submitted From:
-<br>&nbsp;&nbsp;[% page.title || page %] <span class="fade">([% page.url || url %])</span>
+<br>&nbsp;&nbsp;[% decode_uri(page.title || page) %] <a href="[%- c.req.base _ page_url -%]">[%- decode_uri(page_url) -%]</a>
 </p>
 
 <p>
