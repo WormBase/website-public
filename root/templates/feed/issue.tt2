@@ -5,7 +5,7 @@
 [%# override variables %]
 [% issue_name_email = BLOCK %]
     [% UNLESS c.user_exists %]
-    <table width="60%">
+    <table width="100%">
         <tr>
             <th>
             <a class='lightbox' href="[% c.uri_for('/login').path  %]">Login</a>
@@ -14,9 +14,9 @@
               or
             </td>
             <td>
-            Name <input id="name" type="text"   maxlength="30" />
+            Name <input id="name" type="text"   size="35" placeholder="Name (optional)"/>
               <div style="height: 0.4em; overflow: hidden;"> </div>
-            Email <input  id="email" maxlength="50" type="text"/>
+            Email <input  id="email" size="35" type="text" placeholder="Email (so we can get back to you)"/>
             </td>
         </tr>
     </table>
@@ -37,11 +37,13 @@
 
 
 [% WRAPPER report_issue_block %]
+    [% msg=c.request.param('msg') %]
     [% issue_name_email %]
     <p>Type of question:</p>
     [% issue_title_options %]
-    <p>Question:</p>
-    [% issue_content %]
+    <p>[% msg ? 'Error report' : 'Question' %]:</p>
+    [% INCLUDE issue_content %]
+    <div>[% issue_additional_content %]</div>
 [% END %]
 
 [% '<a href="' _ c.uri_for('/search','issue','*') _ '">see more issues ›</a>' %]

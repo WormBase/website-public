@@ -26,8 +26,11 @@
         [% issue_header %]
         [% issue_name_email %]
         <div>[% issue_title_options %]</div>
-        <div>[% issue_content %]</div>
+        <div>[% INCLUDE issue_content %]</div>
     [% END %]
+        <div id="add-new-issue" style="display:none">
+            <a onClick="WB.issue.addNewIssue($jq(this));">New form</a>
+        </div>
     </div>
   </div>
 </div>

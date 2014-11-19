@@ -24,6 +24,7 @@
      </select>
 [% END %]
 
+[%# overrides the previously defined issue_content BLOCK %]
 [% issue_content = BLOCK %]
      <!-- <textarea  rows="10" cols="80">
         Expected URL: [%- c.req.uri -%]&#10;
@@ -51,13 +52,10 @@
         [% issue_title_options %]
 
         [% issue_content %]
-
-        <p>What were you doing? (optional) </p>
-        <textarea id="desc-content"></textarea>
+        [% issue_additional_content %]
 
         <p>How do we contact you?</p>
         [% issue_name_email %]
-
     [% END %]
 </div>
 

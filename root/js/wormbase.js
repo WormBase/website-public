@@ -95,8 +95,8 @@
               statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
           return '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p><a href="/tools/support?url=' + location.pathname
-                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
+                  + (error ? '&msg=' + encodeURIComponent(error.replace(/^\s+|\s+$|\n/mg, '')) : '')
+                  + '"><button class="ui-state-active"><span>Let us know</span></button></a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
     }
 
     function navBarInit(){
