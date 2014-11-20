@@ -1,9 +1,8 @@
 <style type="text/css">.fade{font-size:.9em;color:#999}</style>
 
 [% USE date %]
-<p>[% title || 'Question:' %]
-<br>&nbsp;&nbsp;[% content %]
-</p>
+[% title || 'Question:' %]
+[% content %]
 
 [% page_url = url || page.url %]
 <p>Submitted From:

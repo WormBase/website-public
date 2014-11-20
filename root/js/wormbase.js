@@ -1442,14 +1442,21 @@ var Scrolling = (function(){
 
        //prepare content from either
        // user entered question/feedback, OR
+       // copied html error report through "Let us know" OR
        // pre-generated html report, ie in status/error.tt2
-       if (content.is('input,textarea')){
-           content = content.val().replace(/\n/g, "<br/>");
+       content = $jq('<textarea/>').html(content.val()).val()  //convert encoded html error report to html
+           || content.html();
+       content = content.replace(/^\s+/mg, ''); // avoid problematic leading spaces for github
+       content = content.replace(/^\n+|\n+$/, ''); // remove leading and trailing empty lines
+
+       if(content.match(/^\<(div)|(p)\>.*/)){
+           content.replace(/\n/g, '');
        }else{
-           // trim spaces and remove return, avoid problematic display in github
-           content = content.html().replace(/^\s+|\s+$|\n/mg, '');
+           content = content.replace(/\n+/g, '<br/>');
+           content = '<p>&nbsp;&nbsp;' + content + '</p>';
        }
-       content += (dc && $jq.trim(dc.val())  ? '<br />What were you doing? <br />&nbsp;&nbsp;' + dc.val() : '');
+
+       content += (dc && $jq.trim(dc.val())  ? '<p>What were you doing? <br />&nbsp;&nbsp;' + dc.val() + '</p>': '');
 
         $jq.ajax({
           type: 'POST',

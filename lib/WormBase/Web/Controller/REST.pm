@@ -1106,16 +1106,17 @@ sub _post_to_github {
   my $contact = $obscured_email ? $obscured_name ? "Reported by: $obscured_name ($obscured_email)  (obscured for privacy))" :
     "Reported by: $obscured_email  (obscured for privacy)" :
     "Anonymous error report";
-  my $ptitle = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->title : $page;
-  my $purl = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->url || $u : $u;
+  my $ptitle = eval { $page->title } || $page || '';
+  my $purl = $u || eval { $page->url };
   $ptitle = URI::Escape::uri_unescape($ptitle);
-  $purl = URI::Escape::uri_unescape($ptitle);
+  $purl = URI::Escape::uri_unescape($purl);
+  my $purl_base = $c->req->base;
 
 $content .= <<END;
 
 
 $contact
-Submitted From: $ptitle ($purl)
+Submitted From: $ptitle <a href="$purl_base$purl">$purl</a>
 
 $userAgent
 
@@ -1128,6 +1129,7 @@ END
   my $trim_content = "$content";
   $trim_content =~ s/\<[^\>]*\>/\ /g;
   my $pseudo_title = substr($trim_content,0,50) . '...';
+  $pseudo_title =~ s/(&[^;]*;)+/\ /g;
   my $data = { title => $pseudo_title,
 	       body  => "$content",
 	       labels => $title ? [ 'HelpDesk', $title ] : ['HelpDesk']
