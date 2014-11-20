@@ -584,24 +584,19 @@ div#splash-box>p{
 }
 
 div#create-prompt {
-  font-size:0.7em;
+  font-size:0.5em;
   background:white;
   position:absolute;
   right:1.5em;
   bottom:1em;
-  padding:1em;
-  text-align:center;
+  padding:1em 1.5em;
   border:1px solid #CDCDCD;
   background:#E9EEF2;
 }
 
-#default-login span {
-  font-weight:normal;
-  font-size:0.8em;
-  float:left;
-  margin:1em 0 0 0;
+.default-login{
+  padding:0.5em 0 0 0;
   position:relative;
-  height:1em;
 }
 
 #create-account{
@@ -3197,7 +3192,7 @@ button::-moz-focus-inner {
     border-bottom: none;
     border-left: none;
     border-right: none;
-    display: block;
+    display: inline-block;
     font-family: "Lucida Grande", Tahoma, sans-serif;
     position: relative;
     text-shadow: 0 -1px 1px rgba(0,0,0,0.5);
