@@ -43,8 +43,8 @@
 // Groups that users belong to, each user should only be in one group,
 // The code will use the first group that it finds a user in.
 //
-admin: admin todd norie
-write: lstein todd norie
+admin: admin tharris
+write: tharris
 
 //////////////////////////////////////////////////////////////////
 // users and passwords

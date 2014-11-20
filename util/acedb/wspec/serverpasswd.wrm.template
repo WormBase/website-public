@@ -44,7 +44,7 @@
 // The code will use the first group that it finds a user in.
 //
 admin: admin
-write: todd
+write: tharris
 
 //////////////////////////////////////////////////////////////////
 // users and passwords
