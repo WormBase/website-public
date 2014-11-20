@@ -566,6 +566,7 @@ sub feed_POST {
         }
       }else{
         my $content    = $c->req->params->{content};
+
         my $title      = $c->req->params->{title};
         my $name = $c->req->params->{name};
         my $email = $c->req->params->{email};
@@ -579,7 +580,7 @@ sub feed_POST {
         my $userAgent = $c->req->params->{userAgent};
         my $page = $c->req->params->{page} || $self->_get_page($c, $url);
         $url = $url . $hash;
-        $content =~ s/\n/<br \/>/g;
+
         my ($issue_url,$issue_title,$issue_number) =
         $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
         $c->stash->{userAgent} = $userAgent;
@@ -1102,15 +1103,20 @@ sub _post_to_github {
 # Obscure names and emails.
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
-  my $contact = ($obscured_name && $obscured_email && "Reported by: $obscured_name ($obscured_email)  (obscured for privacy)") || "Anonymous error report";
-  my $ptitle = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->title : $page;
-  my $purl = ref($page) eq 'WormBase::Web::Model::Schema::Page' ? $page->url || $u : $u;
+  my $contact = $obscured_email ? $obscured_name ? "Reported by: $obscured_name ($obscured_email)  (obscured for privacy))" :
+    "Reported by: $obscured_email  (obscured for privacy)" :
+    "Anonymous error report";
+  my $ptitle = eval { $page->title } || $page || '';
+  my $purl = $u || eval { $page->url };
+  $ptitle = URI::Escape::uri_unescape($ptitle);
+  $purl = URI::Escape::uri_unescape($purl);
+  my $purl_base = $c->req->base;
 
 $content .= <<END;
 
 
 $contact
-Submitted From: $ptitle ($purl)
+Submitted From: $ptitle <a href="$purl_base$purl">$purl</a>
 
 $userAgent
 
@@ -1123,6 +1129,7 @@ END
   my $trim_content = "$content";
   $trim_content =~ s/\<[^\>]*\>/\ /g;
   my $pseudo_title = substr($trim_content,0,50) . '...';
+  $pseudo_title =~ s/(&[^;]*;)+/\ /g;
   my $data = { title => $pseudo_title,
 	       body  => "$content",
 	       labels => $title ? [ 'HelpDesk', $title ] : ['HelpDesk']
@@ -1150,7 +1157,7 @@ sub _issue_email{
 
     my $subject ='New Issue';
     my $bcc     = $params->{reporter_email};
-    $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . $params->{reporter_name} . ')';
+    $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . ($params->{reporter_name} || 'Anonymous') . ')';
 
     foreach (keys %$params) {
       next if $_ eq 'c';

@@ -1,0 +1,52 @@
+
+[%# Here is the block used to create a submit issue form %]
+[% BLOCK report_issue_block %]
+    <div id="issues-new">
+
+        [% content %]
+
+        <div id="issue-submit-box">
+          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% template_title | uri %]" url="[% c.req.uri.path %]" rel="[% c.uri_for('/rest','feed','issue').path  %]"/>
+        </div>
+
+        [% issue_footer %]
+        <div id="issue-message"></div>
+    </div>  <!-- closing #issues-new -->
+
+[% END %]
+
+[%# Below are helper variables or block definitions
+  # for creating a submit issue form %]
+
+[% issue_name_email = BLOCK %]
+    [% UNLESS c.user_exists %]
+        <input id="name" type="text" size="48" placeholder="Name (optional)"/>
+        <input id="email" type="text"  size="48" placeholder="Email (so we can get back to you)"/>
+        <!-- <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div> -->
+    [% END %]
+[% END %]
+
+[% issue_title_options = BLOCK %]
+    <select name="email[subject]" id="issue-title" class="valid">
+      <option value="" style="display:none">Type of Question / Comment</option>
+      <option value="Bug Report" [% 'selected' IF msg %]>Bug Report</option>
+      <option value="How Do I ...?">How Do I ...?</option>
+      <option value="Content Correction">Content Correction</option>
+      <option value="Feature Request">Feature Request</option>
+      <option value="My Account">My Account</option>
+      <option value="Everything's broken!">Everything is broken!</option>
+    </select>
+[% END %]
+
+[%# issue_content is a BLOCK definition for content of an issue %]
+[% BLOCK issue_content %]
+  <textarea [% 'readonly' IF msg %] class="issue-text" id="issue-content" rows="6" name="content" placeholder="Question?">[% msg IF msg %]</textarea>
+[% END %]
+
+
+[% issue_additional_content = BLOCK %]
+    <p>What were you doing? (optional) </p>
+    <textarea id="desc-content" class="issue-text"></textarea>
+[% END %]
+
+[% issue_footer = BLOCK %][% END %]

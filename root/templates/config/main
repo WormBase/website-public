@@ -489,3 +489,11 @@
     my @sorted_keys = sort { ssub($a) cmp ssub($b) } keys %$hash_ref if ref($hash_ref) eq 'HASH';
     print join($separator, @sorted_keys);
 [% END %]
+
+[% MACRO decode_uri(coded_uri) PERL%]
+    my $coded_uri = $stash->get('coded_uri');
+
+    use URI::Escape;
+    my $uri = uri_unescape($coded_uri);
+    print "$uri";
+[% END %]

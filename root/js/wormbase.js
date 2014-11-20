@@ -95,8 +95,8 @@
               statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
           return '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p><a href="/tools/support?url=' + location.pathname
-                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
-                  + '">Let us know</a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
+                  + (error ? '&msg=' + encodeURIComponent(error.replace(/^\s+|\s+$|\n/mg, '')) : '')
+                  + '"><button class="ui-state-active"><span>Let us know</span></button></a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
     }
 
     function navBarInit(){
@@ -1424,20 +1424,39 @@ var Scrolling = (function(){
             url = is.attr("url"),
             page = is.attr("page"),
             feed = is.closest('#issues-new'),
-            message = is.closest("#issue-box-content").find("#issue-message"),
-            addNewLink = is.closest("#issue-box-content").find("#add-new-issue"),
+            container = feed.parent(),
+            message = container.find("#issue-message"),
+            addNewLink = container.find("#add-new-issue"),
             name = feed.find("#name"),
             dc = feed.find("#desc-content"),
             email = feed.find("#email"),
-            anon = feed.find("#anon").is(':checked'),
-            content = feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : '');
+            //anon = feed.find("#anon").is(':checked'),
+            content = feed.find("#issue-content");
 
-        if (!anon && !validate_fields(email, name))
+        if (!validate_fields(email))
           return;
         if(!content){
           feed.find("#issue-content").focus();
           return;
         }
+
+       //prepare content from either
+       // user entered question/feedback, OR
+       // copied html error report through "Let us know" OR
+       // pre-generated html report, ie in status/error.tt2
+       content = $jq('<textarea/>').html(content.val()).val()  //convert encoded html error report to html
+           || content.html();
+       content = content.replace(/^\s+/mg, ''); // avoid problematic leading spaces for github
+       content = content.replace(/^\n+|\n+$/, ''); // remove leading and trailing empty lines
+
+       if(content.match(/^\<(div)|(p)\>.*/)){
+           content.replace(/\n/g, '');
+       }else{
+           content = content.replace(/\n+/g, '<br/>');
+           content = '<p>&nbsp;&nbsp;' + content + '</p>';
+       }
+
+       content += (dc && $jq.trim(dc.val())  ? '<p>What were you doing? <br />&nbsp;&nbsp;' + dc.val() + '</p>': '');
 
         $jq.ajax({
           type: 'POST',
@@ -1460,7 +1479,7 @@ var Scrolling = (function(){
         });
         feed.children().not('#issue-message').hide();
         addNewLink.show();
-        message.append("<p><h2>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>");
+        message.append("<p><h2 style='color:rgb(95, 112, 137);'>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>");
         return false;
    },
 
