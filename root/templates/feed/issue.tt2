@@ -1,5 +1,6 @@
 [%# load defined blocks and variable in
   # shared/report_issue.tt2%]
+[% msg=c.request.param('msg') %]
 [% PROCESS shared/report_issue.tt2 %]
 
 [%# override variables %]
@@ -37,7 +38,6 @@
 
 
 [% WRAPPER report_issue_block %]
-    [% msg=c.request.param('msg') %]
     [% issue_name_email %]
     <p>Type of question:</p>
     [% issue_title_options %]
