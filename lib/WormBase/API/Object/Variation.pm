@@ -1394,14 +1394,15 @@ sub _compile_nucleotide_changes {
 
 
         # Set wt and mutant labels
-        if ($object->SNP(0) || $object->RFLP(0)) {
-            $wt_label = 'reference';
-            $mut_label = $object->Strain; # CB4856, 4857, etc
-        }
-        else {
+        # (simplified for #3201)
+        # if ($object->SNP(0) || $object->RFLP(0)) {
+        #     $wt_label = 'reference';
+        #     $mut_label = $object->Strain; # CB4856, 4857, etc
+        # }
+        # else {
             $wt_label  = 'wild type';
-            $mut_label = 'mutant';
-        }
+            $mut_label = 'variant';
+        # }
 
         push @variations, {
             type           => "$type",

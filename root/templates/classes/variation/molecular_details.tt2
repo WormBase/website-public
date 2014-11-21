@@ -43,7 +43,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
               '(sequence unknown / unlisted)';
            END;
            IF label.size > 0;
-              ' (' _ label.join('/') _ ')' _ '<br />';
+              ' (' _ label.join(' / ') _ ')' _ '<br />';
            END;
         wildtype_length = wildtype_length + change.wildtype.length;
         mutant_length = mutant_length + change.mutant.length;
