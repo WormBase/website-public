@@ -119,7 +119,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
            IF assay.assay_type.match('rflp');
 	    '<table>';
 	    	    '<tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>';
-		    '<tr><td>Reference strain digest</td><td>' _ assay.reference_strain_digest _ '</td>';
+		    '<tr><td>Wild type strain digest</td><td>' _ assay.reference_strain_digest _ '</td>';
 		         '<td>' _ assay.reference_strain_bands _ '</td>';
  	 	    '<tr>';
 		    '<tr><td>Polymorphic strain digest</td>';
