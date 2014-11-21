@@ -750,7 +750,7 @@ sub context {
         $placeholder = $seqLen ? {seqLength => $nf->format_number($seqLen) } : undef;
     }
     return {
-        description => 'wildtype and mutant sequences in an expanded genomic context',
+        description => 'wild type and variant sequences in genomic context',
         data        => ($wt || $wt_full || $mut || $mut_full || $placeholder) ? {
             wildtype_fragment => $wt,
             wildtype_full     => $wt_full,
@@ -998,7 +998,8 @@ sub polymorphism_status {
 
 # reference_strain  { }
 # If the variation is a polymorphism, this method
-# will return the reference strain.
+# will return the strains containing the polymorphism.
+# NOTE: not really reference strain, but too late to change the subroutine name now
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_strain
 
 sub reference_strain {
@@ -1008,7 +1009,7 @@ sub reference_strain {
     my @strains = $self->_pack_list([$object->Strain]);
 
     return {
-        description => 'the reference strain for the polymorphism',
+        description => 'strains that this variant has been observed in',
         data        => @strains ? \@strains : undef,
     };
 }
@@ -1393,14 +1394,15 @@ sub _compile_nucleotide_changes {
 
 
         # Set wt and mutant labels
-        if ($object->SNP(0) || $object->RFLP(0)) {
-            $wt_label = 'reference';
-            $mut_label = $object->Strain; # CB4856, 4857, etc
-        }
-        else {
+        # (simplified for #3201)
+        # if ($object->SNP(0) || $object->RFLP(0)) {
+        #     $wt_label = 'reference';
+        #     $mut_label = $object->Strain; # CB4856, 4857, etc
+        # }
+        # else {
             $wt_label  = 'wild type';
-            $mut_label = 'mutant';
-        }
+            $mut_label = 'variant';
+        # }
 
         push @variations, {
             type           => "$type",
