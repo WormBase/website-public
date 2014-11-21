@@ -12,7 +12,7 @@
     </div>
     <div class="login-holder">
       <input type="checkbox" id="remember" name="remember" size="10"><span id="fade"> Remember me · </span></input>
-      <span id="fade"><a href="[% c.uri_for('/register').path %]" onClick='$jq(this).closest(".login-form").load("[% c.uri_for("/register") %]?inline=1").toggleClass("registration-form login-form"); return false;'>register</a> · </span>
+      <!-- old register link <span id="fade"><a href="[% c.uri_for('/register').path %]" onClick='$jq(this).closest(".login-form").load("[% c.uri_for("/register") %]?inline=1").toggleClass("registration-form login-form"); return false;'>register</a> · </span> -->
       <a id="fade" href="[% c.uri_for('/password/index').path %]">forgot login?</a>
     </div>
   </form>

@@ -1,12 +1,12 @@
 <style type="text/css">.fade{font-size:.9em;color:#999}</style>
 
 [% USE date %]
-<p>Question:
-<br>&nbsp;&nbsp;[% content %]
-</p>
+[% title || 'Question:' %]
+[% content %]
 
+[% page_url = url || page.url %]
 <p>Submitted From:
-<br>&nbsp;&nbsp;[% page.title || page %] <span class="fade">([% page.url || url %])</span>
+<br>&nbsp;&nbsp;[% decode_uri(page.title || page) %] <a href="[%- c.req.base _ page_url -%]">[%- decode_uri(page_url) -%]</a>
 </p>
 
 <p>
@@ -14,7 +14,8 @@ This issue has been assigned ticket number: #[% issue_number %]. Follow progress
 <p>
 
 <p>
-[% reporter_email ? "Reported by: " _ reporter_name _ "(" _ reporter_email _ ")" : 'Anonymous error report' %]
+[% reporter_name = reporter_name || "Anonymous" %]
+[% reporter_email ? "Reported by: " _ reporter_name _ " (" _ reporter_email _ ")" : 'Anonymous error report' %]
 <br />
 <span class="fade">[% date.format(timestamp, '%d %b %y %H:%M', 'en_GB') %]
 </span><br /><br />

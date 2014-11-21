@@ -198,7 +198,8 @@
 #   See: Template::Plugin::Lingua::EN::Inflect
     MACRO pluralize(word, size) BLOCK;
       UNLESS word; RETURN; END;
-      IF (size != 1);
+      size = size || 0;
+      IF (size >= 1);
         IF (matches = word.match('^(.*)y$'));
           word = matches.0 _ 'ies';                   # antibody -> antibodies
         ELSIF (matches = word.match('^(.*)ium$'));
@@ -315,8 +316,10 @@
         ext_url || link;
     END;
 
+# lookup external sites by case insensitive match of its name
     MACRO match_link(link) BLOCK;
-      link_regex = "^(?i)$link$";  # search case insensitively for the database
+      link_regex = '^(?i)' _ "$link" _ '$';  # case insensitive regex
+                                             # avoid interpolation of regex symbols
       link_name  = site.external_urls.keys.grep(link_regex);
       link_name = link_name && link_name.pop;
       IF !link_name;
@@ -483,6 +486,14 @@
         return $key unless $sub_as_str;
         return eval($sub_as_str);
     }
-    my @sorted_keys = sort { ssub($a) cmp ssub($b) } keys %$hash_ref;
+    my @sorted_keys = sort { ssub($a) cmp ssub($b) } keys %$hash_ref if ref($hash_ref) eq 'HASH';
     print join($separator, @sorted_keys);
+[% END %]
+
+[% MACRO decode_uri(coded_uri) PERL%]
+    my $coded_uri = $stash->get('coded_uri');
+
+    use URI::Escape;
+    my $uri = uri_unescape($coded_uri);
+    print "$uri";
 [% END %]
