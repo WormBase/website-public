@@ -193,6 +193,7 @@ sub _search_exact {
     my ($query, $enq, @mset);
     if( $type ){
       # exact match using type/query - will only work if query is the WBObjID
+      $q =~ s/\"//g;
       $query=$class->_setup_query("\"$type$q\" $type..$type", $class->qp,1|2);
       $enq       = $class->db->enquire ( $query );
       @mset = $enq->matches( 0,1 ) if $enq;
@@ -232,8 +233,20 @@ sub _search_exact {
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0,10 );
 
+      my $is_exact_match;
+      if($mset[0]){
+          # scores 100% with the query, and 40 in actual score
+          # to scores 40, takes a synonym match of Wbid, OR a long phrase
+          # Can't think of a better way, without re-index with prefixed terms
+          $is_exact_match = (
+              ($mset[0]->get_weight() ge 40) && ($mset[0]->get_percent() eq 100));
+
+          #convention check for exact match
+          $is_exact_match ||= $class->_check_exact_match($q, $mset[0]->get_document);
+      }
+
       # reset if top result is not the exact query
-      @mset = () unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
+      @mset = () unless $is_exact_match;
     }
 
     if($mset[0]){
@@ -243,6 +256,7 @@ sub _search_exact {
 
 }
 
+# Note: synonyms of Wbids fails this check, has to be handled separately
 sub _check_exact_match {
   my ($class, $q, $doc) = @_;
 

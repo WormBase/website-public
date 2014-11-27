@@ -63,6 +63,12 @@
         is  ($match->{id}, 'WBPerson3249', 'correct id returned - wbperson3249 person');
         is  ($match->{label}, 'Joshua N Bembenek', 'correct label returned - wbperson3249 person');
 
+        # search for paper by doi, the prefix (prior to "/" has to be removed first)
+        $match = $api->xapian->fetch({ query => "rstb.1976.0085", class => "paper"});
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'WBPaper00000009', 'correct id returned - WBPaper00000009 paper');
+        is  ($match->{label}, 'Albertson DG et al. (1976)', 'correct label returned');
+
     }
 
     sub test_autocompelte {
@@ -79,4 +85,3 @@
 }
 
 1;
-
