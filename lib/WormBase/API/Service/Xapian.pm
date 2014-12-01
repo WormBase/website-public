@@ -23,6 +23,7 @@ has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
 
 has 'qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
+has 'qp_free_text' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 
 has '_doccount' => (
     is          => 'ro',
@@ -46,7 +47,7 @@ has '_api' => (
     is => 'ro',
 );
 
-
+use Data::Dumper;
 # Main search - returns a page of results
 sub search {
     my ( $class, $args) = @_;
@@ -60,8 +61,10 @@ sub search {
     my $t=[gettimeofday];
     my $count = $class->count_estimate($q, $type, $species);
 
-    $q =~ s/\s/\* /g;
-    $q = "$q*";
+    # $q =~ s/\s/\* /g;
+    # $q = "$q*";
+#    my $stemmer = Search::Xapian::Stem->new('english');
+#    $q = $stemmer->stem_word($q) unless $q =~ /[\/\@\<\>\=\*[\{\:]/;
 
     if($page eq 'all'){
       $page_size = $class->_doccount;
@@ -82,7 +85,7 @@ sub search {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my ($query, $error) =$class->_setup_query($q, $class->qp, 2|512|16);
+    my ($query, $error) =$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
 
     if($type && $type =~ /paper/){
@@ -157,8 +160,8 @@ sub random {
 
 sub count_estimate {
  my ( $class, $q, $type, $species) = @_;
-    $q =~ s/\s/\* /g;
-    $q = "$q*";
+    # $q =~ s/\s/\* /g;
+    # $q = "$q*";
 
     if($type){
       $q = $class->_add_type_range($q, $type);
@@ -175,7 +178,7 @@ sub count_estimate {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->_setup_query($q, $class->qp, 2|512|16);
+    my $query=$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
 
     my $mset      = $enq->get_mset( 0, 0, 500 );
@@ -188,6 +191,7 @@ sub _search_exact {
     my ($class, $args) = @_;
     my $q = $args->{query} || $args->{id};
     my $type = $args->{class};
+    my $species = $args->{species};
     my $doc = $args->{doc};
 
     my ($query, $enq, @mset);
@@ -200,6 +204,7 @@ sub _search_exact {
 
       if (!$mset[0]){
         $query=$class->_setup_query($class->_uniquify($q, $type) . " $type..$type", $class->qp,1|2);
+        $query = $class->_add_species($query, $species) if $species;
         $enq       = $class->db->enquire ( $query );
         @mset = $enq->matches( 0,1 ) if $enq;
       }
@@ -210,11 +215,12 @@ sub _search_exact {
     }
 
     # phrase search in the synonym database
-    if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
+    if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/^\s.*\s$/))){
         my $qu = "$q";
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
         $qu = $class->_add_type_range("$qu", $type);
-        $query=$class->_setup_query($qu, $class->syn_qp, 2|16|512);
+        $qu = $class->_add_species($qu, $species) if $species;
+        $query=$class->_setup_query($qu, $class->syn_qp, 1|2|16|512);
         $enq       = $class->syn_db->enquire ( $query );
         @mset      = $enq->matches( 0,10 ) if $enq;
 
@@ -224,12 +230,14 @@ sub _search_exact {
 
     # search main database
     if(!$mset[0]){
+
       my $qu = "$q";
       $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
-      $qu =~ s/\s/\* /g;
-      $qu = "$qu*";
+      # $qu =~ s/\s/\* /g;
+      # $qu = "$qu*";
       $qu = $class->_add_type_range("$qu", $type);
-      $query=$class->_setup_query($qu, $class->qp, 2|512|16);
+      $qu = $class->_add_species($qu, $species) if $species;
+      $query=$class->_setup_query($qu, $class->qp, 1|2|512|16);
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0,10 );
 
@@ -392,8 +400,15 @@ sub _get_taxonomy {
 sub _setup_query {
   my($self, $q, $qp, $opts) = @_;
   my $error;
+#$q = '' .  $q;
+#$q = '* gene..gene species:6253..6253';
+#$q = '(unc_22 OR unc-22) gene..gene species:6253..6253';
+#$q = 'unc_22 gene..gene species:6253..6253';
+#$q = 'unc_22 gene..gene species:6239..6239';
 
   my $query=$qp->parse_query( $q, $opts );
+#print Dumper $q;
+print Dumper $query->get_description();
 
   if($query->get_length() > 1000){
     $query = $qp->parse_query($q);
@@ -430,6 +445,15 @@ sub _add_type_range {
       }
   }
   return $q;
+}
+
+sub _add_species {
+    my ($class, $q, $species) = @_;
+    if($species){
+        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        $q .= " species:$s..$s" if defined $s;
+    }
+    return $q;
 }
 
 sub _uniquify {
