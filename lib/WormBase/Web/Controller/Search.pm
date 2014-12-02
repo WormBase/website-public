@@ -354,7 +354,9 @@ sub _prep_query {
   my @words = $q =~ m/(\S+)/g;
   @words = map {
       (my $word_new = "$_" ) =~ s/-/_/g;
-      $word_new eq $_ ? $_ : "($_ OR $word_new)";
+      $word_new eq $_ ? "$_*" : "($_* OR $word_new*)";
+      # include wild card, as stemming hasn't been handled when indexing.
+      # 'OR' has low precedence, needs brackets.
   } @words unless ($ac || $phrase);
 
 

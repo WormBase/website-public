@@ -61,8 +61,6 @@ sub search {
     my $t=[gettimeofday];
     my $count = $class->count_estimate($q, $type, $species);
 
-    # $q =~ s/\s/\* /g;
-    # $q = "$q*";
 #    my $stemmer = Search::Xapian::Stem->new('english');
 #    $q = $stemmer->stem_word($q) unless $q =~ /[\/\@\<\>\=\*[\{\:]/;
 
@@ -160,8 +158,6 @@ sub random {
 
 sub count_estimate {
  my ( $class, $q, $type, $species) = @_;
-    # $q =~ s/\s/\* /g;
-    # $q = "$q*";
 
     if($type){
       $q = $class->_add_type_range($q, $type);
@@ -190,6 +186,7 @@ sub count_estimate {
 sub _search_exact {
     my ($class, $args) = @_;
     my $q = $args->{query} || $args->{id};
+    $q =~ s/\*//g;  # exact match, be conservative, no wild card guessing
     my $type = $args->{class};
     my $species = $args->{species};
     my $doc = $args->{doc};
@@ -233,8 +230,6 @@ sub _search_exact {
 
       my $qu = "$q";
       $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
-      # $qu =~ s/\s/\* /g;
-      # $qu = "$qu*";
       $qu = $class->_add_type_range("$qu", $type);
       $qu = $class->_add_species($qu, $species) if $species;
       $query=$class->_setup_query($qu, $class->qp, 1|2|512|16);
