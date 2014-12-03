@@ -149,7 +149,7 @@ sub life_stage {
 #
 # Genes widget
 #
-#######################################
+######################################
 
 sub genes{
     my $self   = shift;
@@ -162,10 +162,12 @@ sub genes{
         classification($gene)->{data}->{type};
         foreach ($gene->Anatomy_function){
             my @bp_inv = map {
+                my $ev = $self->_get_evidence($_);
                 if ("$_" eq "$gene") {
-                    my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}
+                    my $term = $_->Term;
+                    { text => $term && "$term", evidence => $ev};
                 } else {
-                    { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}
+                    $ev ? { text => $self->_pack_obj($_), evidence => $ev} : $self->_pack_obj($_);
                 }
             } $_->Involved;
             next unless @bp_inv;
@@ -424,4 +426,3 @@ sub anatomy_term {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
