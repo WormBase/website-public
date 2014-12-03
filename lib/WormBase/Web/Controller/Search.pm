@@ -88,12 +88,9 @@ sub search :Path('/search') Args {
         my $match = $api->xapian->fetch(\%fetch_args);
 
         if($match){
-print "MATCHED";
           my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
           unless($query=~m/$match->{id}/){
               $url = $c->uri_for($url, \%{$c->req->params});
-              # print "$url\n";
-              #$url = $url . "?query=$query";
           }
           $c->res->redirect($url, 307);
           return;
@@ -115,8 +112,7 @@ print "MATCHED";
                                               page => $page_count,
                                               type => $search,
                                               species => $c->stash->{species} });
-    use Data::Dumper;
-print Dumper $it->{matches};
+
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{error} = ($query_error || "") . ($error || "");

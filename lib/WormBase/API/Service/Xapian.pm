@@ -23,7 +23,6 @@ has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
 
 has 'qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
-has 'qp_free_text' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 
 has '_doccount' => (
     is          => 'ro',
@@ -47,7 +46,6 @@ has '_api' => (
     is => 'ro',
 );
 
-use Data::Dumper;
 # Main search - returns a page of results
 sub search {
     my ( $class, $args) = @_;
@@ -395,15 +393,8 @@ sub _get_taxonomy {
 sub _setup_query {
   my($self, $q, $qp, $opts) = @_;
   my $error;
-#$q = '' .  $q;
-#$q = '* gene..gene species:6253..6253';
-#$q = '(unc_22 OR unc-22) gene..gene species:6253..6253';
-#$q = 'unc_22 gene..gene species:6253..6253';
-#$q = 'unc_22 gene..gene species:6239..6239';
 
   my $query=$qp->parse_query( $q, $opts );
-#print Dumper $q;
-print Dumper $query->get_description();
 
   if($query->get_length() > 1000){
     $query = $qp->parse_query($q);

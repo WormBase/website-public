@@ -4,7 +4,6 @@ use Moose;                       # Moosey goodness
 
 use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
-use Search::Xapian qw/:qpstem :standard/;
 use Search::Xapian;
 use Config::General;
 use Class::MOP;
