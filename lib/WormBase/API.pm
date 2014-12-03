@@ -102,7 +102,7 @@ sub _build_xapian {
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
   my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
-$qp->set_default_op(OP_AND);
+
   my $ptype_svrp = Search::Xapian::NumberValueRangeProcessor->new(8, "ptype:");
   my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   my $species_svrp = Search::Xapian::NumberValueRangeProcessor->new(3, "species:");
@@ -111,11 +111,9 @@ $qp->set_default_op(OP_AND);
   $qp->add_valuerangeprocessor($type_svrp);
 
 
-  $syn_qp->set_default_op(OP_AND);
   $syn_qp->add_valuerangeprocessor($ptype_svrp);
   $syn_qp->add_valuerangeprocessor($species_svrp);
   $syn_qp->add_valuerangeprocessor($type_svrp);
-  $auto_qp->set_default_op(OP_AND);
 
 
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);

@@ -115,7 +115,8 @@ print "MATCHED";
                                               page => $page_count,
                                               type => $search,
                                               species => $c->stash->{species} });
-
+    use Data::Dumper;
+print Dumper $it->{matches};
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{error} = ($query_error || "") . ($error || "");
@@ -344,6 +345,7 @@ sub _get_url {
 
 sub _prep_query {
   my ($self, $q, $ac) = @_;
+  # $ac flags autocomplete
   my $error;
   $q ||= "*";
 
@@ -354,19 +356,19 @@ sub _prep_query {
   my @words = $q =~ m/(\S+)/g;
   @words = map {
       (my $word_new = "$_" ) =~ s/-/_/g;
-      $word_new eq $_ ? "$_*" : "($_* OR $word_new*)";
+      $word_new eq $_ ? "$_*" : $ac ? "$word_new*" : "($word_new $_)*";
       # include wild card, as stemming hasn't been handled when indexing.
-      # 'OR' has low precedence, needs brackets.
-  } @words unless ($ac || $phrase);
+  } @words unless $phrase;
 
 
   if(@words > 8) {
     @words = grep { $phrase ||length($_) > 3 } @words;
     @words = @words[0..5];
+    $new_q = join(' ', @words);
     $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
+  }else{
+    $new_q = join(' ', @words);
   }
-
-  $new_q = join(' ', @words);
   return wantarray ? ($new_q, $error) : $new_q;
 }
 
