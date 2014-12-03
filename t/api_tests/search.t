@@ -63,6 +63,33 @@
         is  ($match->{id}, 'WBPerson3249', 'correct id returned - wbperson3249 person');
         is  ($match->{label}, 'Joshua N Bembenek', 'correct label returned - wbperson3249 person');
 
+        # search for paper by doi, the prefix (prior to "/" has to be removed first)
+        $match = $api->xapian->fetch({ query => "rstb.1976.0085", class => "paper"});
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'WBPaper00000009', 'correct id returned - WBPaper00000009 paper');
+        is  ($match->{label}, 'Albertson DG et al. (1976)', 'correct label returned');
+
+    }
+
+    # test specifying type and species in search
+    sub test_filtered_search {
+
+        # fetching a C.elegans gene
+        my $match = $api->xapian->fetch({ query => '(unc-22 OR unc_22)', class => 'gene', species => 'c_elegans'});
+        isnt($match, undef, 'data returned');
+        is  ($match->{id}, 'WBGene00006759', 'correct C. elegans gene returned');
+
+        # fetching gene by c. elegens gene name, but specifying another species
+        $match = $api->xapian->fetch({ query => '(unc-22 OR unc_22)', class => 'gene', species => 'a_suum'});
+        is($match, undef, "doesn't return a unc-22 of c. elegens when another species is specified");
+
+        # searching gene by c. elegens gene name, with another species, should found some match
+        ($match, my $err) = $api->xapian->search({ query => '(unc-22 OR unc_22)', type => 'gene', species => 'a_suum'});
+        my @it  = @{$match->{matches}};
+        $match = $it[0];
+        isnt($match, undef, 'result returned');
+        is($match->{name}->{taxonomy}, 'a_suum', "a match is found in a. suum");
+        is($match->{name}->{class}, 'gene', "the match is a gene");
     }
 
     sub test_autocompelte {
@@ -79,4 +106,3 @@
 }
 
 1;
-

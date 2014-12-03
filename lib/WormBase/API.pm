@@ -110,6 +110,10 @@ sub _build_xapian {
   $qp->add_valuerangeprocessor($type_svrp);
 
 
+  $syn_qp->add_valuerangeprocessor($ptype_svrp);
+  $syn_qp->add_valuerangeprocessor($species_svrp);
+  $syn_qp->add_valuerangeprocessor($type_svrp);
+
 
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $syn_qp->add_valuerangeprocessor($svrp);

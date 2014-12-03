@@ -46,7 +46,6 @@ has '_api' => (
     is => 'ro',
 );
 
-
 # Main search - returns a page of results
 sub search {
     my ( $class, $args) = @_;
@@ -60,8 +59,8 @@ sub search {
     my $t=[gettimeofday];
     my $count = $class->count_estimate($q, $type, $species);
 
-    $q =~ s/\s/\* /g;
-    $q = "$q*";
+#    my $stemmer = Search::Xapian::Stem->new('english');
+#    $q = $stemmer->stem_word($q) unless $q =~ /[\/\@\<\>\=\*[\{\:]/;
 
     if($page eq 'all'){
       $page_size = $class->_doccount;
@@ -82,7 +81,7 @@ sub search {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my ($query, $error) =$class->_setup_query($q, $class->qp, 2|512|16);
+    my ($query, $error) =$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
 
     if($type && $type =~ /paper/){
@@ -157,8 +156,6 @@ sub random {
 
 sub count_estimate {
  my ( $class, $q, $type, $species) = @_;
-    $q =~ s/\s/\* /g;
-    $q = "$q*";
 
     if($type){
       $q = $class->_add_type_range($q, $type);
@@ -175,7 +172,7 @@ sub count_estimate {
         $q .= " species:$s..$s" if defined $s;
     }
 
-    my $query=$class->_setup_query($q, $class->qp, 2|512|16);
+    my $query=$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
 
     my $mset      = $enq->get_mset( 0, 0, 500 );
@@ -187,18 +184,22 @@ sub count_estimate {
 sub _search_exact {
     my ($class, $args) = @_;
     my $q = $args->{query} || $args->{id};
+    $q =~ s/\*//g;  # exact match, be conservative, no wild card guessing
     my $type = $args->{class};
+    my $species = $args->{species};
     my $doc = $args->{doc};
 
     my ($query, $enq, @mset);
     if( $type ){
       # exact match using type/query - will only work if query is the WBObjID
+      $q =~ s/\"//g;
       $query=$class->_setup_query("\"$type$q\" $type..$type", $class->qp,1|2);
       $enq       = $class->db->enquire ( $query );
       @mset = $enq->matches( 0,1 ) if $enq;
 
       if (!$mset[0]){
         $query=$class->_setup_query($class->_uniquify($q, $type) . " $type..$type", $class->qp,1|2);
+        $query = $class->_add_species($query, $species) if $species;
         $enq       = $class->db->enquire ( $query );
         @mset = $enq->matches( 0,1 ) if $enq;
       }
@@ -209,11 +210,12 @@ sub _search_exact {
     }
 
     # phrase search in the synonym database
-    if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/\s.*\s/))){
+    if((!$mset[0] || $q =~ m/\s/) && (!($q =~ m/^\s.*\s$/))){
         my $qu = "$q";
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
         $qu = $class->_add_type_range("$qu", $type);
-        $query=$class->_setup_query($qu, $class->syn_qp, 2|16|512);
+        $qu = $class->_add_species($qu, $species) if $species;
+        $query=$class->_setup_query($qu, $class->syn_qp, 1|2|16|512);
         $enq       = $class->syn_db->enquire ( $query );
         @mset      = $enq->matches( 0,10 ) if $enq;
 
@@ -223,17 +225,29 @@ sub _search_exact {
 
     # search main database
     if(!$mset[0]){
+
       my $qu = "$q";
       $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
-      $qu =~ s/\s/\* /g;
-      $qu = "$qu*";
       $qu = $class->_add_type_range("$qu", $type);
-      $query=$class->_setup_query($qu, $class->qp, 2|512|16);
+      $qu = $class->_add_species($qu, $species) if $species;
+      $query=$class->_setup_query($qu, $class->qp, 1|2|512|16);
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0,10 );
 
+      my $is_exact_match;
+      if($mset[0]){
+          # scores 100% with the query, and 40 in actual score
+          # to scores 40, takes a synonym match of Wbid, OR a long phrase
+          # Can't think of a better way, without re-index with prefixed terms
+          $is_exact_match = (
+              ($mset[0]->get_weight() ge 40) && ($mset[0]->get_percent() eq 100));
+
+          #convention check for exact match
+          $is_exact_match ||= $class->_check_exact_match($q, $mset[0]->get_document);
+      }
+
       # reset if top result is not the exact query
-      @mset = () unless $mset[0] && $class->_check_exact_match($q, $mset[0]->get_document);
+      @mset = () unless $is_exact_match;
     }
 
     if($mset[0]){
@@ -243,6 +257,7 @@ sub _search_exact {
 
 }
 
+# Note: synonyms of Wbids fails this check, has to be handled separately
 sub _check_exact_match {
   my ($class, $q, $doc) = @_;
 
@@ -416,6 +431,15 @@ sub _add_type_range {
       }
   }
   return $q;
+}
+
+sub _add_species {
+    my ($class, $q, $species) = @_;
+    if($species){
+        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        $q .= " species:$s..$s" if defined $s;
+    }
+    return $q;
 }
 
 sub _uniquify {
