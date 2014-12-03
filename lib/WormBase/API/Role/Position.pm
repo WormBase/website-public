@@ -165,6 +165,7 @@ sub _format_coordinates {
         $ref =~ s/^CHROMOSOME_//;
         ($start, $stop) = ($stop, $start) if $start > $stop;
 
+	# This probably doesn't belong here and should be parameterized.
 	if ($pad_for_gbrowse) {
 	    $start = int($start - 0.2*($stop-$start));
 	    $stop  = int($stop  + 0.05*($stop-$start));
