@@ -37,7 +37,7 @@ sub _build__interactors {
     my $self = shift;
     my $object = $self->object;
 
-    my %interactors;
+    my %interactors = ();
     foreach my $type ($object->Interactor) {
 		my $count = 0;
         next unless $type =~ /Molecule_regulator|Other_regulator|Other_regulated|Rearrangement|Interactor_overlapping_gene|Feature_interactor/;
@@ -52,7 +52,7 @@ sub _build__interactors {
 			$interactors{$type}{"$name"}{object} = $self->_pack_obj($interactor);
 		}
     }
-    return %interactors ? \%interactors : undef;
+    return \%interactors;
 }
 
 #######################################
@@ -75,10 +75,14 @@ sub _build__interactors {
 sub _build__common_name {
     my $self = shift;
     my $object = $self->object;
-    my @list;
-    map {push @list, sort keys %{$self->_interactors->{$_}}} sort keys %{$self->_interactors};
+
+    my $interactors = $self->_interactors;
+    my @list = map {
+        sort keys %{$interactors->{$_}}
+    } sort keys %$interactors;
 
     my $label = join(' : ', @list);
+    $label  ||= "$object";
     return $label;
 }
 
@@ -383,4 +387,3 @@ sub process {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
