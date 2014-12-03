@@ -1713,12 +1713,35 @@ sub other_sequences {
 
 #######################################
 #
-# The Features Widget
+# The "Sequence features" Widget
 #
 #######################################
 
 # features {}
 # Supplied by Role
+
+# Display a gbrowse image specific for the 
+# Sequence features widget.
+sub feature_image {
+    my ($self) = @_;
+    
+    my $segment = $self->_longest_segment;
+    
+    # Create a NEW segment from this with expanded coordinates.
+    my $dbh = $self->gff_dsn();# || return \@segments;
+    my $start = $segment->start - 2000;
+    my $stop  = $segment->stop  + 2000;
+    my ($expanded_segment) = $dbh->segment($segment->seq_id,$start,$stop);
+    
+    my $position = $self->_seg2posURLpart($expanded_segment);
+    $position->{tracks} = [qw/GENES RNASEQ_ASYMMETRIES RNASEQ RNASEQ_SPLICE POLYSOMES MICRO_ORF DNASEI_HYPERSENSITIVE_SITE REGULATORY_REGIONS PROMOTER_REGIONS HISTONE_BINDING_SITES TRANSCRIPTION_FACTOR_BINDING_REGION TRANSCRIPTION_FACTOR_BINDING_SITE BINDING_SITES_PREDICTED BINDING_SITES_CURATED BINDING_REGIONS/];
+
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $position,
+    };
+}
+
 
 
 #########################################
@@ -1770,7 +1793,6 @@ sub _build__segments {
         ||  map {$dbh->segment($_)} @$sequences
         ||  map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
         ||  map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
-
     ) {
         return defined $segments[0] ? \@segments : undef;
     }
