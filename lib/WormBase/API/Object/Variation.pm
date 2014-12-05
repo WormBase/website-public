@@ -519,15 +519,8 @@ sub derivative {
 sub _build_genomic_position {
     my ($self) = @_;
 
-    my $adjustment = sub {
-        my ($abs_start, $abs_stop) = @_;
-        return $abs_stop - $abs_start < 100
-             ? ($abs_start - 50, $abs_stop + 50)
-             : ($abs_start, $abs_stop);
+    my @positions = $self->_genomic_position($self->_segments, \&_pad_short_seg_simple);
 
-    };
-
-    my @positions = $self->_genomic_position($self->_segments, $adjustment);
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
@@ -564,19 +557,9 @@ sub _build_genomic_image {
 
         # Generate a link to the genome browser
         # This is hard-coded and needs to be cleaned up.
-        # Is the segment smaller than 100? Let's adjust
-        my ($low,$high);
-        if ($abs_stop - $abs_start < 100) {
-            $low  = $abs_start - 50;
-            $high = $abs_stop  + 50;
-        }
-        else {
-            $low  = $abs_start;
-            $high = $abs_stop;
-        }
 
         my $split  = $UNMAPPED_SPAN / 2;
-        ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
+        ($segment) = $self->gff_dsn->segment($ref,$abs_start - $split, $abs_stop + $split);
 
         ($position) = $self->_genomic_position([$segment || ()]);
     }
