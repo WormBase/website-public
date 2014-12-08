@@ -246,9 +246,10 @@ colorBinding.$value = color;
                     attribute: 'ntype',
                     toType: 'shape',
                     mapping: {
-                        Rearrangement: "hexagon",
-                        Gene: "octagon",
-                        Molecule: "triangle",
+                        rearrangement: "hexagon",
+                    [%#    gene: "octagon", %]
+                        molecule: "triangle",
+                        feature: "rectangle",
                         other: "ellipse"
                     }
                 }
