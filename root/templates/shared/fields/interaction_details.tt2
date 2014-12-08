@@ -228,7 +228,7 @@ colorBinding.$value = color;
                     width: [% obj.interactions.size %],
                     phenotype: "[% obj.phenotype.label %]",
                     nearby: [% obj.nearby %],
-                    color: "[% type = obj.type; colorBinding.$type.defined ? colorBinding.$type : '#000000' %]"
+                    color: "[% type = obj.type; colorBinding.$type || '#000000' %]"
                     }},
                 [% END %]
             ],
@@ -246,9 +246,10 @@ colorBinding.$value = color;
                     attribute: 'ntype',
                     toType: 'shape',
                     mapping: {
-                        Rearrangement: "hexagon",
-                        Gene: "octagon",
-                        Molecule: "triangle",
+                        rearrangement: "hexagon",
+                    [%#    gene: "octagon", %]
+                        molecule: "triangle",
+                        feature: "rectangle",
                         other: "ellipse"
                     }
                 }
