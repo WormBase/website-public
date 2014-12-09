@@ -197,9 +197,8 @@ sub corresponding_gene {
     my $object = $self->object;
     my $count = $self->_get_count($object, 'Gene');
     my @genes = map {
-        my $label = $self->_make_common_name($_);
-        $label .= ' (reference allele)' if $_->Reference_allele eq $object;
-        $self->_pack_obj($_, $label);
+        my $suffix = $_->Reference_allele("$object") ? ' (reference allele)' : '';
+        [$self->_pack_obj($_), $suffix];
     } $self->object->Gene if $count < 500;
 
     my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
