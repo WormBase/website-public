@@ -4,7 +4,7 @@ WRAPPER $field_block title="Gene" key="corresponding_gene";
          cell_content(fields.corresponding_gene.data);
 END;
 
-WRAPPER $field_block title="Wild type allele" key="reference_allele";
+WRAPPER $field_block title="Reference allele" key="reference_allele";
          cell_content(fields.reference_allele.data);
 END;
 
