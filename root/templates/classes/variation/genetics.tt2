@@ -1,6 +1,7 @@
 [%
 
 WRAPPER $field_block title="Gene" key="corresponding_gene";
+    IF ref(fields.corresponding_gene.data);
        # pre-process individual cell to override default cell_content
        #separator on list-of-list
        corr_genes_new = [];
@@ -8,6 +9,9 @@ WRAPPER $field_block title="Gene" key="corresponding_gene";
          corr_genes_new.push(cell_content(g, ' ')); # use ' ' instead of </br>
        END;
        cell_content(corr_genes_new);
+    ELSE;  # a comment instead of a list is returned, when too many genes
+       fields.corresponding_gene.data;
+    END;
 END;
 
 WRAPPER $field_block title="Reference allele" key="reference_allele";
