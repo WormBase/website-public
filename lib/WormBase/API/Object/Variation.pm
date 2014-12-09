@@ -196,7 +196,10 @@ sub corresponding_gene {
     my ($self) = @_;
     my $object = $self->object;
     my $count = $self->_get_count($object, 'Gene');
-    my @genes = map { $self->_pack_obj($_) } $self->object->Gene if $count < 5000;
+    my @genes = map {
+        my $suffix = $_->Reference_allele("$object") ? ' (reference allele)' : '';
+        [$self->_pack_obj($_), $suffix];
+    } $self->object->Gene if $count < 500;
 
     my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
 
@@ -214,11 +217,17 @@ sub corresponding_gene {
 
 sub reference_allele {
     my ($self) = @_;
+    my $object = $self->object;
+    my $gene = $object->Gene;
+    my $allele = eval {$gene->Reference_allele};
+    my $data = {
+            text => $self->_pack_obj($allele),
+            evidence => { Reference_allele_for => $self->_pack_obj($gene)}
+        } if $allele && $allele ne $object;  # set field to undef if reference allele of containing gene is same as $self->object, github #3201
 
-    my $allele = eval {$self->object->Gene->Reference_allele};
     return {
         description => 'the reference allele for the containing gene (if any)',
-        data        => $allele && $self->_pack_obj($allele),
+        data        => $data
     };
 }
 
