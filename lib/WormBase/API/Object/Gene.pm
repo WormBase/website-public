@@ -364,12 +364,18 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
+        || $object->Automated_description
         || eval { $object->Corresponding_CDS->Brief_identification }
         || eval { $object->Corresponding_transcript->Brief_identification };
 
-    my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
-    my $evidence = $self->_get_evidence($description)
-        || $self->_get_evidence(shift @evs);
+    my $evidence = $self->_get_evidence($description);
+
+    unless ($evidence) {
+        # evidence for concise description has to be found
+        # in Provisional_description
+        my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
+        $evidence = $self->_get_evidence(shift @evs);
+    }
 
     return {
       description => "A manually curated description of the gene's function",
@@ -1720,19 +1726,19 @@ sub other_sequences {
 # features {}
 # Supplied by Role
 
-# Display a gbrowse image specific for the 
+# Display a gbrowse image specific for the
 # Sequence features widget.
 sub feature_image {
     my ($self) = @_;
-    
+
     my $segment = $self->_longest_segment;
-    
+
     # Create a NEW segment from this with expanded coordinates.
     my $dbh = $self->gff_dsn();# || return \@segments;
     my $start = $segment->start - 2000;
     my $stop  = $segment->stop  + 2000;
     my ($expanded_segment) = $dbh->segment($segment->seq_id,$start,$stop);
-    
+
     my $position = $self->_seg2posURLpart($expanded_segment);
     $position->{tracks} = [qw/GENES RNASEQ_ASYMMETRIES RNASEQ RNASEQ_SPLICE POLYSOMES MICRO_ORF DNASEI_HYPERSENSITIVE_SITE REGULATORY_REGIONS PROMOTER_REGIONS HISTONE_BINDING_SITES TRANSCRIPTION_FACTOR_BINDING_REGION TRANSCRIPTION_FACTOR_BINDING_SITE BINDING_SITES_PREDICTED BINDING_SITES_CURATED BINDING_REGIONS/];
 
