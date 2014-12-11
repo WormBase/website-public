@@ -2165,7 +2165,15 @@ div#google-map {
      font-weight:bold;
 }
 
-
+/* image icon ex linking from expression widget to image*/
+.img-link {
+    cursor: pointer;
+}
+.img-link span{
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 0.2em;
+}
 
 
 
