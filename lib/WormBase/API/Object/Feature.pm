@@ -7,17 +7,6 @@ with    'WormBase::API::Role::Position';
 with    'WormBase::API::Role::Sequence';
 with    'WormBase::API::Role::Feature';
 
-has 'tracks' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        return {
-            description => 'tracks displayed in GBrowse',
-            data        => [qw/GENES RNASEQ_ASYMMETRIES RNASEQ RNASEQ_SPLICE POLYSOMES MICRO_ORF DNASEI_HYPERSENSITIVE_SITE REGULATORY_REGIONS PROMOTER_REGIONS HISTONE_BINDING_SITES TRANSCRIPTION_FACTOR_BINDING_REGION TRANSCRIPTION_FACTOR_BINDING_SITE GENOME_SEQUENCE_ERROR_CORRECTED BINDING_SITES_PREDICTED BINDING_SITES_CURATED BINDING_REGIONS GENOME_SEQUENCE_ERROR/],
-        };
-    }
-);
-
 
 # Some good examples: WBsf000001, WBsf027925
 
@@ -380,6 +369,66 @@ sub history_lite {
         data        => @data ? \@data : undef,
     };
 }
+
+#######################################
+#
+# The Location Widget
+#
+#######################################
+
+# genomic_position {}
+# Supplied by Role
+
+# genetic_position {}
+# Supplied by Role
+
+# genomic_image {}
+# Supplied by Role
+
+sub _build_genomic_position {
+    my ($self) = @_;
+
+    my @positions = $self->_genomic_position($self->_segments,
+                                             \&_pad_short_seg_simple);
+    return {
+        description => 'The genomic location of the sequence',
+        data        => @positions ? \@positions : undef,
+    };
+}
+
+sub _build_tracks {
+    my ($self) = @_;
+    return {
+        description => 'tracks displayed in GBrowse',
+        data        => [qw/GENES RNASEQ_ASYMMETRIES RNASEQ RNASEQ_SPLICE POLYSOMES MICRO_ORF DNASEI_HYPERSENSITIVE_SITE REGULATORY_REGIONS PROMOTER_REGIONS HISTONE_BINDING_SITES TRANSCRIPTION_FACTOR_BINDING_REGION TRANSCRIPTION_FACTOR_BINDING_SITE GENOME_SEQUENCE_ERROR_CORRECTED BINDING_SITES_PREDICTED BINDING_SITES_CURATED BINDING_REGIONS GENOME_SEQUENCE_ERROR/],
+    };
+}
+
+sub _build_genomic_image {
+    my ($self) = @_;
+
+    # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
+    my $UNMAPPED_SPAN = 1000;
+
+    my $position;
+    if (my $segment = $self->_segments->[0]) {
+        my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
+
+        # Generate a link to the genome browser
+        # This is hard-coded and needs to be cleaned up.
+
+        my $split  = $UNMAPPED_SPAN / 2;
+        ($segment) = $self->gff_dsn->segment($ref,$abs_start-$split,$abs_stop+$split);
+
+        ($position) = $self->_genomic_position([$segment || ()]);
+    }
+
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $position,
+    };
+}
+
 
 #######################################
 #

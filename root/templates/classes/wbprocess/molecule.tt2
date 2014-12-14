@@ -1,0 +1,18 @@
+[%
+WRAPPER $field_block  title="Molecules" key="molecules";
+    FOREACH m IN fields.molecules.data;
+        evidence(m.evidence, 'molecules', cell_content(m.text), 'evidence');
+    END;
+    # cell_content(fields.molecules.data);
+	# build_data_table (
+	# 	order = [
+	# 		'text',
+	# 		'evidence',
+	# 		],
+	# 	columns = {
+	# 		text          => 'Molecule',
+	# 		evidence      => 'Evidence'
+	# 		},
+	# 	key = 'molecules');
+END;
+%]

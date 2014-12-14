@@ -38,12 +38,13 @@
           '<div class="ui-helper-hidden">';
             '<div id="' _ data.id _ '"><a href="' _ data.image _ '" target="_blank">' _ image(data.image) _ '</a></div>';
           '</div>';
+          '<small>view images</small>';
         END;
         IF data.curated_images;
-          '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ data.id _ '/curated_images"  title="curated pictures for ' _ data.id _ '"></a>';
-        END;
-        IF data.image || data.curated_images;
-          '<small>view images</small>';
+          '<div class="slink img-link" href="/rest/field/expr_pattern/' _ data.id _ '/curated_images"  title="curated pictures for ' _ data.id _ '">';
+            '<span class="ui-icon ui-icon-image exprcamera"></span>';
+            '<span><small>view images</small></span>';
+          '</div>';
         END;
 
         FOREACH ft IN data.footnotes;
@@ -160,6 +161,10 @@
           NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
           bioproject = bp;
         END;
+      END;
+      IF c.config.installation_type.match('^dev');
+        # HACK! to direct dev installation to staging, with GBrowse installed
+        'http://staging.wormbase.org';
       END;
       c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), (bioproject ? taxonomy _ '_' _ bioproject : taxonomy)).path _ (id ? '?name=' _ id : '');
     END;

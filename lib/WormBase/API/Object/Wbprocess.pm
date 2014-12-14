@@ -417,6 +417,24 @@ sub anatomy_term {
     }
 }
 
+#######################################
+#
+# Molecule widget
+#
+#######################################
+sub molecules {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+    foreach my $molecule ($object->Molecule){
+        push @data, {text => $self->_pack_obj($molecule), evidence => $self->_get_evidence($molecule)};
+    }
+    return {
+        description => "Molecules related to this topic",
+        data => @data ? \@data : undef
+    }
+}
+
 ############################################################
 #
 # PRIVATE METHODS

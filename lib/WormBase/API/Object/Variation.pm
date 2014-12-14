@@ -196,7 +196,10 @@ sub corresponding_gene {
     my ($self) = @_;
     my $object = $self->object;
     my $count = $self->_get_count($object, 'Gene');
-    my @genes = map { $self->_pack_obj($_) } $self->object->Gene if $count < 5000;
+    my @genes = map {
+        my $suffix = $_->Reference_allele("$object") ? ' (reference allele)' : '';
+        [$self->_pack_obj($_), $suffix];
+    } $self->object->Gene if $count < 500;
 
     my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
 
@@ -214,11 +217,17 @@ sub corresponding_gene {
 
 sub reference_allele {
     my ($self) = @_;
+    my $object = $self->object;
+    my $gene = $object->Gene;
+    my $allele = eval {$gene->Reference_allele};
+    my $data = {
+            text => $self->_pack_obj($allele),
+            evidence => { Reference_allele_for => $self->_pack_obj($gene)}
+        } if $allele && $allele ne $object;  # set field to undef if reference allele of containing gene is same as $self->object, github #3201
 
-    my $allele = eval {$self->object->Gene->Reference_allele};
     return {
         description => 'the reference allele for the containing gene (if any)',
-        data        => $allele && $self->_pack_obj($allele),
+        data        => $data
     };
 }
 
@@ -519,15 +528,8 @@ sub derivative {
 sub _build_genomic_position {
     my ($self) = @_;
 
-    my $adjustment = sub {
-        my ($abs_start, $abs_stop) = @_;
-        return $abs_stop - $abs_start < 100
-             ? ($abs_start - 50, $abs_stop + 50)
-             : ($abs_start, $abs_stop);
+    my @positions = $self->_genomic_position($self->_segments, \&_pad_short_seg_simple);
 
-    };
-
-    my @positions = $self->_genomic_position($self->_segments, $adjustment);
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
@@ -564,19 +566,9 @@ sub _build_genomic_image {
 
         # Generate a link to the genome browser
         # This is hard-coded and needs to be cleaned up.
-        # Is the segment smaller than 100? Let's adjust
-        my ($low,$high);
-        if ($abs_stop - $abs_start < 100) {
-            $low  = $abs_start - 50;
-            $high = $abs_stop  + 50;
-        }
-        else {
-            $low  = $abs_start;
-            $high = $abs_stop;
-        }
 
         my $split  = $UNMAPPED_SPAN / 2;
-        ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
+        ($segment) = $self->gff_dsn->segment($ref,$abs_start - $split, $abs_stop + $split);
 
         ($position) = $self->_genomic_position([$segment || ()]);
     }

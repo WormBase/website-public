@@ -205,7 +205,7 @@ sub _get_interactions {
       foreach my $key (keys %{$edgeList}) {
           my ($type, $effector, $affected, $direction, $phenotype)= @{$edgeList->{$key}};
           next unless($effector);
-          next unless ($effector->class =~ /Molecule|Gene|Rearrangement|Text/ && $affected->class =~ /Molecule|Gene|Rearrangement|Text/);
+          next unless ($effector->class =~ /Molecule|Gene|Rearrangement|Text|Feature/ && $affected->class =~ /Molecule|Gene|Rearrangement|Text|Feature/);
 
           $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector);
           $data->{nodes}{"$affected"} ||= $self->_pack_obj($affected);
