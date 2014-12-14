@@ -1,6 +1,8 @@
 gff_version: 3
 file: /usr/local/ftp/pub/wormbase/releases/WS246/species/b_malayi/PRJNA10729/b_malayi.PRJNA10729.WS246.annotations.gff3.gz
 feature	children	source	method	track	count
+CDS:WormBase		WormBase	CDS	Genes (protein coding) (genes_protein_coding)	136144
+	CDS:WormBase_imported	WormBase_imported	CDS	Genes (protein coding) (genes_protein_coding)	0
 SL1_acceptor_site:SL1		SL1	SL1_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	19968
 	SL2_acceptor_site:SL2	SL2	SL2_acceptor_site	Trans-spliced acceptor (trans_spliced_acceptor)	0
 assembly_component:Genbank		Genbank	assembly_component	Genbank submissions (genbank_entries)	9779
@@ -19,14 +21,31 @@ expressed_sequence_match:BLAT_EST_BEST		BLAT_EST_BEST	expressed_sequence_match	E
 expressed_sequence_match:BLAT_EST_OTHER		BLAT_EST_OTHER	expressed_sequence_match	ESTs (other) (est_other)	163140
 expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	1361
 	expressed_sequence_match:BLAT_ncRNA_BEST	BLAT_ncRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	0
+gene:WormBase		WormBase	gene	Genes (genes)	15416
+	mRNA:WormBase	WormBase	mRNA	Genes (genes)	17698
+	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	2275
+	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	1643
 intron:RNASeq_splice		RNASeq_splice	intron	RNASeq introns (rnaseq_splice)	114364
 inverted_repeat:inverted		inverted	inverted_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	42005
 	tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	73871
 low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	189673
+ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	67
+	miRNA:WormBase	WormBase	miRNA	Curated Genes (noncoding) (genes_noncoding)	168
+	rRNA:WormBase	WormBase	rRNA	Curated Genes (noncoding) (genes_noncoding)	407
+	scRNA:WormBase	WormBase	scRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	snRNA:WormBase	WormBase	snRNA	Curated Genes (noncoding) (genes_noncoding)	709
+	snoRNA:WormBase	WormBase	snoRNA	Curated Genes (noncoding) (genes_noncoding)	63
+	tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	167
+	exon:WormBase	WormBase	exon	Curated Genes (noncoding) (genes_noncoding)	139380
+	intron:WormBase	WormBase	intron	Curated Genes (noncoding) (genes_noncoding)	119991
+	piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	0
+	antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	0
 nucleotide_match:TIGR_BEST		TIGR_BEST	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models)	54103
 nucleotide_match:TIGR_OTHER		TIGR_OTHER	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models_other)	267197
 operon:deprecated_operon		deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	1
 operon:operon		operon	operon	Operons (operons)	1702
+polypeptide_motif:translated_feature		translated_feature	polypeptide_motif	Protein motifs (protein_motifs)	265858
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	245153
 protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	110980
 protein_match:cbrenneri_proteins-BLASTX		cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	135043
@@ -38,6 +57,7 @@ protein_match:dmelanogaster_proteins-BLASTX		dmelanogaster_proteins-BLASTX	prote
 protein_match:hsapiens_proteins-BLASTX		hsapiens_proteins-BLASTX	protein_match	H. sapiens proteins (sequence_similarity_hsapiens_proteins_blastx)	212075
 protein_match:ppacificus_proteins-BLASTX		ppacificus_proteins-BLASTX	protein_match	P. pacificus proteins (sequence_similarity_ppacificus_proteins_blastx)	96253
 protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	31622
+pseudogenic_transcript:WormBase		WormBase	pseudogenic_transcript	Genes (pseudogenes) (genes_pseudogenes)	13
 repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	100931
 transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	488865
 	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	473667
