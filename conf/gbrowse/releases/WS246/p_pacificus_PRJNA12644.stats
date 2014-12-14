@@ -38,4 +38,3 @@ protein_match:ppacificus_proteins-BLASTX		ppacificus_proteins-BLASTX	protein_mat
 protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	45369
 reagent:Oligo_set		Oligo_set	reagent	Microarray oligo probes (microarray_oligo_probes)	110043
 repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	144825
-sequence_motif:translated_feature		translated_feature	sequence_motif	Protein motifs (protein_motifs)	354937

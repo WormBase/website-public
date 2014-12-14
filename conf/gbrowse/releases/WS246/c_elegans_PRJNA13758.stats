@@ -55,7 +55,6 @@ deletion:PCoF_Allele		PCoF_Allele	deletion	Change-of-function alleles (variation
 	deletion:PCoF_Million_mutation	PCoF_Million_mutation	deletion	Change-of-function alleles (variations_change_of_function_alleles)	2003
 	insertion_site:PCoF_Million_mutation	PCoF_Million_mutation	insertion_site	Change-of-function alleles (variations_change_of_function_alleles)	209
 	complex_substitution:PCoF_Million_mutation	PCoF_Million_mutation	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	378
-	sequence_alteration:PCoF_Million_mutation	PCoF_Million_mutation	sequence_alteration	Change-of-function alleles (variations_change_of_function_alleles)	0
 	deletion:PCoF_Variation_project	PCoF_Variation_project	deletion	Change-of-function alleles (variations_change_of_function_alleles)	0
 	point_mutation:PCoF_Variation_project	PCoF_Variation_project	point_mutation	Change-of-function alleles (variations_change_of_function_alleles)	2420
 	complex_substitution:PCoF_NBP_knockout	PCoF_NBP_knockout	complex_substitution	Change-of-function alleles (variations_change_of_function_alleles)	1438
@@ -67,7 +66,6 @@ deletion:PCoF_Variation_project_Polymorphism		PCoF_Variation_project_Polymorphis
 	SNP:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	SNP	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	69355
 	substitution:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	substitution	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	2
 	complex_substitution:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	complex_substitution	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	6675
-	sequence_alteration:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	sequence_alteration	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0
 duplication:segmental_duplication		segmental_duplication	duplication	Segmental duplication (segmental_duplications)	3484
 exon:history		history	exon	Gene Models (historical) (historical_genes)	107923
 	pseudogenic_transcript:history	history	pseudogenic_transcript	Gene Models (historical) (historical_genes)	343
@@ -123,9 +121,10 @@ point_mutation:Million_mutation		Million_mutation	point_mutation	Million Mutatio
 	complex_substitution:Million_mutation	Million_mutation	complex_substitution	Million Mutation Project (variations_million_mutation_project)	1103
 	deletion:Million_mutation	Million_mutation	deletion	Million Mutation Project (variations_million_mutation_project)	11938
 	insertion_site:Million_mutation	Million_mutation	insertion_site	Million Mutation Project (variations_million_mutation_project)	4332
-	sequence_alteration:Million_mutation	Million_mutation	sequence_alteration	Million Mutation Project (variations_million_mutation_project)	0
+	tandem_duplication:Million_mutation	Million_mutation	tandem_duplication	Million Mutation Project (variations_million_mutation_project)	1443
 polyA_signal_sequence:polyA_signal_sequence		polyA_signal_sequence	polyA_signal_sequence	PolyA sites and signal sequences (polya_sites)	2454
 	polyA_site:polyA_site	polyA_site	polyA_site	PolyA sites and signal sequences (polya_sites)	85690
+polypeptide_motif:translated_feature		translated_feature	polypeptide_motif	Protein motifs (protein_motifs)	401905
 possible_base_call_error:RNASeq		RNASeq	possible_base_call_error	Genome sequence errors (genome_sequence_errors)	955
 promoter:promoter		promoter	promoter	Promoter regions (promoter_regions)	79
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	308811
@@ -156,7 +155,7 @@ substitution:Variation_project_Polymorphism		Variation_project_Polymorphism	subs
 	SNP:Variation_project_Polymorphism	Variation_project_Polymorphism	SNP	Polymorphisms (variations_polymorphisms)	661265
 	insertion_site:Variation_project_Polymorphism	Variation_project_Polymorphism	insertion_site	Polymorphisms (variations_polymorphisms)	97654
 	complex_substitution:Variation_project_Polymorphism	Variation_project_Polymorphism	complex_substitution	Polymorphisms (variations_polymorphisms)	37541
-	sequence_alteration:Variation_project_Polymorphism	Variation_project_Polymorphism	sequence_alteration	Polymorphisms (variations_polymorphisms)	0
+	tandem_duplication:Variation_project_Polymorphism	Variation_project_Polymorphism	tandem_duplication	Polymorphisms (variations_polymorphisms)	2582
 	deletion:Allele_Polymorphism	Allele_Polymorphism	deletion	Polymorphisms (variations_polymorphisms)	11
 transcribed_fragment:TranscriptionallyActiveRegion		TranscriptionallyActiveRegion	transcribed_fragment	Transcriptionally Active Region (transcriptionally_active_region)	4095280
 transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	363076

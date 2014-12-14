@@ -52,7 +52,6 @@ protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_m
 pseudogenic_transcript:WormBase		WormBase	pseudogenic_transcript	Genes (pseudogenes) (genes_pseudogenes)	821
 reagent:Oligo_set		Oligo_set	reagent	Microarray oligo probes (microarray_oligo_probes)	43791
 repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	170518
-sequence_motif:translated_feature		translated_feature	sequence_motif	Protein motifs (protein_motifs)	191145
 transcript_region:RNASeq_F_asymmetry		RNASeq_F_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	316004
 	transcript_region:RNASeq_R_asymmetry	RNASeq_R_asymmetry	transcript_region	RNASeq Asymmetries (rnaseq_asymmetries)	308881
 transcript_region:RNASeq_reads		RNASeq_reads	transcript_region	RNASeq (rnaseq)	883555
