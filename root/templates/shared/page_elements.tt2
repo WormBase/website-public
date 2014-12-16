@@ -426,27 +426,32 @@ WB.getPlugin("dataTables", function(){
         });
         WB.getPlugin("tabletools", function(){
           setTimeout(function(){
-          $jq('#[% table_name %]').dataTable({
-            "bPaginate"        : [% paginate %],
-            "bLengthChange"    : [% length   %],
-            "sPaginationType"  : "[% pagination_type %]",
-            "bFilter"          : [% filter %],
-            "bInfo"            : [% info %],
-            "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
-            "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
-            "oTableTools": {
-              "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_csv_xls_pdf.swf",
-              "aButtons": [
-                {
-                  "sExtends": "collection",
-                  "sButtonText": "Save table",
-                  "aButtons": [ "copy", "csv", "pdf", "print" ]
-                }
-              ]
-            },
-            [% style %]
+            if($jq.fn.dataTable.fnIsDataTable('#[% table_name %]')){
+              // Hack! avoid warning of reinitializing table seen by some users, not sure why
+              $jq('#[% table_name %]').dataTable();
+            }else{
+              $jq('#[% table_name %]').dataTable({
+                "bPaginate"        : [% paginate %],
+                "bLengthChange"    : [% length   %],
+                "sPaginationType"  : "[% pagination_type %]",
+                "bFilter"          : [% filter %],
+                "bInfo"            : [% info %],
+                "fnInitComplete"   : function(){ setTimeout(function(){ WB.resize();}, 700); },
+                "sDom": '[% IF paginate.match("true") || info.match("true") ; '<"wb_table_wrapper table_paginate"Tflrtip>' ; ELSE; '<"wb_table_wrapper"Tflrtip>'; END; %]',
+                "oTableTools": {
+                  "sSwfPath": "/js/jquery/plugins/tabletools/media/swf/copy_csv_xls_pdf.swf",
+                  "aButtons": [
+                    {
+                      "sExtends": "collection",
+                      "sButtonText": "Save table",
+                      "aButtons": [ "copy", "csv", "pdf", "print" ]
+                    }
+                  ]
+                },
+                [% style %]
 
-          });
+              });
+            }
           }, 1);
         });
 	});
@@ -1300,8 +1305,10 @@ END;
 #    'class       : ' _ class   _ "<br />";
 #    'species     : ' _ species   _ "<br />";
 
-  # Get the default (configuration provided) list of widgets.
-  widget_list = section_fetch.widgets.keys.sort;
+  # Get the keys for widgets based on configs, and sort by title attribute.
+  separator = ';;';  # A hack, due to MACRO can't return a list
+  result_str = sort_keys_by(section_fetch.widgets, '$_->{title}', separator);
+  widget_list = result_str.split(separator);
 
   displayed_widgets = [];
   FOREACH widget_list.grep('^overview$');

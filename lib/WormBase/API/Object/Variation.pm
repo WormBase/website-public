@@ -196,7 +196,10 @@ sub corresponding_gene {
     my ($self) = @_;
     my $object = $self->object;
     my $count = $self->_get_count($object, 'Gene');
-    my @genes = map { $self->_pack_obj($_) } $self->object->Gene if $count < 5000;
+    my @genes = map {
+        my $suffix = $_->Reference_allele("$object") ? ' (reference allele)' : '';
+        [$self->_pack_obj($_), $suffix];
+    } $self->object->Gene if $count < 500;
 
     my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
 
@@ -214,11 +217,17 @@ sub corresponding_gene {
 
 sub reference_allele {
     my ($self) = @_;
+    my $object = $self->object;
+    my $gene = $object->Gene;
+    my $allele = eval {$gene->Reference_allele};
+    my $data = {
+            text => $self->_pack_obj($allele),
+            evidence => { Reference_allele_for => $self->_pack_obj($gene)}
+        } if $allele && $allele ne $object;  # set field to undef if reference allele of containing gene is same as $self->object, github #3201
 
-    my $allele = eval {$self->object->Gene->Reference_allele};
     return {
         description => 'the reference allele for the containing gene (if any)',
-        data        => $allele && $self->_pack_obj($allele),
+        data        => $data
     };
 }
 
@@ -519,15 +528,8 @@ sub derivative {
 sub _build_genomic_position {
     my ($self) = @_;
 
-    my $adjustment = sub {
-        my ($abs_start, $abs_stop) = @_;
-        return $abs_stop - $abs_start < 100
-             ? ($abs_start - 50, $abs_stop + 50)
-             : ($abs_start, $abs_stop);
+    my @positions = $self->_genomic_position($self->_segments, \&_pad_short_seg_simple);
 
-    };
-
-    my @positions = $self->_genomic_position($self->_segments, $adjustment);
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
@@ -564,19 +566,9 @@ sub _build_genomic_image {
 
         # Generate a link to the genome browser
         # This is hard-coded and needs to be cleaned up.
-        # Is the segment smaller than 100? Let's adjust
-        my ($low,$high);
-        if ($abs_stop - $abs_start < 100) {
-            $low  = $abs_start - 50;
-            $high = $abs_stop  + 50;
-        }
-        else {
-            $low  = $abs_start;
-            $high = $abs_stop;
-        }
 
         my $split  = $UNMAPPED_SPAN / 2;
-        ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
+        ($segment) = $self->gff_dsn->segment($ref,$abs_start - $split, $abs_stop + $split);
 
         ($position) = $self->_genomic_position([$segment || ()]);
     }
@@ -750,7 +742,7 @@ sub context {
         $placeholder = $seqLen ? {seqLength => $nf->format_number($seqLen) } : undef;
     }
     return {
-        description => 'wildtype and mutant sequences in an expanded genomic context',
+        description => 'wild type and variant sequences in genomic context',
         data        => ($wt || $wt_full || $mut || $mut_full || $placeholder) ? {
             wildtype_fragment => $wt,
             wildtype_full     => $wt_full,
@@ -998,15 +990,19 @@ sub polymorphism_status {
 
 # reference_strain  { }
 # If the variation is a polymorphism, this method
-# will return the reference strain.
+# will return the strains containing the polymorphism.
+# NOTE: not really reference strain, but too late to change the subroutine name now
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_strain
 
 sub reference_strain {
     my ($self) = @_;
+    my $object = $self->object;
+
+    my @strains = $self->_pack_list([$object->Strain]);
 
     return {
-        description => 'the reference strain for the polymorphism',
-        data        => $self->_pack_obj($self ~~ 'Strain'),
+        description => 'strains that this variant has been observed in',
+        data        => @strains ? \@strains : undef,
     };
 }
 
@@ -1390,14 +1386,15 @@ sub _compile_nucleotide_changes {
 
 
         # Set wt and mutant labels
-        if ($object->SNP(0) || $object->RFLP(0)) {
-            $wt_label = 'reference';
-            $mut_label = $object->Strain; # CB4856, 4857, etc
-        }
-        else {
+        # (simplified for #3201)
+        # if ($object->SNP(0) || $object->RFLP(0)) {
+        #     $wt_label = 'reference';
+        #     $mut_label = $object->Strain; # CB4856, 4857, etc
+        # }
+        # else {
             $wt_label  = 'wild type';
-            $mut_label = 'mutant';
-        }
+            $mut_label = 'variant';
+        # }
 
         push @variations, {
             type           => "$type",

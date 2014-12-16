@@ -43,7 +43,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
               '(sequence unknown / unlisted)';
            END;
            IF label.size > 0;
-              ' (' _ label.join('/') _ ')' _ '<br />';
+              ' (' _ label.join(' / ') _ ')' _ '<br />';
            END;
         wildtype_length = wildtype_length + change.wildtype.length;
         mutant_length = mutant_length + change.mutant.length;
@@ -91,8 +91,8 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                 fields.polymorphism_type.data;
        END;
 
-       WRAPPER $field_block title="Strain" key ="reference_strain";
-                tag2link(fields.reference_strain.data);
+       WRAPPER $field_block title=pluralize("Strain", fields.reference_strain.data.size) key ="reference_strain";
+                tags2link(fields.reference_strain.data, ', ', 'strains');
        END;
 
        WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status";
@@ -119,7 +119,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
            IF assay.assay_type.match('rflp');
 	    '<table>';
 	    	    '<tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>';
-		    '<tr><td>Reference strain digest</td><td>' _ assay.reference_strain_digest _ '</td>';
+		    '<tr><td>Wild type strain digest</td><td>' _ assay.reference_strain_digest _ '</td>';
 		         '<td>' _ assay.reference_strain_bands _ '</td>';
  	 	    '<tr>';
 		    '<tr><td>Polymorphic strain digest</td>';

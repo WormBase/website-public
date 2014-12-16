@@ -82,6 +82,26 @@
         is($c_desc->{data}->{evidence}->{Curator_confirmed}, undef, 'no Curator_confirmed evidence returned');
     }
 
+    # test automated description obtained through concise_desription
+    sub test_automated_description {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00015099' });
+
+        can_ok('WormBase::API::Object::Gene', ('concise_description'));
+
+        my $c_desc = $gene->concise_description();
+
+        isnt($c_desc, undef, 'data returned');
+        isnt($c_desc->{data}, undef, 'data structure returned');
+        isnt($c_desc->{data}->{evidence}, undef, 'evidence returned');
+
+        my $evidence = $c_desc->{data}->{evidence};
+        ok($evidence->{Inferred_automatically}, 'description is inferred automatically');
+        my ($inferred_auto_label) = map { $_->{label} } @{$evidence->{Inferred_automatically}};
+        ok($inferred_auto_label =~ /^This description was generated automatically/,
+           'correct text marking automatically inferred description');
+
+    }
+
 
     # Tests the multi_pt_data method of Gene
     sub test_multi_pt_data {
@@ -265,6 +285,38 @@
         is($expression_cluster->{'description'}, 'expression cluster data' , 'correct description returned ');
         is($expression_cluster->{'data'}[0]->{'expression_cluster'}->{'id'}, 'cgc4489_group_2' , 'correct expression cluster id returned');
         is($expression_cluster->{'data'}[0]->{'description'}, 'Genome-wide analysis of developmental and sex-regulated gene expression profile.' , 'correct expression cluster description returned');
+
+
+    }
+
+    sub test_interactions {
+        my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00006759' });
+
+        can_ok('WormBase::API::Object::Gene', ('interactions'));
+
+        my $data = $gene->interactions()->{data};
+        isnt($data, undef, 'data returned');
+        isnt($data->{edges}, undef, 'interactions returned');
+        my @interactions = @{$data->{edges}};
+
+        # test Effector->Affected interaction
+        my ($interaction1) = grep { $_->{interactions}->[0]->{id} eq 'WBInteraction000518902' } @interactions;
+        is($interaction1->{interactions}->[0]->{label}, 'unc-22 : unc-54', 'A correction interaction returned');
+        is($interaction1->{direction}, 'Effector->Affected', 'correct direction of interacion returned');
+        is($interaction1->{type}, 'Suppression', 'correct interaction type returned');
+
+        # test low log-likelihood interaction
+        my ($interaction2) = grep { $_->{interactions}->[0]->{id} eq 'WBInteraction000136005' } @interactions;
+        is($interaction2, undef, 'An interaction with low log-likelihood correction interaction is NOT returned');
+
+        my ($interaction2) = grep { $_->{interactions}->[0]->{id} eq 'WBInteraction000136005' } @interactions;
+        is($interaction2, undef, 'A predicted interaction with low log-likelihood correction interaction is NOT returned');
+
+        # test high log-likelihood interaction
+        my ($interaction3) = grep { $_->{interactions}->[0]->{id} eq 'WBInteraction000031891' } @interactions;
+        is($interaction3->{interactions}->[0]->{label}, 'unc-105 : unc-22', 'A correction interaction returned');
+        is($interaction3->{type}, 'Predicted', 'A predicted interaction with high log-likelihood correction interaction IS returned');
+        is($interaction3->{direction}, 'non-directional', 'correct direction of interacion returned');
 
 
     }

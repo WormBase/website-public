@@ -165,6 +165,7 @@ sub _format_coordinates {
         $ref =~ s/^CHROMOSOME_//;
         ($start, $stop) = ($stop, $start) if $start > $stop;
 
+	# This probably doesn't belong here and should be parameterized.
 	if ($pad_for_gbrowse) {
 	    $start = int($start - 0.2*($stop-$start));
 	    $stop  = int($stop  + 0.05*($stop-$start));
@@ -172,6 +173,15 @@ sub _format_coordinates {
         $ref .= ":$start..$stop";
     }
     return $ref;
+}
+
+# Is the segment smaller than 100? Let's adjust
+# NOTE: this ISN'T a function called with $self
+sub _pad_short_seg_simple {
+    my ($start, $stop) = @_;
+    return $stop - $start < 100
+             ? ($start - 50, $stop + 50)
+             : ($start, $stop);
 }
 
 

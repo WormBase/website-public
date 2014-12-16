@@ -1,0 +1,32 @@
+[%
+
+    # Some instances of this widget require an image.
+    IF fields.feature_image.data;
+        '<div style="clear:both;">';
+            feature_image = fields.feature_image.data;
+            img_url = gbrowse_url(feature_image.taxonomy, feature_image.id, '', 1);           
+            img_url = img_url _ ';t=' _ feature_image.tracks.join(';t=');
+            '<br><br>';
+               tag2link(feature_image, image(img_url));
+            '</div>';
+    END;    
+
+    build_data_table(
+        order = ['name', 'description', 'method', 'interaction', 'expr_pattern', 'bound_by', 'tf'],
+        columns = {
+            name => 'Feature',
+            description => 'Description',
+            method => 'Method',
+            interaction => '<div style="width:12em">Interaction</div>',
+            expr_pattern => '<div style="width:10em">Drives expression in</div>'
+            bound_by => 'Bound by',
+            tf => 'Transcription factor'
+        },
+        passed_data = fields.features.data,
+        separator = ';<br/>'
+    );
+                   #       key = 'gene_models_constructed' );
+
+
+
+%]

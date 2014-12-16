@@ -507,7 +507,7 @@ table ul {
     padding: 0 0 0 1em;
 }
 
-.dataTable td > br {
+.dataTable td br {
     line-height: 150%;
 }
 
@@ -584,24 +584,20 @@ div#splash-box>p{
 }
 
 div#create-prompt {
-  font-size:0.7em;
+  font-size:0.5em;
   background:white;
   position:absolute;
-  right:1.5em;
-  bottom:1em;
-  padding:1em;
+  right:2em;
+  bottom:1.5em;
   text-align:center;
+  padding:1.5em;
   border:1px solid #CDCDCD;
   background:#E9EEF2;
 }
 
-#default-login span {
-  font-weight:normal;
-  font-size:0.8em;
-  float:left;
-  margin:1em 0 0 0;
+.default-login{
+  padding:0.5em 0 0 0;
   position:relative;
-  height:1em;
 }
 
 #create-account{
@@ -1312,19 +1308,39 @@ div#error-box {
     font-size:1.0em;
 }
 
+div#error-box p, div#help-page-content p{
+    margin: 10px 0 5px 0;
+}
+
+div#error-box #desc-content {
+    width: 100%;
+}
+
+#error-box #name {
+    width: 35%;
+}
+
+#error-box #email {
+    width: 60%;
+}
+
 div.ui-state-error {
   padding:1em;
   margin-bottom:1em;
 }
 
-
 /* This is the ACTUAL error message */
 /* root/templates/status/404.tt2 */
 div.error-message-technical {
     font-family:Courier;
-    margin-left:2em;
-    font-size:0.6em;
+    padding:0.5em 0 0.5em 2em;
+    border: 1px solid;
+    font-size:0.8em;
+    overflow-wrap: break-word;
+    background-color: white;
+    line-height: 100%;
 }
+
 
 
 
@@ -2149,7 +2165,15 @@ div#google-map {
      font-weight:bold;
 }
 
-
+/* image icon ex linking from expression widget to image*/
+.img-link {
+    cursor: pointer;
+}
+.img-link span{
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 0.2em;
+}
 
 
 
@@ -2747,8 +2771,21 @@ table.venn tr.venn-data td {
   padding: 1em;
 }
 
-#issues-new, #issues-new>div {
+#issues-new,
+#issue-box-content #issues-new>div,
+#issues-new>div
+{
   margin-top:1em;
+}
+
+#issue-box #name,
+#issue-box #email {
+    margin: 1em 0 0 0;
+    display: inline-block;
+}
+
+#issue-submit-box {
+    display: inline-block;
 }
 
 #operator-box-wrap{
@@ -3164,7 +3201,7 @@ button::-moz-focus-inner {
     border-bottom: none;
     border-left: none;
     border-right: none;
-    display: block;
+    display: inline-block;
     font-family: "Lucida Grande", Tahoma, sans-serif;
     position: relative;
     text-shadow: 0 -1px 1px rgba(0,0,0,0.5);

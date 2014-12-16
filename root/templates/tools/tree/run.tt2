@@ -11,9 +11,10 @@ ELSE;
     name = data.object.name;
 END; %]
 [% UNLESS noboiler %]
+     [% tag_class = data.object.class FILTER lower %] [%# hack to avoid matching external_urls keys #%]
      [% tag = {
           id = name
-          class = data.object.class
+          class = tag_class
       } %]
      <h1>WormBase [% title %] for [% data.object.class %]: [% tag2link(tag, name) %]</h1>
      [% target = "_self" %]

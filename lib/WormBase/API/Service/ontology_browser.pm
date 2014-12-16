@@ -274,9 +274,9 @@ sub show_genes {
         my $id   = $$hashRef{'bioentity'};		# get the gene ID
         my $name = $$hashRef{'bioentity_label'};	# get the gene name
         if ($id =~ m/^WB:/) { $id =~ s/^WB://; }	# strip out the extra leading WB: from the gene ID
-        my $url = '/species/c_elegans/gene/' . $id;	# link to the gene with the WormBase URL.  this may not be the correct link, but redirects okay
-        $gene_list .= qq(<a href="$url">$id</a> <a href="$url">$name</a><br/>\n)
-							# add to the gene list links to the WBGene id and name
+        my $url = '/species/c_elegans/gene/' . $name;	# link to the gene with the WormBase URL.  this may not be the correct link, but redirects okay
+        $gene_list .= qq(<a href="$url">$name</a><br/>\n);
+							# add to the gene list links to the WBGene name
       }
 
 	# depending on the type of data, structure the sentences to describe it
@@ -846,7 +846,9 @@ sub getSolrUrl {							# given a termId, get the solr URL based on the prefix of
   $idToSolrSubdirectory{"GO"}          = "go";
   $idToSolrSubdirectory{"WBls"}        = "lifestage";
   $idToSolrSubdirectory{"WBPhenotype"} = "phenotype";
-  my $base_solr_url = 'http://131.215.12.220:8080/solr/';		# raymond URL 2013 08 06
+#   my $base_solr_url = 'http://131.215.12.207:8080/solr/';		# raymond URL for testing 2014 10 22 
+#   my $base_solr_url = 'http://131.215.12.220:8080/solr/';		# raymond URL 2013 08 06
+  my $base_solr_url = 'http://wobr.caltech.edu/solr/';			# raymond URL for WB live 2014 10 22
   my $solr_url = $base_solr_url . $idToSolrSubdirectory{$identifierType} . '/';
   return $solr_url;
 } # sub getSolrUrl

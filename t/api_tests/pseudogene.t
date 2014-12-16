@@ -22,7 +22,7 @@
     }
 
     sub test_single_pseudogene {
-        my $pg = $api->fetch({ class => 'Pseudogene', name => 'Y106G6D.5a' });
+        my $pg = $api->fetch({ class => 'Pseudogene', name => 'Y106G6D.5a:wp245' });
 
         can_ok('WormBase::API::Object::Pseudogene', qw/
             parent_sequence
@@ -79,4 +79,3 @@
 }
 
 1;
-
