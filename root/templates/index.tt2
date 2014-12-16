@@ -7,13 +7,16 @@
       [% UNLESS (c.user_exists || tutorial) %]
         <div id="create-prompt" class="ui-corner-all">
 
-           <b>Join the online worm community!</b>
-              <div id="default-login" style="overflow:none">
-              <a id="create-account" class="ui-corner-large-all" onClick='$jq("#create-prompt").load("[% c.uri_for("/register").path  %]?inline=1").addClass("registration-form").removeClass("login-form"); return false;' id="register" href="[% c.uri_for('/register').path  %]">
-               <b>   sign up ›</b>
-              </a>
-             <span> Already a member? <b><a id="login" onClick='$jq("#create-prompt").load("[% c.uri_for("/login").path  %]").addClass("login-form").removeClass("registration-form"); return false;' href="[% c.uri_for('/login').path  %]">log in</a></b></span>
+             <h2>Join the online worm community!</h2>
+
+             <div class="default-login">
+                 <span>Sign in with</span>
+                 <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');return false;">
+                      <span>Google</span>
+                 </button>
+                 <span> or &nbsp;<b><a id="login" onClick='$jq("#create-prompt").load("[% c.uri_for("/login").path  %]").addClass("login-form").removeClass("registration-form"); return false;' href="[% c.uri_for('/login').path  %]">log in</a></b></span>
              </div>
+             <!-- old signup link <a id="create-account" class="ui-corner-large-all" onClick='$jq("#create-prompt").load("[% c.uri_for("/register").path  %]?inline=1").addClass("registration-form").removeClass("login-form"); return false;' id="register" href="[% c.uri_for('/register').path  %]"><b>sign up ›</b></a> -->
         </div>
     [% END %]
     [% IF tutorial %]
@@ -46,4 +49,3 @@
  [% title = '' %]
 
  [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1 layout="01-23-6"%]
-

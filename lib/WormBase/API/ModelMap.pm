@@ -62,6 +62,7 @@ BEGIN {
             Motif        => 'Title',
 #            Protein      => 'Gene_name',
             Rnai         => 'History_name',
+            Construct    => ['Public_name', 'Other_name'],
             WBProcess	 => 'Public_name',
         },
         laboratory => {

@@ -29,11 +29,13 @@
         my $ntc = $var->nucleotide_change();
 
         isnt($ntc->{data}, undef, 'data returned');
-        is  ($ntc->{data}[0]->{wildtype_label}, 'reference', 'correct wildtype label');
+        is  ($ntc->{data}[0]->{wildtype_label}, 'wild type', 'correct wildtype label');
         is  ($ntc->{data}[0]->{wildtype}, 'A', 'correct wildtype');
         is  ($ntc->{data}[0]->{mutant}, 'C', 'correct mutant');
-        is  ($ntc->{data}[0]->{mutant_label}, 'HK104', 'correct mutant label');
-    }
+
+        # mutant_label change in #3201, partly
+        #due to same variant observed in multiple strains
+        is  ($ntc->{data}[0]->{mutant_label}, 'variant', 'correct mutant label');    }
 
     # test nucleotide change - sparse data #2603
     sub test_sparse_nucleotide_change {
@@ -47,7 +49,7 @@
         is  ($ntc->{data}[0]->{wildtype_label}, 'wild type', 'correct wildtype label');
         is  ($ntc->{data}[0]->{wildtype}, '', 'correct wildtype');
         is  ($ntc->{data}[0]->{mutant}, '', 'correct mutant');
-        is  ($ntc->{data}[0]->{mutant_label}, 'mutant', 'correct mutant label');
+        is  ($ntc->{data}[0]->{mutant_label}, 'variant', 'correct mutant label');
     }
 
     # test a Sequence field that contains over 1000000

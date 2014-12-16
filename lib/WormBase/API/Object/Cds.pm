@@ -6,6 +6,7 @@ extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
 with 'WormBase::API::Role::Sequence';
+with 'WormBase::API::Role::Feature';
 
 use Bio::Graphics::Browser2::Markup;
 
@@ -318,6 +319,16 @@ sub predicted_exon_structure {
              data        => @exons ? \@exons : undef };
 }
 
+
+#######################################
+#
+# The Features Widget
+#
+#######################################
+
+# features {}
+# Supplied by Role
+
 ############################################################
 #
 # PRIVATE METHODS
@@ -502,4 +513,3 @@ sub _get_parent_coords {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

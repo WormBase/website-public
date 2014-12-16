@@ -1,59 +1,50 @@
+[%# load defined blocks and variable in
+  # shared/report_issue.tt2%]
+[% msg=c.request.param('msg') %]
+[% PROCESS shared/report_issue.tt2 %]
+
+[%# override variables %]
+[% issue_name_email = BLOCK %]
+    [% UNLESS c.user_exists %]
+    <table width="100%">
+        <tr>
+            <th>
+            <a class='lightbox' href="[% c.uri_for('/login').path  %]">Login</a>
+            </th>
+            <td>
+              or
+            </td>
+            <td>
+            Name <input id="name" type="text"   size="35" placeholder="Name (optional)"/>
+              <div style="height: 0.4em; overflow: hidden;"> </div>
+            Email <input  id="email" size="35" type="text" placeholder="Email (so we can get back to you)"/>
+            </td>
+        </tr>
+    </table>
+    <!-- <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div> -->
+    [% END %]
+[% END %]
+
+[% issue_footer = BLOCK %]
+    <a href="javascript:void(0)" onclick="history.back()" style="font-size: 80%">Go back </a>
+[% END %]
+
+<div id="help-page-content">
+
 <h1>WormBase Help</h1>
 
 <p class="text-width">We're constantly working on making WormBase better for you. Please let us know if you have any feedback for us.
 </p>
 
-      <div id="issues-new">
 
-
-[% UNLESS c.user_exists %]
-    <table width="60%">
-            <tr>
-                <th>
-                <a class='lightbox' href="[% c.uri_for('/login').path  %]">Login</a>
-                </th>
-                <td>
-                  or
-                </td>
-                <td>
-                Name <input id="name" type="text"   maxlength="30" />
-                  <div style="height: 0.4em; overflow: hidden;"> </div>
-                Email <input  id="email" maxlength="50" type="text"/>
-                </td>
-            </tr>
-     </table>
-                 <div class="anon"><label><input id="anon" type="checkbox" value="0"> report anonymously</label></div>
-
+[% WRAPPER report_issue_block %]
+    [% issue_name_email %]
+    <p>Type of question:</p>
+    [% issue_title_options %]
+    <p>[% msg ? 'Error report' : 'Question' %]:</p>
+    [% INCLUDE issue_content %]
+    <div>[% issue_additional_content %]</div>
 [% END %]
-
-        <div>
-          Type of question:<br />
-          <select name="email[subject]" id="issue-title" class="valid">
-              <option value="-" style="display:none">Type of Question / Comment</option>
-              <option value="Bug Report">Bug Report</option>
-              <option value="Feature Request">Feature Request</option>
-              <option value="Content Correction">Content Correction</option>
-              <option value="How Do I ...?">How Do I ...?</option>
-              <option value="My Account">My Account</option>
-              <option value="Everything's broken!">Everything's broken!</option>
-          </select>
-        </div>
-
-        <div>
-          Question:<br />
-          <textarea class="text-width issue-text" id="issue-content" rows="10" name="content"  ></textarea>
-        </div>
-
-        <div id="issue-submit-box">
-          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />
-          <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />
-        </div>
-      <!-- <div> -->
-<!--       You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create and track an issue on Github') %]
-    </div> -->
-      </div>
-
-<br />
 
 [% '<a href="' _ c.uri_for('/search','issue','*') _ '">see more issues ›</a>' %]
 <br />
@@ -63,3 +54,4 @@
 [% external_link("https://twitter.com/wormbase", "@wormbase") %]
 <br />
 
+</div>

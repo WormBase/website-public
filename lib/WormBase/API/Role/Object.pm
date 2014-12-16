@@ -1917,6 +1917,27 @@ sub _pack_objects {
     return {map {$_ => $self->_pack_obj($_)} @$objects};
 }
 
+# Alternative to _pack_objects
+# _pack_objects has problem with cell_content MACRO in template,
+# which use hash exclusively for key-value content,
+# a list is required for list type of content
+sub _pack_list {
+    my ($self, $objects, %args) = @_;
+    my ($sort, $comparison_sub) = @args{('sort', 'comparison_subroutine')};
+
+    return unless $objects;
+    my @packed_objects = map { $self->_pack_obj($_) } @$objects;
+
+    # sorting is disabled by default for performance reason;
+    # it can be enbale by specify EITHER of $sort (a boolean flag) OR
+    # $comparison_sub (a subroutine)
+    if ($sort || $comparison_sub) {
+        $comparison_sub = $comparison_sub || sub { lc($_[0]->{label}) };
+        @packed_objects = sort { $comparison_sub->($a) cmp $comparison_sub->($b) } @packed_objects;
+    }
+    return @packed_objects;
+}
+
 ## 	Parameters:
 #	object: the Ace::Object to be linked to
 #	(label): link text

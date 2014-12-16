@@ -24,11 +24,12 @@ WRAPPER highlight_box;
 END;
 
 '<div class="description">';
+WRAPPER $field_block title='' key ='description';
    markup(fields.description.data);
-'</div>';
+END;
 
 
-WRAPPER $field_block title='Bound by product of' key ='binds_gene_product';
+WRAPPER $field_block title='Bound by<br/> product of' key ='binds_gene_product';
      tags2link(fields.binds_gene_product.data);
 END;
 
@@ -36,20 +37,11 @@ WRAPPER $field_block title='Transcription factor' key ='transcription_factor';
          tag2link(fields.transcription_factor.data);
 END;
 
-        sequence('flanking_sequences');
-
-WRAPPER $field_block title='Flanking sequence' key='flanking_sequences';
-	'<div style="white-space:nowrap;">' _ tag2link(fields.flanking_sequences.data.seq) _ '</div>';
-END;
-
-WRAPPER $field_block title='DNA text' key='dna_text';
-    '<div class="sequence-container">' _ fields.dna_text.data _ '</div>';
-END;
-
-
 WRAPPER $field_block title='Annotation' key='annotation';
    fields.annotation.data;
 END;
+
+'</div>';
 
 WRAPPER $field_block title="" key="remarks";
    remarks();

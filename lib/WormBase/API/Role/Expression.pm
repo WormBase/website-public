@@ -110,12 +110,20 @@ sub _expression_pattern_details {
     my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
     my @life_stage = map { $self->_pack_obj($_) } $expr->Life_stage;
     my @go_term = map { $self->_pack_obj($_) } $expr->GO_term;
-    my @transgene = map {
+
+    my $pack_transgenes = sub {
+        my  @trnsgns = @_;
+        return map {
             my @cs =map { "$_" } $_->Construction_summary;
-            @cs ?   {   text=>$self->_pack_obj($_),
-                        evidence=>{'Construction summary'=> \@cs }
-                    } : $self->_pack_obj($_)
-        } $expr->Transgene;
+            @cs ? {
+                text=>$self->_pack_obj($_),
+                evidence=>{'Construction summary'=> \@cs }
+            } : $self->_pack_obj($_)
+        } @trnsgns;
+    };
+    my @transgene = $expr->Transgene ? &$pack_transgenes($expr->Transgene)
+        : &$pack_transgenes($expr->Construct);
+
     my $expr_packed = $self->_pack_obj($expr, "$expr");
 
 

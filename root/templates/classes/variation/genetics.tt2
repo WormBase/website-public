@@ -1,10 +1,20 @@
 [%
 
 WRAPPER $field_block title="Gene" key="corresponding_gene";
-         cell_content(fields.corresponding_gene.data);
+    IF ref(fields.corresponding_gene.data);
+       # pre-process individual cell to override default cell_content
+       #separator on list-of-list
+       corr_genes_new = [];
+       FOREACH g IN fields.corresponding_gene.data;
+         corr_genes_new.push(cell_content(g, ' ')); # use ' ' instead of </br>
+       END;
+       cell_content(corr_genes_new);
+    ELSE;  # a comment instead of a list is returned, when too many genes
+       fields.corresponding_gene.data;
+    END;
 END;
 
-WRAPPER $field_block title="Reference Allele" key="reference_allele";
+WRAPPER $field_block title="Reference allele" key="reference_allele";
          cell_content(fields.reference_allele.data);
 END;
 

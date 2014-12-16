@@ -11,6 +11,7 @@ with    'WormBase::API::Role::Position';
 with    'WormBase::API::Role::Interaction';
 with    'WormBase::API::Role::Variation';
 with    'WormBase::API::Role::Expression';
+with    'WormBase::API::Role::Feature';
 
 =pod
 
@@ -363,12 +364,18 @@ sub concise_description {
 
     my $description =
         $object->Concise_description
+        || $object->Automated_description
         || eval { $object->Corresponding_CDS->Brief_identification }
         || eval { $object->Corresponding_transcript->Brief_identification };
 
-    my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
-    my $evidence = $self->_get_evidence($description)
-        || $self->_get_evidence(shift @evs);
+    my $evidence = $self->_get_evidence($description);
+
+    unless ($evidence) {
+        # evidence for concise description has to be found
+        # in Provisional_description
+        my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
+        $evidence = $self->_get_evidence(shift @evs);
+    }
 
     return {
       description => "A manually curated description of the gene's function",
@@ -1712,68 +1719,36 @@ sub other_sequences {
 
 #######################################
 #
-# The Features Widget
+# The "Sequence features" Widget
 #
 #######################################
 
-has 'features' => (
-    is  => 'ro',
-    lazy => 1,
-    builder => '_build_features',
-);
+# features {}
+# Supplied by Role
 
-sub _build_features {
-    my $self = shift;
-    my $gene = $self->object;
-    my @data;
-    foreach my $feature ($gene->Associated_feature){
-        my $description = $feature->Description;
-        my $method = $feature->Method;
+# Display a gbrowse image specific for the
+# Sequence features widget.
+sub feature_image {
+    my ($self) = @_;
 
-        # create a list of associations
-        my @associations;
-        foreach my $as_tag ($feature->Associations){
-            push @associations, map {
-                my ($type) = "$as_tag" =~ /Associated_with_(\w+)/;
-                $type =~ s/_/ /g;
-                my $packed_as = $self->_pack_obj($_);
-                my $label = $packed_as->{label};
-                $packed_as->{label} = "$type: " . $label unless $label =~ /$type/i;
-                $packed_as;
-            } $as_tag->col();
+    my $segment = $self->_longest_segment;
 
-            # (my $type = "$as_tag") =~ s/_/ /g;
-            # my @as = map { $self->_pack_obj($_) } $as_tag->col();
-            # push @associations, {
-            #     text => \@as,
-            #     evidence => { type => $type },
-            # };
-        }
-        sub priority {
-            # a greater priority value is considered high priority
-            my $as = shift;
-            return $as->{label} =~ /^(Interaction|expression pattern)/i;
-        }
-        @associations = sort { priority($b) cmp priority($a) } @associations;  #sort by descending priority
+    # Create a NEW segment from this with expanded coordinates.
+    my $dbh = $self->gff_dsn();# || return \@segments;
+    my $start = $segment->start - 2000;
+    my $stop  = $segment->stop  + 2000;
+    my ($expanded_segment) = $dbh->segment($segment->seq_id,$start,$stop);
 
-        my @bound_by = map { $self->_pack_obj($_) } $feature->Bound_by_product_of;
-        my $tf => $feature->Transcription_factor;
-
-        push @data, {
-            name => $self->_pack_obj($feature),
-            description => $method && "$description",
-            method => $method && "$method",
-            association => \@associations,
-            bound_by => \@bound_by,
-            tf => $tf && "$tf"
-        };
-    }
+    my $position = $self->_seg2posURLpart($expanded_segment);
+    $position->{tracks} = [qw/GENES RNASEQ_ASYMMETRIES RNASEQ RNASEQ_SPLICE POLYSOMES MICRO_ORF DNASEI_HYPERSENSITIVE_SITE REGULATORY_REGIONS PROMOTER_REGIONS HISTONE_BINDING_SITES TRANSCRIPTION_FACTOR_BINDING_REGION TRANSCRIPTION_FACTOR_BINDING_SITE BINDING_SITES_PREDICTED BINDING_SITES_CURATED BINDING_REGIONS/];
 
     return {
-        description => 'Features associated with gene',
-        data        => @data ? \@data : undef,
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $position,
     };
 }
+
+
 
 #########################################
 #
@@ -1824,7 +1799,6 @@ sub _build__segments {
         ||  map {$dbh->segment($_)} @$sequences
         ||  map { $dbh->segment($_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
         ||  map { $dbh->segment( $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
-
     ) {
         return defined $segments[0] ? \@segments : undef;
     }

@@ -64,7 +64,7 @@
 
 [% MACRO nav_species(species_name,display_title) BLOCK %]
   <li>
-    <a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' || species_name == 'others' %] class="species" [% END %]> 
+    <a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' || species_name == 'others' %] class="species" [% END %]>
      [%- UNLESS species_name == 'others' -%]
          <span class="ui-icon ui-icon-triangle-1-e"></span>
      [%- END -%]
@@ -170,6 +170,7 @@
           </ul>
       </li>
     [% END %]
+<li><a href="http://parasite.wormbase.org">ParaSite</a></li>
   <span class="status-bar"></span>
     </ul>
   </div>

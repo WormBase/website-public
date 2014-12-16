@@ -79,15 +79,23 @@ sub search :Path('/search') Args {
       $c->stash->{req_class} = $c->req->param("class");
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
-      # if it finds an exact match, redirect to the page
-        my $match = $api->xapian->fetch({ query => $tmp_query, class => $search});
+        # if it finds an exact match, redirect to the page
+        my %fetch_args = ( query => $tmp_query,
+                           class => $search,
+                           %{$c->req->params},
+                           redirect => ''
+                       );
+        my $match = $api->xapian->fetch(\%fetch_args);
+
         if($match){
           my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
-          unless($query=~m/$match->{id}/){ $url = $url . "?query=$query";}
+          unless($query=~m/$match->{id}/){
+              $url = $c->uri_for($url, \%{$c->req->params});
+          }
           $c->res->redirect($url, 307);
           return;
-        }
       }
+    }
 
       # if we're on a search page, setup the search first. Load results as ajax later.
       #   - try to redirect to exact match first
@@ -333,25 +341,30 @@ sub _get_url {
 
 sub _prep_query {
   my ($self, $q, $ac) = @_;
+  # $ac flags autocomplete
   my $error;
   $q ||= "*";
 
   my $phrase = $q =~ m/\"/;
 
   my $new_q = $q;
-  $new_q =~ s/-/_/g unless $phrase;
 
-  map { $new_q .= " $_"; } (my @hyphens = $q =~ m/(\S+\-\S+)/g) unless ($ac || $phrase);
-
-  my @words = split(/\s/, $new_q);
+  my @words = $q =~ m/(\S+)/g;
+  @words = map {
+      (my $word_new = "$_" ) =~ s/-/_/g;
+      $word_new eq $_ ? "$_*" : $ac ? "$word_new*" : "($word_new $_)*";
+      # include wild card, as stemming hasn't been handled when indexing.
+  } @words unless $phrase;
 
 
   if(@words > 8) {
     @words = grep { $phrase ||length($_) > 3 } @words;
-    $new_q = join(' ', @words[0..5]);
+    @words = @words[0..5];
+    $new_q = join(' ', @words);
     $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
+  }else{
+    $new_q = join(' ', @words);
   }
-
   return wantarray ? ($new_q, $error) : $new_q;
 }
 

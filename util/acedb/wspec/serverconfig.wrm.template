@@ -45,7 +45,7 @@
 // be sent by the server to the terminal (if not inetd started)
 // and to a "server.log" file in the .../database directory.
 //
-DEBUG
+//DEBUG
 
 
 //////////////////////////////////////////////////////////////////
