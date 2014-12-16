@@ -45,16 +45,18 @@
 		</tr>
 	</table>
 
-	    <input type='submit' onClick='WB.comment.submit($jq(this));' value='Comment' id="comment-submit-[% widget %]" class="comment-submit"  />
+	    <input type='submit' onClick='WB.comment.submit($jq(this));' value='Comment' id="comment-submit-[% widget %]" [% UNLESS c.user_exists; 'disabled=1'; END %] class="comment-submit"  />
 </div>
   </div>
 
  </div>
 
 
+[%# removed, as user finding no comment button, won't enter a comment :(
+  hide submit button unless comment is entered
 <script>
   (function(){
-  var contentBox = $jq(".comment-content"),
+  var contentBox = $jq(".comment-content");
   contentBox.bind('focus',function() {
     $jq(".comment-submit").show();
   });
@@ -65,3 +67,4 @@
   });
   })();
 </script>
+%]
