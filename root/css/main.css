@@ -1042,7 +1042,7 @@ a#fade:hover {
 }
 
 .comment-submit {
-  display:none;
+  /* display:none; previously used for hide button until texts are entered */
 }
 
 .ui-autocomplete-loading { background: white url(/img/ajax-loader.gif) right center no-repeat; }
