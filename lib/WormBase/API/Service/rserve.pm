@@ -7,6 +7,8 @@ use Data::UUID;
 use Digest::MD5 qw(md5);
 
 use Moose;
+use Statistics::R::IO;
+
 with 'WormBase::API::Role::Object';
 
 
@@ -45,11 +47,15 @@ sub init_chart {
 
     return ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list);
 }
-
+use Data::Dumper;
 sub execute_r_program {
     my ($self, $r_program, $image_tmp_path, $image_filename) = @_;
-
-    run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
+#print Dumper 'calling execute';
+ #   run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
+    my $r = Statistics::R::IO::Rserve->new();
+    my $rslt = $r->eval($r_program);
+    $r->close();
+print Dumper $rslt->{num};
 
     # Relocate the plot into an accessible directory of the web-server:
     my $destination = WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($image_filename) . $image_filename;
@@ -217,7 +223,6 @@ labels = c($label_list);
 values = c($value_list);
 projects = c($project_list);
 life_stages = c($life_stage_list);
-data = data.frame(labels, values, projects, life_stages);
 
 # Preserve ordering:
 data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE);
@@ -225,8 +230,27 @@ data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE);
 $format("$image_tmp_path", width = $width, height = $height);
 print(ggplot(data, aes(factor(life_stages), y = values, fill = projects)) + geom_boxplot()$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + $coloring$facets_guides)$facets_grid);
 dev.off();
+
+library(plyr)
+fpkm_summary <- function(data, namePrefix=''){
+    reduced <- ddply(data, ~projects, function(jDat){
+        g <- ggplot(jDat, aes(x = life_stages, y = values)) + geom_boxplot() + coord_flip()
+        fileName <- paste('/tmp/', namePrefix, jDat\$projects[1], '.png', sep='')
+        print(fileName)
+        ggsave(fileName)
+        return(data.frame(
+            num = nrow(jDat),
+            as.list(quantile(jDat\$values))
+        ))
+    })
+    return(reduced)
+}
+
+#sDat = subset(data, projects=="Hillier modENCODE deep sequencing")
+fpkm_summary(data)
 EOP
 ;
+print $r_program;
 
     # Return the absolute URI (relative to the server) of the generated image:
     return $self->execute_r_program($r_program, $image_tmp_path, $image_filename);
