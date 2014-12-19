@@ -1732,6 +1732,7 @@ sub feature_image {
     my ($self) = @_;
 
     my $segment = $self->_longest_segment;
+    return unless $segment;
 
     # Create a NEW segment from this with expanded coordinates.
     my $dbh = $self->gff_dsn();# || return \@segments;
