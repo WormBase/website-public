@@ -945,7 +945,7 @@ a#fade:hover {
   position:absolute;
   right:0;
   top:100%;
-  z-index:598;
+  z-index:1098; /* higher than cytoscape div 1000 */
   font-size:0.9em;
   border:1px solid #CDCDCD;
 }
@@ -2175,7 +2175,19 @@ div#google-map {
     margin-right: 0.2em;
 }
 
+/* cytoscape legend */
+#cyto_legend {
+    width:15em;
+    position:absolute;
+    right:0;
+    z-index:1001; /*
+                     greater than cy div z-index 1000
+                     smaller than dropdown menu in search #searchSelect ul */
+}
 
+#cyto_legend div {
+    margin: 0.2em 0 0.4em;
+}
 
 
 
