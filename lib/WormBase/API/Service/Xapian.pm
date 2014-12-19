@@ -264,7 +264,7 @@ sub _check_exact_match {
   my $label = $doc->get_value(6);
   my $id = $doc->get_value(1);
 
-  return (($q =~ m/$label/) || ($q =~ m/$id/));
+  return (($q =~ m/\Q$label\E/) || ($q =~ m/\Q$id\E/));
 }
 
 

@@ -1372,7 +1372,8 @@ var Scrolling = (function(){
         var feed = cm.closest('#comment-new'),
             content = feed.find(".comment-content").val();
         if(content === "" || content === "write a comment..."){
-            alert("Please provide your name & comment"); return false;
+            feed.find(".comment-content").focus();
+            return false;
         }
         $jq.ajax({
           type: 'POST',
