@@ -781,7 +781,9 @@ sub _build_genomic_position {
     my @positions = ();
     foreach my $gene (@genes) {
         my $position = $self->_api->wrap($gene)->_build_genomic_position;
-        push(@positions, $position->{'data'}[0]);
+        if ($position->{'data'} && $position->{'data'}->[0]){
+            push(@positions, $position->{'data'}->[0]);
+        }
     }
 
     return {
