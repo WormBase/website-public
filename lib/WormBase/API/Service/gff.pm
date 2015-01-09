@@ -59,8 +59,15 @@ sub ping {
 # Added to handle all the places where we pass an Ace Object to segment
 sub segment {
     my ($self, $object, $start, $stop) = @_;
-    return $self->dbh->segment("$object") unless ($start || $stop);
-    return $self->dbh->segment("$object", $start, $stop);
+    my $name;
+    if ("$object" =~ m/\w?+:(.+)/) {
+        # remove species prefix in tier 3 sequences
+        $name = $1;
+    }else{
+        $name = $object;
+    }
+    return $self->dbh->segment("$name") unless ($start || $stop);
+    return $self->dbh->segment("$name", $start, $stop);
 }
 
 sub connect {
