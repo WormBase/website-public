@@ -930,11 +930,6 @@ sub print_sequence {
                 grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.a");
         ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
                 grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.1");
-
-        # hack! try fetch sequence name with speicies id prefix removed
-        my ($seq_name_alt) = "$s" =~ m/\d?+:(.+)/g;
-        ($seq_obj) = sort {$b->length<=>$a->length}
-                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($seq_name_alt) if $seq_name_alt;
     }
 
     # Haven't fetched a GFF segment? Try Ace.
