@@ -8,7 +8,7 @@ has 'dbh' => (
     isa       => 'Bio::DB::SeqFeature::Store',
     predicate => 'has_dbh',
     writer    => 'set_dbh',
-    handles   => [qw/search_notes get_features_by_name get_features_by_attribute/],
+    handles   => [qw/search_notes segment get_features_by_name get_features_by_attribute/],
 );
 
 with 'WormBase::API::Role::Service';
@@ -57,8 +57,21 @@ sub ping {
 }
 
 # Added to handle all the places where we pass an Ace Object to segment
-sub segment {
-    my ($self, $object, $start, $stop) = @_;
+around 'segment' => sub {
+    my ($orig, $self, $object, $start, $stop) = @_;
+    my $name = $self->prepare_name($object);
+    return $self->$orig($name, $start, $stop);
+   # return $self->segment("$name", $start, $stop);
+};
+
+around 'get_features_by_name' => sub {
+    my ($orig, $self, $object) = @_;
+    my $name = $self->prepare_name($object);
+    return $self->$orig($name);
+};
+
+sub prepare_name {
+    my ($self, $object) = @_;
     my $name;
     if ("$object" =~ m/\w?+:(.+)/) {
         # remove species prefix in tier 3 sequences
@@ -66,8 +79,7 @@ sub segment {
     }else{
         $name = $object;
     }
-    return $self->dbh->segment("$name") unless ($start || $stop);
-    return $self->dbh->segment("$name", $start, $stop);
+    return $name;
 }
 
 sub connect {
