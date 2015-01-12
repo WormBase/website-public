@@ -66,8 +66,9 @@
      	         END;
 
                  '<div style="clear:both;">';
-                 genomic_image = fields.genomic_image.data.$idx;
-                 UNLESS genomic_image;
+                 IF ref(fields.genomic_image.data) == 'ARRAY';
+                   genomic_image = fields.genomic_image.data.$idx;
+                 ELSE;
                    genomic_image = fields.genomic_image.data;
                  END;
                  img_url = gbrowse_url(genomic_image.taxonomy, genomic_image.id, '', 1);
@@ -79,7 +80,9 @@
                  '</div>';
                END;
     ELSE;
+        WRAPPER $field_block title="Genomic position";
                   '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the physical map or its coordinates are unknown.</div>';
+        END;
     END;
 
     '<div style="clear:both;">';
