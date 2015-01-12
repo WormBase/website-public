@@ -59,27 +59,35 @@ sub ping {
 # Added to handle all the places where we pass an Ace Object to segment
 around 'segment' => sub {
     my ($orig, $self, $object, $start, $stop) = @_;
-    my $name = $self->prepare_name($object);
-    return $self->$orig($name, $start, $stop);
-   # return $self->segment("$name", $start, $stop);
+    my @names = $self->guess_names($object);
+
+    my @segs;
+    while (@names && !@segs){
+        my $name = shift @names;
+        @segs = $self->$orig($name, $start, $stop);
+    }
+    return wantarray ? @segs : @segs && $segs[0];
 };
 
 around 'get_features_by_name' => sub {
     my ($orig, $self, $object) = @_;
-    my $name = $self->prepare_name($object);
-    return $self->$orig($name);
+    my @names = $self->guess_names($object);
+    my @features;
+    while (@names && !@features){
+        @features = $self->$orig(shift @names);
+    }
+    return @features;
 };
 
-sub prepare_name {
+# default object name, followed by other names
+sub guess_names {
     my ($self, $object) = @_;
-    my $name;
-    if ("$object" =~ m/\w?+:(.+)/) {
+    my @names = ("$object");
+    if (my ($name) = "$object" =~ m/\w?+:(.+)/) {
         # remove species prefix in tier 3 sequences
-        $name = $1;
-    }else{
-        $name = $object;
+        push @names, $name;
     }
-    return $name;
+    return @names;
 }
 
 sub connect {
