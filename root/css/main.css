@@ -1958,7 +1958,8 @@ div.widget-container:hover{
 
 .content {
   padding: 1em 1em 1.8em 1em;
-  overflow:auto;
+  overflow-x:scroll;
+  overflow-y:hidden; /* seems to fix vertical scroll issue in Safari */
   list-style:disc outside none;
   clear:both;
   font-size:0.9em;
@@ -2073,12 +2074,14 @@ div.field-title {
 }
 
 div.field-content {
-  float: left;
-  max-width:100%;
+  display:inline-block;
+  float:none;
+  min-width: 20em;
+  width: calc(100% - 11em);
 }
 
-.one-column div.field-title, .one-column div.field-content {
-  display:table-cell;
+.one-column div.field-title {
+  display:inline-block;
   float:none;
   position:static;
   vertical-align:top;
