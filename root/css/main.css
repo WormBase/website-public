@@ -1958,7 +1958,8 @@ div.widget-container:hover{
 
 .content {
   padding: 1em 1em 1.8em 1em;
-  overflow:auto;
+  overflow-x:scroll;
+  overflow-y:hidden; /* seems to fix vertical scroll issue in Safari */
   list-style:disc outside none;
   clear:both;
   font-size:0.9em;
