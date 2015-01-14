@@ -62,7 +62,13 @@ sub run {
     }
     $request_name =~ s/^#/?/ if $request_class eq 'Model';
     $dsn  = $self->ace_dsn->dbh;
-    my ($object) = $self->_api->fetch({ class => ucfirst $request_class, name => $request_name, nowrap => 1 });
+
+    # Fetch object: first treat $request_class as ACe class name;
+    # failing that, treat $request_class as WB class, and
+    # let fetch resolve it to appropriate ACe class
+    my ($object) = $self->_api->fetch({ aceclass => ucfirst $request_class, name => $request_name, nowrap => 1 })
+    || $self->_api->fetch({ class => ucfirst $request_class, name => $request_name, nowrap => 1 });
+
 
     my ($tree,$msg);
     if ($object) {
