@@ -323,7 +323,8 @@
 
 # lookup external sites by case insensitive match of its name
     MACRO match_link(link) BLOCK;
-      link_regex = '^(?i)' _ "$link" _ '$';  # case insensitive regex
+      link = link.replace('\W', '_');
+      link_regex = '^(?i)' _ link  _ '$';    # case insensitive regex
                                              # avoid interpolation of regex symbols
       link_name  = site.external_urls.keys.grep(link_regex);
       link_name = link_name && link_name.pop;
