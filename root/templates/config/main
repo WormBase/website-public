@@ -316,7 +316,7 @@
                 ext_url = String(id);
               END;
           END;
-          ext_url = (ext_url || site.external_urls.$link.base) FILTER url;
+          ext_url = (ext_url || site.external_urls.$link.base);
         END;
         ext_url || link;
     END;
