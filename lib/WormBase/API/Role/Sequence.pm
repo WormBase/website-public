@@ -40,6 +40,14 @@ has 'genes' => (
     },
    );
 
+has '_method' => (
+    is		=> 'ro',
+    lazy	=> 1,
+    default => sub {
+		my ($self) = @_;
+		return eval { $self ~~ 'Method' };
+    },
+    );
 #######################################################
 #
 # Generic methods, shared across Sequence, CDS, and Transcript classes.
@@ -258,7 +266,7 @@ sub available_from {
     my $self   = shift;
     my $object = $self->object;
 
-    my $data = $self->method eq 'Vancouver_fosmid' && {
+    my $data = $self->_method eq 'Vancouver_fosmid' && {
     label => 'GeneService',
     class => 'Geneservice_fosmids',
     };
@@ -1440,7 +1448,7 @@ sub transcripts {
     my ($self) = @_;
 
     my @transcripts;
-    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
+    if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
     $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
     @transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
     map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
