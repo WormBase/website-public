@@ -95,7 +95,17 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
 END;
 
 WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
-    '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
+    # '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
+    fpkm_plots = fields.fpkm_expression_summary_ls.data.plot;
+    FOREACH p IN fpkm_plots;
+        p.img = '<img src="' _ p.image _ '" alt="' _ p.project_id _ '"';
+    END;
+    build_data_table(order = ['project_id', 'img'],
+                     columns = {
+                        project_id => 'Project',
+                        img => 'Image'
+                     }, passed_data = fpkm_plots,
+                     key='fpkm_plots');
 
     fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
     FOREACH analysis IN fpkm_data;
