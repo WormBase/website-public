@@ -2,11 +2,15 @@ package WormBase::API::Service::rserve;
 
 use File::Basename;
 use File::Copy;
+use File::Spec::Functions qw(catfile);
+use File::Path qw(make_path remove_tree);
 use IPC::Run3;
 use Data::UUID;
 use Digest::MD5 qw(md5);
 
 use Moose;
+use Statistics::R::IO;
+
 with 'WormBase::API::Role::Object';
 
 
@@ -32,10 +36,11 @@ sub init_chart {
     my @values = ();
     my @projects = ();
     my @life_stages = ();
+
     foreach my $datum (@$data) {
         push(@labels, '"' . $datum->{label} . '"');
         push(@values, $datum->{value});
-        push(@projects, '"' . $datum->{project} . '"');
+        push(@projects, '"' . $datum->{project_info}->{id} . '"');
         push(@life_stages, '"' . $datum->{life_stage} . '"');
     }
     my $label_list = join(",\n", @labels);
@@ -46,34 +51,49 @@ sub init_chart {
     return ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list);
 }
 
+# execute the R program, locate the output in $output_tmp_path, and
+# relocate the output to $rel_dir, relative to
+# WormBase::Web->config->{rplots} . $self->version
+# NOTE: $output_tmp_path can be BOTH a file path or dir path;
+#       $rel_dir can ONLY be a dir path
 sub execute_r_program {
-    my ($self, $r_program, $image_tmp_path, $image_filename) = @_;
+    my ($self, $r_program, $output_tmp_path, $rel_dir) = @_;
 
-    run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
+    # name of the output file (can be a directory)
+    my $output_tmp_name = $self->_file_name($output_tmp_path);
 
-    # Relocate the plot into an accessible directory of the web-server:
-    my $destination = WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($image_filename) . $image_filename;
-    # If sub-dir usage is configured to spread image files over multiple directories,
-    # then check whether the directory exists or not. If not, well, create it!
-    if (defined WormBase::Web->config->{rplots_subdirs} && WormBase::Web->config->{rplots_subdirs}) {
-        unless (-d WormBase::Web->config->{rplots} . $self->version) {
-            mkdir WormBase::Web->config->{rplots} . $self->version;
-        }
-        unless (-d WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($image_filename)) {
-            mkdir WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($image_filename);
-        }
+    my $destination_dir = catfile(WormBase::Web->config->{rplots},
+                                  $self->version,
+                                  $rel_dir);
+    my $destination_file = catfile($destination_dir, $output_tmp_name);
+
+    if (WormBase::Web->config->{installation_type} eq 'development') {
+        remove_tree($destination_file);
     }
 
-    # This was a note from Joachim.
-    # TODO: figure out why `move($image_tmp_path, $destination);` does not work anymore!
-    # TH: The system command doesn't work here either. The reason
-    # is that the Rserve is running as jenkins but the app may (or may not) be.
-    # If it is NOT, mv here is cp and the tmp dir fills with images.
-    system('mv', $image_tmp_path, $destination);
+    unless ( -e ($destination_file) ) {
+
+        # run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
+        my $r = Statistics::R::IO::Rserve->new();
+        $r->eval($r_program);
+        $r->close();
+
+        # Relocate the plot into an accessible directory of the web-server.
+        # use subdirectories, or create if needed
+        make_path($destination_dir);
+        system('mv', $output_tmp_path, $destination_dir);
+        # Without right permission, mv here becomes cp and the tmp dir fills with images.
+    }
+
+    my @files = glob(catfile($destination_file, '*'));
 
     # Return the absolute URI (relative to the server) of the generated image:
     return {
-        uri => WormBase::Web->config->{rplots_url_suffix} . $self->version . "/" . $self->_rplot_subdir($image_filename) . $image_filename
+        uri_base => catfile(WormBase::Web->config->{rplots_url_suffix},
+                            $self->version,
+                            $rel_dir,
+                            $output_tmp_name),
+        filenames => [map {$self->_file_name($_) } @files],
     };
 }
 
@@ -100,73 +120,6 @@ sub barboxchart_parameters {
             $customization->{facets} ? " + facet_grid(projects ~ .)" : "");
 }
 
-# Plots a barchart with the given values and labels. This implementation
-# is currently tailored to work with data that also provides information
-# about project and life stage association.
-#
-# Format example:
-#
-#  [
-#    {
-#      'value'      => '3.97874',
-#      'label'      => 'RNASeq_Hillier.L4_larva_Male_cap2_Replicate2',
-#      'project'    => 'RNASeq_Hillier',
-#      'life_stage' => 'WBls:0000024'
-#    },
-#    {
-#      'value'      => '1e-10',
-#      'label'      => 'RNASeq.elegans.SRP015688.L4.linker-cells.nhr-67.4',
-#      'project'    => 'RNASeq_Hillier',
-#      'life_stage' => 'WBls:0000024'
-#    },
-#    {
-#      'value'      => '5.7759',
-#      'label'      => 'RNASeq_Hillier.L4_Larva_Replicate1',
-#      'project'    => 'RNASeq_Hillier',
-#      'life_stage' => 'WBls:0000024'
-#    },
-#    ...
-sub barchart {
-    my ($self, $data, $customization) = @_;
-
-    # Pretty-ization:
-    my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
-
-    # If a filename is provided and the plot exists already: do not generate it again!
-    return { uri => "/img-static/rplots/" . $self->version . "/"
-		 . $self->_rplot_subdir($filename) . $filename }
-    if (WormBase::Web->config->{installation_type} ne 'development'
-	&& defined $filename &&
-	-e (WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($filename) . $filename));
-
-    my $format = "png";
-    my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);
-
-    # Run the R program that plots the barchart:
-    my $r_program = <<EOP
-library("Defaults");
-setDefaults(q, save="no");
-useDefaults(q);
-
-library("ggplot2");
-labels = c($label_list);
-values = c($value_list);
-projects = c($project_list);
-life_stages = c($life_stage_list);
-data = data.frame(labels, values, projects, life_stages);
-
-# Preserve ordering:
-data\$labels = factor(labels, levels = labels, ordered = TRUE)
-
-$format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(x = labels, y = values, fill = projects)) + geom_bar(stat="identity")$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + $coloring$facets_guides)$facets_grid);
-dev.off();
-EOP
-;
-
-    # Return the absolute URI (relative to the server) of the generated image:
-    return $self->execute_r_program($r_program, $image_tmp_path, $image_filename);
-}
 
 # Plots a boxplot with the given values and labels. This implementation
 # is currently tailored to work with data that also provides information
@@ -199,12 +152,13 @@ sub boxplot {
 
     # Pretty-ization:
     my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
-
-    # If a filename is provided and the plot exists already: do not generate it again!
-    return { uri => "/img-static/rplots/" . $self->version . "/" . $self->_rplot_subdir($filename) . $filename } if (WormBase::Web->config->{installation_type} ne 'development' && defined $filename && -e (WormBase::Web->config->{rplots} . $self->version . "/" . $self->_rplot_subdir($filename) . $filename));
+    my ($width, $height, $dpi) = (5, 2.5, 120);
 
     my $format = "png";
     my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);
+    my ($dirname) = $filename =~ /(.+)\.\w+/;
+
+    $image_tmp_path = catfile('/tmp', $dirname);
 
     # Run the R program that plots the barchart:
     my $r_program = <<EOP
@@ -213,6 +167,8 @@ setDefaults(q, save="no");
 useDefaults(q);
 
 library("ggplot2");
+library("plyr");
+
 labels = c($label_list);
 values = c($value_list);
 projects = c($project_list);
@@ -222,24 +178,74 @@ data = data.frame(labels, values, projects, life_stages);
 # Preserve ordering:
 data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE);
 
-$format("$image_tmp_path", width = $width, height = $height);
-print(ggplot(data, aes(factor(life_stages), y = values, fill = projects)) + geom_boxplot()$rotate + labs(x = "$xlabel", y = "$ylabel") + theme(text = element_text(size = 21), axis.text = element_text(colour = 'black')) + $coloring$facets_guides)$facets_grid);
-dev.off();
+fpkm_summary <- function(data, dirName=''){
+
+    fileDir <- paste('/tmp', dirName, sep='/')
+    dir.create(fileDir, showWarnings = FALSE)
+    setwd(fileDir)
+    print(fileDir)
+
+    reduced <- ddply(data, ~projects, function(jDat){
+        g <- ggplot(jDat, aes(x = life_stages, y = values)) + geom_boxplot() + coord_flip()
+        g <- g + labs(x = "$xlabel", y = "$ylabel") + ggtitle(jDat\$projects[1])
+        g <- g + theme(
+            text = element_text(size = 11),
+            axis.text = element_text(colour = 'black'),
+            panel.background = theme_rect(fill = 'transparent',colour = NA),
+       #     panel.grid.major = theme_blank(),
+            panel.grid.minor = theme_line(color='gray'),
+            panel.grid.major = theme_line(color='darkgray'),
+            plot.background = theme_rect(fill = "transparent",colour = NA)
+
+        )
+        fileName <- paste(jDat\$projects[1], '$format', sep='.')
+        ggsave(fileName, width=$width, height=$height, dpi=$dpi, bg='transparent')
+        return(data.frame(
+            num = nrow(jDat),
+            as.list(quantile(jDat\$values))
+        ))
+    })
+    return(reduced)
+}
+
+# # #sDat = subset(data, projects=="Hillier modENCODE deep sequencing")
+fpkm_summary(data, "$dirname")
+
 EOP
 ;
 
     # Return the absolute URI (relative to the server) of the generated image:
-    return $self->execute_r_program($r_program, $image_tmp_path, $image_filename);
+    my $exe_r_summary = $self->execute_r_program($r_program,
+                                                 $image_tmp_path,
+                                                 $self->_rplot_subdir($filename));
+    my $uri_base = $exe_r_summary->{uri_base};
+
+    my @plots = map {
+        my ($project_id) = $_ =~ /(.+)\.\w+$/;
+        {
+            project_id => $project_id,
+            uri => catfile($uri_base, $_),
+        }
+    } @{$exe_r_summary->{filenames}};
+    return @plots ? \@plots : undef;
 }
 
 sub _rplot_subdir {
-    my ($self, $filename) = @_;
-
+    my ($self, $filekey) = @_;
+    # # If sub-dir usage is configured to spread image files over multiple directories,
+    # # then check whether the directory exists or not. If not, well, create it!
+    # if (defined WormBase::Web->config->{rplots_subdirs} && WormBase::Web->config->{rplots_subdirs}){
     if (defined WormBase::Web->config->{rplots_subdirs} && WormBase::Web->config->{rplots_subdirs} > 0) {
-        return unpack('L', md5($filename)) % WormBase::Web->config->{rplots_subdirs} . '/';
+        return unpack('L', md5($filekey)) % WormBase::Web->config->{rplots_subdirs} . '/';
     }
 
     return '';
+}
+
+sub _file_name {
+    my ($self, $path) = @_;
+    my ($filename) = $path =~ /([^\/]+)\/?$/;
+    return $filename;
 }
 
 1;

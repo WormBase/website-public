@@ -181,7 +181,11 @@
         my @data_sub = grep { $_->{'project_info'}->{'id'} eq 'SRP016006' } @data;
         isnt($data_sub[0], undef, 'data returned');
         is($data_sub[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
-        is($fpkm_expression_1->{'data'}->{'plot'}, '/img-static/rplots/' . $version . '/1559/fpkm_WBGene00001530.png' , 'correct plot path returned');
+
+        my $plot_uri_pttn = "\Q/img-static/rplots/$version/1559/fpkm_WBGene00001530/\E.+";
+        like($fpkm_expression_1->{'data'}->{'plot'}->[0]->{'uri'},
+             qr/$plot_uri_pttn/,
+             'correct plot path returned');
 
     }
 
