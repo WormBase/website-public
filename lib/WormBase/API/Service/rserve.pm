@@ -18,7 +18,6 @@ has 'version' => (
     is => 'ro',
 );
 
-use Data::Dumper;
 sub init_chart {
     my ($self, $filename, $data, $format) = @_;
 
@@ -225,7 +224,7 @@ EOP
         my ($project_id) = $_ =~ /(.+)\.\w+$/;
         {
             project_id => $project_id,
-            image => catfile($uri_base, $_),
+            uri => catfile($uri_base, $_),
         }
     } @{$exe_r_summary->{filenames}};
     return @plots ? \@plots : undef;

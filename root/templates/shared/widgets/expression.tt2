@@ -98,7 +98,8 @@ WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_l
     # '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
     fpkm_plots = fields.fpkm_expression_summary_ls.data.plot;
     FOREACH p IN fpkm_plots;
-        p.img = '<img src="' _ p.image _ '" alt="' _ p.project_id _ '"';
+        p.img = '<img src="' _ p.uri _ '" alt="' _ p.project_id _ '"' _
+        'style="width:400px;"';
     END;
     build_data_table(order = ['project_id', 'img'],
                      columns = {
