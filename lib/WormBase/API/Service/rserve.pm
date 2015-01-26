@@ -67,21 +67,34 @@ sub execute_r_program {
                                   $rel_dir);
     my $destination_file = catfile($destination_dir, $output_tmp_name);
 
-    if (WormBase::Web->config->{installation_type} eq 'development') {
-        remove_tree($destination_file);
-    }
+    # if (WormBase::Web->config->{installation_type} eq 'development') {
+    #     remove_tree($destination_file);
+    # }
 
-    unless ( -e ($destination_file) ) {
+    if  ( (! -e ($destination_file)) ||
+         WormBase::Web->config->{installation_type} eq 'development') {
 
-        # run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
+    #    run3([ 'ruby', 'script/rserve_client.rb' ], \$r_program);
         my $r = Statistics::R::IO::Rserve->new();
+        $r->eval("
+            dir.create('$output_tmp_path', recursive=TRUE)
+            dir.create('$destination_file', recursive=TRUE)
+            Sys.chmod(c('$output_tmp_path', '$destination_dir', '$destination_file'), mode = '0775', use_umask = FALSE)
+        ");  #directory owner & group = jenkins, but allow everyone r_x permision
+     #   $r->eval("setwd('$output_tmp_path')");
+        $r->eval("setwd('$destination_file')");
         $r->eval($r_program);
         $r->close();
 
-        # Relocate the plot into an accessible directory of the web-server.
-        # use subdirectories, or create if needed
-        make_path($destination_dir);
-        system('mv', $output_tmp_path, $destination_dir);
+        # # An accessible directory on the web-server, the output will eventually go
+        # # Create if not already exists
+        # my $umask_old = umask;
+        # umask 0000;  #needs permision for deleting $destination_file
+        # make_path($destination_dir);
+        # umask $umask_old;  # reset permissions
+
+        # Relocate the plot to accessible places on the server
+#        system('mv', $output_tmp_path, $destination_dir);
         # Without right permission, mv here becomes cp and the tmp dir fills with images.
     }
 
@@ -178,12 +191,7 @@ data = data.frame(labels, values, projects, life_stages);
 # Preserve ordering:
 data\$life_stages = factor(life_stages, levels = life_stages, ordered = TRUE);
 
-fpkm_summary <- function(data, dirName=''){
-
-    fileDir <- paste('/tmp', dirName, sep='/')
-    dir.create(fileDir, showWarnings = FALSE)
-    setwd(fileDir)
-    print(fileDir)
+fpkm_summary <- function(data, fileDir=''){
 
     reduced <- ddply(data, ~projects, function(jDat){
         g <- ggplot(jDat, aes(x = life_stages, y = values)) + geom_boxplot() + coord_flip()
@@ -192,7 +200,6 @@ fpkm_summary <- function(data, dirName=''){
             text = element_text(size = 11),
             axis.text = element_text(colour = 'black'),
             panel.background = theme_rect(fill = 'transparent',colour = NA),
-       #     panel.grid.major = theme_blank(),
             panel.grid.minor = theme_line(color='gray'),
             panel.grid.major = theme_line(color='darkgray'),
             plot.background = theme_rect(fill = "transparent",colour = NA)
@@ -209,7 +216,7 @@ fpkm_summary <- function(data, dirName=''){
 }
 
 # # #sDat = subset(data, projects=="Hillier modENCODE deep sequencing")
-fpkm_summary(data, "$dirname")
+fpkm_summary(data, "$image_tmp_path")
 
 EOP
 ;
