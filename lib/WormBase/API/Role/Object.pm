@@ -1944,7 +1944,8 @@ sub _pack_list {
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return undef unless $object; # this method shouldn't expect a list.
-    return $object unless ref($object) eq 'Ace::Object';
+    return $object unless (ref($object) eq 'Ace::Object' ||
+                           ref($object) eq 'Ace::Object::Wormbase');
 
     my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$object->class};
     $label = $label // $self->_make_common_name($object);
