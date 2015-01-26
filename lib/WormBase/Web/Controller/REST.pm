@@ -678,22 +678,28 @@ sub widget_GET {
         # The widget itself is loaded by REST; fields are not.
         my @fields = $c->_get_widget_fields( $class, $widget );
 
-        my $fatal_non_compliance = 0;
+        # Store name on all widgets - needed for display
+        unless (grep /^name$/, @fields) {
+            push @fields, 'name';
+        }
+
         my $skip_cache;
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
             my $data = $object->$field;
-            if ( $c->config->{fatal_non_compliance}
-                and my ( $fixed_data, @problems )
-                = $object->_check_data( $data, $class ) )
-            {
-                $data = $fixed_data;
-                $fatal_non_compliance = $c->config->{fatal_non_compliance};
-                my $log = $fatal_non_compliance ? 'fatal' : 'warn';
 
-                $c->log->$log("${class}::$field returns non-compliant data: ");
-                $c->log->$log("\t$_") foreach @problems;
+            if ($c->config->{fatal_non_compliance}) {
+                # checking for data compliance can be an overhead, only use
+                # in testing env where its explicitly enabled
+                my ($fixed_data, @problems) = $object->_check_data( $data, $class );
+                if ( @problems ){
+                    my $log = 'fatal';
+                    $c->log->$log("${class}::$field returns non-compliant data: ");
+                    $c->log->$log("\t$_") foreach @problems;
+
+                    die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                }
             }
 
             # a field can force an entire widget to not caching
@@ -703,12 +709,6 @@ sub widget_GET {
 
             # Conditionally load up the stash (for now) for HTML requests.
             $c->stash->{fields}->{$field} = $data;
-        }
-        # Store name on all widgets - needed for display
-        $c->stash->{fields}->{name} ||= $object->name;
-
-        if ($fatal_non_compliance) {
-            die "Non-compliant data. See log for fatal error.\n";
         }
 
         $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
