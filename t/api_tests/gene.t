@@ -324,6 +324,19 @@
 
 
     }
+
+    sub test_named_by {
+        my $gene =  $api->fetch({ class => 'Gene', name => 'WBGene00017620' });
+        can_ok('WormBase::API::Object::Gene', ('named_by'));
+
+        my $data = $gene->named_by()->{data};
+        isnt($data, undef, 'data returned');
+
+        my @named_by = map { $_->{label} } @$data;
+
+        ok( grep(/\QGregory Hannon\E/, @named_by), 'Person evidence is returned');
+        ok( grep(/\QGoh et al., 2014\E/, @named_by), 'Paper evidence is returned');
+    }
 }
 
 1;
