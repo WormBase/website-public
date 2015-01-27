@@ -203,10 +203,13 @@ sub also_refers_to {
 sub named_by {
     my $self   = shift;
     my $object = $self->object;
-    my $name = $self->_get_evidence($object->CGC_name, ['Person_evidence']);
+
+    my $ev_hash = $self->_get_evidence($object->CGC_name);
+    my @ev = map { @$_ } values %$ev_hash;
+
     return {
-        description => 'the person who named this gene',
-        data        => $name ? \@{$name->{Person_evidence}} : undef,
+        description => 'the source where the approved name was first described',
+        data        => @ev ? \@ev : undef,
     };
 }
 
