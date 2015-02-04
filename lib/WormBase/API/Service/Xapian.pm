@@ -239,8 +239,8 @@ sub _search_exact {
           # scores 100% with the query, and 40 in actual score
           # to scores 40, takes a synonym match of Wbid, OR a long phrase
           # Can't think of a better way, without re-index with prefixed terms
-          $is_exact_match = (
-              ($mset[0]->get_weight() ge 40) && ($mset[0]->get_percent() eq 100));
+          $is_exact_match = $is_exact_match =
+              ($mset[0]->get_weight() >= 40) && ($mset[0]->get_percent() == 100);
 
           #convention check for exact match
           $is_exact_match ||= $class->_check_exact_match($q, $mset[0]->get_document);
