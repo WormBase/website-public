@@ -87,7 +87,10 @@ sub search {
     if($type && $type =~ /paper/){
           $enq->set_sort_by_value(4);
     }
+
     my $check_at_least_matches = 500;
+    $check_at_least_matches = $count if $count < $check_at_least_matches;
+    # coincidentally, $count is exact when < 500, no need to look further for potential matches
     my @mset      = $enq->matches( ($page-1)*$page_size,
                                      $page_size, $check_at_least_matches );
 
