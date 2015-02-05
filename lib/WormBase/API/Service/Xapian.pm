@@ -87,8 +87,9 @@ sub search {
     if($type && $type =~ /paper/){
           $enq->set_sort_by_value(4);
     }
+    my $check_at_least_matches = 500;
     my @mset      = $enq->matches( ($page-1)*$page_size,
-                                     $page_size );
+                                     $page_size, $check_at_least_matches );
 
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
