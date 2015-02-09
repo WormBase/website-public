@@ -317,7 +317,9 @@ sub _split_fields {
     $data = $3;
 
     if($d =~ m/^WB/){
-      $d = $self->_get_tag_info({id => $d, class => $self->modelmap->WB2ACE_MAP->{$label} ? $label : undef });
+      my $class = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($label)} ?
+          $label : undef;
+      $d = $self->_get_tag_info({id => $d, class => $class });
     }elsif($label =~ m/^author$/){
       my ($id, $l);
       if($d =~ m/^(.*)\s(WBPerson\S*)$/){
