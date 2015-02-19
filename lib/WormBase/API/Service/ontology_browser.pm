@@ -850,9 +850,9 @@ sub getSolrUrl {							# given a termId, get the solr URL based on the prefix of
   $idToSolrSubdirectory{"GO"}          = "go";
   $idToSolrSubdirectory{"WBls"}        = "lifestage";
   $idToSolrSubdirectory{"WBPhenotype"} = "phenotype";
-  my $base_solr_url = 'http://131.215.12.207:8080/solr/';		# raymond URL for testing 2014 10 22 
+#   my $base_solr_url = 'http://131.215.12.207:8080/solr/';		# raymond URL for testing 2014 10 22 
 #   my $base_solr_url = 'http://131.215.12.220:8080/solr/';		# raymond URL 2013 08 06
-#   my $base_solr_url = 'http://wobr.caltech.edu/solr/';			# raymond URL for WB live 2014 10 22
+  my $base_solr_url = 'http://wobr.caltech.edu/solr/';			# raymond URL for WB live 2014 10 22
   my $solr_url = $base_solr_url . $idToSolrSubdirectory{$identifierType} . '/';
   return $solr_url;
 } # sub getSolrUrl
