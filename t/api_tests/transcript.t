@@ -174,8 +174,10 @@
         my $expression_cluster = $transcript->expression_cluster();
         isnt($expression_cluster->{'data'}, undef, 'data returned');
         is($expression_cluster->{'description'}, 'expression cluster data' , 'correct description returned ');
-        is($expression_cluster->{'data'}[0]->{'expression_cluster'}->{'id'}, 'cgc4489_group_2' , 'correct expression cluster id returned');
-        is($expression_cluster->{'data'}[0]->{'description'}, 'Genome-wide analysis of developmental and sex-regulated gene expression profile.' , 'correct expression cluster description returned');
+        my ($ec) = grep($_->{'expression_cluster'}->{'id'} eq 'cgc4489_group_2',
+                        @{ $expression_cluster->{'data'} });
+        ok($ec, 'correct expression cluster id returned');
+        is($ec->{'description'}, 'Genome-wide analysis of developmental and sex-regulated gene expression profile.' , 'correct expression cluster description returned');
 
         #test fpkm_expression_summary_ls
         can_ok('WormBase::API::Object::Transcript', ('fpkm_expression_summary_ls'));
