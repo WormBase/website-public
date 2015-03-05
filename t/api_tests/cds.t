@@ -60,7 +60,7 @@
         my $expected_position = 'Acey_s0107_scaf:399963..412768';
 
         can_ok('WormBase::API::Object::Cds', ('genomic_position'));
-        my $cds = $api->fetch({ class => 'Cds', name => '53326:Acey_s0107.g3812.t1'});
+        my $cds = $api->fetch({ class => 'Cds', name => 'PRJNA231479:Acey_s0107.g3812.t1'});
         my $gp_cds = $cds->genomic_position();
         isnt($gp_cds->{data}, undef, 'genomic position for the CDS is returned');
         is($gp_cds->{data}->[0]->{label}, $expected_position, 'genomic position for the CDS is correct');
