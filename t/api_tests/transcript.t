@@ -170,7 +170,7 @@
         is($anatomy_terms->{'data'}->{'WBbt:0005751'}->{'id'}, 'WBbt:0005751' , 'correct anatomy term id returned');
 
         #test expression_cluster
-        can_ok('WormBase::API::Object::Gene', ('expression_cluster'));
+        can_ok('WormBase::API::Object::Transcript', ('expression_cluster'));
         my $expression_cluster = $transcript->expression_cluster();
         isnt($expression_cluster->{'data'}, undef, 'data returned');
         is($expression_cluster->{'description'}, 'expression cluster data' , 'correct description returned ');
