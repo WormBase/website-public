@@ -129,8 +129,9 @@ sub dump {
   my $mode          = $config->{mode}    || 'selected';
   my $entire_genome = $config->{region} && $config->{region} eq 'all';
   my $db            = $self->database;
-  my $whole_segment = $db->segment(Accession => $segment->seq_id) ||
-                      $db->segment($segment->seq_id);
+  my ($seq_id)      = $segment->seq_id;
+  my ($whole_segment) = $db->segment(Accession => $seq_id) ||
+                        $db->segment($seq_id);
   my $coords        = $config->{coords};
   my $embed         = $config->{embed};
 
