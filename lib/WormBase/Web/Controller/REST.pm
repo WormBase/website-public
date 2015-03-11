@@ -1105,7 +1105,7 @@ sub _post_to_github {
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
   my $contact = $obscured_email ? $obscured_name ? "Reported by: $obscured_name ($obscured_email)  (obscured for privacy))" :
     "Reported by: $obscured_email  (obscured for privacy)" :
-    "Anonymous error report";
+    "";
   my $ptitle = eval { $page->title } || $page || '';
   my $purl = $u || eval { $page->url };
   $ptitle = URI::Escape::uri_unescape($ptitle);
@@ -1157,7 +1157,8 @@ sub _issue_email{
 
     my $subject ='New Issue';
     my $bcc     = $params->{reporter_email};
-    $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . ($params->{reporter_name} || 'Anonymous') . ')';
+    $subject    = '[wormbase-help] ' . $params->{issue_title};
+    $subject   .= ' (' . $params->{reporter_name} . ')' if $params->{reporter_name};
 
     foreach (keys %$params) {
       next if $_ eq 'c';
