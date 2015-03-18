@@ -430,8 +430,8 @@ sub auth_code_callback : Chained('auth') PathPart('code')  Args(1){
     # couldn't have been from OAuth2 callback
     #$c->model('Schema::Session')->find({ session_id => "session:$sid" });
 
-    unless ($error) {
-
+    if ($session) {
+      unless ($error){
         my $redirect_uri = $c->uri_for($c->req->path);
         # seems any registered(!!) callback uri would work.
 
@@ -453,10 +453,19 @@ sub auth_code_callback : Chained('auth') PathPart('code')  Args(1){
                          );
 
             $self->auth_local(\%auth_args);
+            return;
+        }else{
+            $error = "Unexpected error. Please let us know.";
+            $c->log->debug("Unexpected error in token retrieval with $provider.");
         }
+      }
+
+      # error handling
+      $c->stash->{error_notice} = $error;
+      $c->go('/rest/auth'); # hack!! to need to load a page not cached
+      $c->res->redirect($session->{redirect});
     }
 
-    # TODO some error handling and debugging
 }
 
 sub auth_local {
@@ -603,7 +612,6 @@ sub logout :Path("/logout") :Args(0){
     $c->logout;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'}='auth/login.tt2';
-
     if($c->config->{wormmine_path}){
       # Send to WormMine logout after
       $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/logout.do');
