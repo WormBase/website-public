@@ -41,7 +41,7 @@ sub init_chart {
         push(@labels, '"' . $datum->{label} . '"');
         push(@values, $datum->{value});
         push(@projects, '"' . $datum->{project_info}->{id} . '"');
-        push(@life_stages, '"' . $datum->{life_stage} . '"');
+        push(@life_stages, '"' . $datum->{life_stage}->{id} . '"');
     }
     my $label_list = join(",\n", @labels);
     my $value_list = join(",\n", @values);
