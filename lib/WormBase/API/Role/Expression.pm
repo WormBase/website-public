@@ -401,7 +401,7 @@ our sub _extract_study2label {
 }
 
 our $_study2label = _extract_study2label();
-                use Data::Dumper;
+
 sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
@@ -456,9 +456,10 @@ sub fpkm_expression {
                         label => $project_label
                     };
 
-                    next unless $project_acc;
-                    $by_study->{$project_acc} ||= { analyses => []};   # ininitalize if not already
-                    push @{$by_study->{$project_acc}->{analyses}}, $analysis_record;
+                    if ($project_acc) {
+                        $by_study->{$project_acc} ||= { analyses => []};   # ininitalize if not already
+                        push @{$by_study->{$project_acc}->{analyses}}, $analysis_record;
+                    }
                 }
 
                 $analysis_record->{project_info} = $project;
@@ -528,8 +529,7 @@ sub fpkm_expression {
         # Reversed comparison, so that early stages appear at the top of the barchart.
         return $label_value[1] <=> $label_value[0];
     } @fpkm_map;
-    # use Data::Dumper;
-    # print Dumper \@fpkm_map;
+
     my $plot;
     if ($mode eq 'summary_ls') {
 	# This is NOT consistently returning an ID, resulting in fpkm_.png
@@ -561,10 +561,8 @@ sub fpkm_expression {
         #                          });
     }
 
-    use Data::Dumper;
     foreach my $study (keys %$by_study){
         my $study_name = "RNASeq_Study.$study";
-        print "RNASeq_Study.$study";
         my $study_obj = $self->_api->fetch({ class => 'Analysis', name => $study_name, nowrap => 1 });
         my $study_label = $study_obj->Title . " [$study]";
 

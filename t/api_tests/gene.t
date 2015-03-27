@@ -181,9 +181,10 @@
         is($fpkm_expression_1->{'description'}, 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data' , 'correct description returned ');
 
         my @data = @{ $fpkm_expression_1->{'data'}->{'table'}->{'fpkm'}->{'data'} };
+
         my @data_sub = grep { $_->{'project_info'}->{'id'} eq 'SRP016006' } @data;
         isnt($data_sub[0], undef, 'data returned');
-        is($data_sub[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
+        is($data_sub[0]->{'project_info'}->{'label'}, 'Thomas Male Female comparison', 'correct project description returned');
 
         my $plot_uri_pttn = "\Q/img-static/rplots/$version/1559/fpkm_WBGene00001530/\E.+";
         like($fpkm_expression_1->{'data'}->{'plot'}->[0]->{'uri'},

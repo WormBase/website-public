@@ -193,7 +193,7 @@
         my @data = @{ $fpkm_expression_summary_ls->{'data'}->{'table'}->{'fpkm'}->{'data'} };
         my @data_sub = grep { $_->{'project_info'}->{'id'} eq 'SRP016006' } @data;
         isnt($data_sub[0], undef, 'fpkm results returned');
-        is($data_sub[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
+        is($data_sub[0]->{'project_info'}->{'label'}, 'Thomas Male Female comparison', 'correct project description returned');
     }
 
 }
