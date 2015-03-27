@@ -401,45 +401,71 @@ our sub _extract_study2label {
 }
 
 our $_study2label = _extract_study2label();
-
+                use Data::Dumper;
 sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
     my $object = $self->_gene;
+    my $by_study = {};  # tracks regular analysis object
+    my $controls_by_life_stage = {};  #tracks analysis object for control statistics
 
     my $rserve = $self->_api->_tools->{rserve};
-    my @fpkm_map = map {
-        my $life_stage = $_->Public_name;
+
+    my @fpkm_map = map { # iterating on life stages
+        my $life_stage = ''. $_->Public_name;
+        my $life_stage_tag = $self->_pack_obj($_);
         my @fpkm_table = $_->col;
-        map {
-            my @fpkm_entry = $_->row;
-            my $label = $fpkm_entry[2];
-            my $name = $self->_pack_obj($fpkm_entry[2]);
-            my $value = $fpkm_entry[0];
 
-            # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
-            # /PRJ[A-Z]{2}\d+/ matches BioProject accession
-            # everything else treat as NCBI Trace SRA
-            my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
-            my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
-            my $project_label = $_study2label->{$project_acc} || $project_acc;
-            $project_label = join(' ', split('_', $project_label));
+        map { # iterating on fpkm_values
 
+            my $value = $_;
+            #fpkm_values are hash keys to analysis_objects having same value,
+            # totally an artifect of ACe,
+            my @ana = map { #iterating on analysis objects
+                my $name = $self->_pack_obj($_);
+                my $analysis_record = {
+                    value => "$value",
+                    life_stage => $life_stage_tag,
+                    label => $name,
+                };
 
+                my $project;
+                my $label = $name->{label};
+                if ($label =~ /([^\.]+).(control_(mean|median))/){
+                    # This analysis object statics for the control
+                    $life_stage = $1;
+                    (my $stat_type = $2) =~ s/_/ /;
+                    $analysis_record->{stat_type} = $stat_type;
+                    $controls_by_life_stage->{$life_stage} ||= [];   # ininitalize if not already
+                    push @{$controls_by_life_stage->{$life_stage}}, $analysis_record;
+                }else{
+                    # otherwise, it't an normal analysis object that part of a study/prject
 
-            my $project_info = {
-                id => $project_acc,
-                class => $source_db,
-                label => $project_label
-            };
+                    # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
+                    # /PRJ[A-Z]{2}\d+/ matches BioProject accession
+                    # everything else treat as NCBI Trace SRA
+                    my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
+                    my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
 
-            {
-                label => $name,
-                value => "$value",
-                project => $project_label,
-                project_info => $project_info,
-                life_stage => "$life_stage"
-            }
+                    my $project_label = $_study2label->{$project_acc} || $project_acc;
+                    $project_label = join(' ', split('_', $project_label));
+
+                    $project = {
+                        id => $project_acc,
+                        class => $source_db,
+                        label => $project_label
+                    };
+
+                    next unless $project_acc;
+                    $by_study->{$project_acc} ||= { analyses => []};   # ininitalize if not already
+                    push @{$by_study->{$project_acc}->{analyses}}, $analysis_record;
+                }
+
+                $analysis_record->{project_info} = $project;
+                $analysis_record;
+            } $value->right() && $value->right()->col() ; #$value->From_analysis;
+
+            @ana;
         } @fpkm_table;
     } $object->RNASeq_FPKM;
 
@@ -454,6 +480,7 @@ sub fpkm_expression {
 
     # Sort by project (primary order) and developmental stage (secondary order):
     @fpkm_map = sort {
+
         # Primary sorting order: project
         # Reverse comparison, so that projects that come first in the alphabet appear at the top of the barchart.
         return $b->{project} cmp $a->{project} if $a->{project} ne $b->{project};
@@ -501,7 +528,8 @@ sub fpkm_expression {
         # Reversed comparison, so that early stages appear at the top of the barchart.
         return $label_value[1] <=> $label_value[0];
     } @fpkm_map;
-
+    # use Data::Dumper;
+    # print Dumper \@fpkm_map;
     my $plot;
     if ($mode eq 'summary_ls') {
 	# This is NOT consistently returning an ID, resulting in fpkm_.png
@@ -533,12 +561,28 @@ sub fpkm_expression {
         #                          });
     }
 
+    use Data::Dumper;
+    foreach my $study (keys %$by_study){
+        my $study_name = "RNASeq_Study.$study";
+        print "RNASeq_Study.$study";
+        my $study_obj = $self->_api->fetch({ class => 'Analysis', name => $study_name, nowrap => 1 });
+        my $study_label = $study_obj->Title . " [$study]";
+
+        $by_study->{$study}->{title} = '' . $study_obj->Title;
+        $by_study->{$study}->{description}  = '' . $study_obj->Description;
+        $by_study->{$study}->{indep_variable} = [
+            map {"$_"} $study_obj->Independent_variable];
+        $by_study->{$study}->{tag} = $self->_pack_obj($study_obj, $study_label);
+    }
+
     return {
         description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
-        data        => {
+        data        => @fpkm_map ? {
+            by_study => $by_study,
+            controls => $controls_by_life_stage,
             plot => $plot,
             table => { fpkm => { data => \@fpkm_map } }
-        }
+        } : undef
     };
 }
 
