@@ -31,12 +31,14 @@ WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_l
             p.img = '<img src="' _ p.uri _ '" alt="' _ pid _ '"' _
             'style="width:400px;"';
             p.project = by_study.$pid.tag;
+            p.description = by_study.$pid.description;
             projects_table.push(p);
         END;
     END;
-    build_data_table(order = ['project', 'img'],
+    build_data_table(order = ['project', 'description', 'img'],
                      columns = {
                         project => 'Project',
+                        description => 'Description',
                         img => 'Image'
                      }, passed_data = projects_table,
                      key='projects_table');
