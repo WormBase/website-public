@@ -24,21 +24,21 @@ use WormBase::API::Service::rserve;
             'label'      => 'RNASeq_Hillier.L4_larva_Male_cap2_Replicate2',
             'project'    => 'RNASeq_Hillier',
             'project_info' => { id => 'testID1' },
-            'life_stage' => 'WBls:0000024'
+            'life_stage' => {id => 'WBls:0000024'}
         },
         {
             'value'      => '1e-10',
             'label'      => 'RNASeq.elegans.SRP015688.L4.linker-cells.nhr-67.4',
             'project'    => 'RNASeq_Hillier',
             'project_info' => { id => 'testID1' },
-            'life_stage' => 'WBls:0000024'
+            'life_stage' =>  {id => 'WBls:0000024'}
         },
         {
             'value'      => '5.7759',
             'label'      => 'RNASeq_Hillier.L4_Larva_Replicate1',
             'project'    => 'RNASeq_Hillier',
             'project_info' => { id => 'testID1' },
-            'life_stage' => 'WBls:0000024'
+            'life_stage' =>  {id => 'WBls:0000024'}
         }
     ];
 

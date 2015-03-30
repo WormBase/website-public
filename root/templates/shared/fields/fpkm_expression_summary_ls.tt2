@@ -24,24 +24,26 @@ WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_l
     # '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
     fpkm_plots = fields.fpkm_expression_summary_ls.data.plot;
     by_study = fields.fpkm_expression_summary_ls.data.by_study;
+    projects_table = [];
     FOREACH p IN fpkm_plots;
-        p.img = '<img src="' _ p.uri _ '" alt="' _ p.project_id _ '"' _
-        'style="width:400px;"';
         pid = p.project_id;
-        p.project = by_study.$pid.tag;
-
+        UNLESS pid == 'RNASeq.elegans';  # skip the superproject of all
+            p.img = '<img src="' _ p.uri _ '" alt="' _ pid _ '"' _
+            'style="width:400px;"';
+            p.project = by_study.$pid.tag;
+            projects_table.push(p);
+        END;
     END;
     build_data_table(order = ['project', 'img'],
                      columns = {
                         project => 'Project',
                         img => 'Image'
-                     }, passed_data = fpkm_plots,
-                     key='fpkm_plots');
+                     }, passed_data = projects_table,
+                     key='projects_table');
 
     fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
     FOREACH analysis IN fpkm_data;
-        analysis.project_link = external_link(analysis.project_info.class,
-                                              analysis.project_info.label, analysis.project_info.id);
+       analysis.project_link = tag2link(analysis.project_info);
     END;
 
     build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],

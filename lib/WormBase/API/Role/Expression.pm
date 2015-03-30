@@ -436,6 +436,8 @@ sub fpkm_expression {
                     $life_stage = $1;
                     (my $stat_type = $2) =~ s/_/ /;
                     $analysis_record->{stat_type} = $stat_type;
+                    $project = $self->_pack_obj($_->Project);
+
                     $controls_by_life_stage->{$life_stage} ||= [];   # ininitalize if not already
                     push @{$controls_by_life_stage->{$life_stage}}, $analysis_record;
                 }else{
@@ -463,6 +465,8 @@ sub fpkm_expression {
                 }
 
                 $analysis_record->{project_info} = $project;
+                $analysis_record->{project} = $project->{id};
+
                 $analysis_record;
             } $value->right() && $value->right()->col() ; #$value->From_analysis;
 
