@@ -433,6 +433,7 @@ sub auth_code_callback : Chained('auth') PathPart('code')  Args(1){
     if ($session) {
       unless ($error){
         my $redirect_uri = $c->uri_for($c->req->path);
+        $redirect_uri->scheme('https') if $c->config->{installation_type} eq 'production';
         # seems any registered(!!) callback uri would work.
 
         # currently google specific, will change
