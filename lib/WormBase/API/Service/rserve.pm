@@ -41,7 +41,7 @@ sub init_chart {
         push(@labels, '"' . $datum->{label} . '"');
         push(@values, $datum->{value});
         push(@projects, '"' . $datum->{project_info}->{id} . '"');
-        push(@life_stages, '"' . $datum->{life_stage}->{id} . '"');
+        push(@life_stages, '"' . $datum->{life_stage}->{label} . '"');
     }
     my $label_list = join(",\n", @labels);
     my $value_list = join(",\n", @values);
@@ -165,7 +165,8 @@ sub boxplot {
 
     # Pretty-ization:
     my ($filename, $xlabel, $ylabel, $width, $height, $rotate, $coloring, $facets_guides, $facets_grid) = $self->barboxchart_parameters($customization);
-    my ($width, $height, $dpi) = (5, 2.5, 120);
+    ($width, $height) = (5, 2.5);
+    my $dpi = 120;
 
     my $format = "png";
     my ($image_tmp_path, $image_filename, $label_list, $value_list, $project_list, $life_stage_list) = $self->init_chart($filename, $data, $format);
