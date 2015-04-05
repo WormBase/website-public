@@ -1,0 +1,9 @@
+gff_version: 3
+file: /usr/local/ftp/pub/wormbase/releases/WS247/species/s_ratti/PRJEB125/s_ratti.PRJEB125.WS247.annotations.gff3.gz
+feature	children	source	method	track	count
+gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	12430
+	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	12430
+	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0
+	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (genes)	0
+low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	230214
+repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	1106
