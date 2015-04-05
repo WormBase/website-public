@@ -131,7 +131,9 @@ sub index {
       my ($class) = &getClassFromId($rootTerm);						# get the object class based on the termId
       my ($url)   = '/tools/ontology_browser/run?inline=1&class=' . $class . '&name=' . $rootTerm . '&linkTarget=_blank';
           										# the url to the term display, links to objects should open in new target from ontology browser page
-      my $load_widget_link = qq(<a href="#o_browser" id="load_$rootTerm" onclick="document.getElementById('o_browser').innerHTML = 'loading $rootTerm $names{$rootTerm}'; \$('#o_browser').load('$url');">$names{"$rootTerm"} ($rootTerm)</a>);
+      my $escaped_name = $names{$rootTerm}; $escaped_name =~ s/\'/&rsquo;/g;
+      my $load_widget_link = qq(<a href="#o_browser" id="load_$rootTerm" onclick="document.getElementById('o_browser').innerHTML = 'loading $rootTerm $escaped_name'; \$('#o_browser').load('$url');">$escaped_name ($rootTerm)</a>);
+#       my $load_widget_link = qq(<a href="#o_browser" id="load_$rootTerm" onclick="document.getElementById('o_browser').innerHTML = 'loading $rootTerm $names{$rootTerm}'; \$('#o_browser').load('$url');">$names{"$rootTerm"} ($rootTerm)</a>);
           										# a link to load node into the o_browser div by doing a jquery load
       $treeExpand .= qq(<ul><li id="$rootTerm">$expand_link $load_widget_link);		# start an unordered list with only element the rootTerm and links to expand and load term info
       $treeExpand .= qq(<ul id="children_${highestNodeCount}_$rootTerm" style="display: none">);
@@ -209,7 +211,9 @@ sub query_children {
       $childElement .= qq($relationship);						# add to the childElement the relationship
       my ($url) = '/tools/ontology_browser/run?inline=1&class=' . $class . '&name=' . $child . '&linkTarget=_blank';
           										# the url to the term display, links to objects should open in new target from ontology browser page
-      my $load_widget_link = qq(<a href="#o_browser" id="load_$child" onclick="document.getElementById('o_browser').innerHTML = 'loading $child $hash{$child}{name}'; \$('#o_browser').load('$url');">$hash{$child}{name} ($child)</a>);  
+      my $escaped_name = $hash{$child}{name}; $escaped_name =~ s/\'/&rsquo;/g;
+      my $load_widget_link = qq(<a href="#o_browser" id="load_$child" onclick="document.getElementById('o_browser').innerHTML = 'loading $child $escaped_name'; \$('#o_browser').load('$url');">$escaped_name ($child)</a>);  
+#       my $load_widget_link = qq(<a href="#o_browser" id="load_$child" onclick="document.getElementById('o_browser').innerHTML = 'loading $child $hash{$child}{name}'; \$('#o_browser').load('$url');">$hash{$child}{name} ($child)</a>);  
           										# a link to load node into the o_browser div by doing a jquery load
       $childElement .= qq($load_widget_link);						# add to the childElement links to display the child terms
       $childElement .= qq(<ul id="children_${highestNodeCount}_$child" style="display: none">);

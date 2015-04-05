@@ -29,6 +29,10 @@
           ELSE;
             "$ln";
           END;
+        ELSIF data.exists('class') && data.id;
+            # the key 'class' is exists, but value is undef
+            # a scenario where xapian fetch by ID fails to find the object
+            searchlink('all', data.id, data.id);
         ELSE;
           data.label || data;
         END;
@@ -316,14 +320,15 @@
                 ext_url = String(id);
               END;
           END;
-          ext_url = (ext_url || site.external_urls.$link.base) FILTER url;
+          ext_url = (ext_url || site.external_urls.$link.base);
         END;
         ext_url || link;
     END;
 
 # lookup external sites by case insensitive match of its name
     MACRO match_link(link) BLOCK;
-      link_regex = '^(?i)' _ "$link" _ '$';  # case insensitive regex
+      link = link.replace('\W', '_');
+      link_regex = '^(?i)' _ link  _ '$';    # case insensitive regex
                                              # avoid interpolation of regex symbols
       link_name  = site.external_urls.keys.grep(link_regex);
       link_name = link_name && link_name.pop;

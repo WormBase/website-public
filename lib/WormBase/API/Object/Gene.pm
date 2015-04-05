@@ -1,3 +1,4 @@
+
 package WormBase::API::Object::Gene;
 
 use Moose;
@@ -165,6 +166,48 @@ sub _build__phenotypes {
     return %phenotypes ? \%phenotypes : undef;
 }
 
+sub phenotype_by_interaction {
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my $data_by_pheno = {};
+    foreach ($object->Interaction){
+        my @ph_types = $self->_pack_list([$_->Interaction_phenotype]);
+        next unless @ph_types;
+
+        my @in_types = map { $_->col } $_->Interaction_type;
+        my $interaction = $self->_pack_obj($_);
+        my @citations = $self->_pack_list([$_->Paper]);
+
+        foreach my $pheno (@ph_types){
+
+            foreach my $in_type (@in_types){
+
+                my $key = $pheno->{id} . "$in_type";
+                unless ($data_by_pheno->{$key}) {
+                    $data_by_pheno->{$key} = {
+                        phenotype => $pheno,
+                        interactions => [],
+                        interaction_type => [],
+                        citations => []
+                    };
+                }
+                my $ph_entry = $data_by_pheno->{$key};
+                push @{$ph_entry->{interactions}}, $interaction;
+                $ph_entry->{interaction_type} = "$in_type" =~ s/_/ /r;
+                push @{$ph_entry->{citations}}, \@citations;
+            }
+        }
+
+    }
+    my @data = values %$data_by_pheno;
+
+    return {
+        description => 'phenotype based on interaction',
+        data => @data ? \@data : undef
+    }
+}
+
 #######################################
 #
 # The Overview Widget
@@ -203,10 +246,13 @@ sub also_refers_to {
 sub named_by {
     my $self   = shift;
     my $object = $self->object;
-    my $name = $self->_get_evidence($object->CGC_name, ['Person_evidence']);
+
+    my $ev_hash = $self->_get_evidence($object->CGC_name);
+    my @ev = map { @$_ } values %$ev_hash;
+
     return {
-        description => 'the person who named this gene',
-        data        => $name ? \@{$name->{Person_evidence}} : undef,
+        description => 'the source where the approved name was first described',
+        data        => @ev ? \@ev : undef,
     };
 }
 
@@ -1620,14 +1666,7 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-
-        my $gff   = $self->_fetch_gff_gene($sequence);
-        unless ($gff) {
-            # a hack to handle AceDB sequence name, which differs from gff seq name by a species ID prefix
-            my ($seq_name_alt) = "$sequence" =~ m/\d?+:(.+)/g;
-            $gff = $self->_fetch_gff_gene($seq_name_alt) if $seq_name_alt;
-        }
-        next unless $gff;
+        my $gff   = $self->_fetch_gff_gene($sequence) or next;
 
         my $cds
             = ( $sequence->class eq 'CDS' )

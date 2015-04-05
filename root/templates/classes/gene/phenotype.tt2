@@ -28,6 +28,26 @@
 			passed_data=fields.phenotype.data.Phenotype_not_observed.values);
       %]
    [% END %]
+    <br />
+[% END %]
+
+[% WRAPPER $field_block title="Interaction-based phenotypes" key="phenotype_by_interaction" %]
+
+    <p><i>The following phenotypes are indirectly caused or affected by some perturbation of [% object.name.data.label %] in the context of a genetic interaction </i>:</p>
+
+    <div>
+[%
+	build_data_table(
+            order=['phenotype','interactions','interaction_type', 'citations'],
+			columns={
+                phenotype  => 'Phenotype',
+                interactions => 'Interactions',
+                interaction_type => 'Interaction Type',
+				citations => 'Citations'
+			}, key='phenotype_by_interaction');
+%]
+    </div>
+
 [% END %]
 
 

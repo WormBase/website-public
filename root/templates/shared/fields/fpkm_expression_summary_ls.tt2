@@ -1,0 +1,60 @@
+[%
+
+# use the field as if it comes from a widget;
+fields.fpkm_expression_summary_ls = fpkm_expression_summary_ls;
+
+WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
+    #table for control stats
+    control_stats_hash = fields.fpkm_expression_summary_ls.data.controls;
+    control_stats = [];
+    FOREACH stage IN control_stats_hash.keys;
+        control_stats = control_stats.merge(control_stats_hash.$stage);
+    END;
+
+    '<div class="field-title">Control Statistics</div>';
+    build_data_table(order = ['life_stage', 'stat_type', 'value', 'label'],
+                     columns = {
+                         life_stage => 'Life stage',
+                         stat_type => 'Statistics type',
+                         label => 'From analysis',
+                         value => 'FPKM value'
+                     },
+                     passed_data = control_stats, key='control_data');
+
+    # '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
+    fpkm_plots = fields.fpkm_expression_summary_ls.data.plot;
+    by_study = fields.fpkm_expression_summary_ls.data.by_study;
+    projects_table = [];
+    FOREACH p IN fpkm_plots;
+        pid = p.project_id;
+        UNLESS pid == 'RNASeq.elegans';  # skip the superproject of all
+            p.img = '<img src="' _ p.uri _ '" alt="' _ pid _ '"' _
+            'style="width:400px;"';
+            p.project = by_study.$pid.tag;
+            p.description = by_study.$pid.description;
+            projects_table.push(p);
+        END;
+    END;
+    build_data_table(order = ['project', 'description', 'img'],
+                     columns = {
+                        project => 'Project',
+                        description => 'Description',
+                        img => 'Image'
+                     }, passed_data = projects_table,
+                     key='projects_table');
+
+    fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
+    FOREACH analysis IN fpkm_data;
+       analysis.project_link = tag2link(analysis.project_info);
+    END;
+
+    build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],
+                     columns = {
+                         label => 'Name',
+                         project_link => 'Project',
+                         life_stage => 'Life Stage',
+                         value => 'FPKM value'
+                     },
+                     passed_data = fpkm_data, key="analysis");
+END;
+%]

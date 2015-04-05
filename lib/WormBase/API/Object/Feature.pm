@@ -178,6 +178,7 @@ sub flanking_sequences {
 # containing annotation info on the feature.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/annotation
 
+# TODO: confirm if any Annotation tag is replaced by something else
 sub annotation {
     my $self   = shift;
     my $object = $self->object;

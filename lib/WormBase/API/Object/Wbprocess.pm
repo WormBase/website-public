@@ -160,6 +160,13 @@ sub genes{
     foreach my $gene (@genes) {
         my $type = WormBase::API::Object::Gene->
         classification($gene)->{data}->{type};
+
+        unless ($gene->Anatomy_function){
+            push @data, {
+                name      => $self->_pack_obj($gene),
+                type      => $type,
+            };
+        }
         foreach ($gene->Anatomy_function){
             my @bp_inv = map {
                 my $ev = $self->_get_evidence($_);
@@ -170,7 +177,7 @@ sub genes{
                     $ev ? { text => $self->_pack_obj($_), evidence => $ev} : $self->_pack_obj($_);
                 }
             } $_->Involved;
-            next unless @bp_inv;
+
             my @assay = map { my $as = $_->right;
                 if ($as) {
                     my @geno = $as->Genotype;
@@ -178,12 +185,13 @@ sub genes{
                     text => "$_",}
                 }
             } $_->Assay;
-            my $pev;
+
+            my $pev = $self->_get_evidence($_->Phenotype);
 
             push @data, {
                 name      => $self->_pack_obj($gene),
                 type      => $type,
-                phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ?
+                phenotype => $pev ?
                     {    evidence => $pev,
                          text     => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
                 assay     => @assay ? \@assay : undef,
@@ -191,7 +199,6 @@ sub genes{
                 reference => $self->_pack_obj(scalar $_->Reference),
             };
         }
-
     }
 
     return {

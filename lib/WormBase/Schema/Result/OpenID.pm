@@ -35,7 +35,10 @@ __PACKAGE__->add_columns(
   { data_type => "text", default_value => "", is_nullable => 1 },
   "auth_type",
   { data_type => "text", default_value => "", is_nullable => 1 },
-
+  "oauth2_refresh_token",
+  { data_type => "char(255)", default_value => "", is_nullable => 1 },
+  "auth_id_external",
+  { data_type => "char(255)", default_value => "", is_nullable => 1 },
 );
 
 __PACKAGE__->set_primary_key("auth_id");
@@ -44,4 +47,3 @@ __PACKAGE__->set_primary_key("auth_id");
 #__PACKAGE__->add_unique_constraint([ 'openid_url' ]);
 
 __PACKAGE__->belongs_to(user=>'WormBase::Schema::Result::User','user_id');
-

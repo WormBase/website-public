@@ -8,7 +8,7 @@ has 'dbh' => (
     isa       => 'Bio::DB::SeqFeature::Store',
     predicate => 'has_dbh',
     writer    => 'set_dbh',
-    handles   => [qw/search_notes get_features_by_name get_features_by_attribute/],
+    handles   => [qw/search_notes segment get_features_by_name get_features_by_attribute/],
 );
 
 with 'WormBase::API::Role::Service';
@@ -57,10 +57,37 @@ sub ping {
 }
 
 # Added to handle all the places where we pass an Ace Object to segment
-sub segment {
-    my ($self, $object, $start, $stop) = @_;
-    return $self->dbh->segment("$object") unless ($start || $stop);
-    return $self->dbh->segment("$object", $start, $stop);
+around 'segment' => sub {
+    my ($orig, $self, $object, $start, $stop) = @_;
+    my @names = $self->guess_names($object);
+
+    my @segs;
+    while (@names && !@segs){
+        my $name = shift @names;
+        @segs = $self->$orig($name, $start, $stop);
+    }
+    return wantarray ? @segs : @segs && $segs[0];
+};
+
+around 'get_features_by_name' => sub {
+    my ($orig, $self, $object) = @_;
+    my @names = $self->guess_names($object);
+    my @features;
+    while (@names && !@features){
+        @features = $self->$orig(shift @names);
+    }
+    return @features;
+};
+
+# default object name, followed by other names
+sub guess_names {
+    my ($self, $object) = @_;
+    my @names = ("$object");
+    if (my ($name) = "$object" =~ m/\w?+:(.+)/) {
+        # remove species prefix in tier 3 sequences
+        push @names, $name;
+    }
+    return @names;
 }
 
 sub connect {

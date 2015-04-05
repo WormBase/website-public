@@ -182,7 +182,7 @@ sub corresponding_all {
         $status =~ s/_/ /g if $status;
         $status = $status . ($cds->Matching_cDNA ? ' by cDNA(s)' : '');
 
-        my $type = $sequences[0]->Method;
+        my $type = @sequences ? $sequences[0]->Method : '';
         $type =~ s/_/ /g;
         @sequences =  map {$self->_pack_obj($_)} @sequences;
         $data{type} = $type && "$type";
@@ -781,7 +781,9 @@ sub _build_genomic_position {
     my @positions = ();
     foreach my $gene (@genes) {
         my $position = $self->_api->wrap($gene)->_build_genomic_position;
-        push(@positions, $position->{'data'}[0]);
+        if ($position->{'data'} && $position->{'data'}->[0]){
+            push(@positions, $position->{'data'}->[0]);
+        }
     }
 
     return {

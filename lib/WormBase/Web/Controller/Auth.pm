@@ -7,9 +7,10 @@ use Net::Twitter;
 use Facebook::Graph;
 use Crypt::SaltedHash;
 use Data::GUID;
+use WormBase::Web::ThirdParty::Google;
 
 __PACKAGE__->config->{namespace} = '';
-
+use Data::Dumper;
 
 sub login :Path("/login")  :Args(0){
      my ( $self, $c ) = @_;
@@ -180,13 +181,13 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
         ."&redirect="
         .$c->req->params->{redirect});
 
-        unless($c->config->{wormmine_path}){
+    #    unless($c->config->{wormmine_path}){
         # WormMine redirects to this url now after it has logged in:
           $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
-        }else{
-          # Redirect users to WormMine openID login
-          $c->res->redirect( $c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
-        }
+        # }else{
+        #   # Redirect users to WormMine openID login
+        #   $c->res->redirect( $c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
+        # }
      }
 }
 
@@ -240,8 +241,6 @@ sub auth_wbid :Path('/auth/wbid')  :Args(0) {
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
 
-
-
      $c->user_session->{redirect} = $c->user_session->{redirect} || $c->req->params->{redirect};
      my $redirect = $c->user_session->{redirect};
      my $param = $c->req->params;
@@ -283,7 +282,16 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
         };
         $c->response->redirect($url);
      # OpenID
-     } else {
+    } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i) {
+        my $callback_url = $c->uri_for('auth/code/google');
+        $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
+        my $url = WormBase::Web::ThirdParty::Google->new()->get_authorization_url(
+            redirect_uri => $callback_url->as_string,
+            state => $c->sessionid,
+            scope => 'email'
+        );
+        $c->response->redirect($url);
+    } else {
         # eval necessary because LWPx::ParanoidAgent
         # croaks if invalid URL is specified
         #  eval {
@@ -408,6 +416,59 @@ sub auth_mendeley_callback : Chained('auth') PathPart('mendeley')  Args(0){
                       });
 }
 
+# Authorization code callback (the first callback) from any Outh2 server
+sub auth_code_callback : Chained('auth') PathPart('code')  Args(1){
+    my($self, $c, $provider) = @_;
+
+    my %params = %{$c->req->params};
+    my ($state, $auth_code, $error) = @params{qw /state code error/};
+
+    my $session_id = "session:$state";
+    my $session = $c->get_session_data("$session_id");
+    $error = 'unverified state, suspicious action' unless $session;
+    # if the corresponding session doesn't exist, this request
+    # couldn't have been from OAuth2 callback
+    #$c->model('Schema::Session')->find({ session_id => "session:$sid" });
+
+    if ($session) {
+      unless ($error){
+        my $redirect_uri = $c->uri_for($c->req->path);
+        $redirect_uri->scheme('https') if $c->config->{installation_type} eq 'production';
+        # seems any registered(!!) callback uri would work.
+
+        # currently google specific, will change
+        my $g_oauth = WormBase::Web::ThirdParty::Google->new();
+        my $token_response = $g_oauth->request_token({
+            code => $auth_code,
+            redirect_uri => $redirect_uri});
+        my $access_token = $token_response->{access_token};
+
+        if ($access_token){
+            my $user_profile = $g_oauth->get_user(access_token => $access_token);
+            my %auth_args = (c  => $c,
+                             %$token_response,
+                             %$user_profile,
+                             provider   => $provider,
+                             auth_type  => 'oauth2',
+                             redirect_to => $session->{redirect},
+                         );
+
+            $self->auth_local(\%auth_args);
+            return;
+        }else{
+            $error = "Unexpected error. Please let us know.";
+            $c->log->debug("Unexpected error in token retrieval with $provider.");
+        }
+      }
+
+      # error handling
+      $c->stash->{error_notice} = $error;
+      $c->go('/rest/auth'); # hack!! to need to load a page not cached
+      $c->res->redirect($session->{redirect});
+    }
+
+}
+
 sub auth_local {
     my ($self,$params) = @_;
     my $c          = $params->{c};
@@ -422,7 +483,18 @@ sub auth_local {
     } elsif ($auth_type eq 'oauth') {
       $authid = $c->model('Schema::OpenID')->find_or_create({ oauth_access_token        => $params->{oauth_access_token},
                                                               oauth_access_token_secret => $params->{oauth_access_token_secret}
-                                                           });
+                                                          });
+    } elsif ($auth_type eq 'oauth2'){
+        # as OAuth2 token expires, shouldn't be relied on to identify accounts
+        $authid = $c->model('Schema::OpenID')->find_or_create({
+            auth_id_external => $params->{id},
+            provider => $params->{provider}
+        });
+        # Note: access_token needs to be updated
+        $authid->oauth_access_token($params->{access_token});
+        # While refresh_token usually should NOT be updated, except when user withdraws permission
+        $authid->oauth2_refresh_token($params->{refresh_token}) if $params->{refresh_token};
+        $authid->update();
     }
 
     my $first_name = $params->{first_name};
@@ -471,7 +543,9 @@ sub auth_local {
             $c->log->debug("adding openid to existing user $username");
             $user->set_columns({username=>$username, active=>1});
             $user->update();
-      } elsif (($c->user && $auth_type eq 'oauth') || ($params->{provider} eq 'facebook')) {
+      } elsif ($c->user && ( $auth_type eq 'oauth' ||
+                             $auth_type eq 'oauth2' ||
+                             $params->{provider} eq 'facebook')) {
             $user = $c->user unless $user;
       }
 
@@ -496,17 +570,17 @@ sub auth_local {
                         xshi\@wormbase\.org
                        }x) {
         my $role=$c->model('Schema::Role')->find({role=>"admin"}) ;
-        $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+        $c->model('Schema::UserRole')->find_or_create({user_id=>$user->user_id,role_id=>$role->id});
       } elsif ($email && $email =~ /\@wormbase\.org/) {
         # assigning curator role to wormbase.org domain user
         my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
-        $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+        $c->model('Schema::UserRole')->find_or_create({user_id=>$user->user_id,role_id=>$role->id});
       }
 
       # Update the authid entry
       if ($authid) {
           $authid->user_id($user->id);                   # Link to my user.
-          $authid->auth_type($auth_type);                # One of openid or oauth
+          $authid->auth_type($auth_type);                # One of openid or oauth or oauth2
           $authid->provider($params->{provider});        # twitter, google, etc.
           $authid->screen_name($params->{screen_name});  # mostly only used by twitter.
           $authid->update();
@@ -518,7 +592,13 @@ sub auth_local {
     if ( $c->authenticate({ user_id=>$authid->user_id }, 'members') ) {
         $c->stash->{'status_msg'} = 'Local Login was also successful.';
         $c->log->debug('Local Login was also successful.');
-        $c->res->redirect($c->uri_for('/'));
+
+        my $redirect_to = $params->{redirect_to} || $c->uri_for('/');
+        # $c->res->header('Cache-Control' => 'no-cache');
+        # $c->res->header('Refresh' => 0);
+        $c->res->headers->expires(time);
+        $c->res->redirect($redirect_to);
+
     }
     else {
         $c->log->debug('Local login failed');
@@ -533,13 +613,14 @@ sub logout :Path("/logout") :Args(0){
     $c->logout;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'}='auth/login.tt2';
-
     if($c->config->{wormmine_path}){
       # Send to WormMine logout after
       $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/logout.do');
     }
 
     # return to url
+    # $c->res->header('Refresh' => 0);
+    $c->res->headers->expires(time);
     $c->res->redirect($c->req->params->{'redirect'});
 }
 

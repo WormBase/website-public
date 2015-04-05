@@ -40,6 +40,14 @@ has 'genes' => (
     },
    );
 
+has '_method' => (
+    is		=> 'ro',
+    lazy	=> 1,
+    default => sub {
+		my ($self) = @_;
+		return eval { $self ~~ 'Method' };
+    },
+    );
 #######################################################
 #
 # Generic methods, shared across Sequence, CDS, and Transcript classes.
@@ -258,7 +266,7 @@ sub available_from {
     my $self   = shift;
     my $object = $self->object;
 
-    my $data = $self->method eq 'Vancouver_fosmid' && {
+    my $data = $self->_method eq 'Vancouver_fosmid' && {
     label => 'GeneService',
     class => 'Geneservice_fosmids',
     };
@@ -930,11 +938,6 @@ sub print_sequence {
                 grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.a");
         ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
                 grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.1");
-
-        # hack! try fetch sequence name with speicies id prefix removed
-        my ($seq_name_alt) = "$s" =~ m/\d?+:(.+)/g;
-        ($seq_obj) = sort {$b->length<=>$a->length}
-                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($seq_name_alt) if $seq_name_alt;
     }
 
     # Haven't fetched a GFF segment? Try Ace.
@@ -1445,7 +1448,7 @@ sub transcripts {
     my ($self) = @_;
 
     my @transcripts;
-    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
+    if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
     $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
     @transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
     map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }

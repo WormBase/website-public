@@ -71,6 +71,18 @@
 
     }
 
+    sub test_involved_genes {
+        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000002' });
+
+        can_ok('WormBase::API::Object::Wbprocess', ('genes'));
+
+        my $g = $wbprocess->genes();
+        isnt($g->{'data'}, undef, 'data returned');
+
+        my @genes = @{ $g->{data} };
+        my ($gene_mec_10) = grep { $_->{name}->{label} eq 'mec-10'; } @genes;
+        ok($gene_mec_10, 'correct gene returned');
+    }
 }
 
 1;
