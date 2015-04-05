@@ -76,6 +76,7 @@ requires 'Hash::Merge';
 #requires 'GO::Parser';                                          #
 #requires 'GO::Utils';                                           #
 #requires 'go-db-perl';                                          #
+requires 'Statistics::R::IO';                                    # executing r codes
 requires 'JSON';                                                 #
 requires 'List::MoreUtils';                                      #
 requires 'Log::Log4perl';                                        #
@@ -129,6 +130,7 @@ requires 'Catalyst::Helper::PSGI';                               #
 requires 'Starman';                                              #
 requires 'URI::Escape::XS';
 requires 'Log::Any::Adapter::Log4perl';                          # cache logging
+
 
 # Testing:
 requires 'Readonly';

@@ -87,8 +87,12 @@ sub search {
     if($type && $type =~ /paper/){
           $enq->set_sort_by_value(4);
     }
+
+    my $check_at_least_matches = 500;
+    $check_at_least_matches = $count if $count < $check_at_least_matches;
+    # coincidentally, $count is exact when < 500, no need to look further for potential matches
     my @mset      = $enq->matches( ($page-1)*$page_size,
-                                     $page_size );
+                                     $page_size, $check_at_least_matches );
 
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
@@ -239,8 +243,8 @@ sub _search_exact {
           # scores 100% with the query, and 40 in actual score
           # to scores 40, takes a synonym match of Wbid, OR a long phrase
           # Can't think of a better way, without re-index with prefixed terms
-          $is_exact_match = (
-              ($mset[0]->get_weight() ge 40) && ($mset[0]->get_percent() eq 100));
+          $is_exact_match = $is_exact_match =
+              ($mset[0]->get_weight() >= 40) && ($mset[0]->get_percent() == 100);
 
           #convention check for exact match
           $is_exact_match ||= $class->_check_exact_match($q, $mset[0]->get_document);
@@ -264,7 +268,7 @@ sub _check_exact_match {
   my $label = $doc->get_value(6);
   my $id = $doc->get_value(1);
 
-  return (($q =~ m/\Q$label\E/) || ($q =~ m/\Q$id\E/));
+  return (($q =~ m/\Q$label\E/i) || ($q =~ m/\Q$id\E/i));
 }
 
 
@@ -313,7 +317,9 @@ sub _split_fields {
     $data = $3;
 
     if($d =~ m/^WB/){
-      $d = $self->_get_tag_info({id => $d, class => $self->modelmap->WB2ACE_MAP->{$label} ? $label : undef });
+      my $class = $self->modelmap->WB2ACE_MAP->{class}->{ucfirst($label)} ?
+          $label : undef;
+      $d = $self->_get_tag_info({id => $d, class => $class });
     }elsif($label =~ m/^author$/){
       my ($id, $l);
       if($d =~ m/^(.*)\s(WBPerson\S*)$/){

@@ -174,19 +174,26 @@
         my $expression_cluster = $transcript->expression_cluster();
         isnt($expression_cluster->{'data'}, undef, 'data returned');
         is($expression_cluster->{'description'}, 'expression cluster data' , 'correct description returned ');
-        is($expression_cluster->{'data'}[0]->{'expression_cluster'}->{'id'}, 'cgc4489_group_2' , 'correct expression cluster id returned');
-        is($expression_cluster->{'data'}[0]->{'description'}, 'Genome-wide analysis of developmental and sex-regulated gene expression profile.' , 'correct expression cluster description returned');
+        my ($ec) = grep($_->{'expression_cluster'}->{'id'} eq 'cgc4489_group_2',
+                        @{ $expression_cluster->{'data'} });
+        ok($ec, 'correct expression cluster id returned');
+        is($ec->{'description'}, 'Genome-wide analysis of developmental and sex-regulated gene expression profile.' , 'correct expression cluster description returned');
 
         #test fpkm_expression_summary_ls
         can_ok('WormBase::API::Object::Transcript', ('fpkm_expression_summary_ls'));
         my $fpkm_expression_summary_ls = $transcript->fpkm_expression_summary_ls();
         isnt($fpkm_expression_summary_ls->{'data'}, undef, 'data returned');
         is($fpkm_expression_summary_ls->{'description'}, 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data' , 'correct description returned ');
-        is($fpkm_expression_summary_ls->{'data'}->{'plot'}, '/img-static/rplots/' . $api->version . '/4876/fpkm_WBGene00015146.png' , 'correct plot returned');
+
+        my $version = $api->version;
+        my $plot_uri_pttn = "\Q/img-static/rplots/$version/4876/fpkm_WBGene00015146/\E.+";
+        like($fpkm_expression_summary_ls->{'data'}->{'plot'}->[0]->{'uri'},
+           qr/$plot_uri_pttn/,
+           'correct plot returned');
         my @data = @{ $fpkm_expression_summary_ls->{'data'}->{'table'}->{'fpkm'}->{'data'} };
         my @data_sub = grep { $_->{'project_info'}->{'id'} eq 'SRP016006' } @data;
         isnt($data_sub[0], undef, 'fpkm results returned');
-        is($data_sub[0]->{'project'}, 'Thomas Male Female comparison', 'correct project description returned');
+        is($data_sub[0]->{'project_info'}->{'label'}, 'Thomas Male Female comparison', 'correct project description returned');
     }
 
 }

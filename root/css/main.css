@@ -945,7 +945,7 @@ a#fade:hover {
   position:absolute;
   right:0;
   top:100%;
-  z-index:598;
+  z-index:1098; /* higher than cytoscape div 1000 */
   font-size:0.9em;
   border:1px solid #CDCDCD;
 }
@@ -1958,7 +1958,8 @@ div.widget-container:hover{
 
 .content {
   padding: 1em 1em 1.8em 1em;
-  overflow:auto;
+  overflow-x:scroll;
+  overflow-y:hidden; /* seems to fix vertical scroll issue in Safari */
   list-style:disc outside none;
   clear:both;
   font-size:0.9em;
@@ -2064,6 +2065,7 @@ div.field {
 }
 
 div.field-title {
+  display:inline-table;
   float: left;
   text-align: right;
   font-size: 1em;
@@ -2073,12 +2075,12 @@ div.field-title {
 }
 
 div.field-content {
-  float: left;
-  max-width:100%;
+  display:inline-table;
+  float:none;
+  width: calc(100% - 11em);
 }
 
-.one-column div.field-title, .one-column div.field-content {
-  display:table-cell;
+.one-column div.field-title {
   float:none;
   position:static;
   vertical-align:top;
@@ -2175,7 +2177,19 @@ div#google-map {
     margin-right: 0.2em;
 }
 
+/* cytoscape legend */
+#cyto_legend {
+    width:15em;
+    position:absolute;
+    right:0;
+    z-index:1001; /*
+                     greater than cy div z-index 1000
+                     smaller than dropdown menu in search #searchSelect ul */
+}
 
+#cyto_legend div {
+    margin: 0.2em 0 0.4em;
+}
 
 
 

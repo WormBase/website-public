@@ -567,10 +567,30 @@ sub _get_lineage_data {
     my $object = $self->object;
 
     my @relationship = eval{$object->$tag};
+
     my @data;
     foreach my $relation (@relationship) {
-	my $name = $relation->Standard_name;
-	my ($level, $start, $end) = $relation->right->row if $relation->right;
+        my $name = $relation->Standard_name;
+
+        my @levels;
+        my @duration;
+        foreach ($relation->col){
+            my ($level, $start, $end) = $_->row;
+            push @levels, "$_";
+            push @duration, $self->_format_duration($start, $end);
+        }
+
+        push @data, {
+            'name'       => $self->_pack_obj($relation, $name && "$name"),
+            'level'      => @levels ? \@levels : undef,
+            'duration'   => @duration ? \@duration : undef
+        };
+    }
+    return @data ? \@data : undef;
+}
+
+sub _format_duration {
+    my ($self, $start, $end) = @_;
 	my @end_date;
 
 	if ($end && !($end =~ m/present/i)) {
@@ -580,20 +600,10 @@ sub _get_lineage_data {
 	my @start_date = split /\ /,$start if $start;
 
 	my $duration = ($start_date[2] || "") .  " - " . ($end_date[2] || "");
-
-	push @data, {
-	    'name'       => $self->_pack_obj($relation, $name && "$name"),
-	    'level'      => $level && "$level",
-	    'start_date' => $start && "$start",
-	    'end_date'   => $end && "$end",
-	    'duration'   => $duration && "$duration"
-	};
-    }
-    return @data ? \@data : undef;
+    return $duration;
 }
 
 
 __PACKAGE__->meta->make_immutable;
 
 1;
-

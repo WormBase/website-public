@@ -23,24 +23,28 @@ use WormBase::API::Service::rserve;
             'value'      => '3.97874',
             'label'      => 'RNASeq_Hillier.L4_larva_Male_cap2_Replicate2',
             'project'    => 'RNASeq_Hillier',
-            'life_stage' => 'WBls:0000024'
+            'project_info' => { id => 'testID1' },
+            'life_stage' => {id => 'WBls:0000024'}
         },
         {
             'value'      => '1e-10',
             'label'      => 'RNASeq.elegans.SRP015688.L4.linker-cells.nhr-67.4',
             'project'    => 'RNASeq_Hillier',
-            'life_stage' => 'WBls:0000024'
+            'project_info' => { id => 'testID1' },
+            'life_stage' =>  {id => 'WBls:0000024'}
         },
         {
             'value'      => '5.7759',
             'label'      => 'RNASeq_Hillier.L4_Larva_Replicate1',
             'project'    => 'RNASeq_Hillier',
-            'life_stage' => 'WBls:0000024'
+            'project_info' => { id => 'testID1' },
+            'life_stage' =>  {id => 'WBls:0000024'}
         }
     ];
 
     # Parameters that are passed along when generating barcharts and boxplots.
     my $plot_parameters = {
+        filename => 'fpkm_WBGene00015146FAKE.png',
         xlabel => 'X Label',
         ylabel => 'Y Label',
         width  => 1000,
@@ -61,16 +65,16 @@ use WormBase::API::Service::rserve;
         can_ok('WormBase::API::Service::rserve', ('execute_r_program'));
     }
 
-    # Test that a barchart can be produced.
-    sub test__barchart {
-        can_ok('WormBase::API::Service::rserve', ('barchart'));
+    # # Test that a barchart can be produced.
+    # sub test__barchart {
+    #     can_ok('WormBase::API::Service::rserve', ('barchart'));
 
-        my $plot_result = $api->_tools->{rserve}->barchart($testdata, $plot_parameters);
-        isnt($plot_result, undef, 'plot result nonempty');
-        is  (exists $plot_result->{'uri'}, 1, '"uri" key present in result set');
-        isnt($plot_result->{'uri'}, undef, '"uri" key-value present in result set');
-        like($plot_result->{'uri'}, qr/\/img-static\/rplots\/.+/, 'image URI returned');
-    }
+    #     my $plot_result = $api->_tools->{rserve}->barchart($testdata, $plot_parameters);
+    #     isnt($plot_result, undef, 'plot result nonempty');
+    #     is  (exists $plot_result->{'uri'}, 1, '"uri" key present in result set');
+    #     isnt($plot_result->{'uri'}, undef, '"uri" key-value present in result set');
+    #     like($plot_result->{'uri'}, qr/\/img-static\/rplots\/.+/, 'image URI returned');
+    # }
 
     # Test that a boxplot can be produced.
     sub test__boxplot {
@@ -78,11 +82,9 @@ use WormBase::API::Service::rserve;
 
         my $plot_result = $api->_tools->{rserve}->boxplot($testdata, $plot_parameters);
         isnt($plot_result, undef, 'plot result nonempty');
-        is  (exists $plot_result->{'uri'}, 1, '"uri" key present in result set');
-        isnt($plot_result->{'uri'}, undef, '"uri" key-value present in result set');
-        like($plot_result->{'uri'}, qr/\/img-static\/rplots\/.+/, 'image URI returned');
+        isnt($plot_result->[0]->{'uri'}, undef, '"uri" key-value present in result set');
+        like($plot_result->[0]->{'uri'}, qr/\/img-static\/rplots\/.+/, 'image URI returned');
     }
 }
 
 1;
-

@@ -40,7 +40,8 @@
 
         # Please keep test names/descriptions all lower case.
         isnt($refers_to->{'data'}, undef, 'data returned');
-          is($refers_to->{'data'}->{'Expr_pattern'}, '19052', 'correct amount of expression patterns found');
+
+        cmp_ok($refers_to->{'data'}->{'Expr_pattern'}, '>', 0, 'correct number of expression patterns found');
 
     }
 

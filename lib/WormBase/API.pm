@@ -245,7 +245,10 @@ sub fetch {
 
             unless ($class) { # an aceclass we don't handle [yet]?
                 $self->log->warn("[API::fetch()]", " ace class $aceclass, UNKNOWN WB class");
-                return 0;
+                return 0 unless $nowrap;
+                # if $nowrap, no WB class object will instantiated,
+                # ok $class eq undef, because it won't be used.
+                # Useful for tree display, which examines ACe objects
             }
         }
 

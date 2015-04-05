@@ -3,10 +3,10 @@
 <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
 
 <div class="text-min">
-  [% IF item.gene; pluralize('Gene', item.gene.size) _ ':' _ tags2link(item.gene, ',') _ '<br />'; END; %]
-  [% IF item.strain; pluralize('Strain', item.strain.size) _ ':' _ tags2link(item.strain, ',') _ '<br />'; END; %]
-  [% IF item.phenotype; pluralize('Phenotype', item.phenotype.size) _ ':' _ tags2link(item.phenotype, ',') _ '<br />'; END; %]
-  [% IF item.genotype; pluralize('Genotype', item.genotype.size) _ ':' _ tags2link(item.genotype, ',') _ '<br />'; END; %]
+  [% IF item.gene; pluralize('Gene', item.gene.size) _ ': ' _ tags2link(item.gene, ', ') _ '<br />'; END; %]
+  [% IF item.strain; pluralize('Strain', item.strain.size) _ ': ' _ tags2link(item.strain, ', ') _ '<br />'; END; %]
+  [% IF item.phenotype; pluralize('Phenotype', item.phenotype.size) _ ': ' _ tags2link(item.phenotype, ', ') _ '<br />'; END; %]
+  [% IF item.genotype; pluralize('Genotype', item.genotype.size) _ ': ' _ tags2link(item.genotype, ', ') _ '<br />'; END; %]
 
   [% remark = item.remark.join('<br />'); remark %]
 </div>

@@ -45,16 +45,6 @@ sub _build_method {
     };
 }
 
-# Role?
-has '_method' => (
-    is		=> 'ro',
-    lazy	=> 1,
-    default => sub {
-		my ($self) = @_;
-		return $self ~~ 'Method';
-    },
-    );
-
 has 'type' => (
     is  => 'ro',
     lazy_build => 1,
@@ -362,4 +352,3 @@ sub _build__segments {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

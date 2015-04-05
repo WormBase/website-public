@@ -60,12 +60,35 @@
         my $response_rest = get($url_rest);
         ok($response_rest =~ /$anatomy_id/, "contains $anatomy_id");
 
-        my $wa_link      = "http://wormatlas.org/hermaphrodite/somatic%20gonad/Somframeset.html";
+        my $wa_link      = "http://wormatlas.org/hermaphrodite/somatic gonad/Somframeset.html";
         my $wa_escaped   = $wa_link; $wa_escaped =~ s/\//\\\//g; $wa_escaped =~ s/\?/\\\?/g;	# escape characters for regex
         ok($response_rest =~ /$wa_escaped/, "contains single escaped WormAtlas link $anatomy_id");
 
         my $wa_response  = get($wa_link); #get returns undef if failed
         isnt($wa_response, undef, "WormAtlas url is working");
+    }
+
+    # check neuralnet url
+    sub test_anatomy_neuralnet {
+        my $host = $configuration->{'host'};
+        my $port = $configuration->{'port'};
+        my $url_base      = "http://$host:$port";
+
+        my $anatomy_id    = 'WBbt:0004003';
+        my $url_rest      = $url_base . "/rest/widget/anatomy_term/$anatomy_id/external_links";
+        my $response_rest = get($url_rest);
+        ok($response_rest =~ /$anatomy_id/, "contains $anatomy_id");
+
+        my $expect_link      = "http://wormweb.org/neuralnet#c=ADFL&m=0";
+
+        # make sure calling the expected url succeeds
+        my $expect_response  = get($expect_link); #get returns undef if failed
+        isnt($expect_response, undef, "Neuralnet url is working");
+
+        # check the expected link is present in the widget rest response
+        ok($response_rest =~ /\Q$expect_link\E/, "response contains neuralnet link for $anatomy_id");
+
+
     }
 
 }
