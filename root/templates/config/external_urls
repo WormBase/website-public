@@ -519,8 +519,8 @@
 
  miRBase = {
 	description = 'microRNA Database'
-	base        = 'http://microrna.sanger.ac.uk/'
-	search      = 'http://microrna.sanger.ac.uk/cgi-bin/mirna_entry.pl?acc=%s'
+	base        = 'http://www.mirbase.org/'
+	search      = 'http://www.mirbase.org/cgi-bin/mirna_entry.pl?acc=%s'
 	}
 
  modENCODE = {
