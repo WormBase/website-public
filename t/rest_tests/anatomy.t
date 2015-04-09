@@ -76,8 +76,8 @@
 
         my $anatomy_id    = 'WBbt:0004003';
         my $url_rest      = $url_base . "/rest/widget/anatomy_term/$anatomy_id/external_links";
-        my $response_rest = get($url_rest);
-        ok($response_rest =~ /$anatomy_id/, "contains $anatomy_id");
+        my $response_rest = get($url_rest); #get returns undef if failed
+        isnt($response_rest, undef, "request widget succeeds");
 
         my $expect_link      = "http://wormweb.org/neuralnet#c=ADFL&m=0";
 
