@@ -801,7 +801,8 @@
   }
 
   function allResults(type, species, query, widget){
-    var url = "/search/" + type + "/" + query + "/1?inline=1" + (species && "&species=" + species),
+    var url_search_base = "/search/" + type + "/" + query,
+        url = url_search_base + "/1?inline=1" + (species && "&species=" + species),
         allSearch = $jq("#all-search-results"),
         searchSummary = $jq("#search-count-summary"),
         curr = $jq("#curr-ref-text");
@@ -813,7 +814,8 @@
 
         var dl = searchSummary.find(".dl-search");
         dl.load(dl.attr("href"), function(){
-          if((parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10)) < 100000){
+          var resultCount = (parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10));
+          if(resultCount < 100000){
             searchSummary.find("#get-breakdown").show().click(function(){
               setLoading($jq(this));
               searchFilter(searchSummary, curr);
@@ -823,6 +825,20 @@
                 return false;
               });
              });
+          }
+          if(resultCount < 500){
+            // allows downloading search result if # is small
+            searchSummary.find('.dl-format a').each(function(){
+              var format = $jq(this).attr('data-content-type');
+              var dl_params = $jq.param({'species': species,
+                                         'format': format});
+              var dl_url = url_search_base + "/all" +
+                (dl_params && '?' + dl_params);
+              $jq(this).attr('href',dl_url);
+
+            });
+          }else{
+            searchSummary.find('.dl-format-list').html('<li  style="height:auto">Too many results to download. Please use our <a href="ftp://ftp.wormbase.org/pub/wormbase/" target="_blank">FTP</a> site.</li>');
           }
         });
       });
