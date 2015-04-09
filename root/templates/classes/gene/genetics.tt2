@@ -10,14 +10,13 @@
    # Alleles
    WRAPPER $field_block title="Alleles" key="alleles";
        build_data_table(
-            order=['variation','molecular_change','locations','effects','aa_change','aa_position','isoform', 'phen_count', 'method_name', 'strain'],
+            order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain'],
             columns={ variation         => 'Allele',
                       molecular_change  => 'Molecular<br /> change',
                       effects           => 'Protein<br /> effects',
                       locations         => 'Locations',
                       phen_count        => '# of<br /> Phenotypes',
-                      aa_change         => 'Protein<br /> change',
-                      aa_position       => 'Amino acid<br />position',
+		      composite_change  => 'Protein<br />change',
                       isoform           => 'Isoform',
                       method_name       => 'Method',
                       strain            => 'Strain',
@@ -29,15 +28,14 @@
    # Polymorphisms
    WRAPPER $field_block title="Polymorphisms & Natural variants" key="polymorphisms";
         build_data_table(
-            order=['variation','type','molecular_change','locations', 'effects','aa_change','aa_position','phen_count', 'strain'],
+            order=['variation','type','molecular_change','locations', 'effects','composite_change','phen_count', 'strain'],
             columns={ variation         => 'Polymorphism',
                       type              => 'Type',
                       molecular_change  => 'Molecular<br /> change',
                       effects           => 'Protein<br /> effects',
                       locations         => 'Locations',
                       phen_count        => '# of<br /> Phenotypes',
-                      aa_change         => 'Protein<br /> change',
-                      aa_position       => 'Amino acid<br />position',
+		      composite_change  => 'Protein<br />change',
                       strain            => 'Strain',
             },
             key='polymorphisms',
