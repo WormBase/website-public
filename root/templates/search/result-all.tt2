@@ -152,7 +152,7 @@
                 END;%]
         </div>
         <ul>
-      <li class="title toggle">
+      <li class="title toggle" style="display:none">
         Download all
         (<span class="dl-search" href="/search/count/[% species %]/[% type %]/[% query_uri %]"></span>)
         <span class="ui-icon ui-icon-triangle-1-e"></span>

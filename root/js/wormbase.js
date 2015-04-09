@@ -813,6 +813,8 @@
         checkSearch(allSearch);
 
         var dl = searchSummary.find(".dl-search");
+        var dl_button = dl.closest('li');
+
         dl.load(dl.attr("href"), function(){
           var resultCount = (parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10));
           if(resultCount < 100000){
@@ -835,11 +837,13 @@
               var dl_url = url_search_base + "/all" +
                 (dl_params && '?' + dl_params);
               $jq(this).attr('href',dl_url);
-
             });
           }else{
             searchSummary.find('.dl-format-list').html('<li  style="height:auto">Too many results to download. Please use our <a href="ftp://ftp.wormbase.org/pub/wormbase/" target="_blank">FTP</a> site.</li>');
+            dl_button.addClass('fade');
+            dl_button.find('.ui-icon').addClass('ui-state-disabled');
           }
+          dl_button.show();  // show the download button otherwise hidden
         });
       });
     } else if (widget == 'references') {

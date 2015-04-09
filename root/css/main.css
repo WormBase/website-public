@@ -795,14 +795,17 @@ div.more .ui-icon {
   top:-6px;
 }
 
-#fade {
+/* Not sure why id instead of class is used initially*/
+/* too widespread to change now */
+#fade, .fade {
    color: #999999;
    font-size: 0.8em;
 }
 
-a#fade:hover {
+a#fade:hover, a.fade:hover {
   text-decoration:underline;
 }
+
 
 .result {
   padding:0 0.5em 0.5em;
