@@ -150,9 +150,11 @@ sub clones {
     my $self   = shift;
     my $object = $self->object;
 
-    my @clone = map { $self->_pack_obj($_) } $object->Clone;
+    my $count = $self->_get_count($object, 'Clone');
+    my @clone = map { $self->_pack_obj($_) } $object->Clone if $count < 500;
+
     return { description => 'clones contained in the strain',
-             data        => @clone ? \@clone : undef };
+             data        => @clone ? \@clone : $count > 0 ? "$count found" : undef };
 
 }
 
@@ -412,4 +414,3 @@ sub date_isolated {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

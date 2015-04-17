@@ -208,7 +208,7 @@
     MACRO pluralize(word, size) BLOCK;
       UNLESS word; RETURN; END;
       size = size || 0;
-      IF (size >= 1);
+      IF (size > 1);
         IF (matches = word.match('^(.*)y$'));
           word = matches.0 _ 'ies';                   # antibody -> antibodies
         ELSIF (matches = word.match('^(.*)ium$'));
