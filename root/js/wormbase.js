@@ -1645,6 +1645,7 @@ var Scrolling = (function(){
         }
         var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']  + '&redirect=' + location;
         this.popupWin(pop_url);
+        this.signinWormMine(box_id);
       },
 
       popupWin: function(url) {
@@ -1656,7 +1657,19 @@ var Scrolling = (function(){
         // var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
         // win2.focus();
         window.location = url;
-      }
+      },
+
+     signinWormMine: function(provider){
+       var mineProviders = {
+         google: 'Google'
+       };
+       var mineUrlBase = 'https://www.wormbase.org/tools/wormmine/openid?provider=%s';
+       var mineUrl;
+       if (mineProviders[provider]){
+         mineUrl = mineUrlBase.replace('%s', mineProviders[provider]);
+         $jq.get(mineUrl);
+       }
+     }
   };
 
 
