@@ -183,7 +183,7 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
 
     #    unless($c->config->{wormmine_path}){
         # WormMine redirects to this url now after it has logged in:
-          $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
+          $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect}."&oauth2=1");
         # }else{
         #   # Redirect users to WormMine openID login
         #   $c->res->redirect( $c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
@@ -240,7 +240,6 @@ sub auth_wbid :Path('/auth/wbid')  :Args(0) {
 
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
-
      $c->user_session->{redirect} = $c->user_session->{redirect} || $c->req->params->{redirect};
      my $redirect = $c->user_session->{redirect};
      my $param = $c->req->params;
@@ -282,7 +281,8 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
         };
         $c->response->redirect($url);
      # OpenID
-    } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i) {
+    } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i && $param->{oauth2} eq '1') {
+
         my $callback_url = $c->uri_for('auth/code/google');
         $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
         my $url = WormBase::Web::ThirdParty::Google->new()->get_authorization_url(
