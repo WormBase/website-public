@@ -1645,7 +1645,12 @@ var Scrolling = (function(){
         }
         var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']  + '&redirect=' + location;
         this.popupWin(pop_url);
-        this.signinWormMine(box_id);
+
+        //if on wormmine page, try sign in to wormmine,
+        // currently not enable for entire site due to redirect issue
+        if (window.location.href.indexOf("tools/wormmine") > -1){
+          this.signinWormMine(box_id);
+        }
       },
 
       popupWin: function(url) {
@@ -1667,7 +1672,8 @@ var Scrolling = (function(){
        var mineUrl;
        if (mineProviders[provider]){
          mineUrl = mineUrlBase.replace('%s', mineProviders[provider]);
-         $jq.get(mineUrl);
+      //   $jq.get(mineUrl);
+         window.location.replace(mineUrl);
        }
      }
   };
