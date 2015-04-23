@@ -50,6 +50,30 @@ has '_method' => (
 		return eval { $self ~~ 'Method' };
     },
     );
+
+has '_seq_obj' => (
+    is => 'ro',
+    lazy => 1,
+    builder => '_build_seq_obj',
+);
+
+has 'is_coding' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my ($self) = @_;
+        my $s = $self->object;
+        my $coding = eval { $s->Coding_pseudogene } || eval {$s->Coding} || eval {$s->Corresponding_CDS};
+        return $coding;
+    },
+);
+
+has '_cds_and_utr' => (
+    is => 'ro',
+    lazy => 1,
+    builder => '_build_cds_and_utr',
+);
+
 #######################################################
 #
 # Generic methods, shared across Sequence, CDS, and Transcript classes.
@@ -804,6 +828,51 @@ sub source_clone {
 #
 ############################################################
 
+# fetch SeqFeature from GFF
+sub _build_seq_obj {
+    my ($self) = @_;
+    my $s = $self->object;
+    my $gff = $self->gff or return;
+
+    my $seq_obj;
+
+    # Genomic clones need to be fetched a bit differently.
+    unless ($s->class =~ /Sequence|Clone/i) {
+        ($seq_obj) = sort {$b->length<=>$a->length}
+                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($s);
+
+        # BLECH!  If provided with a gene ID and alt splices are present just guess
+        # and fetch the first CDS or Transcript
+        # We really should display a list for all of these.
+
+        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.a");
+        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
+                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.1");
+    }
+
+    return $seq_obj;
+}
+
+# get CDS SeqFeatures if applicable (like is_coding)
+sub _build_cds_and_utr {
+    my ($self) = @_;
+    my $seq_obj = $self->_seq_obj;
+    my @cds = ();
+    use Data::Dumper;
+
+    if ($seq_obj && $self->is_coding){
+        @cds = grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
+            map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
+                $seq_obj->get_SeqFeatures();
+
+        # sort by stop if on -ve strand
+        @cds = ($seq_obj->strand > 0) ? sort { $a->start <=> $b->start } @cds : sort { $b->stop <=> $a->stop } @cds;
+    }
+
+    return \@cds;
+}
+
 =head3 print_blast
 
 This method will return a data structure containing
@@ -924,24 +993,9 @@ B<Response example>
 sub print_sequence {
     my ($self) = @_;
     my $s = $self->object;
+
     my @data;
-    my $gff = $self->gff || goto END;
-    my $seq_obj;
-
-    # Genomic clones need to be fetched a bit differently.
-    unless ($s->class =~ /Sequence|Clone/i) {
-        ($seq_obj) = sort {$b->length<=>$a->length}
-                        grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name($s);
-
-        # BLECH!  If provided with a gene ID and alt splices are present just guess
-        # and fetch the first CDS or Transcript
-        # We really should display a list for all of these.
-
-        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.a");
-        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-                grep {$_->primary_tag eq 'mRNA'} $gff->get_features_by_name("$s.1");
-    }
+    my $seq_obj = $self->_seq_obj;
 
     # Haven't fetched a GFF segment? Try Ace.
     # miserable broken workaround
@@ -981,27 +1035,16 @@ sub print_sequence {
         # local coordinates
         $seq_obj->ref($seq_obj);
 
-        # sort by stop if on -ve strand
-        my @features = grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
-            map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
-            $seq_obj->get_SeqFeatures();
-
-        @features = ($seq_obj->strand > 0) ? sort { $a->start <=> $b->start } @features : sort { $b->stop <=> $a->stop } @features;
-
+        my @features = @{$self->_cds_and_utr};
+        print Dumper \@features;
         push @data, _print_unspliced($markup,$seq_obj,$unspliced,\@features);
         push @data, _print_spliced($markup,@features);
         push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
+
         if ($s->{class} eq 'Transcript') {
-
-            my ($seq_flank_range, $flanked_seq, @flankings) =
-                $self->_get_flanking_region($seq_obj, 2000, 2000);
-            my @flanked_features =  (@features, @flankings);  # concat
-
-            push @data, _print_unspliced($markup,
-                                         $seq_flank_range,
-                                         $flanked_seq,
-                                         \@flanked_features,
-                                         'unspliced + UTR + up-/downstream');
+            my ($flanked_seq,$flanked_seq_range, @flankings) = $self->_get_flanking_region(2000, 2000);
+            push @data, _print_flanked_unspliced($markup, $flanked_seq_range, $flanked_seq,
+                                                 \@features, \@flankings);
         }
 
     } else {
@@ -1019,14 +1062,20 @@ sub print_sequence {
              data        => @data ? \@data : undef };
 }
 
-# takes a sequence feature, and length of the upstream ond downstream
-# to be constructed
-# returns: three segments (in the following order):
-#   - the long segment including up- and downstream
-#   - the upstream segment, if not length 0
-#   - the downstream segment, if not length 0
+# get the upstream and downstream of a SeqFeature object
+# args:
+#   -length of the upstream ond downstream to be constructed
+#   -[optionally]: a SeqFeature object, otherwise use the one based on $self
+# returns:
+#   - the dna that spans the upstream, the feature, and the downstream
+#   - three segments (in the following order):
+#     - the long segment including up- and downstream
+#     - the upstream segment, if not length 0
+#     - the downstream segment, if not length 0
 sub _get_flanking_region {
-    my ($self, $seq_obj, $x_upstream, $x_downstream) = @_;
+    my ($self, $x_upstream, $x_downstream, $seq_obj) = @_;
+    $seq_obj = $seq_obj || $self->_seq_obj;
+
     my @flanking_types = ();
     push @flanking_types, 'upstream' if $x_upstream;
     push @flanking_types, 'downstream' if $x_downstream;
@@ -1053,7 +1102,8 @@ sub _get_flanking_region {
         $segment = $contig->intersection($segment);
         $segment->name($flank_id);
         $segment->primary_tag($flank_type);
-#print Dumper $segment;
+print Dumper $contig;
+print Dumper $segment;
         push @flankings, $segment;
     }
     my $long_seg = $seq_obj->union(@flankings);  #with absolute coords
@@ -1080,7 +1130,7 @@ sub _get_flanking_region {
 # print Dumper \@fs;
 
 
-    return ($long_seg, $long_seg_dna, $flankings[0], $flankings[1]);
+    return ($long_seg_dna, $long_seg, $flankings[0], $flankings[1]);
 
 }
 
@@ -1663,6 +1713,26 @@ sub _print_protein {
         type => "aa",
         length => $plen,
     };
+}
+
+# print flanking regions plus the unspliced sequence
+# Note: it calls _print_unspliced underneath
+sub _print_flanked_unspliced {
+    my ($markup, $flanked_seq_range, $flanked_seq, $features, $flankings) = @_;
+
+    my @flanked_features =  (@$features, @$flankings);  # concat
+    # make a title
+    my $title = 'unspliced + UTR';
+    my @flank_titles = map {
+        $_->length() .' '. $_->primary_tag;
+    } @$flankings;
+    $title = join(' + ', ($title, @flank_titles));
+
+    return _print_unspliced($markup,
+                            $flanked_seq_range,
+                            $flanked_seq,
+                            \@flanked_features,
+                            $title);
 }
 
 ##use this or template to format sequence?
