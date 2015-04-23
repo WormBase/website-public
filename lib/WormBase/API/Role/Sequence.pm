@@ -1,4 +1,6 @@
 package WormBase::API::Role::Sequence;
+use Bio::DB::SeqFeature::Segment;
+use Bio::DB::SeqFeature;
 
 use Moose::Role;
 
@@ -918,6 +920,7 @@ B<Response example>
 
 # TODO: REWRITE THIS. This is very gory code. Some of it doesn't do what
 #       one would expect due to some Perl details...
+    use Data::Dumper;
 sub print_sequence {
     my ($self) = @_;
     my $s = $self->object;
@@ -970,6 +973,7 @@ sub print_sequence {
         $markup->add_style('cds0' => 'BGCOLOR yellow');
         $markup->add_style('cds1' => 'BGCOLOR orange');
         $markup->add_style('uc'   => 'UPPERCASE');
+        $markup->add_style('flank'=> 'BGCOLOR beige');
         $markup->add_style('newline' => "\n");
         $markup->add_style('space'   => '');
         my %seenit;
@@ -984,9 +988,22 @@ sub print_sequence {
 
         @features = ($seq_obj->strand > 0) ? sort { $a->start <=> $b->start } @features : sort { $b->stop <=> $a->stop } @features;
 
-        push @data, _print_unspliced($markup,$seq_obj,$unspliced,@features);
+        push @data, _print_unspliced($markup,$seq_obj,$unspliced,\@features);
         push @data, _print_spliced($markup,@features);
         push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
+        if ($s->{class} eq 'Transcript') {
+
+            my ($seq_flank_range, $flanked_seq, @flankings) =
+                $self->_get_flanking_region($seq_obj, 2000, 2000);
+            my @flanked_features =  (@features, @flankings);  # concat
+
+            push @data, _print_unspliced($markup,
+                                         $seq_flank_range,
+                                         $flanked_seq,
+                                         \@flanked_features,
+                                         'unspliced + UTR + up-/downstream');
+        }
+
     } else {
         # Otherwise we've got genomic DNA here
         push @data, {
@@ -1001,6 +1018,72 @@ sub print_sequence {
     return { description => 'the sequence of the sequence',
              data        => @data ? \@data : undef };
 }
+
+# takes a sequence feature, and length of the upstream ond downstream
+# to be constructed
+# returns: three segments (in the following order):
+#   - the long segment including up- and downstream
+#   - the upstream segment, if not length 0
+#   - the downstream segment, if not length 0
+sub _get_flanking_region {
+    my ($self, $seq_obj, $x_upstream, $x_downstream) = @_;
+    my @flanking_types = ();
+    push @flanking_types, 'upstream' if $x_upstream;
+    push @flanking_types, 'downstream' if $x_downstream;
+
+    my ($seq_start, $seq_end) = ($seq_obj->start, $seq_obj->stop);
+    my $flank_coords = $seq_obj->strand > 0 ?
+        { 'upstream' => [$seq_start - $x_upstream, $seq_start - 1],
+          'downstream' => [$seq_end + 1, $seq_end + $x_downstream]}
+      : { 'upstream' => [$seq_end + 1, $seq_end + $x_upstream],
+          'downstream' => [$seq_start - $x_downstream, $seq_start - 1] };
+
+    my @flankings = ();
+    foreach my $flank_type (@flanking_types){
+        my ($flank_start, $flank_end) = @{$flank_coords->{$flank_type}};
+        my $flank_id = $seq_obj->name . '_' . $flank_type;
+        my $segment = Bio::DB::SeqFeature::Segment->new($seq_obj->object_store(),
+                                                        $flank_id,
+                                                        $flank_start,
+                                                        $flank_end,
+                                                        $seq_obj->strand);
+
+        # ensure not to fetch flanking region beyond assembled region ($contig)
+        my ($contig) = $self->gff->segment($seq_obj->name)->features(-types => ['assembly_component']);
+        $segment = $contig->intersection($segment);
+        $segment->name($flank_id);
+        $segment->primary_tag($flank_type);
+#print Dumper $segment;
+        push @flankings, $segment;
+    }
+    my $long_seg = $seq_obj->union(@flankings);  #with absolute coords
+    $long_seg->strand($seq_obj->strand);
+
+    # To get dna for the long sequence that includes up and downstrem.
+    # Need $long_seg's coords relative to original $seq_obj's start
+    my ($start_rel, $end_rel) = ($long_seg->start - $seq_obj->start + 1,
+                                 $long_seg->end - $seq_obj->start + 1);
+    my $long_seg_rel = $self->gff->segment($seq_obj->name, $start_rel, $end_rel);
+    $long_seg_rel->strand($seq_obj->strand);
+    my $long_seg_dna = $long_seg_rel->dna;
+
+
+#      print Dumper $long_seg;
+#     print Dumper    $long_seg->start;
+#     print Dumper $long_seg->end;
+
+#  print Dumper length($long_seg_rel->dna);
+
+#      my $seg_orig = $self->gff->segment($seq_obj->name);
+# my @fs = $seg_orig->features;
+# @fs = grep {$_->end > $seq_obj->end && $_->start < $seq_obj->start } @fs;
+# print Dumper \@fs;
+
+
+    return ($long_seg, $long_seg_dna, $flankings[0], $flankings[1]);
+
+}
+
 
 =head3 print_homologies
 
@@ -1494,7 +1577,7 @@ sub _build__segments {
 }
 
 sub _print_unspliced {
-    my ($markup,$seq_obj,$unspliced,@features) = @_;
+    my ($markup,$seq_obj,$unspliced,$features, $header) = @_;
     my $name = $seq_obj . ' (' . $seq_obj->start . '-' . $seq_obj->stop . ')';
     my $length_all   = length $unspliced;
     if ($length_all > 0) {
@@ -1502,27 +1585,30 @@ sub _print_unspliced {
         my @markup;
         my $offset = $seq_obj->start;
         my $counter = 0;
-        for my $feature (@features) {
+        for my $feature (@$features) {
             my $start    = $seq_obj->strand > 0 ? $feature->start - $offset : $length_all - ($feature->stop - $offset + 1);
             my $length   = abs($feature->stop - $feature->start) + 1;
             my $style = $feature->primary_tag eq 'CDS'  ? 'cds'.$counter++%2
                 : $feature->primary_tag =~ /exon/ ? 'cds'.$counter++%2
-                : $feature->primary_tag =~ 'UTR' ? 'utr' : '';
+                : $feature->primary_tag =~ 'UTR' ? 'utr'
+                : $feature->primary_tag =~ /.+stream/ ? 'flank'
+                : '';
             # print ("\n   " . $feature->primary_tag  . " " . $feature->start . " " . $feature->stop . " $style $start $length");
             push @markup,[$style,$start,$start+$length];
-            push @markup,['uc',$start,$start+$length] unless $style eq 'utr';
+            push @markup,['uc',$start,$start+$length] unless $style =~ 'utr|flank';
         }
         push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
         push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
         $markup->markup(\$unspliced,\@markup);
         return {
-            header=>"unspliced + UTR",
+            header=> $header || "unspliced + UTR",
             sequence=>$unspliced,
             length => $length_all,
             style=> 1,
         };
     }
 }
+
 
 # Fetch and markup the spliced DNA
 # markup alternative exons
