@@ -981,6 +981,13 @@
 	protein     = 'http://www.signalink.org/protein/%s'
 	mirna       = 'http://www.signalink.org/mirna/%s'
 	}
+	
+ ZFIN = {
+        description = 'The Zebrafish Model Organism Database'
+        base        = 'http://zfin.org/'
+        maintainer  = 'zfinadmn@zfin.org'
+        search      = 'http://zfin.org/search?q=%s'
+        }
 
  MODEncodeTissueL2_A_class_neuron = {
 	description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_A_class_neuron'
