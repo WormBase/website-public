@@ -4,7 +4,7 @@
 
 
 
-WRAPPER $field_block title="Anatomic Expression Patterns" key="expression_patterns";
+WRAPPER $field_block title="Spatio-Temporal Expression Patterns" key="expression_patterns";
     gene_image = fields.anatomic_expression_patterns.data.image;
     IF gene_image;
       '<div style="max-width:500px;">';
