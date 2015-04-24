@@ -369,9 +369,14 @@ sub _build__gene {
 
 sub _build_sequences {
     my $self = shift;
-    my $gene = $self->object;
+    my $gene = $self->object; # this is actually a TRANSCRIPT here.
     my %seen;
     my @seqs = grep { !$seen{$_}++} $gene->Corresponding_transcript;
+    
+    # Let's just ensue that we're actually evaluating the *transcript* too
+    # It looks like this method was cut-and-pasted from gene; it's not
+    # customized for the transcript class.
+    push @seqs, grep { !$seen{$_}++} $gene;
 
     for my $cds ($gene->Corresponding_CDS) {
         next if defined $seen{$cds};
@@ -380,7 +385,7 @@ sub _build_sequences {
         push (@seqs, @transcripts ? @transcripts : $cds);
     }
     return \@seqs if @seqs;
-    return [$gene->Corresponding_Pseudogene];
+    return [$gene->Corresponding_pseudogene];
 }
 
 __PACKAGE__->meta->make_immutable;
