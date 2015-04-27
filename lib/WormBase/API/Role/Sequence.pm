@@ -1,6 +1,5 @@
 package WormBase::API::Role::Sequence;
 use Bio::DB::SeqFeature::Segment;
-use Bio::DB::SeqFeature;
 
 use Moose::Role;
 
