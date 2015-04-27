@@ -859,7 +859,6 @@ sub _build_cds_and_utr {
     my ($self) = @_;
     my $seq_obj = $self->_seq_obj;
     my @cds = ();
-    use Data::Dumper;
 
     if ($seq_obj && $self->is_coding){
         @cds = grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
@@ -989,7 +988,7 @@ B<Response example>
 
 # TODO: REWRITE THIS. This is very gory code. Some of it doesn't do what
 #       one would expect due to some Perl details...
-    use Data::Dumper;
+
 sub print_sequence {
     my ($self) = @_;
     my $s = $self->object;
@@ -1036,7 +1035,7 @@ sub print_sequence {
         $seq_obj->ref($seq_obj);
 
         my @features = @{$self->_cds_and_utr};
-        print Dumper \@features;
+
         push @data, _print_unspliced($markup,$seq_obj,$unspliced,\@features);
         push @data, _print_spliced($markup,@features);
         push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
@@ -1081,6 +1080,7 @@ sub _get_flanking_region {
     push @flanking_types, 'downstream' if $x_downstream;
 
     my ($seq_start, $seq_end) = ($seq_obj->start, $seq_obj->stop);
+
     my $flank_coords = $seq_obj->strand > 0 ?
         { 'upstream' => [$seq_start - $x_upstream, $seq_start - 1],
           'downstream' => [$seq_end + 1, $seq_end + $x_downstream]}
@@ -1102,37 +1102,37 @@ sub _get_flanking_region {
         $segment = $contig->intersection($segment);
         $segment->name($flank_id);
         $segment->primary_tag($flank_type);
-print Dumper $contig;
-print Dumper $segment;
         push @flankings, $segment;
     }
+
     my $long_seg = $seq_obj->union(@flankings);  #with absolute coords
     $long_seg->strand($seq_obj->strand);
 
     # To get dna for the long sequence that includes up and downstrem.
-    # Need $long_seg's coords relative to original $seq_obj's start
-    my ($start_rel, $end_rel) = ($long_seg->start - $seq_obj->start + 1,
-                                 $long_seg->end - $seq_obj->start + 1);
+
+    # Ideally, one would use absolute coordinates to get the segment, but
+    # the code commented out below doesn't work for me.
+    # my $long_seg_rel = $self->gff->segment(-name=>$seq_obj->name,
+    #                                        -start=>$long_seg->start,
+    #                                        -end=>$long_seg->end,
+    #                                        -absolute=>1);
+
+    # So find $long_seg's relative coords to original $seq_obj's start OR end
+    # depending on strand
+    my ($start_rel, $end_rel) = $seq_obj->strand > 0 ?
+        ($long_seg->start - $seq_obj->start + 1,
+         $long_seg->end - $seq_obj->start + 1)
+      : (- $long_seg->end + $seq_obj->end + 1,
+         - $long_seg->start + $seq_obj->end + 1);
+
     my $long_seg_rel = $self->gff->segment($seq_obj->name, $start_rel, $end_rel);
-    $long_seg_rel->strand($seq_obj->strand);
+    # its strand is set based on $seq_obj automatically
     my $long_seg_dna = $long_seg_rel->dna;
-
-
-#      print Dumper $long_seg;
-#     print Dumper    $long_seg->start;
-#     print Dumper $long_seg->end;
-
-#  print Dumper length($long_seg_rel->dna);
-
-#      my $seg_orig = $self->gff->segment($seq_obj->name);
-# my @fs = $seg_orig->features;
-# @fs = grep {$_->end > $seq_obj->end && $_->start < $seq_obj->start } @fs;
-# print Dumper \@fs;
-
 
     return ($long_seg_dna, $long_seg, $flankings[0], $flankings[1]);
 
 }
+
 
 
 =head3 print_homologies
