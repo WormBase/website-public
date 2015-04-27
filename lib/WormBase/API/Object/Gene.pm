@@ -248,7 +248,7 @@ sub named_by {
     my $object = $self->object;
 
     my $ev_hash = $self->_get_evidence($object->CGC_name);
-    my @ev = map { @$_ } values %$ev_hash;
+    my @ev = map { $_ and @$_ } values %$ev_hash;
 
     return {
         description => 'the source where the approved name was first described',
