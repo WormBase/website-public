@@ -927,11 +927,11 @@ END;
 
    WRAPPER $field_block title="Phenotypes" key="phenotypes";
 
-       build_data_table(order=['phenotype','description', 'evidence'],
+       build_data_table(order=['phenotype','description','evidence'],
                         columns={
                         phenotype    => 'Phenotype',
-                        description => 'Description',
-                evidence  => 'Evidence'
+                        description => 'Phenotype Definition',
+                       evidence  => 'Evidence'
                     },
                     key='phenotypes');
     END;
@@ -945,7 +945,7 @@ END;
        build_data_table(order=['phenotype','evidence'],
                         columns={
                         phenotype    => 'Phenotype',
-                evidence  => 'Evidence'
+                        evidence  => 'Evidence'
                     },
                     key='phenotypes_not_observed');
       END;
