@@ -1121,7 +1121,7 @@ END;
     END;
     IF sequences.keys.size > 0;
       WRAPPER $field_block title=(field_title.defined ?  field_title : "Sequence") key=field_key;
-        FOREACH obj IN sequences.keys;
+        FOREACH obj IN sequence_list;
           '<div class="seq-toggle">';
           sequences.$obj.download;
           IF sequences.$obj.seq;
