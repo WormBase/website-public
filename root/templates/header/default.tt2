@@ -116,10 +116,13 @@
                 genus_list.$genus.push(s);
                END %]
 
-              [% g_sort = [] %]
+              [% g_sort = c.config.sections.species_list.keys.sort %]
+              [% #Caenorhabditis species first, #other species later %]
+              [% g_sort = g_sort.grep('^c_.+').merge(g_sort.grep('^[^c]_.+')); %]
               [% g_sort.unshift('c_elegans') %]
               [% g_sort.unshift('all') %]
-              [% g_sort.push('others') %]
+              [% g_sort = g_sort.unique %]
+
 
               [% others_list = genus_list.keys.sort %]
               [% others_list.unshift('Caenorhabditis') %]
@@ -141,9 +144,9 @@
 
                 [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
                   [% nav_species(option); %]
-
-                [% ELSIF option == 'others' %]
-                    [% WRAPPER nav_sublist sublist_title=option%]
+                [% END %]
+              [% END %]
+                    [% WRAPPER nav_sublist sublist_title='Others...' %]
                       [% FOREACH g IN others_list %] [%# per genus %]
                         [% WRAPPER nav_sublist sublist_title=g%]
                           [% FOREACH s IN genus_list.$g %] [%# per species %]
@@ -152,9 +155,6 @@
                         [% END %]
                       [% END %]
                     [% END %]
-
-                [% END %]
-              [% END %]
 
         [% ELSE %]
           [% FOREACH option IN c.config.sections.$title.keys.sort %]
