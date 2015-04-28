@@ -85,7 +85,17 @@
 
 [% END %]
 
-
+[% BLOCK nav_sublist %]
+    <li>
+        <a>
+            <span class="ui-icon ui-icon-triangle-1-s"></span>
+            [% sublist_title %]
+        </a>
+        <ul class="wb-dropdown">
+            [% content %]
+        </ul>
+    </li>
+[% END %]
 
   <div id="nav-bar">
     <ul class="nav-bar">
@@ -131,22 +141,18 @@
 
                 [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
                   [% nav_species(option); %]
+
                 [% ELSIF option == 'others' %]
-                <li>
-                  <a class="species">
-                    <span class="ui-icon ui-icon-triangle-1-e"></span>[% option %]
-                  </a>
-                  <ul class="wb-dropdown">
-                      [% FOREACH s IN others_list %]
-                        <li>
-                        <a class="species">
-                        <span class="ui-icon ui-icon-triangle-1-e"></span>[% s %]</a>
-                        <ul class="wb-dropdown">
-                        [% FOREACH g IN genus_list.$s %] [% nav_species(g); %][% END %]
-                        </ul></li>
+                    [% WRAPPER nav_sublist sublist_title=option%]
+                      [% FOREACH g IN others_list %] [%# per genus %]
+                        [% WRAPPER nav_sublist sublist_title=g%]
+                          [% FOREACH s IN genus_list.$g %] [%# per species %]
+                            [% nav_species(s); %]
+                          [% END %]
+                        [% END %]
                       [% END %]
-                  </ul>
-                </li>
+                    [% END %]
+
                 [% END %]
               [% END %]
 
