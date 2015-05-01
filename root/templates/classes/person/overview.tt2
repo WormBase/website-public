@@ -37,12 +37,12 @@ END;
 extended_social_links(fields.name.data.id);
 
 WRAPPER $field_block title="Institution" key="institution";
-    fields.institution.data;
+    cell_content(fields.institution.data);
 END;
 
 WRAPPER $field_block title="Web Page" key="web_page";
     FOREACH url IN fields.web_page.data;
-        external_link(url, url);
+        external_link(url, url) _ '<br/>';
     END;
 END;
 
