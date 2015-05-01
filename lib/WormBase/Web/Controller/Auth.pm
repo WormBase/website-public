@@ -640,9 +640,10 @@ sub create_jwt :Private {
 
     my $claims = {
         iss => $c->config->{site_name},
-        iat => time(),
         sub => $uid,
-        sta => $status
+        sta => $status,
+        iat => time(),
+        exp => $c->session_expires
     };
 
     my $secret = $self->get_jwt_secret();
