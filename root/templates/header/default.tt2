@@ -108,6 +108,8 @@
 
               [% genus_list = {} %]
               [% FOREACH s IN c.config.sections.species_list.keys.sort;
+                # avoid duplicate listing if already in 1st level of menu
+                NEXT IF c.config.sections.species_list.$s.display_in_dropdown == 'yes';
                 genus = c.config.sections.species_list.$s.genus;
                 NEXT UNLESS genus;
                 genus_list.$genus = genus_list.$genus || [];
