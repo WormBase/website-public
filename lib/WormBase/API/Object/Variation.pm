@@ -1503,6 +1503,7 @@ sub _do_markup {
     $markup->add_style('cds0'  => 'BGCOLOR yellow');
     $markup->add_style('cds1'  => 'BGCOLOR orange');
     $markup->add_style('space' => ' ');
+    $markup->add_style('unknown_mutation'       => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('tandem_duplication'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('substitution'     => 'background-color:#FF8080; text-transform:uppercase;');
     $markup->add_style('deletion'     => 'background-color:#FF8080; text-transform:uppercase;');
@@ -1525,7 +1526,7 @@ sub _do_markup {
     }
 
     # Markup the variation as appropriate
-    push (@markup,[lc($object->Type_of_mutation),$var_start,$var_stop]);
+    push (@markup,[lc($object->Type_of_mutation || 'unknown_mutation'),$var_start,$var_stop]);
 
     # Add spacing for peptides
     if ($is_peptide) {
