@@ -231,8 +231,8 @@ sub fax {
 
 sub web_page {
     my $self    = shift;
-    my $address = $self->address_data;
-    my @urls =  grep { /HTTP:\/\//i } @{$address->{web_page}};
+    my $web_address = $self->address_data->{web_page};
+    my @urls =  grep { /HTTP:\/\//i } @$web_address if $web_address;
 
     my $data = { description => 'web address of the person',
 		 data        => @urls ? \@urls : undef };
