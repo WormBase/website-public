@@ -737,43 +737,65 @@ sub rearrangements {
 # associations.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_ontology
 
-sub gene_ontology {
+has '_gene_ontology' => (
+    is  => 'ro',
+    lazy => 1,
+    builder => '_build_gene_ontology',
+);
+use Data::Dumper;
+sub _build_gene_ontology {
     my $self   = shift;
     my $object = $self->object;
 
-    my %data;
-    foreach my $go_term ( $object->GO_term ) {
-        foreach my $code ( $go_term->col ) {
-            my $method = join(", ", map {"$_"} (my @methods = $code->col));
-            my $display_method = $self->_go_method_detail( $method, join(", ", map { $_->col } @methods) );
+    my @data;
+    foreach my $anno ( $object->GO_annotation ) {
+        my $go_term = $anno->GO_term;
+        my $go_type = $go_term->Type;
+        my $go_code = $anno->GO_code;
+        my $relation = $anno->Annotation_relation;
 
-            my $facet = $go_term->Type;
-            $facet =~ s/_/ /g if $facet;
+        my @entities = map {
+            $self->_pack_list([$_->col()]);
+        } $anno->Annotation_made_with;
 
-            $display_method =~ m/.*_(.*)/;    # Strip off the spam-dexer.
-            my $description = $code->Description;
+        my %extensions = map {
+            my ($ext_type, $ext_name, $ext_value) = $_->row();
+            evidence => { "$ext_name" => "$ext_value" }
+        } $anno->Annotation_extension;
 
-#                evidence_code => {  text=>"$code",
-#                                    evidence=> map {
-#                    $_->{'Description'} = "$description";
-#                                                $_ } ($self->_get_evidence($code))
-#                                  },
+        my @term_details = ('' . $go_term->Term);
+        push @term_details, \%extensions if %extensions;
+print Dumper \%extensions;
+        my $anno_data = {
+            term_id => $self->_pack_obj($go_term, "$go_term"),
+            anno_id => "$object",
+            term => \@term_details,
+            evidence_code => "$go_code",
+            go_type => "$go_type",
+            with => @entities ? \@entities : undef,
+            extensions => %extensions ? \%extensions : undef,
+        };
 
-            push @{ $data{"$facet"} }, {
-                method        => $1,
-                evidence_code => {  text=>"$code",
-                                    evidence=> map {
-                                    $_->{'Description'} = "$description";
-                                                $_ } ($self->_get_evidence($code))
-                                  },
-                term          => $self->_pack_obj($go_term),
-            };
-        }
+        push @data, $anno_data;
     }
 
+    return \@data;
+}
+
+sub gene_ontology {
+    my ($self)   = @_;
+
+    my %data_by_type = ();
+    my @data = @{ $self->_gene_ontology };
+    foreach my $anno_data (@data){
+        my $type = $anno_data->{go_type};
+        $data_by_type{$type} ||= ();
+        push @{$data_by_type{$type}}, $anno_data;
+    }
+print Dumper \%data_by_type;
     return {
         description => 'gene ontology assocations',
-        data        => %data ? \%data : undef,
+        data        => %data_by_type ? \%data_by_type : undef,
     };
 }
 

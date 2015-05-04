@@ -21,10 +21,12 @@
                    table_count = table_count + 1;
 
                   # Here we assume that the inner data structure as an array of hashes
-                  build_data_table(order = ['term','evidence_code','method'],
-                             columns = {   method   => 'Method',
+                  build_data_table(order = ['term_id', 'term', 'with', 'evidence_code'],
+                             columns = {   extensions   => 'Extensions',
+                                                 with   => 'With',
                                                  term   => 'Term',
-                                        evidence_code   => 'Evidence Code' },
+                                              term_id   => 'Term ID',
+                                        evidence_code   => 'Evidence code' },
                              passed_data = fields.$key.data.$facet,
                          key     = "table_${table_count}_go");
 
