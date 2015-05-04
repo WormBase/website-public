@@ -265,7 +265,7 @@ END;
       [% IF title; %]
          <div class="field-title">
                   <span title="[% tooltip ? tooltip : fields.$key.description %]">
-                     [% title _ ': ' %]
+                     [% title.replace('_+', ' ') _ ': ' %]
                    </span>
           </div>
       [%  END; %]
