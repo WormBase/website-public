@@ -329,7 +329,7 @@ END;
         FOREACH o IN order; headers.push(columns.$o); END;
 
         # generate table
-        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator);
+        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener);
       END;
     END; # END of MACRO
 %]
@@ -344,7 +344,7 @@ END;
      styling via javascript.
 %]
 
-[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator) BLOCK %]
+[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator, listener) BLOCK %]
 
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
@@ -450,7 +450,7 @@ WB.getPlugin("dataTables", function(){
                 },
                 [% style %]
 
-              });
+              })[% listener %];
             }
           }, 1);
         });
