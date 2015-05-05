@@ -748,7 +748,7 @@ sub _build_gene_ontology {
     my $object = $self->object;
 
     my @data;
-    foreach my $anno ( $object->GO_annotation ) {
+    foreach my $anno ($object->GO_annotation) {
         my $go_term = $anno->GO_term;
         my $go_type = $go_term->Type;
         my $go_code = $anno->GO_code;
@@ -760,17 +760,24 @@ sub _build_gene_ontology {
 
         my %extensions = map {
             my ($ext_type, $ext_name, $ext_value) = $_->row();
-            evidence => { "$ext_name" => "$ext_value" }
+            evidence => { "$ext_name" => $self->_pack_obj($ext_value) }
         } $anno->Annotation_extension;
+
+        my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
+        my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
+   #     print Dumper $anno->get();
+    print Dumper 'HH';
+    print Dumper $evidence;
+    print Dumper 'hh';
 
         my @term_details = ('' . $go_term->Term);
         push @term_details, \%extensions if %extensions;
-print Dumper \%extensions;
+
         my $anno_data = {
             term_id => $self->_pack_obj($go_term, "$go_term"),
             anno_id => "$object",
             term => \@term_details,
-            evidence_code => "$go_code",
+            evidence_code => $evidence ? { evidence => $evidence, text => "$go_code" } : "$go_code",
             go_type => "$go_type",
             with => @entities ? \@entities : undef,
             extensions => %extensions ? \%extensions : undef,
@@ -778,6 +785,14 @@ print Dumper \%extensions;
 
         push @data, $anno_data;
     }
+
+    my $anno_root = $object->at('Gene_info.GO_annotation');
+    # print Dumper \@anno_root;
+    # my $evidence = $self->_get_evidence($anno, ['Contributed_by']);
+    # print Dumper $evidence;
+
+    my $evidence_all = $self->_get_evidence($object, ['Contributed_by'],
+                                            fetch_tag => 'GO_annotation');
 
     return \@data;
 }
@@ -792,7 +807,7 @@ sub gene_ontology {
         $data_by_type{$type} ||= ();
         push @{$data_by_type{$type}}, $anno_data;
     }
-print Dumper \%data_by_type;
+
     return {
         description => 'gene ontology assocations',
         data        => %data_by_type ? \%data_by_type : undef,
