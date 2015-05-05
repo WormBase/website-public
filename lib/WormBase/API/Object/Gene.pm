@@ -760,22 +760,18 @@ sub _build_gene_ontology {
 
         my %extensions = map {
             my ($ext_type, $ext_name, $ext_value) = $_->row();
-            evidence => { "$ext_name" => $self->_pack_obj($ext_value) }
+           "$ext_name" => $self->_pack_obj($ext_value)
         } $anno->Annotation_extension;
 
         my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
         my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
-   #     print Dumper $anno->get();
-    print Dumper 'HH';
-    print Dumper $evidence;
-    print Dumper 'hh';
 
         my @term_details = ('' . $go_term->Term);
-        push @term_details, \%extensions if %extensions;
+        push @term_details, { evidence => \%extensions } if %extensions;
 
         my $anno_data = {
             term_id => $self->_pack_obj($go_term, "$go_term"),
-            anno_id => "$object",
+            anno_id => "$anno",
             term => \@term_details,
             evidence_code => $evidence ? { evidence => $evidence, text => "$go_code" } : "$go_code",
             go_type => "$go_type",
@@ -785,14 +781,6 @@ sub _build_gene_ontology {
 
         push @data, $anno_data;
     }
-
-    my $anno_root = $object->at('Gene_info.GO_annotation');
-    # print Dumper \@anno_root;
-    # my $evidence = $self->_get_evidence($anno, ['Contributed_by']);
-    # print Dumper $evidence;
-
-    my $evidence_all = $self->_get_evidence($object, ['Contributed_by'],
-                                            fetch_tag => 'GO_annotation');
 
     return \@data;
 }
