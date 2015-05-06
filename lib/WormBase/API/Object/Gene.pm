@@ -766,13 +766,14 @@ sub _build_gene_ontology {
         my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
         my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
 
-        my @term_details = ('' . $go_term->Term);
+        my @term_details = () ; #('' . $go_term->Term);
         push @term_details, { evidence => \%extensions } if %extensions;
 
         my $anno_data = {
             term_id => $self->_pack_obj($go_term, "$go_term"),
+            term_description => '' . $go_term->Term,
             anno_id => "$anno",
-            term => \@term_details,
+            term => @term_details ? \@term_details : undef,
             evidence_code => $evidence ? { evidence => $evidence, text => "$go_code" } : "$go_code",
             go_type => "$go_type",
             with => @entities ? \@entities : undef,

@@ -15,27 +15,47 @@
             var rows = api.rows().nodes();
             var last=null;
 
-            api.column(0).data().each( function ( group, i ) {
+            api.column(0).nodes().each( function ( cell, i ) {
+    console.log(cell);
+                $jq(cell).children().hide();
+            });
+
+            api.rows().data().each( function ( rowData, i ) {
+
+                var groupID = rowData[0];
+                var group = rowData[1];
+                // var group = $jq(cell).find(".go_term-link").text();
+                // var extensions = $jq(cell).children("> :not(.evidence)").hide();
+console.log(group);
                 if ( last !== group ) {
+
                     $jq(rows).eq( i ).before(
-                        \'<tr class="group"><td colspan="5">\'+group+\'</td></tr>\'
+                        \'<tr class="group"><td>\' + groupID + \'</td><td colspan="1">\'+ group +\'</td><td colspan="3"></td></tr>\'
                     );
 
                     last = group;
                 }
+              //  $jq(cell).html(extensions);
             } );
-},'%]
+
+},
+        "columnDefs": [
+            { "targets": 1, "visible": false },
+            { "targets": 2, "orderable": false }
+        ],
+        "autoWidth": false
+'%]
 [% go_table_listener = "
-.on( 'click', 'tr.group', function () {
-        var table = \$jq(this).closest('table').DataTable();
-        var currentOrder = table.order()[0];
-        if ( currentOrder[0] === 0 && currentOrder[1] === 'asc' ) {
-            table.order( [ 0, 'desc' ] ).draw();
-        }
-        else {
-            table.order( [ 0, 'asc' ] ).draw();
-        }
-    } );
+// .on( 'click', 'tr.group', function () {
+//         var table = \$jq(this).closest('table').DataTable();
+//         var currentOrder = table.order()[0];
+//         if ( currentOrder[0] === 0 && currentOrder[1] === 'asc' ) {
+//             table.order( [ 0, 'desc' ] ).draw();
+//         }
+//         else {
+//             table.order( [ 0, 'asc' ] ).draw();
+//         }
+//     } );
 " %]
 [%
        key="gene_ontology";
@@ -49,7 +69,7 @@
                    table_count = table_count + 1;
 
                   # Here we assume that the inner data structure as an array of hashes
-                  build_data_table(order = [ 'term_id', 'term', 'with', 'evidence_code', 'anno_id'],
+                  build_data_table(order = ['term_id', 'term_description', 'term', 'with', 'evidence_code', 'anno_id'],
                              columns = {   extensions   => 'Extensions',
                                                  with   => 'With',
                                                  term   => 'Term',
