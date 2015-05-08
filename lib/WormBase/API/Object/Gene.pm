@@ -803,7 +803,72 @@ sub gene_ontology {
     };
 }
 
+sub gene_ontology_summary {
+    my ($self)   = @_;
 
+    my @data = @{ $self->_gene_ontology };
+
+    sub _get_type {
+        my ($item) = @_;
+        return $item->{go_type};
+    }
+
+    sub _get_go_term {
+        my ($item) = @_;
+        return $item->{term_id}->{label};
+    }
+
+    my $data_by_type = $self->_group_and_combine(\@data, \&_get_type);
+    my %result_by_type = ();
+
+    foreach my $go_type (keys %$data_by_type) {
+        my $data4type = $data_by_type->{$go_type};
+        my $result4type = $self->_group_and_combine($data4type, \&_get_go_term, \&_summarize_go_term);
+        $result_by_type{$go_type} = $result4type;
+    }
+    print Dumper \%result_by_type;
+    return {
+        description => 'gene ontology assocations',
+        data        => %result_by_type ? \%result_by_type : undef,
+    };
+}
+
+sub _group_and_combine {
+    my ($self, $all_items, $group_fun, $summarize_fun) = @_;
+    my %grouped = ();
+
+    # to group
+    foreach my $item (@$all_items) {
+        my $group_key = $group_fun->($item);
+        $grouped{$group_key} ||= ();
+        push  @{ $grouped{$group_key} }, $item;
+    }
+
+    # to summarize
+    my %summarized = ();
+    if ($summarize_fun){
+        foreach my $group_key (keys %grouped) {
+            my @group_items = @{ $grouped{$group_key} };
+            my $group_result = $summarize_fun->(\@group_items);
+            $summarized{$group_key} = $group_result;
+        }
+    }
+    return %summarized ? \%summarized : \%grouped;
+}
+sub _summarize_go_term {
+    my ($anno_data_all) = @_;
+
+    my @exts_all = ();
+    foreach my $anno_data (@$anno_data_all){
+        my $exts = $anno_data->{extensions} || {};
+        my @pairs = map {[$_,$exts->{$_}]} (keys %$exts);
+        push @exts_all, \@pairs if @pairs;  #still want extensions from different annotations to be kept separate
+    }
+    return {
+        term_id => $anno_data_all->[0]->{term_id},
+        extensions => @exts_all ? \@exts_all : undef,
+    };
+}
 
 #######################################
 #

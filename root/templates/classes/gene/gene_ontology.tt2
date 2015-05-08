@@ -80,6 +80,12 @@ console.log(group);
     style = go_table_settings,
     listener = go_table_listener);
 
+                  build_data_table(order = ['term_id', 'extensions'],
+                             columns = {   extensions   => 'Extensions',
+                                              term_id   => 'Term ID', },
+                             passed_data = fields.$key.data.$facet,
+                         key     = "table_${table_count}_go_summary");
+
                  END; # END of WRAPPER
               END; # END IF facet contains data
          END; # END of facets
