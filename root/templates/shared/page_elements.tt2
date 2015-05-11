@@ -569,27 +569,39 @@ END; %]
     ELSIF ref(cell) == 'ARRAY';
       IF (!separator) && (cell.size > 10);
           WRAPPER toggle title=cell.size _ ' Results';
-            FOREACH item IN cell;
-              cell_content(item);
-              IF !item.defined('evidence') && !loop.last;
-                  '<br />';
-              END;
-            END;
+            list_cell_content(cell, separator);
           END;
       ELSE;
-        FOREACH item IN cell;
-          cell_content(item);
-          IF !(ref(item) && item.defined('evidence')) && !loop.last;
-              # scalar.defined always return true, so check item is ref
-              separator || '<br />';
-          END;
-        END;
+          list_cell_content(cell, separator);
       END;
     ELSE;
       cell;
     END;
   END;
 %]
+
+[% MACRO list_cell_content(cell, separator) BLOCK;
+    WRAPPER ul_unless_separator;
+        FOREACH item IN cell;
+          IF separator || cell.size < 2;
+            cell_content(item);
+          ELSE;
+            '<li>' _ cell_content(item) _ '</li>';
+          END;
+          IF !(ref(item) && item.defined('evidence')) && !loop.last;
+              # scalar.defined always return true, so check item is ref
+              separator;
+          END;
+        END;
+    END;
+END %]
+
+[% BLOCK ul_unless_separator %]
+
+    [% '<ul>' UNLESS separator %]
+        [% content %]
+    [% '</ul>' UNLESS separator %]
+[% END %]
 
 [% MACRO format_footnotes(notes) BLOCK;
   notes.join('');
