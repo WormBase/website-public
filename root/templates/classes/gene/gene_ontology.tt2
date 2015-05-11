@@ -69,7 +69,7 @@ console.log(group);
                    table_count = table_count + 1;
 
                   # Here we assume that the inner data structure as an array of hashes
-                  build_data_table(order = ['term_id', 'term_description', 'term', 'with', 'evidence_code', 'anno_id'],
+                  build_data_table(order = ['term_id', 'term_description', 'term', 'evidence_code', 'with', 'anno_id'],
                              columns = {   extensions   => 'Extensions',
                                                  with   => 'With',
                                                  term   => 'Term',
@@ -80,11 +80,15 @@ console.log(group);
     style = go_table_settings,
     listener = go_table_listener);
 
-                  build_data_table(order = ['term_id', 'extensions'],
+
+                  build_data_table(order = ['term_id', 'term_description', 'extensions'],
                              columns = {   extensions   => 'Extensions',
-                                              term_id   => 'Term ID', },
-                             passed_data = fields.$key.data.$facet,
-                         key     = "table_${table_count}_go_summary");
+                                              term_id   => 'Term ID',
+                                              term_description => 'Term',
+                                },
+                             passed_data = fields.gene_ontology_summary.data.$facet,
+                         key     = "table_${table_count}_go_summary")
+;
 
                  END; # END of WRAPPER
               END; # END IF facet contains data

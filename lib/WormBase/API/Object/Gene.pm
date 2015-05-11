@@ -771,7 +771,7 @@ sub _build_gene_ontology {
 
         my $anno_data = {
             term_id => $self->_pack_obj($go_term, "$go_term"),
-            term_description => '' . $go_term->Term,
+            term_description => $self->_pack_obj($go_term), #'' . $go_term->Term,
             anno_id => "$anno",
             term => @term_details ? \@term_details : undef,
             evidence_code => $evidence ? { evidence => $evidence, text => "$go_code" } : "$go_code",
@@ -824,7 +824,7 @@ sub gene_ontology_summary {
     foreach my $go_type (keys %$data_by_type) {
         my $data4type = $data_by_type->{$go_type};
         my $result4type = $self->_group_and_combine($data4type, \&_get_go_term, \&_summarize_go_term);
-        $result_by_type{$go_type} = $result4type;
+        $result_by_type{$go_type} = [values %$result4type];
     }
     print Dumper \%result_by_type;
     return {
@@ -860,12 +860,17 @@ sub _summarize_go_term {
 
     my @exts_all = ();
     foreach my $anno_data (@$anno_data_all){
-        my $exts = $anno_data->{extensions} || {};
-        my @pairs = map {[$_,$exts->{$_}]} (keys %$exts);
-        push @exts_all, \@pairs if @pairs;  #still want extensions from different annotations to be kept separate
+        #extensions within a single annotation
+        my $exts = $anno_data->{extensions};
+        push @exts_all, { evidence => $exts } if $exts;
+
+        # my $exts = $anno_data->{extensions} || {};
+        # my @pairs = map {[$_,$exts->{$_}]} (keys %$exts);
+        # push @exts_all, \@pairs if @pairs;
     }
     return {
         term_id => $anno_data_all->[0]->{term_id},
+        term_description => $anno_data_all->[0]->{term_description},
         extensions => @exts_all ? \@exts_all : undef,
     };
 }
