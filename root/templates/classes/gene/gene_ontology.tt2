@@ -69,7 +69,8 @@ console.log(group);
                    table_count = table_count + 1;
 
                   # Here we assume that the inner data structure as an array of hashes
-                  build_data_table(order = ['term_id', 'term_description', 'term', 'evidence_code', 'with', 'anno_id'],
+
+                  full_view = build_data_table(order = ['term_id', 'term_description', 'term', 'evidence_code', 'with', 'anno_id'],
                              columns = {   extensions   => 'Extensions',
                                                  with   => 'With',
                                                  term   => 'Term',
@@ -81,7 +82,7 @@ console.log(group);
     listener = go_table_listener);
 
 
-                  build_data_table(order = ['term_id', 'term_description', 'extensions'],
+                   summary_view = build_data_table(order = ['term_id', 'term_description', 'extensions'],
                              columns = {   extensions   => 'Extensions',
                                               term_id   => 'Term ID',
                                               term_description => 'Term',
@@ -89,6 +90,16 @@ console.log(group);
                              passed_data = fields.gene_ontology_summary.data.$facet,
                          key     = "table_${table_count}_go_summary")
 ;
+
+                   multi_view("go_multi_view_$facet",
+                              [{   key => "go_summary_$facet",
+                                default => 1,
+                                 label => 'Summary view',
+                                  view => summary_view },
+                               {   key => "go_$facet",
+                                 label => 'Full view',
+                                  view => full_view }]);
+
 
                  END; # END of WRAPPER
               END; # END IF facet contains data

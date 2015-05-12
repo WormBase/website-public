@@ -670,6 +670,33 @@ END %]
 
 [% END %]
 
+[% MACRO multi_view(name, view_list) BLOCK;
+    '<div class="multi_view_container">';
+
+    # making buttons for the multi view
+    FOREACH view IN view_list;
+        view_id = view.key;
+        view_button_id = view_id _ '_button';
+        checked_opt = view.default ? ' checked' : '';
+        '<input id="'_ view_button_id _'" name="'_ name _'" type="radio" '_ checked_opt _'/>';
+        '<label for="'_ view_button_id _'">' _
+           view.label _
+        '</label>';
+    END;
+
+    # making the views
+    FOREACH view IN view_list;
+        display = view.default ? ' style="display:none;"' : '';
+        '<div id="'_ view.id _'" class="multi-view" '_ display _'>';
+            view.view;
+        '</div>';
+    END;
+
+        '<script>WB.multiViewInit();</script>';
+    '</div>';
+
+END; %]
+
 
 [%#
  #####################################################
