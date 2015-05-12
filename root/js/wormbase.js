@@ -1698,6 +1698,20 @@ var Scrolling = (function(){
      }
   };
 
+    function multiViewInit(){
+      Plugin.getPlugin('icheck',function(){
+        var buttons = $jq('.multi-view-container input:radio');
+        buttons.iCheck({
+          radioClass: 'iradio_square-aero'
+        }).on('ifChecked', function(){
+          var viewId = $jq(this).attr('value');
+          var container = $jq(this).closest('.multi-view-container');
+          container.find('.multi-view').hide();
+          container.find('#'+viewId).show();
+        });
+
+      });
+    }
 
 	function setupCytoscape(data, types, clazz){
 
@@ -1947,13 +1961,16 @@ var Scrolling = (function(){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
-                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js"
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
+
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
-                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css"
+                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
           };
 
 
@@ -2128,8 +2145,9 @@ var Scrolling = (function(){
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
-      reloadWidget: reloadWidget                    // reload a widget
-    }
+      reloadWidget: reloadWidget,                   // reload a widget
+      multiViewInit: multiViewInit                  // toggle between summary/full view table
+    };
   })();
 
 
