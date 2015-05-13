@@ -801,7 +801,8 @@
   }
 
   function allResults(type, species, query, widget){
-    var url = "/search/" + type + "/" + query + "/1?inline=1" + (species && "&species=" + species),
+    var url_search_base = "/search/" + type + "/" + query,
+        url = url_search_base + "/1?inline=1" + (species && "&species=" + species),
         allSearch = $jq("#all-search-results"),
         searchSummary = $jq("#search-count-summary"),
         curr = $jq("#curr-ref-text");
@@ -812,8 +813,11 @@
         checkSearch(allSearch);
 
         var dl = searchSummary.find(".dl-search");
+        var dl_button = dl.closest('li');
+
         dl.load(dl.attr("href"), function(){
-          if((parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10)) < 100000){
+          var resultCount = (parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10));
+          if(resultCount < 100000){
             searchSummary.find("#get-breakdown").show().click(function(){
               setLoading($jq(this));
               searchFilter(searchSummary, curr);
@@ -824,6 +828,22 @@
               });
              });
           }
+          if(resultCount < 500){
+            // allows downloading search result if # is small
+            searchSummary.find('.dl-format a').each(function(){
+              var format = $jq(this).attr('data-content-type');
+              var dl_params = $jq.param({'species': species,
+                                         'format': format});
+              var dl_url = url_search_base + "/all" +
+                (dl_params && '?' + dl_params);
+              $jq(this).attr('href',dl_url);
+            });
+          }else{
+            searchSummary.find('.dl-format-list').html('<li  style="height:auto">Too many results to download. Please use our <a href="ftp://ftp.wormbase.org/pub/wormbase/" target="_blank">FTP</a> site.</li>');
+            dl_button.addClass('fade');
+            dl_button.find('.ui-icon').addClass('ui-state-disabled');
+          }
+          dl_button.show();  // show the download button otherwise hidden
         });
       });
     } else if (widget == 'references') {
@@ -1645,6 +1665,12 @@ var Scrolling = (function(){
         }
         var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']  + '&redirect=' + location;
         this.popupWin(pop_url);
+
+        //if on wormmine page, try sign in to wormmine,
+        // currently not enable for entire site due to redirect issue
+        if (window.location.href.indexOf("tools/wormmine") > -1){
+          this.signinWormMine(box_id);
+        }
       },
 
       popupWin: function(url) {
@@ -1656,9 +1682,36 @@ var Scrolling = (function(){
         // var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
         // win2.focus();
         window.location = url;
-      }
+      },
+
+     signinWormMine: function(provider){
+       var mineProviders = {
+         google: 'Google'
+       };
+       var mineUrlBase = 'https://www.wormbase.org/tools/wormmine/openid?provider=%s';
+       var mineUrl;
+       if (mineProviders[provider]){
+         mineUrl = mineUrlBase.replace('%s', mineProviders[provider]);
+      //   $jq.get(mineUrl);
+         window.location.replace(mineUrl);
+       }
+     }
   };
 
+    function multiViewInit(){
+      Plugin.getPlugin('icheck',function(){
+        var buttons = $jq('.multi-view-container input:radio');
+        buttons.iCheck({
+          radioClass: 'iradio_square-aero'
+        }).on('ifChecked', function(){
+          var viewId = $jq(this).attr('value');
+          var container = $jq(this).closest('.multi-view-container');
+          container.find('.multi-view').hide();
+          container.find('#'+viewId).show();
+        });
+
+      });
+    }
 
 	function setupCytoscape(data, types, clazz){
 
@@ -1908,13 +1961,16 @@ var Scrolling = (function(){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
-                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js"
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
+
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
-                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css"
+                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
           };
 
 
@@ -2089,8 +2145,9 @@ var Scrolling = (function(){
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
-      reloadWidget: reloadWidget                    // reload a widget
-    }
+      reloadWidget: reloadWidget,                   // reload a widget
+      multiViewInit: multiViewInit                  // toggle between summary/full view table
+    };
   })();
 
 

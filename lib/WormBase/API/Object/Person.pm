@@ -30,13 +30,10 @@ has 'address_data' => (
 	my %address;
 
 	foreach my $tag ($object->Address) {
-	    if ($tag =~ m/street|email|office/i) {
 		my @data = map { $_->name } $tag->col;
-		$address{lc($tag)} = \@data;
-	    } else {
-		$address{lc($tag)} =  $tag->right->name;
-	    }
+		$address{lc($tag)} = \@data if @data;
 	}
+
 	return \%address;
     }
     );
@@ -107,6 +104,7 @@ has 'publication_data' => (
 #
 #######################################
 
+
 #######################################
 #
 # INSTANCE METHODS
@@ -144,7 +142,7 @@ sub country {
     my $self = shift;
     my $address = $self->address_data;
     my $data    = { description => 'country of residence of person, if known',
-		    data        => $address->{country} || undef };
+		    data        => $address->{country} && $address->{country}->[0] };
     return $data;
 }
 
@@ -233,8 +231,8 @@ sub fax {
 
 sub web_page {
     my $self    = shift;
-    my $address = $self->address_data;
-    my @urls =  grep { /HTTP:\/\//i } $address->{web_page};
+    my $web_address = $self->address_data->{web_page};
+    my @urls =  grep { /HTTP:\/\//i } @$web_address if $web_address;
 
     my $data = { description => 'web address of the person',
 		 data        => @urls ? \@urls : undef };

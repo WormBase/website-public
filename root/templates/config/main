@@ -29,10 +29,10 @@
           ELSE;
             "$ln";
           END;
-        ELSIF data.exists('class') && data.id;
-            # the key 'class' is exists, but value is undef
+        ELSIF data.exists('class') && data.class == undef && data.id;
+            # the key 'class' exists, but value is undef
             # a scenario where xapian fetch by ID fails to find the object
-            searchlink('all', data.id, data.id);
+            searchlink('all', data.id, text);
         ELSE;
           data.label || data;
         END;
@@ -208,7 +208,7 @@
     MACRO pluralize(word, size) BLOCK;
       UNLESS word; RETURN; END;
       size = size || 0;
-      IF (size >= 1);
+      IF (size > 1);
         IF (matches = word.match('^(.*)y$'));
           word = matches.0 _ 'ies';                   # antibody -> antibodies
         ELSIF (matches = word.match('^(.*)ium$'));

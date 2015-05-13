@@ -63,7 +63,7 @@ sub _get_feature_associations {
 
         push @data, {
             name => $self->_pack_obj($feature),
-            description => $description,
+            description => $description && "$description",
             method => $method && "$method",
             interaction => \@interactions,
             expr_pattern => \@expr_pattern,

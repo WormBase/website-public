@@ -5,7 +5,7 @@
 # feature     = Motif:translated_feature
 # Aggregated features (skip top level feature)
 #feature       = motif:translated_feature
-feature       = sequence_motif:translated_feature
+feature       = polypeptide_motif:translated_feature
 key           = Protein motifs
 category      = Sequence Features:Translated Features
 glyph         = segments

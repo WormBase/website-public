@@ -62,12 +62,11 @@
     </div>
   </div>
 
+
 [% MACRO nav_species(species_name,display_title) BLOCK %]
   <li>
-    <a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' || species_name == 'others' %] class="species" [% END %]>
-     [%- UNLESS species_name == 'others' -%]
+    <a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' %] class="species" [% END %]>
          <span class="ui-icon ui-icon-triangle-1-e"></span>
-     [%- END -%]
      [% c.config.sections.species_list.$species_name.title %]
     </a>
               <ul class="wb-dropdown">
@@ -84,6 +83,18 @@
 
 [% END %]
 
+[% BLOCK nav_sublist %]
+    <li>
+        <a>
+            <span class="ui-icon ui-icon-triangle-1-s"></span>
+            [% sublist_title %]
+        </a>
+        <ul class="wb-dropdown">
+            [% content %]
+        </ul>
+    </li>
+[% END %]
+
   <div id="nav-bar">
     <ul class="nav-bar">
     [% FOREACH title IN c.config.nav_bar.option %]
@@ -97,18 +108,25 @@
 
               [% genus_list = {} %]
               [% FOREACH s IN c.config.sections.species_list.keys.sort;
+                # avoid duplicate listing if already in 1st level of menu
+                NEXT IF c.config.sections.species_list.$s.display_in_dropdown == 'yes';
                 genus = c.config.sections.species_list.$s.genus;
                 NEXT UNLESS genus;
                 genus_list.$genus = genus_list.$genus || [];
                 genus_list.$genus.push(s);
                END %]
 
-              [% g_sort = genus_list.keys.sort %]
-              [% g_sort.unshift('Caenorhabditis') %]
+              [% g_sort = c.config.sections.species_list.keys.sort %]
+              [% #Caenorhabditis species first, #other species later %]
+              [% g_sort = g_sort.grep('^c_.+').merge(g_sort.grep('^[^c]_.+')); %]
               [% g_sort.unshift('c_elegans') %]
               [% g_sort.unshift('all') %]
-              [% g_sort.push('others') %]
               [% g_sort = g_sort.unique %]
+
+
+              [% others_list = genus_list.keys.sort %]
+              [% others_list.unshift('Caenorhabditis') %]
+              [% others_list = others_list.unique %]
 
               <li>[% text2link('genomic_location','all','<span class="ui-icon ui-icon-triangle-1-e"></span><b>Browse Genomes</b>') %]
                 <ul class="wb-dropdown">
@@ -126,17 +144,16 @@
 
                 [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
                   [% nav_species(option); %]
-                [% ELSE %]
-                <li>
-                  <a class="species">
-                    <span class="ui-icon ui-icon-triangle-1-e"></span>[% option %]
-                  </a>
-                  <ul class="wb-dropdown">
-                      [% FOREACH s IN genus_list.$option %]
-                        [% nav_species(s); %]
-                      [% END %]
-                  </ul>
-                </li>
+                [% END %]
+              [% END %]
+
+              [% WRAPPER nav_sublist sublist_title='Others...' %]
+                [% FOREACH g IN others_list %] [%# per genus %]
+                  [% WRAPPER nav_sublist sublist_title=g%]
+                    [% FOREACH s IN genus_list.$g %] [%# per species %]
+                      [% nav_species(s); %]
+                    [% END %]
+                  [% END %]
                 [% END %]
               [% END %]
 

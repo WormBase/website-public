@@ -9,11 +9,11 @@
    <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">
     <div id="searchBody" class="ui-corner-all">
 
-[% 
+[%
     config_species = c.config.sections.species;
     config_resources = c.config.sections.resources;
 %]
-    
+
 [% PERL %]
 
     # Sort the classes by their display names
@@ -22,9 +22,9 @@
 
     sub name2keys {
         my ($config_classes) = @_;
-        my @nameKeyPairs = map { 
+        my @nameKeyPairs = map {
             my $display_name = eval { $config_classes->{$_}->{'title'} };
-            $display_name ? ({   name => $display_name, 
+            $display_name ? ({   name => $display_name,
                  key => $_ }) : ();
         } keys %$config_classes;
         return @nameKeyPairs;
@@ -32,7 +32,7 @@
 
     my @classes = name2keys($config_species);
     push @classes, name2keys($config_resources);
-    
+
     my @classes_sorted = sort { $a->{name} cmp $b->{name} } @classes;
     my @class_keys = map { $_->{key} } @classes_sorted;
 
@@ -152,16 +152,16 @@
                 END;%]
         </div>
         <ul>
-      <li class="title toggle">
+      <li class="title toggle" style="display:none">
         Download all
         (<span class="dl-search" href="/search/count/[% species %]/[% type %]/[% query_uri %]"></span>)
         <span class="ui-icon ui-icon-triangle-1-e"></span>
       </li>
-      <div class="ui-helper-hidden">
+      <div class="ui-helper-hidden dl-format-list">
         [% FOREACH format IN c.config.api.content_type.keys.sort %]
         [% d_url = "/search/$type/$query_uri/all?" _ ( species ? "species=$species&" : "" ) _ "content-type=" _ format %]
-        <li class>
-          <a href="[% d_url %]" target="_blank">[% c.config.api.content_type.$format %]</a>
+        <li class="dl-format">
+          <a data-content-type="[% format %]" target="_blank">[% c.config.api.content_type.$format %]</a>
           <span class="ui-icon ui-icon-close"></span>
         </li>
         [% END %]

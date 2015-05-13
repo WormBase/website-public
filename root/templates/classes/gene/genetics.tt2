@@ -1,10 +1,8 @@
 [%
 
    # Reference allele
-   WRAPPER $field_block title="Reference allele" key="reference_allele";
-       FOREACH obj IN fields.reference_allele.data;
-	   tag2link(obj);
-       END;
+   WRAPPER $field_block title=pluralize("Reference allele", fields.reference_allele.data.size) key="reference_allele";
+	   tags2link(fields.reference_allele.data);
    END;
 
    # Alleles

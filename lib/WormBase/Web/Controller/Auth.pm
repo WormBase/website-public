@@ -8,6 +8,9 @@ use Facebook::Graph;
 use Crypt::SaltedHash;
 use Data::GUID;
 use WormBase::Web::ThirdParty::Google;
+use JSON::WebToken;
+
+
 
 __PACKAGE__->config->{namespace} = '';
 use Data::Dumper;
@@ -183,7 +186,7 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
 
     #    unless($c->config->{wormmine_path}){
         # WormMine redirects to this url now after it has logged in:
-          $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
+          $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect}."&oauth2=1");
         # }else{
         #   # Redirect users to WormMine openID login
         #   $c->res->redirect( $c->uri_for('/') . $c->config->{wormmine_path} . '/openid?provider=Google');
@@ -240,7 +243,6 @@ sub auth_wbid :Path('/auth/wbid')  :Args(0) {
 
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
-
      $c->user_session->{redirect} = $c->user_session->{redirect} || $c->req->params->{redirect};
      my $redirect = $c->user_session->{redirect};
      my $param = $c->req->params;
@@ -282,7 +284,8 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
         };
         $c->response->redirect($url);
      # OpenID
-    } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i) {
+    } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i && $param->{oauth2} eq '1') {
+
         my $callback_url = $c->uri_for('auth/code/google');
         $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
         my $url = WormBase::Web::ThirdParty::Google->new()->get_authorization_url(
@@ -596,7 +599,10 @@ sub auth_local {
         my $redirect_to = $params->{redirect_to} || $c->uri_for('/');
         # $c->res->header('Cache-Control' => 'no-cache');
         # $c->res->header('Refresh' => 0);
+
         $c->res->headers->expires(time);
+        $c->forward('create_jwt', ['authenticate']);
+        $c->response->cookies->{jwt} = $c->stash->{jwt};
         $c->res->redirect($redirect_to);
 
     }
@@ -610,18 +616,59 @@ sub auth_local {
 sub logout :Path("/logout") :Args(0){
     my ($self, $c) = @_;
     # Clear the user's state
+    my $uid = $c->user->id;
     $c->logout;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'}='auth/login.tt2';
-    if($c->config->{wormmine_path}){
-      # Send to WormMine logout after
-      $c->res->redirect($c->uri_for('/') . $c->config->{wormmine_path} . '/logout.do');
-    }
 
     # return to url
     # $c->res->header('Refresh' => 0);
     $c->res->headers->expires(time);
+    $c->forward('create_jwt', ['revoke', $uid]);
+    $c->response->cookies->{jwt} = $c->stash->{jwt};
     $c->res->redirect($c->req->params->{'redirect'});
+}
+
+
+sub create_jwt :Private {
+    my ($self, $c, $status, $uid) = @_;
+    $uid = $uid || eval { $c->user->id };
+
+    # only create jwt target specific user and
+    # with status (like 'authenticate' or 'revoke') in mind
+    return unless $uid && $status;
+
+    my $claims = {
+        iss => $c->config->{site_name},
+        sub => $uid,
+        sta => $status,
+        iat => time(),
+        exp => $c->session_expires
+    };
+
+    my $secret = $self->get_jwt_secret();
+    my $jwt = JSON::WebToken->encode($claims, $secret, 'HS256');
+
+    my $jwt_cookie = {
+        value => $jwt,
+        httponly => 1,
+        expires => $c->session_expires,
+    };
+    $jwt_cookie->{secure} = 1 if $c->config->{installation_type} eq 'production';
+    $c->stash->{jwt} = $jwt_cookie;
+
+    # my $decoded = JSON::WebToken->decode($jwt, $secret, 1);
+    # print Dumper $decoded;
+}
+
+sub get_jwt_secret {
+    my ($self) = @_;
+    my $app_root = WormBase::Web->path_to('/');
+    my $path = join('/', ("$app_root", 'credentials', 'jwt_secret.txt'));
+
+    my $secret = `cat $path`;
+    chomp $secret;
+    return $secret;
 }
 
 

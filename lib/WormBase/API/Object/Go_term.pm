@@ -101,17 +101,21 @@ sub genes {
     my $self   = shift;
     my $object = $self->object;
     my @data;
+    my $objTag = 'Gene';
 
-    foreach my $gene ($object->Gene) {
+    foreach my $anno ($object->GO_annotation) {
+        my $gene = $anno->$objTag;
         my $desc = $gene->Concise_description || $gene->Provisional_description || undef;
         my $species = $gene->Species || undef;
             push @data, {
                 gene          => $self->_pack_obj($gene),
                 species       => $self->_pack_obj($species),
-                evidence_code => $self->_get_GO_evidence( $object, $gene ),
+                evidence_code => $self->_get_GO_evidence($anno),
                 description	  => $desc && "$desc",
             };
+
     }
+
     return {
         'data'        => @data ? \@data : undef,
         'description' => 'genes annotated with this term'
@@ -282,20 +286,20 @@ sub _get_tag_data {
     return @data_pack ? \@data_pack : undef;
 }
 
-use Data::Dumper;
-sub _get_GO_evidence {
-    my ( $self,$term, $gene ) = @_;
 
-    my $association = $gene->fetch()->get('GO_term')->at("$term");
-    my $code = $association->right if $association;
-#print Dumper $g;
-#print "$term";
-    # foreach my $go_term ($gene->GO_Term) {
-    #     if ( $go_term eq $term ) {
-    #         $code = $go_term->right;
-    #     }
-    # }
-    return {text => $code && "$code", evidence => $self->_get_evidence($code)};
+sub _get_GO_evidence {
+    my ($self, $annotation) = @_;
+    my $code = $annotation->GO_code;
+    my $reference = $self->_pack_obj($annotation->Reference);
+
+    return {text => $code && "$code",
+            evidence => {
+                Paper_evidence => $reference
+            }
+    };
+    # my $association = $gene->fetch()->get('GO_term')->at("$term");
+    # my $code = $association->right if $association;
+    # return {text => $code && "$code", evidence => $self->_get_evidence($code)};
 }
 
 

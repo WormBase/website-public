@@ -9,6 +9,54 @@
 
 %]
 
+[% go_table_settings = '
+"drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows().nodes();
+            var last=null;
+
+            api.column(0).nodes().each( function ( cell, i ) {
+    console.log(cell);
+                $jq(cell).children().hide();
+            });
+
+            api.rows().data().each( function ( rowData, i ) {
+
+                var groupID = rowData[0];
+                var group = rowData[1];
+                // var group = $jq(cell).find(".go_term-link").text();
+                // var extensions = $jq(cell).children("> :not(.evidence)").hide();
+console.log(group);
+                if ( last !== group ) {
+
+                    $jq(rows).eq( i ).before(
+                        \'<tr class="group"><td>\' + groupID + \'</td><td colspan="1">\'+ group +\'</td><td colspan="3"></td></tr>\'
+                    );
+
+                    last = group;
+                }
+              //  $jq(cell).html(extensions);
+            } );
+
+},
+        "columnDefs": [
+            { "targets": 1, "visible": false },
+            { "targets": 2, "orderable": false }
+        ],
+        "autoWidth": false
+'%]
+[% go_table_listener = "
+// .on( 'click', 'tr.group', function () {
+//         var table = \$jq(this).closest('table').DataTable();
+//         var currentOrder = table.order()[0];
+//         if ( currentOrder[0] === 0 && currentOrder[1] === 'asc' ) {
+//             table.order( [ 0, 'desc' ] ).draw();
+//         }
+//         else {
+//             table.order( [ 0, 'asc' ] ).draw();
+//         }
+//     } );
+" %]
 [%
        key="gene_ontology";
        # One table for each key (here, a GO facet)
@@ -21,15 +69,39 @@
                    table_count = table_count + 1;
 
                   # Here we assume that the inner data structure as an array of hashes
-                  build_data_table(order = ['term','evidence_code','method'],
-                             columns = {   method   => 'Method',
+
+                  full_view = build_data_table(order = ['term_id', 'term_description', 'term', 'evidence_code', 'with'],
+                             columns = {   extensions   => 'Extensions',
+                                                 with   => 'With',
                                                  term   => 'Term',
-                                        evidence_code   => 'Evidence Code' },
+                                              term_id   => 'Term ID',
+                                        evidence_code   => 'Evidence code' },
                              passed_data = fields.$key.data.$facet,
-                         key     = "table_${table_count}_go");
+                         key     = "table_${table_count}_go",
+    style = go_table_settings,
+    listener = go_table_listener);
+
+
+                   summary_view = build_data_table(order = ['term_id', 'term_description', 'extensions'],
+                             columns = {   extensions   => 'Extensions',
+                                              term_id   => 'Term ID',
+                                              term_description => 'Term',
+                                },
+                             passed_data = fields.gene_ontology_summary.data.$facet,
+                         key     = "table_${table_count}_go_summary")
+;
+
+                   multi_view("go_multi_view_$facet",
+                              [{   key => "go_summary_$facet",
+                                default => 1,
+                                 label => 'Summary view',
+                                  view => summary_view },
+                               {   key => "go_$facet",
+                                 label => 'Full view',
+                                  view => full_view }]);
+
 
                  END; # END of WRAPPER
               END; # END IF facet contains data
          END; # END of facets
-
 %]
