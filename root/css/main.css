@@ -2210,12 +2210,18 @@ div#google-map {
 }
 
 
+/* multi-view styling */
+.multi-view-container label {
+  padding: 0 1em 1em 0.4em;
+  display: inline-block;
+}
 
-
-
-
-
-
+/* GO table column width */
+#go_summary_Molecular_function table thead th:last-child,
+#go_summary_Cellular_component table thead th:last-child,
+#go_summary_Biological_process table thead th:last-child {
+  width: 40%;
+}
 
 
 

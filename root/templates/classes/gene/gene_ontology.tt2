@@ -70,7 +70,7 @@ console.log(group);
 
                   # Here we assume that the inner data structure as an array of hashes
 
-                  full_view = build_data_table(order = ['term_id', 'term_description', 'term', 'evidence_code', 'with', 'anno_id'],
+                  full_view = build_data_table(order = ['term_id', 'term_description', 'term', 'evidence_code', 'with'],
                              columns = {   extensions   => 'Extensions',
                                                  with   => 'With',
                                                  term   => 'Term',
