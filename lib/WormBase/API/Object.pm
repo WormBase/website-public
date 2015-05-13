@@ -506,7 +506,7 @@ sub _get_evidence {
               $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;
           } elsif ($type eq 'Date_last_updated') {
               $label =~ s/\s00:00:00//;
-              undef $class;
+              $class = 'text';
           } elsif ($type eq 'Affected_by'){
             foreach my $ev ($evidence) {
               push(@evidences, map {$self->_pack_obj($_)} $ev->col);

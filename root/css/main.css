@@ -511,8 +511,23 @@ table ul {
     line-height: 150%;
 }
 
+.dataTable tbody {
+ background-color: #aaa;
+}
+.dataTable tr.group {
+     /* background-color: #888; */
+     /* color: white; */
+     width: 100%;
+background: linear-gradient(#eee, #ddd);
+    /* border-top: 1px solid #AAA; */
 
+    /* border-collapse: collapse; */
+    /* border-space: 0; */
 
+}
+.dataTable tr.group td:first-child {
+    /* background-color: #999; */
+}
 
 
 
@@ -2195,12 +2210,18 @@ div#google-map {
 }
 
 
+/* multi-view styling */
+.multi-view-container label {
+  padding: 0 1em 1em 0.4em;
+  display: inline-block;
+}
 
-
-
-
-
-
+/* GO table column width */
+#go_summary_Molecular_function table thead th:last-child,
+#go_summary_Cellular_component table thead th:last-child,
+#go_summary_Biological_process table thead th:last-child {
+  width: 40%;
+}
 
 
 

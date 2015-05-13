@@ -29,10 +29,10 @@
           ELSE;
             "$ln";
           END;
-        ELSIF data.exists('class') && data.id;
-            # the key 'class' is exists, but value is undef
+        ELSIF data.exists('class') && data.class == undef && data.id;
+            # the key 'class' exists, but value is undef
             # a scenario where xapian fetch by ID fails to find the object
-            searchlink('all', data.id, data.id);
+            searchlink('all', data.id, text);
         ELSE;
           data.label || data;
         END;
