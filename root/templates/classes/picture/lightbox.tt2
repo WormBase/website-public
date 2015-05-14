@@ -2,9 +2,7 @@
 
 [% MACRO img2link(img, label) BLOCK;
    UNLESS label; label = img.label || img.id; END;
-   '<a href="';
-   c.uri_for('/resources', 'picture', img.id).path ;
-   '">';
+   '<a href="'_ img_loc _'" target="_blank">';
    label;
    '</a>';
 END
@@ -99,5 +97,3 @@ $jq('a[target="lightbox"]').click(function () {
    return false;
 });
 </script>
-
-

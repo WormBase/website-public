@@ -136,8 +136,7 @@ sub _expression_pattern_details {
         next unless($_->class eq 'Picture');
         my $pic = $self->_api->wrap($_);
         if( $pic->image->{data}) {
-            $expr_packed->{curated_images} = 1;
-            last;
+            push @{$expr_packed->{curated_images}}, $self->_pack_obj($pic->object);
         }
     }
     my $sub = $expr->Subcellular_localization;
