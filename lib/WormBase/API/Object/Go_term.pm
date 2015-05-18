@@ -103,7 +103,10 @@ sub genes {
     my %data;
     my $objTag = 'Gene';
 
-    my @annotations = $object->GO_annotation;
+    my $counts = $self->_get_count($object, 'GO_annotation');
+    my @annotations = $counts <= 500 ? $object->GO_annotation : ();
+    my $comment_too_many = "$counts GO annotations found. Too many to display. Please use our <a href=\"ftp://ftp.wormbase.org/pub/wormbase/releases/current-production-release\">FTP site</a> to download.";
+
     foreach my $anno (@annotations) {
         my $gene = $anno->$objTag;
         my $evidence_code = $self->_get_GO_evidence($anno);
@@ -129,7 +132,7 @@ sub genes {
     }
 
     return {
-        'data'        => %data ? [values %data] : undef,
+        'data'        => %data ? [values %data] : $counts ? $comment_too_many : undef,
         'description' => 'genes annotated with this term'
     };
 }
