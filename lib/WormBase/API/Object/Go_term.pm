@@ -100,24 +100,39 @@ sub type {
 sub genes {
     my $self   = shift;
     my $object = $self->object;
-    my @data;
+    my %data;
     my $objTag = 'Gene';
 
-    foreach my $anno ($object->GO_annotation) {
+    my $counts = $self->_get_count($object, 'GO_annotation');
+    my @annotations = $counts <= 500 ? $object->GO_annotation : ();
+    my $comment_too_many = "$counts GO annotations found. Too many to display. Please use our <a href=\"ftp://ftp.wormbase.org/pub/wormbase/releases/current-production-release\">FTP site</a> to download.";
+
+    foreach my $anno (@annotations) {
         my $gene = $anno->$objTag;
-        my $desc = $gene->Concise_description || $gene->Provisional_description || undef;
-        my $species = $gene->Species || undef;
-            push @data, {
+        my $evidence_code = $self->_get_GO_evidence($anno);
+
+        if ($data{$gene}){
+            push @{ $data{$gene}{evidence_code} }, $evidence_code;
+        } else {
+
+            my $desc = $gene->Concise_description || $gene->Provisional_description || undef;
+            my $species = $gene->Species || undef;
+            %{$data{$gene}} = (
                 gene          => $self->_pack_obj($gene),
                 species       => $self->_pack_obj($species),
-                evidence_code => $self->_get_GO_evidence($anno),
+                evidence_code => [$self->_get_GO_evidence($anno)],
                 description	  => $desc && "$desc",
-            };
+            );
+        }
 
     }
 
+    foreach (values %data) {
+        $_->{evidence_code} = [sort {$a->{text} cmp $b->{text}} @{ $_->{evidence_code} }];
+    }
+
     return {
-        'data'        => @data ? \@data : undef,
+        'data'        => %data ? [values %data] : $counts ? $comment_too_many : undef,
         'description' => 'genes annotated with this term'
     };
 }
@@ -290,12 +305,11 @@ sub _get_tag_data {
 sub _get_GO_evidence {
     my ($self, $annotation) = @_;
     my $code = $annotation->GO_code;
-    my $reference = $self->_pack_obj($annotation->Reference);
+    my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
+    my $evidence = $self->_get_evidence($annotation->fetch(), $ev_names);
 
     return {text => $code && "$code",
-            evidence => {
-                Paper_evidence => $reference
-            }
+            evidence => $evidence,
     };
     # my $association = $gene->fetch()->get('GO_term')->at("$term");
     # my $code = $association->right if $association;

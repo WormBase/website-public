@@ -826,7 +826,7 @@ sub gene_ontology_summary {
         my $result4type = $self->_group_and_combine($data4type, \&_get_go_term, \&_summarize_go_term);
         $result_by_type{$go_type} = [values %$result4type];
     }
-    print Dumper \%result_by_type;
+
     return {
         description => 'gene ontology assocations',
         data        => %result_by_type ? \%result_by_type : undef,

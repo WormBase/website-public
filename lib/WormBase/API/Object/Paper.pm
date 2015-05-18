@@ -480,13 +480,20 @@ sub refers_to {
             $data{$ref_type} = $counts;
         } else {
 
-            # $data{$ref_type} = $self->_pack_objects([$ref_type->col]);
-
-            my @ref_items = map {
-                my $ev = $self->_get_evidence($_, \@evidence_types);
-                $ev ? { text => $self->_pack_obj($_), evidence => $ev } : $self->_pack_obj($_);
-            } $ref_type->col;
-
+            my @ref_items;
+            if ($ref_type eq 'GO_annotation') {
+                my %ref_items_map = map {
+                    my $go_term = $_->GO_term;
+                    ("$go_term", $self->_pack_obj($go_term));
+                    #(key, val), so val become unique in the map/hash
+                } $ref_type->col;
+                @ref_items = values %ref_items_map;
+            } else {
+                @ref_items = map {
+                    my $ev = $self->_get_evidence($_, \@evidence_types);
+                    $ev ? { text => $self->_pack_obj($_), evidence => $ev } : $self->_pack_obj($_);
+                } $ref_type->col;
+            }
             $data{$ref_type} = @ref_items ? \@ref_items : undef;
 
         # Or build some data tables for different object types
