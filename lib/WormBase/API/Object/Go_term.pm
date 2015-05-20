@@ -153,18 +153,19 @@ sub _build_annotated_genes {
 sub genes_summary {
     my ($self)   = @_;
 
-    my @data = @{ $self->genes };
+    my $ref_type = ref($self->genes->{data});
+    my @data = $ref_type ? @{$self->genes->{data}}: ();
 
     sub _get_gene_id {
         my ($item) = @_;
         return $item->{gene}->{label};
     }
 
-    my $summary = $self->_group_and_combine(\@data, \&_get_go_term, \&_summarize_go_term);
+    my $summary_by_gene = $self->_group_and_combine(\@data, \&_get_gene_id, \&_summarize_gene);
 
     return {
         description => 'genes annotated with this term',
-        data        => %$summary ? $summary : undef,
+        data        => %$summary_by_gene ? [values %$summary_by_gene] : undef,
     };
 }
 
@@ -176,7 +177,7 @@ sub _summarize_gene {
     foreach my $anno_data (@$anno_data_all){
         #extensions within a single annotation
         my $exts = $anno_data->{extensions};
-        push @exts_all, { evidence => $exts } if $exts;
+        push @exts_all, $exts if $exts;
     }
     return {
         gene => $anno_data_all->[0]->{gene},

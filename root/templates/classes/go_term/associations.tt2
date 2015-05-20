@@ -2,6 +2,9 @@
 
 WRAPPER $field_block title="Genes" key="genes";
 
+UNLESS ref(fields.genes.data) == 'ARRAY';
+    fields.genes.data;
+ELSE;
     table_settings = '
         "drawCallback": WB.partitioned_table(1, function(rowData){
             return "<td>" + rowData[0] + "</td>";
@@ -47,6 +50,7 @@ WRAPPER $field_block title="Genes" key="genes";
           label => 'Full view',
           view => full_view }]);
 
+END;  # end of conditinal
 END;
 
 WRAPPER $field_block title="CDS" key="cds";
