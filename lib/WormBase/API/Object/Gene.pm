@@ -833,28 +833,7 @@ sub gene_ontology_summary {
     };
 }
 
-sub _group_and_combine {
-    my ($self, $all_items, $group_fun, $summarize_fun) = @_;
-    my %grouped = ();
 
-    # to group
-    foreach my $item (@$all_items) {
-        my $group_key = $group_fun->($item);
-        $grouped{$group_key} ||= ();
-        push  @{ $grouped{$group_key} }, $item;
-    }
-
-    # to summarize
-    my %summarized = ();
-    if ($summarize_fun){
-        foreach my $group_key (keys %grouped) {
-            my @group_items = @{ $grouped{$group_key} };
-            my $group_result = $summarize_fun->(\@group_items);
-            $summarized{$group_key} = $group_result;
-        }
-    }
-    return %summarized ? \%summarized : \%grouped;
-}
 sub _summarize_go_term {
     my ($anno_data_all) = @_;
 

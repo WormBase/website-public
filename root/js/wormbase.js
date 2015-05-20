@@ -1713,6 +1713,41 @@ var Scrolling = (function(){
       });
     }
 
+    function partitioned_table(group_by_col, row_summarize){
+
+      var drawCallback = function( settings ){
+            var api = this.api();
+            var rows = api.rows().nodes();
+            var last=null;
+
+            api.column(0).nodes().each( function ( cell, i ) {
+                $jq(cell).children().hide();
+            });
+
+            api.rows().data().each( function ( rowData, i ) {
+
+                var groupID = rowData[0];
+                var group = rowData[group_by_col];
+                // var group = $jq(cell).find(".go_term-link").text();
+                // var extensions = $jq(cell).children("> :not(.evidence)").hide();
+console.log(rows.length);
+                if ( last !== group ) {
+
+                    var summary_row = row_summarize ? row_summarize(rowData)
+                      : '<td>' + groupID + '</td><td>'+ group + '</td>';
+                    $jq(rows).eq( i ).before(
+                        '<tr class="group">' + summary_row + '<td colspan="100%"></td></tr>'
+                    );
+
+                    last = group;
+                }
+              //  $jq(cell).html(extensions);
+            } );
+
+      };
+      return drawCallback;
+    }
+
 	function setupCytoscape(data, types, clazz){
 
         /* Converts element attributes to their appropriate mapped values
@@ -2146,7 +2181,8 @@ var Scrolling = (function(){
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
       reloadWidget: reloadWidget,                   // reload a widget
-      multiViewInit: multiViewInit                  // toggle between summary/full view table
+      multiViewInit: multiViewInit,                 // toggle between summary/full view table
+      partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes
     };
   })();
 

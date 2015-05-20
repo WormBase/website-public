@@ -10,36 +10,8 @@
 %]
 
 [% go_table_settings = '
-"drawCallback": function ( settings ) {
-            var api = this.api();
-            var rows = api.rows().nodes();
-            var last=null;
-
-            api.column(0).nodes().each( function ( cell, i ) {
-    console.log(cell);
-                $jq(cell).children().hide();
-            });
-
-            api.rows().data().each( function ( rowData, i ) {
-
-                var groupID = rowData[0];
-                var group = rowData[1];
-                // var group = $jq(cell).find(".go_term-link").text();
-                // var extensions = $jq(cell).children("> :not(.evidence)").hide();
-console.log(group);
-                if ( last !== group ) {
-
-                    $jq(rows).eq( i ).before(
-                        \'<tr class="group"><td>\' + groupID + \'</td><td colspan="1">\'+ group +\'</td><td colspan="3"></td></tr>\'
-                    );
-
-                    last = group;
-                }
-              //  $jq(cell).html(extensions);
-            } );
-
-},
-        "columnDefs": [
+"drawCallback": WB.partitioned_table(1),
+"columnDefs": [
             { "targets": 1, "visible": false },
             { "targets": 2, "orderable": false }
         ],
