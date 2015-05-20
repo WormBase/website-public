@@ -1713,7 +1713,7 @@ var Scrolling = (function(){
       });
     }
 
-    function partitioned_table(group_by_col){
+    function partitioned_table(group_by_col, row_summarize){
 
       var drawCallback = function( settings ){
             var api = this.api();
@@ -1730,11 +1730,13 @@ var Scrolling = (function(){
                 var group = rowData[group_by_col];
                 // var group = $jq(cell).find(".go_term-link").text();
                 // var extensions = $jq(cell).children("> :not(.evidence)").hide();
-console.log(group);
+console.log(rows.length);
                 if ( last !== group ) {
 
+                    var summary_row = row_summarize ? row_summarize(rowData)
+                      : '<td>' + groupID + '</td><td>'+ group + '</td>';
                     $jq(rows).eq( i ).before(
-                        '<tr class="group"><td>' + groupID + '</td><td colspan="1">'+ group +'</td><td colspan="100%"></td></tr>'
+                        '<tr class="group">' + summary_row + '<td colspan="100%"></td></tr>'
                     );
 
                     last = group;

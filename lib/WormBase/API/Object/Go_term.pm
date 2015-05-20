@@ -135,7 +135,7 @@ sub _build_annotated_genes {
             gene => $self->_pack_obj($gene),
             species => $self->_pack_obj($species),
             with => @entities ? \@entities : undef,
-            extensions => %extensions ? \%extensions : undef,
+            extensions => %extensions ? { evidence => \%extensions} : undef,
             evidence_code => $evidence ? { evidence => $evidence, text => "$go_code" } : "$go_code",
             anno_id => "$anno",
         };
