@@ -13,7 +13,9 @@
 "drawCallback": WB.partitioned_table(1),
 "columnDefs": [
             { "targets": 1, "visible": false },
-            { "targets": 2, "orderable": false }
+            { "targets": 2, "orderData": [1] },
+            { "targets": 2, "width": "40%" },
+            { "targets": 2, "width": "20%" }
         ],
         "autoWidth": false
 '%]
@@ -54,7 +56,7 @@
     listener = go_table_listener);
 
 
-                   summary_view = build_data_table(order = ['term_id', 'term_description', 'extensions'],
+                   summary_view = build_data_table(order = ['term_id', 'term_description'],
                              columns = {   extensions   => 'Extensions',
                                               term_id   => 'Term ID',
                                               term_description => 'Term',

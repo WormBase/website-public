@@ -2216,11 +2216,12 @@ div#google-map {
   display: inline-block;
 }
 
-/* GO table column width */
-#go_summary_Molecular_function table thead th:last-child,
-#go_summary_Cellular_component table thead th:last-child,
-#go_summary_Biological_process table thead th:last-child {
-  width: 40%;
+/* GO table styles */
+#go_summary_Molecular_function table tbody td:nth-child(2) > ul,
+#go_summary_Cellular_component table tbody td:nth-child(2) > ul,
+#go_summary_Biological_process table tbody td:nth-child(2) > ul{
+  /* width: 40%; */
+  list-style-type: none;
 }
 
 

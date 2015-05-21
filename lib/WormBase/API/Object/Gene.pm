@@ -847,9 +847,13 @@ sub _summarize_go_term {
         # my @pairs = map {[$_,$exts->{$_}]} (keys %$exts);
         # push @exts_all, \@pairs if @pairs;
     }
+
+    my $term_descr = $anno_data_all->[0]->{term_description};
+    my @term_full = @exts_all ? ($term_descr, \@exts_all) : ($term_descr);
+
     return {
         term_id => $anno_data_all->[0]->{term_id},
-        term_description => $anno_data_all->[0]->{term_description},
+        term_description => \@term_full,
         extensions => @exts_all ? \@exts_all : undef,
     };
 }
