@@ -13,7 +13,9 @@
 "drawCallback": WB.partitioned_table(1),
 "columnDefs": [
             { "targets": 1, "visible": false },
-            { "targets": 2, "orderData": [1] }
+            { "targets": 2, "orderData": [1] },
+            { "targets": 2, "width": "40%" },
+            { "targets": 2, "width": "20%" }
         ],
         "autoWidth": false
 '%]
