@@ -54,7 +54,7 @@
     listener = go_table_listener);
 
 
-                   summary_view = build_data_table(order = ['term_id', 'term_description', 'extensions'],
+                   summary_view = build_data_table(order = ['term_id', 'term_description'],
                              columns = {   extensions   => 'Extensions',
                                               term_id   => 'Term ID',
                                               term_description => 'Term',
