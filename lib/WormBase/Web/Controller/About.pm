@@ -25,9 +25,21 @@ sub about :Path('/about') :Args(0)   {
 sub about_documentation :Path('/about') :Args   {
     my ($self,$c,@path_parts) = @_;
     $self->_setup_page($c);
-    $c->stash->{section} = 'resources';
+    $c->stash->{section} = $self->_get_section(@path_parts);
     $c->stash->{path_parts} = \@path_parts;
     $c->stash->{template} = 'about/report.tt2';
+}
+
+sub _get_section {
+    my ($self, @path_parts) = @_;
+    my $section;
+    my $submit_data_path = 'userguide/submit_data';
+    if (join('/', @path_parts) =~ /\Q$submit_data_path\E/){
+        $section = 'submit_data';
+    }else{
+        $section = 'resources';
+    }
+    return $section;
 }
 
 

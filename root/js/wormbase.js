@@ -1730,7 +1730,6 @@ var Scrolling = (function(){
                 var group = rowData[group_by_col];
                 // var group = $jq(cell).find(".go_term-link").text();
                 // var extensions = $jq(cell).children("> :not(.evidence)").hide();
-console.log(rows.length);
                 if ( last !== group ) {
 
                     var summary_row = row_summarize ? row_summarize(rowData)

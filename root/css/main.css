@@ -1455,6 +1455,7 @@ ul.nav-bar ul.wb-dropdown {
   z-index:598;
   padding:0;
   list-style-type: none;
+  width: 100%;
 }
 
 /* Login and registration styling  - header, home page, and login popup */
@@ -2065,7 +2066,9 @@ li.visible div.widget-container {
 #widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
     background-color: #CFC1DE;
 }
-
+#widget-submit_data .widget-header, .navigation .submit_data.ui-selected, .submit_data-bg, #submit_data .navigation .ui-selected {
+    background-color: #C2D1DF;
+}
 /* END styles for standard widgets */
 
 
@@ -3330,4 +3333,30 @@ button::-moz-focus-inner {
 .flotplot {
   min-width: 300px;
   min-height: 300px
+}
+
+/* standardize static widget */
+/* components like buttons */
+.static-widget-content a.button {
+  float: none;
+  border: 1px solid #AAA;
+  background: #EEE;
+  cursor: pointer;
+  color: black;
+  font-size: x-small;
+  border-radius: .8em;
+  text-decoration: none;
+  padding: 0.3em;
+}
+.static-widget-content a.button:hover {
+  background: #DDD;
+}
+.static-widget-content a.highlight {
+  border-color: #FFB5B5;
+}
+.static-widget-content a.highlight:hover {
+  background: #fff0f3;
+}
+.static-widget-content tbody tr {
+  height:1.5em;
 }
