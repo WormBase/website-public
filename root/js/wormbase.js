@@ -1271,17 +1271,22 @@ var Scrolling = (function(){
             scrollTop = $window.scrollTop(),
             maxScroll = $jq(document).height() - (sidebar.outerHeight() + footerHeight + system_message + 20); //the 20 is for padding before footer
 
-        if(sidebar.outerHeight() > widgetHolder.height()){
-            resetSidebar();
-            return;
-        }
-        if (objSmallerThanWindow){
+        // console.log({
+        //   scrollTop: scrollTop,
+        //   maxScrool:maxScroll,
+        //   offset: offset,
+        //   static:static,
+        //   count:count,
+        //   objSmallerThanWindow: objSmallerThanWindow
+        // });
+
           if(static===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
                 static = 1;
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
+                static = 1;
             }else{
                 resetSidebar();
             }
@@ -1294,13 +1299,14 @@ var Scrolling = (function(){
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
             }
           }
-        }else if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
+
+       if (!objSmallerThanWindow){
+        if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
           count++; //Add counting semaphore to lock
           //close lowest section. delay for animation.
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-        }else{
-          resetSidebar();
         }
+       }
       }
     }
 
