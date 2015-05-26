@@ -3334,3 +3334,29 @@ button::-moz-focus-inner {
   min-width: 300px;
   min-height: 300px
 }
+
+/* standardize static widget */
+/* components like buttons */
+.static-widget-content a.button {
+  float: none;
+  border: 1px solid #AAA;
+  background: #EEE;
+  cursor: pointer;
+  color: black;
+  font-size: x-small;
+  border-radius: .8em;
+  text-decoration: none;
+  padding: 0.3em;
+}
+.static-widget-content a.button:hover {
+  background: #DDD;
+}
+.static-widget-content a.highlight {
+  border-color: #FFB5B5;
+}
+.static-widget-content a.highlight:hover {
+  background: #fff0f3;
+}
+.static-widget-content tbody tr {
+  height:1.5em;
+}
