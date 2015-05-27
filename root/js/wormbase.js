@@ -467,14 +467,18 @@
       });
 
       content.delegate(".slink", 'mouseover', function(){
-          var slink = $jq(this);
+          var slinkAll = $jq(this).closest('td').find('.slink');  //all slinks in the cell
           Plugin.getPlugin("colorbox", function(){
-            slink.colorbox({data: slink.attr("href"),
+            slinkAll.each(function(){
+              var slink =  $jq(this);
+              slink.colorbox({data: slink.attr("href"),
+                            rel: slink.attr("data-group"),
                             width: "800px",
                             height: "550px",
                             scrolling: false,
                            onComplete: function() {$jq.colorbox.resize(); },
                             title: function(){ return slink.next().text() + " " + slink.data("class"); }});
+            });
           });
       });
 
