@@ -1241,8 +1241,10 @@ var Scrolling = (function(){
       if(scroll){
         body.stop(false, true).animate({
           scrollTop: scroll
-        }, 2000, function(){ Scrolling.sidebarMove(); scrollingDown = 0;});
-        scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
+        }, 2000, function(){
+          scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
+          Scrolling.sidebarMove();
+        });
       }
   }
 
@@ -1286,7 +1288,7 @@ var Scrolling = (function(){
                 static = 1;
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
-                static = 1;
+                //static = 1;
             }else{
                 resetSidebar();
             }
