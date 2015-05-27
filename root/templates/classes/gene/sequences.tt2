@@ -12,6 +12,7 @@ IF fields.gene_models.data.table;
                                       protein => 'Protein',
                                       length_protein => 'Protein<br />Length (aa)'},
                           passed_data = fields.gene_models.data.table,
+                          separator = '<br/>',
                           key = 'gene_models_constructed' );
     ELSE;
         build_data_table( order = ['model','length_unspliced','type'],
@@ -19,6 +20,7 @@ IF fields.gene_models.data.table;
                                       type => 'Type',
                                       length_unspliced => 'Transcript<br />Length (nt)'},
                           passed_data = fields.gene_models.data.table,
+                          separator = '<br/>',
                           key = 'gene_models_constructed' );
     END;
 
