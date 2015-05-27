@@ -476,7 +476,7 @@
               slink.colorbox({data: slink.attr("href"),
                             rel: slink.attr("data-group"),
                             width: "800px",
-                            height: "550px",
+                            // height: "550px",
                             scrolling: false,
                            onComplete: function() {$jq.colorbox.resize(); },
                             title: function(){ return slink.next().text() + " " + slink.data("class"); }});
