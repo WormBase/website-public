@@ -1241,7 +1241,7 @@ var Scrolling = (function(){
       if(scroll){
         body.stop(false, true).animate({
           scrollTop: scroll
-        }, 2000, function(){
+        }, 300, 'easeInOutExpo', function(){
           scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
           Scrolling.sidebarMove();
         });
