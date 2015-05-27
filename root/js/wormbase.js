@@ -467,10 +467,12 @@
       });
 
       content.delegate(".slink", 'mouseover', function(){
-          var slinkAll = $jq(this).closest('td').find('.slink');  //all slinks in the cell
+          var slink0 =  $jq(this);
+          var slinkAll = slink0.closest('td').find('.slink[data-group='+ slink0.attr('data-group') +']');  //all slinks in the cell that will be grouped into a set of slides
+
           Plugin.getPlugin("colorbox", function(){
             slinkAll.each(function(){
-              var slink =  $jq(this);
+              var slink = $jq(this);
               slink.colorbox({data: slink.attr("href"),
                             rel: slink.attr("data-group"),
                             width: "800px",
