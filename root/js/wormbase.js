@@ -467,14 +467,28 @@
       });
 
       content.delegate(".slink", 'mouseover', function(){
-          var slink = $jq(this);
+          var slink0 =  $jq(this);
+          var slinkAll;
+
+          // occasionally, several iamges needs to be be grouped into a set
+          // of slides
+          var grpId = slink0.attr('data-group');
+          if (grpId){
+            slinkAll = slink0.closest('td').find('.slink[data-group='+ grpId +']'); //all slinks in the cell that will be grouped
+          }
+
           Plugin.getPlugin("colorbox", function(){
-            slink.colorbox({data: slink.attr("href"),
+            (slinkAll || slink0).each(function(){
+              var slink = $jq(this);
+              slink.colorbox({data: slink.attr("href"),
+                            rel: slink.attr("data-group"),
                             width: "800px",
-                            height: "550px",
+                            // height: "550px",
                             scrolling: false,
                            onComplete: function() {$jq.colorbox.resize(); },
-                            title: function(){ return slink.next().text() + " " + slink.data("class"); }});
+                            title: function(){ return slink.attr('title'); }
+                });
+            });
           });
       });
 
