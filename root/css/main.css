@@ -3344,18 +3344,27 @@ button::-moz-focus-inner {
   cursor: pointer;
   color: black;
   font-size: x-small;
+  color: black;
+  font-size: small;
   border-radius: .8em;
   text-decoration: none;
-  padding: 0.3em;
+  padding: 0.5em;
+  display: inline-block;
 }
 .static-widget-content a.button:hover {
   background: #DDD;
 }
 .static-widget-content a.highlight {
-  border-color: #FFB5B5;
+  /* border-color: #FFB5B5; */
+  font-size: small;
+  border-width: 1px 2px 2px 1px;
+  color: white;
+  background: #9C4041;
 }
 .static-widget-content a.highlight:hover {
-  background: #fff0f3;
+  /* background: #fff0f3; */
+  border-color: #FFB5B5;
+  background: #9C4041;
 }
 .static-widget-content tbody tr {
   height:1.5em;
