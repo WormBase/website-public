@@ -3348,8 +3348,8 @@ button::-moz-focus-inner {
   font-size: small;
   border-radius: .8em;
   text-decoration: none;
-  padding: 0.5em;
-  display: inline-block;
+  padding: 0.2em 0.4em;
+  margin: 0.5em;
 }
 .static-widget-content a.button:hover {
   background: #DDD;
@@ -3360,6 +3360,9 @@ button::-moz-focus-inner {
   border-width: 1px 2px 2px 1px;
   color: white;
   background: #9C4041;
+  padding: 0.5em 1em;
+  display: inline-block;
+
 }
 .static-widget-content a.highlight:hover {
   /* background: #fff0f3; */
@@ -3368,4 +3371,10 @@ button::-moz-focus-inner {
 }
 .static-widget-content tbody tr {
   height:1.5em;
+}
+
+.static-widget-content h1,
+.static-widget-content h2,
+.static-widget-content h3 {
+  margin: 0.5em auto 1em;
 }
