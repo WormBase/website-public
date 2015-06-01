@@ -1455,7 +1455,7 @@ ul.nav-bar ul.wb-dropdown {
   z-index:598;
   padding:0;
   list-style-type: none;
-  width: 100%;
+  min-width: 100%;
 }
 
 /* Login and registration styling  - header, home page, and login popup */
