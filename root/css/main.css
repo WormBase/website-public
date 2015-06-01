@@ -2506,7 +2506,8 @@ div#google-map {
   border-left:1px solid #AAA;
   padding:1em 1.5em 0.5em 0.7em;
   table-layout:fixed;
-  display:table;
+  display:flex; /*avoid widget-holder to be wrapped to next line */
+  display: -webkit-flex; /* safari */
 }
 
 
