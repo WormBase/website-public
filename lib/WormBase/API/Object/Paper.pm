@@ -480,14 +480,17 @@ sub refers_to {
             $data{$ref_type} = $counts;
         } else {
 
-            # $data{$ref_type} = $self->_pack_objects([$ref_type->col]);
-
-            my @ref_items = map {
-                my $ev = $self->_get_evidence($_, \@evidence_types);
-                $ev ? { text => $self->_pack_obj($_), evidence => $ev } : $self->_pack_obj($_);
-            } $ref_type->col;
-
-            $data{$ref_type} = @ref_items ? \@ref_items : undef;
+            my @ref_items;
+            if ($ref_type eq 'GO_annotation') {
+                @ref_items = $self->_get_go_term($ref_type);
+                $ref_type = 'GO_term';
+            } else {
+                @ref_items = map {
+                    my $ev = $self->_get_evidence($_, \@evidence_types);
+                    $ev ? { text => $self->_pack_obj($_), evidence => $ev } : $self->_pack_obj($_);
+                } $ref_type->col;
+            }
+            $data{"$ref_type"} = @ref_items ? \@ref_items : undef;
 
         # Or build some data tables for different object types
         #	foreach $ref_type ($ref_type->col) {
@@ -502,6 +505,19 @@ sub refers_to {
         description => 'Items that the publication refers to',
         data		=> %data ? \%data : undef,
     };
+}
+
+# collect GO_terms that the paper refers to
+sub _get_go_term {
+    my ($self, $ref_type) = @_;
+
+    my %ref_items_map = map {
+        my $go_term = $_->GO_term;
+        ("$go_term", $self->_pack_obj($go_term));
+        #(key, val), so val become unique in the map/hash
+    } $ref_type->col;
+
+    return values %ref_items_map;
 }
 
 

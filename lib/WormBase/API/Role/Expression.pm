@@ -2,6 +2,7 @@ package WormBase::API::Role::Expression;
 
 use Moose::Role;
 use File::Spec::Functions qw(catfile catdir);
+use List::Util qw(first);
 
 #######################################################
 #
@@ -60,51 +61,53 @@ sub anatomic_expression_patterns {
 }
 
 
-# Returns expressions with Microarray and Tiling_array types
+# Returns expressions other than Microarray and Tiling_array types
 sub expression_patterns {
     my $self   = shift;
     my $object = $self->_gene;
-    my @data;
 
-    foreach my $expr ($object->Expr_pattern) {
-        my $type = $expr->Type;
-        next if $type =~ /Microarray|Tiling_array/;
-        push @data, $self->_expression_pattern_details($expr, $type);
-    }
+    my @non_array_patterns = map {
+        $self->_is_array_expression($_) ? () : $self->_expression_pattern_details($_);
+    } $object->Expr_pattern;
 
     return {
         description => "expression patterns associated with the gene:$object",
-        data        => @data ? \@data : undef
+        data        => @non_array_patterns ? \@non_array_patterns : undef
     };
 }
 
-# Returns expressions other than Microarray and Tiling_array types
+
+# Returns expressions with Microarray and Tiling_array types
 sub expression_profiling_graphs {
     my $self   = shift;
     my $object = $self->_gene;
-    my @data;
 
-    foreach my $expr ($object->Expr_pattern) {
-        my $type = $expr->Type;
-        next unless $type =~ /Microarray|Tiling_array/;
-        push @data, $self->_expression_pattern_details($expr, $type);
-    }
+    my @array_patterns = map {
+        $self->_is_array_expression($_) ? $self->_expression_pattern_details($_) : ();
+    } $object->Expr_pattern;
 
     return {
         description => "expression patterns associated with the gene:$object",
-        data        => @data ? \@data : undef
+        data        => @array_patterns ? \@array_patterns : undef
     };
+
+}
+
+sub _is_array_expression {
+    my ($self, $expr) = @_;
+    return first { "$_" =~ /Microarray|Tiling_array/;} $expr->Type;
 }
 
 sub _expression_pattern_details {
-    my ($self, $expr, $type) = @_;
+    my ($self, $expr) = @_;
 
     my $author = $expr->Author;
     my @patterns = $expr->Pattern
         || $expr->Subcellular_localization
         || $expr->Remark;
     my $desc = join("<br />", @patterns) if @patterns;
-    $type =~ s/_/ /g if $type;
+    my @types = map { "$_" =~ s/_/ /gr } $expr->Type;
+
     my $reference = $self->_pack_obj($expr->Reference);
 
     my @expressed_in = map { $self->_pack_obj($_) } $expr->Anatomy_term;
@@ -133,8 +136,7 @@ sub _expression_pattern_details {
         next unless($_->class eq 'Picture');
         my $pic = $self->_api->wrap($_);
         if( $pic->image->{data}) {
-            $expr_packed->{curated_images} = 1;
-            last;
+            push @{$expr_packed->{curated_images}}, $self->_pack_obj($pic->object);
         }
     }
     my $sub = $expr->Subcellular_localization;
@@ -152,7 +154,7 @@ sub _expression_pattern_details {
     return {
         expression_pattern =>  $expr_packed,
         description        => $reference ? { text=> $desc, evidence=> {'Reference' => $reference}} : $desc,
-        type             => $type && "$type",
+        type             => @types ? \@types : undef,
         database         => @dbs ? \@dbs : undef,
         expressed_in    => @expressed_in ? \@expressed_in : undef,
         life_stage    => @life_stage ? \@life_stage : undef,

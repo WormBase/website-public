@@ -29,23 +29,22 @@
           ELSE;
             "$ln";
           END;
-        ELSIF data.exists('class') && data.id;
-            # the key 'class' is exists, but value is undef
+        ELSIF data.exists('class') && data.class == undef && data.id;
+            # the key 'class' exists, but value is undef
             # a scenario where xapian fetch by ID fails to find the object
-            searchlink('all', data.id, data.id);
+            searchlink('all', data.id, text);
         ELSE;
           data.label || data;
         END;
 
         IF data.image;
-          '<a class="ui-icon ui-icon-image exprbox"  rel="expression_pattern_images" href="#' _ data.id _ '" title="expression image for ' _ data.id _ '"></a>';
-          '<div class="ui-helper-hidden">';
-            '<div id="' _ data.id _ '"><a href="' _ data.image _ '" target="_blank">' _ image(data.image) _ '</a></div>';
-          '</div>';
-          '<small>view images</small>';
+          '<div class="slink img-link"  rel="expression_pattern_images" href="' _ data.image _ '" title="expression image for ' _ data.id _ '" data-group="' _ data.id _ '">';
+          '<span class="ui-icon ui-icon-image exprcamera"></span>';
+          '<span><small>view images</small></span>';
+    '</div>';
         END;
-        IF data.curated_images;
-          '<div class="slink img-link" href="/rest/field/expr_pattern/' _ data.id _ '/curated_images"  title="curated pictures for ' _ data.id _ '">';
+        FOREACH cur_img IN data.curated_images;
+          '<div class="slink img-link" href="/rest/widget/picture/' _ cur_img.id _ '/lightbox"  title="curated pictures for ' _ data.id _ '" data-group="' _ data.id _ '">';
             '<span class="ui-icon ui-icon-image exprcamera"></span>';
             '<span><small>view images</small></span>';
           '</div>';

@@ -467,14 +467,28 @@
       });
 
       content.delegate(".slink", 'mouseover', function(){
-          var slink = $jq(this);
+          var slink0 =  $jq(this);
+          var slinkAll;
+
+          // occasionally, several iamges needs to be be grouped into a set
+          // of slides
+          var grpId = slink0.attr('data-group');
+          if (grpId){
+            slinkAll = slink0.closest('td').find('.slink[data-group='+ grpId +']'); //all slinks in the cell that will be grouped
+          }
+
           Plugin.getPlugin("colorbox", function(){
-            slink.colorbox({data: slink.attr("href"),
+            (slinkAll || slink0).each(function(){
+              var slink = $jq(this);
+              slink.colorbox({data: slink.attr("href"),
+                            rel: slink.attr("data-group"),
                             width: "800px",
-                            height: "550px",
+                            // height: "550px",
                             scrolling: false,
                            onComplete: function() {$jq.colorbox.resize(); },
-                            title: function(){ return slink.next().text() + " " + slink.data("class"); }});
+                            title: function(){ return slink.attr('title'); }
+                });
+            });
           });
       });
 
@@ -1241,8 +1255,10 @@ var Scrolling = (function(){
       if(scroll){
         body.stop(false, true).animate({
           scrollTop: scroll
-        }, 2000, function(){ Scrolling.sidebarMove(); scrollingDown = 0;});
-        scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
+        }, 300, 'easeInOutExpo', function(){
+          scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
+          Scrolling.sidebarMove();
+        });
       }
   }
 
@@ -1271,17 +1287,22 @@ var Scrolling = (function(){
             scrollTop = $window.scrollTop(),
             maxScroll = $jq(document).height() - (sidebar.outerHeight() + footerHeight + system_message + 20); //the 20 is for padding before footer
 
-        if(sidebar.outerHeight() > widgetHolder.height()){
-            resetSidebar();
-            return;
-        }
-        if (objSmallerThanWindow){
+        // console.log({
+        //   scrollTop: scrollTop,
+        //   maxScrool:maxScroll,
+        //   offset: offset,
+        //   static:static,
+        //   count:count,
+        //   objSmallerThanWindow: objSmallerThanWindow
+        // });
+
           if(static===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
                 static = 1;
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
+                //static = 1;
             }else{
                 resetSidebar();
             }
@@ -1294,13 +1315,14 @@ var Scrolling = (function(){
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
             }
           }
-        }else if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
+
+       if (!objSmallerThanWindow){
+        if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
           count++; //Add counting semaphore to lock
           //close lowest section. delay for animation.
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-        }else{
-          resetSidebar();
         }
+       }
       }
     }
 
@@ -1698,6 +1720,54 @@ var Scrolling = (function(){
      }
   };
 
+    function multiViewInit(){
+      Plugin.getPlugin('icheck',function(){
+        var buttons = $jq('.multi-view-container input:radio');
+        buttons.iCheck({
+          radioClass: 'iradio_square-aero'
+        }).on('ifChecked', function(){
+          var viewId = $jq(this).attr('value');
+          var container = $jq(this).closest('.multi-view-container');
+          container.find('.multi-view').hide();
+          container.find('#'+viewId).show();
+        });
+
+      });
+    }
+
+    function partitioned_table(group_by_col, row_summarize){
+
+      var drawCallback = function( settings ){
+            var api = this.api();
+            var rows = api.rows().nodes();
+            var last=null;
+
+            api.column(0).nodes().each( function ( cell, i ) {
+                $jq(cell).children().hide();
+            });
+
+            api.rows().data().each( function ( rowData, i ) {
+
+                var groupID = rowData[0];
+                var group = rowData[group_by_col];
+                // var group = $jq(cell).find(".go_term-link").text();
+                // var extensions = $jq(cell).children("> :not(.evidence)").hide();
+                if ( last !== group ) {
+
+                    var summary_row = row_summarize ? row_summarize(rowData)
+                      : '<td>' + groupID + '</td><td>'+ group + '</td>';
+                    $jq(rows).eq( i ).before(
+                        '<tr class="group">' + summary_row + '<td colspan="100%"></td></tr>'
+                    );
+
+                    last = group;
+                }
+              //  $jq(cell).html(extensions);
+            } );
+
+      };
+      return drawCallback;
+    }
 
 	function setupCytoscape(data, types, clazz){
 
@@ -1947,13 +2017,16 @@ var Scrolling = (function(){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
-                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js"
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
+
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
-                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css"
+                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
           };
 
 
@@ -2128,8 +2201,10 @@ var Scrolling = (function(){
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
-      reloadWidget: reloadWidget                    // reload a widget
-    }
+      reloadWidget: reloadWidget,                   // reload a widget
+      multiViewInit: multiViewInit,                 // toggle between summary/full view table
+      partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes
+    };
   })();
 
 
