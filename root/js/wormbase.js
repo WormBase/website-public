@@ -1279,6 +1279,19 @@ var Scrolling = (function(){
       return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
 
+  function sidebarFit() {
+    var sidebarUl = sidebar.find('ul');
+    console.log(sidebarUl.prop('scrollHeight'));
+    console.log(sidebarUl.height());
+    if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+      sidebar.css('height','100%');
+      sidebarUl.css('overflow-y','scroll');
+    }else{
+      sidebar.css('height','initial');
+      sidebarUl.css('overflow-y','hidden');
+    }
+  }
+
   function sidebarMove() {
       if(!sidebar)
         return;
@@ -1316,13 +1329,17 @@ var Scrolling = (function(){
             }
           }
 
-       if (!objSmallerThanWindow){
-        if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
-          count++; //Add counting semaphore to lock
-          //close lowest section. delay for animation.
-          titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-        }
-       }
+      //  if (!objSmallerThanWindow){
+      //   if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
+      //     count++; //Add counting semaphore to lock
+      //     //close lowest section. delay for animation.
+      //     titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
+      //   }
+      //    sidebar.css('height','100%');
+      //  }else{
+      //    sidebar.css('height','initial');
+      //  }
+        Scrolling.sidebarFit();
       }
     }
 
@@ -1331,8 +1348,37 @@ var Scrolling = (function(){
     offset = sidebar.offset().top;
     widgetHolder = $jq("#widget-holder");
 
+    var sidebarUl = sidebar.find('ul');
+
+    if (sidebarUl.prop('scrollHeight') > sidebarUl.height()) {
+      // overflow happened, allow scrolling
+
+    }else{
+      // reduce sidebar height to best fit the content
+      //sidebar.css('height', '100%');
+    }
+
     $window.scroll(function() {
       Scrolling.sidebarMove();
+    });
+
+    sidebar.mouseenter(function(){
+      if (sidebar.css('position') ==='fixed' &&
+          sidebarUl.prop('scrollHeight') > sidebarUl.height()
+         ){
+      $jq('body').addClass('noscroll');
+//           sidebar.css('height', '100%');
+//      sidebarUl.css('overflow-y', 'scroll');
+//      sidebarUl.css('height', '90%');
+//      sidebar.css('height', '100%');
+//      sidebar.addClass('maximize-height');
+      }
+    // console.log(sidebarUl.prop('scrollHeight'));
+    // console.log(sidebarUl.height());
+    }).mouseleave(function(){
+      $jq('body').removeClass('noscroll');
+//      sidebar.addClass('maximize-height');
+//      sidebar.css('height', 'auto');
     });
   }
 
@@ -1359,6 +1405,7 @@ var Scrolling = (function(){
     search:search,
     set_system_message:set_system_message,
     sidebarMove: sidebarMove,
+    sidebarFit: sidebarFit,
     resetSidebar:resetSidebar,
     goToAnchor: goToAnchor,
     scrollUp: scrollUp
