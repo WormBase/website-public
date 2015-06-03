@@ -450,7 +450,7 @@
             var tog = $jq(this);
             tog.toggleClass("active").next().slideToggle("fast", function(){
                 if($jq.colorbox){ $jq.colorbox.resize(); }
-                Scrolling.sidebarMove();
+                //Scrolling.sidebarMove();
               });
             if(tog.hasClass("load-toggle")){
               ajaxGet(tog.next(), tog.attr("href"));
@@ -1281,11 +1281,18 @@ var Scrolling = (function(){
 
   function sidebarFit() {
     var sidebarUl = sidebar.find('ul');
-    console.log(sidebarUl.prop('scrollHeight'));
-    console.log(sidebarUl.height());
+    console.log([sidebarUl.prop('scrollHeight'),
+                 sidebarUl.height(),
+                 sidebar.outerHeight() < ($window.height() - system_message)]);
+    sidebar.css('height','100%');  // must be set to check overflow
     if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
-      sidebar.css('height','100%');
-      sidebarUl.css('overflow-y','scroll');
+        if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
+          count++; //Add counting semaphore to lock
+          //close lowest section. delay for animation.
+          titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarFit();});
+        }else if (sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)")) {
+          sidebarUl.css('overflow-y','scroll');
+        }
     }else{
       sidebar.css('height','initial');
       sidebarUl.css('overflow-y','hidden');
