@@ -450,7 +450,7 @@
             var tog = $jq(this);
             tog.toggleClass("active").next().slideToggle("fast", function(){
                 if($jq.colorbox){ $jq.colorbox.resize(); }
-                //Scrolling.sidebarMove();
+                Scrolling.sidebarMove();
               });
             if(tog.hasClass("load-toggle")){
               ajaxGet(tog.next(), tog.attr("href"));
@@ -1281,23 +1281,48 @@ var Scrolling = (function(){
 
   function sidebarFit() {
     var sidebarUl = sidebar.find('ul');
-    console.log([sidebarUl.prop('scrollHeight'),
-                 sidebarUl.height(),
-                 sidebar.outerHeight() < ($window.height() - system_message)]);
     sidebar.css('height','100%');  // must be set to check overflow
+
     if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
-        if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
-          count++; //Add counting semaphore to lock
-          //close lowest section. delay for animation.
-          titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarFit();});
-        }else if (sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)")) {
-          sidebarUl.css('overflow-y','scroll');
-        }
+      sidebarUl.css('overflow-y','scroll');
+      $jq("#nav-more").show();
+      // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
+      // if(count===0 && titles.length){
+      //   console.log(titles);
+      //   count++; //Add counting semaphore to lock
+      //   //close lowest section. delay for animation.
+      //   titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarFit();});
+      // }
     }else{
       sidebar.css('height','initial');
       sidebarUl.css('overflow-y','hidden');
+      $jq("#nav-more").hide();
     }
   }
+
+  function sidebarScrollInit(){
+    var sidebarUl = sidebar.find('ul');
+    var sbScrlBttn = $jq("#nav-more");
+
+    var loop = function(){
+      sidebarUl.stop().animate({scrollTop: sidebarUl.scrollTop()+100}, 1000, 'linear', loop);
+    }
+
+    var stop = function(){
+      sidebarUl.stop();
+    }
+
+    sidebarUl.scroll(function(){
+      if ( sidebarUl.scrollTop() < sidebarUl.prop("scrollHeight") - sidebarUl.height() - 5){
+        // scrolled near the bottom, allow 5px "buffer"
+        sbScrlBttn.removeClass('ui-state-disabled');
+      }else{
+        sbScrlBttn.addClass('ui-state-disabled');
+      }
+    });
+
+    sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
+  };
 
   function sidebarMove() {
       if(!sidebar)
@@ -1335,19 +1360,8 @@ var Scrolling = (function(){
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
             }
           }
-
-      //  if (!objSmallerThanWindow){
-      //   if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
-      //     count++; //Add counting semaphore to lock
-      //     //close lowest section. delay for animation.
-      //     titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-      //   }
-      //    sidebar.css('height','100%');
-      //  }else{
-      //    sidebar.css('height','initial');
-      //  }
-        Scrolling.sidebarFit();
       }
+      Scrolling.sidebarFit();
     }
 
   function sidebarInit(){
@@ -1357,35 +1371,22 @@ var Scrolling = (function(){
 
     var sidebarUl = sidebar.find('ul');
 
-    if (sidebarUl.prop('scrollHeight') > sidebarUl.height()) {
-      // overflow happened, allow scrolling
-
-    }else{
-      // reduce sidebar height to best fit the content
-      //sidebar.css('height', '100%');
-    }
+    sidebarScrollInit();  // allow side content to be scrolled
+    sidebarFit();
 
     $window.scroll(function() {
       Scrolling.sidebarMove();
     });
 
+    // prevent document being scrolled along when scrolling sidebar
     sidebar.mouseenter(function(){
       if (sidebar.css('position') ==='fixed' &&
           sidebarUl.prop('scrollHeight') > sidebarUl.height()
          ){
       $jq('body').addClass('noscroll');
-//           sidebar.css('height', '100%');
-//      sidebarUl.css('overflow-y', 'scroll');
-//      sidebarUl.css('height', '90%');
-//      sidebar.css('height', '100%');
-//      sidebar.addClass('maximize-height');
       }
-    // console.log(sidebarUl.prop('scrollHeight'));
-    // console.log(sidebarUl.height());
     }).mouseleave(function(){
       $jq('body').removeClass('noscroll');
-//      sidebar.addClass('maximize-height');
-//      sidebar.css('height', 'auto');
     });
   }
 
