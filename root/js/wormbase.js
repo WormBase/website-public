@@ -1291,7 +1291,7 @@ var Scrolling = (function(){
 
     if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
       sidebarUl.css('overflow-y','scroll');
-      $jq("#nav-more").show();
+      $jq("#nav-more").show().removeClass('ui-state-disabled');
 
       // Occasionally, count is stuck at 1 and not reset. Not sure how to fix
       // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
