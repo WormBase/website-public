@@ -1279,6 +1279,12 @@ var Scrolling = (function(){
       return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
 
+  // Decide whether sidebar should be full height or flexible height.
+  // With long sidebar, set sidebar height 100% to allow scroll on y-overflow.
+  // With short side bar, allow flex height, so when scrolling the document to
+  // near the footer, the sidebar isn't pushed off screen until it absolutely
+  // cannot fit.
+  // (There should be a better way to do it...)
   function sidebarFit() {
     var sidebarUl = sidebar.find('ul');
     sidebar.css('height','100%');  // must be set to check overflow
@@ -1286,9 +1292,10 @@ var Scrolling = (function(){
     if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
       sidebarUl.css('overflow-y','scroll');
       $jq("#nav-more").show();
+
+      // Occasionally, count is stuck at 1 and not reset. Not sure how to fix
       // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
       // if(count===0 && titles.length){
-      //   console.log(titles);
       //   count++; //Add counting semaphore to lock
       //   //close lowest section. delay for animation.
       //   titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarFit();});
@@ -1300,6 +1307,8 @@ var Scrolling = (function(){
     }
   }
 
+  // add a scroll down button to sidebar,
+  // to make it obvious overflow has occured.
   function sidebarScrollInit(){
     var sidebarUl = sidebar.find('ul');
     var sbScrlBttn = $jq("#nav-more");
@@ -1314,9 +1323,10 @@ var Scrolling = (function(){
 
     sidebarUl.scroll(function(){
       if ( sidebarUl.scrollTop() < sidebarUl.prop("scrollHeight") - sidebarUl.height() - 5){
-        // scrolled near the bottom, allow 5px "buffer"
+        // not near the bottom, allow of 5px "buffer"
         sbScrlBttn.removeClass('ui-state-disabled');
       }else{
+        // scrolled near the bottom
         sbScrlBttn.addClass('ui-state-disabled');
       }
     });
@@ -1324,6 +1334,7 @@ var Scrolling = (function(){
     sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
   };
 
+  // affix sidebar
   function sidebarMove() {
       if(!sidebar)
         return;
