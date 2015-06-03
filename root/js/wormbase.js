@@ -1279,6 +1279,62 @@ var Scrolling = (function(){
       return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
 
+  // Decide whether sidebar should be full height or flexible height.
+  // With long sidebar, set sidebar height 100% to allow scroll on y-overflow.
+  // With short side bar, allow flex height, so when scrolling the document to
+  // near the footer, the sidebar isn't pushed off screen until it absolutely
+  // cannot fit.
+  // (There should be a better way to do it...)
+  function sidebarFit() {
+    var sidebarUl = sidebar.find('ul');
+    sidebar.css('height','100%');  // must be set to check overflow
+
+    if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+      sidebarUl.css('overflow-y','scroll');
+      $jq("#nav-more").show();
+
+      // Occasionally, count is stuck at 1 and not reset. Not sure how to fix
+      // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
+      // if(count===0 && titles.length){
+      //   count++; //Add counting semaphore to lock
+      //   //close lowest section. delay for animation.
+      //   titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarFit();});
+      // }
+    }else{
+      sidebar.css('height','initial');
+      sidebarUl.css('overflow-y','hidden');
+      $jq("#nav-more").hide();
+    }
+  }
+
+  // add a scroll down button to sidebar,
+  // to make it obvious overflow has occured.
+  function sidebarScrollInit(){
+    var sidebarUl = sidebar.find('ul');
+    var sbScrlBttn = $jq("#nav-more");
+
+    var loop = function(){
+      sidebarUl.stop().animate({scrollTop: sidebarUl.scrollTop()+100}, 1000, 'linear', loop);
+    }
+
+    var stop = function(){
+      sidebarUl.stop();
+    }
+
+    sidebarUl.scroll(function(){
+      if ( sidebarUl.scrollTop() < sidebarUl.prop("scrollHeight") - sidebarUl.height() - 5){
+        // not near the bottom, allow of 5px "buffer"
+        sbScrlBttn.removeClass('ui-state-disabled');
+      }else{
+        // scrolled near the bottom
+        sbScrlBttn.addClass('ui-state-disabled');
+      }
+    });
+
+    sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
+  };
+
+  // affix sidebar
   function sidebarMove() {
       if(!sidebar)
         return;
@@ -1315,15 +1371,8 @@ var Scrolling = (function(){
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
             }
           }
-
-       if (!objSmallerThanWindow){
-        if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
-          count++; //Add counting semaphore to lock
-          //close lowest section. delay for animation.
-          titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-        }
-       }
       }
+      Scrolling.sidebarFit();
     }
 
   function sidebarInit(){
@@ -1331,8 +1380,24 @@ var Scrolling = (function(){
     offset = sidebar.offset().top;
     widgetHolder = $jq("#widget-holder");
 
+    var sidebarUl = sidebar.find('ul');
+
+    sidebarScrollInit();  // allow side content to be scrolled
+    sidebarFit();
+
     $window.scroll(function() {
       Scrolling.sidebarMove();
+    });
+
+    // prevent document being scrolled along when scrolling sidebar
+    sidebar.mouseenter(function(){
+      if (sidebar.css('position') ==='fixed' &&
+          sidebarUl.prop('scrollHeight') > sidebarUl.height()
+         ){
+      $jq('body').addClass('noscroll');
+      }
+    }).mouseleave(function(){
+      $jq('body').removeClass('noscroll');
     });
   }
 
@@ -1359,6 +1424,7 @@ var Scrolling = (function(){
     search:search,
     set_system_message:set_system_message,
     sidebarMove: sidebarMove,
+    sidebarFit: sidebarFit,
     resetSidebar:resetSidebar,
     goToAnchor: goToAnchor,
     scrollUp: scrollUp
