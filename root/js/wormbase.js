@@ -1294,7 +1294,8 @@ var Scrolling = (function(){
     // must be set to check overflow
     sidebar.css('height', $jq(window).height() - system_message);
 
-    if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+    if (static===1 && sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+      // allow only sticky sidebar to be scrollable, to avoid complications
 
       sidebarUl.css('overflow-y','scroll');
       $jq("#nav-more").show();
