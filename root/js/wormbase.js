@@ -1295,8 +1295,10 @@ var Scrolling = (function(){
     sidebar.css('height', $jq(window).height() - system_message);
 
     if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+
       sidebarUl.css('overflow-y','scroll');
-      $jq("#nav-more").show().removeClass('ui-state-disabled');
+      $jq("#nav-more").show();
+      sidebarScroll.updateScrollState();
 
       // Occasionally, count is stuck at 1 and not reset. Not sure how to fix
       // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
@@ -1314,19 +1316,19 @@ var Scrolling = (function(){
 
   // add a scroll down button to sidebar,
   // to make it obvious overflow has occured.
-  function sidebarScrollInit(){
-    var sidebarUl = sidebar.find('ul');
+  var sidebarScroll = (function(){
+    var sidebarUl = $jq('#navigation ul');
     var sbScrlBttn = $jq("#nav-more");
 
     var loop = function(){
       sidebarUl.stop().animate({scrollTop: sidebarUl.scrollTop()+100}, 1000, 'linear', loop);
-    }
+    };
 
     var stop = function(){
       sidebarUl.stop();
-    }
+    };
 
-    sidebarUl.scroll(function(){
+    var updateScrollState = function(){
       if ( sidebarUl.scrollTop() < sidebarUl.prop("scrollHeight") - sidebarUl.height() - 5){
         // not near the bottom, allow of 5px "buffer"
         sbScrlBttn.removeClass('ui-state-disabled');
@@ -1334,10 +1336,17 @@ var Scrolling = (function(){
         // scrolled near the bottom
         sbScrlBttn.addClass('ui-state-disabled');
       }
-    });
+    };
 
-    sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
-  };
+    return {
+      init: function(){
+        sidebarUl.scroll(updateScrollState);
+        sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
+      },
+      updateScrollState: updateScrollState
+    };
+  })();
+
 
   // affix sidebar
   function sidebarMove() {
@@ -1391,7 +1400,7 @@ var Scrolling = (function(){
 
     var sidebarUl = sidebar.find('ul');
 
-    sidebarScrollInit();  // allow side content to be scrolled
+    sidebarScroll.init();  // allow side content to be scrolled
     sidebarFit();
 
     $window.scroll(function() {
