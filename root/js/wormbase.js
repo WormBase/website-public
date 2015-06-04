@@ -907,6 +907,9 @@
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){
             Scrolling.sidebarMove();checkSearch(content);
+            if ($jq('.multi-view-container').length){
+              WB.multiViewInit();
+            }
             Layout.resize();
           });
         }
