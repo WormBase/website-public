@@ -1408,13 +1408,13 @@ var Scrolling = (function(){
     });
 
     // prevent document being scrolled along when scrolling sidebar
-    sidebar.mouseenter(function(){
+    sidebar.mouseover(function(){
       if (sidebar.css('position') ==='fixed' &&
           sidebarUl.prop('scrollHeight') > sidebarUl.height()
          ){
       $jq('body').addClass('noscroll');
       }
-    }).mouseleave(function(){
+    }).mouseout(function(){
       $jq('body').removeClass('noscroll');
     });
   }
