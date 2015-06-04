@@ -1352,6 +1352,10 @@ var Scrolling = (function(){
         //   objSmallerThanWindow: objSmallerThanWindow
         // });
 
+        if(sidebar.outerHeight() > widgetHolder.height()){
+            resetSidebar();
+            return;
+        }
           if(static===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
