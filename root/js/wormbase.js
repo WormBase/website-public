@@ -1287,7 +1287,9 @@ var Scrolling = (function(){
   // (There should be a better way to do it...)
   function sidebarFit() {
     var sidebarUl = sidebar.find('ul');
-    sidebar.css('height','100%');  // must be set to check overflow
+
+    // must be set to check overflow
+    sidebar.css('height', $jq(window).height() - system_message);
 
     if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
       sidebarUl.css('overflow-y','scroll');
