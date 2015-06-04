@@ -1343,7 +1343,8 @@ var Scrolling = (function(){
         sidebarUl.scroll(updateScrollState);
         sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
       },
-      updateScrollState: updateScrollState
+      updateScrollState: updateScrollState,
+      reset: function() { sidebarUl.scrollTop(0); }
     };
   })();
 
@@ -1378,11 +1379,12 @@ var Scrolling = (function(){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 //static = 1;
             }else{
-                resetSidebar();
+                //resetSidebar();
             }
           }else{
             if (scrollTop < offset) {
                 resetSidebar();
+                sidebarScroll.reset();
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
