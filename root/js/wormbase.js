@@ -570,6 +570,7 @@
         $jq.post("/rest/system_message/" + messageId);
         Scrolling.set_system_message(0);
         notifications.css("top", "0");
+        Scrolling.sidebarMove();
       }
   }
 
@@ -1390,6 +1391,9 @@ var Scrolling = (function(){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
+            }else{
+              // needed to re-position sidebar after close system message
+              sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
             }
           }
       }
