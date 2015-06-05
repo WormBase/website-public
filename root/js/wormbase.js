@@ -1417,7 +1417,7 @@ var Scrolling = (function(){
     // prevent document being scrolled along when scrolling sidebar
     var bdy = $jq('body');
     sidebar.mouseover(function(){
-      if (sidebarUl.attr('overflow-y') === 'scroll'){
+      if (sidebarUl.css('overflow-y') === 'scroll'){
         bdy.addClass('noscroll');
       }
 
