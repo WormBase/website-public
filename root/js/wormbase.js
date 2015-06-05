@@ -1415,16 +1415,17 @@ var Scrolling = (function(){
     });
 
     // prevent document being scrolled along when scrolling sidebar
+    var bdy = $jq('body');
     sidebar.mouseover(function(){
-      if (sidebar.css('position') ==='fixed' &&
-          sidebarUl.prop('scrollHeight') > sidebarUl.height()
-         ){
-      $jq('body').addClass('noscroll');
+      if (sidebarUl.attr('overflow-y') === 'scroll'){
+        bdy.addClass('noscroll');
       }
-    }).mouseout(function(){
-      $jq('body').removeClass('noscroll');
+
+    }).mouseleave(function(){
+      bdy.removeClass('noscroll');
     });
   }
+
 
   var search = function searchInit(){
       if(loadcount >= 6){ return; }
