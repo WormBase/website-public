@@ -570,6 +570,7 @@
         $jq.post("/rest/system_message/" + messageId);
         Scrolling.set_system_message(0);
         notifications.css("top", "0");
+        Scrolling.sidebarMove();
       }
   }
 
@@ -1290,11 +1291,16 @@ var Scrolling = (function(){
   // (There should be a better way to do it...)
   function sidebarFit() {
     var sidebarUl = sidebar.find('ul');
-    sidebar.css('height','100%');  // must be set to check overflow
 
-    if (sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+    // must be set to check overflow
+    sidebar.css('height', $jq(window).height() - system_message);
+
+    if (static===1 && sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+      // allow only sticky sidebar to be scrollable, to avoid complications
+
       sidebarUl.css('overflow-y','scroll');
       $jq("#nav-more").show();
+      sidebarScroll.updateScrollState();
 
       // Occasionally, count is stuck at 1 and not reset. Not sure how to fix
       // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
@@ -1312,19 +1318,19 @@ var Scrolling = (function(){
 
   // add a scroll down button to sidebar,
   // to make it obvious overflow has occured.
-  function sidebarScrollInit(){
-    var sidebarUl = sidebar.find('ul');
+  var sidebarScroll = (function(){
+    var sidebarUl = $jq('#navigation ul');
     var sbScrlBttn = $jq("#nav-more");
 
     var loop = function(){
       sidebarUl.stop().animate({scrollTop: sidebarUl.scrollTop()+100}, 1000, 'linear', loop);
-    }
+    };
 
     var stop = function(){
       sidebarUl.stop();
-    }
+    };
 
-    sidebarUl.scroll(function(){
+    var updateScrollState = function(){
       if ( sidebarUl.scrollTop() < sidebarUl.prop("scrollHeight") - sidebarUl.height() - 5){
         // not near the bottom, allow of 5px "buffer"
         sbScrlBttn.removeClass('ui-state-disabled');
@@ -1332,10 +1338,18 @@ var Scrolling = (function(){
         // scrolled near the bottom
         sbScrlBttn.addClass('ui-state-disabled');
       }
-    });
+    };
 
-    sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
-  };
+    return {
+      init: function(){
+        sidebarUl.scroll(updateScrollState);
+        sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
+      },
+      updateScrollState: updateScrollState,
+      reset: function() { sidebarUl.scrollTop(0); }
+    };
+  })();
+
 
   // affix sidebar
   function sidebarMove() {
@@ -1355,6 +1369,10 @@ var Scrolling = (function(){
         //   objSmallerThanWindow: objSmallerThanWindow
         // });
 
+        if(sidebar.outerHeight() > widgetHolder.height()){
+            resetSidebar();
+            return;
+        }
           if(static===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
@@ -1363,15 +1381,19 @@ var Scrolling = (function(){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 //static = 1;
             }else{
-                resetSidebar();
+                //resetSidebar();
             }
           }else{
             if (scrollTop < offset) {
                 resetSidebar();
+                sidebarScroll.reset();
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
+            }else{
+              // needed to re-position sidebar after close system message
+              sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
             }
           }
       }
@@ -1385,7 +1407,7 @@ var Scrolling = (function(){
 
     var sidebarUl = sidebar.find('ul');
 
-    sidebarScrollInit();  // allow side content to be scrolled
+    sidebarScroll.init();  // allow side content to be scrolled
     sidebarFit();
 
     $window.scroll(function() {
@@ -1393,16 +1415,17 @@ var Scrolling = (function(){
     });
 
     // prevent document being scrolled along when scrolling sidebar
-    sidebar.mouseenter(function(){
-      if (sidebar.css('position') ==='fixed' &&
-          sidebarUl.prop('scrollHeight') > sidebarUl.height()
-         ){
-      $jq('body').addClass('noscroll');
+    var bdy = $jq('body');
+    sidebar.mouseover(function(){
+      if (sidebarUl.attr('overflow-y') === 'scroll'){
+        bdy.addClass('noscroll');
       }
+
     }).mouseleave(function(){
-      $jq('body').removeClass('noscroll');
+      bdy.removeClass('noscroll');
     });
   }
+
 
   var search = function searchInit(){
       if(loadcount >= 6){ return; }
