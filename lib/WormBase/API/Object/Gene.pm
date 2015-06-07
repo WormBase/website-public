@@ -248,7 +248,7 @@ sub named_by {
     my $object = $self->object;
 
     my $ev_hash = $self->_get_evidence($object->CGC_name);
-    my @ev = map { @$_ } values %$ev_hash;
+    my @ev = map { $_ and @$_ } values %$ev_hash;
 
     return {
         description => 'the source where the approved name was first described',
@@ -737,47 +737,126 @@ sub rearrangements {
 # associations.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_ontology
 
-sub gene_ontology {
+has '_gene_ontology' => (
+    is  => 'ro',
+    lazy => 1,
+    builder => '_build_gene_ontology',
+);
+use Data::Dumper;
+sub _build_gene_ontology {
     my $self   = shift;
     my $object = $self->object;
 
-    my %data;
-    foreach my $go_term ( $object->GO_term ) {
-        foreach my $code ( $go_term->col ) {
-            my $method = join(", ", map {"$_"} (my @methods = $code->col));
-            my $display_method = $self->_go_method_detail( $method, join(", ", map { $_->col } @methods) );
+    my @data;
+    foreach my $anno ($object->GO_annotation) {
+        my $go_term = $anno->GO_term;
+        my $go_type = $go_term->Type;
+        my $go_code = $anno->GO_code;
+        my $relation = $anno->Annotation_relation;
 
-            my $facet = $go_term->Type;
-            $facet =~ s/_/ /g if $facet;
+        my @entities = map {
+            $self->_pack_list([$_->col()]);
+        } $anno->Annotation_made_with;
 
-            $display_method =~ m/.*_(.*)/;    # Strip off the spam-dexer.
-            my $description = $code->Description;
+        my %extensions = map {
+            my ($ext_type, $ext_name, $ext_value) = $_->row();
+           "$ext_name" => $self->_pack_obj($ext_value)
+        } $anno->Annotation_extension;
 
-#                evidence_code => {  text=>"$code",
-#                                    evidence=> map {
-#                    $_->{'Description'} = "$description";
-#                                                $_ } ($self->_get_evidence($code))
-#                                  },
+        my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
+        my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
 
-            push @{ $data{"$facet"} }, {
-                method        => $1,
-                evidence_code => {  text=>"$code",
-                                    evidence=> map {
-                                    $_->{'Description'} = "$description";
-                                                $_ } ($self->_get_evidence($code))
-                                  },
-                term          => $self->_pack_obj($go_term),
-            };
-        }
+        my @term_details = () ; #('' . $go_term->Term);
+        push @term_details, { evidence => \%extensions } if %extensions;
+
+        my $anno_data = {
+            term_id => $self->_pack_obj($go_term, "$go_term"),
+            term_description => $self->_pack_obj($go_term), #'' . $go_term->Term,
+            anno_id => "$anno",
+            term => @term_details ? \@term_details : undef,
+            evidence_code => $evidence ? { evidence => $evidence, text => "$go_code" } : "$go_code",
+            go_type => "$go_type",
+            with => @entities ? \@entities : undef,
+            extensions => %extensions ? \%extensions : undef,
+        };
+
+        push @data, $anno_data;
+    }
+
+    return \@data;
+}
+
+sub gene_ontology {
+    my ($self)   = @_;
+
+    my %data_by_type = ();
+    my @data = @{ $self->_gene_ontology };
+    foreach my $anno_data (@data){
+        my $type = $anno_data->{go_type};
+        $data_by_type{$type} ||= ();
+        push @{$data_by_type{$type}}, $anno_data;
     }
 
     return {
         description => 'gene ontology assocations',
-        data        => %data ? \%data : undef,
+        data        => %data_by_type ? \%data_by_type : undef,
+    };
+}
+
+sub gene_ontology_summary {
+    my ($self)   = @_;
+
+    my @data = @{ $self->_gene_ontology };
+
+    sub _get_type {
+        my ($item) = @_;
+        return $item->{go_type};
+    }
+
+    sub _get_go_term {
+        my ($item) = @_;
+        return $item->{term_id}->{label};
+    }
+
+    my $data_by_type = $self->_group_and_combine(\@data, \&_get_type);
+    my %result_by_type = ();
+
+    foreach my $go_type (keys %$data_by_type) {
+        my $data4type = $data_by_type->{$go_type};
+        my $result4type = $self->_group_and_combine($data4type, \&_get_go_term, \&_summarize_go_term);
+        $result_by_type{$go_type} = [values %$result4type];
+    }
+
+    return {
+        description => 'gene ontology assocations',
+        data        => %result_by_type ? \%result_by_type : undef,
     };
 }
 
 
+sub _summarize_go_term {
+    my ($anno_data_all) = @_;
+
+    my @exts_all = ();
+    foreach my $anno_data (@$anno_data_all){
+        #extensions within a single annotation
+        my $exts = $anno_data->{extensions};
+        push @exts_all, { evidence => $exts } if $exts;
+
+        # my $exts = $anno_data->{extensions} || {};
+        # my @pairs = map {[$_,$exts->{$_}]} (keys %$exts);
+        # push @exts_all, \@pairs if @pairs;
+    }
+
+    my $term_descr = $anno_data_all->[0]->{term_description};
+    my @term_full = @exts_all ? ($term_descr, \@exts_all) : ($term_descr);
+
+    return {
+        term_id => $anno_data_all->[0]->{term_id},
+        term_description => \@term_full,
+        extensions => @exts_all ? \@exts_all : undef,
+    };
+}
 
 #######################################
 #

@@ -1,0 +1,21 @@
+gff_version: 3
+file: /usr/local/ftp/pub/wormbase/releases/WS248/species/h_bacteriophora/PRJNA13977/h_bacteriophora.PRJNA13977.WS248.annotations.gff3.gz
+feature	children	source	method	track	count
+expressed_sequence_match:EMBL_cDNAs-STAR		EMBL_cDNAs-STAR	expressed_sequence_match	INSDC nematode cDNAs (sequence_similarity_insdc_cdnas)	52974
+expressed_sequence_match:NEMBASE_cDNAs-STAR		NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	9650
+gene:WormBase_imported		WormBase_imported	gene	Genes (genes)	20964
+	mRNA:WormBase_imported	WormBase_imported	mRNA	Genes (genes)	20964
+	five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0
+	three_prime_UTR:WormBase_imported	WormBase_imported	three_prime_UTR	Genes (genes)	0
+low_complexity_region:dust		dust	low_complexity_region	Low complextity region (Dust) (repeats_dust)	38454
+protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	354047
+protein_match:cbrenneri_proteins-BLASTX		cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	195162
+protein_match:cbriggsae_proteins-BLASTX		cbriggsae_proteins-BLASTX	protein_match	C. briggsae proteins (sequence_similarity_cbriggsae_proteins_blastx)	166179
+protein_match:celegans_proteins-BLASTX		celegans_proteins-BLASTX	protein_match	C. elegans proteins (sequence_similarity_celegans_proteins_blastx)	203072
+protein_match:cjaponica_proteins-BLASTX		cjaponica_proteins-BLASTX	protein_match	C. japonica proteins (sequence_similarity_cjaponica_proteins_blastx)	196288
+protein_match:cremanei_proteins-BLASTX		cremanei_proteins-BLASTX	protein_match	C. remanei proteins (sequence_similarity_cremanei_proteins_blastx)	193642
+protein_match:dmelanogaster_proteins-BLASTX		dmelanogaster_proteins-BLASTX	protein_match	D. melanogaster proteins (sequence_similarity_dmelanogaster_proteins_blastx)	89488
+protein_match:hsapiens_proteins-BLASTX		hsapiens_proteins-BLASTX	protein_match	H. sapiens proteins (sequence_similarity_hsapiens_proteins_blastx)	224698
+protein_match:ppacificus_proteins-BLASTX		ppacificus_proteins-BLASTX	protein_match	P. pacificus proteins (sequence_similarity_ppacificus_proteins_blastx)	138242
+protein_match:scerevisiae_proteins-BLASTX		scerevisiae_proteins-BLASTX	protein_match	S. cerevisiae proteins (sequence_similarity_scerevisiae_proteins_blastx)	25534
+repeat_region:RepeatMasker		RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	27385

@@ -1980,7 +1980,37 @@ sub _split_genus_species {
 }
 
 
+# works like a single threaded mapreduce
+# args:
+#  - a list of items
+#  - $group_fun:
+#      map (emit) based on the result of $group_fun call (a group_key),
+#      and the list of items will be partitioned based on this
+#  - $summarize_fun:
+#      each partition will be proceessed (reduced) by $summarize_fun
+#  returns a hash with group_key maps to reduced result
+sub _group_and_combine {
+    my ($self, $all_items, $group_fun, $summarize_fun) = @_;
+    my %grouped = ();
 
+    # to group
+    foreach my $item (@$all_items) {
+        my $group_key = $group_fun->($item);
+        $grouped{$group_key} ||= ();
+        push  @{ $grouped{$group_key} }, $item;
+    }
+
+    # to summarize
+    my %summarized = ();
+    if ($summarize_fun){
+        foreach my $group_key (keys %grouped) {
+            my @group_items = @{ $grouped{$group_key} };
+            my $group_result = $summarize_fun->(\@group_items);
+            $summarized{$group_key} = $group_result;
+        }
+    }
+    return %summarized ? \%summarized : \%grouped;
+}
 ############################################################
 #
 # Private Methods

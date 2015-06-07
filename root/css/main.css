@@ -511,8 +511,23 @@ table ul {
     line-height: 150%;
 }
 
+.dataTable tbody {
+ background-color: #aaa;
+}
+.dataTable tr.group {
+     /* background-color: #888; */
+     /* color: white; */
+     width: 100%;
+background: linear-gradient(#eee, #ddd);
+    /* border-top: 1px solid #AAA; */
 
+    /* border-collapse: collapse; */
+    /* border-space: 0; */
 
+}
+.dataTable tr.group td:first-child {
+    /* background-color: #999; */
+}
 
 
 
@@ -795,14 +810,17 @@ div.more .ui-icon {
   top:-6px;
 }
 
-#fade {
+/* Not sure why id instead of class is used initially*/
+/* too widespread to change now */
+#fade, .fade {
    color: #999999;
    font-size: 0.8em;
 }
 
-a#fade:hover {
+a#fade:hover, a.fade:hover {
   text-decoration:underline;
 }
+
 
 .result {
   padding:0 0.5em 0.5em;
@@ -1103,6 +1121,9 @@ body, html {
     height:100%;
 }
 
+.noscroll {
+  overflow: hidden;
+}
 
 /*@media screen and (max-device-width: 480px) {
   body {
@@ -1437,6 +1458,7 @@ ul.nav-bar ul.wb-dropdown {
   z-index:598;
   padding:0;
   list-style-type: none;
+  min-width: 100%;
 }
 
 /* Login and registration styling  - header, home page, and login popup */
@@ -2047,7 +2069,9 @@ li.visible div.widget-container {
 #widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
     background-color: #CFC1DE;
 }
-
+#widget-submit_data .widget-header, .navigation .submit_data.ui-selected, .submit_data-bg, #submit_data .navigation .ui-selected {
+    background-color: #C2D1DF;
+}
 /* END styles for standard widgets */
 
 
@@ -2192,12 +2216,19 @@ div#google-map {
 }
 
 
+/* multi-view styling */
+.multi-view-container label {
+  padding: 0 1em 1em 0.4em;
+  display: inline-block;
+}
 
-
-
-
-
-
+/* GO table styles */
+#go_summary_Molecular_function table tbody td:nth-child(2) > ul,
+#go_summary_Cellular_component table tbody td:nth-child(2) > ul,
+#go_summary_Biological_process table tbody td:nth-child(2) > ul{
+  /* width: 40%; */
+  list-style-type: none;
+}
 
 
 
@@ -2341,7 +2372,12 @@ div#google-map {
 
 #navigation {
   width: 12em;
+  height: 100%;
   border-bottom:1px solid #AAA;
+}
+
+#navigation.maximize-height {
+  height: 100%;
 }
 
 .navigation #title{
@@ -2383,6 +2419,8 @@ div#google-map {
   margin: 0 0 0 0em;
   padding: 0;
   overflow: hidden;
+  height: calc(100% - 75px);
+
 }
 
 .navigation ul li {
@@ -2447,7 +2485,21 @@ div#google-map {
   z-index:5;
 }
 
-#nav-min:hover{
+#nav-more .ui-icon{
+  margin: auto;
+}
+#nav-more {
+  position: absolute;
+  width: 100%;
+  z-index:5;
+  bottom: 0;
+  padding: 0.5em 0;
+  background: #CCC;
+}
+
+
+#nav-min:hover,
+#nav-more:hover {
 
   -moz-box-shadow:    1px 2px 1px 1px #999;
   -webkit-box-shadow: 1px 2px 1px 1px #999;
@@ -2478,7 +2530,8 @@ div#google-map {
   border-left:1px solid #AAA;
   padding:1em 1.5em 0.5em 0.7em;
   table-layout:fixed;
-  display:table;
+  display:flex; /*avoid widget-holder to be wrapped to next line */
+  display: -webkit-flex; /* safari */
 }
 
 
@@ -3305,4 +3358,48 @@ button::-moz-focus-inner {
 .flotplot {
   min-width: 300px;
   min-height: 300px
+}
+
+/* standardize static widget */
+/* components like buttons */
+.static-widget-content a.button {
+  float: none;
+  border: 1px solid #AAA;
+  background: #EEE;
+  cursor: pointer;
+  color: black;
+  font-size: x-small;
+  color: black;
+  font-size: small;
+  border-radius: .8em;
+  text-decoration: none;
+  padding: 0.2em 0.4em;
+  margin: 0.5em;
+}
+.static-widget-content a.button:hover {
+  background: #DDD;
+}
+.static-widget-content a.highlight {
+  /* border-color: #FFB5B5; */
+  font-size: small;
+  border-width: 1px 2px 2px 1px;
+  color: white;
+  background: #9C4041;
+  padding: 0.5em 1em;
+  display: inline-block;
+
+}
+.static-widget-content a.highlight:hover {
+  /* background: #fff0f3; */
+  border-color: #FFB5B5;
+  background: #9C4041;
+}
+.static-widget-content tbody tr {
+  height:1.5em;
+}
+
+.static-widget-content h1,
+.static-widget-content h2,
+.static-widget-content h3 {
+  margin: 0.5em auto 1em;
 }

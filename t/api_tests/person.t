@@ -21,6 +21,30 @@
         $api = $_[0];
     }
 
+    sub test_institutions {
+        my $person = $api->fetch({ class => 'Person', name => 'WBPerson77' });
+        can_ok('WormBase::API::Object::Person', ('institution'));
+
+        my $ins = $person->institution()->{data};
+        isnt($ins, undef, 'data returned');
+
+        my ($ins1, $ins2) = grep { /Salk Institute|Molecular and Cell Biology/ } @$ins;
+        isnt($ins1, undef, 'one institution returned');
+        isnt($ins2, undef, 'mutiple institution returned');
+    }
+
+    sub test_webpage {
+        my $person = $api->fetch({ class => 'Person', name => 'WBPerson77' });
+        can_ok('WormBase::API::Object::Person', ('web_page'));
+
+        my $webpages = $person->web_page()->{data};
+        isnt($webpages, undef, 'data returned');
+
+        my ($page1, $page2) = grep { /nobelprize|wikipedia/ } @$webpages;
+        isnt($page1, undef, 'one webpage returned');
+        isnt($page2, undef, 'mutiple webpage returned');
+    }
+
     # Tests previous addresses
     sub test_previous_addresses {
 

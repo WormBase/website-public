@@ -123,6 +123,7 @@
       </li>
 [% END %]
     </ul>
+    <div id="nav-more" style="display:none"><div class="ui-icon ui-icon-triangle-1-s"></div></div>
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon" class="ui-icon ui-icon-triangle-1-w"></div></div>
   </div>
   </div>
