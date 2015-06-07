@@ -52,7 +52,7 @@
 
         my $sequence = $transcript->print_sequence();
         isnt($sequence->{'data'}, undef, 'data returned');
-        is (scalar @{$sequence->{'data'}}, 3, 'correct amount of sequences returned -ve strand');
+        is (scalar @{$sequence->{'data'}}, 4, 'correct amount of sequences returned -ve strand');
 
         foreach my $seq (@{$sequence->{'data'}}) {
             if($seq->{'header'} eq "unspliced + UTR"){
@@ -77,7 +77,7 @@
 
         $sequence = $transcript->print_sequence();
         isnt($sequence->{'data'}, undef, 'data returned');
-        is (scalar @{$sequence->{'data'}}, 3, 'correct amount of sequences returned +ve strand');
+        is (scalar @{$sequence->{'data'}}, 4, 'correct amount of sequences returned +ve strand');
 
         foreach my $seq (@{$sequence->{'data'}}) {
             if($seq->{'header'} eq "unspliced + UTR"){
@@ -115,6 +115,47 @@
         is ($sequence->{'data'}[0]->{'sequence'}, "atgggcgccttcgatcgcgtgaaagctcaagttgcatccgactcaaaatggacatcagctccttacaagggatttgtggccggaagcccatcaaacacgtatattgatattgtttccactgcgtgagttttcaacatgcaacctatcctgaagctttttaaaattaattctttgaagacgccactaacacgatgaattttgctcgtcactcgaaatacgatgaaatgtattctccttatctcggatcattccgcgaacgacacaattatacttcaattgctccaagcttgtgtattaacaaaacaaaccgtgccatcgagtatgacctggcaccacacaaggcttacaatccacgacaatccgaatggcttcttgaaaaagacaagaaatatagagttcgtggtgctcgtaatttaatttacacaaaaagcgcatcggatatcagtttgcctccactgacacgtcgcacattcacagttccaacagatactcttcgtcatcagaatcaatttctctactggaatggtcgtgcacttggtcttgactatgttgctccattccttcgtcgtgaagattattctcgtcacgaggatcgccgttatcagagaatttactggtctccacatttcattgatttgcttccatcttgccgtcattctgcacatcttatgctttccgcttattaa", 'correct sequence returned nc transcript' )
     }
 
+    sub test_flanking_region_neg_strand {
+
+        can_ok('WormBase::API::Object::Transcript', ('_get_flanking_region'));
+        can_ok('WormBase::API::Object::Transcript', ('_print_flanked_unspliced'));
+
+        #  -ve strand test
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'B0336.6.1' });
+        my ($len_us, $len_ds) = (60, 50);  #upstream and downstream length to fetch
+        my ($flanked_seq,$flanked_seq_range, $up_range, $down_range) =
+            $transcript->_get_flanking_region($len_us, $len_ds);
+        my ($orig_start, $orig_end) = ($transcript->_seq_obj->start, $transcript->_seq_obj->end);
+        my ($flanked_start, $flanked_end) = ($flanked_seq_range->start,
+                                             $flanked_seq_range->end);
+
+        is($orig_start, 5690107, 'correct start coord of un-flanked transcript');
+        is($orig_end, 5692730, 'correct end coord of un-flanked transcript');
+        is($flanked_start, 5690057, 'correct start coord of flanked transcript');
+        is($flanked_end, 5692790, 'correct end coord of un-flanked transcript');
+
+        is($flanked_seq, lc('GTCAATTTATTATTTTTAAAATATTTTTCTAAACGTTAGTTAACTTTTAGTTTGTTACAGATGCTACATAATGGGGAAGGCGGAATGAGTGTTAATGATCTTCAAGAGCTCATCGAGCGACGGATACCCGATAATCGAGCTCAACTGGAAACGAGTCATGCGAATCTTCAACAAGTTGCCGCGTATTGTGAGGATAATTATATACAATCAAACGTGTGGTTTAATTTTTTCTTTTAAGTTTATGAATTAAACGTTTTCAGAATAAATCTGCTGCGCTAGAGGAATCCAAGAAATTCGCGATCCAGGCACTCGCCAGCGTAGCCTACCAGATTAACAAGATGGTTACGTAAGTATTTCAATTAATTTGTTTTAATTATGAATCTTTTTTTCAGAGATTTACACGATATGCTTGCTCTACAAACCGATAAAGTGAACTCTTTAACAAATCAAGTTCAATATGTTAGCCAAGTAGTTGATGTACATAAAGAGAAGCTTGCAAGACGAGAAATTGGTTCTCTCACAACCAATAAAACATTATTCAAGCAACCCAAAATCATTGCACCAGCAATCCCAGATGAAAAGCAGAGATATCAACGAACGCCCATCGATTTTTCTGTTCTTGACGGAATAGGGCATGGTGTCAGAACATCGGATCCACCGAGAGCAGCACCAATCTCAAGAGCAACTTCATCAATTTCTGGCAGTTCTCCATCACAATTTCACAATGAATCTCCAGCGTATGGAGTTTATGCTGGTGAACGAACGGCTACGTTAGGAAGAACAATGAGACCGTATGCTCCATCAATTGCTCCATCGGATTATCGGTTGCCACAGGTGAACATTTGAAATATTCATAGAGGCTGAAAATAATTTGCTTTTCGTGTTTTTGACAAAACGTTTTCAAAAAAAAAAGGGAGCGAAAAATTCTGACATAACTTATACATTTTAAATTTTAAACTTTTTTTTCTGAAAAATACACTCAATATTGAAAAAAAAGTGAACCATTGATAAATTTATTCAAAAAACGGTTTTTTTGACCCAAAACGACCGCATTTCATAATGAGACTTCTGAAAATATCGAAAAAAAATTTAGAGCGAGCCTGAATAAGAATCTGAAATCCTTGTTACAGCAGTTAGATACAGTATTTATTGAATAATCACATAATTAATTTTGAAATTTTTTAGAAGTCTTTTTATGAAATTCAATGTTTCAGGCTAGTTTTTGTCGACTTCAGACTAAACAACTAATTTTTAAAAAATCAGCTCATTTCCTTTTCAAAAAATTAATCAAGTTTTTTCTAACATAATCCGATTACTTTTTACAGGTCACACCACAATCAGAATCACGAATCGGCCGTCAAATGAGCCACGGATCAGAGTTCGGAGATCATATGAGCGGTGGTGGTGGAAGCGGAAGTCAACACGGATCATCAGACTATAATTCCATTTATCAACCTGATCGTTACGGAACTATTCGAGCTGGTGGTCGGACTACAGTGGATGGTAGCTTTTCTATTCCCAGACTATCATCTGCACAAAGTAGTGCTGGAGGTCCAGAATCACCAACATTCCCACTTCCACCACCAGCTATGAATTATACTGGATATGTTGCACCGGGAAGTGTGGTACAACAACAACAACAACAACAAATGCAACAACAAAATTATGGAACTATTCGAAAATCAACGGTGAACCGACATGATCTTCCACCTCCACCAAATTCTTTGCTCACTGGAATGTCAAGTCGAATGCCAACACAAGATGATATGGATGATCTACCACCTCCACCAGAATCAGTTGGTGGGTCATCAGCGTATGGAGTGTTTGCTGGTAGAACAGAATCGTACAGTTCGAGTCAGCCACCAAGTCTCTTTGATACGAGTGCTGGATGGATGCCCAACGAGTATTTGGAAAAAGGTATTTTTGGAGATTTTAATTTGATTGAAAAATTGTCGGAAAAAAATTCTCTAAGCTTTTCTGTATTATTTTACGATTTAGAAAATTGGCTAAAATTGTTAGTGAAAAATTTATTATAAAAACCGAAAAAAGTTTAAAAAAATTAAATTTAATAAAAATTTAAAAAAGAGAAAAAAACAAAAAATTTTGTGATATTGGAAAGTGATTTTGAAAAATTCAAATATCTCCAAATTTTTTTTTTTTGAGAATTTTCAAATTTTGAAAATTATAAGCTTTGATTTTTTAAAAAGTTATCTTTTTAGCTTTTATTTTCGAAAAAAACGAAAAATAAATTTCCTTTAAAAACATCGGAGTATCAAAAAAATCCAAAAAGAATCGAAATCTTAAGTTGTAAAATGCGATTTTTTGCAGAATTTTTAATGTTACAAAGCAATTATATTTGTCAATTTAAACATTTTCGAAAAAAACCAATCTTTTTTTTCAGTACGGGTCCTGTACGACTATGATGCTGCAAAAGAAGACGAGTTGACACTTCGCGAGAACGCAATTGTCTACGTACTGAAAAAGAACGATGACGACTGGTATGAAGGTGTCTTGGATGGAGTCACTGGGCTTTTCCCTGGAAACTACGTAGTTCCAGTATGATAACAAGAAATGCTAACCCTGCTAAATCAATTGCTTTTAATCTCACTTTTATTCATATTCATATATTGCCTTTTGCCTCGAGTACTTGTATGTGAAAAGCCAAAAATAAACGATGGATATGTAATCATGAAGGAAGCAGTGGTCCCCTCGTTTGCAGCAGTGAGAAGCCTAA'), 'correct flanked sequence returned');
+    }
+
+    sub test_flanking_region_pos_strand {
+        #  +ve strand test
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'AC3.1' });
+        my ($len_us, $len_ds) = (60, 50);  #upstream and downstream length to fetch
+        my ($flanked_seq, $flanked_seq_range, $up_range, $down_range) =
+            $transcript->_get_flanking_region($len_us, $len_ds);
+        my ($orig_start, $orig_end) = ($transcript->_seq_obj->start, $transcript->_seq_obj->end);
+        my ($flanked_start, $flanked_end) = ($flanked_seq_range->start,
+                                             $flanked_seq_range->end);
+
+        is($orig_start, 10368556, 'correct start coord of un-flanked transcript');
+        is($orig_end, 10369868, 'correct end coord of un-flanked transcript');
+        is($flanked_start, 10368496, 'correct start coord of flanked transcript');
+        is($flanked_end, 10369918, 'correct end coord of un-flanked transcript');
+
+        is($flanked_seq, lc('TTACGGAGCTCCTCCCCTTTCTTGCTATAAATAACGCTCACATCGACAAAAATTGTTAATATGATCATGTTCACAGAAGCTGAAGTTATGAGTTTTTCATACGCCGTTGATTTTGGAGTTCCCGAATGGCTCAAACTTTACTATCACGTCATTTCCGTGGTGTCAACTGTTATTTCATTTTTCTCAATGTACATAATTTTGTTTCAAAGTGGGAAAATGGATGGATATCGATTCTATCTATTTTATATGCAGGTATTCCATAATTATAAAAACAACTATTTTTGATACAGTTTATGCATTTTCAGTTTGCTGGATGGTTGATGGATCTTCATCTATCTACTTTTATGCAGTTCATTCCATTATTCCCAGTTTTTGGAGGATATTGTACTGGACTCTTGACTCAAATTTTCAGAATTGACGATTCATTTCAAACGGTAGCAATATCAAATAAAATTTATTGAAAAAAAGGAAATTAAATTTTCAGACATATACTGCATTTACCATTTGCTTGGTAGCCAGTGCTTTGAATAGTTGCTTTGTTCGGAAGCATCAAGCAATTTCTAAAATCAGCTCTAAATATCTTCTCGATAATGTTACATACTGCATTGTTATATTTCTACTCAATATATATCCAGTTATTGCTGCATCTTTACTTTATTTGAGCATGCTCAATAAGTCCGAACAAGTTGAATTGGTGAAATCGGTAATTGAATTCAAAATTAAATTCACGAATAATTATTTTTGTTTTGCAGGTTTACCCAAATCTCGTTGATAAATTTGCAAGTCTACCAAACTACGTGGTATTTGATTCCAATATATGGGCAATTGTATTCTTTGCATTCATATTTTTTGGTTGTACATATACACTTGTTTTGATTGTCACAACTACTTATCAAATGTTCAAAATATTAGACGATAATCGAAAACATATCAGTGCTTCAAACTATGCAAAGCATCGAGCCACTTTGAGAAGTCTTTTAGCTCAGTTTACAACGTGTTTCTTGATTGTTGGTCCAGCGTCTTTGTTCTCTTTACTGGTAGTTATAAGATATGAACATAGTCAAGGTATATATTATAACACGGCATTCAATATAACACATACTATTTCAGTAGCAACACATTGGACCATTGTTGCTCTAACTCTCCATTCCAGTGCAAATGCAATTGTAATGGTTATCACATATCCTCCATACAGACATTTTGTAATGCTATGGAAAACGAACAGGTTCGAGTGTACAGGTTCTAACAATTCAATAACCAAATATATTTTCAGATCATTCCACTTCGCATCATCTCAATATCAACGGTCTACTCTCCCGAATACAAGAATTCAAACGGAGCGAAGTATTGCAGTAACAATAACAACCCATTAACTTCTAATTTCCCGAGTTTCAAACTTGTAAATAAACTTTTTCGTCTTTTG'), 'correct flanked sequence returned');
+
+    }
+
     #related to issue #2710
     sub test_expression_widget {
         my $transcript = $api->fetch({ class => 'Transcript', name => 'B0336.6.1' });
@@ -148,7 +189,8 @@
         isnt($expressions->{'data'}, undef, 'data returned');
         is($expressions->{'description'}, 'expression patterns associated with the gene:WBGene00015146' , 'correct description returned ');
         is($expressions->{'data'}[0]->{'description'}->{'text'}, 'Collectively, these approaches revealed that ABI-1 is expressed in a number of neurons within the nerve ring and head, including the amphid interneurons AIYL/R, the RMEL/R motoneurons, coelomocytes, and several classes of ventral cord motoneuron.' , 'correct expression description returned' );
-        is($expressions->{'data'}[0]->{'type'}, 'Reporter gene', 'correct type returned');
+        ok(scalar grep { 'Reporter gene' } @{$expressions->{'data'}[0]->{'type'}}, 'type reporter gene returned');
+        ok(scalar grep { 'Cis regulatory element' } @{$expressions->{'data'}[0]->{'type'}}, 'type cis regulatory element returned');
         is($expressions->{'data'}[0]->{'expression_pattern'}->{'id'}, 'Expr8549', 'correct expression pattern returned');
 
         #test expression_profiling_graphs
@@ -157,7 +199,7 @@
         isnt($graphs->{'data'}, undef, 'data returned');
         is($graphs->{'description'}, 'expression patterns associated with the gene:WBGene00015146' , 'correct description returned ');
         is($graphs->{'data'}[0]->{'description'}->{'text'}, 'Developmental gene expression time-course.  Raw data can be downloaded from ftp://caltech.wormbase.org/pub/wormbase/datasets-published/levin2012' , 'correct expression description returned' );
-        is($graphs->{'data'}[0]->{'type'}, 'Microarray', 'correct type returned');
+        ok(scalar grep { 'Microarray' } @{$expressions->{'data'}[0]->{'type'}}, 'type microarry returned');
         is($graphs->{'data'}[0]->{'expression_pattern'}->{'id'}, 'Expr1011958', 'correct expression pattern returned');
 
         #test anatomy_terms

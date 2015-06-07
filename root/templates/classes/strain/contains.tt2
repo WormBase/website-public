@@ -26,9 +26,16 @@
       [% tags2link(fields.rearrangements.data, '<br />', 'rearrangements found') %]
 [% END %]
 
-[% WRAPPER $field_block title=pluralize("Clone", fields.clones.data.size) key="clones" %]
-      [% tags2link(fields.clones.data, '<br />', 'clones found') %]
-[% END %]
+[%
+    WRAPPER $field_block title=pluralize("Clone", fields.clones.data.size) key="clones";
+        clone_data = fields.clones.data;
+        IF clones_data;
+            tags2link(clones_data, '<br />', 'clones found');
+        ELSE;  # a string is returned
+            searchlink('clone', object.name.data.id, clone_data);
+        END;
+    END;
+%]
 
 [% WRAPPER $field_block title=pluralize("Transgene", fields.transgenes.data.size) key="transgenes" %]
       [% tags2link(fields.transgenes.data, '<br />', 'transgenes found') %]

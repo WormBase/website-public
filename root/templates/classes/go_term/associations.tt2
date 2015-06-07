@@ -2,20 +2,54 @@
 
 WRAPPER $field_block title="Genes" key="genes";
 
-    build_data_table (
-		order = [
-			'gene',
-            'species',
-			'evidence_code',
-			'description'
-			],
-		columns = {
-			gene => 'Gene',
+UNLESS ref(fields.genes.data) == 'ARRAY';
+    fields.genes.data;
+ELSE;
+    table_settings = '
+        "drawCallback": WB.partitioned_table(1, function(rowData){
+            return "<td>" + rowData[0] + "</td>";
+        }),
+        "columnDefs": [
+            { "targets": 1, "visible": false },
+            { "targets": 4, "width": "20%" }
+        ],
+        "autoWidth": false
+    ';
+
+    full_view = build_data_table(
+        order = ['gene', 'gene', 'species', 'extensions', 'evidence_code', 'with'],
+        columns = {
+            gene => 'Gene',
             species => 'Species',
-			evidence_code => 'Evidence Code',
-			description => 'Description'
-			},
-		key = 'genes');
+            with => 'With',
+            extensions => 'Extensions',
+            evidence_code => 'Evidence code',
+            anno_id => "Annotation ID",
+        },
+        key = "genes",
+        style = table_settings);
+
+
+    summary_view = build_data_table(
+        order = ['gene', 'species', 'extensions'],
+        columns = {
+            gene => 'Gene',
+            species => 'Species',
+            extensions => 'Extensions',
+        },
+        key = "genes_summary");
+
+    multi_view(
+        "genes_multi_view", [
+        { key => "genes_summary",
+          default => 1,
+          label => 'Summary view',
+          view => summary_view },
+        { key => "genes",
+          label => 'Full view',
+          view => full_view }]);
+
+END;  # end of conditinal
 END;
 
 WRAPPER $field_block title="CDS" key="cds";
@@ -130,7 +164,3 @@ WRAPPER $field_block title="Motifs" key="motif";
 END;
 
 %]
-
-
-
-

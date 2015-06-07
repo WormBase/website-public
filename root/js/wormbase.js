@@ -467,14 +467,28 @@
       });
 
       content.delegate(".slink", 'mouseover', function(){
-          var slink = $jq(this);
+          var slink0 =  $jq(this);
+          var slinkAll;
+
+          // occasionally, several iamges needs to be be grouped into a set
+          // of slides
+          var grpId = slink0.attr('data-group');
+          if (grpId){
+            slinkAll = slink0.closest('td').find('.slink[data-group='+ grpId +']'); //all slinks in the cell that will be grouped
+          }
+
           Plugin.getPlugin("colorbox", function(){
-            slink.colorbox({data: slink.attr("href"),
+            (slinkAll || slink0).each(function(){
+              var slink = $jq(this);
+              slink.colorbox({data: slink.attr("href"),
+                            rel: slink.attr("data-group"),
                             width: "800px",
-                            height: "550px",
+                            // height: "550px",
                             scrolling: false,
                            onComplete: function() {$jq.colorbox.resize(); },
-                            title: function(){ return slink.next().text() + " " + slink.data("class"); }});
+                            title: function(){ return slink.attr('title'); }
+                });
+            });
           });
       });
 
@@ -556,6 +570,7 @@
         $jq.post("/rest/system_message/" + messageId);
         Scrolling.set_system_message(0);
         notifications.css("top", "0");
+        Scrolling.sidebarMove();
       }
   }
 
@@ -801,7 +816,8 @@
   }
 
   function allResults(type, species, query, widget){
-    var url = "/search/" + type + "/" + query + "/1?inline=1" + (species && "&species=" + species),
+    var url_search_base = "/search/" + type + "/" + query,
+        url = url_search_base + "/1?inline=1" + (species && "&species=" + species),
         allSearch = $jq("#all-search-results"),
         searchSummary = $jq("#search-count-summary"),
         curr = $jq("#curr-ref-text");
@@ -812,8 +828,11 @@
         checkSearch(allSearch);
 
         var dl = searchSummary.find(".dl-search");
+        var dl_button = dl.closest('li');
+
         dl.load(dl.attr("href"), function(){
-          if((parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10)) < 100000){
+          var resultCount = (parseInt(dl.text().replace(/K/g,'000').replace(/[MBGTP]/g, '000000').replace(/\D/g, ''), 10));
+          if(resultCount < 100000){
             searchSummary.find("#get-breakdown").show().click(function(){
               setLoading($jq(this));
               searchFilter(searchSummary, curr);
@@ -824,6 +843,22 @@
               });
              });
           }
+          if(resultCount < 500){
+            // allows downloading search result if # is small
+            searchSummary.find('.dl-format a').each(function(){
+              var format = $jq(this).attr('data-content-type');
+              var dl_params = $jq.param({'species': species,
+                                         'format': format});
+              var dl_url = url_search_base + "/all" +
+                (dl_params && '?' + dl_params);
+              $jq(this).attr('href',dl_url);
+            });
+          }else{
+            searchSummary.find('.dl-format-list').html('<li  style="height:auto">Too many results to download. Please use our <a href="ftp://ftp.wormbase.org/pub/wormbase/" target="_blank">FTP</a> site.</li>');
+            dl_button.addClass('fade');
+            dl_button.find('.ui-icon').addClass('ui-state-disabled');
+          }
+          dl_button.show();  // show the download button otherwise hidden
         });
       });
     } else if (widget == 'references') {
@@ -873,6 +908,9 @@
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){
             Scrolling.sidebarMove();checkSearch(content);
+            if ($jq('.multi-view-container').length){
+              WB.multiViewInit();
+            }
             Layout.resize();
           });
         }
@@ -1221,8 +1259,10 @@ var Scrolling = (function(){
       if(scroll){
         body.stop(false, true).animate({
           scrollTop: scroll
-        }, 2000, function(){ Scrolling.sidebarMove(); scrollingDown = 0;});
-        scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
+        }, 300, 'easeInOutExpo', function(){
+          scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
+          Scrolling.sidebarMove();
+        });
       }
   }
 
@@ -1243,6 +1283,75 @@ var Scrolling = (function(){
       return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
 
+  // Decide whether sidebar should be full height or flexible height.
+  // With long sidebar, set sidebar height 100% to allow scroll on y-overflow.
+  // With short side bar, allow flex height, so when scrolling the document to
+  // near the footer, the sidebar isn't pushed off screen until it absolutely
+  // cannot fit.
+  // (There should be a better way to do it...)
+  function sidebarFit() {
+    var sidebarUl = sidebar.find('ul');
+
+    // must be set to check overflow
+    sidebar.css('height', $jq(window).height() - system_message);
+
+    if (static===1 && sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+      // allow only sticky sidebar to be scrollable, to avoid complications
+
+      sidebarUl.css('overflow-y','scroll');
+      $jq("#nav-more").show();
+      sidebarScroll.updateScrollState();
+
+      // Occasionally, count is stuck at 1 and not reset. Not sure how to fix
+      // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
+      // if(count===0 && titles.length){
+      //   count++; //Add counting semaphore to lock
+      //   //close lowest section. delay for animation.
+      //   titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarFit();});
+      // }
+    }else{
+      sidebar.css('height','initial');
+      sidebarUl.css('overflow-y','hidden');
+      $jq("#nav-more").hide();
+    }
+  }
+
+  // add a scroll down button to sidebar,
+  // to make it obvious overflow has occured.
+  var sidebarScroll = (function(){
+    var sidebarUl = $jq('#navigation ul');
+    var sbScrlBttn = $jq("#nav-more");
+
+    var loop = function(){
+      sidebarUl.stop().animate({scrollTop: sidebarUl.scrollTop()+100}, 1000, 'linear', loop);
+    };
+
+    var stop = function(){
+      sidebarUl.stop();
+    };
+
+    var updateScrollState = function(){
+      if ( sidebarUl.scrollTop() < sidebarUl.prop("scrollHeight") - sidebarUl.height() - 5){
+        // not near the bottom, allow of 5px "buffer"
+        sbScrlBttn.removeClass('ui-state-disabled');
+      }else{
+        // scrolled near the bottom
+        sbScrlBttn.addClass('ui-state-disabled');
+      }
+    };
+
+    return {
+      init: function(){
+        sidebarUl.scroll(updateScrollState);
+        sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
+      },
+      updateScrollState: updateScrollState,
+      reset: function() { sidebarUl.scrollTop(0); }
+    };
+  })();
+
+
+  // affix sidebar
   function sidebarMove() {
       if(!sidebar)
         return;
@@ -1251,37 +1360,44 @@ var Scrolling = (function(){
             scrollTop = $window.scrollTop(),
             maxScroll = $jq(document).height() - (sidebar.outerHeight() + footerHeight + system_message + 20); //the 20 is for padding before footer
 
+        // console.log({
+        //   scrollTop: scrollTop,
+        //   maxScrool:maxScroll,
+        //   offset: offset,
+        //   static:static,
+        //   count:count,
+        //   objSmallerThanWindow: objSmallerThanWindow
+        // });
+
         if(sidebar.outerHeight() > widgetHolder.height()){
             resetSidebar();
             return;
         }
-        if (objSmallerThanWindow){
           if(static===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
                 static = 1;
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
+                //static = 1;
             }else{
-                resetSidebar();
+                //resetSidebar();
             }
           }else{
             if (scrollTop < offset) {
                 resetSidebar();
+                sidebarScroll.reset();
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
+            }else{
+              // needed to re-position sidebar after close system message
+              sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
             }
           }
-        }else if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
-          count++; //Add counting semaphore to lock
-          //close lowest section. delay for animation.
-          titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-        }else{
-          resetSidebar();
-        }
       }
+      Scrolling.sidebarFit();
     }
 
   function sidebarInit(){
@@ -1289,10 +1405,27 @@ var Scrolling = (function(){
     offset = sidebar.offset().top;
     widgetHolder = $jq("#widget-holder");
 
+    var sidebarUl = sidebar.find('ul');
+
+    sidebarScroll.init();  // allow side content to be scrolled
+    sidebarFit();
+
     $window.scroll(function() {
       Scrolling.sidebarMove();
     });
+
+    // prevent document being scrolled along when scrolling sidebar
+    var bdy = $jq('body');
+    sidebar.mouseover(function(){
+      if (sidebarUl.css('overflow-y') === 'scroll'){
+        bdy.addClass('noscroll');
+      }
+
+    }).mouseleave(function(){
+      bdy.removeClass('noscroll');
+    });
   }
+
 
   var search = function searchInit(){
       if(loadcount >= 6){ return; }
@@ -1317,6 +1450,7 @@ var Scrolling = (function(){
     search:search,
     set_system_message:set_system_message,
     sidebarMove: sidebarMove,
+    sidebarFit: sidebarFit,
     resetSidebar:resetSidebar,
     goToAnchor: goToAnchor,
     scrollUp: scrollUp
@@ -1645,6 +1779,12 @@ var Scrolling = (function(){
         }
         var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']  + '&redirect=' + location;
         this.popupWin(pop_url);
+
+        //if on wormmine page, try sign in to wormmine,
+        // currently not enable for entire site due to redirect issue
+        if (window.location.href.indexOf("tools/wormmine") > -1){
+          this.signinWormMine(box_id);
+        }
       },
 
       popupWin: function(url) {
@@ -1656,9 +1796,70 @@ var Scrolling = (function(){
         // var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
         // win2.focus();
         window.location = url;
-      }
+      },
+
+     signinWormMine: function(provider){
+       var mineProviders = {
+         google: 'Google'
+       };
+       var mineUrlBase = 'https://www.wormbase.org/tools/wormmine/openid?provider=%s';
+       var mineUrl;
+       if (mineProviders[provider]){
+         mineUrl = mineUrlBase.replace('%s', mineProviders[provider]);
+      //   $jq.get(mineUrl);
+         window.location.replace(mineUrl);
+       }
+     }
   };
 
+    function multiViewInit(){
+      Plugin.getPlugin('icheck',function(){
+        var buttons = $jq('.multi-view-container input:radio');
+        buttons.iCheck({
+          radioClass: 'iradio_square-aero'
+        }).on('ifChecked', function(){
+          var viewId = $jq(this).attr('value');
+          var container = $jq(this).closest('.multi-view-container');
+          container.find('.multi-view').hide();
+          container.find('#'+viewId).show();
+        });
+
+      });
+    }
+
+    function partitioned_table(group_by_col, row_summarize){
+
+      var drawCallback = function( settings ){
+            var api = this.api();
+            var rows = api.rows().nodes();
+            var last=null;
+
+            api.column(0).nodes().each( function ( cell, i ) {
+                $jq(cell).children().hide();
+            });
+
+            api.rows().data().each( function ( rowData, i ) {
+
+                var groupID = rowData[0];
+                var group = rowData[group_by_col];
+                // var group = $jq(cell).find(".go_term-link").text();
+                // var extensions = $jq(cell).children("> :not(.evidence)").hide();
+                if ( last !== group ) {
+
+                    var summary_row = row_summarize ? row_summarize(rowData)
+                      : '<td>' + groupID + '</td><td>'+ group + '</td>';
+                    $jq(rows).eq( i ).before(
+                        '<tr class="group">' + summary_row + '<td colspan="100%"></td></tr>'
+                    );
+
+                    last = group;
+                }
+              //  $jq(cell).html(extensions);
+            } );
+
+      };
+      return drawCallback;
+    }
 
 	function setupCytoscape(data, types, clazz){
 
@@ -1908,13 +2109,16 @@ var Scrolling = (function(){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
-                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js"
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
+
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
-                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css"
+                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
           };
 
 
@@ -2089,8 +2293,10 @@ var Scrolling = (function(){
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
-      reloadWidget: reloadWidget                    // reload a widget
-    }
+      reloadWidget: reloadWidget,                   // reload a widget
+      multiViewInit: multiViewInit,                 // toggle between summary/full view table
+      partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes
+    };
   })();
 
 

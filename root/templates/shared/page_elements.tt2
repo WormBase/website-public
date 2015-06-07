@@ -19,7 +19,7 @@
     [% id = id || 0; %]
 [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
     [% FOREACH type IN data.keys -%]
-        <b>[% type.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]:
+        <b>[% type_label = '' _ type; type_label.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]:
           [% IF (type == 'curatorial_remarks'); '<br />'; END; %]
           [% tags2link(data.$type, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items') %]
         [% END %]
@@ -265,7 +265,7 @@ END;
       [% IF title; %]
          <div class="field-title">
                   <span title="[% tooltip ? tooltip : fields.$key.description %]">
-                     [% title _ ': ' %]
+                     [% title.replace('_+', ' ') _ ': ' %]
                    </span>
           </div>
       [%  END; %]
@@ -329,7 +329,7 @@ END;
         FOREACH o IN order; headers.push(columns.$o); END;
 
         # generate table
-        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator);
+        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener);
       END;
     END; # END of MACRO
 %]
@@ -344,7 +344,7 @@ END;
      styling via javascript.
 %]
 
-[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator) BLOCK %]
+[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator, listener) BLOCK %]
 
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
@@ -450,7 +450,7 @@ WB.getPlugin("dataTables", function(){
                 },
                 [% style %]
 
-              });
+              })[% listener %];
             }
           }, 1);
         });
@@ -569,27 +569,39 @@ END; %]
     ELSIF ref(cell) == 'ARRAY';
       IF (!separator) && (cell.size > 10);
           WRAPPER toggle title=cell.size _ ' Results';
-            FOREACH item IN cell;
-              cell_content(item);
-              IF !item.defined('evidence') && !loop.last;
-                  '<br />';
-              END;
-            END;
+            list_cell_content(cell, separator);
           END;
       ELSE;
-        FOREACH item IN cell;
-          cell_content(item);
-          IF !(ref(item) && item.defined('evidence')) && !loop.last;
-              # scalar.defined always return true, so check item is ref
-              separator || '<br />';
-          END;
-        END;
+          list_cell_content(cell, separator);
       END;
     ELSE;
       cell;
     END;
   END;
 %]
+
+[% MACRO list_cell_content(cell, separator) BLOCK;
+    WRAPPER ul_unless_separator;
+        FOREACH item IN cell;
+          IF separator || cell.size < 2;
+            cell_content(item);
+          ELSE;
+            '<li>' _ cell_content(item) _ '</li>';
+          END;
+          IF !(ref(item) && item.defined('evidence')) && !loop.last;
+              # scalar.defined always return true, so check item is ref
+              separator;
+          END;
+        END;
+    END;
+END %]
+
+[% BLOCK ul_unless_separator %]
+
+    [% '<ul>' UNLESS separator %]
+        [% content %]
+    [% '</ul>' UNLESS separator %]
+[% END %]
 
 [% MACRO format_footnotes(notes) BLOCK;
   notes.join('');
@@ -657,6 +669,32 @@ END; %]
    <!-- end [% id %] widget -->
 
 [% END %]
+
+[% MACRO multi_view(name, view_list) BLOCK;
+    '<div class="multi-view-container">';
+
+    # making buttons for the multi view
+    FOREACH view IN view_list;
+        view_id = view.key;
+        view_button_id = view_id _ '_button';
+        checked_opt = view.default ? ' checked' : '';
+        '<input id="'_ view_button_id _'" name="'_ name _'" value="'_ view_id _'" type="radio" '_ checked_opt _'/>';
+        '<label for="'_ view_button_id _'">' _
+           view.label _
+        '</label>';
+    END;
+
+    # making the views
+    FOREACH view IN view_list;
+        display = view.default ? '' : ' style="display:none;"';
+        '<div id="'_ view.key _'" class="multi-view" '_ display _'>';
+            view.view;
+        '</div>';
+    END;
+
+    '</div>';
+
+END; %]
 
 
 [%#
@@ -927,11 +965,11 @@ END;
 
    WRAPPER $field_block title="Phenotypes" key="phenotypes";
 
-       build_data_table(order=['phenotype','description', 'evidence'],
+       build_data_table(order=['phenotype','description','evidence'],
                         columns={
                         phenotype    => 'Phenotype',
-                        description => 'Description',
-                evidence  => 'Evidence'
+                        description => 'Phenotype Definition',
+                       evidence  => 'Evidence'
                     },
                     key='phenotypes');
     END;
@@ -945,7 +983,7 @@ END;
        build_data_table(order=['phenotype','evidence'],
                         columns={
                         phenotype    => 'Phenotype',
-                evidence  => 'Evidence'
+                        evidence  => 'Evidence'
                     },
                     key='phenotypes_not_observed');
       END;
@@ -1121,7 +1159,7 @@ END;
     END;
     IF sequences.keys.size > 0;
       WRAPPER $field_block title=(field_title.defined ?  field_title : "Sequence") key=field_key;
-        FOREACH obj IN sequences.keys;
+        FOREACH obj IN sequence_list;
           '<div class="seq-toggle">';
           sequences.$obj.download;
           IF sequences.$obj.seq;
@@ -1130,7 +1168,7 @@ END;
               sequences.$obj.seq;
             END;
             IF (sequences.$obj.title.match('UTR') && sequences.$obj.seq.match('color'));
-              '<p id="fade" style="width:55em">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next</p>';
+              '<p id="fade" style="width:55em">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next. Beige indicates flanking regions of a transcript.</p>';
             END;
           END;
           '</div>';

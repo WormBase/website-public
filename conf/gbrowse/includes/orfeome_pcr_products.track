@@ -8,7 +8,7 @@ glyph         = sub {
 		return 'box';
 	}	
 height        = 4
-fgcolor = sub { my f = shift; 
+fgcolor = sub { my $f = shift; 
        my ($amp) = $f->attributes('amplified'); 
        return 'cyan' if $amp; 
        return 'red'; 

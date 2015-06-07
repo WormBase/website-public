@@ -15,12 +15,12 @@ link      = sub {
 		my $f = shift;
 		my %attributes  = $f->attributes();
 		my ($note) = $attributes{Note};
-		$note[0]  =~ /Predicted binding site for (.*)/;
+		$note  =~ /Predicted binding site for (.*)/;
 		my $gene = $1;
 		return "/get?name=$gene;class=Gene" if $gene;
 		return "http://pictar.bio.nyu.edu/cgi-bin/new_PicTar_nematode.cgi?species=nematode" if $f->source eq 'PicTar';
 		return "http://microrna.sanger.ac.uk/targets/v3/" if $f->source eq 'miRanda'; 
-		return "/get?name=$name;class=Feature";
+		return "/get?name=$gene;class=Feature";
 		return;
 	}
 label = sub {

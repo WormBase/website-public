@@ -258,7 +258,8 @@
         isnt($expressions->{'data'}, undef, 'data returned');
         is($expressions->{'description'}, 'expression patterns associated with the gene:WBGene00015146' , 'correct description returned ');
         is($expressions->{'data'}[0]->{'description'}->{'text'}, 'Collectively, these approaches revealed that ABI-1 is expressed in a number of neurons within the nerve ring and head, including the amphid interneurons AIYL/R, the RMEL/R motoneurons, coelomocytes, and several classes of ventral cord motoneuron.' , 'correct expression description returned' );
-        is($expressions->{'data'}[0]->{'type'}, 'Reporter gene', 'correct type returned');
+        ok(scalar grep { 'Reporter gene' } @{$expressions->{'data'}[0]->{'type'}}, 'type reporter gene returned');
+        ok(scalar grep { 'Cis regulatory element' } @{$expressions->{'data'}[0]->{'type'}}, 'type cis regulatory element returned');
         is($expressions->{'data'}[0]->{'expression_pattern'}->{'id'}, 'Expr8549', 'correct expression pattern returned');
 
         #test expression_profiling_graphs
@@ -267,7 +268,7 @@
         isnt($graphs->{'data'}, undef, 'data returned');
         is($graphs->{'description'}, 'expression patterns associated with the gene:WBGene00015146' , 'correct description returned ');
         is($graphs->{'data'}[0]->{'description'}->{'text'}, 'Developmental gene expression time-course.  Raw data can be downloaded from ftp://caltech.wormbase.org/pub/wormbase/datasets-published/levin2012' , 'correct expression description returned' );
-        is($graphs->{'data'}[0]->{'type'}, 'Microarray', 'correct type returned');
+        ok(scalar grep { 'Microarray' } @{$graphs->{'data'}[0]->{'type'}}, 'correct type returned');
         is($graphs->{'data'}[0]->{'expression_pattern'}->{'id'}, 'Expr1011958', 'correct expression pattern returned');
 
         #test anatomy_terms
