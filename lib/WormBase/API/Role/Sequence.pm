@@ -1099,9 +1099,11 @@ sub _get_flanking_region {
         # ensure not to fetch flanking region beyond assembled region ($contig)
         my ($contig) = $self->gff->segment($seq_obj->name)->features(-types => ['assembly_component']);
         $segment = $contig->intersection($segment);
-        $segment->name($flank_id);
-        $segment->primary_tag($flank_type);
-        push @flankings, $segment;
+        if ($segment) {
+            $segment->name($flank_id);
+            $segment->primary_tag($flank_type);
+            push @flankings, $segment;
+        }
     }
 
     my $long_seg = $seq_obj->union(@flankings);  #with absolute coords
@@ -1128,7 +1130,7 @@ sub _get_flanking_region {
     # its strand is set based on $seq_obj automatically
     my $long_seg_dna = $long_seg_rel->dna;
 
-    return ($long_seg_dna, $long_seg, $flankings[0], $flankings[1]);
+    return ($long_seg_dna, $long_seg, @flankings);
 
 }
 
@@ -1722,6 +1724,7 @@ sub _print_flanked_unspliced {
     my @flanked_features =  (@$features, @$flankings);  # concat
     # make a title
     my $title = 'unspliced + UTR';
+
     my @flank_titles = map {
         $_->length() .' '. $_->primary_tag;
     } @$flankings;
