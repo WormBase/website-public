@@ -570,6 +570,7 @@
         $jq.post("/rest/system_message/" + messageId);
         Scrolling.set_system_message(0);
         notifications.css("top", "0");
+        Scrolling.sidebarMove();
       }
   }
 
@@ -907,6 +908,9 @@
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){
             Scrolling.sidebarMove();checkSearch(content);
+            if ($jq('.multi-view-container').length){
+              WB.multiViewInit();
+            }
             Layout.resize();
           });
         }
@@ -1279,6 +1283,75 @@ var Scrolling = (function(){
       return ((docViewTop <= elemTop) && (elemTop <= docViewBottom));
   }
 
+  // Decide whether sidebar should be full height or flexible height.
+  // With long sidebar, set sidebar height 100% to allow scroll on y-overflow.
+  // With short side bar, allow flex height, so when scrolling the document to
+  // near the footer, the sidebar isn't pushed off screen until it absolutely
+  // cannot fit.
+  // (There should be a better way to do it...)
+  function sidebarFit() {
+    var sidebarUl = sidebar.find('ul');
+
+    // must be set to check overflow
+    sidebar.css('height', $jq(window).height() - system_message);
+
+    if (static===1 && sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+      // allow only sticky sidebar to be scrollable, to avoid complications
+
+      sidebarUl.css('overflow-y','scroll');
+      $jq("#nav-more").show();
+      sidebarScroll.updateScrollState();
+
+      // Occasionally, count is stuck at 1 and not reset. Not sure how to fix
+      // titles = $jq(sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"));
+      // if(count===0 && titles.length){
+      //   count++; //Add counting semaphore to lock
+      //   //close lowest section. delay for animation.
+      //   titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarFit();});
+      // }
+    }else{
+      sidebar.css('height','initial');
+      sidebarUl.css('overflow-y','hidden');
+      $jq("#nav-more").hide();
+    }
+  }
+
+  // add a scroll down button to sidebar,
+  // to make it obvious overflow has occured.
+  var sidebarScroll = (function(){
+    var sidebarUl = $jq('#navigation ul');
+    var sbScrlBttn = $jq("#nav-more");
+
+    var loop = function(){
+      sidebarUl.stop().animate({scrollTop: sidebarUl.scrollTop()+100}, 1000, 'linear', loop);
+    };
+
+    var stop = function(){
+      sidebarUl.stop();
+    };
+
+    var updateScrollState = function(){
+      if ( sidebarUl.scrollTop() < sidebarUl.prop("scrollHeight") - sidebarUl.height() - 5){
+        // not near the bottom, allow of 5px "buffer"
+        sbScrlBttn.removeClass('ui-state-disabled');
+      }else{
+        // scrolled near the bottom
+        sbScrlBttn.addClass('ui-state-disabled');
+      }
+    };
+
+    return {
+      init: function(){
+        sidebarUl.scroll(updateScrollState);
+        sbScrlBttn.hover(loop, stop); // Loop-fn on mouseenter, stop-fn on mouseleave
+      },
+      updateScrollState: updateScrollState,
+      reset: function() { sidebarUl.scrollTop(0); }
+    };
+  })();
+
+
+  // affix sidebar
   function sidebarMove() {
       if(!sidebar)
         return;
@@ -1296,6 +1369,10 @@ var Scrolling = (function(){
         //   objSmallerThanWindow: objSmallerThanWindow
         // });
 
+        if(sidebar.outerHeight() > widgetHolder.height()){
+            resetSidebar();
+            return;
+        }
           if(static===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
@@ -1304,26 +1381,23 @@ var Scrolling = (function(){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 //static = 1;
             }else{
-                resetSidebar();
+                //resetSidebar();
             }
           }else{
             if (scrollTop < offset) {
                 resetSidebar();
+                sidebarScroll.reset();
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
+            }else{
+              // needed to re-position sidebar after close system message
+              sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
             }
           }
-
-       if (!objSmallerThanWindow){
-        if(count===0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){
-          count++; //Add counting semaphore to lock
-          //close lowest section. delay for animation.
-          titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-        }
-       }
       }
+      Scrolling.sidebarFit();
     }
 
   function sidebarInit(){
@@ -1331,10 +1405,27 @@ var Scrolling = (function(){
     offset = sidebar.offset().top;
     widgetHolder = $jq("#widget-holder");
 
+    var sidebarUl = sidebar.find('ul');
+
+    sidebarScroll.init();  // allow side content to be scrolled
+    sidebarFit();
+
     $window.scroll(function() {
       Scrolling.sidebarMove();
     });
+
+    // prevent document being scrolled along when scrolling sidebar
+    var bdy = $jq('body');
+    sidebar.mouseover(function(){
+      if (sidebarUl.css('overflow-y') === 'scroll'){
+        bdy.addClass('noscroll');
+      }
+
+    }).mouseleave(function(){
+      bdy.removeClass('noscroll');
+    });
   }
+
 
   var search = function searchInit(){
       if(loadcount >= 6){ return; }
@@ -1359,6 +1450,7 @@ var Scrolling = (function(){
     search:search,
     set_system_message:set_system_message,
     sidebarMove: sidebarMove,
+    sidebarFit: sidebarFit,
     resetSidebar:resetSidebar,
     goToAnchor: goToAnchor,
     scrollUp: scrollUp

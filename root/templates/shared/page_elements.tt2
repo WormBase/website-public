@@ -692,7 +692,6 @@ END %]
         '</div>';
     END;
 
-        '<script>WB.multiViewInit();</script>';
     '</div>';
 
 END; %]
