@@ -3047,7 +3047,11 @@ div.inline-columns img {
 }
 
 .slink-box {
-  position:relative;
+  position:absolute;
+}
+
+.slink-label {
+  margin-left: 1.5em;
 }
 
 div.title {
