@@ -3052,6 +3052,8 @@ div.inline-columns img {
 
 .slink-label {
   margin-left: 1.5em;
+  line-height: 1.5em;
+  white-space: nowrap;
 }
 
 div.title {
