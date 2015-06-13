@@ -127,18 +127,20 @@
           text = markup_var("$text","var", 1);
         END;
 
+        text = url ? "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>" : "$text";
+
         IF downloadable(class);
           "<span class='slink-box'><a href='" _ c.uri_for('/rest/widget', class, id, 'sequences').path  _ '?colorbox=1' _ "' class='button ui-corner-all tl slink' data-class='$class' tip='view sequence'>";
             "<span class='ui-icon ui-icon-dna ui-button'></span>";
           "</a>";
-        END;
-
-        url ? "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>" : "$text";
-        IF downloadable(class);
           "</span>";
+          "<span class='slink-label'>" _ text _ "</span>";
+        ELSE;
+            text;
         END;
       END;
    END;
+
 
     MACRO searchlink(class, id, text) BLOCK;
         IF  !(c.stash.object.name.data.defined('taxonomy')) || (c.stash.object.name.data.defined('taxonomy') &&
