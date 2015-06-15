@@ -29,5 +29,7 @@
       window.WB || document.write('<script src="/js/wormbase.js"><\/script>');
       [% INCLUDE google_analytics %]
     </script>
+      [% INCLUDE olark %]
+      [%# INCLUDE chatlio %]
   </body>
 </html>

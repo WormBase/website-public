@@ -15,6 +15,7 @@ use URI::Escape;
 use Text::MultiMarkdown 'markdown';
 use DateTime;
 use Encode;
+use Data::Dumper;
 
 __PACKAGE__->config(
     'default'          => 'text/x-yaml',
@@ -567,7 +568,7 @@ sub feed_POST {
       }else{
         my $content    = $c->req->params->{content};
 
-        my $title      = $c->req->params->{title};
+        my $title      = $c->req->params->{title};   # This is actually TYPE of request, not title.
         my $name = $c->req->params->{name};
         my $email = $c->req->params->{email};
         if($c->user_exists){
@@ -581,8 +582,22 @@ sub feed_POST {
         my $page = $c->req->params->{page} || $self->_get_page($c, $url);
         $url = $url . $hash;
 
+
+#        my ($issue_url,$issue_title,$issue_number) =
+#	    $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
         my ($issue_url,$issue_title,$issue_number) =
-        $self->_post_to_github($c,$content, $email, $name, $title, $page, $userAgent, $url);
+	    $self->_post_to_github({c => $c,
+				    content         => $content,
+				    content_prelude => 'Submitted from the feedback form on the WormBase website.',
+				    visitor_email => $email,
+				    visitor_name  => $name,
+				    feedback_type => $title,
+				    page_object   => $page,  # here, an object, from which we extract page title.
+				    browser       => $userAgent,
+				    url           => $url,
+				   });
+	
+
         $c->stash->{userAgent} = $userAgent;
         $self->_issue_email({ c       => $c,
                               page    => $page,
@@ -606,6 +621,194 @@ sub feed_POST {
       }
     }
 }
+
+# Provide a webhook endpoint for Olark so that we can post 
+# chat transcripts to Github for further follow up.
+
+# Described here:
+# https://www.olark.com/help/webhooks
+
+=pod
+
+Sample output
+{
+    "kind": "Conversation",
+    "id": "EV695BI2930A6XMO32886MPT899443414",
+    "tags": ["olark", "customer"],
+    "items": [{
+        "kind": "MessageToVisitor",
+        "nickname": "John",
+        "timestamp": "1307116657.1",
+        "body": "Hi there. Need any help?",
+        "operatorId": "1234"
+	      },
+	      {
+        "kind": "MessageToOperator",
+        "nickname": "Bob",
+        "timestamp": "1307116661.25",
+        "body": "Yes, please help me with billing."
+	      }],
+	    "visitor": {
+        "kind": "Visitor",
+        "id": "9QRF9YWM5XW3ZSU7P9CGWRU89944341",
+        "fullName": "Bob Doe",
+        "emailAddress": "bob@example.com",
+        "phoneNumber": "(555) 555-5555",
+        "city": "Palo Alto",
+        "region": "CA",
+        "country": "United State",
+        "countryCode": "US",
+        "organization": "Widgets Inc.",
+        "ip": "123.4.56.78",
+        "browser": "Chrome 12.1",
+        "operatingSystem": "Windows",
+        "conversationBeginPage": "http://www.example.com/path",
+        "customFields": {
+            "myInternalCustomerId": "12341234",
+            "favoriteColor": "blue"
+        },
+		"chat_feedback": {
+            "comments": "Very helpful, thanks",
+            "friendliness": 5,
+            "knowledge": 5,
+            "overall_chat": 5,
+            "responsiveness": 5
+	    }
+	},
+    "operators": {
+        "1234": {
+            "kind": "Operator",
+            "id": "1234",
+            "username": "jdoe",
+            "nickname": "John",
+            "emailAddress": "john@example.com"
+        }
+    },
+    "groups": [{
+        "name": "My Sales Group",
+        "id": "0123456789abcdef",
+        "kind": "Group"
+	       }]
+}
+
+=cut
+
+sub olark :Path('/rest/olark') :ActionClass('REST') {}
+
+sub olark_POST {
+    my ($self,$c) = @_;
+
+    # Necessary for older versions of Catalyst.
+    my $json = $c->req->params->{data};
+    my $post = decode_json($json);
+
+    # When we upgrade to Catalyst 5.0049, this changes. JSON should
+    # automatically be decoded, too.
+    #    my ($post) = $c->req->body_data;
+
+    my $convo_id   = $post->{id};
+    my $convo_kind = $post->{kind};
+
+    # Parse out the transcript and operators (may be more than one?) of the conversation
+    my $items = $post->{items};
+    my @transcript;
+    my %operators;
+
+    my $conversation_type; # Need to flag offline chat for further followup
+    foreach (@$items) {
+	my $kind        = $_->{kind};
+	if ($kind =~ /offline/i) { $conversation_type = 'offline' }
+	my $nickname    = $_->{nickname};
+	my $timestamp   = $_->{timestamp};
+	my $body        = $_->{body};
+	my $operator_id = $_->{operatorId};
+	
+	push @transcript,$nickname ? "$nickname: $body" : $body;
+	
+	$operators{$nickname}++ if $operator_id;
+    }
+    
+    my $transcript_prelude; # we use the transcript to automatically build titles. This clariyfing prelude interferes with that.
+    if ($conversation_type eq 'offline') {
+	$transcript_prelude = 'Help Desk query collected when no chat operators were online. Follow up required.';
+    } else {
+	$transcript_prelude = 'Help Desk chat transcript. Issue can be closed if question was resolved in chat.';
+    }
+
+    my $transcript = join('</br>',@transcript);
+    my $operators  = join(',',keys %operators);
+
+    # Get some stats on the visitor (probably won't want to post all of this to GitHub!)
+    my $visitor_kind   = $post->{visitor}->{kind};
+    my $visitor_name   = $post->{visitor}->{fullName};
+    my $visitor_id     = $post->{visitor}->{id};
+    my $visitor_email  = $post->{visitor}->{emailAddress};
+    my $visitor_phone  = $post->{visitor}->{phoneNumber};
+    my $visitor_city   = $post->{visitor}->{city};
+    my $visitor_region = $post->{visitor}->{region};
+    my $visitor_country= $post->{visitor}->{country};
+    my $visitor_country_code = $post->{visitor}->{countryCode};
+    my $visitor_org    = $post->{visitor}->{organization};
+    my $visitor_ip     = $post->{visitor}->{ip};
+    my $visitor_browser= $post->{visitor}->{browser};
+    my $visitor_os     = $post->{visitor}->{operatingSystem};
+    my $visitor_start_page = $post->{visitor}->{conversationBeginPage};
+
+
+    $c->log->debug($transcript);
+    
+    # The *WormBase* user. We might want to use these INSTEAD of those supplied
+    # by Olark.
+    my ($wb_name,$wb_user_email);
+    if ($c->user_exists){
+	$wb_name = $c->user->username;
+	$wb_user_email = $c->user->primary_email->email;
+    }
+        
+    # Which name should we pass, the wormbase name or that supplied by Olark?
+    
+    $conversation_type ||= 'online';
+
+    my ($issue_url,$issue_title,$issue_number) =
+	$self->_post_to_github({c => $c,
+				content         => $transcript,
+				content_prelude => $transcript_prelude,
+				visitor_email => $visitor_email,
+				visitor_name  => $visitor_name,
+				feedback_type => "source: $conversation_type chat",
+				page_object   => $visitor_start_page,
+				browser       => $visitor_browser,
+				url           => $visitor_start_page,
+			       });
+    
+#$transcript, $visitor_email, $visitor_name, "source: $conversation_type chat", $visitor_start_page, $visitor_browser, "");
+
+   # Should we still send an email?
+   $self->_issue_email({ c       => $c,
+			  page    => $visitor_start_page,
+			  new     => 1,
+			  content => encode('utf8', $transcript),
+                          change  => undef,
+			  reporter_email   => $visitor_email,
+			  reporter_name    => encode('utf8', $visitor_name),
+			  title        => "$conversation_type chat",
+			  url          => $visitor_start_page,
+			  issue_url    => $issue_url,
+			  issue_title  => encode('utf8', "$conversation_type chat transcript: $issue_title"),
+			  issue_number => $issue_number});
+    my $message = "<p>Track the progress of your question, <a href='$issue_url' target='_blank'>$issue_title (#$issue_number)</a> on our <a href='$issue_url' target='_blank'>issue tracker</a>.</p>";
+
+#    $c->log->debug("$visitor_start_page $visitor_name $visitor_email $operators $transcript");
+    $self->status_ok(
+	$c,
+	entity => {
+	    message => $message,
+	}
+	);    
+}
+
+
+
 
 
 
@@ -1069,10 +1272,20 @@ sub _check_user_info {
 
 
 sub _post_to_github {
-  my ($self,$c,$content,$email, $name, $title, $page, $userAgent, $u) = @_;
-
-  my $url     = "https://api.github.com/repos/" . $c->config->{github_repo} . "/issues";
-
+    my ($self,$params) = @_;
+    
+    my $c = $params->{c};
+    my $content          = $params->{content};
+    my $content_prelude  = $params->{content_prelude};
+    my $visitor_email    = $params->{visitor_email};
+    my $visitor_name     = $params->{visitor_name};
+    my $feedback_type    = $params->{feedback_type};  # will become a label in GitHub
+    my $page_object      = $params->{page_object};
+    my $browser          = $params->{browser};
+    my $page_url         = $params->{url};
+    
+    my $github_url = "https://api.github.com/repos/" . $c->config->{github_repo} . "/issues";
+    
   # Get a new authorization for the website repo,
   # curl -H "Content-Type: application/json"  -u "tharris" -X POST https://api.github.com/authorizations -d '{"scopes": [ "website" ],"note": "wormbase helpdesk cross-post" }'
 
@@ -1087,53 +1300,65 @@ sub _post_to_github {
   # Get github issues (not particularly useful)
   # curl -H "Authorization: token OAUTH-TOKEN" https://api.github.com/repos/wormbase/website/issues
 
-  # Post a new issue
-  # Surely an easier way to do this.
-  my $path = WormBase::Web->path_to('/') . '/credentials';
-  my $token = `cat $path/github_token.txt`;
-  chomp $token;
-  return unless $token;
-
+    # Post a new issue
+    # Surely an easier way to do this.
+    my $path = WormBase::Web->path_to('/') . '/credentials';
+    my $token = `cat $path/github_token.txt`;
+    chomp $token;
+    return unless $token;
+    
 #      curl -H "Authorization: token TOKEN" -X POST -d '{ "title":"Test Issue","body":"this is the body of the issue","labels":["HelpDesk"]}' https://api.github.com/repos/wormbase/website/issues
+    
+    my $req = HTTP::Request->new(POST => $github_url);
+    $req->content_type('application/json');
+    $req->header('Authorization' => "token $token");
+    
+    # Obscure names and emails. Is it REALLY necessary to obscure names?
+    my $obscured_name  = substr($visitor_name, 0, 4) .  '*' x ((length $visitor_name)  - 4);
+    my $obscured_email = substr($visitor_email, 0, 4) . '*' x ((length $visitor_email) - 4);
+    my $contact = $obscured_email ? $obscured_name ? "$obscured_name ($obscured_email)"
+	: $obscured_email
+	: "unknown";
+    
+    # Originating page MAY be an object.
+    my $page_title = eval { $page_object->title } || $page_url;
+    $page_title = URI::Escape::uri_unescape($page_title);
+    
+    $page_url = URI::Escape::uri_unescape($page_url);
+    my $url_base = $c->req->base;  # This will be empty for webhook posts of course!
 
-  my $req = HTTP::Request->new(POST => $url);
-  $req->content_type('application/json');
-  $req->header('Authorization' => "token $token");
-
-# Obscure names and emails.
-  my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
-  my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
-  my $contact = $obscured_email ? $obscured_name ? "Reported by: $obscured_name ($obscured_email)  (obscured for privacy))" :
-    "Reported by: $obscured_email  (obscured for privacy)" :
-    "";
-  my $ptitle = eval { $page->title } || $page || '';
-  my $purl = $u || eval { $page->url };
-  $ptitle = URI::Escape::uri_unescape($ptitle);
-  $purl = URI::Escape::uri_unescape($purl);
-  my $purl_base = $c->req->base;
-
-$content .= <<END;
-
-
-$contact
-Submitted From: $ptitle <a href="$purl_base$purl">$purl</a>
-
-$userAgent
+    my $full_content;
+    if ($content_prelude) {
+	$full_content = <<END;
+	
+*$content_prelude*
 
 END
 ;
+    } 
 
-  my $json         = new JSON;
+    $full_content .= <<END;
+$content
+    
+**Reported by:** $contact
+**Submitted from:** <a target="_blank" href="$url_base$page_url">$page_title</a>
+**Browser:** $browser
 
+END
+;
+    
+    my $json         = new JSON;
+    
 # Create a more informative title
-  my $trim_content = "$content";
-  $trim_content =~ s/\<[^\>]*\>/\ /g;
-  my $pseudo_title = substr($trim_content,0,50) . '...';
-  $pseudo_title =~ s/(&[^;]*;)+/\ /g;
-  my $data = { title => $pseudo_title,
-	       body  => "$content",
-	       labels => $title ? [ 'HelpDesk', $title ] : ['HelpDesk']
-  };
+    my $trim_content = "$content";
+    $trim_content =~ s/\<[^\>]*\>/\ /g;
+    my $pseudo_title = substr($trim_content,0,50) . '...';
+    $pseudo_title =~ s/(&[^;]*;)+/\ /g;
+
+    my $data = { title => $pseudo_title,
+		 body  => "$full_content",
+		 labels => $feedback_type ? [ 'HelpDesk', $feedback_type ] : ['HelpDesk']
+    };
 
   my $request_json = $json->utf8(1)->encode($data);
   $req->content($request_json);
@@ -1155,7 +1380,7 @@ sub _issue_email{
 
     my $c       = $params->{c};
 
-    my $subject ='New Issue';
+    my $subject = 'New Issue';
     my $bcc     = $params->{reporter_email};
     $subject    = '[wormbase-help] ' . $params->{issue_title};
     $subject   .= ' (' . $params->{reporter_name} . ')' if $params->{reporter_name};
