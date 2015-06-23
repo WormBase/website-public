@@ -1121,10 +1121,11 @@ body, html {
     height:100%;
 }
 
+@media not screen {
 .noscroll {
   overflow: hidden;
 }
-
+}
 /*@media screen and (max-device-width: 480px) {
   body {
     font-size:150%;
