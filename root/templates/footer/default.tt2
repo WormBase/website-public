@@ -29,7 +29,7 @@
       <div class="footer-column">
         <div class="footer-title">Support</div>
         <ul>
-          <li><a href="[% c.uri_for('/about','userguide').path  _ '#023-1-5'%]">Submit Data</a></li>
+          <li><a href="[% c.uri_for('/about','userguide', 'submit_data').path  _ '#01--10'%]">Submit Data</a></li>
           <li><a href="mailto:help@wormbase.org">Email</a></li>
           <li><a href="[% c.uri_for('/about','Frequently_asked_questions').path  %]">FAQ</a></li>
           <li><a href="[% c.uri_for('/about','userguide').path  %]">User Guide</a></li>

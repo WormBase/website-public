@@ -19,7 +19,7 @@
         <div class="system-message" ></div>
       [% END %]
 
-  [% PROCESS "boilerplate/issue_box.tt2" %]
+  [%# PROCESS "boilerplate/issue_box.tt2" %]
 [% PROCESS page_info %]
 
 [% save = object.name.data.class.match('paper') ? 'my_library' : 'reports'%]

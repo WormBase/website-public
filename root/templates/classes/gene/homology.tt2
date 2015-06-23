@@ -14,7 +14,7 @@
     END;
 
     # Nematode orthologs (species hosted at WormBase)
-    WRAPPER $field_block title="Nematode Orthologs" key="nematode_orthologs";
+    WRAPPER $field_block title="Orthologs" key="nematode_orthologs";
     build_data_table(order=['species','ortholog','method'],
    	             columns={species  => 'Species',
 		              ortholog => 'Ortholog',
