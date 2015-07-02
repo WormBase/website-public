@@ -1758,7 +1758,8 @@ sub gene_models {
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
 
         my $len_spliced   = 0;
-        map { $len_spliced += $_->length } map { $_->get_SeqFeatures } $gff->get_SeqFeatures('CDS:WormBase');
+        # Handle single-exon CDS.
+        map { $len_spliced += $_->length } map { if ($_->segments) {$_->get_SeqFeatures} else {$_} } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 

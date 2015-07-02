@@ -2276,8 +2276,10 @@ sub _fetch_gff_gene {
     my $trans;
     my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database, host:" . $self->host; # should probably log this?
 
-    ($trans) = $GFF->get_features_by_name("$transcript");
-    return $trans;
+    my @feats = $GFF->get_features_by_name("$transcript");
+    if (my ($mrna) = grep {$_->{'type'} eq 'mRNA'} @feats) {
+	return $mrna;
+    }
 }
 
 #----------------------------------------------------------------------
