@@ -23,13 +23,14 @@ label     = sub {
 		my $score = $f->score;
 		return $score ? "$score reads" : $f->name;
 	}    
-title     = sub {
-		my $f = shift;
-		my $name   = $f->name;
-		my $notes  = $f->notes;
-		$notes     = $name if ($notes eq '');
-		return "$notes";
-	}    
+title = sub {
+                my $f = shift;
+                my $name   = $f->name;
+                my $score  = $f->score;
+                $score     = $name if ($score eq '');
+                return "$score reads";
+            }
+
 citation    = These are introns formed by aligned RNASeq reads spanning a
 	      region of the genome. Alignments of short read sequences from
 	      all available RNASeq projects were used. The number of reads
