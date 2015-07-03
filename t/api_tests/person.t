@@ -85,6 +85,18 @@
 
     }
 
+    sub test_lineage {
+        my $person = $api->fetch({ class => 'Person', name => 'WBPerson1482' });
+
+        can_ok('WormBase::API::Object::Person', ('supervised_by'));
+        my $supervised_by = $person->supervised_by();
+        isnt($supervised_by->{'data'}, undef, 'data returned');
+
+        my ($supervisor_prev) = grep { $_->{name}->{id} eq 'WBPerson652' } @{$supervised_by->{'data'}};
+        isnt($supervisor_prev, undef, 'specific person returned');
+        is($supervisor_prev->{level}->[0], 'Lab visitor', 'correct position returned');
+    }
+
 }
 
 1;
