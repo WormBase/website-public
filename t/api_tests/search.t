@@ -80,15 +80,15 @@
         is  ($match->{id}, 'WBGene00006759', 'correct C. elegans gene returned');
 
         # fetching gene by c. elegens gene name, but specifying another species
-        $match = $api->xapian->fetch({ query => '(unc-22 OR unc_22)', class => 'gene', species => 'a_suum'});
+        $match = $api->xapian->fetch({ query => '(unc-22 OR unc_22)', class => 'gene', species => 'c_briggsae'});
         is($match, undef, "doesn't return a unc-22 of c. elegens when another species is specified");
 
         # searching gene by c. elegens gene name, with another species, should found some match
-        ($match, my $err) = $api->xapian->search({ query => '(unc-22 OR unc_22)', type => 'gene', species => 'a_suum'});
+        ($match, my $err) = $api->xapian->search({ query => '(unc-22 OR unc_22)', type => 'gene', species => 'c_briggsae'});
         my @it  = @{$match->{matches}};
         $match = $it[0];
         isnt($match, undef, 'result returned');
-        is($match->{name}->{taxonomy}, 'a_suum', "a match is found in a. suum");
+        is($match->{name}->{taxonomy}, 'c_briggsae', "a match is found in C. briggsae");
         is($match->{name}->{class}, 'gene', "the match is a gene");
     }
 
