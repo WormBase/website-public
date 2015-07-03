@@ -56,7 +56,7 @@
         my $previous_addresses = $person->previous_addresses();
 
         isnt($previous_addresses->{'data'}, undef, 'data returned');
-          is($previous_addresses->{'data'}[0]->{'institution'}, "Cold Spring Harbor Laboratory, Cold Spring Harbor NY, USA", 'correct previous address');
+          is($previous_addresses->{'data'}[0]->{'institution'}, "Cold Spring Harbor Laboratory; Cold Spring Harbor NY, United States of America", 'correct previous address');
 
         # test previous address for person with no previous address
         $person = $api->fetch({ class => 'Person', name => 'Kim do H' });
