@@ -25,9 +25,8 @@ label     = sub {
 	}    
 title = sub {
                 my $f = shift;
-                my $name   = $f->name;
                 my $score  = $f->score;
-                $score     = $name if ($score eq '');
+                return unless $score;
                 return "$score reads";
             }
 
