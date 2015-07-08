@@ -574,7 +574,8 @@ sub _get_lineage_data {
         my @duration;
         foreach ($relation->col){
             my ($level, $start, $end) = $_->row;
-            push @levels, "$_";
+            ($level = "$level") =~ s/_/ /g;
+            push @levels, $level;
             push @duration, $self->_format_duration($start, $end);
         }
 

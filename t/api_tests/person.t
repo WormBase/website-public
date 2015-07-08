@@ -56,7 +56,7 @@
         my $previous_addresses = $person->previous_addresses();
 
         isnt($previous_addresses->{'data'}, undef, 'data returned');
-          is($previous_addresses->{'data'}[0]->{'institution'}, "Cold Spring Harbor Laboratory, Cold Spring Harbor NY, USA", 'correct previous address');
+          is($previous_addresses->{'data'}[0]->{'institution'}, "Cold Spring Harbor Laboratory; Cold Spring Harbor NY, United States of America", 'correct previous address');
 
         # test previous address for person with no previous address
         $person = $api->fetch({ class => 'Person', name => 'Kim do H' });
@@ -83,6 +83,18 @@
         my @rep1 = grep { $_->{'id'} eq 'WBPerson3249'} @$lab_reps;
         ok(@rep1, 'a correct lab representative returned');
 
+    }
+
+    sub test_lineage {
+        my $person = $api->fetch({ class => 'Person', name => 'WBPerson1482' });
+
+        can_ok('WormBase::API::Object::Person', ('supervised_by'));
+        my $supervised_by = $person->supervised_by();
+        isnt($supervised_by->{'data'}, undef, 'data returned');
+
+        my ($supervisor_prev) = grep { $_->{name}->{id} eq 'WBPerson652' } @{$supervised_by->{'data'}};
+        isnt($supervisor_prev, undef, 'specific person returned');
+        is($supervisor_prev->{level}->[0], 'Lab visitor', 'correct position returned');
     }
 
 }
