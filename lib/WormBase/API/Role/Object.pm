@@ -2277,7 +2277,7 @@ sub _fetch_gff_gene {
     my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database, host:" . $self->host; # should probably log this?
 
     my @feats = $GFF->get_features_by_name("$transcript");
-    my $type = $self->classification->{data}->{type};
+    my $type = eval { $self->classification->{data}->{type} };
 
     ($trans) = grep {
         $_->{'type'} eq 'mRNA' || $_->{'type'} =~ $type;
