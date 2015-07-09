@@ -1770,9 +1770,9 @@ sub gene_models {
             if( $sequence->class eq "Pseudogene" ){
                 my $l;
                 map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
-                push @lengths, $l . "<br />";
+                push @lengths, $l;
             }else{
-                push @lengths, $self->_fetch_gff_gene($sequence)->length . "<br />";
+                push @lengths, $self->_fetch_gff_gene($sequence)->length;
             }
         }
 
