@@ -23,6 +23,7 @@
     # Test that the returned information of a gene model contains a pre-determined
     # number of rows.
     sub test__gene_models {
+        # test gene model for a miRNA gene
         my $gene = $api->fetch({ class => 'Gene', name => 'WBGene00003328' });
 
         can_ok('WormBase::API::Object::Gene', ('gene_models'));
@@ -34,6 +35,11 @@
         isnt($models->{data}{table}, undef, 'table data structure returned');
         $models = $models->{data}{table};
         is  (scalar @$models, 3, 'two models returned');
+
+        my ($mirna) = grep { $_->{type} eq 'miRNA' } @$models;
+        my ($pmirna) = grep { $_->{type} eq 'pre miRNA' } @$models;
+        ok  ($mirna, 'miRNA transcript returned');
+        ok  ($pmirna, 'pre miRNA transcript returned');
 
         # test curator remarks
         $gene = $api->fetch({ class => 'Gene', name => 'WBGene00006763' });
@@ -47,6 +53,20 @@
         is  (scalar @$ae, 2, 'two accession evidences returned');
         is  ($ae->[0]{id}, 'AF283324', 'correct accession returned');
         is  ($ae->[0]{class}, 'sequence', 'correct class returned');
+
+        # test single-exon CDS #4016
+        $gene = $api->fetch({ class => 'Gene', name => 'WBGene00003180' });
+        $models = $gene->gene_models();
+
+        isnt($models, undef, 'data returned');
+        isnt($models->{data}, undef, 'data structure returned');
+        isnt($models->{data}{table}, undef, 'table data structure returned');
+        $models = $models->{data}{table};
+
+        is  (scalar @$models, 1, 'one models returned');
+        isnt($models->[0]->{cds}, undef, 'cds is returned');
+        ok  (grep { $_ eq '660' } @{$models->[0]->{length_unspliced}}, 'correct transcript length returned');
+        is  ($models->[0]->{length_spliced}, 525, 'correct coding sequence length');
 
     }
 
