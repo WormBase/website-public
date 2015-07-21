@@ -147,6 +147,18 @@ sub elsevier :Path("/elsevier/wblogo.png") Args(0) {
     $c->serve_static_file("root/img/buttons/$path.png");
 }
 
+# create a permanent link for mapping micropublication DOI
+# issue #4043
+sub micropub :Path("/micropub") Args(0) {
+    my ( $self, $c ) = @_;
+    my $wbid = $c->req->param('id');
+    my $class = $c->req->param('class');
+    $c->req->param('name', $wbid);
+
+    $c->go('get');
+}
+
+
 #######################################################
 #
 #     CONFIGURATION - PROBABLY BELONGS ELSEWHERE
