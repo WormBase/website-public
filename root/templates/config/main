@@ -312,7 +312,7 @@
        IF(site.external_urls.defined(link));
           desc = site.external_urls.$link.description;
           IF id;
-              USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt : site.external_urls.$link.search.replace('%S', '%s'));
+              USE String=format((dbt && site.external_urls.$link.defined(dbt)) ? site.external_urls.$link.$dbt.replace('%S', '%s') : site.external_urls.$link.search.replace('%S', '%s'));
               IF (link == 'ensembl');
                 UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
                 array=id.split('&');

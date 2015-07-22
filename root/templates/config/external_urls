@@ -52,6 +52,8 @@
 	base        = 'http://www.ncbi.nlm.nih.gov/RefSeq/',
 	email       = '',
 	search      = 'http://www.ncbi.nlm.nih.gov/%s'
+	mRNA      = 'http://www.ncbi.nlm.nih.gov/nuccore/%s'
+	protein      = 'http://www.ncbi.nlm.nih.gov/protein/%s'
 	}
 
  AmerChemicalSoc = {
@@ -981,7 +983,7 @@
 	protein     = 'http://www.signalink.org/protein/%s'
 	mirna       = 'http://www.signalink.org/mirna/%s'
 	}
-	
+
  ZFIN = {
         description = 'The Zebrafish Model Organism Database'
         base        = 'http://zfin.org/'
