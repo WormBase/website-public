@@ -14,7 +14,7 @@ connector_color = gray
 fgcolor       = black
 bgcolor       = sub {
 		my $f = shift;
-		my ($type) = $f->attributes('Type');
+		my ($type) = $f->attributes('predictiontype');
                 return 'magenta'             if ($type =~ /tmhmm/);
                 return 'lightseagreen'       if ($type =~ /seg/);
 	        return 'aquamarine'          if ($type =~ /signalp/);
@@ -22,19 +22,18 @@ bgcolor       = sub {
 		return 'lightsalmon'         if ($type =~ /pfam/);
 	}
 link          = sub { my $f   = shift;
-	        my ($protein) = $f->attributes('Protein');
+	        my ($protein) = $f->attributes('protein');
                 return "/get?name=$protein;class=Protein";
         }
 height        = 7
-label         = sub { my $f = shift;
-                  my ($description) = $f->attributes('Description');
-                  return $description ? $description : '';
-         }
+label = sub {my ($note) = shift->notes();
+              return $note;
+        }
 description = sub { my $f = shift;
-	      my ($aa_range) = $f->attributes('Range');
-	      my ($exons)    = $f->attributes('Exons');
+	      my ($aa_range) = $f->attributes('range');
+	      my ($exons)    = $f->attributes('exons');
 	      my @desc;
-	      my ($label) = $f->attributes('Type');
+	      my ($label) = $f->attributes('predictiontype');
 	      push @desc, $label;
 	      if ($aa_range) {
 	      	 push @desc,"amino acids: $aa_range";
@@ -44,6 +43,7 @@ description = sub { my $f = shift;
               }		 
 	      return join('; ',@desc);
 	}
+bump = 2
 citation      = This track shows the extent of predicted protein motifs. Note these
                 spans correspond to amino acid coordinates interpolated onto the
                 physical map.  Included are signal peptide (signalp), coiled coil (ncoils)
