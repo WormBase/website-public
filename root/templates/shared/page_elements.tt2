@@ -582,14 +582,14 @@ END; %]
 
 [% MACRO list_cell_content(cell, separator) BLOCK;
     IF cell.size < 2;
-       FOREACH item IN cell; cell_content(item); END;
+       FOREACH item IN cell; cell_content(item, ' '); END;
     ELSE;
       WRAPPER ul_unless_separator;
         FOREACH item IN cell;
           IF separator;
-            cell_content(item);
+            cell_content(item, ' ');
           ELSE;
-            '<li>' _ cell_content(item) _ '</li>';
+            '<li>' _ cell_content(item, ' ') _ '</li>';
           END;
           IF !(ref(item) && item.defined('evidence')) && !loop.last;
               # scalar.defined always return true, so check item is ref
