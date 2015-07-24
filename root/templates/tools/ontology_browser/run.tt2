@@ -21,4 +21,6 @@
    [% svg_legend_markup %]
    <br/><br/><br/>
    [% parent_table %]
+   <br/><br/><br/>
+   [% exclusive_genes %]
 [% END %]
