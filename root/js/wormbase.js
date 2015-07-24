@@ -2353,6 +2353,11 @@ var Scrolling = (function(){
       }
   });
 
+  $jq(window).on('beforeunload', function(){
+    // scroll top upon page refresh
+    $jq(window).scrollTop(0);
+  });
+
   window.WB = WB;
 }(this,document);
 
