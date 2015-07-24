@@ -96,7 +96,7 @@ END;
 
 %]
 <!--fpkm expression field will be loaded with an ajax call-->
-<div id="fpkm_holder">
+<div id="fpkm_holder" style="height:10px;">
     <div class="field">
         <div class="field-title"><span>FPKM expression data:  </span></div>
         <div class="field-content"><div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div></div>
@@ -109,13 +109,13 @@ $jq(".exprbox").colorbox({width:"90%", inline:true});
 $jq(".exprcamera").colorbox({width:"80%", height:"80%", opacity:"0.4"});
 });
 
-setTimeout(function(){
+//setTimeout(function(){
 // There is some arcana here that will not let us use
 // c.uri_for in this context. It will point to, typically,
 // wormbase.org when prebaking which might not be concurrent
 // with the version being prebaked.
 //    WB.ajaxGet($jq("#fpkm_holder"), "[% c.uri_for("/rest/field", class, fields.name.data.id, "fpkm_expression_summary_ls") %]", {noLoadImg: true});
-    WB.ajaxGet($jq("#fpkm_holder"), "[% '/rest/field/' _ class _ '/' _ fields.name.data.id _ '/fpkm_expression_summary_ls' %]", {noLoadImg: true});
-}, 1000);
+    WB.openField($jq("#fpkm_holder"), "[% '/rest/field/' _ class _ '/' _ fields.name.data.id _ '/fpkm_expression_summary_ls' %]", {noLoadImg: true});
+//}, 1000);
 
 </script>
