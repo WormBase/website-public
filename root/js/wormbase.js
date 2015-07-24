@@ -903,14 +903,26 @@
         var url     = nav.attr("href");
 
         content.closest("li").appendTo($jq("#widget-holder").children(column));
+        var heightDefault = content.height();
+        var heightIncrease;
+        var offset = content.offset().top;
 
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){
-            Scrolling.sidebarMove();checkSearch(content);
             if ($jq('.multi-view-container').length){
               WB.multiViewInit();
             }
+            console.log([content.offset().top - scrollPos]);
+            var scrollPos = $jq(window).scrollTop();
+            if (content.offset().top < scrollPos - 25){
+              heightIncrease = content.height() - heightDefault;
+              console.log(scrollPos + heightIncrease);
+              $jq('html,body').stop(true,true).animate({
+                scrollTop: scrollPos + heightIncrease
+              }, 0, function(){console.log('Done open ' + widget_name + ' ' +$jq(window).scrollTop());});
+            }
+            Scrolling.sidebarMove();checkSearch(content);
             Layout.resize();
           });
         }
@@ -1257,7 +1269,7 @@ var Scrolling = (function(){
       var elem = document.getElementById(anchor),
           scroll = isScrolledIntoView(elem) ? undefined : $jq(elem).offset().top - system_message - 10;
       if(scroll){
-        body.stop(false, true).animate({
+        body.stop(false, false).animate({
           scrollTop: scroll
         }, 300, 'easeInOutExpo', function(){
           scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
