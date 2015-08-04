@@ -499,7 +499,7 @@ Children terms are not included here.
       my $indentation = $max_steps - 1; 				# indentation is one less than the maximum steps (to make 1 step have no indentation)
       if ($indentation > $max_indent) { $max_indent = $indentation; }	# if current indentation is greater than maximum, update maximum indentation
       ($relationship) = &convertRelationshipToImage($relationship);	# if the relationship has an image, map to an html img element
-      $inferredTree{$indentation}{qq($relationship : $link_ancestor $link_ancestorname)}++;
+      $inferredTree{$indentation}{qq($relationship $link_ancestorname ($link_ancestor))}++;
 									# add to inferred tree hash sorting by indentation
 #       $ancestorTable .= qq(<tr><td>$max_steps</td><td>$relationship</td><td>$link_ancestor</td><td>$link_ancestorname</td></tr>\n);
     } # foreach my $ancestor (sort keys %ancestors)
@@ -527,7 +527,7 @@ Children terms are not included here.
 									# make html link to WormBase focus term object id, green colour
     my $link_focusTermName = &makeObjectLink($class, $focusTermId, $label{$focusTermId}, $linkTarget, 'green');
 									# make html link to WormBase focus term object name, green colour
-    $inferredTreeView .= qq($spacer<span style="color:green">$link_focusTermName ($link_focusTerm)</span> [${inferredLink}]<br/>\n);
+    $inferredTreeView .= qq($spacer<span style="color:green">&#9898;&nbsp; $link_focusTermName ($link_focusTerm)</span> [${inferredLink}]<br/>\n);
 									# add data for main term
 
     my $tooManyNonTransitiveChildrenCutoff = 20; 			# how many non-transitive children are too many to query individually
