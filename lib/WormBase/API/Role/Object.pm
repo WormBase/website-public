@@ -1958,6 +1958,35 @@ sub _pack_obj {
     };
 }
 
+# pack XREFs as tags
+# Xrefs are stored under the Database tag.
+sub _pack_xrefs {
+    my ($self,$object) = @_;
+    $object = $self->object unless $object;
+
+    my @databases = $object->Database;
+    my @xrefs = ();
+
+    foreach my $db (@databases) {
+        # Possibly multiple databases
+        foreach my $dbt ($db->col()){
+            # possibly multiple namespaces per databases
+            foreach my $id ($dbt->col()){
+                push @xrefs, {
+                    class => "$db",
+                    id    => "$id",
+                    label => "$db:$id",
+                    dbt   => "$dbt"
+                }
+            };
+        }
+
+    }
+    return @xrefs;
+}
+
+
+
 sub _parsed_species {
     my ($self, $object) = @_;
     $object ||= $self->object;

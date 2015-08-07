@@ -23,7 +23,7 @@
       IF data.defined;
         UNLESS text; text = data.label; END;
         IF data.class.defined && data.class != 'text';
-          ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy);
+          ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy, data.dbt);
           IF data.style;
             '<span style="'_ data.style _ "\">$ln</span>";
           ELSE;
@@ -112,9 +112,9 @@
 # Like tag2link, but for cases where we only have text and no object.
 # You must provide both the id and text.
 # URLs
-    MACRO text2link(class,id,text,title,taxonomy) BLOCK;
+    MACRO text2link(class,id,text,title,taxonomy, dbt) BLOCK;
       IF (site.external_urls.$class.defined);
-          external_link(class, text, id);
+          external_link(class, text, id, dbt);
       ELSIF id.match('CHROMOSOME');
         text;
       ELSE;
