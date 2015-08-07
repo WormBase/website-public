@@ -413,6 +413,11 @@
 	search      = 'http://h-invitational.jp/hinv/spsoup/transcript_view?hit_id=%s'
 	}
 
+ HAMAP = {
+	description = 'HAMAP is a system for the classification and annotation of protein sequences'
+	base        = 'http://hamap.expasy.org/'
+	HAMAP_annotation_rule = 'http://hamap.expasy.org/unirule/%s'
+	}
  hi = {
 	description = 'H-InvDB: Annotated Human Gene Database'
 	search      = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
@@ -486,7 +491,7 @@
  KEGG = {
 	description = 'KEGG is a database of biological systems, consisting of genetic building blocks of genes and proteins (KEGG GENES), chemical building blocks of both endogenous and exogenous substances (KEGG LIGAND), molecular wiring diagrams of interaction and reaction networks (KEGG PATHWAY), and hierarchies and relationships of various biological objects (KEGG BRITE). KEGG provides a reference knowledge base for linking genomes to biological systems and also to environments by the processes of PATHWAY mapping and BRITE mapping.'
 	base        = 'http://www.genome.jp/kegg'
-	search      = 'http://www.genome.jp/dbget-bin/www_bget?%s'
+	search      = 'http://www.genome.jp/dbget-bin/www_bget?ec:%s'
 	}
 
  'KEGG COMPOUND' = {
@@ -671,6 +676,11 @@
         description = 'ORCID (Open Researcher and Contributor ID) is a nonproprietary alphanumeric code to uniquely identify scientific and other academic authors.'
         base        = 'http://orcid.org/'
         search      = 'http://orcid.org/%s'
+        }
+
+ Panther = {
+    description = 'PanTree i a framework for integrating biological knowledge in an evolutionary context.'
+    PanTree_node = 'http://pantree.org/node/annotationNode.jsp?id=%s'
         }
 
  Pfam = {
@@ -928,11 +938,19 @@
 	search      = 'http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=%s',
 	}
 
+ UniPathway = {
+    description = 'UniPathway is a manually curated resource of enzyme-catalyzed and spontaneous chemical reactions.'
+    base        = 'http://www.grenoble.prabi.fr/obiwarehouse/unipathway'
+    search      = 'http://www.grenoble.prabi.fr/obiwarehouse/unipathway/upa?upid=%s'
+    }
+
  UniProt = {
 	description = 'UniProt | The Universal Protein Resource | EBI. The mission of UniProt is to provide the scientific community with a comprehensive, high-quality and freely accessible resource of protein sequence and functional information.'
 	maintainer  = ''
 	base        = 'http://www.ebi.ac.uk/uniprot'
 	search      = 'http://www.ebi.uniprot.org/entry/%s'
+    'UniProtKB-KW' = 'http://www.uniprot.org/keywords/%s'
+    'UniProtKB-SubCell' = 'http://www.uniprot.org/locations/%s'
 	}
 
  WormAtlas = {
