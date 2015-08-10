@@ -352,6 +352,11 @@
 	search      = 'http://www.sciencedirect.com/science/article/pii/%s'
 	}
 
+ 'Gene Ontology Consortium' = {
+    description = 'The Gene Ontology (GO) project is a major bioinformatics initiative to develop a computational representation of our evolving knowledge of how genes encode biological functions at the molecular, cellular and tissue system levels.'
+    GO_REF = 'http://www.geneontology.org/cgi-bin/references.cgi#GO_REF:%s'
+    }
+
  GeneExpressionPatterns = {
 	description = 'Gene Expression Patterns'
 	base        = 'http://www.journals.elsevier.com/gene-expression-patterns'

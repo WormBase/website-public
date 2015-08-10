@@ -772,6 +772,13 @@ sub _build_gene_ontology {
         my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
         my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
 
+        my @go_refs = map {
+            $_->{label} = $_->{id};
+            $_;
+        }  $self->_pack_xrefs($anno, 'GO_reference');
+        $evidence->{GO_reference} = \@go_refs if @go_refs;
+
+
         my @term_details = () ; #('' . $go_term->Term);
         push @term_details, { evidence => \%extensions } if %extensions;
 

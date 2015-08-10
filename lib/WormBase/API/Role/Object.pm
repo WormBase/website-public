@@ -1961,10 +1961,11 @@ sub _pack_obj {
 # pack XREFs as tags
 # Xrefs are stored under the Database tag.
 sub _pack_xrefs {
-    my ($self,$object) = @_;
+    my ($self,$object, $tag) = @_;
     $object = $self->object unless $object;
+    $tag = $tag || 'Database';
 
-    my @databases = $object->Database;
+    my @databases = $object->$tag;
     my @xrefs = ();
 
     foreach my $db (@databases) {
