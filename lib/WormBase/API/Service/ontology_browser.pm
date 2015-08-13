@@ -242,6 +242,7 @@ sub query_children {
 sub show_genes {
     my ($self,$param) = @_;
     my $focusTermId   = $param->{focusTermId};						# get the focusTermId from the URL
+    return unless ($focusTermId);
     my $focusTermName = $param->{focusTermName};					# get the focusTermName from the URL
     my ($class) = &getClassFromId($focusTermId);					# get the object class based on the termId
     my %url;										# hash of URLs for different solr queries depending on class
@@ -797,6 +798,7 @@ sub recurseLongestPath {
 sub getClassFromId {							# from a term ID, match for identifier prefix to get the class used in the solr URL path
   my ($rootTerm) = @_;
   my $class = 'go_term';						# initialize to arbitrary default class
+  unless ($rootTerm) { return ''; }
   if ($rootTerm =~ m/GO:/)               { $class = 'go_term';      }
     elsif ($rootTerm =~ m/WBPhenotype:/) { $class = 'phenotype';    }
     elsif ($rootTerm =~ m/WBbt:/)        { $class = 'anatomy_term'; }
@@ -880,6 +882,7 @@ sub getTopoHash {							# given a termId, get the topology_graph_json and regula
 =cut
 sub getSolrUrl {							# given a termId, get the solr URL based on the prefix of the termId
   my ($focusTermId) = @_;
+  unless ($focusTermId) { return ''; }
   my ($identifierType) = $focusTermId =~ m/^(\w+):/;
   my %idToSolrSubdirectory;						# different classes map to a different Solr subdirectory
   $idToSolrSubdirectory{"WBbt"}        = "anatomy";
