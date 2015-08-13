@@ -242,6 +242,7 @@ sub query_children {
 sub show_genes {
     my ($self,$param) = @_;
     my $focusTermId   = $param->{focusTermId};						# get the focusTermId from the URL
+    return unless ($focusTermId);
     my $focusTermName = $param->{focusTermName};					# get the focusTermName from the URL
     my ($class) = &getClassFromId($focusTermId);					# get the object class based on the termId
     my %url;										# hash of URLs for different solr queries depending on class
@@ -250,9 +251,9 @@ sub show_genes {
    
     if ($class eq 'go_term') {								# go_term gets direct C. elegans, direct non-C. elegans, inferred + direct C. elegans, inferred + direct non-C. elegans
         $url{"direct_cele"}    = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=taxon:NCBITaxon\:6239&fq=annotation_class:%22' . $focusTermId . '%22'; 
-        $url{"direct_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=taxon%20asc&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=annotation_class:%22' . $focusTermId . '%22';
+        $url{"direct_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=annotation_class:%22' . $focusTermId . '%22';
         $url{"infDir_cele"}    = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=taxon:NCBITaxon\:6239&fq=regulates_closure:%22' . $focusTermId . '%22';
-        $url{"infDir_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=taxon%20asc&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=regulates_closure:%22' . $focusTermId . '%22';
+        $url{"infDir_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=regulates_closure:%22' . $focusTermId . '%22';
       }
       elsif ($class eq 'phenotype') {			# phenotype gets direct rnai, direct variation, direct + inferred rnai, direct + inferred variation
         $url{"direct_rnai"}      = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=evidence_type:RNAi&fq=annotation_class:%22' . $focusTermId . '%22';
@@ -797,6 +798,7 @@ sub recurseLongestPath {
 sub getClassFromId {							# from a term ID, match for identifier prefix to get the class used in the solr URL path
   my ($rootTerm) = @_;
   my $class = 'go_term';						# initialize to arbitrary default class
+  unless ($rootTerm) { return ''; }
   if ($rootTerm =~ m/GO:/)               { $class = 'go_term';      }
     elsif ($rootTerm =~ m/WBPhenotype:/) { $class = 'phenotype';    }
     elsif ($rootTerm =~ m/WBbt:/)        { $class = 'anatomy_term'; }
@@ -880,6 +882,7 @@ sub getTopoHash {							# given a termId, get the topology_graph_json and regula
 =cut
 sub getSolrUrl {							# given a termId, get the solr URL based on the prefix of the termId
   my ($focusTermId) = @_;
+  unless ($focusTermId) { return ''; }
   my ($identifierType) = $focusTermId =~ m/^(\w+):/;
   my %idToSolrSubdirectory;						# different classes map to a different Solr subdirectory
   $idToSolrSubdirectory{"WBbt"}        = "anatomy";
