@@ -313,6 +313,12 @@
 	search      = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
 	}
 
+ ftp = {
+    description = 'WormBase FTP site'
+    search = 'ftp://ftp.wormbase.org/pub/wormbase/%s'
+    release = 'ftp://ftp.wormbase.org/pub/wormbase/release/%s'
+    }
+
  'FoliaBiologica(Praha)' = {
 	description = 'Folia Biologica (Praha)'
 	base        = 'http://fb.cuni.cz/'
