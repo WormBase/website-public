@@ -135,6 +135,9 @@ END;
 
    '<div class="description">';
    IF fields.status.data == 'Dead'; no_toggle = 1; END;
+   IF !fields.concise_description.data.text && !fields.structured_description.data;
+     no_toggle = 1;
+   END;
       remarks;
    '</div>';
 
