@@ -432,7 +432,7 @@ sub corresponding_all {
         my @sequences = $cds->Corresponding_transcript;
 
         my $len_spliced   = 0;
-        map { $len_spliced += $_->length } map { $_->get_SeqFeatures } $gff->get_SeqFeatures('CDS:WormBase');
+        map { $len_spliced += $_->length } map { if ($_->{'segments'}) {$_->get_SeqFeatures} else {$_} } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 
@@ -860,8 +860,9 @@ sub _build_cds_and_utr {
     my @cds = ();
 
     if ($seq_obj && $self->is_coding){
+        # Check segments as hack to handle single-exon genes.
         @cds = grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
-            map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
+            map { $_->primary_tag eq 'CDS' && $_->segments ? ($_->get_SeqFeatures) : ($_) }
                 $seq_obj->get_SeqFeatures();
 
         # sort by stop if on -ve strand
