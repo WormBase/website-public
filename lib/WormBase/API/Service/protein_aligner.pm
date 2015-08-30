@@ -84,7 +84,7 @@ sub _postprocess{
          my @cols=split(//,$l);
          my $flip=0;
          for(my $position=0;$position < scalar(@cols);$position++){
-           next if $l=~/CLUSTAL/;
+           next if $l=~/MUSCLE/;
            $flip=1 if $cols[$position]=~/\s/;
            next unless $flip;
            $cols[$position]="<span class=\"align-$colours{$cols[$position]}\">$cols[$position]</span>"

@@ -117,7 +117,7 @@ sub _build__segments {
     my $self = shift;
     my $object = $self->object;
     my $class = $object->class;
-    return [ $self->gff_dsn->segment($object) // () ];
+    return [ $self->gff_dsn->segment($object) || () ];
 }
 
 =pod replace by the standard evidence method _get_evidence

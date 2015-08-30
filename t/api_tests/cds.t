@@ -57,10 +57,10 @@
         # unlike core species, tier 3 has prefix added to the ACe object name,
         #that needs to striped before fetching segments from GFF databases
 
-        my $expected_position = 'Acey_s0107_scaf:399963..412768';
+        my $expected_position = 'OVOC_OM1b:59116..66239';
 
         can_ok('WormBase::API::Object::Cds', ('genomic_position'));
-        my $cds = $api->fetch({ class => 'Cds', name => 'PRJNA231479:Acey_s0107.g3812.t1'});
+        my $cds = $api->fetch({ class => 'Cds', name => 'OVOC7:ov242'});
         my $gp_cds = $cds->genomic_position();
         isnt($gp_cds->{data}, undef, 'genomic position for the CDS is returned');
         is($gp_cds->{data}->[0]->{label}, $expected_position, 'genomic position for the CDS is correct');

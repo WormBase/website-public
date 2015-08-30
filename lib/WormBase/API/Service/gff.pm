@@ -66,7 +66,7 @@ around 'segment' => sub {
         my $name = shift @names;
         @segs = $self->$orig($name, $start, $stop);
     }
-    return wantarray ? @segs : @segs && $segs[0];
+    return wantarray ? @segs : shift @segs;
 };
 
 around 'get_features_by_name' => sub {

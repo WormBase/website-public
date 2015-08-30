@@ -1121,10 +1121,12 @@ body, html {
     height:100%;
 }
 
-.noscroll {
-  overflow: hidden;
-}
 
+@media screen {
+    .noscroll {
+        overflow: hidden;
+    }
+}
 /*@media screen and (max-device-width: 480px) {
   body {
     font-size:150%;
@@ -2226,10 +2228,14 @@ div#google-map {
 #go_summary_Molecular_function table tbody td:nth-child(2) > ul,
 #go_summary_Cellular_component table tbody td:nth-child(2) > ul,
 #go_summary_Biological_process table tbody td:nth-child(2) > ul{
-  /* width: 40%; */
   list-style-type: none;
 }
 
+#go_summary_Molecular_function table tbody td:nth-child(1),
+#go_summary_Cellular_component table tbody td:nth-child(1),
+#go_summary_Biological_process table tbody td:nth-child(1) {
+  width: 60px;
+}
 
 
 
@@ -3047,7 +3053,13 @@ div.inline-columns img {
 }
 
 .slink-box {
-  position:relative;
+  position:absolute;
+}
+
+.slink-label {
+  margin-left: 1.5em;
+  line-height: 1.5em;
+  white-space: nowrap;
 }
 
 div.title {

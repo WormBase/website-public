@@ -589,7 +589,11 @@
           xhr.requestURL = $url;
         },
         success:function(data){
-          ajaxPanel.html(data);
+          if (settings.success){
+            settings.success(data);
+          }else{
+            ajaxPanel.html(data);
+          }
         },
         error:function(xhr, textStatus, thrownError){
           ajaxPanel.html(ajaxError(xhr));
@@ -903,14 +907,17 @@
         var url     = nav.attr("href");
 
         content.closest("li").appendTo($jq("#widget-holder").children(column));
+        var heightDefault = content.height();
 
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){
-            Scrolling.sidebarMove();checkSearch(content);
             if ($jq('.multi-view-container').length){
               WB.multiViewInit();
             }
+            //console.log([content.offset().top - scrollPos]);
+            discreetLoad(content, heightDefault);
+            Scrolling.sidebarMove();checkSearch(content);
             Layout.resize();
           });
         }
@@ -919,6 +926,39 @@
         content.parents("li").addClass("visible");
         return false;
     }
+
+    function openField(container, url, settings, callback){
+      var heightDefault = container.children('.field').height();
+
+      settings.success = function(data){
+        var field = $jq('<div/>').html(data).contents().hide();
+        container.append(field);
+        setTimeout(function(){
+          // a long wait to ensure field is rendered before showing,
+          // to avoid miscalculating field height
+          container.children().first().remove();  //remove placeholder
+          container.children().last().show();
+          discreetLoad(container.children('.field'), heightDefault);
+        },2000);
+      };
+
+      ajaxGet(container, url, settings);
+      return false;
+    }
+
+    // when content is loaded asynchronously, its height may cause viewport to
+    // shift position. So set page scroll position as needed
+    function discreetLoad(container, heightDefault){
+      var scrollPos = $jq(window).scrollTop();
+      if (container.offset().top < scrollPos - 25){
+        var heightIncrease = container.height() - heightDefault;
+
+        $jq('html,body').stop(true,true).animate({
+          scrollTop: scrollPos + heightIncrease
+        }, 1);
+      }
+    }
+
 
     function minWidget(widget_name){
       moduleMin($jq("#" + widget_name).find(".module-min"), false, "minimize");
@@ -1257,7 +1297,7 @@ var Scrolling = (function(){
       var elem = document.getElementById(anchor),
           scroll = isScrolledIntoView(elem) ? undefined : $jq(elem).offset().top - system_message - 10;
       if(scroll){
-        body.stop(false, true).animate({
+        body.stop(false, false).animate({
           scrollTop: scroll
         }, 300, 'easeInOutExpo', function(){
           scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
@@ -2276,6 +2316,8 @@ var Scrolling = (function(){
       // loading - ajax/plugins/files/RSS
       ajaxGet: ajaxGet,                             // load data via ajax request
       setLoading: setLoading,                       // add the loading image to a certain div
+      openField: openField,                         // load field with discreetLoad
+
       loadRSS: loadRSS,                             // load RSS (homepage)
       loadFile: Plugin.loadFile,                    // load a file dynamically
       getPlugin: Plugin.getPlugin,                  // load plugin
@@ -2309,6 +2351,11 @@ var Scrolling = (function(){
         WB.init();
         window.$jq = $jq;
       }
+  });
+
+  $jq(window).on('beforeunload', function(){
+    // scroll top upon page refresh
+    $jq(window).scrollTop(0);
   });
 
   window.WB = WB;

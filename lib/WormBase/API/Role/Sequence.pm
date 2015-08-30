@@ -432,7 +432,7 @@ sub corresponding_all {
         my @sequences = $cds->Corresponding_transcript;
 
         my $len_spliced   = 0;
-        map { $len_spliced += $_->length } map { $_->get_SeqFeatures } $gff->get_SeqFeatures('CDS:WormBase');
+        map { $len_spliced += $_->length } map { if ($_->{'segments'}) {$_->get_SeqFeatures} else {$_} } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 
@@ -860,8 +860,9 @@ sub _build_cds_and_utr {
     my @cds = ();
 
     if ($seq_obj && $self->is_coding){
+        # Check segments as hack to handle single-exon genes.
         @cds = grep { $_->primary_tag ne 'intron' && $_->primary_tag ne 'exon'}
-            map { $_->primary_tag eq 'CDS' ? ($_->get_SeqFeatures) : ($_) }
+            map { $_->primary_tag eq 'CDS' && $_->segments ? ($_->get_SeqFeatures) : ($_) }
                 $seq_obj->get_SeqFeatures();
 
         # sort by stop if on -ve strand
@@ -1099,9 +1100,11 @@ sub _get_flanking_region {
         # ensure not to fetch flanking region beyond assembled region ($contig)
         my ($contig) = $self->gff->segment($seq_obj->name)->features(-types => ['assembly_component']);
         $segment = $contig->intersection($segment);
-        $segment->name($flank_id);
-        $segment->primary_tag($flank_type);
-        push @flankings, $segment;
+        if ($segment) {
+            $segment->name($flank_id);
+            $segment->primary_tag($flank_type);
+            push @flankings, $segment;
+        }
     }
 
     my $long_seg = $seq_obj->union(@flankings);  #with absolute coords
@@ -1128,7 +1131,7 @@ sub _get_flanking_region {
     # its strand is set based on $seq_obj automatically
     my $long_seg_dna = $long_seg_rel->dna;
 
-    return ($long_seg_dna, $long_seg, $flankings[0], $flankings[1]);
+    return ($long_seg_dna, $long_seg, @flankings);
 
 }
 
@@ -1722,6 +1725,7 @@ sub _print_flanked_unspliced {
     my @flanked_features =  (@$features, @$flankings);  # concat
     # make a title
     my $title = 'unspliced + UTR';
+
     my @flank_titles = map {
         $_->length() .' '. $_->primary_tag;
     } @$flankings;

@@ -122,7 +122,7 @@ sub index {
   my $treeExpand = '';									# the html for the expandable tree
   my $highestNodeCount = 0;								# count of nodes in the expandable tree.  each node must have a unique ID because the ontology term may appear several times in the expandable tree. e.g. GO:0008150 is parent to GO:0050789 directly as well as parent to GO:0065007, which is also parent to GO:0050789
   foreach my $category (@ontologyCategories) {						# for each category
-    $treeExpand.= qq(<br/><h2>$categoryLabel{$category}</h2>\n);			# add h2 header of the category
+    $treeExpand.= qq(<br/><h2 id="$category">$categoryLabel{$category}</h2>\n);		# add h2 header of the category
     foreach my $rootTerm (@{ $ontologyCategories{$category} }) {			# for each root term under the category
       $highestNodeCount++;								# add one more node
       my $expand_link = qq(<span style="border:solid 1px black; cursor: pointer;" id="toggle_${highestNodeCount}_$rootTerm" onclick="togglePlusMinus('toggle_${highestNodeCount}_$rootTerm'); expandTermId('$rootTerm', '$highestNodeCount');" >&nbsp;+&nbsp;</span>);  
@@ -242,6 +242,7 @@ sub query_children {
 sub show_genes {
     my ($self,$param) = @_;
     my $focusTermId   = $param->{focusTermId};						# get the focusTermId from the URL
+    return unless ($focusTermId);
     my $focusTermName = $param->{focusTermName};					# get the focusTermName from the URL
     my ($class) = &getClassFromId($focusTermId);					# get the object class based on the termId
     my %url;										# hash of URLs for different solr queries depending on class
@@ -250,9 +251,9 @@ sub show_genes {
    
     if ($class eq 'go_term') {								# go_term gets direct C. elegans, direct non-C. elegans, inferred + direct C. elegans, inferred + direct non-C. elegans
         $url{"direct_cele"}    = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=taxon:NCBITaxon\:6239&fq=annotation_class:%22' . $focusTermId . '%22'; 
-        $url{"direct_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=taxon%20asc&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=annotation_class:%22' . $focusTermId . '%22';
+        $url{"direct_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=annotation_class:%22' . $focusTermId . '%22';
         $url{"infDir_cele"}    = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=taxon:NCBITaxon\:6239&fq=regulates_closure:%22' . $focusTermId . '%22';
-        $url{"infDir_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=taxon%20asc&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=regulates_closure:%22' . $focusTermId . '%22';
+        $url{"infDir_noncele"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=-taxon:NCBITaxon\:6239&fq=regulates_closure:%22' . $focusTermId . '%22';
       }
       elsif ($class eq 'phenotype') {			# phenotype gets direct rnai, direct variation, direct + inferred rnai, direct + inferred variation
         $url{"direct_rnai"}      = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=evidence_type:RNAi&fq=annotation_class:%22' . $focusTermId . '%22';
@@ -499,7 +500,7 @@ Children terms are not included here.
       my $indentation = $max_steps - 1; 				# indentation is one less than the maximum steps (to make 1 step have no indentation)
       if ($indentation > $max_indent) { $max_indent = $indentation; }	# if current indentation is greater than maximum, update maximum indentation
       ($relationship) = &convertRelationshipToImage($relationship);	# if the relationship has an image, map to an html img element
-      $inferredTree{$indentation}{qq($relationship : $link_ancestor $link_ancestorname)}++;
+      $inferredTree{$indentation}{qq($relationship $link_ancestorname ($link_ancestor))}++;
 									# add to inferred tree hash sorting by indentation
 #       $ancestorTable .= qq(<tr><td>$max_steps</td><td>$relationship</td><td>$link_ancestor</td><td>$link_ancestorname</td></tr>\n);
     } # foreach my $ancestor (sort keys %ancestors)
@@ -527,7 +528,7 @@ Children terms are not included here.
 									# make html link to WormBase focus term object id, green colour
     my $link_focusTermName = &makeObjectLink($class, $focusTermId, $label{$focusTermId}, $linkTarget, 'green');
 									# make html link to WormBase focus term object name, green colour
-    $inferredTreeView .= qq($spacer<span style="color:green">$link_focusTermName ($link_focusTerm)</span> [${inferredLink}]<br/>\n);
+    $inferredTreeView .= qq($spacer<span style="color:green">&#9898;&nbsp; $link_focusTermName ($link_focusTerm)</span> [${inferredLink}]<br/>\n);
 									# add data for main term
 
     my $tooManyNonTransitiveChildrenCutoff = 20; 			# how many non-transitive children are too many to query individually
@@ -570,12 +571,49 @@ Children terms are not included here.
       $inferredTreeView .= $spacer . $spacer . qq($relationshipImg $link_childname $link_to_show_genes<br/>\n);
 									# add data for child term
     } # foreach my $child (sort keys %children)
+
+
+    my $exclusivelyAnnotatedGenesSection;				# section for displaying genes that may be exclusively annotated to the term
+    if ( ($class eq 'anatomy_term') && ($focusTermId ne 'WBbt:0000100') ) {	# for anatomy terms only, and not the root term
+#       my $genes_exclusively_url = 'http://tazendra.caltech.edu/~azurebrd/var/work/raymond/table_anatomy_to_genes';	# source of mappings
+      my ($solr_url) = &getSolrUrl($focusTermId);				# get the solr URL to determine if live or dev solr server
+      my $base_table_url = 'http://wobr.caltech.edu:81/'; 			# live server by default
+      if ($solr_url =~ m/82/) { $base_table_url = 'http://wobr.caltech.edu:82/'; }		# if port :8082 use port :82
+      my $genes_exclusively_url = $base_table_url . 'wobr_files/table_anatomy_to_genes';	# construct table url
+
+      my $genes_url_page_data   = get $genes_exclusively_url;
+      my (@lines) = split/\n/, $genes_url_page_data;
+      foreach my $line (@lines) {
+        my ($wbbt, $anatname, $count, $genes, @junk) = split/\t/, $line;
+        if ($wbbt eq $focusTermId) {
+          my $exclusively_message = "There are " . $count . " genes that may be specifically expressed. ";
+#           $exclusively_message .= qq(<span id="toShowEAGTable" style="color: blue; text-decoration: underline;" onclick="document.getElementById('divExclusivelyGenes').style.display = ''; document.getElementById('toHideEAGTable').style.display = ''; document.getElementById('toShowEAGTable').style.display = 'none';">show</span> );	# to have show/hide controls
+#           $exclusively_message .= qq(<span id="toHideEAGTable" style="color: blue; text-decoration: underline; display: none;" onclick="document.getElementById('divExclusivelyGenes').style.display = 'none'; document.getElementById('toHideEAGTable').style.display = 'none'; document.getElementById('toShowEAGTable').style.display = '';">hide</span>);	# to have show/hide controls
+          $exclusively_message .= qq(<br/>\n);
+          $exclusivelyAnnotatedGenesSection .= $exclusively_message;
+          my $geneTable = qq(<table>);
+          my (@genes) = split/, /, $genes;
+          my %sortGenePubname;							# sort genes alphanumerically by public name
+          foreach my $gene (@genes) {
+            my ($wbgene, $genePubname) = split/ - /, $gene;
+            my $wbgeneUrl = '/species/c_elegans/gene/' . $wbgene;	# link to the gene with the WormBase URL.
+            $sortGenePubname{$genePubname} = qq(<tr><td><a href="$wbgeneUrl" target="new">$genePubname</a></td></tr>\n); }
+          foreach my $genePubname (sort keys %sortGenePubname) {
+            $geneTable .= $sortGenePubname{$genePubname}; }
+          $geneTable .= qq(</table>);
+          my $boxHeight = $count * 21;
+          if ($boxHeight > 100) { $boxHeight = 100; }
+#           my $geneDiv = qq(<div id="divExclusivelyGenes" style="border: solid 1px; width: 200px; height: ${boxHeight}px; overflow: auto; display: none;">$geneTable</div>);	# hide by default
+          my $geneDiv = qq(<div id="divExclusivelyGenes" style="border: solid 1px; width: 200px; height: ${boxHeight}px; overflow: auto;">$geneTable</div>);	# show by default
+          $exclusivelyAnnotatedGenesSection .= $geneDiv; } }
+    } # if ( ($class eq 'anatomy_term') && ($focusTermId ne 'WBbt:0000100') )
    
     return {
 	     svg_markup         => $svgMarkup,				# pass the svg_markup through catalyst for view
 	     svg_legend_markup  => $svgLegendMarkup,			# pass the svg_legend_markup through catalyst for view
 	     parent_table       => $parentTable,			# pass the parent_table through catalyst for view
 	     inferred_tree_view => $inferredTreeView,			# pass the inferred_tree_view through catalyst for view
+	     exclusive_genes    => $exclusivelyAnnotatedGenesSection,	# pass the exclusivelyAnnotatedGenesSection through catalyst for view
     };
 } # sub run
 
@@ -760,6 +798,7 @@ sub recurseLongestPath {
 sub getClassFromId {							# from a term ID, match for identifier prefix to get the class used in the solr URL path
   my ($rootTerm) = @_;
   my $class = 'go_term';						# initialize to arbitrary default class
+  unless ($rootTerm) { return ''; }
   if ($rootTerm =~ m/GO:/)               { $class = 'go_term';      }
     elsif ($rootTerm =~ m/WBPhenotype:/) { $class = 'phenotype';    }
     elsif ($rootTerm =~ m/WBbt:/)        { $class = 'anatomy_term'; }
@@ -843,6 +882,7 @@ sub getTopoHash {							# given a termId, get the topology_graph_json and regula
 =cut
 sub getSolrUrl {							# given a termId, get the solr URL based on the prefix of the termId
   my ($focusTermId) = @_;
+  unless ($focusTermId) { return ''; }
   my ($identifierType) = $focusTermId =~ m/^(\w+):/;
   my %idToSolrSubdirectory;						# different classes map to a different Solr subdirectory
   $idToSolrSubdirectory{"WBbt"}        = "anatomy";
@@ -850,9 +890,12 @@ sub getSolrUrl {							# given a termId, get the solr URL based on the prefix of
   $idToSolrSubdirectory{"GO"}          = "go";
   $idToSolrSubdirectory{"WBls"}        = "lifestage";
   $idToSolrSubdirectory{"WBPhenotype"} = "phenotype";
+#   my $base_solr_url = 'http://131.215.12.204:8080/solr/';		# raymond URL for testing 2015 05 12 
 #   my $base_solr_url = 'http://131.215.12.207:8080/solr/';		# raymond URL for testing 2014 10 22 
 #   my $base_solr_url = 'http://131.215.12.220:8080/solr/';		# raymond URL 2013 08 06
-  my $base_solr_url = 'http://wobr.caltech.edu/solr/';			# raymond URL for WB live 2014 10 22
+#   my $base_solr_url = 'http://wobr.caltech.edu/solr/';		# raymond URL for WB live 2014 10 22
+  my $base_solr_url = 'http://wobr.caltech.edu:8081/solr/';			# raymond URL for WB live 2015 07 24
+#   my $base_solr_url = 'http://wobr.caltech.edu:8082/solr/';			# raymond URL for dev  2015 07 24
   my $solr_url = $base_solr_url . $idToSolrSubdirectory{$identifierType} . '/';
   return $solr_url;
 } # sub getSolrUrl
