@@ -41,7 +41,7 @@
 
         my $brief = $cds->identity();
         isnt($brief->{'data'}, undef, 'data returned');
-        is($brief->{'data'}->{'text'}, 'Guanylate cyclase receptor-type gcy-1', 'Correct brief identification');
+        is($brief->{'data'}->{'text'}, 'Receptor-type guanylate cyclase gcy-1', 'Correct brief identification');
         isnt($brief->{'data'}->{'evidence'}, undef, 'evidence returned');
         isnt($brief->{'data'}->{'evidence'}->{'Accession_evidence'}, undef, 'correct type of evidence returned');
 
