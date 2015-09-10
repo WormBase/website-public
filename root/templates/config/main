@@ -203,6 +203,38 @@
     END;
 
 
+    MACRO jbrowse_url(taxonomy, position_string, bioproject) BLOCK;
+      queries = {
+        data => 'data/' _ taxonomy _ '_' _ bioproject,
+        loc => position_string
+      };
+      IF c.config.installation_type.match('^dev');
+        # HACK! to direct dev installation to staging, with GBrowse installed
+        'http://www.wormbase.org';
+      END;
+      c.uri_for('/tools', 'genome', 'jbrowse', queries).path_query();
+    END;
+
+    MACRO jbrowselink(data, label, search) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+
+      IF species;
+        linkouts = [];
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            url = jbrowse_url(taxonomy, data.pos_string, bp);
+            linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+
+
+
+
 # use this to pluraize a word
 # there exists a TT plugin which does this, but better.
 #   See: Template::Plugin::Lingua::EN::Inflect
