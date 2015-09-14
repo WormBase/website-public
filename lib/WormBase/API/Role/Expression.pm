@@ -10,19 +10,6 @@ use List::Util qw(first);
 #
 #######################################################
 
-#######################################################
-#
-# Generic methods, shared across Gene and Transcript classes
-#
-#######################################################
-
-
-############################################################
-#
-# Private Methods
-#
-############################################################
-
 
 has '_gene' => (
     is       => 'ro',
@@ -38,7 +25,22 @@ has 'exp_sequences' => (
     builder => '_build_sequences',
 );
 
+has 'rnaseq_plot' => (
+    is  => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build__rnaseq_plot',
+);
+
 requires '_build__gene'; # no fallback to build segments... yet (or ever?).
+
+
+#######################################################
+#
+# Generic methods, shared across Gene and Transcript classes
+#
+#######################################################
+
 
 # anatomic_expression_patterns { }
 # This method will return a complex data structure
@@ -327,6 +329,29 @@ sub anatomy_function {
         data        => @data_pack ? \@data_pack : undef,
         description => 'anatomy functions associatated with this gene',
     };
+}
+
+
+sub _build__rnaseq_plot {
+    my ($self) = @_;
+    my $gene = $self->_gene;
+    my $RNAseq_plot = $self->_api->_tools->{rnaseq_plot};
+    use Data::Dumper;
+    #print Dumper $RNAseq_plot;
+  # get data
+  my ($gene_data, $cds_data, $trans_data, $pseud_data) = $RNAseq_plot->get_gene_data($gene);
+ # if (!defined $gene_name) {$outfile = "$gene.png"}
+
+  # draw graphs
+    my ($name) = keys %{$gene_data};
+    my $data = $gene_data->{$name};
+    if (scalar keys %{$data} == 0) {print "No data found for $gene\n"; next} # no data - usually because it is a transposon
+    my $plot = $RNAseq_plot->draw_graph('Gene', $data, $name);
+    return {
+        data => $plot,
+        description => 'Plot for RNAseq data'
+    };
+
 }
 
 

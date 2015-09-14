@@ -94,6 +94,10 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
               key = 'anatomy_function');
 END;
 
+WRAPPER $field_block title="RNAseq" key="rnaseq_plot";
+    image(fields.rnaseq_plot.data);
+END;
+
 %]
 <!--fpkm expression field will be loaded with an ajax call-->
 <div id="fpkm_holder" style="height:10px;">
