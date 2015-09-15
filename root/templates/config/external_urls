@@ -178,12 +178,14 @@
 
  ChEBI = {
 	description = 'Chemical Entities of Biological Interest (ChEBI) is a freely available dictionary of molecular entities focused on small chemical compounds.'
+	maintainer  = 'EBI'
 	base        = 'http://www.ebi.ac.uk/chebi/init.do'
 	search      = 'http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=%s'
 	}
 
  ChemIDplus = {
 	description = 'ChemIDplus is a free, web-based search system that provides access to structure and nomenclature authority files used for the identification of chemical substances cited in National Library of Medicine (NLM) databases, including the TOXNET system. ChemIDplus also provides structure searching and direct links to many biomedical resources at NLM and on the Internet for chemicals of interest. The database contains over 388,000 chemical records, of which over 295,000 include chemical structures, and is searchable by Name, Synonym, CAS Registry Number, Molecular Formula, Classification Code, Locator Code, Structure, Toxicity, and/or Physical properties.'
+	maintainer  = 'TOXNET'
 	base        = 'http://chem.sis.nlm.nih.gov/chemidplus/chemidlite.jsp'
 	search      = 'http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=%s'
 	}
@@ -201,6 +203,7 @@
 
  CTD = {
 	description = 'Comparative Toxicogenomic Database (CTD) advances the understanding of the effects of environmental chemicals on human health and includes manually curated data describing cross-species chemical gene/protein interactions and chemical- and gene- disease relationships to illuminate molecular mechanisms underlying variable susceptibility and environmentally influenced diseases. These data will also provide insights into complex chemical-gene and protein interaction networks.'
+	maintainer  = 'MDI Biological Laboratory & NC State University'
 	base        = 'http://ctd.mdibl.org'
 	search      = 'http://ctd.mdibl.org/detail.go?type=chem&acc=%s'
 	}
@@ -485,6 +488,7 @@
 
  KEGG = {
 	description = 'KEGG is a database of biological systems, consisting of genetic building blocks of genes and proteins (KEGG GENES), chemical building blocks of both endogenous and exogenous substances (KEGG LIGAND), molecular wiring diagrams of interaction and reaction networks (KEGG PATHWAY), and hierarchies and relationships of various biological objects (KEGG BRITE). KEGG provides a reference knowledge base for linking genomes to biological systems and also to environments by the processes of PATHWAY mapping and BRITE mapping.'
+	maintainer  = 'Kanehisa Laboratories'
 	base        = 'http://www.genome.jp/kegg'
 	search      = 'http://www.genome.jp/dbget-bin/www_bget?%s'
 	}
@@ -655,6 +659,7 @@
 
  NLM_MeSH = {
 	description = 'The National Library of Medicine Medical Subject Headings thesaurus. These terms are used by the NLM for indexing articles for the MEDLNE/PubMED database.'
+	maintainer  = 'U.S. National Library of Medicine'
 	base        = 'http://www.nlm.nih.gov/mesh'
 	email       = 'nelson@nlm.nih.gov'
 	search      = 'http://www.nlm.nih.gov/cgi/mesh/2010/MB_cgi?field=uid&term=%s'
