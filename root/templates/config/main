@@ -203,16 +203,25 @@
     END;
 
 
-    MACRO jbrowse_url(taxonomy, position_string, bioproject) BLOCK;
+    MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url) BLOCK;
       queries = {
         data => 'data/' _ taxonomy _ '_' _ bioproject,
         loc => position_string
       };
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        'http://www.wormbase.org';
+        'http://staging.wormbase.org';
       END;
-      c.uri_for('/tools', 'genome', 'jbrowse', queries).path_query();
+      IF is_preview_url;
+          # queries.tracklist=0;
+          queries.nav=0;
+          queries.overview=0;
+          url = c.uri_for('/tools', 'genome', '/jbrowse', 'full.html', queries).path_query();
+      ELSE;
+          # the leading and trailing / for jbrowse url part is important..
+          url = c.uri_for('/tools', 'genome', '/jbrowse/', queries).path_query();
+      END;
+      url;
     END;
 
     MACRO jbrowselink(data, label, search) BLOCK;
@@ -226,6 +235,28 @@
         FOREACH bp IN bioproject;
             url = jbrowse_url(taxonomy, data.pos_string, bp);
             linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+
+    MACRO jbrowse_view(data, label) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+
+      IF species;
+        linkouts = [];
+        linkouts.push("<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>Beta</sup></h3>");
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            url = jbrowse_url(taxonomy, data.pos_string, bp);
+            view_url = jbrowse_url(taxonomy, data.pos_string, bp, 1);
+            linkouts.push("<div class=\"jbrowse-view-container\">
+                                <iframe src=\"$view_url\" id=\"jbrowse-frame-$bp\"></iframe>
+                                <!--a href=\"$url\" target=\"jbrowse-frame-$bp\"></a -->
+                          </div>");
         END;
         linkouts.join(' ');
       END;
