@@ -2308,8 +2308,26 @@ div#google-map {
   color: #555;
 }
 
-.jbrowse_link sup {
+.jbrowse_link sup, .jbrowse-view-header sup {
   color: brown;
+}
+
+.jbrowse-view-container {
+  width: 90%;
+  height:400px;
+  padding: 2em 4em 2em 2em;
+  background-color: #EEE;
+}
+
+.jbrowse-view-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 3px ridge;
+  background-color: white;
+}
+
+h3.jbrowse-view-header {
+  margin: 1em auto 0.5em;
 }
 
 

@@ -78,6 +78,7 @@
                  END;
                  '<br><br>';
                  tag2link(genomic_image, image(img_url));
+                 jbrowse_view(position);
                  '</div>';
                END;
     ELSE;
