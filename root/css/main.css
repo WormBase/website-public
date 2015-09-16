@@ -2301,6 +2301,17 @@ div#google-map {
   overflow:hidden;
 }
 
+.jbrowse_link {
+  display: inline-block;
+  margin-left: 2em;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.jbrowse_link sup {
+  color: brown;
+}
+
 
 /*********************************
 

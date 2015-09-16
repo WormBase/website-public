@@ -2353,7 +2353,7 @@ var Scrolling = (function(){
       }
   });
 
-  $jq(window).on('beforeunload', function(){
+  $jq(window).bind('beforeunload', function(){
     // scroll top upon page refresh
     $jq(window).scrollTop(0);
   });
