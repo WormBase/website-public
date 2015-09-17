@@ -726,8 +726,7 @@ sub draw_graph {
   binmode P;
   print P $img->png;
   close P;
-  print "Written $outfile\n";
-  print "Written $display_path\n";
+
   return $display_path;
 }
 
