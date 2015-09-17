@@ -718,7 +718,7 @@ sub draw_graph {
 
 
   use Data::Dumper;
-  my $filename = "$name.png";
+  my $filename = "$name\_$type.png";
   my $outfile = catfile($self->subdir_out_path($gene_id), $filename);
   my $display_path = catfile($self->subdir_display_path($gene_id), $filename);
 
@@ -742,12 +742,20 @@ sub get_gene_data {
   my @Transcript = $gene->Corresponding_transcript;
   my @Pseudogene = $gene->Corresponding_pseudogene;
 
-  my ($gene_data) = get_data('gene',  ($gene));
-  my ($cds_data) = get_data('cds', @CDS);
-  my ($trans_data) = get_data('trans', @Transcript);
-  my ($pseud_data) = get_data('pseud', @Pseudogene);
+  my %sources = (
+      'Gene' => [$gene],
+      'CDS' => \@CDS,
+      'Transcript' => \@Transcript,
+      'Pseudogene' => \@Pseudogene
+  );
 
-  return ($gene_data, $cds_data, $trans_data, $pseud_data);
+  my %data = ();
+  foreach my $type (keys %sources){
+      my ($d) = $self->get_data($type, @{ $sources{$type} });
+      $data{$type} = $d;
+  }
+
+  return %data;
 }
 
 ############################################################################
@@ -758,7 +766,7 @@ sub get_gene_data {
 #
 
 sub get_data {
-  my ($type, @objs) = @_;
+  my ($self, $type, @objs) = @_;
   my %data;
 
   foreach my $obj (@objs) {
@@ -767,7 +775,7 @@ sub get_data {
     my $dummy;
     my $name;
 
-    if ($type eq 'gene') {
+    if (lc($type) eq 'gene') {
       $name = $obj->Public_name->name;
     } else {
       $name = $obj->name;

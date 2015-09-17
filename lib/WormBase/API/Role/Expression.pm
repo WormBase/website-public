@@ -336,22 +336,29 @@ sub _build__rnaseq_plot {
     my ($self) = @_;
     my $gene = $self->_gene;
     my $RNAseq_plot = $self->_api->_tools->{rnaseq_plot};
-    use Data::Dumper;
-    #print Dumper $RNAseq_plot;
-  # get data
-  my ($gene_data, $cds_data, $trans_data, $pseud_data) = $RNAseq_plot->get_gene_data($gene);
- # if (!defined $gene_name) {$outfile = "$gene.png"}
 
-  # draw graphs
-    my ($name) = keys %{$gene_data};
-    my $data = $gene_data->{$name};
-    if (scalar keys %{$data} == 0) {print "No data found for $gene\n"; next} # no data - usually because it is a transposon
-    my $plot = $RNAseq_plot->draw_graph('Gene', $data, $name);
+    my %data = $self->__build_rnaseq_plot_data;
+
+    my @plots = ();
+
+    foreach my $type (keys %data){
+        my $type_data = $data{$type};
+        foreach my $name (keys %{$type_data} ) {
+            if (scalar keys %{$type_data->{$name}} == 0) {print "No data found for $name\n"; next} # no data
+            my $plot = $RNAseq_plot->draw_graph($type, $type_data->{$name}, $name, $gene->name);
+            push @plots, $plot;
+        }
+    }
     return {
-        data => $plot,
+        data => @plots ? \@plots : undef,
         description => 'Plot for RNAseq data'
     };
 
+}
+
+sub __build_rnaseq_plot_data {
+    # subclass must override
+    return ();
 }
 
 

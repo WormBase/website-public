@@ -95,7 +95,9 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
 END;
 
 WRAPPER $field_block title="RNAseq" key="rnaseq_plot";
-    image(fields.rnaseq_plot.data);
+    FOREACH p IN fields.rnaseq_plot.data;
+        image(p);
+    END;
 END;
 
 %]
