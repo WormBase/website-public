@@ -446,67 +446,36 @@ sub fpkm_expression {
     my $rserve = $self->_api->_tools->{rserve};
 
     my @fpkm_map = map { # iterating on life stages
+        my $life_stage_ace = $_;
         my $life_stage = ''. $_->Public_name;
         my $life_stage_tag = $self->_pack_obj($_);
-        my @fpkm_table = $_->col;
 
         map { # iterating on fpkm_values
 
             my $value = $_;
             #fpkm_values are hash keys to analysis_objects having same value,
             # totally an artifect of ACe,
-            my @ana = map { #iterating on analysis objects
+            map { #iterating on analysis objects
                 my $name = $self->_pack_obj($_);
-                my $analysis_record = {
-                    value => "$value",
-                    life_stage => $life_stage_tag,
-                    label => $name,
-                };
+                my $analysis_record = $self->_pack_analysis_record($life_stage_ace, $value, $_);
 
-                my $project;
-                my $label = $name->{label};
-                if ($label =~ /([^\.]+).(control_(mean|median))/){
+                if ($analysis_record->{stat_type}){
                     # This analysis object statics for the control
-                    $life_stage = $1;
-                    (my $stat_type = $2) =~ s/_/ /;
-                    $analysis_record->{stat_type} = $stat_type;
-                    $project = $self->_pack_obj($_->Project);
-
                     $controls_by_life_stage->{$life_stage} ||= [];   # ininitalize if not already
                     push @{$controls_by_life_stage->{$life_stage}}, $analysis_record;
                 }else{
-                    # otherwise, it't an normal analysis object that part of a study/prject
-
-                    # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
-                    # /PRJ[A-Z]{2}\d+/ matches BioProject accession
-                    # everything else treat as NCBI Trace SRA
-                    my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
-                    my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
-
-                    my $project_label = $_study2label->{$project_acc} || $project_acc;
-                    $project_label = join(' ', split('_', $project_label));
-
-                    $project = {
-                        id => $project_acc,
-                        class => $source_db,
-                        label => $project_label
-                    };
-
-                    if ($project_acc) {
+                    if (my $project_acc = $analysis_record->{project_info}->{id}){
                         $by_study->{$project_acc} ||= { analyses => []};   # ininitalize if not already
                         push @{$by_study->{$project_acc}->{analyses}}, $analysis_record;
                     }
                 }
 
-                $analysis_record->{project_info} = $project;
-                $analysis_record->{project} = $project->{id};
+                # keep only regular analysis (no control ones)
+                $analysis_record->{stat_type} ? () : $analysis_record;
 
-                $analysis_record;
-            } $value->right() && $value->right()->col() ; #$value->From_analysis;
-
-            @ana;
-        } @fpkm_table;
-    } $object->RNASeq_FPKM;
+            } $value->right() && $value->right()->col() ; #each From_analysis object
+        } $life_stage_ace->col;   #each value
+    } $object->RNASeq_FPKM;   #each life stage
 
     # Return if no expression data is available.
     # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
@@ -620,6 +589,57 @@ sub fpkm_expression {
             table => { fpkm => { data => \@fpkm_map } }
         } : undef
     };
+}
+
+####################
+#
+# Internal methods
+#
+####################
+
+
+sub _pack_analysis_record {
+    my ($self, $life_stage, $value, $study) = @_;
+    my $name = $self->_pack_obj($study);
+
+    my $analysis_record = {
+        value => "$value",
+        life_stage => $self->_pack_obj($life_stage),
+        label => $name,
+    };
+
+    my $project;
+    my $label = $name->{label};
+    if ($label =~ /([^\.]+).(control_(mean|median))/){
+        # This analysis object statics for the control
+        $life_stage = $1;
+        (my $stat_type = $2) =~ s/_/ /;
+        $analysis_record->{control} = 1;
+        $analysis_record->{$stat_type} = $value;
+        $project = $self->_pack_obj($study->Project);
+    }else{
+        # otherwise, it't an normal analysis object that part of a study/prject
+
+        # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
+        # /PRJ[A-Z]{2}\d+/ matches BioProject accession
+        # everything else treat as NCBI Trace SRA
+        my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
+        my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
+
+        my $project_label = $_study2label->{$project_acc} || $project_acc;
+        $project_label = join(' ', split('_', $project_label));
+
+        $project = {
+            id => $project_acc,
+            class => $source_db,
+            label => $project_label
+        };
+    }
+
+    $analysis_record->{project_info} = $project;
+    $analysis_record->{project} = $project->{id};
+
+    return $analysis_record;
 }
 
 1;
