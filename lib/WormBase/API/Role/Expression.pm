@@ -440,15 +440,14 @@ sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
     my $object = $self->_gene;
-    my $by_study = {};  # tracks regular analysis object
-    my $controls_by_life_stage = {};  #tracks analysis object for control statistics
+
+    my @controls = (); #tracks analysis object for control statistics
+    my @regular_analyses = (); # tracks regular analysis object
 
     my $rserve = $self->_api->_tools->{rserve};
 
     my @fpkm_map = map { # iterating on life stages
         my $life_stage_ace = $_;
-        my $life_stage = ''. $_->Public_name;
-        my $life_stage_tag = $self->_pack_obj($_);
 
         map { # iterating on fpkm_values
 
@@ -459,15 +458,11 @@ sub fpkm_expression {
                 my $name = $self->_pack_obj($_);
                 my $analysis_record = $self->_pack_analysis_record($life_stage_ace, $value, $_);
 
-                if ($analysis_record->{stat_type}){
+                if ($analysis_record->{control}){
                     # This analysis object statics for the control
-                    $controls_by_life_stage->{$life_stage} ||= [];   # ininitalize if not already
-                    push @{$controls_by_life_stage->{$life_stage}}, $analysis_record;
+                    push @controls, $analysis_record;
                 }else{
-                    if (my $project_acc = $analysis_record->{project_info}->{id}){
-                        $by_study->{$project_acc} ||= { analyses => []};   # ininitalize if not already
-                        push @{$by_study->{$project_acc}->{analyses}}, $analysis_record;
-                    }
+                    push @regular_analyses, $analysis_record;
                 }
 
                 # keep only regular analysis (no control ones)
@@ -568,23 +563,11 @@ sub fpkm_expression {
         #                          });
     }
 
-    foreach my $study (keys %$by_study){
-        my $study_name = "RNASeq_Study.$study";
-        my $study_obj = $self->_api->fetch({ class => 'Analysis', name => $study_name, nowrap => 1 });
-        my $study_label = $study_obj->Title . " [$study]";
-
-        $by_study->{$study}->{title} = '' . $study_obj->Title;
-        $by_study->{$study}->{description}  = '' . $study_obj->Description;
-        $by_study->{$study}->{indep_variable} = [
-            map {"$_"} $study_obj->Independent_variable];
-        $by_study->{$study}->{tag} = $self->_pack_obj($study_obj, $study_label);
-    }
-
     return {
         description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
         data        => @fpkm_map ? {
-            by_study => $by_study,
-            controls => $controls_by_life_stage,
+            by_study => $self->_make_study_summary(\@regular_analyses),
+            controls => [$self->_make_control_summary(\@controls)],
             plot => $plot,
             table => { fpkm => { data => \@fpkm_map } }
         } : undef
@@ -615,8 +598,9 @@ sub _pack_analysis_record {
         $life_stage = $1;
         (my $stat_type = $2) =~ s/_/ /;
         $analysis_record->{control} = 1;
-        $analysis_record->{$stat_type} = $value;
+        $analysis_record->{stat_type} = $stat_type;
         $project = $self->_pack_obj($study->Project);
+        $analysis_record->{comment} = ''. $study->Description;
     }else{
         # otherwise, it't an normal analysis object that part of a study/prject
 
@@ -640,6 +624,58 @@ sub _pack_analysis_record {
     $analysis_record->{project} = $project->{id};
 
     return $analysis_record;
+}
+
+sub _make_study_summary {
+    my ($self, $analysis_records) = @_;
+    my %by_studies = ();
+    foreach my $analysis_record (@$analysis_records){
+        my $study_id = $analysis_record->{project_info}->{id};
+        unless ($by_studies{$study_id}){
+            my $study_name = "RNASeq_Study.$study_id";
+            my $study_obj = $self->_api->fetch({ class => 'Analysis', name => $study_name, nowrap => 1 });
+            if ($study_obj) {
+                my $study_label = $study_obj->Title . " [$study_id]";
+
+                my $study = {
+                    title => '' . $study_obj->Title,
+                    description => '' . $study_obj->Description,
+                    indep_variable => [map {"$_"} $study_obj->Independent_variable],
+                    tag => $self->_pack_obj($study_obj, $study_label)
+                };
+                $by_studies{$study_id} = $study;
+            }
+        }
+    }
+    return \%by_studies;
+
+}
+
+
+sub _make_control_summary {
+    my ($self, $analysis_records) = @_;
+    my %by_lifestage = ();
+    foreach my $analysis_record (@$analysis_records){
+        my ($key) = $analysis_record->{label}->{id} =~ /^(.*)\.control/;
+        my $stat_type = $analysis_record->{stat_type};
+        my $stat_details = {
+               text => $analysis_record->{value},
+            evidence => {
+                comment => $analysis_record->{comment}
+            }
+        };
+
+        unless ($by_lifestage{$key}) {
+            $by_lifestage{$key} = {
+                life_stage => $analysis_record->{life_stage}
+            };
+        }
+        my $summary = $by_lifestage{$key};
+        $summary->{$stat_type} = $stat_details;
+    }
+
+    return values %by_lifestage;
+
 }
 
 1;

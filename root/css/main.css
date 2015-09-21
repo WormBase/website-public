@@ -2237,7 +2237,11 @@ div#google-map {
   width: 60px;
 }
 
-
+/* FPKM control statistics table on Expression widget */
+table#table_control_data_by td:nth-child(2),
+table#table_control_data_by td:nth-child(3) {
+  width: 40%;
+}
 
 /* SEQUENCE STYLING */
 /* sequence display formatting */
