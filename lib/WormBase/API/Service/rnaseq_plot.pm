@@ -725,12 +725,18 @@ sub draw_graph {
   my $outfile = catfile($self->subdir_out_path($gene_id), $filename);
   my $display_path = catfile($self->subdir_display_path($gene_id), $filename);
 
-  my $old_umask = umask '007';  #relax owner and group permission
-  open (P, ">$outfile") || die "can't open $outfile\n";
-  binmode P;
-  print P $img->png;
-  close P;
-  umask $old_umask;
+  # whether to generate or re-generate plot file
+  if  ( (! -e ($outfile)) ||
+            WormBase::Web->config->{installation_type} eq 'development') {
+
+      my $old_umask = umask '007';  #relax owner and group permission
+      open (P, ">$outfile") || die "can't open $outfile\n";
+      binmode P;
+      print P $img->png;
+      close P;
+      umask $old_umask;
+  }
+
   return $display_path;
 }
 
