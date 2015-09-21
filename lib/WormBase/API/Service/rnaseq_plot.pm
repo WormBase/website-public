@@ -39,7 +39,10 @@ has 'number_subdirs' => (
 sub subdir_out_path {
     my ($self, $filekey) = @_;
     my $subdir_path = catdir($self->plot_dir_base, $self->_get_subdir($filekey));
-    make_path($subdir_path);
+
+    my $umask_old = umask '007'; #relax owner and group permission
+    make_path($subdir_path, { mode => 0777 });
+    umask $umask_old;
     return $subdir_path;
 }
 
@@ -717,16 +720,17 @@ sub draw_graph {
 
 
 
-  use Data::Dumper;
+
   my $filename = "$name\_$type.png";
   my $outfile = catfile($self->subdir_out_path($gene_id), $filename);
   my $display_path = catfile($self->subdir_display_path($gene_id), $filename);
 
+  my $old_umask = umask '007';  #relax owner and group permission
   open (P, ">$outfile") || die "can't open $outfile\n";
   binmode P;
   print P $img->png;
   close P;
-
+  umask $old_umask;
   return $display_path;
 }
 
