@@ -22,7 +22,7 @@
       [% tags2link(fields.genes.data, '<br />', 'genes found') %]
 [% END %]
 
-[% WRAPPER $field_block title=pluralize("Rarrangement", fields.rearrangements.data.size) key="rearrangements" %]
+[% WRAPPER $field_block title=pluralize("Rearrangements", fields.rearrangements.data.size) key="rearrangements" %]
       [% tags2link(fields.rearrangements.data, '<br />', 'rearrangements found') %]
 [% END %]
 
