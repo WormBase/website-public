@@ -84,6 +84,7 @@
 
         my $url_html = "http://$host:$port/rest/widget/gene/WBGene00015099/expression?download=1&content-type=text%2Fhtml";
         my $response_html = get($url_html);
+print $response_html;
 
         ok($response_html =~ /B0280\.1\b/, 'lists a topo map');
         ok($response_html =~ /B0280\.11\b/, 'lists another topo map');
@@ -97,4 +98,3 @@
 }
 
 1;
-
