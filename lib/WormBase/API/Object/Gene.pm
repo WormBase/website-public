@@ -1868,6 +1868,23 @@ sub feature_image {
     };
 }
 
+#######################################
+#
+# The Expression Widget
+#
+#######################################
+
+sub __build_rnaseq_plot_data {
+
+    my ($self) = @_;
+    my $object = $self->object;
+    my $RNAseq_plot = $self->_api->_tools->{rnaseq_plot};
+    my %data = (
+        'Gene' => $RNAseq_plot->get_data('gene', ($object))
+    );
+
+    return %data;
+}
 
 
 #########################################

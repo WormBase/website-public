@@ -326,6 +326,25 @@ sub predicted_exon_structure {
 # features {}
 # Supplied by Role
 
+
+#######################################
+#
+# The Expression Widget
+#
+#######################################
+
+sub __build_rnaseq_plot_data {
+
+    my ($self) = @_;
+    my $object = $self->object;
+    my $RNAseq_plot = $self->_api->_tools->{rnaseq_plot};
+    my %data = (
+        'Transcript' => $RNAseq_plot->get_data('transcript', ($object))
+    );
+    return %data;
+}
+
+
 ############################################################
 #
 # PRIVATE METHODS
@@ -372,7 +391,7 @@ sub _build_sequences {
     my $gene = $self->object; # this is actually a TRANSCRIPT here.
     my %seen;
     my @seqs = grep { !$seen{$_}++} $gene->Corresponding_transcript;
-    
+
     # Let's just ensue that we're actually evaluating the *transcript* too
     # It looks like this method was cut-and-pasted from gene; it's not
     # customized for the transcript class.
