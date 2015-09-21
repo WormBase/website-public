@@ -24,6 +24,7 @@ WRAPPER $field_block title="Spatio-Temporal Expression Patterns" key="expression
                           go_term => 'GO term',
                           transgene => 'Transgene'
                              },
+                    style = '"aaSorting": [],',
                     key='expression_patterns');
 
 END;
@@ -41,6 +42,7 @@ WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profili
                           go_term => 'GO term',
                           transgene => 'Transgene'
                              },
+                    style = '"aaSorting": [],',
                     key='expression_profiling_graphs');
 
 END;

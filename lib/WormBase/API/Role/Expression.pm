@@ -71,6 +71,7 @@ sub expression_patterns {
     my @non_array_patterns = map {
         $self->_is_array_expression($_) ? () : $self->_expression_pattern_details($_);
     } $object->Expr_pattern;
+    @non_array_patterns = $self->_sort_expression_patterns(\@non_array_patterns);
 
     return {
         description => "expression patterns associated with the gene:$object",
@@ -87,6 +88,7 @@ sub expression_profiling_graphs {
     my @array_patterns = map {
         $self->_is_array_expression($_) ? $self->_expression_pattern_details($_) : ();
     } $object->Expr_pattern;
+    @array_patterns = $self->_sort_expression_patterns(\@array_patterns);
 
     return {
         description => "expression patterns associated with the gene:$object",
@@ -166,6 +168,21 @@ sub _expression_pattern_details {
     };
 }
 
+
+sub _sort_expression_patterns {
+    my ($self, $patterns) = @_;
+
+    sub valueFun {
+        my ($pattern_obj) = @_;
+        my ($match_chronogram) = $pattern_obj->{expression_pattern}->{label} =~ /^Chronogram/;
+        return $match_chronogram ? 1 : -1;
+    }
+
+    return sort {
+        valueFun($a) <=> valueFun($b)
+    } @$patterns;
+
+}
 # anatomy_terms { }
 # This method will return a hash
 # containing unique anatomy terms described from the
