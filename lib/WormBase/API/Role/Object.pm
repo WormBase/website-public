@@ -814,10 +814,11 @@ sub _build_laboratory {
         @representative = map { $self->_pack_obj($_) } @representative;
 	    push @data, {
 		laboratory => $self->_pack_obj($lab, "$label"),
-		representative => \@representative
+		representative => @representative ? \@representative : undef
 	    };
 	}
     }
+
     my $description = "$class" =~ /Person/i ? "the laboratory associated with the $class"
         : "the laboratory where the $class was isolated, created, or named";
     return {
