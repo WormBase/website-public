@@ -238,6 +238,26 @@
         is($data_sub[0]->{'project_info'}->{'label'}, 'Thomas Male Female comparison', 'correct project description returned');
     }
 
+    # test corresponding_all (gene model corresponding the transcript
+    sub test_expression_widget {
+
+        # test miRNA transcripts
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'K02B9.5' });
+
+        can_ok('WormBase::API::Object::Transcript', ('corresponding_all'));
+
+        my $model = $transcript->corresponding_all();
+        my $model_data = $model->{data}->[0];
+
+        my ($pre_miRNA) = grep { $_->{id} eq 'K02B9.5' } @{$model_data->{model}};
+        ok($pre_miRNA, 'got pre miRNA');
+        my @lengths = @{$model_data->{length_unspliced}};
+        my ($pre_miRNA_length) = grep { $_ =~ 97 } @lengths;
+        ok($pre_miRNA_length, 'got length for pre miRNA');
+
+    }
+
+
 }
 
 1;
