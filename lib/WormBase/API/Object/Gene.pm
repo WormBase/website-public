@@ -1772,7 +1772,11 @@ sub gene_models {
                 map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
                 push @lengths, $l;
             }else{
-                push @lengths, $self->_fetch_gff_gene($sequence)->length;
+                my $l;
+                map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
+                push @lengths, $l;
+                # push @lengths, $self->_fetch_gff_gene($sequence)->length;
+                use Data::Dumper; print Dumper $self->_fetch_gff_gene($sequence)->Exon;
             }
         }
 
