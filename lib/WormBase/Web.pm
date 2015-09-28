@@ -8,6 +8,9 @@ use Log::Log4perl::Catalyst;
 use Log::Any::Adapter;
 use HTTP::Status qw(:constants :is status_message);
 use Env 'API_TESTS';
+use JSON;
+use LWP;
+use Net::FTP;
 
 # Required for API unit tests:
 use File::Basename;
@@ -139,10 +142,52 @@ __PACKAGE__->setup;
 sub finalize_config { # overriding Plugin::ConfigLoader
     my $c = shift;
     $c->next::method(@_);
+    $c->_setup_species;
     $c->_setup_log4perl;
     $c->_setup_cache;
     $c->_setup_static;
 };
+
+sub _setup_species {
+    my $c = shift;
+
+    # process the species_list in conf
+    my $original_species = $c->config->{sections}->{species_list};
+    my $new_species = {};
+    my $available_species = _get_json("/pub/wormbase/releases/WS250/species/ASSEMBLIES.WS250.json");
+    foreach my $species (keys $original_species){
+        if ($available_species->{$species}){
+            # include a species ONLY if it is available
+            $new_species->{$species} = $original_species->{$species};
+        }
+    }
+    $c->config->{sections}->{species_list} = $new_species;
+
+    use Data::Dumper;
+    # dynamically create ParaSite species list
+    my $parasite_specise_tree = _get_json("/pub/wormbase/parasite/releases/WBPS3/species_tree.json");
+    #print Dumper [keys %{$parasite_specise_tree->[0]}];
+    #print Dumper _get_json("/pub/wormbase/releases/WS250/species/");
+}
+
+# helper function to get and parse species info located in JSON file on FTP site
+sub _get_json {
+    my ($path) = @_;
+    my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
+                            Timeout=>5, Passive=>1)
+        or die "Cannot connect to ftp.wormbase.org: $@";
+    $ftp->login();
+    my $stream = "";
+    my $fh;
+    open( $fh, '>', \$stream) || die "cannot open fh";
+    my $r = $ftp->get($path, $fh);
+    close $fh;
+    print Dumper $stream;
+    my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($stream);
+    use Data::Dumper;
+    #print Dumper $parsed;
+    return $parsed;
+}
 
 sub _setup_log4perl {
     # Specific loggers for different environments

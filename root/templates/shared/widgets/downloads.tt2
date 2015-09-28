@@ -8,19 +8,20 @@
      <th width="15%">GFF3</th>
      <th width="15%">Protein</th>
    </tr>
-
-   [% s_list = (species != 'all') ? [species] : c.config.sections.species_list.keys.sort(); %]
+   [% species_conf = c.config.sections.species_list; %]
+   [% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
 
    [% FOREACH option IN s_list %]
+
       [% NEXT IF (option == 'all'); %]
-        [% FOREACH bioproject IN c.config.sections.species_list.$option.bioprojects.keys; %]
+        [% FOREACH bioproject IN species_conf.$option.bioprojects.keys; %]
       <tr>
         [% IF (species == 'all') %]
-           <td><a href="/species/[% option %]" class="species">[% c.config.sections.species_list.$option.genus %] [% c.config.sections.species_list.$option.species %]</a></td>
+           <td><a href="/species/[% option %]" class="species">[% species_conf.$option.genus %] [% species_conf.$option.species %]</a></td>
        [% END %]
        <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% bioproject.replace('PRJNA', '') %]">[% bioproject %]</a>
        </td>
-       <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]">[% (species == 'all') ? 'FTP home' : c.config.sections.species_list.$option.genus _ ' ' _ c.config.sections.species_list.$option.species %]</a></td>
+       <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]">[% (species == 'all') ? 'FTP home' : species_conf.$option.genus _ ' ' _ species_conf.$option.species %]</a></td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/sequence/genomic/[% option %].[% bioproject %].[% constants.acedb_version %].genomic.fa.gz">[% option %].fa.gz</td>
        <!-- <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/gff/[% option %].[% bioproject %].[% constants.acedb_version %].annotations.gff2.gz">[% option %].gff2.gz</td> -->
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/gff/[% option %].[% bioproject %].[% constants.acedb_version %].annotations.gff3.gz">[% option %].gff3.gz</td>
