@@ -494,6 +494,7 @@ sub feed_GET {
     my $type = shift @args;
 
     if($type eq "download"){
+
       my $class = shift @args;
       my $wbid = shift @args;
       my $widget = shift @args;
@@ -504,6 +505,9 @@ sub feed_GET {
       }elsif ( ($widget=~m/browse/) && ($widget ne 'ontology_browser') ) {
         $c->stash->{search} = 1;
         $c->stash->{url} = $c->uri_for("/search", $class, "*")->path;
+      }elsif ($class eq 'all' && $wbid eq 'all' && $name){
+        # a species index page
+        $c->stash->{url} = $c->uri_for('widget', 'index', $name, $class, $widget)->path;
       }else{
         $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget)->path;
       }
@@ -596,7 +600,7 @@ sub feed_POST {
 				    browser       => $userAgent,
 				    url           => $url,
 				   });
-	
+
 
         $c->stash->{userAgent} = $userAgent;
         $self->_issue_email({ c       => $c,
@@ -622,7 +626,7 @@ sub feed_POST {
     }
 }
 
-# Provide a webhook endpoint for Olark so that we can post 
+# Provide a webhook endpoint for Olark so that we can post
 # chat transcripts to Github for further follow up.
 
 # Described here:
@@ -722,12 +726,12 @@ sub olark_POST {
 	my $timestamp   = $_->{timestamp};
 	my $body        = $_->{body};
 	my $operator_id = $_->{operatorId};
-	
+
 	push @transcript,$nickname ? "$nickname: $body" : $body;
-	
+
 	$operators{$nickname}++ if $operator_id;
     }
-    
+
     my $transcript_prelude; # we use the transcript to automatically build titles. This clariyfing prelude interferes with that.
     if ($conversation_type eq 'offline') {
 	$transcript_prelude = 'Help Desk query collected when no chat operators were online. Follow up required.';
@@ -756,7 +760,7 @@ sub olark_POST {
 
 
     $c->log->debug($transcript);
-    
+
     # The *WormBase* user. We might want to use these INSTEAD of those supplied
     # by Olark.
     my ($wb_name,$wb_user_email);
@@ -764,9 +768,9 @@ sub olark_POST {
 	$wb_name = $c->user->username;
 	$wb_user_email = $c->user->primary_email->email;
     }
-        
+
     # Which name should we pass, the wormbase name or that supplied by Olark?
-    
+
     $conversation_type ||= 'online';
 
     my ($issue_url,$issue_title,$issue_number) =
@@ -780,7 +784,7 @@ sub olark_POST {
 				browser       => $visitor_browser,
 				url           => $visitor_start_page,
 			       });
-    
+
 #$transcript, $visitor_email, $visitor_name, "source: $conversation_type chat", $visitor_start_page, $visitor_browser, "");
 
    # Should we still send an email?
@@ -804,7 +808,7 @@ sub olark_POST {
 	entity => {
 	    message => $message,
 	}
-	);    
+	);
 }
 
 
@@ -1273,7 +1277,7 @@ sub _check_user_info {
 
 sub _post_to_github {
     my ($self,$params) = @_;
-    
+
     my $c = $params->{c};
     my $content          = $params->{content};
     my $content_prelude  = $params->{content_prelude};
@@ -1283,9 +1287,9 @@ sub _post_to_github {
     my $page_object      = $params->{page_object};
     my $browser          = $params->{browser};
     my $page_url         = $params->{url};
-    
+
     my $github_url = "https://api.github.com/repos/" . $c->config->{github_repo} . "/issues";
-    
+
   # Get a new authorization for the website repo,
   # curl -H "Content-Type: application/json"  -u "tharris" -X POST https://api.github.com/authorizations -d '{"scopes": [ "website" ],"note": "wormbase helpdesk cross-post" }'
 
@@ -1306,49 +1310,49 @@ sub _post_to_github {
     my $token = `cat $path/github_token.txt`;
     chomp $token;
     return unless $token;
-    
+
 #      curl -H "Authorization: token TOKEN" -X POST -d '{ "title":"Test Issue","body":"this is the body of the issue","labels":["HelpDesk"]}' https://api.github.com/repos/wormbase/website/issues
-    
+
     my $req = HTTP::Request->new(POST => $github_url);
     $req->content_type('application/json');
     $req->header('Authorization' => "token $token");
-    
+
     # Obscure names and emails. Is it REALLY necessary to obscure names?
     my $obscured_name  = substr($visitor_name, 0, 4) .  '*' x ((length $visitor_name)  - 4);
     my $obscured_email = substr($visitor_email, 0, 4) . '*' x ((length $visitor_email) - 4);
     my $contact = $obscured_email ? $obscured_name ? "$obscured_name ($obscured_email)"
 	: $obscured_email
 	: "unknown";
-    
+
     # Originating page MAY be an object.
     my $page_title = eval { $page_object->title } || $page_url;
     $page_title = URI::Escape::uri_unescape($page_title);
-    
+
     $page_url = URI::Escape::uri_unescape($page_url);
     my $url_base = $c->req->base;  # This will be empty for webhook posts of course!
 
     my $full_content;
     if ($content_prelude) {
 	$full_content = <<END;
-	
+
 *$content_prelude*
 
 END
 ;
-    } 
+    }
 
     $full_content .= <<END;
 $content
-    
+
 **Reported by:** $contact
 **Submitted from:** <a target="_blank" href="$url_base$page_url">$page_title</a>
 **Browser:** $browser
 
 END
 ;
-    
+
     my $json         = new JSON;
-    
+
 # Create a more informative title
     my $trim_content = "$content";
     $trim_content =~ s/\<[^\>]*\>/\ /g;

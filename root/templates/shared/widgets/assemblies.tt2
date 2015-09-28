@@ -10,13 +10,14 @@ IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; 
 
       '<p><div class="caveat-emptor">Current Assemblies</div></p>';
 
-      build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference'],
+      build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference','genomic_sequence'],
                         columns={
                             name              => 'Name',
                             sequenced_strain  => 'Sequenced strain',
                             wb_release_range  => 'WormBase releases',
                             reference         => 'Origin',
                             bioproject        => 'Bioproject ID',
+                            genomic_sequence => 'Genomic sequence'
                         },
                         key='current_assemblies');
 
@@ -26,13 +27,14 @@ IF fields.ncbi_id.data; ' - NCBI taxonomy id: ' _ fields.ncbi_id.data _ '</p>'; 
 
       '<p><div class="caveat-emptor">Prior Assemblies</div></p>';
 
-      build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference'],
+      build_data_table(order=['name','sequenced_strain','wb_release_range','bioproject','reference', 'genomic_sequence'],
                         columns={
                             name              => 'Name',
                             sequenced_strain  => 'Sequenced strain',
                             wb_release_range  => 'WormBase releases',
                             reference         => 'Origin',
                             bioproject        => 'Bioproject ID',
+                            genomic_sequence => 'Genomic sequence'
                         },
                         key='previous_assemblies');
 
