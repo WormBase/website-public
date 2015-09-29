@@ -62,8 +62,8 @@ END; %]
 
     [% FOREACH option IN s_list %]
      <tr>
-       <td><a href="http://parasite.wormbase.org[% option.url %]" class="species">[% option.label %]</a></td>
-       <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% option.bioproject %]">[% option.bioproject %]</a></td>
+       <td><a href="http://parasite.wormbase.org[% option.url %]" target="_blank" class="species">[% option.label %]</a></td>
+       <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% option.bioproject %]" target="_blank">[% option.bioproject %]</a></td>
        <td>[% parasite_ftp_link(option.name, option.bioproject, '') %] </td>
        <td>[% parasite_ftp_link(option.name, option.bioproject, 'genomic.fa.gz') %]</td>
        <td>[% parasite_ftp_link(option.name, option.bioproject, 'annotations.gff3.gz') %]</td>
