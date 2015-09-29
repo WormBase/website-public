@@ -1,4 +1,5 @@
 [% BLOCK ftp_download_table %]
+  [% IF display && display.size; # ensure there's data to be displayed %]
     [% IF title; %]
         <h2>[% title %]</h2>
     [%  END; %]
@@ -14,6 +15,7 @@
        </tr>
        [% content %]
     </table>
+  [% END %]
 [% END %]
 
 [% MACRO parasite_ftp_link(species_name, bioproject, format) BLOCK;
@@ -26,9 +28,11 @@
     '<a href="' _ url _ '">' _ (format || 'FTP home') _ '</a>';
 END; %]
 
-[% WRAPPER ftp_download_table title="Core species" %]
-   [% species_conf = c.config.sections.species_list; %]
-   [% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
+
+[% species_conf = c.config.sections.species_list; %]
+[% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
+
+[% WRAPPER ftp_download_table title="" display=s_list %]
 
    [% FOREACH option IN s_list %]
 
@@ -50,9 +54,9 @@ END; %]
    [% END %]
 [% END %]
 
-[% WRAPPER ftp_download_table title="Other species" %]
-    [% parasite_species_conf = c.config.sections.parasite_species_list; %]
-    [% s_list = (species != 'all') ? [] : parasite_species_conf; %]
+[% parasite_species_conf = c.config.sections.parasite_species_list; %]
+[% s_list = (species != 'all') ? [] : parasite_species_conf; %]
+[% WRAPPER ftp_download_table title="Other species" display=s_list %]
 
     [% FOREACH option IN s_list %]
      <tr>
