@@ -8,6 +8,9 @@ use Log::Log4perl::Catalyst;
 use Log::Any::Adapter;
 use HTTP::Status qw(:constants :is status_message);
 use Env 'API_TESTS';
+use JSON;
+use LWP;
+use Net::FTP;
 
 # Required for API unit tests:
 use File::Basename;
@@ -139,10 +142,113 @@ __PACKAGE__->setup;
 sub finalize_config { # overriding Plugin::ConfigLoader
     my $c = shift;
     $c->next::method(@_);
+    $c->_setup_species;
     $c->_setup_log4perl;
     $c->_setup_cache;
     $c->_setup_static;
 };
+
+sub _setup_species {
+    my $c = shift;
+
+    # process the species_list in conf
+    my $original_species = $c->config->{sections}->{species_list};
+    my $new_species = {};
+    my $available_species = _with_ftp_site(\&_get_json,"/pub/wormbase/releases/WS250/species/ASSEMBLIES.WS250.json");
+    foreach my $species (keys $original_species){
+        if ($available_species->{$species}){
+            # include a species ONLY if it is available
+            $new_species->{$species} = $original_species->{$species};
+        }
+    }
+    $c->config->{sections}->{species_list} = $new_species;
+
+    # dynamically create ParaSite species list
+    my $parasite_species_trees = _with_ftp_site(\&_get_json, "/pub/wormbase/parasite/releases/WBPS3/species_tree.json");
+    my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
+    $c->config->{sections}->{parasite_species_list} = \@parasite_species;
+
+    # determine the latest parasite release
+    my $latest_wbps_release = _with_ftp_site(\&_get_latest_release, "/pub/wormbase/parasite/releases/");
+    $c->config->{parasite_release} = $latest_wbps_release;
+
+}
+
+# helper function to get and parse species info located in JSON file on FTP site
+sub _get_json {
+    my ($ftp, $path) = @_;
+
+    my $stream = "";
+    my $fh;
+    open( $fh, '>', \$stream) || die "cannot open fh";
+    my $r = $ftp->get($path, $fh);
+    close $fh;
+
+    my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($stream);
+    return $parsed;
+}
+
+sub _get_latest_release {
+    my ($ftp, $release_dir_path) = @_;
+    my $releases = _list_directory($ftp, $release_dir_path);
+
+    sub get_release_number {
+        my ($release_name) = @_;
+        my ($num) = $release_name =~ /.+(\d+)$/;
+        return $num;
+    }
+
+    my ($latest) = sort {
+        get_release_number($b) <=> get_release_number($a);
+    } @$releases;
+
+    my @path_parts = split('/', $latest);
+    return pop @path_parts;  # if release name is a path, take only the last part
+}
+
+sub _list_directory {
+    my ($ftp, $path) = @_;
+
+    return $ftp->ls($path);
+}
+
+# helper method to handle setup and teardown of ftp site connection
+sub _with_ftp_site {
+    my ($function, @args) = @_;
+    my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
+                            Timeout=>5, Passive=>1)
+        or die "Cannot connect to ftp.wormbase.org: $@";
+
+    $ftp->login();
+    my $result = $function->($ftp, @args);
+    $ftp->quit();
+
+    return $result;
+}
+
+# traverse the parasite species tree to get the leaf species
+sub _parse_parasite_species {
+    my ($tree, $name_prefix) = @_;
+
+    my $children = $tree->{children};
+    unless ($children){
+        # parse leaf species
+        my $species = {
+            name => lc(join('_',split(/\s+/,$name_prefix))),
+            label => $name_prefix,
+            bioproject => $tree->{label},
+            url => $tree->{url}
+        };
+        return ($species);
+    }
+    my @species = ();
+    foreach my $subtree (@$children){
+        # parse parent species
+        push @species, _parse_parasite_species($subtree, $tree->{label});
+    }
+    return @species;
+
+}
 
 sub _setup_log4perl {
     # Specific loggers for different environments
