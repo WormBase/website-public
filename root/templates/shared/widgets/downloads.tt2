@@ -1,19 +1,22 @@
 [% BLOCK ftp_download_table %]
+  [% IF display && display.size; # ensure there's data to be displayed %]
     [% IF title; %]
-        <h2>[% title %]</h2>
+        <h3>[% title %]</h3><br/>
     [%  END; %]
     <table width="100%">
        <tr>
-         [% IF (species == 'all') %]<th width="30%">Species</th>[% END %]
-         <th width="10%">BioProject</th>
+         [% IF (species == 'all') %]<th width="22%">Species</th>[% END %]
+         <th width="13%">BioProject</th>
          <th width="10%">FTP Home</th>
          <th width="20%">Genomic Sequence</th>
          <!-- <th width="10%">GFF2</th> -->
-         <th width="15%">GFF3</th>
+         <th width="20%">GFF3</th>
          <th width="15%">Protein</th>
        </tr>
        [% content %]
     </table>
+    <br/>
+  [% END %]
 [% END %]
 
 [% MACRO parasite_ftp_link(species_name, bioproject, format) BLOCK;
@@ -26,9 +29,11 @@
     '<a href="' _ url _ '">' _ (format || 'FTP home') _ '</a>';
 END; %]
 
-[% WRAPPER ftp_download_table title="Core species" %]
-   [% species_conf = c.config.sections.species_list; %]
-   [% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
+
+[% species_conf = c.config.sections.species_list; %]
+[% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
+
+[% WRAPPER ftp_download_table title="" display=s_list %]
 
    [% FOREACH option IN s_list %]
 
@@ -50,9 +55,10 @@ END; %]
    [% END %]
 [% END %]
 
-[% WRAPPER ftp_download_table title="Other species" %]
-    [% parasite_species_conf = c.config.sections.parasite_species_list; %]
-    [% s_list = (species != 'all') ? [] : parasite_species_conf; %]
+
+[% parasite_species_conf = c.config.sections.parasite_species_list; %]
+[% s_list = (species != 'all') ? [] : parasite_species_conf; %]
+[% WRAPPER ftp_download_table title="Other species" display=s_list %]
 
     [% FOREACH option IN s_list %]
      <tr>
@@ -66,5 +72,5 @@ END; %]
     [% END %]
 
 [% END %]
-<br />
+
 <div class="caveat-emptor">Links point to the most current assemblies. Additional datasets and older versions are available on the summary page for each species or on the FTP home.</div>
