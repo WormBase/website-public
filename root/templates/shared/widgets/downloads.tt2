@@ -30,20 +30,20 @@
 END; %]
 
 
-[% species_conf = c.config.sections.species_list; %]
-[% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
 
-[% WRAPPER ftp_download_table title="" display=s_list %]
+[% WRAPPER ftp_download_table title="" display=1 %]
 
-   [% FOREACH option IN s_list %]
-
+    [% # include WB Central species %]
+    [% species_conf = c.config.sections.species_list; %]
+    [% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
+    [% FOREACH option IN s_list %]
       [% NEXT IF (option == 'all'); %]
         [% FOREACH bioproject IN species_conf.$option.bioprojects.keys; %]
       <tr>
         [% IF (species == 'all') %]
            <td><a href="/species/[% option %]" class="species">[% species_conf.$option.genus %] [% species_conf.$option.species %]</a></td>
        [% END %]
-       <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% bioproject.replace('PRJNA', '') %]">[% bioproject %]</a>
+       <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% bioproject %]" target="_blank">[% bioproject %]</a>
        </td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]">[% (species == 'all') ? 'FTP home' : species_conf.$option.genus _ ' ' _ species_conf.$option.species %]</a></td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/sequence/genomic/[% option %].[% bioproject %].[% constants.acedb_version %].genomic.fa.gz">[% option %].fa.gz</td>
@@ -52,14 +52,11 @@ END; %]
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/sequence/protein/[% option %].[% bioproject %].[% constants.acedb_version %].protein.fa.gz">[% option %].fa.gz</td>
       </tr>
       [% END %]
-   [% END %]
-[% END %]
+    [% END %]
 
-
-[% parasite_species_conf = c.config.sections.parasite_species_list; %]
-[% s_list = (species != 'all') ? [] : parasite_species_conf; %]
-[% WRAPPER ftp_download_table title="Other species" display=s_list %]
-
+    [% # include ParaSite species %]
+    [% parasite_species_conf = c.config.sections.parasite_species_list; %]
+    [% s_list = (species != 'all') ? [] : parasite_species_conf; %]
     [% FOREACH option IN s_list %]
      <tr>
        <td><a href="http://parasite.wormbase.org[% option.url %]" target="_blank" class="species">[% option.label %]</a></td>
@@ -70,7 +67,7 @@ END; %]
        <td>[% parasite_ftp_link(option.name, option.bioproject, 'protein.fa.gz') %]</td>
      </tr>
     [% END %]
-
 [% END %]
+
 
 <div class="caveat-emptor">Links point to the most current assemblies. Additional datasets and older versions are available on the summary page for each species or on the FTP home.</div>
