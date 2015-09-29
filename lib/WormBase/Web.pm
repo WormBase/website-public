@@ -163,11 +163,11 @@ sub _setup_species {
     }
     $c->config->{sections}->{species_list} = $new_species;
 
-    use Data::Dumper;
     # dynamically create ParaSite species list
-    my $parasite_specise_tree = _get_json("/pub/wormbase/parasite/releases/WBPS3/species_tree.json");
-    #print Dumper [keys %{$parasite_specise_tree->[0]}];
-    #print Dumper _get_json("/pub/wormbase/releases/WS250/species/");
+    my $parasite_species_trees = _get_json("/pub/wormbase/parasite/releases/WBPS3/species_tree.json");
+    my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
+    $c->config->{sections}->{parasite_species_list} = \@parasite_species;
+
 }
 
 # helper function to get and parse species info located in JSON file on FTP site
@@ -177,16 +177,39 @@ sub _get_json {
                             Timeout=>5, Passive=>1)
         or die "Cannot connect to ftp.wormbase.org: $@";
     $ftp->login();
+
     my $stream = "";
     my $fh;
     open( $fh, '>', \$stream) || die "cannot open fh";
     my $r = $ftp->get($path, $fh);
     close $fh;
-    print Dumper $stream;
+
     my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($stream);
-    use Data::Dumper;
-    #print Dumper $parsed;
     return $parsed;
+}
+
+# traverse the parasite species tree to get the leaf species
+sub _parse_parasite_species {
+    my ($tree, $name_prefix) = @_;
+
+    my $children = $tree->{children};
+    unless ($children){
+        # parse leaf species
+        my $species = {
+            name => lc(join('_',split(/\s+/,$name_prefix))),
+            label => $name_prefix,
+            bioproject => $tree->{label},
+            url => $tree->{url}
+        };
+        return ($species);
+    }
+    my @species = ();
+    foreach my $subtree (@$children){
+        # parse parent species
+        push @species, _parse_parasite_species($subtree, $tree->{label});
+    }
+    return @species;
+
 }
 
 sub _setup_log4perl {
