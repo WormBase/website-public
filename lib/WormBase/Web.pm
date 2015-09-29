@@ -156,7 +156,7 @@ sub _setup_species {
     my $new_species = {};
     my $available_species = _with_ftp_site(\&_get_json,"/pub/wormbase/releases/WS250/species/ASSEMBLIES.WS250.json");
     foreach my $species (keys $original_species){
-        if ($available_species->{$species}){
+        if ($available_species->{$species} || $species eq 'all'){
             # include a species ONLY if it is available
             $new_species->{$species} = $original_species->{$species};
         }
