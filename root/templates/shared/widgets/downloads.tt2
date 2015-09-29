@@ -1,13 +1,32 @@
-<table width="100%">
-   <tr>
-     [% IF (species == 'all') %]<th width="30%">Species</th>[% END %]
-     <th width="10%">BioProject</th>
-     <th width="10%">FTP Home</th>
-     <th width="20%">Genomic Sequence</th>
-     <!-- <th width="10%">GFF2</th> -->
-     <th width="15%">GFF3</th>
-     <th width="15%">Protein</th>
-   </tr>
+[% BLOCK ftp_download_table %]
+    [% IF title; %]
+        <h2>[% title %]</h2>
+    [%  END; %]
+    <table width="100%">
+       <tr>
+         [% IF (species == 'all') %]<th width="30%">Species</th>[% END %]
+         <th width="10%">BioProject</th>
+         <th width="10%">FTP Home</th>
+         <th width="20%">Genomic Sequence</th>
+         <!-- <th width="10%">GFF2</th> -->
+         <th width="15%">GFF3</th>
+         <th width="15%">Protein</th>
+       </tr>
+       [% content %]
+    </table>
+[% END %]
+
+[% MACRO parasite_ftp_link(species_name, bioproject, format) BLOCK;
+    filename_parts = [species_name, bioproject, c.config.parasite_release, format];
+    # specific file or species home directory
+    filename = format ? filename_parts.join('.') : '';
+    path_parts = [c.config.parasite_release, 'species', species_name, bioproject, filename];
+    url = 'ftp://ftp.wormbase.org/pub/wormbase/parasite/releases/'
+          _ path_parts.join('/');
+    '<a href="' _ url _ '">' _ (format || 'FTP home') _ '</a>';
+END; %]
+
+[% WRAPPER ftp_download_table title="Core species" %]
    [% species_conf = c.config.sections.species_list; %]
    [% s_list = (species != 'all') ? [species] : species_conf.keys.sort(); %]
 
@@ -29,6 +48,23 @@
       </tr>
       [% END %]
    [% END %]
-</table>
+[% END %]
+
+[% WRAPPER ftp_download_table title="Other species" %]
+    [% parasite_species_conf = c.config.sections.parasite_species_list; %]
+    [% s_list = (species != 'all') ? [] : parasite_species_conf; %]
+
+    [% FOREACH option IN s_list %]
+     <tr>
+       <td><a href="http://parasite.wormbase.org/[% option.url %]" class="species">[% option.label %]</a></td>
+       <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% option.bioproject %]">[% option.bioproject %]</a></td>
+       <td>[% parasite_ftp_link(option.name, option.bioproject, '') %] </td>
+       <td>[% parasite_ftp_link(option.name, option.bioproject, 'genomic.fa.gz') %]</td>
+       <td>[% parasite_ftp_link(option.name, option.bioproject, 'annotations.gff3.gz') %]</td>
+       <td>[% parasite_ftp_link(option.name, option.bioproject, 'protein.fa.gz') %]</td>
+     </tr>
+    [% END %]
+
+[% END %]
 <br />
 <div class="caveat-emptor">Links point to the most current assemblies. Additional datasets and older versions are available on the summary page for each species or on the FTP home.</div>
