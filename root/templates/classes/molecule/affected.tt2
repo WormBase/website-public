@@ -1,10 +1,11 @@
 [%
 
-MACRO tableAffected(type, tag) BLOCK;
+MACRO tableAffected(type, tag, order) BLOCK;
     build_data_table(
-	order = ['affected', 'phenotype'],
+	order = order || ['phenotype','affected_gene','affected'],
 	columns = {
 	    affected  => "$type",
+        affected_gene => 'Gene',
 	    phenotype => 'Phenotype',
 	}, key = "$tag" );
 END;
@@ -22,7 +23,7 @@ WRAPPER $field_block title="Variations" key="affected_variations";
 END;
 
 WRAPPER $field_block title="Strains" key="affected_strains";
-      tableAffected('Strain', 'affected_strains');
+      tableAffected('Strain', 'affected_strains', ['phenotype','affected']);
 END;
 
 %]
