@@ -126,6 +126,23 @@ sub _build_annotated_genes {
             $self->_pack_list([$_->col()]);
         } $anno->Annotation_made_with;
 
+        my @entities = map {
+            my @ent;
+            if ("$_" eq 'Database'){
+                @ent = $self->_pack_xrefs($anno);
+            }else{
+                @ent = $self->_pack_list([$_->col()]);
+            }
+            @ent;
+        } $anno->Annotation_made_with;
+
+        my @go_refs = map {
+            $_->{label} = $_->{id};
+            $_;
+        }  $self->_pack_xrefs($anno, 'GO_reference');
+        $evidence->{GO_reference} = \@go_refs if @go_refs;
+
+
         my %extensions = map {
             my ($ext_type, $ext_name, $ext_value) = $_->row();
            "$ext_name" => $self->_pack_obj($ext_value)

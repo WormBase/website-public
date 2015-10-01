@@ -742,7 +742,7 @@ has '_gene_ontology' => (
     lazy => 1,
     builder => '_build_gene_ontology',
 );
-use Data::Dumper;
+
 sub _build_gene_ontology {
     my $self   = shift;
     my $object = $self->object;
@@ -755,7 +755,13 @@ sub _build_gene_ontology {
         my $relation = $anno->Annotation_relation;
 
         my @entities = map {
-            $self->_pack_list([$_->col()]);
+            my @ent;
+            if ("$_" eq 'Database'){
+                @ent = $self->_pack_xrefs($anno);
+            }else{
+                @ent = $self->_pack_list([$_->col()]);
+            }
+            @ent;
         } $anno->Annotation_made_with;
 
         my %extensions = map {
@@ -765,6 +771,13 @@ sub _build_gene_ontology {
 
         my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
         my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
+
+        my @go_refs = map {
+            $_->{label} = $_->{id};
+            $_;
+        }  $self->_pack_xrefs($anno, 'GO_reference');
+        $evidence->{GO_reference} = \@go_refs if @go_refs;
+
 
         my @term_details = () ; #('' . $go_term->Term);
         push @term_details, { evidence => \%extensions } if %extensions;
