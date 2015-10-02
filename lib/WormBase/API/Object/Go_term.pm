@@ -52,9 +52,9 @@ http://wormbase.org/species/go_term
 sub term {
     my $self       = shift;
     my $object     = $self->object;
-    my $tag_object = $object->Term;
+
     return {
-        'data'        => $self->_pack_obj($object, $tag_object && "$tag_object"),
+        'data'        => $self->_pack_obj($object),
         'description' => 'GO term'
     };
 }
