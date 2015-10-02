@@ -123,10 +123,6 @@ sub _build_annotated_genes {
         my $species = $gene->Species || undef;
 
         my @entities = map {
-            $self->_pack_list([$_->col()]);
-        } $anno->Annotation_made_with;
-
-        my @entities = map {
             my @ent;
             if ("$_" eq 'Database'){
                 @ent = $self->_pack_xrefs($anno);
