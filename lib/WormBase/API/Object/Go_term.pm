@@ -52,9 +52,9 @@ http://wormbase.org/species/go_term
 sub term {
     my $self       = shift;
     my $object     = $self->object;
-    my $tag_object = $object->Term;
+
     return {
-        'data'        => $self->_pack_obj($object, $tag_object && "$tag_object"),
+        'data'        => $self->_pack_obj($object),
         'description' => 'GO term'
     };
 }
@@ -121,10 +121,6 @@ sub _build_annotated_genes {
         my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
         my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
         my $species = $gene->Species || undef;
-
-        my @entities = map {
-            $self->_pack_list([$_->col()]);
-        } $anno->Annotation_made_with;
 
         my @entities = map {
             my @ent;

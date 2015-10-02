@@ -47,7 +47,16 @@
         isnt($aGene->{'species'}, undef, 'A species is specified');
     }
 
+    sub test_go_name {
+        my $go = $api->fetch({ class => 'Go_term', name => 'GO:0006810' });
+
+        can_ok('WormBase::API::Object::Go_term', ('term'));
+
+        my $term_name = $go->term();
+        isnt($term_name->{data}, undef, 'data returned');
+        is($term_name->{data}->{label}, 'transport', 'correct Go term name returned');
+    }
+
 }
 
 1;
-
