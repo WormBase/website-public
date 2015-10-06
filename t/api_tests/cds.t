@@ -43,13 +43,13 @@
         isnt($brief->{'data'}, undef, 'data returned');
         is($brief->{'data'}->{'text'}, 'Receptor-type guanylate cyclase gcy-1', 'Correct brief identification');
         isnt($brief->{'data'}->{'evidence'}, undef, 'evidence returned');
-        # isnt($brief->{'data'}->{'evidence'}->{'Accession_evidence'}, undef, 'correct type of evidence returned');
+        isnt($brief->{'data'}->{'evidence'}->{'Accession_evidence'}, undef, 'correct type of evidence returned');
 
-        # my $evs = $brief->{'data'}->{'evidence'}->{'Accession_evidence'};
-        # ok(\$evs, 'has one Accession_evidence');
-        # my $evidence = shift $evs;
-        # is($evidence->{'class'}, 'UniProt', 'Correct external database specified');
-        # is($evidence->{'id'}, 'Q09435', 'Correct cross-referecne id specified');
+        my $evs = $brief->{'data'}->{'evidence'}->{'Accession_evidence'};
+        ok(\$evs, 'has one Accession_evidence');
+        my $evidence = shift $evs;
+        is($evidence->{'class'}, 'UniProt', 'Correct external database specified');
+        is($evidence->{'id'}, 'Q09435', 'Correct cross-referecne id specified');
     }
 
     sub test_tier3_genomic_position {
