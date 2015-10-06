@@ -4,15 +4,15 @@ category     = Alleles, Variations, RNAi
 key          = Balancers
 label        = sub {
 	     my $f = shift;
-	     my %attributes = $f->attributes;
-	     my ($name) = $attributes{balancer} || $f->name;
-             $name =~ s/Rearrangement//;
+	     my ($name) = $f->attributes('balancer');
+	     $name ||= $f->name;
+             $name =~ s/Rearrangement://;
 	     return $name;
        }
 description  = sub {
 		my $f = shift;
-     	        my %attributes = $f->attributes;
-	        my ($type) = $attributes{balancer_type} || 'rearrangement';
+     	        my ($type) = $f->attributes('balancer_type');
+	        $type ||= 'rearrangement';
 	        return $type;		
  	}
 glyph        = box
@@ -21,25 +21,24 @@ fgcolor      = black
 font2color   = blue
 height       = 8
 balloon hover = sub {
-	           my $f    = shift;
-        	   my %attributes = $f->attributes;
-	           my ($type)  = $attributes{balancer_type} || 'rearrangement';
-    	           my ($name)  = $attributes{balancer} || $f->name;
-		   $name =~ s/Rearrangement//;
-    	           my ($notes) = $attributes{Note};
-
-		   my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
-
-		   my @notes = ("<b>Balancer: $name</b>");
-		   push (@notes,"<b>type:</b> $type: ") if $type;
-		   push (@notes,"<b>location:</b> $ref:$start..$stop");
-		   push (@notes,"<b>notes:</b> $notes") if $notes;
-		   return join('<br />',@notes);
+		my $f    = shift;
+		my ($type)  = $f->attributes('balancer_type');
+		$type ||= 'rearrangement';
+		my ($name)  = $f->attributes('balancer');
+		$name ||= $f->name;
+		$name =~ s/Rearrangement://;
+		my ($notes) = $f->notes;
+		my ($ref,$start,$stop) = ($f->ref,$f->start,$f->stop);
+		my @notes = ("<b>Balancer: $name</b>");
+		push (@notes,"<b>type:</b> $type") if $type;
+		push (@notes,"<b>location:</b> $ref:$start..$stop");
+		push (@notes,"<b>notes:</b> $notes") if $notes;
+		return join('<br />',@notes);
 	}
 link          = sub { 
  	             my $f = shift;
  		     my ($name) = $f->attributes('balancer');
-		     $name =~ s/Rearrangement//;
+		     $name =~ s/Rearrangement://;
                      return "/db/get?name=$name;class=Rearrangement";
          }
 citation      = This track shows the approximate location of balancers.
