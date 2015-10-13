@@ -239,7 +239,7 @@
     }
 
     # test corresponding_all (gene model corresponding the transcript
-    sub test_expression_widget {
+    sub test_corresponding {
 
         # test miRNA transcripts
         my $transcript = $api->fetch({ class => 'Transcript', name => 'K02B9.5' });
@@ -254,6 +254,17 @@
         my @lengths = @{$model_data->{length_unspliced}};
         my ($pre_miRNA_length) = grep { $_ =~ 97 } @lengths;
         ok($pre_miRNA_length, 'got length for pre miRNA');
+
+
+        # test transcript length for one with introns
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'B0348.6a.1' });
+
+        can_ok('WormBase::API::Object::Transcript', ('corresponding_all'));
+        my $model = $transcript->corresponding_all();
+        my $model_data = $model->{data}->[0];
+        my @lengths = @{$model_data->{length_unspliced}};
+        my ($transcript_length) = grep { $_ =~ 1098 } @lengths;
+        ok($transcript_length, 'got correct transcript length');
 
     }
 
