@@ -21,7 +21,7 @@ WRAPPER $field_block title="Transgenes" key="affected_transgenes";
             return "<td>" + rowData[0] + "</td>";
         }),
         "columnDefs": [
-            { "targets": 2, "width": "20%" }
+            { "targets": 3, "width": "40%" }
         ],
         aaSorting: [],
         "autoWidth": false
@@ -35,7 +35,8 @@ WRAPPER $field_block title="Transgenes" key="affected_transgenes";
 	    phenotype => 'Phenotype',
 	    phenotype_not => 'Phenotype not observed',
 	}, key = "affected_transgenes",
-      style = table_settings
+      style = table_settings,
+      separator = '<br/>'
      );
 END;
 

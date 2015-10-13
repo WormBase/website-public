@@ -145,7 +145,7 @@ sub affected_transgenes {
         my @genes;
         if ($phenotype_info) {
 
-            my $remark = $phenotype_info->Remark;
+            my ($remark) = $phenotype_info->at('Remark');
             my $remark_evidence = $that_self->_get_evidence($remark) if $remark;
             my $remark_evidence_tag = $remark_evidence ? { text => "$remark", evidence => $remark_evidence } : "$remark";
 
@@ -155,9 +155,10 @@ sub affected_transgenes {
             #     $_->{remark} = $remark_evidence_tag;
             #     $_->{$phenotype_tag_name} = 1;
             # }
-        }
 
-        return @genes ? ($phenotype_info, @genes) : ($phenotype_info);
+            use Data::Dumper; print Dumper $remark . '';
+        }
+        return ($phenotype_info, @genes);
     }
 
     my $data_pack = $self->_affects('Transgene', \&get_caused_by_gene);
@@ -213,7 +214,6 @@ sub _affects {
     foreach my $affected ($object->$tag){
 
         my $phenotype = $affected->right;
-        my $evidence = {text => $self->_pack_obj($affected), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
 
         my @affected_packed;
         my $phenotype_info;
@@ -228,15 +228,19 @@ sub _affects {
                 $phenotype_tag = 'phenotype_not' if @affected_genes;
             }
             @affected_packed = $self->_pack_list(\@affected_genes);
-        }
 
-        my $data_per_phenotype =  {
-            affected  =>  $evidence ? $evidence : $self->_pack_obj($affected),
-            affected_gene => @affected_packed ? \@affected_packed : undef,
-        };
-        my $remark = $phenotype_info->Remark if $phenotype_info;
-        $data_per_phenotype->{$phenotype_tag} = $remark ? { text => $self->_pack_obj($phenotype), evidence => "$remark" } : $self->_pack_obj($phenotype);
-        push @data, $data_per_phenotype;
+            my ($remark) = $phenotype_info->at('Remark') if $phenotype_info;
+            my $evidence = {text => [$self->_pack_obj($affected), "$remark"], evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+
+            my $data_per_phenotype =  {
+                affected  =>  $evidence ? $evidence : $self->_pack_obj($affected),
+                affected_gene => @affected_packed ? \@affected_packed : undef,
+            };
+
+            $data_per_phenotype->{$phenotype_tag} = $self->_pack_obj($phenotype);
+
+            push @data, $data_per_phenotype;
+        }
     }
     return @data ? \@data : undef;
 }
