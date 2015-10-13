@@ -14,8 +14,29 @@ WRAPPER $field_block title="RNAi" key="affected_rnai";
       tableAffected('RNAi', 'affected_rnai');
 END;
 
+
 WRAPPER $field_block title="Transgenes" key="affected_transgenes";
-      tableAffected('Transgene', 'affected_transgenes');
+    table_settings = '
+        "drawCallback": WB.partitioned_table(0, function(rowData){
+            return "<td>" + rowData[0] + "</td>";
+        }),
+        "columnDefs": [
+            { "targets": 2, "width": "20%" }
+        ],
+        aaSorting: [],
+        "autoWidth": false
+    ';
+
+    build_data_table(
+	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	columns = {
+	    affected  => "Details",
+        affected_gene => 'Gene',
+	    phenotype => 'Phenotype',
+	    phenotype_not => 'Phenotype not observed',
+	}, key = "affected_transgenes",
+      style = table_settings
+     );
 END;
 
 WRAPPER $field_block title="Variations" key="affected_variations";
