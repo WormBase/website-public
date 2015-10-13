@@ -229,11 +229,26 @@
       species = c.config.sections.species_list.$taxonomy;
       label = label || data.label;
 
+      # compute padding for displaying coordinates
+      coord_parts = label.match('(\w+):(\d+)\.{2}(\d+)');
+      chromosome_id = coord_parts.0;
+      IF coord_parts.1 < coord_parts.2;
+        start_pos = coord_parts.1;
+        end_pos = coord_parts.2;
+      ELSE;
+        start_pos = coord_parts.2;
+        end_pos = coord_parts.1;
+      END;
+      start_pos_display = start_pos - 0.3 * (end_pos - start_pos);
+      end_pos_display = end_pos + 0.3 * (end_pos - start_pos);
+      pos_display_string = chromosome_id _ ':'
+        _ start_pos_display _ '..' _ end_pos_display;
+
       IF species;
         linkouts = [];
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
-            url = jbrowse_url(taxonomy, data.pos_string, bp);
+            url = jbrowse_url(taxonomy, pos_display_string, bp);
             linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
         END;
         linkouts.join(' ');
