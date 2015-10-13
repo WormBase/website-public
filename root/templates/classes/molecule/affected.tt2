@@ -44,8 +44,5 @@ WRAPPER $field_block title="Variations" key="affected_variations";
       tableAffected('Variation', 'affected_variations');
 END;
 
-WRAPPER $field_block title="Strains" key="affected_strains";
-      tableAffected('Strain', 'affected_strains', ['phenotype','affected']);
-END;
 
 %]

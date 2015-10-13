@@ -119,10 +119,20 @@ sub affected_variations {
 
 sub affected_strains {
     my $self      = shift;
-    my $data_pack = $self->_affects('Strain');
+    my $object = $self->object;
+
+    my @data;
+    foreach my $affected ($object->Strain){
+        my $phenotype = $affected->right;
+        my $evidence = {text => $self->_pack_obj($phenotype), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+        push @data, {
+            affected  => $self->_pack_obj($affected),
+            phenotype => $evidence ? $evidence : $self->_pack_obj($phenotype),
+        };
+    }
 
     return {
-        data        => $data_pack,
+        data        => @data ? \@data : undef,
         description => 'strain affected by molecule'
     };
 }
