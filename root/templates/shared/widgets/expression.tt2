@@ -96,7 +96,7 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
               key = 'anatomy_function');
 END;
 
-WRAPPER $field_block title="FPKM expression data" key="rnaseq_plot";
+WRAPPER $field_block title="FPKM expression data from selected modENCODE libraries" key="rnaseq_plot";
     FOREACH p IN fields.rnaseq_plot.data;
         image(p);
     END;

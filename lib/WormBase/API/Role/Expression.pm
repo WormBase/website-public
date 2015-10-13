@@ -368,7 +368,7 @@ sub _build__rnaseq_plot {
     }
     return {
         data => @plots ? \@plots : undef,
-        description => 'Plot for RNAseq data'
+        description => 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The grey bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.'
     };
 
 }
