@@ -168,7 +168,7 @@ sub corresponding_all {
 
         $data{length_spliced}   = $len_spliced;
 
-        my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
+        my @lengths = map { $self->_get_transcript_length("$_", ''. $_->Method) . "<br />";} @sequences;
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
 
