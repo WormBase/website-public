@@ -2278,13 +2278,34 @@ sub _fetch_gff_gene {
     my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database, host:" . $self->host; # should probably log this?
 
     my @feats = $GFF->get_features_by_name("$transcript");
-    $type = $type || eval { $self->classification->{data}->{type} };
 
     ($trans) = grep {
-        $_->{'type'} eq 'mRNA' || $_->{'type'} =~ $type;
+        $_->{type} eq $type || $_->{type} =~ /^mRNA|CDS$/;
     } @feats;
-
+    # print Dumper $type;
+    # print Dumper $trans;
     return $trans;
+}
+
+# get the transcript length of a sequence
+# find the sum of the exon lengths if there are exons;
+# otherwise, give the full length
+# Used by gene_model field in Gene.pm and corresponding_all in Sequence.pm
+sub _get_transcript_length {
+    my ($self, $sequence_name, $sequence_type) = @_;
+    my $sequence = $self->_fetch_gff_gene($sequence_name, $sequence_type);
+    return unless $sequence;
+
+    my $l = 0;
+    if ($sequence->Exon){
+        foreach my $exon ($sequence->Exon) {
+            $l += $exon->length;
+        }
+    }else{
+        $l = $sequence->length;
+    }
+
+    return $l;
 }
 
 #----------------------------------------------------------------------

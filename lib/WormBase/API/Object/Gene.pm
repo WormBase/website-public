@@ -1745,7 +1745,7 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-        my $gff   = $self->_fetch_gff_gene($sequence) or next;
+        my $gff   = $self->_fetch_gff_gene($sequence, ''. $sequence->Method) or next;
 
         my $cds
             = ( $sequence->class eq 'CDS' )
@@ -1767,17 +1767,8 @@ sub gene_models {
 
         my @lengths;
         foreach my $sequence (@sequences){
-            if( $sequence->class eq "Pseudogene" ){
-                my $l;
-                map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
-                push @lengths, $l;
-            }else{
-                my $l;
-                map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
-                push @lengths, $l;
-                # push @lengths, $self->_fetch_gff_gene($sequence)->length;
-                use Data::Dumper; print Dumper $self->_fetch_gff_gene($sequence)->Exon;
-            }
+            my $l = $self->_get_transcript_length("$sequence", ''. $sequence->Method);
+            push @lengths, $l;
         }
 
         $data{length_unspliced} = @lengths ? \@lengths : undef;
