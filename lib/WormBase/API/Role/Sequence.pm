@@ -438,7 +438,14 @@ sub corresponding_all {
 
         $data{length_spliced}   = $len_spliced;
 
-        my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
+        my @lengths = map {
+            my $l = 0;
+            foreach my $seq_exon ($self->_fetch_gff_gene($_)->Exon) {
+                $l += $seq_exon->length;
+            }
+            $l ? "$l<br/>" : "-<br/>";
+        } @sequences;
+        # Note: despite the name, this is the transcript length
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
 
@@ -475,10 +482,15 @@ sub corresponding_all {
 
             my @lengths = map {
                 my $tr = $self->_fetch_gff_gene("$_", ''. $_->Method);
-                $tr ? $tr->length . "<br />" : ();
+                my $l = 0;
+                foreach my $seq_exon (eval{ $tr->Exon }) {
+                    $l += $seq_exon->length;
+                }
+                $l ? "$l<br/>" : "-<br/>";
             } @sequences;
-
+            # Note: despite the name, this is the transcript length
             $data{length_unspliced} = @lengths ? \@lengths : undef;
+
             $data{cds} =[map {  '(no CDS)<br/>' }  @sequences];
             my @types = map { (my $type = $_->Method . '<br/>') =~ s/_/ /g; $type; }  @sequences;
             $data{type} = @types ? \@types : undef;
