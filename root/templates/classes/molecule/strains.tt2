@@ -1,0 +1,11 @@
+[%
+WRAPPER $field_block title="Strains" key="affected_strains";
+    build_data_table(
+	    order = ['affected', 'phenotype'],
+	    columns = {
+	        affected  => 'Strain',
+	        phenotype => 'Phenotype',
+	    }, key = "affected_strains" );
+END;
+
+%]
