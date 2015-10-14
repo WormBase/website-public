@@ -10,20 +10,63 @@ MACRO tableAffected(type, tag, order) BLOCK;
 	}, key = "$tag" );
 END;
 
+
+table_settings = '
+    "drawCallback": WB.partitioned_table(0, function(rowData){
+        return "<td>" + rowData[0] + "</td>";
+    }),
+    "columnDefs": [
+        { "targets": 3, "width": "40%" }
+    ],
+    aaSorting: [],
+    "autoWidth": false
+';
+
+
 WRAPPER $field_block title="RNAi" key="affected_rnai";
-      tableAffected('RNAi', 'affected_rnai');
+#      tableAffected('RNAi', 'affected_rnai');
+    build_data_table(
+	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	columns = {
+	    affected  => "Details",
+        affected_gene => 'Gene',
+	    phenotype => 'Phenotype',
+	    phenotype_not => 'Phenotype not observed',
+	}, key = "affected_rnai",
+      style = table_settings,
+      separator = '<br/>'
+     );
 END;
 
+
 WRAPPER $field_block title="Transgenes" key="affected_transgenes";
-      tableAffected('Transgene', 'affected_transgenes');
+
+    build_data_table(
+	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	columns = {
+	    affected  => "Details",
+        affected_gene => 'Gene',
+	    phenotype => 'Phenotype',
+	    phenotype_not => 'Phenotype not observed',
+	}, key = "affected_transgenes",
+      style = table_settings,
+      separator = '<br/>'
+     );
 END;
 
 WRAPPER $field_block title="Variations" key="affected_variations";
-      tableAffected('Variation', 'affected_variations');
+    build_data_table(
+	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	columns = {
+	    affected  => "Details",
+        affected_gene => 'Gene',
+	    phenotype => 'Phenotype',
+	    phenotype_not => 'Phenotype not observed',
+	}, key = "affected_variations",
+      style = table_settings,
+      separator = '<br/>'
+     );
 END;
 
-WRAPPER $field_block title="Strains" key="affected_strains";
-      tableAffected('Strain', 'affected_strains', ['phenotype','affected']);
-END;
 
 %]
