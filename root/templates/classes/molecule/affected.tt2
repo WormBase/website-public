@@ -26,15 +26,16 @@ table_settings = '
 WRAPPER $field_block title="RNAi" key="affected_rnai";
 #      tableAffected('RNAi', 'affected_rnai');
     build_data_table(
-	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	order = ['affected','phenotype'],
 	columns = {
-	    affected  => "Details",
+	    affected  => "RNAi",
         affected_gene => 'Gene',
 	    phenotype => 'Phenotype',
 	    phenotype_not => 'Phenotype not observed',
-	}, key = "affected_rnai",
-      style = table_settings,
-      separator = '<br/>'
+	},
+    key = "affected_rnai",
+    separator = '<br/>',
+    style='"columnDefs": [{ "targets": 0, "width": "40%" }]'
      );
 END;
 

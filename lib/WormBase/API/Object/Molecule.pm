@@ -187,10 +187,38 @@ sub affected_rnai {
         return ($phenotype_info, @affected_gene);
     }
 
-    my $data_pack = $self->_affects('RNAi', \&get_primary_targets);
+    # fetching RNAi could reuse the functionality shared with
+    #fetching transgene and variations. But let's wait for feedback
+    #before actually putting it up
+    #my $data_pack = $self->_affects('RNAi', \&get_primary_targets);
+
+    my @data;
+    foreach my $affected ($self->object->RNAi){
+
+        my $phenotype = $affected->right;
+        my $phenotype_tag;
+
+        my ($phenotype_info, @affected_genes) = get_primary_targets($affected, $phenotype, 'Phenotype');
+        if (@affected_genes) {
+            $phenotype_tag = 'phenotype';
+        }else{
+            ($phenotype_info, @affected_genes) = get_primary_targets($affected, $phenotype, 'Phenotype_not_observed');
+            $phenotype_tag = 'phenotype_not' if @affected_genes;
+        }
+
+        my $affected_packed = $self->_pack_obj($affected);
+        my $evidence = {text => $self->_pack_obj($phenotype), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+
+        push @data, {
+            affected  =>  $affected_packed,
+          #  affected_gene => $self->_pack_list([@affected_genes]),
+            $phenotype_tag => $evidence ? $evidence : $self->_pack_obj($phenotype)
+        };
+
+    }
 
     return {
-        data        => $data_pack,
+        data        => @data ? \@data : undef,
         description => 'rnai affected by molecule'
     };
 }
