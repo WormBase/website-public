@@ -220,8 +220,6 @@ sub _affects {
     foreach my $affected ($object->$tag){
 
         my $phenotype = $affected->right;
-
-        my @affected_packed;
         my $phenotype_info;
         my $phenotype_tag;
 
@@ -235,12 +233,16 @@ sub _affects {
             }
 
             my ($remark) = $phenotype_info->at('Remark') if $phenotype_info;
-            my $evidence = {text => [$self->_pack_obj($affected), "$remark"], evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+            my $affected_packed = $self->_pack_obj($affected);
+            $affected_packed->{label} = $affected_packed->{label} .
+                ' [' . $tag . ']';
+
+            my $evidence = {text => [$affected_packed, "$remark"], evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
 
             # create a row for every affected gene
             foreach my $gene (@affected_genes) {
                 my $data_per_phenotype =  {
-                    affected  =>  $evidence ? $evidence : $self->_pack_obj($affected),
+                    affected  =>  $evidence ? $evidence : $affected_packed,
                     affected_gene => $self->_pack_obj($gene),
                     $phenotype_tag => $self->_pack_obj($phenotype)
                 };
