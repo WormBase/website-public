@@ -281,7 +281,8 @@ sub _affects {
             $affected_packed->{label} = $affected_packed->{label} .
                 ' [' . $tag . ']';
 
-            my $evidence = {text => [$affected_packed, "$remark"], evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+            my $evidence = {text => [$affected_packed, $remark ? "$remark" : ''],
+                            evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
 
             # create a row for every affected gene
             foreach my $gene (@affected_genes) {
