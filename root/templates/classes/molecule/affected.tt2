@@ -40,6 +40,22 @@ WRAPPER $field_block title="RNAi" key="affected_rnai";
 END;
 
 
+WRAPPER $field_block title="Genes" key="affected_genes";
+
+    build_data_table(
+	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	columns = {
+	    affected  => "Details",
+        affected_gene => 'Gene',
+	    phenotype => 'Phenotype',
+	    phenotype_not => 'Phenotype not observed',
+	}, key = "affected_genes",
+      style = table_settings,
+      separator = '<br/>'
+     );
+END;
+
+
 WRAPPER $field_block title="Transgenes" key="affected_transgenes";
 
     build_data_table(
@@ -54,6 +70,7 @@ WRAPPER $field_block title="Transgenes" key="affected_transgenes";
       separator = '<br/>'
      );
 END;
+
 
 WRAPPER $field_block title="Variations" key="affected_variations";
     build_data_table(

@@ -85,6 +85,22 @@ sub molecule_use {
 #
 ############################
 
+
+sub affected_genes {
+    my ($self) = @_;
+    my $genes_by_variations = $self->affected_variations->{data} || [];
+    my $genes_by_transgenes = $self->affected_transgenes->{data} || [];
+
+    my @genes = ();
+    push @genes, @$genes_by_transgenes;
+    push @genes, @$genes_by_variations;
+
+    return {
+        'data' => @genes ? \@genes : undef,
+        'description' => 'genes affected by the molecule'
+    };
+}
+
 # affected_variations { }
 # This method will return a data structure with variations affected by the molecule.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_variations
