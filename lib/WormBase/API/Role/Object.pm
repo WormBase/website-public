@@ -2310,10 +2310,9 @@ sub _fetch_gff_gene {
     my @feats = $GFF->get_features_by_name("$transcript");
 
     ($trans) = grep {
-        $_->{type} eq $type || $_->{type} =~ /^mRNA|CDS$/;
+        $_->{type} eq $type || $_->{type} =~ /mRNA|CDS|transcript$/;
     } @feats;
-    # print Dumper $type;
-    # print Dumper $trans;
+
     return $trans;
 }
 
