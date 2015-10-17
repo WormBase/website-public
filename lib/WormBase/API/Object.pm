@@ -498,7 +498,7 @@ sub _get_evidence {
               }
               next;
           } elsif($type eq 'GO_term_evidence') {
-              my $desc = $evidence->Term || $evidence->Definition;
+              my $desc = $evidence->Name || $evidence->Definition;
               $label .= (($desc) ? "($desc)" : '');
           } elsif ($type eq 'Protein_id_evidence') {
               $class = "Entrezp";

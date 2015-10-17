@@ -65,7 +65,7 @@
 
         is  (scalar @$models, 1, 'one models returned');
         isnt($models->[0]->{cds}, undef, 'cds is returned');
-        ok  (grep { $_ eq '660' } @{$models->[0]->{length_unspliced}}, 'correct transcript length returned');
+        ok  (grep { $_ eq '638' } @{$models->[0]->{length_unspliced}}, 'correct transcript length returned');
         is  ($models->[0]->{length_spliced}, 525, 'correct coding sequence length');
 
     }

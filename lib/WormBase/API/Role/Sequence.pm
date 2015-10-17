@@ -438,7 +438,11 @@ sub corresponding_all {
 
         $data{length_spliced}   = $len_spliced;
 
-        my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
+        my @lengths = map {
+            my $l = $self->_get_transcript_length("$_", ''. $_->Method);
+            $l ? "$l<br/>" : "-<br/>";
+        } @sequences;
+        # Note: despite the name, this is the transcript length
         $data{length_unspliced} = @lengths ? \@lengths : undef;
 
 
@@ -472,13 +476,17 @@ sub corresponding_all {
             $data{model}   = @sequences ?
                 [ map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences ]
                 : undef;
-            my @lengths = map { $self->_fetch_gff_gene($_)->length . "<br />";} @sequences;
-            $data{length_unspliced} = @lengths ? \@lengths : undef;
-            $data{cds} = '(no CDS)';
-            my $type = $sequences[0]->Method if @sequences;
-            $type =~ s/_/ /g;
-            $data{type} = $type && "$type";
 
+            my @lengths = map {
+                my $l = $self->_get_transcript_length("$_", ''. $_->Method);
+                $l ? "$l<br/>" : "-<br/>";
+            } @sequences;
+            # Note: despite the name, this is the transcript length
+            $data{length_unspliced} = @lengths ? \@lengths : undef;
+
+            $data{cds} =[map {  '(no CDS)<br/>' }  @sequences];
+            my @types = map { (my $type = $_->Method . '<br/>') =~ s/_/ /g; $type; }  @sequences;
+            $data{type} = @types ? \@types : undef;
             push @rows, \%data;
         }
 

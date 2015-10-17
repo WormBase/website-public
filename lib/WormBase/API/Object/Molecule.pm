@@ -85,13 +85,42 @@ sub molecule_use {
 #
 ############################
 
+
+sub affected_genes {
+    my ($self) = @_;
+    my $genes_by_variations = $self->affected_variations->{data} || [];
+    my $genes_by_transgenes = $self->affected_transgenes->{data} || [];
+
+    my @genes = ();
+    push @genes, @$genes_by_transgenes;
+    push @genes, @$genes_by_variations;
+
+    return {
+        'data' => @genes ? \@genes : undef,
+        'description' => 'genes affected by the molecule'
+    };
+}
+
 # affected_variations { }
 # This method will return a data structure with variations affected by the molecule.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_variations
 
 sub affected_variations {
     my $self      = shift;
-    my $data_pack = $self->_affects('Variation');
+
+    sub get_affected_gene {
+        my ($variation, $phenotype, $phenotype_tag_name) = @_;
+
+        my ($phenotype_info) = grep {
+            "$_" eq "$phenotype" ? ($_) : ();
+        } ($variation->$phenotype_tag_name);
+
+        my @affected_gene = $variation->Gene;
+
+        return ($phenotype_info, @affected_gene);
+    }
+
+    my $data_pack = $self->_affects('Variation', \&get_affected_gene);
 
     return {
         data        => $data_pack,
@@ -106,10 +135,20 @@ sub affected_variations {
 
 sub affected_strains {
     my $self      = shift;
-    my $data_pack = $self->_affects('Strain');
+    my $object = $self->object;
+
+    my @data;
+    foreach my $affected ($object->Strain){
+        my $phenotype = $affected->right;
+        my $evidence = {text => $self->_pack_obj($phenotype), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+        push @data, {
+            affected  => $self->_pack_obj($affected),
+            phenotype => $evidence ? $evidence : $self->_pack_obj($phenotype),
+        };
+    }
 
     return {
-        data        => $data_pack,
+        data        => @data ? \@data : undef,
         description => 'strain affected by molecule'
     };
 }
@@ -120,7 +159,24 @@ sub affected_strains {
 
 sub affected_transgenes {
     my $self      = shift;
-    my $data_pack = $self->_affects('Transgene');
+    my $that_self = $self; # some closure issue and name collision
+
+    sub get_caused_by_gene {
+        my ($transgene, $phenotype, $phenotype_tag_name) = @_;
+
+        my ($phenotype_info) = grep {
+            "$_" eq "$phenotype" ? ($_) : ();
+        } ($transgene->$phenotype_tag_name);
+
+        my @genes;
+        if ($phenotype_info) {
+            @genes = $phenotype_info->at('Caused_by');  #worm genes
+            @genes = $phenotype_info->at('Caused_by_other') if !@genes;  #other genes
+        }
+        return ($phenotype_info, @genes);
+    }
+
+    my $data_pack = $self->_affects('Transgene', \&get_caused_by_gene);
 
     return {
         data        => $data_pack,
@@ -134,10 +190,51 @@ sub affected_transgenes {
 
 sub affected_rnai {
     my $self      = shift;
-    my $data_pack = $self->_affects('RNAi');
+
+    sub get_primary_targets {
+        my ($rnai, $phenotype, $phenotype_tag_name) = @_;
+
+        my ($phenotype_info) = grep {
+            "$_" eq "$phenotype" ? ($_) : ();
+        } ($rnai->$phenotype_tag_name);
+
+        my @affected_gene = $rnai->Gene;
+
+        return ($phenotype_info, @affected_gene);
+    }
+
+    # fetching RNAi could reuse the functionality shared with
+    #fetching transgene and variations. But let's wait for feedback
+    #before actually putting it up
+    #my $data_pack = $self->_affects('RNAi', \&get_primary_targets);
+
+    my @data;
+    foreach my $affected ($self->object->RNAi){
+
+        my $phenotype = $affected->right;
+        my $phenotype_tag;
+
+        my ($phenotype_info, @affected_genes) = get_primary_targets($affected, $phenotype, 'Phenotype');
+        if (@affected_genes) {
+            $phenotype_tag = 'phenotype';
+        }else{
+            ($phenotype_info, @affected_genes) = get_primary_targets($affected, $phenotype, 'Phenotype_not_observed');
+            $phenotype_tag = 'phenotype_not' if @affected_genes;
+        }
+
+        my $affected_packed = $self->_pack_obj($affected);
+        my $evidence = {text => $self->_pack_obj($phenotype), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+
+        push @data, {
+            affected  =>  $affected_packed,
+          #  affected_gene => $self->_pack_list([@affected_genes]),
+            $phenotype_tag => $evidence ? $evidence : $self->_pack_obj($phenotype)
+        };
+
+    }
 
     return {
-        data        => $data_pack,
+        data        => @data ? \@data : undef,
         description => 'rnai affected by molecule'
     };
 }
@@ -160,17 +257,43 @@ sub affected_rnai {
 ##########################
 
 sub _affects {
-    my ($self, $tag) = @_;
+    my ($self, $tag, $affected_gene_function) = @_;
     my $object = $self->object;
 
     my @data;
     foreach my $affected ($object->$tag){
-	my $phenotype = $affected->right;
-	my $evidence = {text => $self->_pack_obj($phenotype), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
-	push @data, {
-	    affected  => $self->_pack_obj($affected),
-	    phenotype => $evidence ? $evidence : $self->_pack_obj($phenotype),
-	};
+
+        my $phenotype = $affected->right;
+        my $phenotype_info;
+        my $phenotype_tag;
+
+        if ($affected_gene_function) {
+            my ($phenotype_info, @affected_genes) = $affected_gene_function->($affected, $phenotype, 'Phenotype');
+            if (@affected_genes) {
+                $phenotype_tag = 'phenotype';
+            }else{
+                ($phenotype_info, @affected_genes) = $affected_gene_function->($affected, $phenotype, 'Phenotype_not_observed');
+                $phenotype_tag = 'phenotype_not' if @affected_genes;
+            }
+
+            my ($remark) = $phenotype_info->at('Remark') if $phenotype_info;
+            my $affected_packed = $self->_pack_obj($affected);
+            $affected_packed->{label} = $affected_packed->{label} .
+                ' [' . $tag . ']';
+
+            my $evidence = {text => [$affected_packed, $remark ? "$remark" : ''],
+                            evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+
+            # create a row for every affected gene
+            foreach my $gene (@affected_genes) {
+                my $data_per_phenotype =  {
+                    affected  =>  $evidence ? $evidence : $affected_packed,
+                    affected_gene => $self->_pack_obj($gene),
+                    $phenotype_tag => $self->_pack_obj($phenotype)
+                };
+                push @data, $data_per_phenotype;
+            }
+        }
     }
     return @data ? \@data : undef;
 }
@@ -178,4 +301,3 @@ sub _affects {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

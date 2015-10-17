@@ -23,7 +23,7 @@
       IF data.defined;
         UNLESS text; text = data.label; END;
         IF data.class.defined && data.class != 'text';
-          ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy);
+          ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy, data.dbt);
           IF data.style;
             '<span style="'_ data.style _ "\">$ln</span>";
           ELSE;
@@ -112,9 +112,9 @@
 # Like tag2link, but for cases where we only have text and no object.
 # You must provide both the id and text.
 # URLs
-    MACRO text2link(class,id,text,title,taxonomy) BLOCK;
+    MACRO text2link(class,id,text,title,taxonomy, dbt) BLOCK;
       IF (site.external_urls.$class.defined);
-          external_link(class, text, id);
+          external_link(class, text, id, dbt);
       ELSIF id.match('CHROMOSOME');
         text;
       ELSE;
@@ -201,6 +201,84 @@
         linkouts.join(' ');
       END;
     END;
+
+
+    MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url) BLOCK;
+      queries = {
+        data => 'data/' _ taxonomy _ '_' _ bioproject,
+        loc => position_string
+      };
+      IF c.config.installation_type.match('^dev');
+        # HACK! to direct dev installation to staging, with GBrowse installed
+        'http://staging.wormbase.org';
+      END;
+      IF is_preview_url;
+          # queries.tracklist=0;
+          queries.nav=0;
+          queries.overview=0;
+          url = c.uri_for('/tools', 'genome', '/jbrowse', 'full.html', queries).path_query();
+      ELSE;
+          # the leading and trailing / for jbrowse url part is important..
+          url = c.uri_for('/tools', 'genome', '/jbrowse/', queries).path_query();
+      END;
+      url;
+    END;
+
+    MACRO jbrowselink(data, label, search) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+
+      # compute padding for displaying coordinates
+      coord_parts = label.match('(\w+):(\d+)\.{2}(\d+)');
+      chromosome_id = coord_parts.0;
+      IF coord_parts.1 < coord_parts.2;
+        start_pos = coord_parts.1;
+        end_pos = coord_parts.2;
+      ELSE;
+        start_pos = coord_parts.2;
+        end_pos = coord_parts.1;
+      END;
+      start_pos_display = start_pos - 0.3 * (end_pos - start_pos);
+      end_pos_display = end_pos + 0.3 * (end_pos - start_pos);
+      pos_display_string = chromosome_id _ ':'
+        _ start_pos_display _ '..' _ end_pos_display;
+
+      IF species;
+        linkouts = [];
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            url = jbrowse_url(taxonomy, pos_display_string, bp);
+            linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+
+    MACRO jbrowse_view(data, label) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+
+      IF species;
+        linkouts = [];
+        linkouts.push("<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>Beta</sup></h3>");
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            url = jbrowse_url(taxonomy, data.pos_string, bp);
+            view_url = jbrowse_url(taxonomy, data.pos_string, bp, 1);
+            linkouts.push("<div class=\"jbrowse-view-container\">
+                                <iframe src=\"$view_url\" id=\"jbrowse-frame-$bp\"></iframe>
+                                <!--a href=\"$url\" target=\"jbrowse-frame-$bp\"></a -->
+                          </div>");
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+
+
 
 
 # use this to pluraize a word

@@ -1,7 +1,7 @@
 [GENES_PSEUDOGENES]
 key          = Genes (pseudogenes)
 category     = Genes
-feature = pseudogenic_transcript:WormBase
+feature = pseudogenic_transcript:WormBase pseudogenic_rRNA:WormBase pseudogenic_tRNA:WormBase
 glyph = gene
 title = sub {
 	 my $f = shift;
@@ -24,21 +24,18 @@ label = sub {
         }
 description  = sub {             
         my $f = shift;
-  	return 'pseudogene';
-  
-        # eventually maybe also descriptions
-        # my $tags   = join(';',$f->get_all_tags());
+        my $type = $f->type;
+        $type =~ s/_/ /g;
+        $type =~ s/:WormBase//;
+        return $type;
        }
 bgcolor = sub {
-             my $f = shift;
-             my $type = $f->type;
-                # Component parts:
-             # ncRNAs : gene > ncRNA > exon
-             # coding : gene > mRNA > CDS
-             return 'gray'   if $f->type =~ /exon|pseudogene/i;
-             return 'violet' if $f->strand > 0;
-             return 'turquoise';
-             }
+        my($feature,$option_name,$part_no,$total_parts,$glyph) = @_;
+        my $type = $glyph->parent_feature->type;
+        if ($type =~ /rRNA/) {return 'darkslategray';}
+        if ($type =~ /tRNA/) {return 'silver';}
+        return 'gray';
+        }
 fgcolor      = black
 utr_color    = gray
 font2color   = blue

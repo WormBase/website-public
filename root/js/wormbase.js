@@ -1876,6 +1876,7 @@ var Scrolling = (function(){
 
             api.column(0).nodes().each( function ( cell, i ) {
                 $jq(cell).children().hide();
+                $jq(cell).text('');
             });
 
             api.rows().data().each( function ( rowData, i ) {
@@ -2353,7 +2354,7 @@ var Scrolling = (function(){
       }
   });
 
-  $jq(window).on('beforeunload', function(){
+  $jq(window).bind('beforeunload', function(){
     // scroll top upon page refresh
     $jq(window).scrollTop(0);
   });

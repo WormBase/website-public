@@ -3,23 +3,19 @@
 # use the field as if it comes from a widget;
 fields.fpkm_expression_summary_ls = fpkm_expression_summary_ls;
 
-WRAPPER $field_block title="FPKM expression data" key="fpkm_expression_summary_ls";
+WRAPPER $field_block title="" key="fpkm_expression_summary_ls";
     #table for control stats
     control_stats_hash = fields.fpkm_expression_summary_ls.data.controls;
-    control_stats = [];
-    FOREACH stage IN control_stats_hash.keys;
-        control_stats = control_stats.merge(control_stats_hash.$stage);
-    END;
 
     '<div class="field-title">Control Statistics</div>';
-    build_data_table(order = ['life_stage', 'stat_type', 'value', 'label'],
+    build_data_table(order = ['life_stage', 'control median', 'control mean'],
                      columns = {
                          life_stage => 'Life stage',
-                         stat_type => 'Statistics type',
-                         label => 'From analysis',
-                         value => 'FPKM value'
+                         'control mean' => 'Control mean'
+                         'control median' => 'Control median'
                      },
-                     passed_data = control_stats, key='control_data');
+                     passed_data = control_stats_hash,
+                     key='control_data');
 
     # '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
     fpkm_plots = fields.fpkm_expression_summary_ls.data.plot;

@@ -58,7 +58,7 @@ BEGIN {
             Species      => 'Common_name',
             Molecule     => [qw(Public_name Name)],
             Anatomy_term => 'Term',
-            GO_term      => 'Term',
+            GO_term      => 'Name',
             Motif        => 'Title',
 #            Protein      => 'Gene_name',
             Rnai         => 'History_name',
