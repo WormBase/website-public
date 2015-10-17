@@ -69,6 +69,12 @@
         is  ($match->{id}, 'WBPaper00000009', 'correct id returned - WBPaper00000009 paper');
         is  ($match->{label}, 'Albertson DG et al. (1976)', 'correct label returned');
 
+
+        # This query (searching for rearrangement by gene name) should not find
+        # exact match
+        $match = $api->xapian->fetch({ query => "dpy-17", class => "rearrangement"});
+        is($match, undef, 'correctly return undef when not finding exact match');
+
     }
 
     # test specifying type and species in search

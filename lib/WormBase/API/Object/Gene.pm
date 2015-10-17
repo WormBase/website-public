@@ -742,7 +742,7 @@ has '_gene_ontology' => (
     lazy => 1,
     builder => '_build_gene_ontology',
 );
-use Data::Dumper;
+
 sub _build_gene_ontology {
     my $self   = shift;
     my $object = $self->object;
@@ -755,7 +755,13 @@ sub _build_gene_ontology {
         my $relation = $anno->Annotation_relation;
 
         my @entities = map {
-            $self->_pack_list([$_->col()]);
+            my @ent;
+            if ("$_" eq 'Database'){
+                @ent = $self->_pack_xrefs($anno);
+            }else{
+                @ent = $self->_pack_list([$_->col()]);
+            }
+            @ent;
         } $anno->Annotation_made_with;
 
         my %extensions = map {
@@ -765,6 +771,13 @@ sub _build_gene_ontology {
 
         my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
         my $evidence = $self->_get_evidence($anno->fetch(), $ev_names);
+
+        my @go_refs = map {
+            $_->{label} = $_->{id};
+            $_;
+        }  $self->_pack_xrefs($anno, 'GO_reference');
+        $evidence->{GO_reference} = \@go_refs if @go_refs;
+
 
         my @term_details = () ; #('' . $go_term->Term);
         push @term_details, { evidence => \%extensions } if %extensions;
@@ -1745,7 +1758,7 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-        my $gff   = $self->_fetch_gff_gene($sequence) or next;
+        my $gff   = $self->_fetch_gff_gene($sequence, ''. $sequence->Method) or next;
 
         my $cds
             = ( $sequence->class eq 'CDS' )
@@ -1767,13 +1780,8 @@ sub gene_models {
 
         my @lengths;
         foreach my $sequence (@sequences){
-            if( $sequence->class eq "Pseudogene" ){
-                my $l;
-                map { $l += $_->length } $self->_fetch_gff_gene($sequence)->Exon;
-                push @lengths, $l;
-            }else{
-                push @lengths, $self->_fetch_gff_gene($sequence)->length;
-            }
+            my $l = $self->_get_transcript_length("$sequence", ''. $sequence->Method);
+            push @lengths, $l;
         }
 
         $data{length_unspliced} = @lengths ? \@lengths : undef;
@@ -1868,6 +1876,23 @@ sub feature_image {
     };
 }
 
+#######################################
+#
+# The Expression Widget
+#
+#######################################
+
+sub __build_rnaseq_plot_data {
+
+    my ($self) = @_;
+    my $object = $self->object;
+    my $RNAseq_plot = $self->_api->_tools->{rnaseq_plot};
+    my %data = (
+        'Gene' => $RNAseq_plot->get_data('gene', ($object))
+    );
+
+    return %data;
+}
 
 
 #########################################

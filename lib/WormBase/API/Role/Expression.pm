@@ -10,19 +10,6 @@ use List::Util qw(first);
 #
 #######################################################
 
-#######################################################
-#
-# Generic methods, shared across Gene and Transcript classes
-#
-#######################################################
-
-
-############################################################
-#
-# Private Methods
-#
-############################################################
-
 
 has '_gene' => (
     is       => 'ro',
@@ -38,7 +25,22 @@ has 'exp_sequences' => (
     builder => '_build_sequences',
 );
 
+has 'rnaseq_plot' => (
+    is  => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build__rnaseq_plot',
+);
+
 requires '_build__gene'; # no fallback to build segments... yet (or ever?).
+
+
+#######################################################
+#
+# Generic methods, shared across Gene and Transcript classes
+#
+#######################################################
+
 
 # anatomic_expression_patterns { }
 # This method will return a complex data structure
@@ -69,6 +71,7 @@ sub expression_patterns {
     my @non_array_patterns = map {
         $self->_is_array_expression($_) ? () : $self->_expression_pattern_details($_);
     } $object->Expr_pattern;
+    @non_array_patterns = $self->_sort_expression_patterns(\@non_array_patterns);
 
     return {
         description => "expression patterns associated with the gene:$object",
@@ -85,6 +88,7 @@ sub expression_profiling_graphs {
     my @array_patterns = map {
         $self->_is_array_expression($_) ? $self->_expression_pattern_details($_) : ();
     } $object->Expr_pattern;
+    @array_patterns = $self->_sort_expression_patterns(\@array_patterns);
 
     return {
         description => "expression patterns associated with the gene:$object",
@@ -164,6 +168,21 @@ sub _expression_pattern_details {
     };
 }
 
+
+sub _sort_expression_patterns {
+    my ($self, $patterns) = @_;
+
+    sub valueFun {
+        my ($pattern_obj) = @_;
+        my ($match_chronogram) = $pattern_obj->{expression_pattern}->{label} =~ /^Chronogram/;
+        return $match_chronogram ? 1 : -1;
+    }
+
+    return sort {
+        valueFun($a) <=> valueFun($b)
+    } @$patterns;
+
+}
 # anatomy_terms { }
 # This method will return a hash
 # containing unique anatomy terms described from the
@@ -330,6 +349,36 @@ sub anatomy_function {
 }
 
 
+sub _build__rnaseq_plot {
+    my ($self) = @_;
+    my $gene = $self->_gene;
+    my $RNAseq_plot = $self->_api->_tools->{rnaseq_plot};
+
+    my %data = $self->__build_rnaseq_plot_data;
+
+    my @plots = ();
+
+    foreach my $type (keys %data){
+        my $type_data = $data{$type};
+        foreach my $name (keys %{$type_data} ) {
+            if (scalar keys %{$type_data->{$name}} == 0) {print "No data found for $name\n"; next} # no data
+            my $plot = $RNAseq_plot->draw_graph($type, $type_data->{$name}, $name, $gene->name);
+            push @plots, $plot;
+        }
+    }
+    return {
+        data => @plots ? \@plots : undef,
+        description => 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The grey bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.'
+    };
+
+}
+
+sub __build_rnaseq_plot_data {
+    # subclass must override
+    return ();
+}
+
+
 sub fpkm_expression_summary_ls {
     my $self = shift;
     return $self->fpkm_expression('summary_ls');
@@ -408,73 +457,37 @@ sub fpkm_expression {
     my $self = shift;
     my $mode = shift;
     my $object = $self->_gene;
-    my $by_study = {};  # tracks regular analysis object
-    my $controls_by_life_stage = {};  #tracks analysis object for control statistics
+
+    my @controls = (); #tracks analysis object for control statistics
+    my @regular_analyses = (); # tracks regular analysis object
 
     my $rserve = $self->_api->_tools->{rserve};
 
     my @fpkm_map = map { # iterating on life stages
-        my $life_stage = ''. $_->Public_name;
-        my $life_stage_tag = $self->_pack_obj($_);
-        my @fpkm_table = $_->col;
+        my $life_stage_ace = $_;
 
         map { # iterating on fpkm_values
 
             my $value = $_;
             #fpkm_values are hash keys to analysis_objects having same value,
             # totally an artifect of ACe,
-            my @ana = map { #iterating on analysis objects
+            map { #iterating on analysis objects
                 my $name = $self->_pack_obj($_);
-                my $analysis_record = {
-                    value => "$value",
-                    life_stage => $life_stage_tag,
-                    label => $name,
-                };
+                my $analysis_record = $self->_pack_analysis_record($life_stage_ace, $value, $_);
 
-                my $project;
-                my $label = $name->{label};
-                if ($label =~ /([^\.]+).(control_(mean|median))/){
+                if ($analysis_record->{control}){
                     # This analysis object statics for the control
-                    $life_stage = $1;
-                    (my $stat_type = $2) =~ s/_/ /;
-                    $analysis_record->{stat_type} = $stat_type;
-                    $project = $self->_pack_obj($_->Project);
-
-                    $controls_by_life_stage->{$life_stage} ||= [];   # ininitalize if not already
-                    push @{$controls_by_life_stage->{$life_stage}}, $analysis_record;
+                    push @controls, $analysis_record;
                 }else{
-                    # otherwise, it't an normal analysis object that part of a study/prject
-
-                    # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
-                    # /PRJ[A-Z]{2}\d+/ matches BioProject accession
-                    # everything else treat as NCBI Trace SRA
-                    my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
-                    my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
-
-                    my $project_label = $_study2label->{$project_acc} || $project_acc;
-                    $project_label = join(' ', split('_', $project_label));
-
-                    $project = {
-                        id => $project_acc,
-                        class => $source_db,
-                        label => $project_label
-                    };
-
-                    if ($project_acc) {
-                        $by_study->{$project_acc} ||= { analyses => []};   # ininitalize if not already
-                        push @{$by_study->{$project_acc}->{analyses}}, $analysis_record;
-                    }
+                    push @regular_analyses, $analysis_record;
                 }
 
-                $analysis_record->{project_info} = $project;
-                $analysis_record->{project} = $project->{id};
+                # keep only regular analysis (no control ones)
+                $analysis_record->{stat_type} ? () : $analysis_record;
 
-                $analysis_record;
-            } $value->right() && $value->right()->col() ; #$value->From_analysis;
-
-            @ana;
-        } @fpkm_table;
-    } $object->RNASeq_FPKM;
+            } $value->right() && $value->right()->col() ; #each From_analysis object
+        } $life_stage_ace->col;   #each value
+    } $object->RNASeq_FPKM;   #each life stage
 
     # Return if no expression data is available.
     # Yes, it has to be <= 1, because there will be an undef entry when no data is present.
@@ -567,27 +580,119 @@ sub fpkm_expression {
         #                          });
     }
 
-    foreach my $study (keys %$by_study){
-        my $study_name = "RNASeq_Study.$study";
-        my $study_obj = $self->_api->fetch({ class => 'Analysis', name => $study_name, nowrap => 1 });
-        my $study_label = $study_obj->Title . " [$study]";
-
-        $by_study->{$study}->{title} = '' . $study_obj->Title;
-        $by_study->{$study}->{description}  = '' . $study_obj->Description;
-        $by_study->{$study}->{indep_variable} = [
-            map {"$_"} $study_obj->Independent_variable];
-        $by_study->{$study}->{tag} = $self->_pack_obj($study_obj, $study_label);
-    }
-
     return {
         description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
         data        => @fpkm_map ? {
-            by_study => $by_study,
-            controls => $controls_by_life_stage,
+            by_study => $self->_make_study_summary(\@regular_analyses),
+            controls => [$self->_make_control_summary(\@controls)],
             plot => $plot,
             table => { fpkm => { data => \@fpkm_map } }
         } : undef
     };
+}
+
+####################
+#
+# Internal methods
+#
+####################
+
+
+sub _pack_analysis_record {
+    my ($self, $life_stage, $value, $study) = @_;
+    my $name = $self->_pack_obj($study);
+
+    my $analysis_record = {
+        value => "$value",
+        life_stage => $self->_pack_obj($life_stage),
+        label => $name,
+    };
+
+    my $project;
+    my $label = $name->{label};
+    if ($label =~ /([^\.]+).(control_(mean|median))/){
+        # This analysis object statics for the control
+        $life_stage = $1;
+        (my $stat_type = $2) =~ s/_/ /;
+        $analysis_record->{control} = 1;
+        $analysis_record->{stat_type} = $stat_type;
+        $project = $self->_pack_obj($study->Project);
+        $analysis_record->{comment} = ''. $study->Description;
+    }else{
+        # otherwise, it't an normal analysis object that part of a study/prject
+
+        # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
+        # /PRJ[A-Z]{2}\d+/ matches BioProject accession
+        # everything else treat as NCBI Trace SRA
+        my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
+        my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
+
+        my $project_label = $_study2label->{$project_acc} || $project_acc;
+        $project_label = join(' ', split('_', $project_label));
+
+        $project = {
+            id => $project_acc,
+            class => $source_db,
+            label => $project_label
+        };
+    }
+
+    $analysis_record->{project_info} = $project;
+    $analysis_record->{project} = $project->{id};
+
+    return $analysis_record;
+}
+
+sub _make_study_summary {
+    my ($self, $analysis_records) = @_;
+    my %by_studies = ();
+    foreach my $analysis_record (@$analysis_records){
+        my $study_id = $analysis_record->{project_info}->{id};
+        unless ($by_studies{$study_id}){
+            my $study_name = "RNASeq_Study.$study_id";
+            my $study_obj = $self->_api->fetch({ class => 'Analysis', name => $study_name, nowrap => 1 });
+            if ($study_obj) {
+                my $study_label = $study_obj->Title . " [$study_id]";
+
+                my $study = {
+                    title => '' . $study_obj->Title,
+                    description => '' . $study_obj->Description,
+                    indep_variable => [map {"$_"} $study_obj->Independent_variable],
+                    tag => $self->_pack_obj($study_obj, $study_label)
+                };
+                $by_studies{$study_id} = $study;
+            }
+        }
+    }
+    return \%by_studies;
+
+}
+
+
+sub _make_control_summary {
+    my ($self, $analysis_records) = @_;
+    my %by_lifestage = ();
+    foreach my $analysis_record (@$analysis_records){
+        my ($key) = $analysis_record->{label}->{id} =~ /^(.*)\.control/;
+        my $stat_type = $analysis_record->{stat_type};
+        my $stat_details = {
+               text => $analysis_record->{value},
+            evidence => {
+                comment => $analysis_record->{comment}
+            }
+        };
+
+        unless ($by_lifestage{$key}) {
+            $by_lifestage{$key} = {
+                life_stage => $analysis_record->{life_stage}
+            };
+        }
+        my $summary = $by_lifestage{$key};
+        $summary->{$stat_type} = $stat_details;
+    }
+
+    return values %by_lifestage;
+
 }
 
 1;

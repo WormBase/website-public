@@ -11,11 +11,7 @@ WRAPPER highlight_box;
       END;
     END;
 
-    title = "Associated feature";
-    IF fields.feature.data.size > 1;
-        title = title _ 's';
-    END;
-    WRAPPER $field_block title=title key="feature";
+    WRAPPER $field_block title=pluralize('Associated feature', fields.feature.data.size) key="feature";
         tags2link(fields.feature.data);
     END;
 

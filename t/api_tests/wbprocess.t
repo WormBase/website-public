@@ -65,9 +65,11 @@
 
         isnt($related_process->{'data'}, undef, 'data returned');
         isnt($keys[0], undef, 'related topics group retuned');
-        is($keys[0], 'Generalisation of', 'correct related topics group retuned');
-        isnt($related_process->{'data'}->{$keys[0]}[0]->{'id'}, undef, 'related topic returned');
-        is($related_process->{'data'}->{$keys[0]}[0]->{'id'}, 'WBbiopr:00000006', 'correct related topic returned');
+        isnt($related_process->{'data'}->{'Generalisation of'}, undef, 'related topic returned');
+        my ($related) = grep {
+            $_->{id} eq 'WBbiopr:00000006';
+        } @{$related_process->{'data'}->{'Generalisation of'}};
+        isnt($related, undef, 'correct related topic returned');
 
     }
 

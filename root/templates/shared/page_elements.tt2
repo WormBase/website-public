@@ -548,7 +548,7 @@ END; %]
             searchlink(cell.class, cell.id, cell.id);
           END;
       ELSIF cell.defined('evidence');
-          evidence(cell.evidence,table_name _ index, cell_content(cell.text), 'details');
+          evidence(cell.evidence,table_name _ index, cell_content(cell.text, separator), 'details');
       ELSIF cell.defined('interaction');
           interaction_cell(cell);
       ELSIF cell.defined('xrefs');
@@ -786,7 +786,7 @@ olark.identify('6652-820-10-1192');/*]]>*/</script><noscript><a href="https://ww
 <script type="text/javascript">
  var _chatlio=_chatlio||[];
 !function(){var t=document.getElementById("chatlio-widget-embed");if(t&&window.React&&_chatlio.init)return void _chatlio.init(t,React);for(var e=function(t){return function(){_chatlio.push([t].concat(arguments))}},i=["identify","track","show","hide","isShown","isOnline"],a=0;a<i.length;a++)_chatlio[i[a]]||(_chatlio[i[a]]=e(i[a]));var n=document.createElement("script"),c=document.getElementsByTagName("script")[0];n.id="chatlio-widget-embed",n.src="https://w.chatlio.com/w.chatlio-widget.js",n.async=!0,n.setAttribute("data-embed-version","1.1");
-  
+
   n.setAttribute("data-widget-id","d08a2c44-e392-4f31-4d73-7dbdaeefa136");
   n.setAttribute("data-start-hidden", false);
   c.parentNode.insertBefore(n,c);

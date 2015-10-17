@@ -132,6 +132,11 @@ sub _process_assembly {
     $label->{taxonomy} = lc "${g}_$species";
     $label->{bioproject} = $bioproject;
 
+
+    my $genomic_release = $assembly->Superceded_by ? $assembly->Latest_WS_release : $assembly->First_WS_release;
+    my $genomic_sequence = $self->_genomic_seq_ftp($label->{taxonomy},$bioproject,"$genomic_release",'genomic','fa','gz');
+
+
     my $data = {
         name => $label,
         sequenced_strain  => $self->_pack_obj($assembly->Strain),
@@ -141,8 +146,26 @@ sub _process_assembly {
         reference         => $self->_pack_obj($ref),
         status            => $status,
         bioproject        => $bioproject,
+        genomic_sequence => $genomic_sequence
     };
     return $data;
+}
+
+# link to files with base url ftp://ftp.wormbase.org/pub/wormbase/species/
+sub _genomic_seq_ftp {
+    my ($self,$species,$bioproject,$release) = @_;
+    my $genomic_seq_file;
+    my $species_full = $release > 236 ? "$species.$bioproject" : "$species";
+
+    $genomic_seq_file = join('.',$species_full,"WS$release",'genomic','fa','gz');
+
+    my $genomic_seq_path = join('/','species',$species,'sequence','genomic', $genomic_seq_file);
+    my $genomic_sequence = {
+        class => 'ftp',
+        label => join('.',"$species",'fa','gz'),
+        id => $genomic_seq_path,
+        };
+    return $genomic_sequence;
 }
 
 
@@ -172,4 +195,3 @@ sub ncbi_id {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

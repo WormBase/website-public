@@ -814,10 +814,11 @@ sub _build_laboratory {
         @representative = map { $self->_pack_obj($_) } @representative;
 	    push @data, {
 		laboratory => $self->_pack_obj($lab, "$label"),
-		representative => \@representative
+		representative => @representative ? \@representative : undef
 	    };
 	}
     }
+
     my $description = "$class" =~ /Person/i ? "the laboratory associated with the $class"
         : "the laboratory where the $class was isolated, created, or named";
     return {
@@ -1958,6 +1959,36 @@ sub _pack_obj {
     };
 }
 
+# pack XREFs as tags
+# Xrefs are stored under the Database tag.
+sub _pack_xrefs {
+    my ($self,$object, $tag) = @_;
+    $object = $self->object unless $object;
+    $tag = $tag || 'Database';
+
+    my @databases = $object->$tag;
+    my @xrefs = ();
+
+    foreach my $db (@databases) {
+        # Possibly multiple databases
+        foreach my $dbt ($db->col()){
+            # possibly multiple namespaces per databases
+            foreach my $id ($dbt->col()){
+                push @xrefs, {
+                    class => "$db",
+                    id    => "$id",
+                    label => "$db:$id",
+                    dbt   => "$dbt"
+                }
+            };
+        }
+
+    }
+    return @xrefs;
+}
+
+
+
 sub _parsed_species {
     my ($self, $object) = @_;
     $object ||= $self->object;
@@ -2271,19 +2302,39 @@ sub _get_genotype {
 #
 #########################################
 sub _fetch_gff_gene {
-    my ($self,$transcript) = @_;
+    my ($self,$transcript, $type) = @_;
 
     my $trans;
     my $GFF = $self->gff_dsn() or die "Cannot connect to GFF database, host:" . $self->host; # should probably log this?
 
     my @feats = $GFF->get_features_by_name("$transcript");
-    my $type = eval { $self->classification->{data}->{type} };
 
     ($trans) = grep {
-        $_->{'type'} eq 'mRNA' || $_->{'type'} =~ $type;
+        $_->{type} eq $type || $_->{type} =~ /mRNA|CDS|transcript$/;
     } @feats;
 
     return $trans;
+}
+
+# get the transcript length of a sequence
+# find the sum of the exon lengths if there are exons;
+# otherwise, give the full length
+# Used by gene_model field in Gene.pm and corresponding_all in Sequence.pm
+sub _get_transcript_length {
+    my ($self, $sequence_name, $sequence_type) = @_;
+    my $sequence = $self->_fetch_gff_gene($sequence_name, $sequence_type);
+    return unless $sequence;
+
+    my $l = 0;
+    if ($sequence->Exon){
+        foreach my $exon ($sequence->Exon) {
+            $l += $exon->length;
+        }
+    }else{
+        $l = $sequence->length;
+    }
+
+    return $l;
 }
 
 #----------------------------------------------------------------------
