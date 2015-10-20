@@ -267,7 +267,8 @@
         FOREACH bp IN bioproject;
             url = jbrowse_url(taxonomy, data.pos_string, bp);
             view_url = jbrowse_url(taxonomy, data.pos_string, bp, 1);
-            WRAPPER toggle title="Click to view" lazy=1 iframe=1 href=view_url toggle_class="jbrowse-view-container";
+            '<p class="fade">Experimental feature - please use Chrome Browser for the best viewing result.</p>';
+            WRAPPER toggle title="Click here to view" lazy=1 iframe=1 href=view_url toggle_class="jbrowse-view-container";
             END;
         END;
       END;
