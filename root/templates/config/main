@@ -229,8 +229,22 @@
       species = c.config.sections.species_list.$taxonomy;
       label = label || data.label;
 
+      pos_display_string = pad_jbrowse_coordinates(label);
+
+      IF species;
+        linkouts = [];
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            url = jbrowse_url(taxonomy, pos_display_string, bp);
+            linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+    MACRO pad_jbrowse_coordinates(coord_string) BLOCK;
       # compute padding for displaying coordinates
-      coord_parts = label.match('(\w+):(\d+)\.{2}(\d+)');
+      coord_parts = coord_string.match('(\w+):(\d+)\.{2}(\d+)');
       chromosome_id = coord_parts.0;
       IF coord_parts.1 < coord_parts.2;
         start_pos = coord_parts.1;
@@ -245,16 +259,7 @@
       end_pos_display = Math.int(end_pos + 0.3 * (end_pos - start_pos));
       pos_display_string = chromosome_id _ ':'
         _ start_pos_display _ '..' _ end_pos_display;
-
-      IF species;
-        linkouts = [];
-        bioproject = data.bioproject || species.bioprojects.keys;
-        FOREACH bp IN bioproject;
-            url = jbrowse_url(taxonomy, pos_display_string, bp);
-            linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
-        END;
-        linkouts.join(' ');
-      END;
+      pos_display_string;
     END;
 
 
@@ -267,8 +272,9 @@
         "<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>Beta</sup></h3>";
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
-            url = jbrowse_url(taxonomy, data.pos_string, bp);
-            view_url = jbrowse_url(taxonomy, data.pos_string, bp, 1);
+            true_coords = data.label; #don't use the data.pos_string which is padded for GBrowse
+            padded_coords = pad_jbrowse_coordinates(true_coords);
+            view_url = jbrowse_url(taxonomy, padded_coords, bp, 1);
             '<p class="fade">Experimental feature - please use Chrome Browser for the best viewing result.</p>';
             WRAPPER toggle title="Click here to view" lazy=1 iframe=1 href=view_url toggle_class="jbrowse-view-container";
             END;
