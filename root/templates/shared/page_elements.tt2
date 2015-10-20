@@ -59,7 +59,8 @@
 [% BLOCK toggle %]
     <div class="toggle [% IF lazy; 'load-toggle'; END; %]"
          [% IF href; ' href="' _ href _ '"'; END; %]
-         [% IF id; ' id="' _ id _ '"'; END; %]>
+         [% IF id; ' id="' _ id _ '"'; END; %]
+         [% IF iframe; ' iframe="' _ iframe _ '"'; END; %]>
       <span style="float:left" class="ui-icon ui-icon-triangle-1-[% open ? 's' : 'e' %]"></span>
       [% title %]
     </div>
@@ -1501,6 +1502,8 @@ END;
   [% external_link(movie_path, 'download movie') %]
 
 [% END %]
+
+
 
 
 

@@ -453,7 +453,11 @@
                 Scrolling.sidebarMove();
               });
             if(tog.hasClass("load-toggle")){
-              ajaxGet(tog.next(), tog.attr("href"));
+              if (tog.attr("iframe")) {
+                  tog.next().html('<iframe src="' + tog.attr("href") + '" id=\"jbrowse-frame-a\"></iframe>');
+              } else {
+                  ajaxGet(tog.next(), tog.attr("href"));
+              }
               tog.removeClass("load-toggle");
             }
             tog.children(".ui-icon").toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s");

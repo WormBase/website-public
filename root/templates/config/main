@@ -262,18 +262,14 @@
       label = label || data.label;
 
       IF species;
-        linkouts = [];
-        linkouts.push("<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>Beta</sup></h3>");
+        "<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>Beta</sup></h3>";
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
             url = jbrowse_url(taxonomy, data.pos_string, bp);
             view_url = jbrowse_url(taxonomy, data.pos_string, bp, 1);
-            linkouts.push("<div class=\"jbrowse-view-container\">
-                                <iframe src=\"$view_url\" id=\"jbrowse-frame-$bp\"></iframe>
-                                <!--a href=\"$url\" target=\"jbrowse-frame-$bp\"></a -->
-                          </div>");
+            WRAPPER toggle title="Click to view" lazy=1 iframe=1 href=view_url toggle_class="jbrowse-view-container";
+            END;
         END;
-        linkouts.join(' ');
       END;
     END;
 
