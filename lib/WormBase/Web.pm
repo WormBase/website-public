@@ -157,10 +157,10 @@ sub _setup_species {
     my $species_file_local_path = $c->path_to('/', 'species_ASSEMBLIES.json');
     my $available_species = eval {
         # use the species file on FTP site if available
-        my $species = _with_ftp_site(\&_get_json_via_ftp, "/pub/wormbase/releases/WS250/species/ASSEMBLIES.WS250.json");
+        my $species = _with_ftp_site(\&_get_json_via_ftp, "/pub/wormbase/releases/WS250/species/ASSEMBLIES." . $c->config->{wormbase_release} .".json");
         # write the species to local file
         open(my $fh, '>', $species_file_local_path);
-        print $fh (new JSON)->utf8->encode($species);
+        print $fh (new JSON)->pretty->utf8->encode($species);
         close $fh;
         $species;
     } || do {
@@ -183,14 +183,17 @@ sub _setup_species {
 sub _setup_parasite_species {
     my $c = shift;
 
-    my $species_file_local_path = $c->path_to('/', 'parasite_species_tree.json');
+    # determine the latest parasite release
+    my $latest_wbps_release = eval { _with_ftp_site(\&_get_latest_release, "/pub/wormbase/parasite/releases/"); };
+    $c->config->{parasite_release} = $latest_wbps_release if $latest_wbps_release;  # otherwise, leave the config unchanged
 
+    my $species_file_local_path = $c->path_to('/', 'parasite_species_tree.json');
     my $parasite_species_trees = eval {
         # use the species file on FTP site if available
-        my $species_trees = _with_ftp_site(\&_get_json_via_ftp, "/pub/wormbase/parasite/releases/WBPS3/species_tree.json");
+        my $species_trees = _with_ftp_site(\&_get_json_via_ftp, "/pub/wormbase/parasite/releases/". $c->config->{parasite_release} . "/species_tree.json");
         # write the species to local file
         open(my $fh, '>', $species_file_local_path);
-        print $fh (new JSON)->utf8->encode($species_trees);
+        print $fh (new JSON)->pretty->utf8->encode($species_trees);
         close $fh;
         $species_trees;
     } || do {
@@ -200,10 +203,6 @@ sub _setup_parasite_species {
 
     my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
     $c->config->{sections}->{parasite_species_list} = \@parasite_species;
-
-    # determine the latest parasite release
-    my $latest_wbps_release = _with_ftp_site(\&_get_latest_release, "/pub/wormbase/parasite/releases/");
-    $c->config->{parasite_release} = $latest_wbps_release;
 
 }
 
