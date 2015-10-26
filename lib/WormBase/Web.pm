@@ -154,7 +154,20 @@ sub _setup_species {
     # process the species_list in conf
     my $original_species = $c->config->{sections}->{species_list};
     my $new_species = {};
-    my $available_species = _with_ftp_site(\&_get_json,"/pub/wormbase/releases/WS250/species/ASSEMBLIES.WS250.json");
+    my $species_file_local_path = $c->path_to('/', 'species_ASSEMBLIES.json');
+    my $available_species = eval {
+        # use the species file on FTP site if available
+        my $species = _with_ftp_site(\&_get_json_via_ftp, "/pub/wormbase/releases/WS250/species/ASSEMBLIES." . $c->config->{wormbase_release} .".json");
+        # write the species to local file
+        open(my $fh, '>', $species_file_local_path);
+        print $fh (new JSON)->pretty->utf8->encode($species);
+        close $fh;
+        $species;
+    } || do {
+        # in case of error, fallback to local file
+        _get_json_local($species_file_local_path);
+    };
+
     foreach my $species (keys $original_species){
         if ($available_species->{$species} || $species eq 'all'){
             # include a species ONLY if it is available
@@ -162,20 +175,39 @@ sub _setup_species {
         }
     }
     $c->config->{sections}->{species_list} = $new_species;
+    $c->_setup_parasite_species;
+}
 
-    # dynamically create ParaSite species list
-    my $parasite_species_trees = _with_ftp_site(\&_get_json, "/pub/wormbase/parasite/releases/WBPS3/species_tree.json");
-    my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
-    $c->config->{sections}->{parasite_species_list} = \@parasite_species;
+
+# dynamically create ParaSite species list
+sub _setup_parasite_species {
+    my $c = shift;
 
     # determine the latest parasite release
-    my $latest_wbps_release = _with_ftp_site(\&_get_latest_release, "/pub/wormbase/parasite/releases/");
-    $c->config->{parasite_release} = $latest_wbps_release;
+    my $latest_wbps_release = eval { _with_ftp_site(\&_get_latest_release, "/pub/wormbase/parasite/releases/"); };
+    $c->config->{parasite_release} = $latest_wbps_release if $latest_wbps_release;  # otherwise, leave the config unchanged
+
+    my $species_file_local_path = $c->path_to('/', 'parasite_species_tree.json');
+    my $parasite_species_trees = eval {
+        # use the species file on FTP site if available
+        my $species_trees = _with_ftp_site(\&_get_json_via_ftp, "/pub/wormbase/parasite/releases/". $c->config->{parasite_release} . "/species_tree.json");
+        # write the species to local file
+        open(my $fh, '>', $species_file_local_path);
+        print $fh (new JSON)->pretty->utf8->encode($species_trees);
+        close $fh;
+        $species_trees;
+    } || do {
+        # in case of error, fallback to local copy
+        _get_json_local($species_file_local_path);
+    };
+
+    my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
+    $c->config->{sections}->{parasite_species_list} = \@parasite_species;
 
 }
 
 # helper function to get and parse species info located in JSON file on FTP site
-sub _get_json {
+sub _get_json_via_ftp {
     my ($ftp, $path) = @_;
 
     my $stream = "";
@@ -185,6 +217,14 @@ sub _get_json {
     close $fh;
 
     my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($stream);
+    return $parsed;
+}
+
+sub _get_json_local {
+    my ($path) = @_;
+    my $json_string = `cat $path`;
+    chomp $json_string;
+    my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($json_string);
     return $parsed;
 }
 
@@ -215,6 +255,7 @@ sub _list_directory {
 # helper method to handle setup and teardown of ftp site connection
 sub _with_ftp_site {
     my ($function, @args) = @_;
+
     my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
                             Timeout=>5, Passive=>1)
         or die "Cannot connect to ftp.wormbase.org: $@";
