@@ -2,6 +2,7 @@
 key          = Curated Genes (noncoding)
 category     = Genes
 feature = miRNA:WormBase
+          miRNA_primary_transcript:WormBase
           ncRNA:WormBase        
           rRNA:WormBase
           scRNA:WormBase
