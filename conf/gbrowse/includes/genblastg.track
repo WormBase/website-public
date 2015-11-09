@@ -1,16 +1,39 @@
 [GENBLASTG]
 feature = CDS:genBlastG
 category     = Genes
+frame2f = darkblue
+frame0r = darkred
+require_subparts = 1
+height = 13
+description = 0
+frame0f = cadetblue
+frame1r = red
+frame1f = blue
+frame2r = crimson
 key          = genBlastG CDS predictions
-label        = 1
+label        = sub { my $f = shift;
+ my $name = $f->load_id;
+ return $name;
+ }
 glyph        = cds
-link         = sub { 
- 	             my $f = shift;
- 		     my ($name) = $f->display_name;
-                     if (name =~ /_([^_]+)$/) {
-                         return "/get?name=$1;class=CDS";
+link         = sub {
+                     my $f = shift;
+                     my ($name) = $f->load_id;
+                     if ($name =~ /_([^_]+)$/) {
+                         my $elegans_cds = $1;
+                         return "/get?name=$elegans_cds;class=CDS";
                      }
                      return;
          }
+balloon hover = sub {
+                     my $f = shift;
+                     my ($name) = $f->load_id;
+                     if ($name =~ /_([^_]+)$/) {
+                         my $elegans_cds = $1;
+                         return "Click to go to the <i>C. elegans</i> page for $elegans_cds";
+                     }
+         }
+
 citation      = Data from <a href='http://www.wormbase.org/resources/paper/WBPaper00040677#0--10'>'genBlastG: using BLAST searches to build homologous gene models'</a>.
+
 
