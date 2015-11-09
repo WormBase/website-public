@@ -1,0 +1,16 @@
+[GENBLASTG]
+feature = CDS:genBlastG
+category     = Genes
+key          = genBlastG CDS predictions
+label        = 1
+glyph        = cds
+link         = sub { 
+ 	             my $f = shift;
+ 		     my ($name) = $f->display_name;
+                     if (name =~ /_([^_]+)$/) {
+                         return "/get?name=$1;class=CDS";
+                     }
+                     return;
+         }
+citation      = Data from <a href='http://www.wormbase.org/resources/paper/WBPaper00040677#0--10'>'genBlastG: using BLAST searches to build homologous gene models'</a>.
+
