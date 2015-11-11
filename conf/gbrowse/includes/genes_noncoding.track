@@ -12,6 +12,7 @@ feature = miRNA:WormBase
 	  piRNA:WormBase
 	  lincRNA:WormBase
 	  antisense_RNA
+	  miRNA_primary_transcript:WormBase
 glyph = gene
 title = sub {
 	 my $f = shift;
