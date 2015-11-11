@@ -1324,6 +1324,12 @@ sub _post_to_github {
 	: $obscured_email
 	: "unknown";
 
+    # Sanitize content, too
+    $content =~ s/\Q$visitor_name\E/visitor_name/g;
+    $content =~ s/\Q$visitor_email\E/visitor_email/g;
+    $content_prelude =~ s/\Q$visitor_name\E/visitor_name/g;
+    $content_prelude =~ s/\Q$visitor_email\E/visitor_email/g;
+    
     # Originating page MAY be an object.
     my $page_title = eval { $page_object->title } || $page_url;
     $page_title = URI::Escape::uri_unescape($page_title);
