@@ -1,21 +1,29 @@
 [GENBLASTG]
 feature = CDS:genBlastG
 category     = Genes
-frame2f = darkblue
-frame0r = darkred
-require_subparts = 1
-height = 13
+#frame2f = darkblue
+#frame0r = darkred
+#require_subparts = 1
+#height = 13
+height = 8
 description = 0
-frame0f = cadetblue
-frame1r = red
-frame1f = blue
-frame2r = crimson
+#frame0f = cadetblue
+#frame1r = red
+#frame1f = blue
+#frame2r = crimson
+bgcolor = sub { my $f = shift;
+ my $type = $f->type;
+ return 'gray'   if $f->type =~ /exon|pseudogene|ncrna/i;
+ return 'violet' if $f->strand > 0;
+ return 'turquoise';
+ }
 key          = genBlastG CDS predictions
 label        = sub { my $f = shift;
  my $name = $f->load_id;
  return $name;
  }
-glyph        = cds
+#glyph        = cds
+glyph        = gene
 link         = sub {
                      my $f = shift;
                      my ($name) = $f->load_id;
