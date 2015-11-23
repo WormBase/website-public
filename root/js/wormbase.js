@@ -44,7 +44,6 @@
         histUpdate(history_on);
       }
 
-
       search_change(pageInfo['class']);
       if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
@@ -1906,8 +1905,105 @@ var Scrolling = (function(){
       return drawCallback;
     }
 
-	function setupCytoscape(data, types, clazz){
 
+
+    function loadCytoscapeForInteraction(data, types, clazz) {
+          Plugin.getPlugin('cytoscape_js_arbor', function() {
+            setupCyInteractionViewer(data, types, clazz)
+          });
+    }
+
+    function setupCytoscapeInteraction(data, types, clazz){
+      if (Plugin.checkPluginsLoaded('cytoscape_js')) {
+        loadCytoscapeForInteraction(data, types, clazz) 
+      } else {
+        if (Plugin.checkPluginsLoading('cytoscape_js')) {
+           Plugin.addToCallLater('cytoscape_js', 'setupCytoscapeInteraction', function() { setupCytoscapeInteraction(data, types, clazz) });
+        } else {
+          Plugin.getPlugin('cytoscape_js',function(){
+            loadCytoscapeForInteraction(data, types, clazz) 
+            return;
+          });
+        }
+      }
+    }
+
+
+    function loadCytoscapeForPhenGraph(elements) {
+      Plugin.getPlugin('cytoscape_js_dagre', function() {
+        setupCyPhenGraph(elements);
+      });
+    }
+
+    function setupCytoscapePhenGraph(elements){
+      if (Plugin.checkPluginsLoaded('cytoscape_js')) {
+        loadCytoscapeForPhenGraph(elements) 
+      } else {
+        if (Plugin.checkPluginsLoading('cytoscape_js')) {
+           Plugin.addToCallLater('cytoscape_js', 'setupCytoscapeInteraction', function() { setupCytoscapePhenGraph(elements) });
+        } else {
+          Plugin.getPlugin('cytoscape_js',function(){
+            loadCytoscapeForPhenGraph(elements) 
+            return;
+          });
+        }
+      }
+    }
+
+    function setupCyPhenGraph(elements){
+      var cyPhenGraph = window.cyPhenGraph = cytoscape({
+        container: document.getElementById('cyPhenGraph'),
+        layout: { name: 'dagre', padding: 10, nodeSep: 5 },
+        style: cytoscape.stylesheet()
+          .selector('node')
+            .css({
+              'content': 'data(name)',
+              'background-color': 'white',
+              'shape': 'data(nodeShape)',
+              'border-color': 'data(nodeColor)',
+              'border-style': 'data(borderStyle)',
+              'border-width': 2,
+              'width': 'data(diameter)',
+              'height': 'data(diameter)',
+              'text-valign': 'center',
+              'text-wrap': 'wrap',
+              'min-zoomed-font-size': 8,
+              'border-opacity': 0.3,
+              'font-size': 'data(fontSize)'
+            })
+          .selector('edge')
+            .css({
+              'target-arrow-shape': 'none',
+              'source-arrow-shape': 'triangle',
+              'width': 2,
+              'line-color': '#ddd',
+              'target-arrow-color': '#ddd',
+              'source-arrow-color': '#ddd'
+            })
+          .selector('.highlighted')
+            .css({
+              'background-color': '#61bffc',
+              'line-color': '#61bffc',
+              'target-arrow-color': '#61bffc',
+              'transition-property': 'background-color, line-color, target-arrow-color',
+              'transition-duration': '0.5s'
+            })
+          .selector('.faded')
+            .css({
+              'opacity': 0.25,
+              'text-opacity': 0
+            }),
+        elements: elements,
+        wheelSensitivity: 0.2,
+
+        ready: function(){
+          window.cyPhenGraph = this;
+          cyPhenGraph.elements().unselectify();
+        }
+      });
+    }
+
+    function setupCyInteractionViewer(data, types, clazz){
         /* Converts element attributes to their appropriate mapped values
          * Any non-matching attributes will be matched to the "other" mapping
          *     if exists
@@ -1955,7 +2051,6 @@ var Scrolling = (function(){
             }
         }(1);
 
-        Plugin.getPlugin('cytoscape_js',function(){
 
             var legend = $jq('#cyto_legend');
 
@@ -2128,12 +2223,10 @@ var Scrolling = (function(){
 
             }
 
-        });
+    }
 
 
-	}
-
-	function getMarkItUp(callback){
+    function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
         Plugin.getPlugin("markitup-wiki", callback);
       });
@@ -2142,6 +2235,9 @@ var Scrolling = (function(){
 
     var Plugin = (function(){
       var plugins = new Array(),
+          pluginsLoaded = new Array(),
+          pluginsLoading = new Array(),
+          callLater = new Array(),
           css = new Array(),
           loading = false,
           pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
@@ -2154,8 +2250,9 @@ var Scrolling = (function(){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
-                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
-
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape_min/2.5.0/cytoscape.min.js",
+                        cytoscape_js_arbor: "/js/jquery/plugins/cytoscapejs/cytoscape_arbor/1.1.2/cytoscape-arbor.js",
+                        cytoscape_js_dagre: "/js/jquery/plugins/cytoscapejs/cytoscape_dagre/1.1.2/cytoscape-dagre.js",
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
@@ -2167,27 +2264,36 @@ var Scrolling = (function(){
           };
 
 
-
+      function addToCallLater(name, toCallFunctionName, toCallFunction) {
+        if (typeof callLater[name] === 'undefined') { callLater[name] = new Array(); }
+        callLater[name][toCallFunctionName] = toCallFunction;
+      }
+      function triggerCallLater(name) {
+        for (var toCallFunctionName in callLater[name]) {
+          callLater[name][toCallFunctionName]();
+        }
+        delete callLater[name];
+      }
 
       function getScript(name, url, stylesheet, callback) {
 
-       function LoadJs(){
+        function LoadJs(){
            css[name] = true;
-           loadFile(url, true, function(){
+           loadFile(url, true, name, function(){
               callback();
               plugins[name] = true;
            });
         }
 
         if(stylesheet){
-         loadFile(stylesheet, false, LoadJs());
+         loadFile(stylesheet, false, name, LoadJs());
         }else{
            LoadJs();
         }
       }
 
 
-      function loadFile(url, js, callback) {
+      function loadFile(url, js, name, callback) {
         var head = document.documentElement,
             script = document.createElement( js ? "script" : "link"),
             done = false;
@@ -2202,12 +2308,16 @@ var Scrolling = (function(){
         }
 
         function doneLoad(){
+            pluginsLoaded[name] = true;
+            pluginsLoading[name] = false;
+            if (callLater[name]) { triggerCallLater(name); }
             done = true;
             loading = false;
             if(callback)
               callback();
         }
 
+        pluginsLoading[name] = true;
         if(js){
           script.onload = script.onreadystatechange = function() {
           if(!done && (!this.readyState ||
@@ -2250,7 +2360,7 @@ var Scrolling = (function(){
               // for the document.styleSheets[n].href === url
               // ...
 
-              // FF changes the length prematurely  )
+              // FF changes the length prematurely
             doneLoad();
               clearInterval(ti);
 
@@ -2263,6 +2373,16 @@ var Scrolling = (function(){
       }
 
 
+
+      function checkPluginsLoaded(name) {
+        if (pluginsLoaded[name]) { return true; }
+          else { return false; }
+      }
+      function checkPluginsLoading(name) {
+        if (pluginsLoading[name]) { return true; }
+          else { return false; }
+      }
+
       function getPlugin(name, callback){
         var script = pScripts[name],
             css = pStyle[name];
@@ -2271,6 +2391,7 @@ var Scrolling = (function(){
       }
 
       function loadPlugin(name, url, stylesheet, callback){
+//         if(!pluginsLoaded[name])	// this might be better, then can get rid of plugins completely
         if(!plugins[name]){
           getScript(name, url, !css[name] ? stylesheet : undefined, callback);
         }else{
@@ -2285,6 +2406,9 @@ var Scrolling = (function(){
 
       return {
         getPlugin: getPlugin,
+        checkPluginsLoaded: checkPluginsLoaded,
+        checkPluginsLoading: checkPluginsLoading,
+        addToCallLater: addToCallLater,
         loadFile: loadFile
       };
     })();
@@ -2339,7 +2463,8 @@ var Scrolling = (function(){
       // miscellaneous
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
-      setupCytoscape: setupCytoscape,               // setup cytoscape for use
+      setupCytoscapeInteraction: setupCytoscapeInteraction,               // setup cytoscape for use
+      setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes

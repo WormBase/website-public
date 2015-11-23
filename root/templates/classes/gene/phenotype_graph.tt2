@@ -1,0 +1,228 @@
+
+
+[%# This phenotype processing diverges from the standard processing ... %]
+[%# See also Varation.pm for alternative data processing/structure... %]
+
+<!--
+    url: 'http://juancarlos.wormbase.org/tools/ontology_browser/ajax_json?inline=1&geneId=[% fields.phenotype_graph.wbgene %]',
+url: 'http://131.215.12.204/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=WBGene00000899',
+    url: 'http://juancarlos.wormbase.org/tools/ontology_browser/ajax_json?inline=1&geneId=WBGene00000899',
+<script src="http://131.215.12.204/~azurebrd/javascript/dagre.min.js"></script>
+-->
+
+<script src="/js/jquery/plugins/cytoscapejs/dagre/0.7.4/dagre.min.js "></script>
+<!--
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery/plugins/cytoscapejs/dagre/0.7.4/dagre.min.js "></script>
+<script src="/js/jquery/plugins/cytoscapejs/cytoscape_min/2.5.0/cytoscape.min.js"></script>
+<script src="/js/jquery/plugins/cytoscapejs/cytoscape_dagre/1.1.2/cytoscape-dagre.js"></script>
+-->
+
+<!-- need these later for qtip, take them out to debug
+<script src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
+<script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-qtip/2.2.5/cytoscape-qtip.js"></script>
+-->
+
+<script type="text/javascript">
+$jq(function(){
+
+// console.log('meow3');
+  // get exported json from cytoscape desktop via ajax
+  var graphP = $jq.ajax({
+    url: 'http://juancarlos.wormbase.org/rest/widget/gene/[% fields.phenotype_graph.data %]/phenotype_graph_json', 
+    type: 'GET',
+    dataType: 'json'
+  });
+
+  Promise.all([ graphP ]).then(initCy);
+
+  function initCy( then ){
+    var elements = then[0].elements;
+    WB.setupCytoscapePhenGraph(elements);
+  }
+//   function initCy( then ){
+//     var elements = then[0].elements;
+//     var cyPhenGraph = window.cyPhenGraph = cytoscape({
+//       container: document.getElementById('cyPhenGraph'),
+//       layout: { name: 'dagre', padding: 10, nodeSep: 5 },
+//       style: cytoscape.stylesheet()
+//         .selector('node')
+//           .css({
+//             'content': 'data(name)',
+//             'background-color': 'white',
+//             'shape': 'data(nodeShape)',
+//             'border-color': 'data(nodeColor)',
+//             'border-style': 'data(borderStyle)',
+//             'border-width': 2,
+//             'width': 'data(diameter)',
+//             'height': 'data(diameter)',
+//             'text-valign': 'center',
+//             'text-wrap': 'wrap',
+//             'min-zoomed-font-size': 8,
+//             'border-opacity': 0.3,
+//             'font-size': 'data(fontSize)'
+//           })
+//         .selector('edge')
+//           .css({
+//             'target-arrow-shape': 'none',
+//             'source-arrow-shape': 'triangle',
+//             'width': 2,
+//             'line-color': '#ddd',
+//             'target-arrow-color': '#ddd',
+//             'source-arrow-color': '#ddd'
+//           })
+//         .selector('.highlighted')
+//           .css({
+//             'background-color': '#61bffc',
+//             'line-color': '#61bffc',
+//             'target-arrow-color': '#61bffc',
+//             'transition-property': 'background-color, line-color, target-arrow-color',
+//             'transition-duration': '0.5s'
+//           })
+//         .selector('.faded')
+//           .css({
+//             'opacity': 0.25,
+//             'text-opacity': 0
+//           }),
+//       elements: elements,
+//       wheelSensitivity: 0.2,
+// 
+//       ready: function(){
+//         window.cyPhenGraph = this;
+//         cyPhenGraph.elements().unselectify();
+// 
+//         cyPhenGraph.on('tap', 'node', function(e){
+//           var node = e.cyTarget;
+//           var nodeId   = node.data('id');
+//           var neighborhood = node.neighborhood().add(node);
+//           cyPhenGraph.elements().addClass('faded');
+//           neighborhood.removeClass('faded');
+// 
+//           var node = e.cyTarget;
+//           var nodeId   = node.data('id');
+//           var nodeName = node.data('name');
+//           var annotCounts = node.data('annotCounts');
+//           var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+//           node.qtip({
+//                position: {
+//                  my: 'top center',
+//                  at: 'bottom center'
+//                },
+//                style: {
+//                  classes: 'qtip-bootstrap',
+//                  tip: {
+//                    width: 16,
+//                    height: 8
+//                  }
+//                },
+//                content: qtipContent,
+//                show: {
+//                   e: e.type,
+//                   ready: true
+//                },
+//                hide: {
+//                   e: 'mouseout unfocus'
+//                }
+//           }, e);
+//         });
+// 
+//         cyPhenGraph.on('tap', function(e){
+//           if( e.cyTarget === cyPhenGraph ){
+//             cyPhenGraph.elements().removeClass('faded');
+//           }
+//         });
+// 
+//         cyPhenGraph.on('mouseover', 'node', function(event) {
+//             var node = event.cyTarget;
+//             var nodeId   = node.data('id');
+//             var nodeName = node.data('name');
+//             var annotCounts = node.data('annotCounts');
+//             var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+//             $jq('#info').html( qtipContent );
+//         });
+// 
+//       }
+// 
+//     });
+//   } //   function initCy( then )
+
+//   $('#radio_weighted').on('click', function(){
+//     var nodes = cyPhenGraph.nodes();
+//     for( var i = 0; i < nodes.length; i++ ){
+//       var node     = nodes[i];
+//       var nodeId   = node.data('id');
+//       var diameterWeighted   = node.data('diameter_weighted');
+//       cyPhenGraph.$('#' + nodeId).data('diameter', diameterWeighted);
+//       var fontSizeWeighted   = node.data('fontSizeWeighted');
+//       cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeWeighted);
+//     }
+//     cyPhenGraph.layout();
+//   });
+//   $('#radio_unweighted').on('click', function(){
+//     var nodes = cyPhenGraph.nodes();
+//     for( var i = 0; i < nodes.length; i++ ){
+//       var node     = nodes[i];
+//       var nodeId   = node.data('id');
+//       var diameterUnweighted = node.data('diameter_unweighted');
+//       var diameterWeighted   = node.data('diameter_weighted');
+//       cyPhenGraph.$('#' + nodeId).data('diameter', diameterUnweighted);
+//       var fontSizeUnweighted = node.data('fontSizeUnweighted');
+//       var fontSizeWeighted   = node.data('fontSizeWeighted');
+//       cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeUnweighted);
+//     }
+//     cyPhenGraph.layout();
+//   });
+//   $('#view_png_button').on('click', function(){
+//     var png64 = cyPhenGraph.png();
+//     $('#png-export').attr('src', png64);
+//     $('#png-export').show();
+//     $('#cyPhenGraph').hide();
+//     $('#weightstate').hide();
+//     $('#view_png_button').hide();
+//     $('#view_edit_button').show();
+//     $('#info').text('drag image to desktop, or right-click and save image as');
+//   });
+//   $('#view_edit_button').on('click', function(){
+//     $('#png-export').hide();
+//     $('#cyPhenGraph').show();
+//     $('#weightstate').show();
+//     $('#view_png_button').show();
+//     $('#view_edit_button').hide();
+//   });
+//   WB.setupCytoscapePhenGraph(elements);
+});
+</script>
+
+<div id="cyPhenGraph" style="height: 100%; width: 100%; position: absolute; border: 1px solid #aaa;"></div>
+  <div id="loading">
+    <span class="fa fa-refresh fa-spin"></span>
+  </div>
+<div id="exportdiv" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
+<button id="view_png_button">export png</button>
+<button id="view_edit_button" style="display: none;">go back</button>
+</div><br/>
+<div id="legenddiv" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
+Legend :<br/>
+<table>
+<tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
+<g id="node1" class="node"><title></title>
+<polygon fill="none" stroke="blue" stroke-dasharray="5,2" points="36,-36 0,-36 0,-0 36,-0 36,-36"/></g></g></svg></td><td valign="center">Root</td></tr>
+<tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
+<g id="node1" class="node"><title></title>
+<ellipse fill="none" stroke="blue" stroke-dasharray="5,2" cx="18" cy="-18" rx="18" ry="18"/></g></g></svg></td><td valign="center">Without Direct Annotation</td></tr>
+<tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
+<g id="node1" class="node"><title></title>
+<ellipse fill="none" stroke="red" cx="18" cy="-18" rx="18" ry="18"/></g></g></svg></td><td valign="center">With Direct Annotation</td></tr>
+</table></div>
+<div id="weightstate" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
+<input type="radio" name="radio_type" id="radio_weighted"   checked="checked" >Annotation weighted</input><br/>
+<input type="radio" name="radio_type" id="radio_unweighted">Annotation unweighted</input><br/>
+</div><br/>
+<div id="info" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">Mouseover or click node for more information.</div><br/>
+<img id="png-export" style="border: 1px solid #ddd; display: none;">

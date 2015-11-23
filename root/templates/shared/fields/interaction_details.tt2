@@ -194,7 +194,7 @@ otherwise find them in Interaction->interaction_details %]
 [%- content -%]
     [%# Must implement arbor.js here, it uses web workers and
     will not work when combined with other JS %]
-    <script src="/js/jquery/plugins/cytoscapejs/arbor.js"></script>
+    <script src="/js/jquery/plugins/cytoscapejs/arbor/0.91/arbor.js"></script>
     <script type="text/javascript">
     (function(){
       var data = {
@@ -255,7 +255,7 @@ otherwise find them in Interaction->interaction_details %]
         types = [ [% FOREACH obj IN TYPES.keys.sort %]
                           "[% obj %]",
                     [% END %] ]
-        WB.setupCytoscape(data, types [% IF CLASSTYPE; ', "'; CLASSTYPE; '"'; END; %]);
+        WB.setupCytoscapeInteraction(data, types [% IF CLASSTYPE; ', "'; CLASSTYPE; '"'; END; %]);
 
     })();
     </script>
