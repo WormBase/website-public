@@ -1914,18 +1914,18 @@ var Scrolling = (function(){
     }
 
     function setupCytoscapeInteraction(data, types, clazz){
-      if (Plugin.checkPluginsLoaded('cytoscape_js')) {
-        loadCytoscapeForInteraction(data, types, clazz) 
-      } else {
-        if (Plugin.checkPluginsLoading('cytoscape_js')) {
-           Plugin.addToCallLater('cytoscape_js', 'setupCytoscapeInteraction', function() { setupCytoscapeInteraction(data, types, clazz) });
-        } else {
+      // if (Plugin.checkPluginsLoaded('cytoscape_js')) {
+      //   loadCytoscapeForInteraction(data, types, clazz)
+      // } else {
+      //   if (Plugin.checkPluginsLoading('cytoscape_js')) {
+      //      Plugin.addToCallLater('cytoscape_js', function() { setupCytoscapeInteraction(data, types, clazz) });
+      //   } else {
           Plugin.getPlugin('cytoscape_js',function(){
-            loadCytoscapeForInteraction(data, types, clazz) 
+            loadCytoscapeForInteraction(data, types, clazz)
             return;
           });
-        }
-      }
+      //   }
+      // }
     }
 
 
@@ -1936,18 +1936,18 @@ var Scrolling = (function(){
     }
 
     function setupCytoscapePhenGraph(elements){
-      if (Plugin.checkPluginsLoaded('cytoscape_js')) {
-        loadCytoscapeForPhenGraph(elements) 
-      } else {
-        if (Plugin.checkPluginsLoading('cytoscape_js')) {
-           Plugin.addToCallLater('cytoscape_js', 'setupCytoscapeInteraction', function() { setupCytoscapePhenGraph(elements) });
-        } else {
+      // if (Plugin.checkPluginsLoaded('cytoscape_js')) {
+      //   loadCytoscapeForPhenGraph(elements)
+      // } else {
+      //   if (Plugin.checkPluginsLoading('cytoscape_js')) {
+      //      Plugin.addToCallLater('cytoscape_js', function() { setupCytoscapePhenGraph(elements) });
+      //   } else {
           Plugin.getPlugin('cytoscape_js',function(){
-            loadCytoscapeForPhenGraph(elements) 
+            loadCytoscapeForPhenGraph(elements)
             return;
           });
-        }
-      }
+      //   }
+      // }
     }
 
     function setupCyPhenGraph(elements){
@@ -2264,27 +2264,37 @@ var Scrolling = (function(){
           };
 
 
-      function addToCallLater(name, toCallFunctionName, toCallFunction) {
+      function addToCallLater(name, toCallFunction) {
         if (typeof callLater[name] === 'undefined') { callLater[name] = new Array(); }
-        callLater[name][toCallFunctionName] = toCallFunction;
+        // append functions to the queue
+        callLater[name].push(toCallFunction);
       }
       function triggerCallLater(name) {
-        for (var toCallFunctionName in callLater[name]) {
-          callLater[name][toCallFunctionName]();
+        // take functions off the queue until the queue is empty
+        while(callLater[name] && callLater[name].length > 0){
+          var toCallFunction = callLater[name].shift();
+          if (toCallFunction){
+              toCallFunction();
+          }
         }
-        delete callLater[name];
       }
 
       function getScript(name, url, stylesheet, callback) {
 
         function LoadJs(){
            css[name] = true;
+
            loadFile(url, true, name, function(){
               callback();
               plugins[name] = true;
+
+              pluginsLoaded[name] = true;
+              pluginsLoading[name] = false;
+              if (callLater[name]) { triggerCallLater(name); }
            });
         }
 
+        pluginsLoading[name] = true;
         if(stylesheet){
          loadFile(stylesheet, false, name, LoadJs());
         }else{
@@ -2297,7 +2307,6 @@ var Scrolling = (function(){
         var head = document.documentElement,
             script = document.createElement( js ? "script" : "link"),
             done = false;
-        loading = true;
 
         if(js){
           script.src = url;
@@ -2308,16 +2317,11 @@ var Scrolling = (function(){
         }
 
         function doneLoad(){
-            pluginsLoaded[name] = true;
-            pluginsLoading[name] = false;
-            if (callLater[name]) { triggerCallLater(name); }
             done = true;
-            loading = false;
             if(callback)
               callback();
         }
 
-        pluginsLoading[name] = true;
         if(js){
           script.onload = script.onreadystatechange = function() {
           if(!done && (!this.readyState ||
@@ -2383,6 +2387,13 @@ var Scrolling = (function(){
           else { return false; }
       }
 
+      function isLoading(){
+        var loadingPlugins = Object.keys(pluginsLoading).filter(function(name){
+            return pluginsLoading[name];
+        });
+        return loadingPlugins.length > 0;
+      }
+
       function getPlugin(name, callback){
         var script = pScripts[name],
             css = pStyle[name];
@@ -2391,16 +2402,19 @@ var Scrolling = (function(){
       }
 
       function loadPlugin(name, url, stylesheet, callback){
-//         if(!pluginsLoaded[name])	// this might be better, then can get rid of plugins completely
-        if(!plugins[name]){
-          getScript(name, url, !css[name] ? stylesheet : undefined, callback);
-        }else{
-          if(loading){
-            return setTimeout(getPlugin(name, url, stylesheet, callback),10);
+
+          if (pluginsLoaded[name]){
+              callback();
+          }else if (pluginsLoading[name]){
+              addToCallLater(name, callback);
+          }else if (isLoading()) {
+              // if anything else is loading, wait for a bit before loading the new plugin
+              setTimeout(function(){
+                  getScript(name, url, !css[name] ? stylesheet : undefined, callback);
+              },10);
           }else{
-            callback();
+              getScript(name, url, !css[name] ? stylesheet : undefined, callback);
           }
-        }
         return;
       }
 
