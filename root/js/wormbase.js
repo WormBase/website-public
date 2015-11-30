@@ -2145,6 +2145,11 @@ var Scrolling = (function(){
       var menuContainer = container.find('.fpkm-plot-menu-container');
       var plotCanvas = container.find('.fpkm-plot-canvas');
 
+      var projectToData = groupBy(function(item){
+        return item.project;
+      }, data);
+
+
       function setupMenu(projects){
         var listItems = Object.keys(projects).map(function(projectID, index){
           var project = projects[projectID];
@@ -2177,36 +2182,92 @@ var Scrolling = (function(){
       }
 
       function updatePlot(projectID){
-        Plugin.getPlugin('highcharts', function(){
-            plotCanvas.highcharts({
-            chart: {
-              type: 'bar'
-            },
-            title: {
-              text: 'Fruit Consumption'
-            },
-            xAxis: {
-              categories: ['Apples', 'Bananas', 'Oranges']
-            },
-            yAxis: {
-              title: {
-                text: 'Fruit eaten'
-              }
-            },
-            series: [{
-              name: 'Jane',
-              data: [1, 0, 4]
-            }, {
-              name: 'John',
-              data: [5, 7, 3]
-            }]
+        var seriesDataRaw = groupBy(function(item){
+          return item.life_stage.label;
+        }, projectToData[projectID]);
+        var categories = Object.keys(seriesDataRaw);
+
+        var allData = categories.map(function(category){
+          return seriesDataRaw[category].map(function(item){
+            return item.value;
           });
         });
+        var minPoints = 5;
+        var boxplotData = allData.map(function(categoryData, index){
+          //categoryData.length < minPoints ? [] :
+          return categoryData.length > 1 ? boxSummaryStat(categoryData) : [0,1,2,3,4].map(function(){ return categoryData[0] });
+        });
+        // var scatterplotData = allData.reduce(
+        //   function(collection, categoryData, index){
+        //     return concat(con
+
+        console.log('data per category');
+        console.log(allData);
+        console.log('box stat per category');
+        console.log(boxplotData);
+
+        plotCanvas.highcharts({
+          chart: {
+            type: 'boxplot'
+          },
+          title: {
+            text: projectID
+          },
+          xAxis: {
+            categories: categories
+          },
+          yAxis: {
+            title: {
+              text: 'FPKM values'
+            }
+          },
+          series: [{
+            name: 'Life stages',
+            data: boxplotData
+          }]
+        });
+      }
+
+      function groupBy(keyFunction, dataArray){
+        var groups = {};
+        dataArray.forEach(function(currentItem){
+          var groupKey = keyFunction(currentItem);
+          groups[groupKey] = (groups[groupKey] || []).concat(currentItem);
+        });
+        return groups;
+      }
+
+      function boxSummaryStat(dataArray){
+        var quantiles = jStat(dataArray).quantiles([0.25, 0.5, 0.75]);
+        console.log('quantiles');
+        console.log(quantiles);
+        var q1 = quantiles[0];
+        var q3 = quantiles[2];
+        var iqr = q3 - q1;
+        var lowerBound = q1 - 1.5 * iqr;
+        var upperBound = q3 + 1.5 * iqr;
+
+        var whiskerBottom = Math.min.apply(null, dataArray.filter(
+          function(dataValue){
+            return dataValue >= lowerBound;
+          }));
+        var whiskerTop = Math.max.apply(null, dataArray.filter(
+          function(dataValue){
+            return dataValue <= upperBound;
+          }));
+
+        return [].concat(whiskerBottom, quantiles, whiskerTop);
       }
 
       (function setup(){
         setupMenu(projects);
-        update();
+        Plugin.getPlugin('jstat',function(){
+          Plugin.getPlugin('highcharts', function(){
+            Plugin.getPlugin('highcharts_more', function(){
+              update();
+            });
+          });
+        });
       })();
 
     }
@@ -2227,6 +2288,8 @@ var Scrolling = (function(){
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
                         cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
                         highcharts: "/js/highcharts/4.1.9/highcharts.js",
+                        highcharts_more: "/js/highcharts/4.1.9/highcharts-more.js",
+                        jstat: "/js/jstat/1.5.0/jstat.min.js",  // statistics library in JS
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",

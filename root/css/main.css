@@ -2354,6 +2354,15 @@ h3.jbrowse-view-header {
   cursor: pointer;
 }
 
+.fpkm-plot-menu-container .plot-menu li:hover {
+  text-decoration: underline;
+}
+
+.fpkm-plot-canvas {
+  display: inline-block;
+  width: 400px;
+}
+
 /*********************************
 
    Navigation for sidebar view
