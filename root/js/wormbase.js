@@ -941,7 +941,7 @@
           // a long wait to ensure field is rendered before showing,
           // to avoid miscalculating field height
           container.children().first().remove();  //remove placeholder
-          container.children().last().show();
+          container.children().show();
           discreetLoad(container.children('.field'), heightDefault);
         },2000);
       };
@@ -2140,6 +2140,77 @@ var Scrolling = (function(){
       return;
     }
 
+    function makeFpkmBoxPlot(container, projects, data){
+
+      var menuContainer = container.find('.fpkm-plot-menu-container');
+      var plotCanvas = container.find('.fpkm-plot-canvas');
+
+      function setupMenu(projects){
+        var listItems = Object.keys(projects).map(function(projectID, index){
+          var project = projects[projectID];
+          var className = index === 0 ? 'ui-state-focus' : '';
+
+          return '<li class="' + className
+            + '" data-project-id="' + projectID + '">'
+            + project.title + '</li>';
+        });
+        var menuHtml = [].concat('<ul class="plot-menu">', listItems, '</ul>').join('');
+        menuContainer.html(menuHtml);
+        menuContainer.find('ul').menu();
+        menuContainer.find('li').click(function(){
+          var selectedItem = $jq(this);
+          selectedItem.addClass('ui-state-focus');
+          selectedItem.siblings().removeClass('ui-state-focus');
+          //console.log(selectedItem.text());
+          update();
+        });
+      }
+
+      function update(){
+        var projectID = getSelectedProject();
+        updatePlot(projectID);
+        console.log(projectID);
+      }
+
+      function getSelectedProject(){
+        return menuContainer.find('li.ui-state-focus').first().attr('data-project-id');
+      }
+
+      function updatePlot(projectID){
+        Plugin.getPlugin('highcharts', function(){
+            plotCanvas.highcharts({
+            chart: {
+              type: 'bar'
+            },
+            title: {
+              text: 'Fruit Consumption'
+            },
+            xAxis: {
+              categories: ['Apples', 'Bananas', 'Oranges']
+            },
+            yAxis: {
+              title: {
+                text: 'Fruit eaten'
+              }
+            },
+            series: [{
+              name: 'Jane',
+              data: [1, 0, 4]
+            }, {
+              name: 'John',
+              data: [5, 7, 3]
+            }]
+          });
+        });
+      }
+
+      (function setup(){
+        setupMenu(projects);
+        update();
+      })();
+
+    }
+
     var Plugin = (function(){
       var plugins = new Array(),
           css = new Array(),
@@ -2155,7 +2226,7 @@ var Scrolling = (function(){
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
                         cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
-
+                        highcharts: "/js/highcharts/4.1.9/highcharts.js",
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
@@ -2340,6 +2411,7 @@ var Scrolling = (function(){
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
+      makeFpkmBoxPlot: makeFpkmBoxPlot,             // fpkm by life stage box plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes

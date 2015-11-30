@@ -2335,6 +2335,25 @@ h3.jbrowse-view-header {
 }
 
 
+/* fpkm plots */
+
+.fpkm-plot-menu-container {
+  height: 400px;
+  border: 1px solid #AAA;
+  border-radius: 5px;
+  overflow-y: scroll;
+  display: inline-block;
+}
+
+.fpkm-plot-menu-container .plot-menu {
+  width: 300px;
+}
+
+.fpkm-plot-menu-container .plot-menu li {
+  padding: 0.5em;
+  cursor: pointer;
+}
+
 /*********************************
 
    Navigation for sidebar view
