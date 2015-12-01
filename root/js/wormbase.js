@@ -2174,7 +2174,8 @@ var Scrolling = (function(){
       function update(){
         var projectID = getSelectedProject();
         updatePlot(projectID);
-        console.log(projectID);
+        updateDescription(projectID);
+        console.log(projects[projectID]);
       }
 
       function getSelectedProject(){
@@ -2201,10 +2202,10 @@ var Scrolling = (function(){
         //   function(collection, categoryData, index){
         //     return concat(con
 
-        console.log('data per category');
-        console.log(allData);
-        console.log('box stat per category');
-        console.log(boxplotData);
+        // console.log('data per category');
+        // console.log(allData);
+        // console.log('box stat per category');
+        // console.log(boxplotData);
 
         plotCanvas.highcharts({
           chart: {
@@ -2228,6 +2229,23 @@ var Scrolling = (function(){
         });
       }
 
+      function updateDescription(projectID) {
+        var descriptionContainer = container.find(".fpkm-plot-description");
+        var projectObject = projects[projectID];
+        var newDescription;
+
+        function getLink(tag){
+          var linkParts = [].concat('/resources', tag.class, tag.id);
+          var link = linkParts.join('/');
+          return '<strong><a href="' + link + '">' + tag.label + '</a></strong>';
+        }
+
+        newDescription = getLink(projectObject.tag) + '<div class="text-min"><p>'
+          + projectObject.description + '</p></div>';
+        descriptionContainer.html(newDescription);
+        formatExpand(descriptionContainer);
+      }
+
       function groupBy(keyFunction, dataArray){
         var groups = {};
         dataArray.forEach(function(currentItem){
@@ -2239,8 +2257,6 @@ var Scrolling = (function(){
 
       function boxSummaryStat(dataArray){
         var quantiles = jStat(dataArray).quantiles([0.25, 0.5, 0.75]);
-        console.log('quantiles');
-        console.log(quantiles);
         var q1 = quantiles[0];
         var q3 = quantiles[2];
         var iqr = q3 - q1;
@@ -2433,6 +2449,7 @@ var Scrolling = (function(){
       search_species_change: search_species_change, // change the species search filter
       checkSearch: checkSearch,                     // check search results - post-format if needed
       allResults: allResults,                       // setup search all page
+      formatExpand: formatExpand,                   // expandable div between text-min class
 
       // static widgets
       getMarkItUp: getMarkItUp,                     // get markup plugin for static widgets
