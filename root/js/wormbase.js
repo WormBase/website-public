@@ -2215,7 +2215,10 @@ var Scrolling = (function(){
             text: projectID
           },
           xAxis: {
-            categories: categories
+            categories: categories,
+            title: {
+              text: 'Life stages'
+            }
           },
           yAxis: {
             title: {
@@ -2223,9 +2226,12 @@ var Scrolling = (function(){
             }
           },
           series: [{
-            name: 'Life stages',
+            name: 'fpkm box statistics',
             data: boxplotData
-          }]
+          }],
+          legend: {
+            enabled: false
+          }
         });
       }
 
