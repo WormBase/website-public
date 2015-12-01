@@ -49,8 +49,10 @@ WRAPPER $field_block title="" key="fpkm_expression_summary_ls";
 
     '<div class="fpkm-plot-container">
         <div class="fpkm-plot-menu-container"></div>
-        <div class="fpkm-plot-canvas"></div>
-        <div class="fpkm-plot-description"></div>
+        <div class="fpkm-plot-content-container">
+            <div class="fpkm-plot-description"></div>
+            <div class="fpkm-plot-canvas"></div>
+        </div>
     </div>';
 
 

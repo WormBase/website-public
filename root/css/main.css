@@ -2337,12 +2337,17 @@ h3.jbrowse-view-header {
 
 /* fpkm plots */
 
+.fpkm-plot-container {
+  display: flex;
+}
+
 .fpkm-plot-menu-container {
-  height: 400px;
+  height: 450px;
   border: 1px solid #AAA;
   border-radius: 5px;
   overflow-y: scroll;
   display: inline-block;
+  top: 0;
 }
 
 .fpkm-plot-menu-container .plot-menu {
@@ -2358,9 +2363,13 @@ h3.jbrowse-view-header {
   text-decoration: underline;
 }
 
-.fpkm-plot-canvas {
+.fpkm-plot-content-container {
   display: inline-block;
-  width: 400px;
+  width: 60%;
+}
+
+.fpkm-plot-content-container > * {
+  padding: 5px  20px;
 }
 
 /*********************************
