@@ -1775,6 +1775,7 @@ var Scrolling = (function(){
   }
 
   function loadRSS(id, url){
+console.log(url);
     var container = $jq("#" + id);
     setLoading(container);
     Plugin.getPlugin("jGFeed", function(){
@@ -2190,14 +2191,22 @@ var Scrolling = (function(){
 
         var allData = categories.map(function(category){
           return seriesDataRaw[category].map(function(item){
-            return item.value;
+            return Number(item.value);
           });
         });
-        var minPoints = 5;
-        var boxplotData = allData.map(function(categoryData, index){
-          //categoryData.length < minPoints ? [] :
-          return categoryData.length > 1 ? boxSummaryStat(categoryData) : [0,1,2,3,4].map(function(){ return categoryData[0] });
-        });
+console.log(allData);
+        var minPoints = 2;
+        var boxplotData = allData.reduce(function(boxData, categoryData, index){
+          if (categoryData.length < minPoints) {
+            return boxData;
+          }else{
+            var boxParams = [].concat(categories[index],  // x
+                                      boxSummaryStat(categoryData)) // boxplot stats
+            return boxData.concat([boxParams]);
+          }
+        }, []);
+
+
         // var scatterplotData = allData.reduce(
         //   function(collection, categoryData, index){
         //     return concat(con
@@ -2205,7 +2214,7 @@ var Scrolling = (function(){
         // console.log('data per category');
         // console.log(allData);
         // console.log('box stat per category');
-        // console.log(boxplotData);
+        console.log(boxplotData);
 
         plotCanvas.highcharts({
           chart: {
@@ -2262,7 +2271,7 @@ var Scrolling = (function(){
       }
 
       function boxSummaryStat(dataArray){
-        var quantiles = jStat(dataArray).quantiles([0.25, 0.5, 0.75]);
+        var quantiles = ss.quantile(dataArray, [0.25, 0.5, 0.75]);
         var q1 = quantiles[0];
         var q3 = quantiles[2];
         var iqr = q3 - q1;
@@ -2283,7 +2292,7 @@ var Scrolling = (function(){
 
       (function setup(){
         setupMenu(projects);
-        Plugin.getPlugin('jstat',function(){
+        Plugin.getPlugin('simple_statistics',function(){
           Plugin.getPlugin('highcharts', function(){
             Plugin.getPlugin('highcharts_more', function(){
               update();
@@ -2312,6 +2321,7 @@ var Scrolling = (function(){
                         highcharts: "/js/highcharts/4.1.9/highcharts.js",
                         highcharts_more: "/js/highcharts/4.1.9/highcharts-more.js",
                         jstat: "/js/jstat/1.5.0/jstat.min.js",  // statistics library in JS
+                        simple_statistics: "/js/simple-statistics/1.0.1/simple_statistics.min.js",  // statistics library in JS
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
