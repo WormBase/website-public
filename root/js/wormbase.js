@@ -1777,25 +1777,34 @@ var Scrolling = (function(){
   function loadRSS(id, url){
     var container = $jq("#" + id);
     setLoading(container);
-    Plugin.getPlugin("jGFeed", function(){
-      $jq.jGFeed(url,
-        function(feeds){
-          // Check for errors
-          if(!feeds){
-            // there was an error
-            return false;
-          }
-          var txt = '<div id="results"><ul>';
-          for(var i=-1, entry; (entry = feeds.entries[++i]);){
-            txt += '<div class="result"><li><div class="date" id="fade">'
-                + entry.publishedDate.substring(0, 16) + '</div>'
-                + '<a href="' + entry.link + '">' + entry.title + '</a></li>'
-                + '<div class="text-min">' + entry.content.replace(/(\<\/?p\>|\<br\>)/g, '') + '</div></div>';
-          }
-          txt += '</ul></div>';
-          container.html(txt);
-          formatExpand(container);
-        }, 3);
+    $jq.get(url, function(xml){
+      var entries = $jq(xml).find("item");
+      var entriesHtml = $jq.makeArray(entries).slice(0,3).map(
+        function(entry){
+          var title = $jq(entry).find('title').text();
+          var link = $jq(entry).find('link').text();
+          var date = ($jq(entry).find('pubDate').text() || '').substring(0, 16);
+          var content = $jq(entry).find('content\\:encoded').text()
+            || $jq(entry).find('description').text();
+          content = content.replace(/(\<\/?p\>|\<br\>)/g, '')
+
+          return [
+            '<div class="result">',
+            '<li>',
+            '<div class="date" id="fade">' + date + '</div>',
+            '<a href="' + link + '">' + title + '</a>',
+            '</li>',
+            '<div class="text-min">' + content + '</div></div>'
+          ].join('');
+
+        });
+
+      var txt = [].concat(
+        '<div id="results"><ul>',
+        entriesHtml,
+        '</ul></div>').join('');
+      container.html(txt);
+      formatExpand(container);
     });
   }
 
@@ -2147,7 +2156,6 @@ var Scrolling = (function(){
           pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
                         dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js",
-                        jGFeed:"/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js",
                         generateFile: "/js/jquery/plugins/generateFile.js",
                         pfam: "/js/pfam/domain_graphics.min.js",
                         markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
