@@ -1397,7 +1397,10 @@ sub phenotype_graph {
 sub phenotype_graph_json {
   my $self = shift;
   my $geneId = $self->object;
-  my $url = 'http://131.215.12.204/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+# dev server
+#   my $url = 'http://wobr.caltech.edu:82/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+# live server
+  my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
   my $data = get $url;
   return {
     data               => "$data",

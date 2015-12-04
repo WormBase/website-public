@@ -1908,46 +1908,34 @@ var Scrolling = (function(){
 
 
     function loadCytoscapeForInteraction(data, types, clazz) {
-          Plugin.getPlugin('cytoscape_js_arbor', function() {
-            setupCyInteractionViewer(data, types, clazz)
-          });
+      Plugin.getPlugin('cytoscape_js_arbor', function() {
+        setupCyInteractionViewer(data, types, clazz)
+      });
     }
 
     function setupCytoscapeInteraction(data, types, clazz){
-      // if (Plugin.checkPluginsLoaded('cytoscape_js')) {
-      //   loadCytoscapeForInteraction(data, types, clazz)
-      // } else {
-      //   if (Plugin.checkPluginsLoading('cytoscape_js')) {
-      //      Plugin.addToCallLater('cytoscape_js', function() { setupCytoscapeInteraction(data, types, clazz) });
-      //   } else {
-          Plugin.getPlugin('cytoscape_js',function(){
-            loadCytoscapeForInteraction(data, types, clazz)
-            return;
-          });
-      //   }
-      // }
+      Plugin.getPlugin('cytoscape_js',function(){
+        loadCytoscapeForInteraction(data, types, clazz)
+        return;
+      });
     }
 
 
     function loadCytoscapeForPhenGraph(elements) {
-      Plugin.getPlugin('cytoscape_js_dagre', function() {
-        setupCyPhenGraph(elements);
+      Plugin.getPlugin('qtip', function() {
+        Plugin.getPlugin('cytoscape_js_qtip', function() {
+          Plugin.getPlugin('cytoscape_js_dagre', function() {
+            setupCyPhenGraph(elements);
+          });
+        });
       });
     }
 
     function setupCytoscapePhenGraph(elements){
-      // if (Plugin.checkPluginsLoaded('cytoscape_js')) {
-      //   loadCytoscapeForPhenGraph(elements)
-      // } else {
-      //   if (Plugin.checkPluginsLoading('cytoscape_js')) {
-      //      Plugin.addToCallLater('cytoscape_js', function() { setupCytoscapePhenGraph(elements) });
-      //   } else {
-          Plugin.getPlugin('cytoscape_js',function(){
-            loadCytoscapeForPhenGraph(elements)
-            return;
-          });
-      //   }
-      // }
+      Plugin.getPlugin('cytoscape_js',function(){
+        loadCytoscapeForPhenGraph(elements)
+        return;
+      });
     }
 
     function setupCyPhenGraph(elements){
@@ -1962,7 +1950,7 @@ var Scrolling = (function(){
               'shape': 'data(nodeShape)',
               'border-color': 'data(nodeColor)',
               'border-style': 'data(borderStyle)',
-              'border-width': 2,
+              'border-width': 'data(borderWidth)',
               'width': 'data(diameter)',
               'height': 'data(diameter)',
               'text-valign': 'center',
@@ -1999,7 +1987,108 @@ var Scrolling = (function(){
         ready: function(){
           window.cyPhenGraph = this;
           cyPhenGraph.elements().unselectify();
+          $jq('#cyPhenGraphLoading').hide();
+
+          cyPhenGraph.on('tap', 'node', function(e){
+            var node = e.cyTarget;
+            var nodeId   = node.data('id');
+            var neighborhood = node.neighborhood().add(node);
+            cyPhenGraph.elements().addClass('faded');
+            neighborhood.removeClass('faded');
+  
+            var node = e.cyTarget;
+            var nodeId   = node.data('id');
+            var nodeName = node.data('name');
+            var annotCounts = node.data('annotCounts');
+            var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+            node.qtip({
+                 position: {
+                   my: 'top center',
+                   at: 'bottom center'
+                 },
+                 style: {
+                   classes: 'qtip-bootstrap',
+                   tip: {
+                     width: 16,
+                     height: 8
+                   }
+                 },
+                 content: qtipContent,
+                 show: {
+                    e: e.type,
+                    ready: true
+                 },
+                 hide: {
+                    e: 'mouseout unfocus'
+                 }
+            }, e);
+          });
+
+          cyPhenGraph.on('tap', function(e){
+            if( e.cyTarget === cyPhenGraph ){
+              cyPhenGraph.elements().removeClass('faded');
+            }
+          });
+  
+          cyPhenGraph.on('mouseover', 'node', function(event) {
+              var node = event.cyTarget;
+              var nodeId   = node.data('id');
+              var nodeName = node.data('name');
+              var annotCounts = node.data('annotCounts');
+              var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+              $jq('#info').html( qtipContent );
+          });
         }
+
+      });
+
+      $jq('#radio_weighted').on('click', function(){
+        var nodes = cyPhenGraph.nodes();
+        for( var i = 0; i < nodes.length; i++ ){
+          var node     = nodes[i];
+          var nodeId   = node.data('id');
+          var diameterWeighted   = node.data('diameter_weighted');
+          cyPhenGraph.$('#' + nodeId).data('diameter', diameterWeighted);
+          var fontSizeWeighted   = node.data('fontSizeWeighted');
+          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeWeighted);
+          var borderWidthWeighted   = node.data('borderWidthWeighted');
+          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthWeighted);
+        }
+        cyPhenGraph.layout();
+      });
+      $jq('#radio_unweighted').on('click', function(){
+        var nodes = cyPhenGraph.nodes();
+        for( var i = 0; i < nodes.length; i++ ){
+          var node     = nodes[i];
+          var nodeId   = node.data('id');
+          var diameterUnweighted = node.data('diameter_unweighted');
+          var diameterWeighted   = node.data('diameter_weighted');
+          cyPhenGraph.$('#' + nodeId).data('diameter', diameterUnweighted);
+          var fontSizeUnweighted = node.data('fontSizeUnweighted');
+          var fontSizeWeighted   = node.data('fontSizeWeighted');
+          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeUnweighted);
+          var borderWidthUnweighted = node.data('borderWidthUnweighted');
+          var borderWidthWeighted   = node.data('borderWidthWeighted');
+          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthUnweighted);
+        }
+        cyPhenGraph.layout();
+      });
+      $jq('#view_png_button').on('click', function(){
+        var png64 = cyPhenGraph.png({ bg: 'white' });
+        $jq('#png-export').attr('src', png64);
+        $jq('#png-export').show();
+        $jq('#cyPhenGraph').hide();
+        $jq('#weightstate').hide();
+        $jq('#view_png_button').hide();
+        $jq('#view_edit_button').show();
+        $jq('#info').text('drag image to desktop, or right-click and save image as');
+      });
+      $jq('#view_edit_button').on('click', function(){
+        $jq('#png-export').hide();
+        $jq('#cyPhenGraph').show();
+        $jq('#weightstate').show();
+        $jq('#view_png_button').show();
+        $jq('#view_edit_button').hide();
       });
     }
 
@@ -2234,8 +2323,7 @@ var Scrolling = (function(){
     }
 
     var Plugin = (function(){
-      var plugins = new Array(),
-          pluginsLoaded = new Array(),
+      var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
           callLater = new Array(),
           css = new Array(),
@@ -2253,6 +2341,8 @@ var Scrolling = (function(){
                         cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape_min/2.5.0/cytoscape.min.js",
                         cytoscape_js_arbor: "/js/jquery/plugins/cytoscapejs/cytoscape_arbor/1.1.2/cytoscape-arbor.js",
                         cytoscape_js_dagre: "/js/jquery/plugins/cytoscapejs/cytoscape_dagre/1.1.2/cytoscape-dagre.js",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.js",
+                        cytoscape_js_qtip: "/js/jquery/plugins/cytoscapejs/cytoscape_js_qtip/2.2.5/cytoscape-qtip.js",
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
@@ -2260,6 +2350,7 @@ var Scrolling = (function(){
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
                         tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.css",
                         icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
           };
 
@@ -2286,8 +2377,6 @@ var Scrolling = (function(){
 
            loadFile(url, true, name, function(){
               callback();
-              plugins[name] = true;
-
               pluginsLoaded[name] = true;
               pluginsLoading[name] = false;
               if (callLater[name]) { triggerCallLater(name); }
@@ -2477,11 +2566,11 @@ var Scrolling = (function(){
       // miscellaneous
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
-      setupCytoscapeInteraction: setupCytoscapeInteraction,               // setup cytoscape for use
-      setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use
+      setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
+      setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
-      partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes
+      partitioned_table: partitioned_table          // augment to a datatable setting, when table rows are partitioned by certain attributes
     };
   })();
 
