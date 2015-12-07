@@ -940,7 +940,7 @@
           // a long wait to ensure field is rendered before showing,
           // to avoid miscalculating field height
           container.children().first().remove();  //remove placeholder
-          container.children().last().show();
+          container.children().show();
           discreetLoad(container.children('.field'), heightDefault);
         },2000);
       };
@@ -1774,6 +1774,7 @@ var Scrolling = (function(){
   }
 
   function loadRSS(id, url){
+console.log(url);
     var container = $jq("#" + id);
     setLoading(container);
     $jq.get(url, function(xml){
@@ -2004,7 +2005,7 @@ var Scrolling = (function(){
             var neighborhood = node.neighborhood().add(node);
             cyPhenGraph.elements().addClass('faded');
             neighborhood.removeClass('faded');
-  
+
             var node = e.cyTarget;
             var nodeId   = node.data('id');
             var nodeName = node.data('name');
@@ -2038,7 +2039,7 @@ var Scrolling = (function(){
               cyPhenGraph.elements().removeClass('faded');
             }
           });
-  
+
           cyPhenGraph.on('mouseover', 'node', function(event) {
               var node = event.cyTarget;
               var nodeId   = node.data('id');
@@ -2331,6 +2332,196 @@ var Scrolling = (function(){
       return;
     }
 
+    function makeFpkmBoxPlot(container, projects, data){
+
+      var menuContainer = container.find('.fpkm-plot-menu-container');
+      var plotCanvas = container.find('.fpkm-plot-canvas');
+
+      var projectToData = groupBy(function(item){
+        return item.project;
+      }, data);
+
+
+      function setupMenu(projects){
+        var listItems = Object.keys(projects).map(function(projectID, index){
+          var project = projects[projectID];
+          var className = index === 0 ? 'ui-state-focus' : '';
+
+          return '<li class="' + className
+            + '" data-project-id="' + projectID + '">'
+            + project.title + '</li>';
+        });
+        var menuHtml = [].concat('<ul class="plot-menu">', listItems, '</ul>').join('');
+        menuContainer.html(menuHtml);
+        menuContainer.find('ul').menu();
+        menuContainer.find('li').click(function(){
+          var selectedItem = $jq(this);
+          selectedItem.addClass('ui-state-focus');
+          selectedItem.siblings().removeClass('ui-state-focus');
+          update();
+        });
+      }
+
+      function update(){
+        var projectID = getSelectedProject();
+        updatePlot(projectID);
+        updateDescription(projectID);
+      }
+
+      function getSelectedProject(){
+        return menuContainer.find('li.ui-state-focus').first().attr('data-project-id');
+      }
+
+      function updatePlot(projectID){
+        var seriesDataRaw = groupBy(function(item){
+          return item.life_stage.label;
+        }, projectToData[projectID]);
+        var categories = Object.keys(seriesDataRaw);
+
+        var allData = categories.map(function(category){
+          return seriesDataRaw[category].map(function(item){
+            return Number(item.value);
+          });
+        });
+
+        var minPoints = 2;
+        var boxplotData = allData.reduce(function(boxData, categoryData, index){
+          if (categoryData.length < minPoints) {
+            return boxData;
+          }else{
+            var boxParams = [].concat(index,  // x
+                                      boxSummaryStat(categoryData)) // boxplot stats
+            return boxData.concat([boxParams]);
+          }
+        }, []);
+
+        var boxplotOtherPoints = allData.reduce(function(pointsData, categoryData, index){
+          var boxParams = boxSummaryStat(categoryData);
+          var otherData = categoryData.length < minPoints ? categoryData
+            : categoryData.filter(function(value){
+              // ONLY keep the outliers
+              return value < boxParams[0] || value > boxParams[4];
+            });
+
+          var otherPoints = otherData.map(function(value){
+            return [index,  // x
+                   value] // y
+          });
+
+          return pointsData.concat(otherPoints);
+        }, []);
+
+        var allPoints = allData.reduce(function(pointsData, categoryData, categoryIndex){
+          var morePoints = categoryData.map(function(value){
+            return [categoryIndex,  // x
+                    value];  // y
+          })
+          return pointsData.concat(morePoints);
+        }, []);
+
+        plotCanvas.highcharts({
+          chart: {
+            type: 'boxplot'
+          },
+          title: {
+            text: projectID
+          },
+          xAxis: {
+            categories: categories,
+            title: {
+              text: 'Life stages'
+            }
+          },
+          yAxis: {
+            title: {
+              text: 'FPKM values'
+            }
+          },
+          series: [
+            {
+              name: 'fpkm box statistics',
+              data: boxplotData
+            },
+            {
+              name: 'Outlier',
+              color: Highcharts.getOptions().colors[0],
+              type: 'scatter',
+              data: boxplotOtherPoints,
+              tooltip: {
+                pointFormat: 'Observation: {point.y}'
+              }
+            },
+            // {
+            //   name: 'All observations',
+            //   type: 'scatter',
+            //   data: allPoints
+            // }
+          ],
+          legend: {
+            enabled: false
+          }
+        });
+      }
+
+      function updateDescription(projectID) {
+        var descriptionContainer = container.find(".fpkm-plot-description");
+        var projectObject = projects[projectID];
+        var newDescription;
+
+        function getLink(tag){
+          var linkParts = [].concat('/resources', tag.class, tag.id);
+          var link = linkParts.join('/');
+          return '<strong><a href="' + link + '">' + tag.label + '</a></strong>';
+        }
+
+        newDescription = getLink(projectObject.tag) + '<div class="text-min"><p>'
+          + projectObject.description + '</p></div>';
+        descriptionContainer.html(newDescription);
+        formatExpand(descriptionContainer);
+      }
+
+      function groupBy(keyFunction, dataArray){
+        var groups = {};
+        dataArray.forEach(function(currentItem){
+          var groupKey = keyFunction(currentItem);
+          groups[groupKey] = (groups[groupKey] || []).concat(currentItem);
+        });
+        return groups;
+      }
+
+      function boxSummaryStat(dataArray){
+        var quantiles = ss.quantile(dataArray, [0.25, 0.5, 0.75]);
+        var q1 = quantiles[0];
+        var q3 = quantiles[2];
+        var iqr = q3 - q1;
+        var lowerBound = q1 - 1.5 * iqr;
+        var upperBound = q3 + 1.5 * iqr;
+
+        var whiskerBottom = Math.min.apply(null, dataArray.filter(
+          function(dataValue){
+            return dataValue >= lowerBound;
+          }));
+        var whiskerTop = Math.max.apply(null, dataArray.filter(
+          function(dataValue){
+            return dataValue <= upperBound;
+          }));
+
+        return [].concat(whiskerBottom, quantiles, whiskerTop);
+      }
+
+      (function setup(){
+        setupMenu(projects);
+        Plugin.getPlugin('simple_statistics',function(){
+          Plugin.getPlugin('highcharts', function(){
+            Plugin.getPlugin('highcharts_more', function(){
+              update();
+            });
+          });
+        });
+      })();
+
+    }
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -2351,6 +2542,10 @@ var Scrolling = (function(){
                         cytoscape_js_dagre: "/js/jquery/plugins/cytoscapejs/cytoscape_dagre/1.1.2/cytoscape-dagre.js",
                         qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.js",
                         cytoscape_js_qtip: "/js/jquery/plugins/cytoscapejs/cytoscape_js_qtip/2.2.5/cytoscape-qtip.js",
+                        highcharts: "/js/highcharts/4.1.9/highcharts.js",
+                        highcharts_more: "/js/highcharts/4.1.9/highcharts-more.js",
+                        //jstat: "/js/jstat/1.5.0/jstat.min.js",  // statistics library in JS, not in use
+                        simple_statistics: "/js/simple-statistics/1.0.1/simple_statistics.min.js",  // statistics library in JS
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
@@ -2534,6 +2729,7 @@ var Scrolling = (function(){
       search_species_change: search_species_change, // change the species search filter
       checkSearch: checkSearch,                     // check search results - post-format if needed
       allResults: allResults,                       // setup search all page
+      formatExpand: formatExpand,                   // expandable div between text-min class
 
       // static widgets
       getMarkItUp: getMarkItUp,                     // get markup plugin for static widgets
@@ -2576,6 +2772,7 @@ var Scrolling = (function(){
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
       setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
+      makeFpkmBoxPlot: makeFpkmBoxPlot,             // fpkm by life stage box plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table          // augment to a datatable setting, when table rows are partitioned by certain attributes

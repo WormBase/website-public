@@ -595,3 +595,11 @@
     my $uri = uri_unescape($coded_uri);
     print "$uri";
 [% END %]
+
+[% MACRO json_encode(hash) BLOCK %]
+    [% PERL; %]
+        my $hash = $stash->get('hash');
+        use JSON;
+        print JSON->new->encode($hash);
+    [% END; %]
+[% END %]

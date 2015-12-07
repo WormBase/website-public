@@ -2335,6 +2335,43 @@ h3.jbrowse-view-header {
 }
 
 
+/* fpkm plots */
+
+.fpkm-plot-container {
+  display: flex;
+}
+
+.fpkm-plot-menu-container {
+  height: 450px;
+  border: 1px solid #AAA;
+  border-radius: 5px;
+  overflow-y: scroll;
+  display: inline-block;
+  top: 0;
+}
+
+.fpkm-plot-menu-container .plot-menu {
+  width: 300px;
+}
+
+.fpkm-plot-menu-container .plot-menu li {
+  padding: 0.5em;
+  cursor: pointer;
+}
+
+.fpkm-plot-menu-container .plot-menu li:hover {
+  text-decoration: underline;
+}
+
+.fpkm-plot-content-container {
+  display: inline-block;
+  width: 60%;
+}
+
+.fpkm-plot-content-container > * {
+  padding: 5px  20px;
+}
+
 /*********************************
 
    Navigation for sidebar view

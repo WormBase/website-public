@@ -1,3 +1,4 @@
+
 [%
 
 # use the field as if it comes from a widget;
@@ -21,6 +22,8 @@ WRAPPER $field_block title="" key="fpkm_expression_summary_ls";
     fpkm_plots = fields.fpkm_expression_summary_ls.data.plot;
     by_study = fields.fpkm_expression_summary_ls.data.by_study;
     projects_table = [];
+
+
     FOREACH p IN fpkm_plots;
         pid = p.project_id;
         UNLESS pid == 'RNASeq.elegans';  # skip the superproject of all
@@ -44,6 +47,15 @@ WRAPPER $field_block title="" key="fpkm_expression_summary_ls";
        analysis.project_link = tag2link(analysis.project_info);
     END;
 
+    '<div class="fpkm-plot-container">
+        <div class="fpkm-plot-menu-container"></div>
+        <div class="fpkm-plot-content-container">
+            <div class="fpkm-plot-description"></div>
+            <div class="fpkm-plot-canvas"></div>
+        </div>
+    </div>';
+
+
     build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],
                      columns = {
                          label => 'Name',
@@ -54,3 +66,7 @@ WRAPPER $field_block title="" key="fpkm_expression_summary_ls";
                      passed_data = fpkm_data, key="analysis");
 END;
 %]
+
+<script type="text/javascript">
+    WB.makeFpkmBoxPlot($jq('.fpkm-plot-container'),[% json_encode(by_study) %], [% json_encode(fpkm_data) %]);
+</script>
