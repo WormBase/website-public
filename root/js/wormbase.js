@@ -2198,7 +2198,7 @@ console.log(url);
           if (categoryData.length < minPoints) {
             return boxData;
           }else{
-            var boxParams = [].concat(categories[index],  // x
+            var boxParams = [].concat(index,  // x
                                       boxSummaryStat(categoryData)) // boxplot stats
             return boxData.concat([boxParams]);
           }
@@ -2220,6 +2220,14 @@ console.log(url);
           return pointsData.concat(otherPoints);
         }, []);
 
+        var allPoints = allData.reduce(function(pointsData, categoryData, categoryIndex){
+          var morePoints = categoryData.map(function(value){
+            return [categoryIndex,  // x
+                    value];  // y
+          })
+          return pointsData.concat(morePoints);
+        }, []);
+
         plotCanvas.highcharts({
           chart: {
             type: 'boxplot'
@@ -2238,18 +2246,26 @@ console.log(url);
               text: 'FPKM values'
             }
           },
-          series: [{
-            name: 'fpkm box statistics',
-            data: boxplotData
-          },{
-            name: 'Outlier',
-            color: Highcharts.getOptions().colors[0],
-            type: 'scatter',
-            data: boxplotOtherPoints,
-            tooltip: {
-              pointFormat: 'Observation: {point.y}'
-            }
-          }],
+          series: [
+            {
+              name: 'fpkm box statistics',
+              data: boxplotData
+            },
+            {
+              name: 'Outlier',
+              color: Highcharts.getOptions().colors[0],
+              type: 'scatter',
+              data: boxplotOtherPoints,
+              tooltip: {
+                pointFormat: 'Observation: {point.y}'
+              }
+            },
+            // {
+            //   name: 'All observations',
+            //   type: 'scatter',
+            //   data: allPoints
+            // }
+          ],
           legend: {
             enabled: false
           }
