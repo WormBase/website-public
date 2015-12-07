@@ -1389,7 +1389,7 @@ sub phenotype_graph {
     my $self = shift;
     my $object = $self->object;
     return {
-        data        => $object,
+        data        => "$object",
         description => 'The Phenotype Graph of the gene',
     };
 }
@@ -1402,8 +1402,10 @@ sub phenotype_graph_json {
 # live server
   my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
   my $data = get $url;
+  use Data::Dumper;
+  print Dumper $data;
   return {
-    data               => "$data",
+    data               => "$data" || undef,
     description        => 'JSON for Phenotype Graph of the gene',
   };
 }
