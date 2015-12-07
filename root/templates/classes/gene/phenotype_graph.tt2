@@ -10,7 +10,7 @@ $jq(function(){
 
   // get exported json from cytoscape desktop via ajax
   var graphP = $jq.ajax({
-    url: 'http://juancarlos.wormbase.org/rest/widget/gene/[% fields.phenotype_graph.data %]/phenotype_graph_json', 
+    url: '/rest/widget/gene/[% fields.phenotype_graph.data %]/phenotype_graph_json',
     type: 'GET',
     dataType: 'json'
   });
