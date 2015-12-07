@@ -1,0 +1,60 @@
+
+
+[%# This phenotype processing diverges from the standard processing ... %]
+[%# See also Varation.pm for alternative data processing/structure... %]
+
+<script src="/js/jquery/plugins/cytoscapejs/dagre/0.7.4/dagre.min.js "></script>
+
+<script type="text/javascript">
+$jq(function(){
+
+  // get exported json from cytoscape desktop via ajax
+  var graphP = $jq.ajax({
+    url: 'http://juancarlos.wormbase.org/rest/widget/gene/[% fields.phenotype_graph.data %]/phenotype_graph_json', 
+    type: 'GET',
+    dataType: 'json'
+  });
+
+  Promise.all([ graphP ]).then(initCy);
+
+  function initCy( then ){
+    var elements = then[0].elements;
+    WB.setupCytoscapePhenGraph(elements);
+  }
+});
+</script>
+
+<div id="cyPhenGraph" style="height: 750px; width: 950px; position: relative; float: left; border: 1px solid #aaa;">
+  <div id="cyPhenGraphLoading" style="width: 950px; padding: 20px 0 0 0; position: absolute; text-align: center;"><img src="/img/ajax-loader.gif" alt="Loading graph..." /></div>
+</div>
+<div id="controlsdiv" style="height: 750px; position: absolute; float: right; right: 0;">
+  <div id="exportdiv" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
+    <button id="view_png_button">export png</button>
+    <button id="view_edit_button" style="display: none;">go back</button>
+  </div><br/>
+  <div id="legenddiv" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
+    Legend :<br/>
+    <table>
+      <tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+        <polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
+        <g id="node1" class="node"><title></title>
+        <polygon fill="none" stroke="blue" stroke-dasharray="5,2" points="36,-36 0,-36 0,-0 36,-0 36,-36"/></g></g></svg></td><td valign="center">Root</td></tr>
+      <tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+        <polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
+        <g id="node1" class="node"><title></title>
+        <ellipse fill="none" stroke="blue" stroke-dasharray="5,2" cx="18" cy="-18" rx="18" ry="18"/></g></g></svg></td><td valign="center">Without Direct Annotation</td></tr>
+      <tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+        <polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
+        <g id="node1" class="node"><title></title>
+        <ellipse fill="none" stroke="red" cx="18" cy="-18" rx="18" ry="18"/></g></g></svg></td><td valign="center">With Direct Annotation</td></tr>
+    </table></div>
+  <div id="weightstate" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
+    <input type="radio" name="radio_type" id="radio_weighted"   checked="checked" >Annotation weighted</input><br/>
+    <input type="radio" name="radio_type" id="radio_unweighted">Annotation unweighted</input><br/>
+  </div><br/>
+  <div id="info" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">Mouseover or click node for more information.</div><br/>
+</div>
+<img id="png-export" style="border: 1px solid #ddd; display: none;">
