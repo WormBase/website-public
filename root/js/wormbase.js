@@ -2167,7 +2167,6 @@ console.log(url);
           var selectedItem = $jq(this);
           selectedItem.addClass('ui-state-focus');
           selectedItem.siblings().removeClass('ui-state-focus');
-          //console.log(selectedItem.text());
           update();
         });
       }
@@ -2176,7 +2175,6 @@ console.log(url);
         var projectID = getSelectedProject();
         updatePlot(projectID);
         updateDescription(projectID);
-        console.log(projects[projectID]);
       }
 
       function getSelectedProject(){
@@ -2194,7 +2192,7 @@ console.log(url);
             return Number(item.value);
           });
         });
-console.log(allData);
+
         var minPoints = 2;
         var boxplotData = allData.reduce(function(boxData, categoryData, index){
           if (categoryData.length < minPoints) {
@@ -2206,15 +2204,21 @@ console.log(allData);
           }
         }, []);
 
+        var boxplotOtherPoints = allData.reduce(function(pointsData, categoryData, index){
+          var boxParams = boxSummaryStat(categoryData);
+          var otherData = categoryData.length < minPoints ? categoryData
+            : categoryData.filter(function(value){
+              // ONLY keep the outliers
+              return value < boxParams[0] || value > boxParams[4];
+            });
 
-        // var scatterplotData = allData.reduce(
-        //   function(collection, categoryData, index){
-        //     return concat(con
+          var otherPoints = otherData.map(function(value){
+            return [index,  // x
+                   value] // y
+          });
 
-        // console.log('data per category');
-        // console.log(allData);
-        // console.log('box stat per category');
-        console.log(boxplotData);
+          return pointsData.concat(otherPoints);
+        }, []);
 
         plotCanvas.highcharts({
           chart: {
@@ -2237,6 +2241,14 @@ console.log(allData);
           series: [{
             name: 'fpkm box statistics',
             data: boxplotData
+          },{
+            name: 'Outlier',
+            color: Highcharts.getOptions().colors[0],
+            type: 'scatter',
+            data: boxplotOtherPoints,
+            tooltip: {
+              pointFormat: 'Observation: {point.y}'
+            }
           }],
           legend: {
             enabled: false
