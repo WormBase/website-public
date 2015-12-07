@@ -1402,10 +1402,9 @@ sub phenotype_graph_json {
 # live server
   my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
   my $data = get $url;
-  use Data::Dumper;
-  print Dumper $data;
+
   return {
-    data               => "$data" || undef,
+    data               => "$data",
     description        => 'JSON for Phenotype Graph of the gene',
   };
 }
