@@ -5,6 +5,7 @@ use Moose;
 use File::Spec::Functions qw(catfile catdir);
 use namespace::autoclean -except => 'meta';
 use File::Temp;
+use LWP::Simple;
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
@@ -153,7 +154,7 @@ sub _build__phenotypes {
                     }elsif ($type =~ /construct/i) {
                         # Only include those transgenes where the Caused_by in #Phenotype_info
                         # is the current gene.
-                        my ($caused_by) = $_->at('Caused_by');
+                        my ($caused_by) = $_->at('Caused_by') || '';
                         next unless $caused_by eq $object;
                     }
 
@@ -1379,6 +1380,40 @@ sub pos_neg_data {
 
 #######################################
 #
+# The Phenotype_Graph Widget
+#
+#######################################
+
+
+sub phenotype_graph {
+    my $self = shift;
+    my $object = $self->object;
+    return {
+        data        => "$object",
+        description => 'The Phenotype Graph of the gene',
+    };
+}
+
+sub phenotype_graph_json {
+  my $self = shift;
+  my $geneId = $self->object;
+# dev server
+#   my $url = 'http://wobr.caltech.edu:82/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+# live server
+  my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+  my $data = get $url;
+
+  return {
+    data               => "$data",
+    description        => 'JSON for Phenotype Graph of the gene',
+  };
+}
+
+
+
+
+#######################################
+#
 # The Phenotype Widget
 #
 #######################################
@@ -1415,7 +1450,7 @@ sub drives_overexpression {
 
                     # Only include those transgenes where the Caused_by in #Phenotype_info
                     # is the current gene.
-                    my ($caused_by) = $phene->at('Caused_by');
+                    my ($caused_by) = $phene->at('Caused_by') || '';
                     next unless $caused_by eq $object;
 
                     $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);

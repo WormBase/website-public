@@ -44,7 +44,6 @@
         histUpdate(history_on);
       }
 
-
       search_change(pageInfo['class']);
       if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
@@ -1778,25 +1777,34 @@ var Scrolling = (function(){
 console.log(url);
     var container = $jq("#" + id);
     setLoading(container);
-    Plugin.getPlugin("jGFeed", function(){
-      $jq.jGFeed(url,
-        function(feeds){
-          // Check for errors
-          if(!feeds){
-            // there was an error
-            return false;
-          }
-          var txt = '<div id="results"><ul>';
-          for(var i=-1, entry; (entry = feeds.entries[++i]);){
-            txt += '<div class="result"><li><div class="date" id="fade">'
-                + entry.publishedDate.substring(0, 16) + '</div>'
-                + '<a href="' + entry.link + '">' + entry.title + '</a></li>'
-                + '<div class="text-min">' + entry.content.replace(/(\<\/?p\>|\<br\>)/g, '') + '</div></div>';
-          }
-          txt += '</ul></div>';
-          container.html(txt);
-          formatExpand(container);
-        }, 3);
+    $jq.get(url, function(xml){
+      var entries = $jq(xml).find("item");
+      var entriesHtml = $jq.makeArray(entries).slice(0,3).map(
+        function(entry){
+          var title = $jq(entry).find('title').text();
+          var link = $jq(entry).find('link').text();
+          var date = ($jq(entry).find('pubDate').text() || '').substring(0, 16);
+          var content = $jq(entry).find('content\\:encoded').text()
+            || $jq(entry).find('description').text();
+          content = content.replace(/(\<\/?p\>|\<br\>)/g, '')
+
+          return [
+            '<div class="result">',
+            '<li>',
+            '<div class="date" id="fade">' + date + '</div>',
+            '<a href="' + link + '">' + title + '</a>',
+            '</li>',
+            '<div class="text-min">' + content + '</div></div>'
+          ].join('');
+
+        });
+
+      var txt = [].concat(
+        '<div id="results"><ul>',
+        entriesHtml,
+        '</ul></div>').join('');
+      container.html(txt);
+      formatExpand(container);
     });
   }
 
@@ -1907,8 +1915,194 @@ console.log(url);
       return drawCallback;
     }
 
-	function setupCytoscape(data, types, clazz){
 
+
+    function loadCytoscapeForInteraction(data, types, clazz) {
+      Plugin.getPlugin('cytoscape_js_arbor', function() {
+        setupCyInteractionViewer(data, types, clazz)
+      });
+    }
+
+    function setupCytoscapeInteraction(data, types, clazz){
+      Plugin.getPlugin('cytoscape_js',function(){
+        loadCytoscapeForInteraction(data, types, clazz)
+        return;
+      });
+    }
+
+
+    function loadCytoscapeForPhenGraph(elements) {
+      Plugin.getPlugin('qtip', function() {
+        Plugin.getPlugin('cytoscape_js_qtip', function() {
+          Plugin.getPlugin('cytoscape_js_dagre', function() {
+            setupCyPhenGraph(elements);
+          });
+        });
+      });
+    }
+
+    function setupCytoscapePhenGraph(elements){
+      Plugin.getPlugin('cytoscape_js',function(){
+        loadCytoscapeForPhenGraph(elements)
+        return;
+      });
+    }
+
+    function setupCyPhenGraph(elements){
+      var cyPhenGraph = window.cyPhenGraph = cytoscape({
+        container: document.getElementById('cyPhenGraph'),
+        layout: { name: 'dagre', padding: 10, nodeSep: 5 },
+        style: cytoscape.stylesheet()
+          .selector('node')
+            .css({
+              'content': 'data(name)',
+              'background-color': 'white',
+              'shape': 'data(nodeShape)',
+              'border-color': 'data(nodeColor)',
+              'border-style': 'data(borderStyle)',
+              'border-width': 'data(borderWidth)',
+              'width': 'data(diameter)',
+              'height': 'data(diameter)',
+              'text-valign': 'center',
+              'text-wrap': 'wrap',
+              'min-zoomed-font-size': 8,
+              'border-opacity': 0.3,
+              'font-size': 'data(fontSize)'
+            })
+          .selector('edge')
+            .css({
+              'target-arrow-shape': 'none',
+              'source-arrow-shape': 'triangle',
+              'width': 2,
+              'line-color': '#ddd',
+              'target-arrow-color': '#ddd',
+              'source-arrow-color': '#ddd'
+            })
+          .selector('.highlighted')
+            .css({
+              'background-color': '#61bffc',
+              'line-color': '#61bffc',
+              'target-arrow-color': '#61bffc',
+              'transition-property': 'background-color, line-color, target-arrow-color',
+              'transition-duration': '0.5s'
+            })
+          .selector('.faded')
+            .css({
+              'opacity': 0.25,
+              'text-opacity': 0
+            }),
+        elements: elements,
+        wheelSensitivity: 0.2,
+
+        ready: function(){
+          window.cyPhenGraph = this;
+          cyPhenGraph.elements().unselectify();
+          $jq('#cyPhenGraphLoading').hide();
+
+          cyPhenGraph.on('tap', 'node', function(e){
+            var node = e.cyTarget;
+            var nodeId   = node.data('id');
+            var neighborhood = node.neighborhood().add(node);
+            cyPhenGraph.elements().addClass('faded');
+            neighborhood.removeClass('faded');
+
+            var node = e.cyTarget;
+            var nodeId   = node.data('id');
+            var nodeName = node.data('name');
+            var annotCounts = node.data('annotCounts');
+            var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+            node.qtip({
+                 position: {
+                   my: 'top center',
+                   at: 'bottom center'
+                 },
+                 style: {
+                   classes: 'qtip-bootstrap',
+                   tip: {
+                     width: 16,
+                     height: 8
+                   }
+                 },
+                 content: qtipContent,
+                 show: {
+                    e: e.type,
+                    ready: true
+                 },
+                 hide: {
+                    e: 'mouseout unfocus'
+                 }
+            }, e);
+          });
+
+          cyPhenGraph.on('tap', function(e){
+            if( e.cyTarget === cyPhenGraph ){
+              cyPhenGraph.elements().removeClass('faded');
+            }
+          });
+
+          cyPhenGraph.on('mouseover', 'node', function(event) {
+              var node = event.cyTarget;
+              var nodeId   = node.data('id');
+              var nodeName = node.data('name');
+              var annotCounts = node.data('annotCounts');
+              var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+              $jq('#info').html( qtipContent );
+          });
+        }
+
+      });
+
+      $jq('#radio_weighted').on('click', function(){
+        var nodes = cyPhenGraph.nodes();
+        for( var i = 0; i < nodes.length; i++ ){
+          var node     = nodes[i];
+          var nodeId   = node.data('id');
+          var diameterWeighted   = node.data('diameter_weighted');
+          cyPhenGraph.$('#' + nodeId).data('diameter', diameterWeighted);
+          var fontSizeWeighted   = node.data('fontSizeWeighted');
+          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeWeighted);
+          var borderWidthWeighted   = node.data('borderWidthWeighted');
+          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthWeighted);
+        }
+        cyPhenGraph.layout();
+      });
+      $jq('#radio_unweighted').on('click', function(){
+        var nodes = cyPhenGraph.nodes();
+        for( var i = 0; i < nodes.length; i++ ){
+          var node     = nodes[i];
+          var nodeId   = node.data('id');
+          var diameterUnweighted = node.data('diameter_unweighted');
+          var diameterWeighted   = node.data('diameter_weighted');
+          cyPhenGraph.$('#' + nodeId).data('diameter', diameterUnweighted);
+          var fontSizeUnweighted = node.data('fontSizeUnweighted');
+          var fontSizeWeighted   = node.data('fontSizeWeighted');
+          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeUnweighted);
+          var borderWidthUnweighted = node.data('borderWidthUnweighted');
+          var borderWidthWeighted   = node.data('borderWidthWeighted');
+          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthUnweighted);
+        }
+        cyPhenGraph.layout();
+      });
+      $jq('#view_png_button').on('click', function(){
+        var png64 = cyPhenGraph.png({ bg: 'white' });
+        $jq('#png-export').attr('src', png64);
+        $jq('#png-export').show();
+        $jq('#cyPhenGraph').hide();
+        $jq('#weightstate').hide();
+        $jq('#view_png_button').hide();
+        $jq('#view_edit_button').show();
+        $jq('#info').text('drag image to desktop, or right-click and save image as');
+      });
+      $jq('#view_edit_button').on('click', function(){
+        $jq('#png-export').hide();
+        $jq('#cyPhenGraph').show();
+        $jq('#weightstate').show();
+        $jq('#view_png_button').show();
+        $jq('#view_edit_button').hide();
+      });
+    }
+
+    function setupCyInteractionViewer(data, types, clazz){
         /* Converts element attributes to their appropriate mapped values
          * Any non-matching attributes will be matched to the "other" mapping
          *     if exists
@@ -1956,7 +2150,6 @@ console.log(url);
             }
         }(1);
 
-        Plugin.getPlugin('cytoscape_js',function(){
 
             var legend = $jq('#cyto_legend');
 
@@ -2129,12 +2322,10 @@ console.log(url);
 
             }
 
-        });
+    }
 
 
-	}
-
-	function getMarkItUp(callback){
+    function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
         Plugin.getPlugin("markitup-wiki", callback);
       });
@@ -2332,23 +2523,28 @@ console.log(url);
     }
 
     var Plugin = (function(){
-      var plugins = new Array(),
+      var pluginsLoaded = new Array(),
+          pluginsLoading = new Array(),
+          callLater = new Array(),
           css = new Array(),
           loading = false,
           pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
                         dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js",
-                        jGFeed:"/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js",
                         generateFile: "/js/jquery/plugins/generateFile.js",
                         pfam: "/js/pfam/domain_graphics.min.js",
                         markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
-                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape_min/2.5.0/cytoscape.min.js",
+                        cytoscape_js_arbor: "/js/jquery/plugins/cytoscapejs/cytoscape_arbor/1.1.2/cytoscape-arbor.js",
+                        cytoscape_js_dagre: "/js/jquery/plugins/cytoscapejs/cytoscape_dagre/1.1.2/cytoscape-dagre.js",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.js",
+                        cytoscape_js_qtip: "/js/jquery/plugins/cytoscapejs/cytoscape_js_qtip/2.2.5/cytoscape-qtip.js",
                         highcharts: "/js/highcharts/4.1.9/highcharts.js",
                         highcharts_more: "/js/highcharts/4.1.9/highcharts-more.js",
-                        jstat: "/js/jstat/1.5.0/jstat.min.js",  // statistics library in JS
+                        //jstat: "/js/jstat/1.5.0/jstat.min.js",  // statistics library in JS, not in use
                         simple_statistics: "/js/simple-statistics/1.0.1/simple_statistics.min.js",  // statistics library in JS
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
@@ -2357,35 +2553,52 @@ console.log(url);
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
                         tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.css",
                         icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
           };
 
 
-
+      function addToCallLater(name, toCallFunction) {
+        if (typeof callLater[name] === 'undefined') { callLater[name] = new Array(); }
+        // append functions to the queue
+        callLater[name].push(toCallFunction);
+      }
+      function triggerCallLater(name) {
+        // take functions off the queue until the queue is empty
+        while(callLater[name] && callLater[name].length > 0){
+          var toCallFunction = callLater[name].shift();
+          if (toCallFunction){
+              toCallFunction();
+          }
+        }
+      }
 
       function getScript(name, url, stylesheet, callback) {
 
-       function LoadJs(){
+        function LoadJs(){
            css[name] = true;
-           loadFile(url, true, function(){
+
+           loadFile(url, true, name, function(){
               callback();
-              plugins[name] = true;
+              pluginsLoaded[name] = true;
+              pluginsLoading[name] = false;
+              if (callLater[name]) { triggerCallLater(name); }
            });
         }
 
+        pluginsLoading[name] = true;
         if(stylesheet){
-         loadFile(stylesheet, false, LoadJs());
+         loadFile(stylesheet, false, name, LoadJs());
         }else{
            LoadJs();
         }
       }
 
 
-      function loadFile(url, js, callback) {
+      function loadFile(url, js, name, callback) {
         var head = document.documentElement,
             script = document.createElement( js ? "script" : "link"),
             done = false;
-        loading = true;
 
         if(js){
           script.src = url;
@@ -2397,7 +2610,6 @@ console.log(url);
 
         function doneLoad(){
             done = true;
-            loading = false;
             if(callback)
               callback();
         }
@@ -2444,7 +2656,7 @@ console.log(url);
               // for the document.styleSheets[n].href === url
               // ...
 
-              // FF changes the length prematurely  )
+              // FF changes the length prematurely
             doneLoad();
               clearInterval(ti);
 
@@ -2457,6 +2669,23 @@ console.log(url);
       }
 
 
+
+      function checkPluginsLoaded(name) {
+        if (pluginsLoaded[name]) { return true; }
+          else { return false; }
+      }
+      function checkPluginsLoading(name) {
+        if (pluginsLoading[name]) { return true; }
+          else { return false; }
+      }
+
+      function isLoading(){
+        var loadingPlugins = Object.keys(pluginsLoading).filter(function(name){
+            return pluginsLoading[name];
+        });
+        return loadingPlugins.length > 0;
+      }
+
       function getPlugin(name, callback){
         var script = pScripts[name],
             css = pStyle[name];
@@ -2465,20 +2694,27 @@ console.log(url);
       }
 
       function loadPlugin(name, url, stylesheet, callback){
-        if(!plugins[name]){
-          getScript(name, url, !css[name] ? stylesheet : undefined, callback);
-        }else{
-          if(loading){
-            return setTimeout(getPlugin(name, url, stylesheet, callback),10);
+
+          if (pluginsLoaded[name]){
+              callback();
+          }else if (pluginsLoading[name]){
+              addToCallLater(name, callback);
+          }else if (isLoading()) {
+              // if anything else is loading, wait for a bit before loading the new plugin
+              setTimeout(function(){
+                  getScript(name, url, !css[name] ? stylesheet : undefined, callback);
+              },10);
           }else{
-            callback();
+              getScript(name, url, !css[name] ? stylesheet : undefined, callback);
           }
-        }
         return;
       }
 
       return {
         getPlugin: getPlugin,
+        checkPluginsLoaded: checkPluginsLoaded,
+        checkPluginsLoading: checkPluginsLoading,
+        addToCallLater: addToCallLater,
         loadFile: loadFile
       };
     })();
@@ -2534,11 +2770,12 @@ console.log(url);
       // miscellaneous
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
-      setupCytoscape: setupCytoscape,               // setup cytoscape for use
+      setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
+      setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
       makeFpkmBoxPlot: makeFpkmBoxPlot,             // fpkm by life stage box plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
-      partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes
+      partitioned_table: partitioned_table          // augment to a datatable setting, when table rows are partitioned by certain attributes
     };
   })();
 
