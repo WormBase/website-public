@@ -192,7 +192,7 @@ sub brief_id{
     return {
         description => "Short identification for this pseudogene",
         data => $object->Brief_identification ?
-            $object->Brief_identification : undef
+            ''. $object->Brief_identification : undef
     };
 }
 
