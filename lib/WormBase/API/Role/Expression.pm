@@ -549,12 +549,16 @@ sub fpkm_expression {
         return $label_value[1] <=> $label_value[0];
     } @fpkm_map;
 
+    # a map from experiment ID to [life_stage, type, library]
+    my $experiments = $self->_api->_tools->{rnaseq_plot}->experiments;
+
     return {
         description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
         data        => @fpkm_map ? {
             by_study => $self->_make_study_summary(\@regular_analyses),
             controls => [$self->_make_control_summary(\@controls)],
-            table => { fpkm => { data => \@fpkm_map } }
+            table => { fpkm => { data => \@fpkm_map } },
+            experiments => $experiments,
         } : undef
     };
 }
@@ -592,7 +596,7 @@ sub _pack_analysis_record {
         # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
         # /PRJ[A-Z]{2}\d+/ matches BioProject accession
         # everything else treat as NCBI Trace SRA
-        my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
+        my ($project_acc, $experiment_id) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\.(.+)/;
         my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
 
         my $project_label = $_study2label->{$project_acc} || $project_acc;
@@ -601,7 +605,8 @@ sub _pack_analysis_record {
         $project = {
             id => $project_acc,
             class => $source_db,
-            label => $project_label
+            label => $project_label,
+            experiment => $experiment_id
         };
     }
 
