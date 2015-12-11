@@ -2101,7 +2101,8 @@ div.field-title {
 }
 
 div.field-content {
-  display:inline-table;
+  /* display:inline-table; */
+  display: inline-block;
   float:none;
   width: calc(100% - 11em);
 }
