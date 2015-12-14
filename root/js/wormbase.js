@@ -2332,6 +2332,60 @@ console.log(url);
       return;
     }
 
+    var FpkmPlots = (function(){
+
+      // summary plot using selected modENCODE experiments
+      function makeFpkmSummaryPlot(container, experiments, data){
+        console.log(experiments);
+        console.log(data);
+        function update(){
+          var selectedData = data.filter(function(d){
+            var experimentId = d.project_info.experiment;
+            return d.project_info.id === 'SRP000401'
+              && experiments[experimentId];
+          });
+          console.log(selectedData);
+
+          // compute median for each technical replicates indicated by the library
+          // (technical replicates and only them share the same library ID)
+          var libraries = selectedData.reduce(function(prev, d){
+            var experimentId = d.project_info.experiment;
+            var libraryId = experiments[experimentId][2];
+            var replicates = prev[libraryId] || [];
+            prev[libraryId] = replicates.concat(d);
+            return prev;
+          }, {});
+          var summarized = Object.keys(libraries).map(function(libraryId){
+            var replicates = libraries[libraryId];
+            var median = ss.median(replicates.map(function(d){
+              return d.value;
+            }));
+            var experimentId = replicates[0].project_info.experiment;
+            var lifeStage = experiments[experimentId][0];
+            var type = experiments[experimentId][1];
+
+            return {
+              value: median,
+              lifeStage: lifeStage,
+              type: type,
+              library: libraryId
+            }
+          });
+          console.log(summarized);
+        }
+
+
+        // load the libraries and call to make the plot
+        (function setup(){
+          Plugin.getPlugin('simple_statistics',function(){
+            Plugin.getPlugin('highcharts', function(){
+              update();
+            });
+          });
+        })();
+      };
+
+      // box plot for each project
     function makeFpkmBoxPlot(container, projects, data){
 
       var menuContainer = container.find('.fpkm-plot-menu-container');
@@ -2522,6 +2576,14 @@ console.log(url);
 
     }
 
+    return {
+      makeFpkmBoxPlot: makeFpkmBoxPlot,
+      makeFpkmSummaryPlot: makeFpkmSummaryPlot
+    };
+
+  })();
+
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -2702,7 +2764,7 @@ console.log(url);
           }else if (isLoading()) {
               // if anything else is loading, wait for a bit before loading the new plugin
               setTimeout(function(){
-                  getScript(name, url, !css[name] ? stylesheet : undefined, callback);
+                loadPlugin(name, url, stylesheet, callback);  // call loadPlugin instead of getScript to re-evaluate the conditionals
               },10);
           }else{
               getScript(name, url, !css[name] ? stylesheet : undefined, callback);
@@ -2772,7 +2834,7 @@ console.log(url);
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
       setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
-      makeFpkmBoxPlot: makeFpkmBoxPlot,             // fpkm by life stage box plots
+      FpkmPlots: FpkmPlots,                         // fpkm by life stage plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table          // augment to a datatable setting, when table rows are partitioned by certain attributes

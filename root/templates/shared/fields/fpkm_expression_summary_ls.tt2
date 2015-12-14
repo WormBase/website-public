@@ -5,8 +5,16 @@
     # only needed if wrapping it in a field block
     fields.fpkm_expression_summary_ls = fpkm_expression_summary_ls;
 
+    IF fields.fpkm_expression_summary_ls;
+        # used by per project fpkm plots
+        by_study = fields.fpkm_expression_summary_ls.data.by_study;
+        fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
+        # used by plot Julie proposes selected experiments
+        experiments = fields.fpkm_expression_summary_ls.data.experiments;
+    END;
+
     WRAPPER $field_block title="FPKM expression data from selected modENCODE libraries" key="fpkm_expression_summary_ls";
-        '<div class="fpkm-selected"></div>';
+        '<div class="fpkm-selected-container"></div>';
     END;
 
     WRAPPER $field_block title="FPKM expression control statistics" key="fpkm_expression_summary_ls";
@@ -21,10 +29,6 @@
                          },
                          passed_data = control_stats_hash,
                          key='control_data');
-
-        # used by per project fpkm plots
-        by_study = fields.fpkm_expression_summary_ls.data.by_study;
-        fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
 
     END;
 
@@ -63,5 +67,6 @@
 %]
 
 <script type="text/javascript" >
-    WB.makeFpkmBoxPlot($jq('.fpkm-plot-container'),[% json_encode(by_study); %], [% json_encode(fpkm_data); %]);
+    WB.FpkmPlots.makeFpkmBoxPlot($jq('.fpkm-plot-container'),[% json_encode(by_study); %], [% json_encode(fpkm_data); %]);
+    WB.FpkmPlots.makeFpkmSummaryPlot($jq('.fpkm-selected-container'),[% json_encode(experiments); %], [% json_encode(fpkm_data); %]);
 </script>
