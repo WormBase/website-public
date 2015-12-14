@@ -1,51 +1,34 @@
 
 [%
 
-# use the field as if it comes from a widget;
-fields.fpkm_expression_summary_ls = fpkm_expression_summary_ls;
+    # use the field as if it comes from a widget;
+    # only needed if wrapping it in a field block
+    fields.fpkm_expression_summary_ls = fpkm_expression_summary_ls;
 
-WRAPPER $field_block title="" key="fpkm_expression_summary_ls";
-    #table for control stats
-    control_stats_hash = fields.fpkm_expression_summary_ls.data.controls;
-
-    '<div class="field-title">Control Statistics</div>';
-    build_data_table(order = ['life_stage', 'control median', 'control mean'],
-                     columns = {
-                         life_stage => 'Life stage',
-                         'control mean' => 'Control mean'
-                         'control median' => 'Control median'
-                     },
-                     passed_data = control_stats_hash,
-                     key='control_data');
-
-    # '<img width="100%" src="' _ fields.fpkm_expression_summary_ls.data.plot _ '" alt="FPKM expression data plot"></img>';
-    fpkm_plots = fields.fpkm_expression_summary_ls.data.plot;
-    by_study = fields.fpkm_expression_summary_ls.data.by_study;
-    projects_table = [];
-
-
-    FOREACH p IN fpkm_plots;
-        pid = p.project_id;
-        UNLESS pid == 'RNASeq.elegans';  # skip the superproject of all
-            p.img = '<img src="' _ p.uri _ '" alt="' _ pid _ '"' _
-            'style="width:400px;"';
-            p.project = by_study.$pid.tag;
-            p.description = by_study.$pid.description;
-            projects_table.push(p);
-        END;
+    WRAPPER $field_block title="FPKM expression data from selected modENCODE libraries" key="fpkm_expression_summary_ls";
+        '<div class="fpkm-selected"></div>';
     END;
-    build_data_table(order = ['project', 'description', 'img'],
-                     columns = {
-                        project => 'Project',
-                        description => 'Description',
-                        img => 'Image'
-                     }, passed_data = projects_table,
-                     key='projects_table');
 
-    fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
-    FOREACH analysis IN fpkm_data;
-       analysis.project_link = tag2link(analysis.project_info);
+    WRAPPER $field_block title="FPKM expression control statistics" key="fpkm_expression_summary_ls";
+        #table for control stats
+        control_stats_hash = fields.fpkm_expression_summary_ls.data.controls;
+
+        build_data_table(order = ['life_stage', 'control median', 'control mean'],
+                         columns = {
+                             life_stage => 'Life stage',
+                             'control mean' => 'Control mean'
+                             'control median' => 'Control median'
+                         },
+                         passed_data = control_stats_hash,
+                         key='control_data');
+
+        # used by per project fpkm plots
+        by_study = fields.fpkm_expression_summary_ls.data.by_study;
+        fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
+
     END;
+
+    WRAPPER $field_block title="FPKM expression" key="fpkm_expression_summary_ls";
 
     '<div class="fpkm-plot-container">
         <div class="fpkm-plot-menu-container"></div>
@@ -56,17 +39,29 @@ WRAPPER $field_block title="" key="fpkm_expression_summary_ls";
     </div>';
 
 
-    build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],
-                     columns = {
-                         label => 'Name',
-                         project_link => 'Project',
-                         life_stage => 'Life Stage',
-                         value => 'FPKM value'
-                     },
-                     passed_data = fpkm_data, key="analysis");
-END;
+
+        fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
+
+        FOREACH analysis IN fpkm_data;
+            analysis.project_link = tag2link(analysis.project_info);
+        END;
+
+        # USE Dumper;Dumper.dump(fpkm_data);
+        build_data_table(order = ['label', 'project_link', 'life_stage', 'value'],
+                         columns = {
+                             label => 'Name',
+                             project_link => 'Project',
+                             life_stage => 'Life Stage',
+                             value => 'FPKM value'
+                         },
+                         passed_data = fpkm_data, key="analysis");
+
+    '<div>';'</div>';
+    END;
+
+
 %]
 
-<script type="text/javascript">
-    WB.makeFpkmBoxPlot($jq('.fpkm-plot-container'),[% json_encode(by_study) %], [% json_encode(fpkm_data) %]);
+<script type="text/javascript" >
+    WB.makeFpkmBoxPlot($jq('.fpkm-plot-container'),[% json_encode(by_study); %], [% json_encode(fpkm_data); %]);
 </script>
