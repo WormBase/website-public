@@ -2382,7 +2382,7 @@ console.log(url);
               text: '' //'FPKM expression data from selected modENCODE libraries'
             },
             subtitle: {
-              text: 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The grey bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.',
+              text: 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.',
               style: {
                 "font-size": "10px"
               },
@@ -2393,12 +2393,29 @@ console.log(url);
             },
             series: [{
               name: 'Median',
+              color: '#beaed4',
               data: sortedByLifeStage.map(function(dat){
                 var values = dat.map(function(d){
                   return d.value;
                 });
                 return [bin(dat[0].lifeStage), ss.median(values)];
               })
+            },{
+              name: 'polyA+',
+              type: 'scatter',
+              color: '#f7a35c', //'rgba(223, 83, 83, .5)',
+              marker: {
+                radius: 2
+              },
+              data: pointSeries(sortedByLifeStage, 'polyA')
+            },{
+              name: 'ribozero',
+              type: 'scatter',
+              color: '#90ed7d',
+              marker: {
+                radius: 2,
+              },
+              data: pointSeries(sortedByLifeStage, 'ribozero')
             }],
             xAxis: xAxis(),
             yAxis: {
@@ -2464,6 +2481,19 @@ console.log(url);
           });
           console.log(summarized);
           return summarized;
+        }
+
+        // scatter plot data, filerType: one of ployA and ribozero
+        function pointSeries(sortedByLifeStage, filterType){
+
+          return sortedByLifeStage.reduce(function(prev, dat){
+            var results = dat.filter(function(d){
+              return d.type === filterType;
+            }).map(function(d){
+              return [bin(d.lifeStage), d.value];
+            });
+            return prev.concat(results);
+          }, [])
         }
 
         // get numerical representation of lifestage
