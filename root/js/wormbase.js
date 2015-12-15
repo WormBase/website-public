@@ -2336,15 +2336,106 @@ console.log(url);
 
       // summary plot using selected modENCODE experiments
       function makeFpkmSummaryPlot(container, experiments, data){
-        console.log(experiments);
-        console.log(data);
+
+        var CATEGORICAL_STAGES_PARTITIONED = [
+          ['EE', 'LE', 'L1', 'L2', 'L3', 'L4', 'YA'],
+          ['Male EM', 'Male L4'],
+          ['Soma L4'],
+          ['Dauer entry', 'Dauer', 'Dauer exit']];
+        var CATEGORICAL_STAGES = CATEGORICAL_STAGES_PARTITIONED.reduce(function(prev, stagesInPartition){
+          return prev.concat(stagesInPartition);
+        }, []);
+        var STAGES_TYPES = [
+          'Embryonic time series (minutes)',
+          'Classical stages',
+          'Male EM, L4',
+          'Soma',
+          'Dauer stages'];
+        var MIN_CATEGORICAL = 800;
+        var STEP = 100;
+
+        // console.log(experiments);
+        // console.log(data);
         function update(){
+          var cleanData = preprocess_data(experiments, data);
+          var lifeStage2Data = cleanData.reduce(function(prev, d){
+            var lifeStage = bin(d.lifeStage);
+            var dat = prev[lifeStage] || [];
+            prev[lifeStage] = dat.concat(d);
+            console.log(lifeStage, d.lifeStage);
+            return prev;
+          }, {});
+          var sortedByLifeStage = Object.keys(lifeStage2Data).sort(function(lifeStageA, lifeStageB){
+            return bin(lifeStageA) - bin(lifeStageB);
+          }).map(function(lifeStage){
+            return lifeStage2Data[lifeStage];
+          });
+
+          console.log(lifeStage2Data);
+
+          container.highcharts({
+            chart: {
+              type: 'column',
+              marginBottom: 150
+            },
+            title: {
+              text: '' //'FPKM expression data from selected modENCODE libraries'
+            },
+            subtitle: {
+              text: 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The grey bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.',
+              style: {
+                "font-size": "10px"
+              },
+              verticalAlign: 'bottom',
+              x: 20,
+              y: -40,
+              floating: true
+            },
+            series: [{
+              name: 'Median',
+              data: sortedByLifeStage.map(function(dat){
+                var values = dat.map(function(d){
+                  return d.value;
+                });
+                return [bin(dat[0].lifeStage), ss.median(values)];
+              })
+            }],
+            xAxis: xAxis(),
+            yAxis: {
+              min: 0,
+              title: {
+                text: 'Expression (FPKM)'
+              }
+            },
+            tooltip: {
+              headerFormat: '<table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} PFKM</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+            },
+            legend: {
+              align: 'center',
+              verticalAlign: 'top'
+            },
+
+            plotOptions: {
+              column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+              }
+            }
+          });
+        }
+
+        function preprocess_data(experiments, data){
           var selectedData = data.filter(function(d){
             var experimentId = d.project_info.experiment;
             return d.project_info.id === 'SRP000401'
               && experiments[experimentId];
           });
-          console.log(selectedData);
+          // console.log(selectedData);
 
           // compute median for each technical replicates indicated by the library
           // (technical replicates and only them share the same library ID)
@@ -2358,7 +2449,7 @@ console.log(url);
           var summarized = Object.keys(libraries).map(function(libraryId){
             var replicates = libraries[libraryId];
             var median = ss.median(replicates.map(function(d){
-              return d.value;
+              return Number(d.value);
             }));
             var experimentId = replicates[0].project_info.experiment;
             var lifeStage = experiments[experimentId][0];
@@ -2372,6 +2463,80 @@ console.log(url);
             }
           });
           console.log(summarized);
+          return summarized;
+        }
+
+        // get numerical representation of lifestage
+        function xScale(lifeStage){
+          if (Number(lifeStage) < MIN_CATEGORICAL) {
+            var minutes = Number(lifeStage);
+            return minutes;
+          }else{
+            var multiplier = CATEGORICAL_STAGES.indexOf(lifeStage);
+            //multiplier = multiplier === -1 ? 0 : multiplier;
+            return MIN_CATEGORICAL + multiplier * STEP;
+          }
+        }
+
+        // get the bin that the lifestage by binning its numeric value
+        function bin(lifeStage){
+          if (Number(lifeStage) < MIN_CATEGORICAL) {
+            var minutes = Number(lifeStage);
+            return Math.floor(minutes/30) * 30;
+          }else{
+            return xScale(lifeStage);
+          }
+        }
+
+        // declare how x-axis needs to be drawn
+        function xAxis () {
+          var tickLabels = [];
+          for (var tick = 0; tick < MIN_CATEGORICAL; tick+=STEP){
+            tickLabels.push(tick);
+          }
+          tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
+
+          return {
+            tickInterval: STEP,
+            labels: {
+              formatter: function() {
+                var index = parseInt(this.value) / STEP;
+                return tickLabels[index];
+              }
+            },
+            plotBands: plotBands()
+          }
+        }
+
+        // alternating bands to represent types of lifestages
+        function plotBands () {
+          var bands = STAGES_TYPES.map(function(typeName, index){
+            var palette = ['rgba(68, 170, 213, 0.1)',
+                          'rgba(0, 0, 0, 0)'];
+            var from, to;
+            if (index === 0){
+              // the numeric time stage
+              from = 0;
+              to = MIN_CATEGORICAL - STEP/2;
+            }else{
+              var stages = CATEGORICAL_STAGES_PARTITIONED[index-1];
+              from = xScale(stages[0]) - STEP/2;
+              to = xScale(stages[stages.length -1]) + STEP/2;
+            }
+            return {
+              from: from,
+              to: to,
+              color: palette[index % 2],
+              label: {
+                text: index % 2 ? '<br/>' + typeName : typeName,  //avoid band label overlapping
+                style: {
+                  color: '#606060'
+                }
+              }
+            };
+          });
+          console.log(bands);
+          return bands;
         }
 
 
