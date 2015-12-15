@@ -2411,7 +2411,7 @@ console.log(url);
             },{
               name: 'ribozero',
               type: 'scatter',
-              color: '#90ed7d',
+              color: '#4daf4a',
               marker: {
                 radius: 2,
               },
