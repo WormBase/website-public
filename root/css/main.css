@@ -2338,6 +2338,12 @@ h3.jbrowse-view-header {
 
 /* fpkm plots */
 
+.fpkm-selected-container {
+  display: flex;
+  min-width: 800px;
+}
+
+
 .fpkm-plot-container {
   display: flex;
 }
