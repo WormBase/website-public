@@ -2448,8 +2448,20 @@ var Scrolling = (function(){
             },
             tooltip: {
               headerFormat: '<table>',
-              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} PFKM</b></td></tr>',
+              pointFormatter: function(){
+                console.log(this);
+                var parts = [
+                  '<tr>',
+                  '<td style="color:' + this.series.color + ';padding:0;font-weight:bold;">' + this.series.name + ': </td>',
+                  '<td><b>' + this.y.toFixed(1) + ' (FPKM)</b></td>',
+                  '</tr>',
+                  '<tr>',
+                  '<td style="color:' + this.series.color + ';padding:0">life stage: </td>',
+                  '<td>' + getLabelFromScale(this.x, 1) + '</td>'
+                ];
+
+                return parts.join('');
+              },
               footerFormat: '</table>',
               shared: true,
               useHTML: true
@@ -2544,6 +2556,26 @@ var Scrolling = (function(){
           }
         }
 
+        // the reverse of the scale
+        // But instead of doing the computation, just use a lookup table and
+        var scale2Label;
+        function getLabelFromScale(scaleValue, withUnit){
+          if (!scale2Label){
+            // initialize lookup table, if it's never initialized
+            scale2Label = CATEGORICAL_STAGES.reduce(function(prev, label){
+              var scale = xScale(label);
+              prev[scale] = label;
+              return prev;
+            }, {});
+          }
+          var label = scale2Label[scaleValue] || scaleValue;
+          if (withUnit && !isNaN(Number(label))){
+            return label + ' (minutes)';
+          }else{
+            return  label;
+          }
+        }
+
         // get the bin that the lifestage by binning its numeric value
         function bin(lifeStage){
           if (Number(lifeStage) < MIN_CATEGORICAL) {
@@ -2563,18 +2595,12 @@ var Scrolling = (function(){
           }
           tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
 
-          var scale2Label = tickLabels.reduce(function(prev, label){
-            var scale = xScale(label);
-            prev[scale] = label;
-            return prev;
-          }, {});
-
           return {
             // tickInterval: STEP,
             tickPositions: tickLabels.map(xScale),
             labels: {
               formatter: function() {
-                var label = scale2Label[this.value];
+                var label = getLabelFromScale([this.value]);
                 return label.toString().split(/\s+/).join('<br/>');
               },
               style: {
