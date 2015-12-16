@@ -2388,16 +2388,38 @@ var Scrolling = (function(){
               floating: true
             },
             series: [{
-              name: 'Median',
+              name: 'Median',  // only includes the numerical stages
               //color: '#beaed4',
               color: 'rgba(189,189,189, 1)',
-              data: sortedByLifeStage.map(function(dat){
-                var values = dat.map(function(d){
-                  return d.value;
-                });
-                return [bin(dat[0].lifeStage), ss.median(values)];
-              }),
+              data: sortedByLifeStage
+                .filter(function(dat){
+                  // keep only the numerical lifestages
+                  return !isNaN(Number(dat[0].lifeStage));
+                })
+                .map(function(dat){
+                  var values = dat.map(function(d){
+                    return d.value;
+                  });
+                  return [bin(dat[0].lifeStage), ss.median(values)];
+                }),
               pointWidth: 8
+            },{
+              name: 'Median (categorical)',  //I need to separate these data out, cuz Gary Williams want a wider bar for them.
+              showInLegend: false,
+              pointWidth: 20,
+              //color: '#beaed4',
+              color: 'rgba(189,189,189, 1)',
+              data: sortedByLifeStage
+                .filter(function(dat){
+                  // keep only the NON-numerical lifestages
+                  return isNaN(Number(dat[0].lifeStage));
+                })
+                .map(function(dat){
+                  var values = dat.map(function(d){
+                    return d.value;
+                  });
+                  return [bin(dat[0].lifeStage), ss.median(values)];
+                }),
             },{
               name: 'polyA+',
               type: 'scatter',
