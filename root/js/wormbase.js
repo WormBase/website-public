@@ -2351,8 +2351,9 @@ var Scrolling = (function(){
           'Male EM, L4',
           'Soma',
           'Dauer stages'];
-        var MIN_CATEGORICAL = 800;
+        var MIN_CATEGORICAL = 850;
         var STEP = 100;
+        var BIG_STEP= 150;
 
         function update(){
           var cleanData = preprocess_data(experiments, data);
@@ -2500,9 +2501,24 @@ var Scrolling = (function(){
             var minutes = Number(lifeStage);
             return minutes;
           }else{
-            var multiplier = CATEGORICAL_STAGES.indexOf(lifeStage);
-            //multiplier = multiplier === -1 ? 0 : multiplier;
-            return MIN_CATEGORICAL + multiplier * STEP;
+            var stepMultiplier, bigStepMultiplier;
+            // normal step between stages of the same type
+            // big step when stage type changes, such as from numerical to classical
+
+            stepMultiplier = CATEGORICAL_STAGES.indexOf(lifeStage);
+
+            // use the side-effect of the loop to set the bigStepMultipliers
+            CATEGORICAL_STAGES_PARTITIONED.some(function(stages, index){
+              if (stages.indexOf(lifeStage) !== -1){
+                bigStepMultiplier = index;
+                return true;
+              }
+              return false;  //some() function will run more loops
+            });
+
+            return MIN_CATEGORICAL
+              + STEP * (stepMultiplier - bigStepMultiplier)  //big step is double counted in stepMultiplier, remove them
+              + BIG_STEP * (bigStepMultiplier);
           }
         }
 
@@ -2519,19 +2535,25 @@ var Scrolling = (function(){
         // declare how x-axis needs to be drawn
         function xAxis () {
           var tickLabels = [];
-          for (var tick = 0; tick < MIN_CATEGORICAL; tick+=STEP){
+          var maxNumericTick = MIN_CATEGORICAL-BIG_STEP;
+          for (var tick = 0; tick <= maxNumericTick; tick+=STEP){
             tickLabels.push(tick);
           }
           tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
 
+          var scale2Label = tickLabels.reduce(function(prev, label){
+            var scale = xScale(label);
+            prev[scale] = label;
+            return prev;
+          }, {});
+
           return {
-            //tickInterval: STEP,
+            // tickInterval: STEP,
             tickPositions: tickLabels.map(xScale),
             labels: {
               formatter: function() {
-                var index = parseInt(this.value) / STEP;
-                var label = tickLabels[index].toString();
-                return label.split(/\s+/).join('<br/>');
+                var label = scale2Label[this.value];
+                return label.toString().split(/\s+/).join('<br/>');
               },
               style: {
                 'font-size': 10,
@@ -2552,14 +2574,15 @@ var Scrolling = (function(){
             var palette = ['rgba(68, 170, 213, 0.1)',
                           'rgba(0, 0, 0, 0)'];
             var from, to;
+            var padding = BIG_STEP/2;
             if (index === 0){
               // the numeric time stage
               from = 0;
-              to = MIN_CATEGORICAL - STEP/2;
+              to = MIN_CATEGORICAL - padding;
             }else{
               var stages = CATEGORICAL_STAGES_PARTITIONED[index-1];
-              from = xScale(stages[0]) - STEP/2;
-              to = xScale(stages[stages.length -1]) + STEP/2;
+              from = xScale(stages[0]) - padding;
+              to = xScale(stages[stages.length -1]) + padding;
             }
             return {
               from: from,
