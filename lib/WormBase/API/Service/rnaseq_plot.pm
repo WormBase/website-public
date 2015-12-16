@@ -385,6 +385,14 @@ my %experiments = (
 
 		);
 
+
+has 'experiments' => (
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub { return \%experiments; }
+);
+
+
 my %libraries;
 foreach my $experiment (keys %experiments) {
   my ($stage, $type, $library) = @{$experiments{$experiment}};

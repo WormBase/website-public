@@ -1774,7 +1774,7 @@ var Scrolling = (function(){
   }
 
   function loadRSS(id, url){
-console.log(url);
+
     var container = $jq("#" + id);
     setLoading(container);
     $jq.get(url, function(xml){
@@ -2332,6 +2332,255 @@ console.log(url);
       return;
     }
 
+    var FpkmPlots = (function(){
+
+      // summary plot using selected modENCODE experiments
+      function makeFpkmSummaryPlot(container, experiments, data){
+
+        var CATEGORICAL_STAGES_PARTITIONED = [
+          ['EE', 'LE', 'L1', 'L2', 'L3', 'L4', 'YA'],
+          ['Male EM', 'Male L4'],
+          ['Soma L4'],
+          ['Dauer entry', 'Dauer', 'Dauer exit']];
+        var CATEGORICAL_STAGES = CATEGORICAL_STAGES_PARTITIONED.reduce(function(prev, stagesInPartition){
+          return prev.concat(stagesInPartition);
+        }, []);
+        var STAGES_TYPES = [
+          'Embryonic time series (minutes)',
+          'Classical stages',
+          'Male EM, L4',
+          'Soma',
+          'Dauer stages'];
+        var MIN_CATEGORICAL = 800;
+        var STEP = 100;
+
+        function update(){
+          var cleanData = preprocess_data(experiments, data);
+          var lifeStage2Data = cleanData.reduce(function(prev, d){
+            var lifeStage = bin(d.lifeStage);
+            var dat = prev[lifeStage] || [];
+            prev[lifeStage] = dat.concat(d);
+            return prev;
+          }, {});
+          var sortedByLifeStage = Object.keys(lifeStage2Data).sort(function(lifeStageA, lifeStageB){
+            return bin(lifeStageA) - bin(lifeStageB);
+          }).map(function(lifeStage){
+            return lifeStage2Data[lifeStage];
+          });
+
+          container.highcharts({
+            chart: {
+              type: 'column',
+              marginBottom: 150
+            },
+            title: {
+              text: '' //'FPKM expression data from selected modENCODE libraries'
+            },
+            subtitle: {
+              text: 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.',
+              style: {
+                "font-size": "10px"
+              },
+              verticalAlign: 'bottom',
+              x: 20,
+              y: -40,
+              floating: true
+            },
+            series: [{
+              name: 'Median',
+              color: '#beaed4',
+              data: sortedByLifeStage.map(function(dat){
+                var values = dat.map(function(d){
+                  return d.value;
+                });
+                return [bin(dat[0].lifeStage), ss.median(values)];
+              })
+            },{
+              name: 'polyA+',
+              type: 'scatter',
+              //color: '#f7a35c',
+              color: 'rgba(247, 163, 92, 1)',
+              marker: {
+                radius: 2
+              },
+              data: pointSeries(sortedByLifeStage, 'polyA')
+            },{
+              name: 'ribozero',
+              type: 'scatter',
+              //color: '#4daf4a',
+              color: 'rgba(77, 175, 74, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
+              marker: {
+                radius: 3,
+              },
+              data: pointSeries(sortedByLifeStage, 'ribozero')
+            }],
+            xAxis: xAxis(),
+            yAxis: {
+              min: 0,
+              title: {
+                text: 'Expression (FPKM)'
+              }
+            },
+            tooltip: {
+              headerFormat: '<table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} PFKM</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+            },
+            legend: {
+              align: 'center',
+              verticalAlign: 'top'
+            },
+
+            plotOptions: {
+              column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+              }
+            }
+          });
+        }
+
+        function preprocess_data(experiments, data){
+          var selectedData = data.filter(function(d){
+            var experimentId = d.project_info.experiment;
+            return d.project_info.id === 'SRP000401'
+              && experiments[experimentId];
+          });
+
+          // compute median for each technical replicates indicated by the library
+          // (technical replicates and only them share the same library ID)
+          var libraries = selectedData.reduce(function(prev, d){
+            var experimentId = d.project_info.experiment;
+            var libraryId = experiments[experimentId][2];
+            var replicates = prev[libraryId] || [];
+            prev[libraryId] = replicates.concat(d);
+            return prev;
+          }, {});
+          var summarized = Object.keys(libraries).map(function(libraryId){
+            var replicates = libraries[libraryId];
+            var median = ss.median(replicates.map(function(d){
+              return Number(d.value);
+            }));
+            var experimentId = replicates[0].project_info.experiment;
+            var lifeStage = experiments[experimentId][0];
+            var type = experiments[experimentId][1];
+
+            return {
+              value: median,
+              lifeStage: lifeStage,
+              type: type,
+              library: libraryId
+            }
+          });
+
+          return summarized;
+        }
+
+        // scatter plot data, filerType: one of ployA and ribozero
+        function pointSeries(sortedByLifeStage, filterType){
+
+          return sortedByLifeStage.reduce(function(prev, dat){
+            var results = dat.filter(function(d){
+              return d.type === filterType;
+            }).map(function(d){
+              return [bin(d.lifeStage), d.value];
+            });
+            return prev.concat(results);
+          }, [])
+        }
+
+        // get numerical representation of lifestage
+        function xScale(lifeStage){
+          if (Number(lifeStage) < MIN_CATEGORICAL) {
+            var minutes = Number(lifeStage);
+            return minutes;
+          }else{
+            var multiplier = CATEGORICAL_STAGES.indexOf(lifeStage);
+            //multiplier = multiplier === -1 ? 0 : multiplier;
+            return MIN_CATEGORICAL + multiplier * STEP;
+          }
+        }
+
+        // get the bin that the lifestage by binning its numeric value
+        function bin(lifeStage){
+          if (Number(lifeStage) < MIN_CATEGORICAL) {
+            var minutes = Number(lifeStage);
+            return Math.floor(minutes/30) * 30;
+          }else{
+            return xScale(lifeStage);
+          }
+        }
+
+        // declare how x-axis needs to be drawn
+        function xAxis () {
+          var tickLabels = [];
+          for (var tick = 0; tick < MIN_CATEGORICAL; tick+=STEP){
+            tickLabels.push(tick);
+          }
+          tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
+
+          return {
+            tickInterval: STEP,
+            labels: {
+              formatter: function() {
+                var index = parseInt(this.value) / STEP;
+                return tickLabels[index];
+              }
+            },
+            plotBands: plotBands(),
+            title: {
+              text: 'Life stages',
+              y: -10
+            }
+          }
+        }
+
+        // alternating bands to represent types of lifestages
+        function plotBands () {
+          var bands = STAGES_TYPES.map(function(typeName, index){
+            var palette = ['rgba(68, 170, 213, 0.1)',
+                          'rgba(0, 0, 0, 0)'];
+            var from, to;
+            if (index === 0){
+              // the numeric time stage
+              from = 0;
+              to = MIN_CATEGORICAL - STEP/2;
+            }else{
+              var stages = CATEGORICAL_STAGES_PARTITIONED[index-1];
+              from = xScale(stages[0]) - STEP/2;
+              to = xScale(stages[stages.length -1]) + STEP/2;
+            }
+            return {
+              from: from,
+              to: to,
+              color: palette[index % 2],
+              label: {
+                text: index % 2 ? '<br/>' + typeName : typeName,  //avoid band label overlapping
+                style: {
+                  color: '#606060'
+                }
+              }
+            };
+          });
+
+          return bands;
+        }
+
+
+        // load the libraries and call to make the plot
+        (function setup(){
+          Plugin.getPlugin('simple_statistics',function(){
+            Plugin.getPlugin('highcharts', function(){
+              update();
+            });
+          });
+        })();
+      };
+
+      // box plot for each project
     function makeFpkmBoxPlot(container, projects, data){
 
       var menuContainer = container.find('.fpkm-plot-menu-container');
@@ -2522,6 +2771,14 @@ console.log(url);
 
     }
 
+    return {
+      makeFpkmBoxPlot: makeFpkmBoxPlot,
+      makeFpkmSummaryPlot: makeFpkmSummaryPlot
+    };
+
+  })();
+
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -2702,7 +2959,7 @@ console.log(url);
           }else if (isLoading()) {
               // if anything else is loading, wait for a bit before loading the new plugin
               setTimeout(function(){
-                  getScript(name, url, !css[name] ? stylesheet : undefined, callback);
+                loadPlugin(name, url, stylesheet, callback);  // call loadPlugin instead of getScript to re-evaluate the conditionals
               },10);
           }else{
               getScript(name, url, !css[name] ? stylesheet : undefined, callback);
@@ -2772,7 +3029,7 @@ console.log(url);
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
       setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
-      makeFpkmBoxPlot: makeFpkmBoxPlot,             // fpkm by life stage box plots
+      FpkmPlots: FpkmPlots,                         // fpkm by life stage plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table          // augment to a datatable setting, when table rows are partitioned by certain attributes

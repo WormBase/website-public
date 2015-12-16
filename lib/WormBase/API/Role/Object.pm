@@ -2117,11 +2117,12 @@ sub _check_data_content {
                 push @compliance_problems, @problems;
             }
         }
-        unless (@$data) {
-            push @compliance_problems,
-              join('->', @keys)
-              . ': Empty arrayref returned; should be undef.';
-        }
+        # unless (@$data) {
+        #     push @compliance_problems,
+        #       join('->', @keys)
+        #       . ': Empty arrayref returned; should be undef.';
+        #     # Why??
+        # }
     }
     elsif ($ref eq 'HASH') {
         foreach my $key (keys %$data) {
