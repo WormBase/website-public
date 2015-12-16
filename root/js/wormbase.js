@@ -2403,7 +2403,8 @@ console.log(url);
             },{
               name: 'polyA+',
               type: 'scatter',
-              color: '#f7a35c', //'rgba(223, 83, 83, .5)',
+              //color: '#f7a35c',
+              color: 'rgba(247, 163, 92, 1)',
               marker: {
                 radius: 2
               },
@@ -2411,7 +2412,8 @@ console.log(url);
             },{
               name: 'ribozero',
               type: 'scatter',
-              color: '#4daf4a',
+              //color: '#4daf4a',
+              color: 'rgba(77, 175, 74, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
               marker: {
                 radius: 3,
               },
