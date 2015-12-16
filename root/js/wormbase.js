@@ -2348,7 +2348,7 @@ var Scrolling = (function(){
         var STAGES_TYPES = [
           'Embryonic time series (minutes)',
           'Classical stages',
-          'Male EM, L4',
+          'Male',
           'Soma',
           'Dauer stages'];
         var MIN_CATEGORICAL = 850;
@@ -2384,7 +2384,7 @@ var Scrolling = (function(){
               },
               verticalAlign: 'bottom',
               x: 20,
-              y: -40,
+              y: -60,
               floating: true
             },
             series: [{
@@ -2563,7 +2563,7 @@ var Scrolling = (function(){
             plotBands: plotBands(),
             title: {
               text: 'Life stages',
-              y: -10
+              y: 0
             }
           }
         }
@@ -2589,9 +2589,9 @@ var Scrolling = (function(){
               to: to,
               color: palette[index % 2],
               label: {
-                text: index % 2 ? '<br/>' + typeName : typeName,  //avoid band label overlapping
+                text: typeName,
                 style: {
-                  color: '#606060'
+                  color: '#606060',
                 }
               }
             };
