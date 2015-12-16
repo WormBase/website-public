@@ -1774,7 +1774,7 @@ var Scrolling = (function(){
   }
 
   function loadRSS(id, url){
-console.log(url);
+
     var container = $jq("#" + id);
     setLoading(container);
     $jq.get(url, function(xml){
@@ -2354,15 +2354,12 @@ console.log(url);
         var MIN_CATEGORICAL = 800;
         var STEP = 100;
 
-        // console.log(experiments);
-        // console.log(data);
         function update(){
           var cleanData = preprocess_data(experiments, data);
           var lifeStage2Data = cleanData.reduce(function(prev, d){
             var lifeStage = bin(d.lifeStage);
             var dat = prev[lifeStage] || [];
             prev[lifeStage] = dat.concat(d);
-            console.log(lifeStage, d.lifeStage);
             return prev;
           }, {});
           var sortedByLifeStage = Object.keys(lifeStage2Data).sort(function(lifeStageA, lifeStageB){
@@ -2370,8 +2367,6 @@ console.log(url);
           }).map(function(lifeStage){
             return lifeStage2Data[lifeStage];
           });
-
-          console.log(lifeStage2Data);
 
           container.highcharts({
             chart: {
@@ -2454,7 +2449,6 @@ console.log(url);
             return d.project_info.id === 'SRP000401'
               && experiments[experimentId];
           });
-          // console.log(selectedData);
 
           // compute median for each technical replicates indicated by the library
           // (technical replicates and only them share the same library ID)
@@ -2481,7 +2475,7 @@ console.log(url);
               library: libraryId
             }
           });
-          console.log(summarized);
+
           return summarized;
         }
 
@@ -2571,7 +2565,7 @@ console.log(url);
               }
             };
           });
-          console.log(bands);
+
           return bands;
         }
 
