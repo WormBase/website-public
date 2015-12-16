@@ -2395,7 +2395,8 @@ var Scrolling = (function(){
                   return d.value;
                 });
                 return [bin(dat[0].lifeStage), ss.median(values)];
-              })
+              }),
+              pointWidth: 8
             },{
               name: 'polyA+',
               type: 'scatter',
@@ -2524,11 +2525,17 @@ var Scrolling = (function(){
           tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
 
           return {
-            tickInterval: STEP,
+            //tickInterval: STEP,
+            tickPositions: tickLabels.map(xScale),
             labels: {
               formatter: function() {
                 var index = parseInt(this.value) / STEP;
-                return tickLabels[index];
+                var label = tickLabels[index].toString();
+                return label.split(/\s+/).join('<br/>');
+              },
+              style: {
+                'font-size': 10,
+                'font-weight': 'bold'
               }
             },
             plotBands: plotBands(),
