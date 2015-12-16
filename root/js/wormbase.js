@@ -2433,9 +2433,9 @@ var Scrolling = (function(){
               name: 'ribozero',
               type: 'scatter',
               //color: '#4daf4a',
-              color: 'rgba(31,120,180, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
+              color: 'rgba(84, 39, 143, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
               marker: {
-                radius: 4,
+                radius: 3,
               },
               data: pointSeries(sortedByLifeStage, 'ribozero')
             }],
