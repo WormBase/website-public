@@ -2413,7 +2413,7 @@ console.log(url);
               type: 'scatter',
               color: '#4daf4a',
               marker: {
-                radius: 2,
+                radius: 3,
               },
               data: pointSeries(sortedByLifeStage, 'ribozero')
             }],
@@ -2534,7 +2534,11 @@ console.log(url);
                 return tickLabels[index];
               }
             },
-            plotBands: plotBands()
+            plotBands: plotBands(),
+            title: {
+              text: 'Life stages',
+              y: -10
+            }
           }
         }
 
