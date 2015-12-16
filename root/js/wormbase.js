@@ -2388,7 +2388,8 @@ var Scrolling = (function(){
             },
             series: [{
               name: 'Median',
-              color: '#beaed4',
+              //color: '#beaed4',
+              color: 'rgba(189,189,189, 1)',
               data: sortedByLifeStage.map(function(dat){
                 var values = dat.map(function(d){
                   return d.value;
@@ -2399,18 +2400,18 @@ var Scrolling = (function(){
               name: 'polyA+',
               type: 'scatter',
               //color: '#f7a35c',
-              color: 'rgba(247, 163, 92, 1)',
+              color:  'rgba(77, 175, 74, 1)',
               marker: {
-                radius: 2
+                radius: 3
               },
               data: pointSeries(sortedByLifeStage, 'polyA')
             },{
               name: 'ribozero',
               type: 'scatter',
               //color: '#4daf4a',
-              color: 'rgba(77, 175, 74, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
+              color: 'rgba(31,120,180, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
               marker: {
-                radius: 3,
+                radius: 4,
               },
               data: pointSeries(sortedByLifeStage, 'ribozero')
             }],
