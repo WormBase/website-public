@@ -2449,7 +2449,6 @@ var Scrolling = (function(){
             tooltip: {
               headerFormat: '<table>',
               pointFormatter: function(){
-                console.log(this);
                 var parts = [
                   '<tr>',
                   '<td style="color:' + this.series.color + ';padding:0;font-weight:bold;">' + this.series.name + ': </td>',
