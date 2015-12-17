@@ -2348,11 +2348,12 @@ var Scrolling = (function(){
         var STAGES_TYPES = [
           'Embryonic time series (minutes)',
           'Classical stages',
-          'Male EM, L4',
+          'Male',
           'Soma',
           'Dauer stages'];
-        var MIN_CATEGORICAL = 800;
+        var MIN_CATEGORICAL = 850;
         var STEP = 100;
+        var BIG_STEP= 150;
 
         function update(){
           var cleanData = preprocess_data(experiments, data);
@@ -2383,32 +2384,56 @@ var Scrolling = (function(){
               },
               verticalAlign: 'bottom',
               x: 20,
-              y: -40,
+              y: -60,
               floating: true
             },
             series: [{
-              name: 'Median',
-              color: '#beaed4',
-              data: sortedByLifeStage.map(function(dat){
-                var values = dat.map(function(d){
-                  return d.value;
-                });
-                return [bin(dat[0].lifeStage), ss.median(values)];
-              })
+              name: 'Median',  // only includes the numerical stages
+              //color: '#beaed4',
+              color: 'rgba(189,189,189, 1)',
+              data: sortedByLifeStage
+                .filter(function(dat){
+                  // keep only the numerical lifestages
+                  return !isNaN(Number(dat[0].lifeStage));
+                })
+                .map(function(dat){
+                  var values = dat.map(function(d){
+                    return d.value;
+                  });
+                  return [bin(dat[0].lifeStage), ss.median(values)];
+                }),
+              pointWidth: 8
+            },{
+              name: 'Median (categorical)',  //I need to separate these data out, cuz Gary Williams want a wider bar for them.
+              showInLegend: false,
+              pointWidth: 20,
+              //color: '#beaed4',
+              color: 'rgba(189,189,189, 1)',
+              data: sortedByLifeStage
+                .filter(function(dat){
+                  // keep only the NON-numerical lifestages
+                  return isNaN(Number(dat[0].lifeStage));
+                })
+                .map(function(dat){
+                  var values = dat.map(function(d){
+                    return d.value;
+                  });
+                  return [bin(dat[0].lifeStage), ss.median(values)];
+                }),
             },{
               name: 'polyA+',
               type: 'scatter',
               //color: '#f7a35c',
-              color: 'rgba(247, 163, 92, 1)',
+              color:  'rgba(77, 175, 74, 1)',
               marker: {
-                radius: 2
+                radius: 3
               },
               data: pointSeries(sortedByLifeStage, 'polyA')
             },{
               name: 'ribozero',
               type: 'scatter',
               //color: '#4daf4a',
-              color: 'rgba(77, 175, 74, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
+              color: 'rgba(84, 39, 143, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
               marker: {
                 radius: 3,
               },
@@ -2423,8 +2448,19 @@ var Scrolling = (function(){
             },
             tooltip: {
               headerFormat: '<table>',
-              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} PFKM</b></td></tr>',
+              pointFormatter: function(){
+                var parts = [
+                  '<tr>',
+                  '<td style="color:' + this.series.color + ';padding:0;font-weight:bold;">' + this.series.name + ': </td>',
+                  '<td><b>' + this.y.toFixed(1) + ' (FPKM)</b></td>',
+                  '</tr>',
+                  '<tr>',
+                  '<td style="color:' + this.series.color + ';padding:0">life stage: </td>',
+                  '<td>' + getLabelFromScale(this.x, 1) + '</td>'
+                ];
+
+                return parts.join('');
+              },
               footerFormat: '</table>',
               shared: true,
               useHTML: true
@@ -2498,9 +2534,44 @@ var Scrolling = (function(){
             var minutes = Number(lifeStage);
             return minutes;
           }else{
-            var multiplier = CATEGORICAL_STAGES.indexOf(lifeStage);
-            //multiplier = multiplier === -1 ? 0 : multiplier;
-            return MIN_CATEGORICAL + multiplier * STEP;
+            var stepMultiplier, bigStepMultiplier;
+            // normal step between stages of the same type
+            // big step when stage type changes, such as from numerical to classical
+
+            stepMultiplier = CATEGORICAL_STAGES.indexOf(lifeStage);
+
+            // use the side-effect of the loop to set the bigStepMultipliers
+            CATEGORICAL_STAGES_PARTITIONED.some(function(stages, index){
+              if (stages.indexOf(lifeStage) !== -1){
+                bigStepMultiplier = index;
+                return true;
+              }
+              return false;  //some() function will run more loops
+            });
+
+            return MIN_CATEGORICAL
+              + STEP * (stepMultiplier - bigStepMultiplier)  //big step is double counted in stepMultiplier, remove them
+              + BIG_STEP * (bigStepMultiplier);
+          }
+        }
+
+        // the reverse of the scale
+        // But instead of doing the computation, just use a lookup table and
+        var scale2Label;
+        function getLabelFromScale(scaleValue, withUnit){
+          if (!scale2Label){
+            // initialize lookup table, if it's never initialized
+            scale2Label = CATEGORICAL_STAGES.reduce(function(prev, label){
+              var scale = xScale(label);
+              prev[scale] = label;
+              return prev;
+            }, {});
+          }
+          var label = scale2Label[scaleValue] || scaleValue;
+          if (withUnit && !isNaN(Number(label))){
+            return label + ' (minutes)';
+          }else{
+            return  label;
           }
         }
 
@@ -2517,23 +2588,29 @@ var Scrolling = (function(){
         // declare how x-axis needs to be drawn
         function xAxis () {
           var tickLabels = [];
-          for (var tick = 0; tick < MIN_CATEGORICAL; tick+=STEP){
+          var maxNumericTick = MIN_CATEGORICAL-BIG_STEP;
+          for (var tick = 0; tick <= maxNumericTick; tick+=STEP){
             tickLabels.push(tick);
           }
           tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
 
           return {
-            tickInterval: STEP,
+            // tickInterval: STEP,
+            tickPositions: tickLabels.map(xScale),
             labels: {
               formatter: function() {
-                var index = parseInt(this.value) / STEP;
-                return tickLabels[index];
+                var label = getLabelFromScale([this.value]);
+                return label.toString().split(/\s+/).join('<br/>');
+              },
+              style: {
+                'font-size': 10,
+                'font-weight': 'bold'
               }
             },
             plotBands: plotBands(),
             title: {
               text: 'Life stages',
-              y: -10
+              y: 0
             }
           }
         }
@@ -2544,23 +2621,24 @@ var Scrolling = (function(){
             var palette = ['rgba(68, 170, 213, 0.1)',
                           'rgba(0, 0, 0, 0)'];
             var from, to;
+            var padding = BIG_STEP/2;
             if (index === 0){
               // the numeric time stage
               from = 0;
-              to = MIN_CATEGORICAL - STEP/2;
+              to = MIN_CATEGORICAL - padding;
             }else{
               var stages = CATEGORICAL_STAGES_PARTITIONED[index-1];
-              from = xScale(stages[0]) - STEP/2;
-              to = xScale(stages[stages.length -1]) + STEP/2;
+              from = xScale(stages[0]) - padding;
+              to = xScale(stages[stages.length -1]) + padding;
             }
             return {
               from: from,
               to: to,
               color: palette[index % 2],
               label: {
-                text: index % 2 ? '<br/>' + typeName : typeName,  //avoid band label overlapping
+                text: typeName,
                 style: {
-                  color: '#606060'
+                  color: '#606060',
                 }
               }
             };
