@@ -2238,6 +2238,11 @@ div#google-map {
   width: 60px;
 }
 
+/* gene phenotypes table */
+#table_phenotype_by tbody td:nth-child(2) > .evidence{
+  margin-left: 1em; /* so it aligns with non-list elements, in the same column */
+}
+
 /* FPKM control statistics table on Expression widget */
 table#table_control_data_by td:nth-child(2),
 table#table_control_data_by td:nth-child(3) {

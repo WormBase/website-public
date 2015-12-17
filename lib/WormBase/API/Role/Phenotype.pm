@@ -21,7 +21,6 @@ has 'features' => (
 #
 #######################################
 
-use Data::Dumper;
 
 sub _build__phenotypes_with {
     my ($self, $phenotype_tag) = @_;
@@ -85,25 +84,26 @@ sub _build__phenotypes_with {
 
     sub aggregate {
         my ($phenos_ref) = @_;
-        my @evidence_all = map {
-            $_->{evidence};
-        } @$phenos_ref;
+
+        my %evidence_by_type = ();
+        foreach (@$phenos_ref){
+            my $type = $_->{evidence}->{text}->{class};
+            my $type_name = $type eq 'variation' ? 'Allele' : $type eq 'rnai' ? 'RNAi' : ucfirst($type);
+            $evidence_by_type{$type_name} = [] unless $evidence_by_type{$type_name};
+
+            push @{$evidence_by_type{$type_name}}, $_->{evidence};
+        }
         return {
             phenotype => $phenos_ref->[0]->{phenotype},
             entity => $phenos_ref->[0]->{entity},
-            evidence => @evidence_all ? \@evidence_all : undef
+            evidence =>  %evidence_by_type ?  \%evidence_by_type : undef
         };
     }
 
     my $packed_all_phenotypes_hash
         = $self->_group_and_combine(\@all_phenotypes, \&group_key, \&aggregate);
 
-    #print Dumper \@all_phenotypes;
-
-    #{ text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
-
     my @packed_all_phenotypes = values %$packed_all_phenotypes_hash;
-    print Dumper \@packed_all_phenotypes;
 
     return @packed_all_phenotypes ? \@packed_all_phenotypes : undef;
 }
