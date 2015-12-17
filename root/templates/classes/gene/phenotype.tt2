@@ -29,7 +29,7 @@
 [% END %]
 
 
-<div style="display:inline-block;">
+
 [% WRAPPER $field_block title="Phenotype not observed" key="phenotype_not_observed" %]
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
       [%
@@ -38,12 +38,13 @@
                 phenotype  => 'Phenotype',
                 entity => 'Entity',
                 evidence => 'Supporting Evidence',
-        }, key='phenotype_not_observed');
+        }, key='phenotype_not_observed',
+        style = phenotype_table_settings);
       %]
    [% END %]
     <br />
 [% END %]
-</div>
+
 
 [% WRAPPER $field_block title="Interaction-based phenotypes" key="phenotype_by_interaction" %]
 
