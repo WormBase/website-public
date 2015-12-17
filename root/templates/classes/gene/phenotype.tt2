@@ -1,4 +1,12 @@
 
+[% phenotype_table_settings = '
+"drawCallback": WB.partitioned_table(0),
+"columnDefs": [
+            { "targets": 0, "visible": false },
+            { "targets": 1, "width": "50%" },
+        ],
+        "autoWidth": false
+'%]
 
 
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
@@ -13,7 +21,9 @@
                 phenotype  => 'Phenotype',
                  entity => 'Entity',
                  evidence => 'Supporting Evidence',
-            }, key='phenotype');
+            }, key='phenotype',
+            style = phenotype_table_settings
+    );
 %]
     <br />
 [% END %]

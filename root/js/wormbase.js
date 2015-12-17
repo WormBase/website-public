@@ -1901,7 +1901,7 @@ var Scrolling = (function(){
                 if ( last !== group ) {
 
                     var summary_row = row_summarize ? row_summarize(rowData)
-                      : '<td>' + groupID + '</td><td>'+ group + '</td>';
+                      : '<td>' + group + '</td>';
                     $jq(rows).eq( i ).before(
                         '<tr class="group">' + summary_row + '<td colspan="100%"></td></tr>'
                     );

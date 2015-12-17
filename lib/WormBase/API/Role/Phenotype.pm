@@ -70,11 +70,42 @@ sub _build__phenotypes_with {
         };
     } (@allele_phenotypes, @rnai_phenotypes,  @construct_phenotypes);
 
-    print Dumper \@all_phenotypes;
+
+    sub group_key {
+        my ($pheno) = @_;
+        my @entity_keys = map {
+            $_->{key} || '';
+        } @{$pheno->{entity} || []};
+
+        my $key = join('_',
+                       $pheno->{phenotype}->{id},
+                       @entity_keys);
+        return $key;
+    }
+
+    sub aggregate {
+        my ($phenos_ref) = @_;
+        my @evidence_all = map {
+            $_->{evidence};
+        } @$phenos_ref;
+        return {
+            phenotype => $phenos_ref->[0]->{phenotype},
+            entity => $phenos_ref->[0]->{entity},
+            evidence => @evidence_all ? \@evidence_all : undef
+        };
+    }
+
+    my $packed_all_phenotypes_hash
+        = $self->_group_and_combine(\@all_phenotypes, \&group_key, \&aggregate);
+
+    #print Dumper \@all_phenotypes;
+
     #{ text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
 
+    my @packed_all_phenotypes = values %$packed_all_phenotypes_hash;
+    print Dumper \@packed_all_phenotypes;
 
-    return @all_phenotypes ? \@all_phenotypes : undef;
+    return @packed_all_phenotypes ? \@packed_all_phenotypes : undef;
 }
 
 
@@ -112,7 +143,8 @@ sub _get_pato {
             pato_evidence => {
                 entity_term => $self->_pack_obj($entity_term),
                 pato_term => $pato_term->Name ? "$pato_term->Name" : 'abnormal',
-            }
+            },
+            key => join('_', "$entity_term", "$pato_term")
         };
     } @entities;
 
