@@ -1,4 +1,3 @@
-
 package WormBase::API::Object::Gene;
 
 use Moose;
@@ -14,6 +13,7 @@ with    'WormBase::API::Role::Interaction';
 with    'WormBase::API::Role::Variation';
 with    'WormBase::API::Role::Expression';
 with    'WormBase::API::Role::Feature';
+with    'WormBase::API::Role::Phenotype';
 
 =pod
 
@@ -78,12 +78,6 @@ has 'tracks' => (
     }
 );
 
-has '_phenotypes' => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build__phenotypes',
-);
-
 has '_alleles' => (
     is      => 'ro',
     lazy    => 1,
@@ -111,61 +105,7 @@ sub _build__alleles {
     };
 
 }
-sub _build__phenotypes {
-    my ($self) = @_;
-    my $object = $self->object;
 
-    my %phenotypes;
-
-    # This needs to be updated for the construct model
-    # Shall do this when Drives_construct and Construct_product tags are populated
-    # Don't look into Drives_construct for phenotypes - source Karen Y
-    foreach my $type ('Construct_product', 'Allele', 'RNAi_result'){
-
-        my $type_name; #label that shows in the evidence column above each list of that object type
-        if ($type =~ /construct/i) { $type_name = 'Transgene:'; }
-        elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
-        else { $type_name = $type . ':'; }
-
-        # For Transgene experiements, unlike others, have to get phenotype info from associated constructs
-        my @exp_objs;
-        if ($type =~ /construct/i) { @exp_objs = map { $_->Transgene_construct } $object->$type; }
-        else { @exp_objs = $object->$type; }
-
-        foreach my $obj (@exp_objs){
-
-            my $seq_status = eval { $obj->SeqStatus };
-            my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
-            my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
-
-            foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
-
-                foreach ($obj->$obs){
-
-                    $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
-                    my $evidence = $self->_get_evidence($_);
-                    # add some additional information for RNAis
-                    if ($type eq 'RNAi_result') {
-                        $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
-                        my $genotype = $obj->Genotype;
-                        $evidence->{Genotype} = "$genotype" if $genotype;
-                        my $strain = $obj->Strain;
-                        $evidence->{Strain} = "$strain" if $strain;
-                    }elsif ($type =~ /construct/i) {
-                        # Only include those transgenes where the Caused_by in #Phenotype_info
-                        # is the current gene.
-                        my ($caused_by) = $_->at('Caused_by') || '';
-                        next unless $caused_by eq $object;
-                    }
-
-                    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
-                }
-            }
-        }
-    }
-
-    return %phenotypes ? \%phenotypes : undef;
-}
 
 sub phenotype_by_interaction {
     my ($self) = @_;
@@ -1422,12 +1362,34 @@ sub phenotype_graph_json {
 # returns the phenotype(s) associated with the gene.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/phenotype
 
-sub phenotype {
+
+has 'phenotype' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__phenotype',
+);
+
+has 'phenotype_not_observed' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__phenotype_not_observed',
+);
+
+sub _build__phenotype {
     my $self = shift;
 
     return {
         description => 'The Phenotype summary of the gene',
-        data        => $self->_phenotypes,
+        data        => $self->_build__phenotypes_with('Phenotype'),
+    };
+}
+
+sub _build__phenotype_not_observed {
+    my $self = shift;
+
+    return {
+        description => 'The Phenotype not observed summary of the gene',
+        data        => $self->_build__phenotypes_with('Phenotype_not_observed'),
     };
 }
 
@@ -1450,7 +1412,8 @@ sub drives_overexpression {
 
                     # Only include those transgenes where the Caused_by in #Phenotype_info
                     # is the current gene.
-                    my ($caused_by) = $phene->at('Caused_by') || '';
+
+                    my ($caused_by) = $phene->at('Caused_by_gene');
                     next unless $caused_by eq $object;
 
                     $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
