@@ -1329,7 +1329,7 @@ sub _post_to_github {
     $content =~ s/\Q$visitor_email\E/visitor_email/g;
     $content_prelude =~ s/\Q$visitor_name\E/visitor_name/g;
     $content_prelude =~ s/\Q$visitor_email\E/visitor_email/g;
-    
+
     # Originating page MAY be an object.
     my $page_title = eval { $page_object->title } || $page_url;
     $page_title = URI::Escape::uri_unescape($page_title);
@@ -1646,6 +1646,28 @@ sub _get_page {
     return $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
 }
 
+sub blog_feed :Path("/rest/blog_feed") Args(0) {
+    my ( $self, $c ) = @_;
+    my $url = 'http://blog.wormbase.org/categories/news/feed/';
+    $self->_get_feed_from($c, $url);
+
+}
+
+sub forum_feed :Path("/rest/forum_feed") Args(0) {
+    my ( $self, $c ) = @_;
+    my $url = 'http://forums.wormbase.org/index.php?type=rss;action=.xml;limit=3';
+    $self->_get_feed_from($c, $url);
+
+}
+
+sub _get_feed_from {
+    my ($self, $c, $url) = @_;
+    my $new_request = HTTP::Request->new(GET => $url);
+    my $lwp       = LWP::UserAgent->new;
+    my $response  = $lwp->request($new_request);
+    $c->res->header( 'Content-Type' => 'text/xml' );
+    $c->res->body($response->content);
+}
 
 ########################################
 #

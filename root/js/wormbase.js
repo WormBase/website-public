@@ -44,7 +44,6 @@
         histUpdate(history_on);
       }
 
-
       search_change(pageInfo['class']);
       if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
@@ -941,7 +940,7 @@
           // a long wait to ensure field is rendered before showing,
           // to avoid miscalculating field height
           container.children().first().remove();  //remove placeholder
-          container.children().last().show();
+          container.children().show();
           discreetLoad(container.children('.field'), heightDefault);
         },2000);
       };
@@ -1775,27 +1774,37 @@ var Scrolling = (function(){
   }
 
   function loadRSS(id, url){
+
     var container = $jq("#" + id);
     setLoading(container);
-    Plugin.getPlugin("jGFeed", function(){
-      $jq.jGFeed(url,
-        function(feeds){
-          // Check for errors
-          if(!feeds){
-            // there was an error
-            return false;
-          }
-          var txt = '<div id="results"><ul>';
-          for(var i=-1, entry; (entry = feeds.entries[++i]);){
-            txt += '<div class="result"><li><div class="date" id="fade">'
-                + entry.publishedDate.substring(0, 16) + '</div>'
-                + '<a href="' + entry.link + '">' + entry.title + '</a></li>'
-                + '<div class="text-min">' + entry.content.replace(/(\<\/?p\>|\<br\>)/g, '') + '</div></div>';
-          }
-          txt += '</ul></div>';
-          container.html(txt);
-          formatExpand(container);
-        }, 3);
+    $jq.get(url, function(xml){
+      var entries = $jq(xml).find("item");
+      var entriesHtml = $jq.makeArray(entries).slice(0,3).map(
+        function(entry){
+          var title = $jq(entry).find('title').text();
+          var link = $jq(entry).find('link').text();
+          var date = ($jq(entry).find('pubDate').text() || '').substring(0, 16);
+          var content = $jq(entry).find('content\\:encoded').text()
+            || $jq(entry).find('description').text();
+          content = content.replace(/(\<\/?p\>|\<br\>)/g, '')
+
+          return [
+            '<div class="result">',
+            '<li>',
+            '<div class="date" id="fade">' + date + '</div>',
+            '<a href="' + link + '">' + title + '</a>',
+            '</li>',
+            '<div class="text-min">' + content + '</div></div>'
+          ].join('');
+
+        });
+
+      var txt = [].concat(
+        '<div id="results"><ul>',
+        entriesHtml,
+        '</ul></div>').join('');
+      container.html(txt);
+      formatExpand(container);
     });
   }
 
@@ -1906,8 +1915,194 @@ var Scrolling = (function(){
       return drawCallback;
     }
 
-	function setupCytoscape(data, types, clazz){
 
+
+    function loadCytoscapeForInteraction(data, types, clazz) {
+      Plugin.getPlugin('cytoscape_js_arbor', function() {
+        setupCyInteractionViewer(data, types, clazz)
+      });
+    }
+
+    function setupCytoscapeInteraction(data, types, clazz){
+      Plugin.getPlugin('cytoscape_js',function(){
+        loadCytoscapeForInteraction(data, types, clazz)
+        return;
+      });
+    }
+
+
+    function loadCytoscapeForPhenGraph(elements) {
+      Plugin.getPlugin('qtip', function() {
+        Plugin.getPlugin('cytoscape_js_qtip', function() {
+          Plugin.getPlugin('cytoscape_js_dagre', function() {
+            setupCyPhenGraph(elements);
+          });
+        });
+      });
+    }
+
+    function setupCytoscapePhenGraph(elements){
+      Plugin.getPlugin('cytoscape_js',function(){
+        loadCytoscapeForPhenGraph(elements)
+        return;
+      });
+    }
+
+    function setupCyPhenGraph(elements){
+      var cyPhenGraph = window.cyPhenGraph = cytoscape({
+        container: document.getElementById('cyPhenGraph'),
+        layout: { name: 'dagre', padding: 10, nodeSep: 5 },
+        style: cytoscape.stylesheet()
+          .selector('node')
+            .css({
+              'content': 'data(name)',
+              'background-color': 'white',
+              'shape': 'data(nodeShape)',
+              'border-color': 'data(nodeColor)',
+              'border-style': 'data(borderStyle)',
+              'border-width': 'data(borderWidth)',
+              'width': 'data(diameter)',
+              'height': 'data(diameter)',
+              'text-valign': 'center',
+              'text-wrap': 'wrap',
+              'min-zoomed-font-size': 8,
+              'border-opacity': 0.3,
+              'font-size': 'data(fontSize)'
+            })
+          .selector('edge')
+            .css({
+              'target-arrow-shape': 'none',
+              'source-arrow-shape': 'triangle',
+              'width': 2,
+              'line-color': '#ddd',
+              'target-arrow-color': '#ddd',
+              'source-arrow-color': '#ddd'
+            })
+          .selector('.highlighted')
+            .css({
+              'background-color': '#61bffc',
+              'line-color': '#61bffc',
+              'target-arrow-color': '#61bffc',
+              'transition-property': 'background-color, line-color, target-arrow-color',
+              'transition-duration': '0.5s'
+            })
+          .selector('.faded')
+            .css({
+              'opacity': 0.25,
+              'text-opacity': 0
+            }),
+        elements: elements,
+        wheelSensitivity: 0.2,
+
+        ready: function(){
+          window.cyPhenGraph = this;
+          cyPhenGraph.elements().unselectify();
+          $jq('#cyPhenGraphLoading').hide();
+
+          cyPhenGraph.on('tap', 'node', function(e){
+            var node = e.cyTarget;
+            var nodeId   = node.data('id');
+            var neighborhood = node.neighborhood().add(node);
+            cyPhenGraph.elements().addClass('faded');
+            neighborhood.removeClass('faded');
+
+            var node = e.cyTarget;
+            var nodeId   = node.data('id');
+            var nodeName = node.data('name');
+            var annotCounts = node.data('annotCounts');
+            var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+            node.qtip({
+                 position: {
+                   my: 'top center',
+                   at: 'bottom center'
+                 },
+                 style: {
+                   classes: 'qtip-bootstrap',
+                   tip: {
+                     width: 16,
+                     height: 8
+                   }
+                 },
+                 content: qtipContent,
+                 show: {
+                    e: e.type,
+                    ready: true
+                 },
+                 hide: {
+                    e: 'mouseout unfocus'
+                 }
+            }, e);
+          });
+
+          cyPhenGraph.on('tap', function(e){
+            if( e.cyTarget === cyPhenGraph ){
+              cyPhenGraph.elements().removeClass('faded');
+            }
+          });
+
+          cyPhenGraph.on('mouseover', 'node', function(event) {
+              var node = event.cyTarget;
+              var nodeId   = node.data('id');
+              var nodeName = node.data('name');
+              var annotCounts = node.data('annotCounts');
+              var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+              $jq('#info').html( qtipContent );
+          });
+        }
+
+      });
+
+      $jq('#radio_weighted').on('click', function(){
+        var nodes = cyPhenGraph.nodes();
+        for( var i = 0; i < nodes.length; i++ ){
+          var node     = nodes[i];
+          var nodeId   = node.data('id');
+          var diameterWeighted   = node.data('diameter_weighted');
+          cyPhenGraph.$('#' + nodeId).data('diameter', diameterWeighted);
+          var fontSizeWeighted   = node.data('fontSizeWeighted');
+          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeWeighted);
+          var borderWidthWeighted   = node.data('borderWidthWeighted');
+          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthWeighted);
+        }
+        cyPhenGraph.layout();
+      });
+      $jq('#radio_unweighted').on('click', function(){
+        var nodes = cyPhenGraph.nodes();
+        for( var i = 0; i < nodes.length; i++ ){
+          var node     = nodes[i];
+          var nodeId   = node.data('id');
+          var diameterUnweighted = node.data('diameter_unweighted');
+          var diameterWeighted   = node.data('diameter_weighted');
+          cyPhenGraph.$('#' + nodeId).data('diameter', diameterUnweighted);
+          var fontSizeUnweighted = node.data('fontSizeUnweighted');
+          var fontSizeWeighted   = node.data('fontSizeWeighted');
+          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeUnweighted);
+          var borderWidthUnweighted = node.data('borderWidthUnweighted');
+          var borderWidthWeighted   = node.data('borderWidthWeighted');
+          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthUnweighted);
+        }
+        cyPhenGraph.layout();
+      });
+      $jq('#view_png_button').on('click', function(){
+        var png64 = cyPhenGraph.png({ bg: 'white' });
+        $jq('#png-export').attr('src', png64);
+        $jq('#png-export').show();
+        $jq('#cyPhenGraph').hide();
+        $jq('#weightstate').hide();
+        $jq('#view_png_button').hide();
+        $jq('#view_edit_button').show();
+        $jq('#info').text('drag image to desktop, or right-click and save image as');
+      });
+      $jq('#view_edit_button').on('click', function(){
+        $jq('#png-export').hide();
+        $jq('#cyPhenGraph').show();
+        $jq('#weightstate').show();
+        $jq('#view_png_button').show();
+        $jq('#view_edit_button').hide();
+      });
+    }
+
+    function setupCyInteractionViewer(data, types, clazz){
         /* Converts element attributes to their appropriate mapped values
          * Any non-matching attributes will be matched to the "other" mapping
          *     if exists
@@ -1955,7 +2150,6 @@ var Scrolling = (function(){
             }
         }(1);
 
-        Plugin.getPlugin('cytoscape_js',function(){
 
             var legend = $jq('#cyto_legend');
 
@@ -2128,34 +2322,565 @@ var Scrolling = (function(){
 
             }
 
-        });
+    }
 
 
-	}
-
-	function getMarkItUp(callback){
+    function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
         Plugin.getPlugin("markitup-wiki", callback);
       });
       return;
     }
 
+    var FpkmPlots = (function(){
+
+      // summary plot using selected modENCODE experiments
+      function makeFpkmSummaryPlot(container, experiments, data){
+
+        var CATEGORICAL_STAGES_PARTITIONED = [
+          ['EE', 'LE', 'L1', 'L2', 'L3', 'L4', 'YA'],
+          ['Male EM', 'Male L4'],
+          ['Soma L4'],
+          ['Dauer entry', 'Dauer', 'Dauer exit']];
+        var CATEGORICAL_STAGES = CATEGORICAL_STAGES_PARTITIONED.reduce(function(prev, stagesInPartition){
+          return prev.concat(stagesInPartition);
+        }, []);
+        var STAGES_TYPES = [
+          'Embryonic time series (minutes)',
+          'Classical stages',
+          'Male',
+          'Soma',
+          'Dauer stages'];
+        var MIN_CATEGORICAL = 850;
+        var STEP = 100;
+        var BIG_STEP= 150;
+
+        function update(){
+          var cleanData = preprocess_data(experiments, data);
+          var lifeStage2Data = cleanData.reduce(function(prev, d){
+            var lifeStage = bin(d.lifeStage);
+            var dat = prev[lifeStage] || [];
+            prev[lifeStage] = dat.concat(d);
+            return prev;
+          }, {});
+          var sortedByLifeStage = Object.keys(lifeStage2Data).sort(function(lifeStageA, lifeStageB){
+            return bin(lifeStageA) - bin(lifeStageB);
+          }).map(function(lifeStage){
+            return lifeStage2Data[lifeStage];
+          });
+
+          container.highcharts({
+            chart: {
+              type: 'column',
+              marginBottom: 150
+            },
+            title: {
+              text: '' //'FPKM expression data from selected modENCODE libraries'
+            },
+            subtitle: {
+              text: 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.',
+              style: {
+                "font-size": "10px"
+              },
+              verticalAlign: 'bottom',
+              x: 20,
+              y: -60,
+              floating: true
+            },
+            series: [{
+              name: 'Median',  // only includes the numerical stages
+              //color: '#beaed4',
+              color: 'rgba(189,189,189, 1)',
+              data: sortedByLifeStage
+                .filter(function(dat){
+                  // keep only the numerical lifestages
+                  return !isNaN(Number(dat[0].lifeStage));
+                })
+                .map(function(dat){
+                  var values = dat.map(function(d){
+                    return d.value;
+                  });
+                  return [bin(dat[0].lifeStage), ss.median(values)];
+                }),
+              pointWidth: 8
+            },{
+              name: 'Median (categorical)',  //I need to separate these data out, cuz Gary Williams want a wider bar for them.
+              showInLegend: false,
+              pointWidth: 20,
+              //color: '#beaed4',
+              color: 'rgba(189,189,189, 1)',
+              data: sortedByLifeStage
+                .filter(function(dat){
+                  // keep only the NON-numerical lifestages
+                  return isNaN(Number(dat[0].lifeStage));
+                })
+                .map(function(dat){
+                  var values = dat.map(function(d){
+                    return d.value;
+                  });
+                  return [bin(dat[0].lifeStage), ss.median(values)];
+                }),
+            },{
+              name: 'polyA+',
+              type: 'scatter',
+              //color: '#f7a35c',
+              color:  'rgba(77, 175, 74, 1)',
+              marker: {
+                radius: 3
+              },
+              data: pointSeries(sortedByLifeStage, 'polyA')
+            },{
+              name: 'ribozero',
+              type: 'scatter',
+              //color: '#4daf4a',
+              color: 'rgba(84, 39, 143, 0.6)',  // ribozero is drawn on top of polyA, so give it some transparancy
+              marker: {
+                radius: 3,
+              },
+              data: pointSeries(sortedByLifeStage, 'ribozero')
+            }],
+            xAxis: xAxis(),
+            yAxis: {
+              min: 0,
+              title: {
+                text: 'Expression (FPKM)'
+              }
+            },
+            tooltip: {
+              headerFormat: '<table>',
+              pointFormatter: function(){
+                var parts = [
+                  '<tr>',
+                  '<td style="color:' + this.series.color + ';padding:0;font-weight:bold;">' + this.series.name + ': </td>',
+                  '<td><b>' + this.y.toFixed(1) + ' (FPKM)</b></td>',
+                  '</tr>',
+                  '<tr>',
+                  '<td style="color:' + this.series.color + ';padding:0">life stage: </td>',
+                  '<td>' + getLabelFromScale(this.x, 1) + '</td>'
+                ];
+
+                return parts.join('');
+              },
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+            },
+            legend: {
+              align: 'center',
+              verticalAlign: 'top'
+            },
+
+            plotOptions: {
+              column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+              }
+            }
+          });
+        }
+
+        function preprocess_data(experiments, data){
+          var selectedData = data.filter(function(d){
+            var experimentId = d.project_info.experiment;
+            return d.project_info.id === 'SRP000401'
+              && experiments[experimentId];
+          });
+
+          // compute median for each technical replicates indicated by the library
+          // (technical replicates and only them share the same library ID)
+          var libraries = selectedData.reduce(function(prev, d){
+            var experimentId = d.project_info.experiment;
+            var libraryId = experiments[experimentId][2];
+            var replicates = prev[libraryId] || [];
+            prev[libraryId] = replicates.concat(d);
+            return prev;
+          }, {});
+          var summarized = Object.keys(libraries).map(function(libraryId){
+            var replicates = libraries[libraryId];
+            var median = ss.median(replicates.map(function(d){
+              return Number(d.value);
+            }));
+            var experimentId = replicates[0].project_info.experiment;
+            var lifeStage = experiments[experimentId][0];
+            var type = experiments[experimentId][1];
+
+            return {
+              value: median,
+              lifeStage: lifeStage,
+              type: type,
+              library: libraryId
+            }
+          });
+
+          return summarized;
+        }
+
+        // scatter plot data, filerType: one of ployA and ribozero
+        function pointSeries(sortedByLifeStage, filterType){
+
+          return sortedByLifeStage.reduce(function(prev, dat){
+            var results = dat.filter(function(d){
+              return d.type === filterType;
+            }).map(function(d){
+              return [bin(d.lifeStage), d.value];
+            });
+            return prev.concat(results);
+          }, [])
+        }
+
+        // get numerical representation of lifestage
+        function xScale(lifeStage){
+          if (Number(lifeStage) < MIN_CATEGORICAL) {
+            var minutes = Number(lifeStage);
+            return minutes;
+          }else{
+            var stepMultiplier, bigStepMultiplier;
+            // normal step between stages of the same type
+            // big step when stage type changes, such as from numerical to classical
+
+            stepMultiplier = CATEGORICAL_STAGES.indexOf(lifeStage);
+
+            // use the side-effect of the loop to set the bigStepMultipliers
+            CATEGORICAL_STAGES_PARTITIONED.some(function(stages, index){
+              if (stages.indexOf(lifeStage) !== -1){
+                bigStepMultiplier = index;
+                return true;
+              }
+              return false;  //some() function will run more loops
+            });
+
+            return MIN_CATEGORICAL
+              + STEP * (stepMultiplier - bigStepMultiplier)  //big step is double counted in stepMultiplier, remove them
+              + BIG_STEP * (bigStepMultiplier);
+          }
+        }
+
+        // the reverse of the scale
+        // But instead of doing the computation, just use a lookup table and
+        var scale2Label;
+        function getLabelFromScale(scaleValue, withUnit){
+          if (!scale2Label){
+            // initialize lookup table, if it's never initialized
+            scale2Label = CATEGORICAL_STAGES.reduce(function(prev, label){
+              var scale = xScale(label);
+              prev[scale] = label;
+              return prev;
+            }, {});
+          }
+          var label = scale2Label[scaleValue] || scaleValue;
+          if (withUnit && !isNaN(Number(label))){
+            return label + ' (minutes)';
+          }else{
+            return  label;
+          }
+        }
+
+        // get the bin that the lifestage by binning its numeric value
+        function bin(lifeStage){
+          if (Number(lifeStage) < MIN_CATEGORICAL) {
+            var minutes = Number(lifeStage);
+            return Math.floor(minutes/30) * 30;
+          }else{
+            return xScale(lifeStage);
+          }
+        }
+
+        // declare how x-axis needs to be drawn
+        function xAxis () {
+          var tickLabels = [];
+          var maxNumericTick = MIN_CATEGORICAL-BIG_STEP;
+          for (var tick = 0; tick <= maxNumericTick; tick+=STEP){
+            tickLabels.push(tick);
+          }
+          tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
+
+          return {
+            // tickInterval: STEP,
+            tickPositions: tickLabels.map(xScale),
+            labels: {
+              formatter: function() {
+                var label = getLabelFromScale([this.value]);
+                return label.toString().split(/\s+/).join('<br/>');
+              },
+              style: {
+                'font-size': 10,
+                'font-weight': 'bold'
+              }
+            },
+            plotBands: plotBands(),
+            title: {
+              text: 'Life stages',
+              y: 0
+            }
+          }
+        }
+
+        // alternating bands to represent types of lifestages
+        function plotBands () {
+          var bands = STAGES_TYPES.map(function(typeName, index){
+            var palette = ['rgba(68, 170, 213, 0.1)',
+                          'rgba(0, 0, 0, 0)'];
+            var from, to;
+            var padding = BIG_STEP/2;
+            if (index === 0){
+              // the numeric time stage
+              from = 0;
+              to = MIN_CATEGORICAL - padding;
+            }else{
+              var stages = CATEGORICAL_STAGES_PARTITIONED[index-1];
+              from = xScale(stages[0]) - padding;
+              to = xScale(stages[stages.length -1]) + padding;
+            }
+            return {
+              from: from,
+              to: to,
+              color: palette[index % 2],
+              label: {
+                text: typeName,
+                style: {
+                  color: '#606060',
+                }
+              }
+            };
+          });
+
+          return bands;
+        }
+
+
+        // load the libraries and call to make the plot
+        (function setup(){
+          Plugin.getPlugin('simple_statistics',function(){
+            Plugin.getPlugin('highcharts', function(){
+              update();
+            });
+          });
+        })();
+      };
+
+      // box plot for each project
+    function makeFpkmBoxPlot(container, projects, data){
+
+      var menuContainer = container.find('.fpkm-plot-menu-container');
+      var plotCanvas = container.find('.fpkm-plot-canvas');
+
+      var projectToData = groupBy(function(item){
+        return item.project;
+      }, data);
+
+
+      function setupMenu(projects){
+        var listItems = Object.keys(projects).map(function(projectID, index){
+          var project = projects[projectID];
+          var className = index === 0 ? 'ui-state-focus' : '';
+
+          return '<li class="' + className
+            + '" data-project-id="' + projectID + '">'
+            + project.title + '</li>';
+        });
+        var menuHtml = [].concat('<ul class="plot-menu">', listItems, '</ul>').join('');
+        menuContainer.html(menuHtml);
+        menuContainer.find('ul').menu();
+        menuContainer.find('li').click(function(){
+          var selectedItem = $jq(this);
+          selectedItem.addClass('ui-state-focus');
+          selectedItem.siblings().removeClass('ui-state-focus');
+          update();
+        });
+      }
+
+      function update(){
+        var projectID = getSelectedProject();
+        updatePlot(projectID);
+        updateDescription(projectID);
+      }
+
+      function getSelectedProject(){
+        return menuContainer.find('li.ui-state-focus').first().attr('data-project-id');
+      }
+
+      function updatePlot(projectID){
+        var seriesDataRaw = groupBy(function(item){
+          return item.life_stage.label;
+        }, projectToData[projectID]);
+        var categories = Object.keys(seriesDataRaw);
+
+        var allData = categories.map(function(category){
+          return seriesDataRaw[category].map(function(item){
+            return Number(item.value);
+          });
+        });
+
+        var minPoints = 2;
+        var boxplotData = allData.reduce(function(boxData, categoryData, index){
+          if (categoryData.length < minPoints) {
+            return boxData;
+          }else{
+            var boxParams = [].concat(index,  // x
+                                      boxSummaryStat(categoryData)) // boxplot stats
+            return boxData.concat([boxParams]);
+          }
+        }, []);
+
+        var boxplotOtherPoints = allData.reduce(function(pointsData, categoryData, index){
+          var boxParams = boxSummaryStat(categoryData);
+          var otherData = categoryData.length < minPoints ? categoryData
+            : categoryData.filter(function(value){
+              // ONLY keep the outliers
+              return value < boxParams[0] || value > boxParams[4];
+            });
+
+          var otherPoints = otherData.map(function(value){
+            return [index,  // x
+                   value] // y
+          });
+
+          return pointsData.concat(otherPoints);
+        }, []);
+
+        var allPoints = allData.reduce(function(pointsData, categoryData, categoryIndex){
+          var morePoints = categoryData.map(function(value){
+            return [categoryIndex,  // x
+                    value];  // y
+          })
+          return pointsData.concat(morePoints);
+        }, []);
+
+        plotCanvas.highcharts({
+          chart: {
+            type: 'boxplot'
+          },
+          title: {
+            text: projectID
+          },
+          xAxis: {
+            categories: categories,
+            title: {
+              text: 'Life stages'
+            }
+          },
+          yAxis: {
+            title: {
+              text: 'FPKM values'
+            }
+          },
+          series: [
+            {
+              name: 'fpkm box statistics',
+              data: boxplotData
+            },
+            {
+              name: 'Outlier',
+              color: Highcharts.getOptions().colors[0],
+              type: 'scatter',
+              data: boxplotOtherPoints,
+              tooltip: {
+                pointFormat: 'Observation: {point.y}'
+              }
+            },
+            // {
+            //   name: 'All observations',
+            //   type: 'scatter',
+            //   data: allPoints
+            // }
+          ],
+          legend: {
+            enabled: false
+          }
+        });
+      }
+
+      function updateDescription(projectID) {
+        var descriptionContainer = container.find(".fpkm-plot-description");
+        var projectObject = projects[projectID];
+        var newDescription;
+
+        function getLink(tag){
+          var linkParts = [].concat('/resources', tag.class, tag.id);
+          var link = linkParts.join('/');
+          return '<strong><a href="' + link + '">' + tag.label + '</a></strong>';
+        }
+
+        newDescription = getLink(projectObject.tag) + '<div class="text-min"><p>'
+          + projectObject.description + '</p></div>';
+        descriptionContainer.html(newDescription);
+        formatExpand(descriptionContainer);
+      }
+
+      function groupBy(keyFunction, dataArray){
+        var groups = {};
+        dataArray.forEach(function(currentItem){
+          var groupKey = keyFunction(currentItem);
+          groups[groupKey] = (groups[groupKey] || []).concat(currentItem);
+        });
+        return groups;
+      }
+
+      function boxSummaryStat(dataArray){
+        var quantiles = ss.quantile(dataArray, [0.25, 0.5, 0.75]);
+        var q1 = quantiles[0];
+        var q3 = quantiles[2];
+        var iqr = q3 - q1;
+        var lowerBound = q1 - 1.5 * iqr;
+        var upperBound = q3 + 1.5 * iqr;
+
+        var whiskerBottom = Math.min.apply(null, dataArray.filter(
+          function(dataValue){
+            return dataValue >= lowerBound;
+          }));
+        var whiskerTop = Math.max.apply(null, dataArray.filter(
+          function(dataValue){
+            return dataValue <= upperBound;
+          }));
+
+        return [].concat(whiskerBottom, quantiles, whiskerTop);
+      }
+
+      (function setup(){
+        setupMenu(projects);
+        Plugin.getPlugin('simple_statistics',function(){
+          Plugin.getPlugin('highcharts', function(){
+            Plugin.getPlugin('highcharts_more', function(){
+              update();
+            });
+          });
+        });
+      })();
+
+    }
+
+    return {
+      makeFpkmBoxPlot: makeFpkmBoxPlot,
+      makeFpkmSummaryPlot: makeFpkmSummaryPlot
+    };
+
+  })();
+
+
     var Plugin = (function(){
-      var plugins = new Array(),
+      var pluginsLoaded = new Array(),
+          pluginsLoading = new Array(),
+          callLater = new Array(),
           css = new Array(),
           loading = false,
           pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
                         dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js",
-                        jGFeed:"/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js",
                         generateFile: "/js/jquery/plugins/generateFile.js",
                         pfam: "/js/pfam/domain_graphics.min.js",
                         markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
                         tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
                         placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
-                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape.min.js",
-
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape_min/2.5.0/cytoscape.min.js",
+                        cytoscape_js_arbor: "/js/jquery/plugins/cytoscapejs/cytoscape_arbor/1.1.2/cytoscape-arbor.js",
+                        cytoscape_js_dagre: "/js/jquery/plugins/cytoscapejs/cytoscape_dagre/1.1.2/cytoscape-dagre.js",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.js",
+                        cytoscape_js_qtip: "/js/jquery/plugins/cytoscapejs/cytoscape_js_qtip/2.2.5/cytoscape-qtip.js",
+                        highcharts: "/js/highcharts/4.1.9/highcharts.js",
+                        highcharts_more: "/js/highcharts/4.1.9/highcharts-more.js",
+                        //jstat: "/js/jstat/1.5.0/jstat.min.js",  // statistics library in JS, not in use
+                        simple_statistics: "/js/simple-statistics/1.0.1/simple_statistics.min.js",  // statistics library in JS
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
           pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
@@ -2163,35 +2888,52 @@ var Scrolling = (function(){
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
                         tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.css",
                         icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
           };
 
 
-
+      function addToCallLater(name, toCallFunction) {
+        if (typeof callLater[name] === 'undefined') { callLater[name] = new Array(); }
+        // append functions to the queue
+        callLater[name].push(toCallFunction);
+      }
+      function triggerCallLater(name) {
+        // take functions off the queue until the queue is empty
+        while(callLater[name] && callLater[name].length > 0){
+          var toCallFunction = callLater[name].shift();
+          if (toCallFunction){
+              toCallFunction();
+          }
+        }
+      }
 
       function getScript(name, url, stylesheet, callback) {
 
-       function LoadJs(){
+        function LoadJs(){
            css[name] = true;
-           loadFile(url, true, function(){
+
+           loadFile(url, true, name, function(){
               callback();
-              plugins[name] = true;
+              pluginsLoaded[name] = true;
+              pluginsLoading[name] = false;
+              if (callLater[name]) { triggerCallLater(name); }
            });
         }
 
+        pluginsLoading[name] = true;
         if(stylesheet){
-         loadFile(stylesheet, false, LoadJs());
+         loadFile(stylesheet, false, name, LoadJs());
         }else{
            LoadJs();
         }
       }
 
 
-      function loadFile(url, js, callback) {
+      function loadFile(url, js, name, callback) {
         var head = document.documentElement,
             script = document.createElement( js ? "script" : "link"),
             done = false;
-        loading = true;
 
         if(js){
           script.src = url;
@@ -2203,7 +2945,6 @@ var Scrolling = (function(){
 
         function doneLoad(){
             done = true;
-            loading = false;
             if(callback)
               callback();
         }
@@ -2250,7 +2991,7 @@ var Scrolling = (function(){
               // for the document.styleSheets[n].href === url
               // ...
 
-              // FF changes the length prematurely  )
+              // FF changes the length prematurely
             doneLoad();
               clearInterval(ti);
 
@@ -2263,6 +3004,23 @@ var Scrolling = (function(){
       }
 
 
+
+      function checkPluginsLoaded(name) {
+        if (pluginsLoaded[name]) { return true; }
+          else { return false; }
+      }
+      function checkPluginsLoading(name) {
+        if (pluginsLoading[name]) { return true; }
+          else { return false; }
+      }
+
+      function isLoading(){
+        var loadingPlugins = Object.keys(pluginsLoading).filter(function(name){
+            return pluginsLoading[name];
+        });
+        return loadingPlugins.length > 0;
+      }
+
       function getPlugin(name, callback){
         var script = pScripts[name],
             css = pStyle[name];
@@ -2271,20 +3029,27 @@ var Scrolling = (function(){
       }
 
       function loadPlugin(name, url, stylesheet, callback){
-        if(!plugins[name]){
-          getScript(name, url, !css[name] ? stylesheet : undefined, callback);
-        }else{
-          if(loading){
-            return setTimeout(getPlugin(name, url, stylesheet, callback),10);
+
+          if (pluginsLoaded[name]){
+              callback();
+          }else if (pluginsLoading[name]){
+              addToCallLater(name, callback);
+          }else if (isLoading()) {
+              // if anything else is loading, wait for a bit before loading the new plugin
+              setTimeout(function(){
+                loadPlugin(name, url, stylesheet, callback);  // call loadPlugin instead of getScript to re-evaluate the conditionals
+              },10);
           }else{
-            callback();
+              getScript(name, url, !css[name] ? stylesheet : undefined, callback);
           }
-        }
         return;
       }
 
       return {
         getPlugin: getPlugin,
+        checkPluginsLoaded: checkPluginsLoaded,
+        checkPluginsLoading: checkPluginsLoading,
+        addToCallLater: addToCallLater,
         loadFile: loadFile
       };
     })();
@@ -2299,6 +3064,7 @@ var Scrolling = (function(){
       search_species_change: search_species_change, // change the species search filter
       checkSearch: checkSearch,                     // check search results - post-format if needed
       allResults: allResults,                       // setup search all page
+      formatExpand: formatExpand,                   // expandable div between text-min class
 
       // static widgets
       getMarkItUp: getMarkItUp,                     // get markup plugin for static widgets
@@ -2339,10 +3105,12 @@ var Scrolling = (function(){
       // miscellaneous
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
-      setupCytoscape: setupCytoscape,               // setup cytoscape for use
+      setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
+      setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
+      FpkmPlots: FpkmPlots,                         // fpkm by life stage plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
-      partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes
+      partitioned_table: partitioned_table          // augment to a datatable setting, when table rows are partitioned by certain attributes
     };
   })();
 

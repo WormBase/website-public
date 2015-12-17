@@ -595,3 +595,23 @@
     my $uri = uri_unescape($coded_uri);
     print "$uri";
 [% END %]
+
+[% MACRO json_encode(hash) BLOCK %]
+    [% PERL; %]
+        my $hash = $stash->get('hash');
+        use JSON;
+        print JSON->new->encode($hash);
+    [% END; %]
+[% END %]
+
+[% MACRO asset_hash BLOCK -%]
+    [% PERL; -%]
+         open(my $fh_js, "<", "root/js/wormbase.js") or die "cannot open < wormbase.js file: $!";
+         open(my $fh_css, "<", "root/css/main.css") or die "cannot open < main.css file: $!";
+         use Digest::MD5;
+         my $ctx = Digest::MD5->new;
+         $ctx->addfile($fh_js);
+         $ctx->addfile($fh_css);
+         print($ctx->hexdigest);
+    [%- END; %]
+[%- END %]

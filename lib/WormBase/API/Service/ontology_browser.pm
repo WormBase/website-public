@@ -306,7 +306,7 @@ sub show_genes {
              focusTermId   => $focusTermId,		# pass the focusTermId through catalyst for view
     };
 } # sub show_genes
- 
+
 =head2 SUB run
   Usage    - 
   Returns  - svg_markup         # pass the svg_markup through catalyst for view
