@@ -18,8 +18,8 @@
 [%
 	build_data_table(order=['phenotype','entity', 'evidence'],
             columns={
-                phenotype  => 'Phenotype',
-                 entity => 'Entity',
+                phenotype  => '_Phenotype',
+                 entity => 'Phenotype',
                  evidence => 'Supporting Evidence',
             }, key='phenotype',
             style = phenotype_table_settings
@@ -35,8 +35,8 @@
       [%
     	build_data_table(order=['phenotype','entity', 'evidence'],
             columns={
-                phenotype  => 'Phenotype',
-                entity => 'Entity',
+                phenotype  => '_Phenotype',
+                entity => 'Phenotype',
                 evidence => 'Supporting Evidence',
         }, key='phenotype_not_observed',
         style = phenotype_table_settings);
