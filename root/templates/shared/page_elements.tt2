@@ -540,6 +540,7 @@ END; %]
 
 
 [% MACRO pato_evidence(obj) BLOCK;
+    'Entity: ';
     tag2link(obj.entity_term) _ ', ' _ obj.pato_term;
 END; %]
 
