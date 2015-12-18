@@ -538,6 +538,12 @@ END; %]
     markup_var(genstr);
 END; %]
 
+
+[% MACRO pato_evidence(obj) BLOCK;
+    tag2link(obj.entity_term) _ ', ' _ obj.pato_term;
+END; %]
+
+
 [% MACRO cell_content(cell, separator) BLOCK;
     IF ref(cell) == 'HASH';
       IF cell.defined('species');
@@ -558,6 +564,8 @@ END; %]
           show_genotype(cell.genotype);
       ELSIF cell.defined('footnotes');
         cell_content(cell.text) _ format_footnotes(cell.footnotes);
+      ELSIF cell.defined('pato_evidence');
+          pato_evidence(cell.pato_evidence);
       ELSE;
 
         # assumes that hash passed to cell should be output as the key followed by its value
