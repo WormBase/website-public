@@ -206,11 +206,6 @@
         isnt($data_sub[0], undef, 'data returned');
         is($data_sub[0]->{'project_info'}->{'label'}, 'Thomas Male Female comparison', 'correct project description returned');
 
-        my $plot_uri_pttn = "\Q/img-static/rplots/$version/1559/fpkm_WBGene00001530/\E.+";
-        like($fpkm_expression_1->{'data'}->{'plot'}->[0]->{'uri'},
-             qr/$plot_uri_pttn/,
-             'correct plot path returned');
-
     }
 
     #Tests the alleles and polymorphisms methods of Gene

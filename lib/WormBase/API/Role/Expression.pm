@@ -549,44 +549,16 @@ sub fpkm_expression {
         return $label_value[1] <=> $label_value[0];
     } @fpkm_map;
 
-    my $plot;
-    if ($mode eq 'summary_ls') {
-	# This is NOT consistently returning an ID, resulting in fpkm_.png
-	# and breaking the expression widget.
-	# filename => "fpkm_" . $self->name->{data}{id} . ".png",
-	my $obj = $self->object;
-        $plot = $rserve->boxplot(\@fpkm_map, {
-                                    filename => "fpkm_$object.png",
-                                    xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-                                    ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-                                    width    => WormBase::Web->config->{fpkm_expression_chart_width},
-                                    height   => WormBase::Web->config->{fpkm_expression_chart_height},
-                                    rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
-                                    bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
-                                    facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
-                                    adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
-                                 });
-    } else {
-        # $plot = $rserve->barchart(\@fpkm_map, {
-        #                             filename => "fpkm_$object.png",
-        #                             xlabel   => WormBase::Web->config->{fpkm_expression_chart_xlabel},
-        #                             ylabel   => WormBase::Web->config->{fpkm_expression_chart_ylabel},
-        #                             width    => WormBase::Web->config->{fpkm_expression_chart_width},
-        #                             height   => WormBase::Web->config->{fpkm_expression_chart_height},
-        #                             rotate   => WormBase::Web->config->{fpkm_expression_chart_rotate},
-        #                             bw       => WormBase::Web->config->{fpkm_expression_chart_bw},
-        #                             facets   => WormBase::Web->config->{fpkm_expression_chart_facets},
-        #                             adjust_height_for_less_than_X_facets => WormBase::Web->config->{fpkm_expression_chart_height_shorter_if_less_than_X_facets}
-        #                          });
-    }
+    # a map from experiment ID to [life_stage, type, library]
+    my $experiments = $self->_api->_tools->{rnaseq_plot}->experiments;
 
     return {
         description => 'Fragments Per Kilobase of transcript per Million mapped reads (FPKM) expression data',
         data        => @fpkm_map ? {
             by_study => $self->_make_study_summary(\@regular_analyses),
             controls => [$self->_make_control_summary(\@controls)],
-            plot => $plot,
-            table => { fpkm => { data => \@fpkm_map } }
+            table => { fpkm => { data => \@fpkm_map } },
+            experiments => $experiments,
         } : undef
     };
 }
@@ -624,7 +596,7 @@ sub _pack_analysis_record {
         # accession of a project, occurs right behind /WBbt:\d+/ in a dot separated list
         # /PRJ[A-Z]{2}\d+/ matches BioProject accession
         # everything else treat as NCBI Trace SRA
-        my ($project_acc) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\./;
+        my ($project_acc, $experiment_id) = $label =~ /WBbt:\d+\.([A-Z]+\d+)\.(.+)/;
         my $source_db = $project_acc =~ /^PRJ[A-Z]{2}\d+/ ? 'BioProject' : 'sra_trace';
 
         my $project_label = $_study2label->{$project_acc} || $project_acc;
@@ -633,7 +605,8 @@ sub _pack_analysis_record {
         $project = {
             id => $project_acc,
             class => $source_db,
-            label => $project_label
+            label => $project_label,
+            experiment => $experiment_id
         };
     }
 

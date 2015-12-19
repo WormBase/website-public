@@ -12,7 +12,7 @@
     </title>
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link type="text/css" href="/css/jquery-ui.min.css" rel="stylesheet" />
-    <link type="text/css" href="/css/main[% c.config.installation_type == 'development' ? '' : '.min' %].css?v[% git_commit_id %]" rel="stylesheet" />
+    <link type="text/css" href="/css/main[% c.config.installation_type == 'development' ? '' : '.min' %].css?v[%- asset_hash | trim -%]" rel="stylesheet" />
   </head>
 
   <body>
@@ -24,7 +24,7 @@
     <script src="/js/jquery-1.9.1.min.js"></script>
     <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
 
-    <script src="/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v[% git_commit_id %]"></script>
+    <script src="/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v[%- asset_hash | trim -%]"></script>
     <script>
       window.WB || document.write('<script src="/js/wormbase.js"><\/script>');
       [% INCLUDE google_analytics %]

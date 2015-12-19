@@ -1,35 +1,50 @@
 
+[% phenotype_table_settings = '
+"drawCallback": WB.partitioned_table(0),
+"columnDefs": [
+            { "targets": 0, "visible": false },
+            { "targets": 1, "width": "50%" },
+        ],
+        "autoWidth": false
+'%]
 
-[%# This phenotype processing diverges from the standard processing ... %]
-[%# See also Varation.pm for alternative data processing/structure... %]
 
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
    Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
 
 
     <p><i>The following phenotypes have been observed in [% object.name.data.label %]</i>:</p>
-    <div>
-[%
-	build_data_table(order=['object','evidence'],
-			columns={object  => 'Phenotype',
-				 evidence => 'Supporting Evidence',
-			}, key='phenotype_observed',
-			passed_data=fields.phenotype.data.Phenotype.values);
-%]
-    </div>
 
+[%
+	build_data_table(order=['phenotype','entity', 'evidence'],
+            columns={
+                phenotype  => '_Phenotype',
+                 entity => 'Phenotype',
+                 evidence => 'Supporting Evidence',
+            }, key='phenotype',
+            style = phenotype_table_settings
+    );
+%]
     <br />
+[% END %]
+
+
+
+[% WRAPPER $field_block title="Phenotype not observed" key="phenotype_not_observed" %]
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
       [%
-	build_data_table(order=['object','evidence'],
-			columns={object  => 'Phenotype',
-				 evidence => 'Supporting Evidence',
-			}, key='phenotype_not_observed',
-			passed_data=fields.phenotype.data.Phenotype_not_observed.values);
+    	build_data_table(order=['phenotype','entity', 'evidence'],
+            columns={
+                phenotype  => '_Phenotype',
+                entity => 'Phenotype',
+                evidence => 'Supporting Evidence',
+        }, key='phenotype_not_observed',
+        style = phenotype_table_settings);
       %]
    [% END %]
     <br />
 [% END %]
+
 
 [% WRAPPER $field_block title="Interaction-based phenotypes" key="phenotype_by_interaction" %]
 
@@ -49,6 +64,7 @@
     </div>
 
 [% END %]
+
 
 
     <br />

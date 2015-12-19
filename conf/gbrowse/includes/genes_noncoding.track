@@ -2,6 +2,7 @@
 key          = Curated Genes (noncoding)
 category     = Genes
 feature = miRNA:WormBase
+          miRNA_primary_transcript:WormBase
           ncRNA:WormBase        
           rRNA:WormBase
           scRNA:WormBase
@@ -11,6 +12,7 @@ feature = miRNA:WormBase
 	  piRNA:WormBase
 	  lincRNA:WormBase
 	  antisense_RNA
+	  miRNA_primary_transcript:WormBase
 glyph = gene
 title = sub {
 	 my $f = shift;
