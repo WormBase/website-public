@@ -3,5 +3,6 @@
 <br />      <a href="http://blog.wormbase.org/">View More ›</a>
 
 <script>
-  WB.loadRSS("news-box", 'http://blog.wormbase.org/categories/news/feed/?callback=?');
+ // WB.loadRSS("news-box", 'http://blog.wormbase.org/categories/news/feed/?callback=?');
+ WB.loadRSS("news-box", '/rest/blog_feed');
 </script>

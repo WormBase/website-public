@@ -440,7 +440,7 @@ sub _parse_year {
 # Returns: A hash ref containing the evidence requested
 #
 sub _get_evidence {
-    my ($self,$node,$evidence_type)=@_;
+    my ($self,$node,$evidence_type, $ignore_evidence_type)=@_;
     my @nodes = eval{$node->col} ;
     return undef unless(@nodes);
     my %data;
@@ -451,6 +451,11 @@ sub _get_evidence {
        #if only extracting one/more specific evidence types
       if(defined $evidence_type) {
         next unless(grep /^$type$/ , @$evidence_type);
+      }
+
+      # skip explicitly ignored evidence_type
+      if(defined $ignore_evidence_type) {
+        next if (grep /^$type$/ , @$ignore_evidence_type);
       }
 
       my @evidences;

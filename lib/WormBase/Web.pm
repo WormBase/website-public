@@ -154,7 +154,11 @@ sub _setup_species {
     # process the species_list in conf
     my $original_species = $c->config->{sections}->{species_list};
     my $new_species = {};
-    my $available_species = _with_ftp_site(\&_get_json,"/pub/wormbase/releases/WS250/species/ASSEMBLIES.WS250.json");
+
+    my $species_file_remote_path = "/pub/wormbase/releases/WS250/species/ASSEMBLIES." . $c->config->{wormbase_release} .".json";
+    my $species_file_local_path = $c->path_to('/conf/species/', 'species_ASSEMBLIES.json');
+    my $available_species = _get_json($c, $species_file_remote_path, $species_file_local_path);
+
     foreach my $species (keys $original_species){
         if ($available_species->{$species} || $species eq 'all'){
             # include a species ONLY if it is available
@@ -162,35 +166,70 @@ sub _setup_species {
         }
     }
     $c->config->{sections}->{species_list} = $new_species;
+    $c->_setup_parasite_species;
+}
 
-    # dynamically create ParaSite species list
-    my $parasite_species_trees = _with_ftp_site(\&_get_json, "/pub/wormbase/parasite/releases/WBPS3/species_tree.json");
-    my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
-    $c->config->{sections}->{parasite_species_list} = \@parasite_species;
+
+# dynamically create ParaSite species list
+sub _setup_parasite_species {
+    my $c = shift;
 
     # determine the latest parasite release
-    my $latest_wbps_release = _with_ftp_site(\&_get_latest_release, "/pub/wormbase/parasite/releases/");
-    $c->config->{parasite_release} = $latest_wbps_release;
+    $c->config->{parasite_release} = _get_latest_release($c);
+
+    my $species_file_remote_path = "/pub/wormbase/parasite/releases/". $c->config->{parasite_release} . "/species_tree.json";
+    my $species_file_local_path = $c->path_to('/conf/species/', 'parasite_species_tree.json');
+
+    my $parasite_species_trees = _get_json($c,
+                                           $species_file_remote_path,
+                                           $species_file_local_path);
+
+    my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
+    $c->config->{sections}->{parasite_species_list} = \@parasite_species;
 
 }
 
 # helper function to get and parse species info located in JSON file on FTP site
+# if the ftp site fails, fallback to a local copy
 sub _get_json {
-    my ($ftp, $path) = @_;
+    my ($c, $remote_path, $local_copy_path) = @_;
+    my $json_string = "";
 
-    my $stream = "";
-    my $fh;
-    open( $fh, '>', \$stream) || die "cannot open fh";
-    my $r = $ftp->get($path, $fh);
-    close $fh;
+    local *_callback = sub {
 
-    my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($stream);
+        my ($ftp, $error) = @_;
+        if ($error) {
+            $json_string = `cat $local_copy_path`;
+            chomp $json_string;
+        } else {
+            my $fh;
+            open( $fh, '>', \$json_string) || die "cannot open fh";
+            $ftp->get($remote_path, $fh);
+            close $fh;
+
+            if ($c->config->{installation_type} eq 'development'){
+                # only update local copy on a development instance
+                # to avoid uncommited change in git repo
+                open($fh, '>', $local_copy_path);
+                print $fh $json_string;
+                close $fh;
+            }
+        }
+
+    };
+
+    _with_ftp_site(\&_callback);
+    # unlike with javascript, _with_ftp_site is blocking
+    my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($json_string);
     return $parsed;
 }
 
+
 sub _get_latest_release {
-    my ($ftp, $release_dir_path) = @_;
-    my $releases = _list_directory($ftp, $release_dir_path);
+    my ($c) = @_;
+    my $release_dir_path = '/pub/wormbase/parasite/releases/';
+    my $latest_release_number_path = $c->path_to('/conf/species/parasite_release_number.txt');
+    my $latest_release_number;
 
     sub get_release_number {
         my ($release_name) = @_;
@@ -198,26 +237,45 @@ sub _get_latest_release {
         return $num;
     }
 
-    my ($latest) = sort {
-        get_release_number($b) <=> get_release_number($a);
-    } @$releases;
+    local *_callback = sub {
+        my ($ftp, $error) = @_;
 
-    my @path_parts = split('/', $latest);
-    return pop @path_parts;  # if release name is a path, take only the last part
+        if ($error) {
+            $latest_release_number = `cat $latest_release_number_path`;
+            chomp $latest_release_number;
+        } else {
+            my $all_releases = $ftp->ls($release_dir_path);
+            my @all_release_numbers = map {
+                my $num = get_release_number($_);
+                $num ? $num : ();
+            } @$all_releases;
+            ($latest_release_number) = sort {
+                $b <=> $a
+            } @all_release_numbers;
+
+            if ($c->config->{installation_type} eq 'development'){
+                # only update local copy on a development instance
+                # to avoid uncommited change in git repo
+                open(my $fh, '>', $latest_release_number_path);
+                print $fh $latest_release_number;
+                close $fh;
+            }
+        }
+    };
+
+    _with_ftp_site(\&_callback);
+    # unlike with javascript, _with_ftp_site is blocking
+    return 'WBPS' .  $latest_release_number;
 }
 
-sub _list_directory {
-    my ($ftp, $path) = @_;
-
-    return $ftp->ls($path);
-}
 
 # helper method to handle setup and teardown of ftp site connection
 sub _with_ftp_site {
     my ($function, @args) = @_;
+
     my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
                             Timeout=>5, Passive=>1)
-        or die "Cannot connect to ftp.wormbase.org: $@";
+        or return $function->(undef, "Cannot connect to ftp.wormbase.org: $@");
 
     $ftp->login();
     my $result = $function->($ftp, @args);

@@ -9,8 +9,14 @@
 
 %]
 
+
+
 [% go_table_settings = '
-"drawCallback": WB.partitioned_table(1),
+"drawCallback": WB.partitioned_table(1, function(rowData){
+    var termID = rowData[0];
+    var term = rowData[1];
+    return "<td>" + termID + "</td><td>"+ term + "</td>";
+}),
 "columnDefs": [
             { "targets": 1, "visible": false },
             { "targets": 2, "orderData": [1] },

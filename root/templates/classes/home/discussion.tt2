@@ -28,5 +28,5 @@
 [% END %]
 
 <script>
-  WB.loadRSS("discussion-load", 'http://forums.wormbase.org/index.php?type=rss;action=.xml;limit=3');
+  WB.loadRSS("discussion-load", '/rest/forum_feed/');
 </script>

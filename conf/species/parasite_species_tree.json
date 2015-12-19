@@ -1,0 +1,1632 @@
+[
+   {
+      "url" : "/",
+      "children" : [
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Romanomermis_culicivorax_prjeb1358/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Cologne genome project",
+                              "url" : "/Romanomermis_culicivorax_prjeb1358/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1358"
+                           }
+                        ],
+                        "label" : "Romanomermis culicivorax"
+                     }
+                  ],
+                  "label" : "Romanomermis"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Soboliphyme_baturini_prjeb516/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Soboliphyme_baturini_prjeb516/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB516"
+                           }
+                        ],
+                        "label" : "Soboliphyme baturini"
+                     }
+                  ],
+                  "label" : "Soboliphyme"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Trichinella_nativa_prjna179527/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Trichinella_nativa_prjna179527/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA179527"
+                           }
+                        ],
+                        "label" : "Trichinella nativa"
+                     },
+                     {
+                        "url" : "/Trichinella_spiralis_prjna12603/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Trichinella_spiralis_prjna12603/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA12603"
+                           }
+                        ],
+                        "label" : "Trichinella spiralis"
+                     }
+                  ],
+                  "label" : "Trichinella"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Trichuris_muris_prjeb126/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Trichuris_muris_prjeb126/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB126"
+                           }
+                        ],
+                        "label" : "Trichuris muris"
+                     },
+                     {
+                        "url" : "/Trichuris_suis_prjna179528/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Trichuris_suis_prjna179528/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA179528"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichuris_suis_prjna208415/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA208415"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichuris_suis_prjna208416/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA208416"
+                           }
+                        ],
+                        "label" : "Trichuris suis"
+                     },
+                     {
+                        "url" : "/Trichuris_trichiura_prjeb535/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Trichuris_trichiura_prjeb535/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB535"
+                           }
+                        ],
+                        "label" : "Trichuris trichiura"
+                     }
+                  ],
+                  "label" : "Trichuris"
+               }
+            ],
+            "label" : "Clade I"
+         },
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Acanthocheilonema_viteae_prjeb4306/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Acanthocheilonema_viteae_prjeb4306/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB4306"
+                           }
+                        ],
+                        "label" : "Acanthocheilonema viteae"
+                     }
+                  ],
+                  "label" : "Acanthocheilonema"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Anisakis_simplex_prjeb496/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Anisakis_simplex_prjeb496/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB496"
+                           }
+                        ],
+                        "label" : "Anisakis simplex"
+                     }
+                  ],
+                  "label" : "Anisakis"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Ascaris_lumbricoides_prjeb4950/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Ascaris_lumbricoides_prjeb4950/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB4950"
+                           }
+                        ],
+                        "label" : "Ascaris lumbricoides"
+                     },
+                     {
+                        "url" : "/Ascaris_suum_prjna62057/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Colorado School of Medicine genome project",
+                              "url" : "/Ascaris_suum_prjna62057/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA62057"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Ascaris_suum_prjna80881/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA80881"
+                           }
+                        ],
+                        "label" : "Ascaris suum"
+                     }
+                  ],
+                  "label" : "Ascaris"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Brugia_malayi_prjna10729/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Brugia_malayi_prjna10729/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA10729"
+                           }
+                        ],
+                        "label" : "Brugia malayi"
+                     },
+                     {
+                        "url" : "/Brugia_pahangi_prjeb497/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Brugia_pahangi_prjeb497/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB497"
+                           }
+                        ],
+                        "label" : "Brugia pahangi"
+                     },
+                     {
+                        "url" : "/Brugia_timori_prjeb4663/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Brugia_timori_prjeb4663/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB4663"
+                           }
+                        ],
+                        "label" : "Brugia timori"
+                     }
+                  ],
+                  "label" : "Brugia"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Dirofilaria_immitis_prjeb1797/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Dirofilaria_immitis_prjeb1797/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1797"
+                           }
+                        ],
+                        "label" : "Dirofilaria immitis"
+                     }
+                  ],
+                  "label" : "Dirofilaria"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Dracunculus_medinensis_prjeb500/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Dracunculus_medinensis_prjeb500/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB500"
+                           }
+                        ],
+                        "label" : "Dracunculus medinensis"
+                     }
+                  ],
+                  "label" : "Dracunculus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Elaeophora_elaphi_prjeb502/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Elaeophora_elaphi_prjeb502/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB502"
+                           }
+                        ],
+                        "label" : "Elaeophora elaphi"
+                     }
+                  ],
+                  "label" : "Elaeophora"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Enterobius_vermicularis_prjeb503/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Enterobius_vermicularis_prjeb503/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB503"
+                           }
+                        ],
+                        "label" : "Enterobius vermicularis"
+                     }
+                  ],
+                  "label" : "Enterobius"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Gongylonema_pulchrum_prjeb505/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Gongylonema_pulchrum_prjeb505/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB505"
+                           }
+                        ],
+                        "label" : "Gongylonema pulchrum"
+                     }
+                  ],
+                  "label" : "Gongylonema"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Litomosoides_sigmodontis_prjeb3075/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Litomosoides_sigmodontis_prjeb3075/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB3075"
+                           }
+                        ],
+                        "label" : "Litomosoides sigmodontis"
+                     }
+                  ],
+                  "label" : "Litomosoides"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Loa_loa_prjna246086/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Institute for Genome Sciences genome project",
+                              "url" : "/Loa_loa_prjna246086/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA246086"
+                           },
+                           {
+                              "summary" : "Broad Institute genome project",
+                              "url" : "/Loa_loa_prjna60051/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA60051"
+                           }
+                        ],
+                        "label" : "Loa loa"
+                     }
+                  ],
+                  "label" : "Loa"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Onchocerca_flexuosa_prjeb512/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Onchocerca_flexuosa_prjeb512/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB512"
+                           }
+                        ],
+                        "label" : "Onchocerca flexuosa"
+                     },
+                     {
+                        "url" : "/Onchocerca_ochengi_prjeb1204/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Onchocerca_ochengi_prjeb1204/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1204"
+                           },
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Onchocerca_ochengi_prjeb1809/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1809"
+                           }
+                        ],
+                        "label" : "Onchocerca ochengi"
+                     },
+                     {
+                        "url" : "/Onchocerca_volvulus_prjeb513/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Onchocerca_volvulus_prjeb513/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB513"
+                           }
+                        ],
+                        "label" : "Onchocerca volvulus"
+                     }
+                  ],
+                  "label" : "Onchocerca"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Parascaris_equorum_prjeb514/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Parascaris_equorum_prjeb514/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB514"
+                           }
+                        ],
+                        "label" : "Parascaris equorum"
+                     }
+                  ],
+                  "label" : "Parascaris"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Syphacia_muris_prjeb524/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Syphacia_muris_prjeb524/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB524"
+                           }
+                        ],
+                        "label" : "Syphacia muris"
+                     }
+                  ],
+                  "label" : "Syphacia"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Thelazia_callipaeda_prjeb1205/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Thelazia_callipaeda_prjeb1205/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1205"
+                           }
+                        ],
+                        "label" : "Thelazia callipaeda"
+                     }
+                  ],
+                  "label" : "Thelazia"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Toxocara_canis_prjeb533/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Toxocara_canis_prjeb533/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB533"
+                           }
+                        ],
+                        "label" : "Toxocara canis"
+                     }
+                  ],
+                  "label" : "Toxocara"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Wuchereria_bancrofti_prjeb536/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Wuchereria_bancrofti_prjeb536/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB536"
+                           }
+                        ],
+                        "label" : "Wuchereria bancrofti"
+                     }
+                  ],
+                  "label" : "Wuchereria"
+               }
+            ],
+            "label" : "Clade III"
+         },
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Bursaphelenchus_xylophilus_prjea64437/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Bursaphelenchus_xylophilus_prjea64437/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEA64437"
+                           }
+                        ],
+                        "label" : "Bursaphelenchus xylophilus"
+                     }
+                  ],
+                  "label" : "Bursaphelenchus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Globodera_pallida_prjeb123/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Globodera_pallida_prjeb123/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB123"
+                           }
+                        ],
+                        "label" : "Globodera pallida"
+                     }
+                  ],
+                  "label" : "Globodera"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Meloidogyne_floridensis_prjeb6016/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Meloidogyne_floridensis_prjeb6016/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB6016"
+                           }
+                        ],
+                        "label" : "Meloidogyne floridensis"
+                     },
+                     {
+                        "url" : "/Meloidogyne_hapla_prjna29083/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "North Carolina State University genome project",
+                              "url" : "/Meloidogyne_hapla_prjna29083/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA29083"
+                           }
+                        ],
+                        "label" : "Meloidogyne hapla"
+                     },
+                     {
+                        "url" : "/Meloidogyne_incognita_prjea28837/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "INRA genome project",
+                              "url" : "/Meloidogyne_incognita_prjea28837/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEA28837"
+                           }
+                        ],
+                        "label" : "Meloidogyne incognita"
+                     }
+                  ],
+                  "label" : "Meloidogyne"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Parastrongyloides_trichosuri_prjeb515/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Parastrongyloides_trichosuri_prjeb515/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB515"
+                           }
+                        ],
+                        "label" : "Parastrongyloides trichosuri"
+                     }
+                  ],
+                  "label" : "Parastrongyloides"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Rhabditophanes_kr3021_prjeb1297/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Rhabditophanes_kr3021_prjeb1297/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1297"
+                           }
+                        ],
+                        "label" : "Rhabditophanes sp. KR3021"
+                     }
+                  ],
+                  "label" : "Rhabditophanes"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Steinernema_carpocapsae_prjna202318/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "California Institute of Technology genome project",
+                              "url" : "/Steinernema_carpocapsae_prjna202318/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA202318"
+                           }
+                        ],
+                        "label" : "Steinernema carpocapsae"
+                     },
+                     {
+                        "url" : "/Steinernema_feltiae_prjna204661/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "California Institute of Technology genome project",
+                              "url" : "/Steinernema_feltiae_prjna204661/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA204661"
+                           }
+                        ],
+                        "label" : "Steinernema feltiae"
+                     },
+                     {
+                        "url" : "/Steinernema_glaseri_prjna204943/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "California Institute of Technology genome project",
+                              "url" : "/Steinernema_glaseri_prjna204943/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA204943"
+                           }
+                        ],
+                        "label" : "Steinernema glaseri"
+                     },
+                     {
+                        "url" : "/Steinernema_monticolum_prjna205067/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "California Institute of Technology genome project",
+                              "url" : "/Steinernema_monticolum_prjna205067/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA205067"
+                           }
+                        ],
+                        "label" : "Steinernema monticolum"
+                     },
+                     {
+                        "url" : "/Steinernema_scapterisci_prjna204942/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "California Institute of Technology genome project",
+                              "url" : "/Steinernema_scapterisci_prjna204942/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA204942"
+                           }
+                        ],
+                        "label" : "Steinernema scapterisci"
+                     }
+                  ],
+                  "label" : "Steinernema"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Strongyloides_papillosus_prjeb525/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Strongyloides_papillosus_prjeb525/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB525"
+                           }
+                        ],
+                        "label" : "Strongyloides papillosus"
+                     },
+                     {
+                        "url" : "/Strongyloides_ratti_prjeb125/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Strongyloides_ratti_prjeb125/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB125"
+                           }
+                        ],
+                        "label" : "Strongyloides ratti"
+                     },
+                     {
+                        "url" : "/Strongyloides_stercoralis_prjeb528/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Strongyloides_stercoralis_prjeb528/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB528"
+                           }
+                        ],
+                        "label" : "Strongyloides stercoralis"
+                     },
+                     {
+                        "url" : "/Strongyloides_venezuelensis_prjeb530/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Strongyloides_venezuelensis_prjeb530/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB530"
+                           }
+                        ],
+                        "label" : "Strongyloides venezuelensis"
+                     }
+                  ],
+                  "label" : "Strongyloides"
+               }
+            ],
+            "label" : "Clade IV"
+         },
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Ancylostoma_caninum_prjna72585/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Ancylostoma_caninum_prjna72585/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA72585"
+                           }
+                        ],
+                        "label" : "Ancylostoma caninum"
+                     },
+                     {
+                        "url" : "/Ancylostoma_ceylanicum_prjna231479/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Cornell University genome project",
+                              "url" : "/Ancylostoma_ceylanicum_prjna231479/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA231479"
+                           },
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Ancylostoma_ceylanicum_prjna72583/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA72583"
+                           }
+                        ],
+                        "label" : "Ancylostoma ceylanicum"
+                     },
+                     {
+                        "url" : "/Ancylostoma_duodenale_prjna72581/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Ancylostoma_duodenale_prjna72581/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA72581"
+                           }
+                        ],
+                        "label" : "Ancylostoma duodenale"
+                     }
+                  ],
+                  "label" : "Ancylostoma"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Angiostrongylus_cantonensis_prjeb493/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Angiostrongylus_cantonensis_prjeb493/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB493"
+                           }
+                        ],
+                        "label" : "Angiostrongylus cantonensis"
+                     },
+                     {
+                        "url" : "/Angiostrongylus_costaricensis_prjeb494/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Angiostrongylus_costaricensis_prjeb494/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB494"
+                           }
+                        ],
+                        "label" : "Angiostrongylus costaricensis"
+                     }
+                  ],
+                  "label" : "Angiostrongylus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Cylicostephanus_goldi_prjeb498/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Cylicostephanus_goldi_prjeb498/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB498"
+                           }
+                        ],
+                        "label" : "Cylicostephanus goldi"
+                     }
+                  ],
+                  "label" : "Cylicostephanus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Dictyocaulus_viviparus_prjeb5116/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Dictyocaulus_viviparus_prjeb5116/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB5116"
+                           },
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Dictyocaulus_viviparus_prjna72587/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA72587"
+                           }
+                        ],
+                        "label" : "Dictyocaulus viviparus"
+                     }
+                  ],
+                  "label" : "Dictyocaulus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Haemonchus_contortus_prjeb506/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Haemonchus_contortus_prjeb506/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB506"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Haemonchus_contortus_prjna205202/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA205202"
+                           }
+                        ],
+                        "label" : "Haemonchus contortus"
+                     },
+                     {
+                        "url" : "/Haemonchus_placei_prjeb509/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Haemonchus_placei_prjeb509/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB509"
+                           }
+                        ],
+                        "label" : "Haemonchus placei"
+                     }
+                  ],
+                  "label" : "Haemonchus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Heligmosomoides_polygyrus_prjeb1203/Info/Index/",
+                        "aliases" : [
+                           "Heligmosomoides bakeri"
+                        ],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Heligmosomoides_polygyrus_prjeb1203/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1203"
+                           }
+                        ],
+                        "label" : "Heligmosomoides polygyrus"
+                     }
+                  ],
+                  "label" : "Heligmosomoides"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Heterorhabditis_bacteriophora_prjna13977/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Heterorhabditis_bacteriophora_prjna13977/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA13977"
+                           }
+                        ],
+                        "label" : "Heterorhabditis bacteriophora"
+                     }
+                  ],
+                  "label" : "Heterorhabditis"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Necator_americanus_prjna72135/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Necator_americanus_prjna72135/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA72135"
+                           }
+                        ],
+                        "label" : "Necator americanus"
+                     }
+                  ],
+                  "label" : "Necator"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Nippostrongylus_brasiliensis_prjeb511/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Nippostrongylus_brasiliensis_prjeb511/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB511"
+                           }
+                        ],
+                        "label" : "Nippostrongylus brasiliensis"
+                     }
+                  ],
+                  "label" : "Nippostrongylus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Oesophagostomum_dentatum_prjna72579/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Oesophagostomum_dentatum_prjna72579/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA72579"
+                           }
+                        ],
+                        "label" : "Oesophagostomum dentatum"
+                     }
+                  ],
+                  "label" : "Oesophagostomum"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Pristionchus_exspectatus_prjeb6009/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Max-Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_exspectatus_prjeb6009/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB6009"
+                           }
+                        ],
+                        "label" : "Pristionchus exspectatus"
+                     },
+                     {
+                        "url" : "/Pristionchus_pacificus_prjna12644/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Pristionchus_pacificus_prjna12644/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA12644"
+                           }
+                        ],
+                        "label" : "Pristionchus pacificus"
+                     }
+                  ],
+                  "label" : "Pristionchus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Strongylus_vulgaris_prjeb531/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Strongylus_vulgaris_prjeb531/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB531"
+                           }
+                        ],
+                        "label" : "Strongylus vulgaris"
+                     }
+                  ],
+                  "label" : "Strongylus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Teladorsagia_circumcincta_prjna72569/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Teladorsagia_circumcincta_prjna72569/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA72569"
+                           }
+                        ],
+                        "label" : "Teladorsagia circumcincta"
+                     }
+                  ],
+                  "label" : "Teladorsagia"
+               }
+            ],
+            "label" : "Clade V"
+         }
+      ],
+      "label" : "Nematoda (Roundworms)"
+   },
+   {
+      "url" : "/",
+      "children" : [
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Diphyllobothrium_latum_prjeb1206/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Diphyllobothrium_latum_prjeb1206/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1206"
+                           }
+                        ],
+                        "label" : "Diphyllobothrium latum"
+                     }
+                  ],
+                  "label" : "Diphyllobothrium"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Echinococcus_canadensis_prjeb8992/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "BMHid-Biologia Molecular de Hidatidosis genome project",
+                              "url" : "/Echinococcus_canadensis_prjeb8992/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB8992"
+                           }
+                        ],
+                        "label" : "Echinococcus canadensis"
+                     },
+                     {
+                        "url" : "/Echinococcus_granulosus_prjeb121/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Echinococcus_granulosus_prjeb121/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB121"
+                           }
+                        ],
+                        "label" : "Echinococcus granulosus"
+                     },
+                     {
+                        "url" : "/Echinococcus_multilocularis_prjeb122/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Echinococcus_multilocularis_prjeb122/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB122"
+                           }
+                        ],
+                        "label" : "Echinococcus multilocularis"
+                     }
+                  ],
+                  "label" : "Echinococcus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Hydatigera_taeniaeformis_prjeb534/Info/Index/",
+                        "aliases" : [
+                           "Taenia taeniaeformis"
+                        ],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Hydatigera_taeniaeformis_prjeb534/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB534"
+                           }
+                        ],
+                        "label" : "Hydatigera taeniaeformis"
+                     }
+                  ],
+                  "label" : "Hydatigera"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Hymenolepis_diminuta_prjeb507/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Hymenolepis_diminuta_prjeb507/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB507"
+                           }
+                        ],
+                        "label" : "Hymenolepis diminuta"
+                     },
+                     {
+                        "url" : "/Hymenolepis_microstoma_prjeb124/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Hymenolepis_microstoma_prjeb124/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB124"
+                           }
+                        ],
+                        "label" : "Hymenolepis microstoma"
+                     },
+                     {
+                        "url" : "/Hymenolepis_nana_prjeb508/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Hymenolepis_nana_prjeb508/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB508"
+                           }
+                        ],
+                        "label" : "Hymenolepis nana"
+                     }
+                  ],
+                  "label" : "Hymenolepis"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Mesocestoides_corti_prjeb510/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Mesocestoides_corti_prjeb510/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB510"
+                           }
+                        ],
+                        "label" : "Mesocestoides corti"
+                     }
+                  ],
+                  "label" : "Mesocestoides"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Schistocephalus_solidus_prjeb527/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Schistocephalus_solidus_prjeb527/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB527"
+                           }
+                        ],
+                        "label" : "Schistocephalus solidus"
+                     }
+                  ],
+                  "label" : "Schistocephalus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Spirometra_erinaceieuropaei_prjeb1202/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Spirometra_erinaceieuropaei_prjeb1202/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1202"
+                           }
+                        ],
+                        "label" : "Spirometra erinaceieuropaei"
+                     }
+                  ],
+                  "label" : "Spirometra"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Taenia_asiatica_prjeb532/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Taenia_asiatica_prjeb532/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB532"
+                           }
+                        ],
+                        "label" : "Taenia asiatica"
+                     },
+                     {
+                        "url" : "/Taenia_solium_prjna170813/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "National University of Mexico genome project",
+                              "url" : "/Taenia_solium_prjna170813/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA170813"
+                           }
+                        ],
+                        "label" : "Taenia solium"
+                     }
+                  ],
+                  "label" : "Taenia"
+               }
+            ],
+            "label" : "Cestoda (Tapeworms)"
+         },
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Clonorchis_sinensis_prjda72781/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Sun Yat-sen University genome project",
+                              "url" : "/Clonorchis_sinensis_prjda72781/Info/Index",
+                              "children" : null,
+                              "label" : "PRJDA72781"
+                           }
+                        ],
+                        "label" : "Clonorchis sinensis"
+                     }
+                  ],
+                  "label" : "Clonorchis"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Echinostoma_caproni_prjeb1207/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Echinostoma_caproni_prjeb1207/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1207"
+                           }
+                        ],
+                        "label" : "Echinostoma caproni"
+                     }
+                  ],
+                  "label" : "Echinostoma"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Fasciola_hepatica_prjeb6687/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "CGR, University of Liverpool genome project",
+                              "url" : "/Fasciola_hepatica_prjeb6687/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB6687"
+                           },
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Fasciola_hepatica_prjna179522/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA179522"
+                           }
+                        ],
+                        "label" : "Fasciola hepatica"
+                     }
+                  ],
+                  "label" : "Fasciola"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Opisthorchis_viverrini_prjna222628/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Opisthorchis_viverrini_prjna222628/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA222628"
+                           }
+                        ],
+                        "label" : "Opisthorchis viverrini"
+                     }
+                  ],
+                  "label" : "Opisthorchis"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Schistosoma_curassoni_prjeb519/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Schistosoma_curassoni_prjeb519/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB519"
+                           }
+                        ],
+                        "label" : "Schistosoma curassoni"
+                     },
+                     {
+                        "url" : "/Schistosoma_haematobium_prjna78265/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Schistosoma_haematobium_prjna78265/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA78265"
+                           }
+                        ],
+                        "label" : "Schistosoma haematobium"
+                     },
+                     {
+                        "url" : "/Schistosoma_japonicum_prjea34885/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Chinese National Human Genome Center genome project",
+                              "url" : "/Schistosoma_japonicum_prjea34885/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEA34885"
+                           }
+                        ],
+                        "label" : "Schistosoma japonicum"
+                     },
+                     {
+                        "url" : "/Schistosoma_mansoni_prjea36577/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Schistosoma_mansoni_prjea36577/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEA36577"
+                           }
+                        ],
+                        "label" : "Schistosoma mansoni"
+                     },
+                     {
+                        "url" : "/Schistosoma_margrebowiei_prjeb522/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Schistosoma_margrebowiei_prjeb522/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB522"
+                           }
+                        ],
+                        "label" : "Schistosoma margrebowiei"
+                     },
+                     {
+                        "url" : "/Schistosoma_mattheei_prjeb523/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Schistosoma_mattheei_prjeb523/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB523"
+                           }
+                        ],
+                        "label" : "Schistosoma mattheei"
+                     },
+                     {
+                        "url" : "/Schistosoma_rodhaini_prjeb526/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Schistosoma_rodhaini_prjeb526/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB526"
+                           }
+                        ],
+                        "label" : "Schistosoma rodhaini"
+                     }
+                  ],
+                  "label" : "Schistosoma"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Trichobilharzia_regenti_prjeb4662/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Trichobilharzia_regenti_prjeb4662/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB4662"
+                           }
+                        ],
+                        "label" : "Trichobilharzia regenti"
+                     }
+                  ],
+                  "label" : "Trichobilharzia"
+               }
+            ],
+            "label" : "Trematoda (Flukes)"
+         },
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Protopolystoma_xenopodis_prjeb1201/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "url" : "/Protopolystoma_xenopodis_prjeb1201/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB1201"
+                           }
+                        ],
+                        "label" : "Protopolystoma xenopodis"
+                     }
+                  ],
+                  "label" : "Protopolystoma"
+               }
+            ],
+            "label" : "Monogenea"
+         },
+         {
+            "url" : "/",
+            "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Schmidtea_mediterranea_prjna12585/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Schmidtea_mediterranea_prjna12585/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA12585"
+                           }
+                        ],
+                        "label" : "Schmidtea mediterranea"
+                     }
+                  ],
+                  "label" : "Schmidtea"
+               }
+            ],
+            "label" : "Free-living flatworms"
+         }
+      ],
+      "label" : "Platyhelminthes (Flatworms)"
+   }
+]
