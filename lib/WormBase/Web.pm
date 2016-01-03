@@ -155,7 +155,7 @@ sub _setup_species {
     my $original_species = $c->config->{sections}->{species_list};
     my $new_species = {};
 
-    my $species_file_remote_path = "/pub/wormbase/releases/WS250/species/ASSEMBLIES." . $c->config->{wormbase_release} .".json";
+    my $species_file_remote_path = '/pub/wormbase/releases/' . $c->config->{wormbase_release} . '/species/ASSEMBLIES.' . $c->config->{wormbase_release} . '.json';
     my $species_file_local_path = $c->path_to('/conf/species/', 'species_ASSEMBLIES.json');
     my $available_species = _get_json($c, $species_file_remote_path, $species_file_local_path);
 
