@@ -8,11 +8,19 @@
 <script type="text/javascript">
 $jq(function(){
 
-  // get exported json from cytoscape desktop via ajax
+// old way with json and fake widget phenotype_graph_json
+//   var graphP = $jq.ajax({
+//     url: 'http://juancarlos.wormbase.org/rest/widget/gene/[% fields.phenotype_graph.data %]/phenotype_graph_json', 
+//     type: 'GET',
+//     dataType: 'json'
+//   });
+
+  // get exported jsonp from cytoscape desktop via ajax
   var graphP = $jq.ajax({
-    url: 'http://juancarlos.wormbase.org/rest/widget/gene/[% fields.phenotype_graph.data %]/phenotype_graph_json', 
+    url: 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJsonp&focusTermId=[% fields.phenotype_graph.data %]',
     type: 'GET',
-    dataType: 'json'
+    jsonpCallback: 'jsonCallback',
+    dataType: 'jsonp'
   });
 
   Promise.all([ graphP ]).then(initCy);
