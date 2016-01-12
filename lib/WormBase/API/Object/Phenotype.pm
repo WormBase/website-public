@@ -69,7 +69,7 @@ sub synonyms {
 sub is_dead {
     my $self = shift;
     my $object = $self->object;
-    my ($alternate) = $object->at('Dead');
+    my $alternate = $object->Alternate_phenotype if $object->Dead;
 
     return {
         description => "The Note of the phenotype when it's retired and replaced by another.",
