@@ -934,7 +934,7 @@
       var heightDefault = container.children('.field').height();
 
       settings.success = function(data){
-        var field = $jq('<div/>').html(data).contents().hide();
+        var field = $jq('<div/>').html(data).hide();
         container.append(field);
         setTimeout(function(){
           // a long wait to ensure field is rendered before showing,
