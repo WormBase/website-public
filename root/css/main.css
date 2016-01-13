@@ -2129,7 +2129,9 @@ div.field-curator span.desc {
   bottom:0.2em;
 }
 
-
+#colorbox div.field-title {
+  width: 7em;
+}
 
 
 /* Subfields: fields inside of fields */
@@ -3176,7 +3178,7 @@ div.title {
 
 .seq-toggle  {
   position:relative;
-  width:44em;
+  max-width: 44em;
 }
 
 
