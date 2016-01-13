@@ -155,7 +155,7 @@ sub _setup_species {
     my $original_species = $c->config->{sections}->{species_list};
     my $new_species = {};
 
-    my $species_file_remote_path = "/pub/wormbase/releases/WS250/species/ASSEMBLIES." . $c->config->{wormbase_release} .".json";
+    my $species_file_remote_path = '/pub/wormbase/releases/' . $c->config->{wormbase_release} . '/species/ASSEMBLIES.' . $c->config->{wormbase_release} . '.json';
     my $species_file_local_path = $c->path_to('/conf/species/', 'species_ASSEMBLIES.json');
     my $available_species = _get_json($c, $species_file_remote_path, $species_file_local_path);
 
@@ -195,30 +195,33 @@ sub _get_json {
     my ($c, $remote_path, $local_copy_path) = @_;
     my $json_string = "";
 
-    local *_callback = sub {
+    local *_process_local_copy = sub {
+        $json_string = `cat $local_copy_path`;
+        chomp $json_string;
+    };
 
-        my ($ftp, $error) = @_;
-        if ($error) {
-            $json_string = `cat $local_copy_path`;
-            chomp $json_string;
-        } else {
-            my $fh;
-            open( $fh, '>', \$json_string) || die "cannot open fh";
-            $ftp->get($remote_path, $fh);
-            close $fh;
+    local *_process_remote_copy = sub {
 
-            if ($c->config->{installation_type} eq 'development'){
-                # only update local copy on a development instance
-                # to avoid uncommited change in git repo
-                open($fh, '>', $local_copy_path);
-                print $fh $json_string;
-                close $fh;
-            }
-        }
+        my ($ftp) = @_;
+        my $fh;
+        open( $fh, '>', \$json_string) || die "cannot open fh";
+        $ftp->get($remote_path, $fh);
+        close $fh;
+
+        # update local copy
+        # to avoid uncommited change in git repo
+        open($fh, '>', $local_copy_path);
+        print $fh $json_string;
+        close $fh;
 
     };
 
-    _with_ftp_site(\&_callback);
+    # consider remote copy only on a development instance
+    if ($c->config->{installation_type} eq 'development'){
+        _with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+    }else{
+        _process_local_copy();
+    }
     # unlike with javascript, _with_ftp_site is blocking
     my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($json_string);
     return $parsed;
@@ -237,33 +240,40 @@ sub _get_latest_release {
         return $num;
     }
 
-    local *_callback = sub {
-        my ($ftp, $error) = @_;
-
-        if ($error) {
-            $latest_release_number = `cat $latest_release_number_path`;
-            chomp $latest_release_number;
-        } else {
-            my $all_releases = $ftp->ls($release_dir_path);
-            my @all_release_numbers = map {
-                my $num = get_release_number($_);
-                $num ? $num : ();
-            } @$all_releases;
-            ($latest_release_number) = sort {
-                $b <=> $a
-            } @all_release_numbers;
-
-            if ($c->config->{installation_type} eq 'development'){
-                # only update local copy on a development instance
-                # to avoid uncommited change in git repo
-                open(my $fh, '>', $latest_release_number_path);
-                print $fh $latest_release_number;
-                close $fh;
-            }
-        }
+    local *_process_local_copy = sub {
+        $latest_release_number = `cat $latest_release_number_path`;
+        chomp $latest_release_number;
     };
 
-    _with_ftp_site(\&_callback);
+    local *_process_remote_copy = sub {
+        my ($ftp) = @_;
+
+        my $all_releases = $ftp->ls($release_dir_path);
+        my @all_release_numbers = map {
+            my $num = get_release_number($_);
+            $num ? $num : ();
+        } @$all_releases;
+        ($latest_release_number) = sort {
+            $b <=> $a
+        } @all_release_numbers;
+
+        if ($c->config->{installation_type} eq 'development'){
+            # only update local copy on a development instance
+            # to avoid uncommited change in git repo
+            open(my $fh, '>', $latest_release_number_path);
+                print $fh $latest_release_number;
+            close $fh;
+        }
+
+    };
+
+    # consider remote copy only on a development instance
+    if ($c->config->{installation_type} eq 'development'){
+        _with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+    }else{
+        _process_local_copy();
+    }
+
     # unlike with javascript, _with_ftp_site is blocking
     return 'WBPS' .  $latest_release_number;
 }
@@ -271,14 +281,14 @@ sub _get_latest_release {
 
 # helper method to handle setup and teardown of ftp site connection
 sub _with_ftp_site {
-    my ($function, @args) = @_;
+    my ($on_success, $on_error, @args) = @_;
 
     my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
                             Timeout=>5, Passive=>1)
-        or return $function->(undef, "Cannot connect to ftp.wormbase.org: $@");
+        or return $on_error->("Cannot connect to ftp.wormbase.org: $@", @args);
 
     $ftp->login();
-    my $result = $function->($ftp, @args);
+    my $result = $on_success->($ftp, @args);
     $ftp->quit();
 
     return $result;

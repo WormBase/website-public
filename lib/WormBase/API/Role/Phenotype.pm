@@ -142,7 +142,7 @@ sub _get_pato {
         return {
             pato_evidence => {
                 entity_term => $self->_pack_obj($entity_term),
-                pato_term => $pato_term->Name ? "$pato_term->Name" : 'abnormal',
+                pato_term   => eval { $pato_term->Name } ? $pato_term->Name : 'abnormal',
             },
             key => join('_', "$entity_term", "$pato_term")
         };
