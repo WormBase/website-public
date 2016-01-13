@@ -85,6 +85,22 @@
         my ($gene_mec_10) = grep { $_->{name}->{label} eq 'mec-10'; } @genes;
         ok($gene_mec_10, 'correct gene returned');
     }
+
+    sub test_go_term {
+
+        my $wbprocess = $api->fetch({ class => 'Wbprocess', name => 'WBbiopr:00000008' });
+
+        can_ok('WormBase::API::Object::Wbprocess', ('go_term'));
+
+        my $go_term = $wbprocess->go_term;
+        isnt($go_term->{'data'}, undef, 'data returned');
+
+        my ($term1) = grep {
+            $_->{name}->{label} eq 'defense response';
+        } @{$go_term->{data}};
+        ok($term1, 'correct GO term returned');
+
+    }
 }
 
 1;
