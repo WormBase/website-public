@@ -125,8 +125,8 @@ sub go_term {
     my @data_pack;
 
     foreach my $tag_object (@tag_objects) {
-    	my $term_pack = $self->_pack_obj($tag_object,$tag_object->Term); ## , $tag_object->Term
-    	push @data_pack, $term_pack; ## {go_term => $term_pack}
+    	my $term_pack = $self->_pack_obj($tag_object);
+    	push @data_pack, $term_pack;
     }
 
     return {
