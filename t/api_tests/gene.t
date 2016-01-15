@@ -116,8 +116,9 @@
 
         my $evidence = $c_desc->{data}->{evidence};
         ok($evidence->{Inferred_automatically}, 'description is inferred automatically');
-        my ($inferred_auto_label) = map { $_->{label} } @{$evidence->{Inferred_automatically}};
-        ok($inferred_auto_label =~ /^This description was generated automatically/,
+
+        my ($inferred_auto_label) = grep { $_->{label} =~ /^This description was generated automatically/; } @{$evidence->{Inferred_automatically}};
+        ok($inferred_auto_label,
            'correct text marking automatically inferred description');
 
     }
