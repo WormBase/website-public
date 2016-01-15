@@ -2363,15 +2363,16 @@ var Scrolling = (function(){
             prev[lifeStage] = dat.concat(d);
             return prev;
           }, {});
-          var sortedByLifeStage = Object.keys(lifeStage2Data).sort(function(lifeStageA, lifeStageB){
-            return bin(lifeStageA) - bin(lifeStageB);
-          }).map(function(lifeStage){
-            return lifeStage2Data[lifeStage];
-          });
+          var sortedByLifeStage = Object.keys(lifeStage2Data).slice()
+            .sort(function(lifeStageA,lifeStageB){
+              return lifeStageA - lifeStageB;
+            })
+            .map(function(lifeStage){
+              return lifeStage2Data[lifeStage];
+            });
 
           container.highcharts({
             chart: {
-              type: 'column',
               marginBottom: 150
             },
             title: {
@@ -2389,6 +2390,7 @@ var Scrolling = (function(){
             },
             series: [{
               name: 'Median',  // only includes the numerical stages
+              type: 'column',
               //color: '#beaed4',
               color: 'rgba(189,189,189, 1)',
               data: sortedByLifeStage
@@ -2402,11 +2404,11 @@ var Scrolling = (function(){
                   });
                   return [bin(dat[0].lifeStage), ss.median(values)];
                 }),
-              pointWidth: 8
             },{
               name: 'Median (categorical)',  //I need to separate these data out, cuz Gary Williams want a wider bar for them.
-              showInLegend: false,
+              type: 'column',
               pointWidth: 20,
+              showInLegend: false,
               //color: '#beaed4',
               color: 'rgba(189,189,189, 1)',
               data: sortedByLifeStage
@@ -2472,8 +2474,11 @@ var Scrolling = (function(){
 
             plotOptions: {
               column: {
-                pointPadding: 0.2,
-                borderWidth: 0
+                grouping: false,
+                pointPlacement: 0,
+                groupPadding: 0,
+                pointPadding: 0,
+                borderWidth: 1
               }
             }
           });
@@ -2589,7 +2594,8 @@ var Scrolling = (function(){
         function xAxis () {
           var tickLabels = [];
           var maxNumericTick = MIN_CATEGORICAL-BIG_STEP;
-          for (var tick = 0; tick <= maxNumericTick; tick+=STEP){
+
+          for (var tick = 0; tick <= maxNumericTick; tick+=150){
             tickLabels.push(tick);
           }
           tickLabels = tickLabels.concat(CATEGORICAL_STAGES);
