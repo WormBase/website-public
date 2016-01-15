@@ -2355,6 +2355,8 @@ var Scrolling = (function(){
         var STEP = 100;
         var BIG_STEP= 150;
 
+        var LABEL_COLOR = '#000000';
+
         function update(){
           var cleanData = preprocess_data(experiments, data);
           var lifeStage2Data = cleanData.reduce(function(prev, d){
@@ -2373,6 +2375,8 @@ var Scrolling = (function(){
 
           container.highcharts({
             chart: {
+              height: 500,
+              width: 850,
               marginBottom: 150
             },
             title: {
@@ -2381,6 +2385,7 @@ var Scrolling = (function(){
             subtitle: {
               text: 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.',
               style: {
+                color: LABEL_COLOR,
                 "font-size": "10px"
               },
               verticalAlign: 'bottom',
@@ -2445,7 +2450,15 @@ var Scrolling = (function(){
             yAxis: {
               min: 0,
               title: {
-                text: 'Expression (FPKM)'
+                text: 'Expression (FPKM)',
+                style: {
+                  color: LABEL_COLOR
+                }
+              },
+              labels: {
+                style: {
+                  color: LABEL_COLOR
+                }
               }
             },
             tooltip: {
@@ -2609,6 +2622,7 @@ var Scrolling = (function(){
                 return label.toString().split(/\s+/).join('<br/>');
               },
               style: {
+                color: LABEL_COLOR,
                 'font-size': 10,
                 'font-weight': 'bold'
               }
@@ -2616,6 +2630,9 @@ var Scrolling = (function(){
             plotBands: plotBands(),
             title: {
               text: 'Life stages',
+              style: {
+                color: LABEL_COLOR
+              },
               y: 0
             }
           }
@@ -2644,7 +2661,7 @@ var Scrolling = (function(){
               label: {
                 text: typeName,
                 style: {
-                  color: '#606060',
+                  color: LABEL_COLOR
                 }
               }
             };
