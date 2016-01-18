@@ -1216,7 +1216,7 @@ END;
               sequences.$obj.seq;
             END;
             IF (sequences.$obj.title.match('UTR') && sequences.$obj.seq.match('color'));
-              '<p id="fade" style="width:55em">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next. Beige indicates flanking regions of a transcript.</p>';
+              '<p id="fade">Lowercase text in transcripts indicates introns and UTRs, UTR sequences having a light gray font. Uppercase, highlighted text in transcripts indicate coding sequence where each subsequent coding exon is highlighted in a different color, alternating between yellow and orange, to differentiate one exon from the next. Beige indicates flanking regions of a transcript.</p>';
             END;
           END;
           '</div>';
