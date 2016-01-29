@@ -193,28 +193,36 @@ sub _setup_parasite_species {
 # if the ftp site fails, fallback to a local copy
 sub _get_json {
     my ($c, $remote_path, $local_copy_path) = @_;
-    my $json_string = "";
+    my $json;
 
     local *_process_local_copy = sub {
-        $json_string = `cat $local_copy_path`;
+        my $json_string = `cat $local_copy_path`;
         chomp $json_string;
+
+        $json = _parse_json($json_string);  # update reference in closure
     };
 
     local *_process_remote_copy = sub {
 
         my ($ftp) = @_;
         my $fh;
+        my $json_string;
         open( $fh, '>', \$json_string) || die "cannot open fh";
         $ftp->get($remote_path, $fh);
         close $fh;
 
+        my $json = _parse_json($json_string);
         # update local copy
-        # to avoid uncommited change in git repo
         open($fh, '>', $local_copy_path);
         print $fh $json_string;
         close $fh;
 
     };
+
+    sub _parse_json {
+        my ($my_json_string) = @_;
+        return (new JSON)->allow_nonref->utf8->relaxed->decode($my_json_string);
+    }
 
     # consider remote copy only on a development instance
     if ($c->config->{installation_type} eq 'development'){
@@ -223,8 +231,8 @@ sub _get_json {
         _process_local_copy();
     }
     # unlike with javascript, _with_ftp_site is blocking
-    my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($json_string);
-    return $parsed;
+
+    return $json;
 }
 
 
@@ -257,6 +265,8 @@ sub _get_latest_release {
             $b <=> $a
         } @all_release_numbers;
 
+        die "Failed to get ParaSite release number from FTP" unless $latest_release_number;
+
         if ($c->config->{installation_type} eq 'development'){
             # only update local copy on a development instance
             # to avoid uncommited change in git repo
@@ -283,15 +293,26 @@ sub _get_latest_release {
 sub _with_ftp_site {
     my ($on_success, $on_error, @args) = @_;
 
+    my $error;
     my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
-                            Timeout=>5, Passive=>1)
-        or return $on_error->("Cannot connect to ftp.wormbase.org: $@", @args);
+                            Timeout=>5, Passive=>1);
 
-    $ftp->login();
-    my $result = $on_success->($ftp, @args);
-    $ftp->quit();
+    eval {
+        if ($ftp){
+            $ftp->login();
+            $on_success->($ftp, @args);
+            $ftp->quit();
+        } else {
+            die "Cannot connect to ftp.wormbase.org: $@";
+        }
+        1;  # expression returns a truety value at the end
+    } or do {
+        $error = $@;
+        warn "!!!FAILED!!! to retrieve species configuration from FTP site:\n$error";
+    };
 
-    return $result;
+    $on_error->($error, @args) if $error;
+
 }
 
 # traverse the parasite species tree to get the leaf species
