@@ -183,8 +183,7 @@ sub _setup_parasite_species {
     my $parasite_species_trees = _get_json($c,
                                            $species_file_remote_path,
                                            $species_file_local_path);
-    use Data::Dumper;
-print Dumper $parasite_species_trees;
+
     my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
     $c->config->{sections}->{parasite_species_list} = \@parasite_species;
 
