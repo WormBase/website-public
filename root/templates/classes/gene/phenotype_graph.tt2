@@ -27,11 +27,15 @@ $jq(function(){
 
   function initCy( then ){
     var elements = then[0].elements;
-    WB.setupCytoscapePhenGraph(elements);
+    if (elements.nodes.length > 0) {
+        WB.setupCytoscapePhenGraph(elements); }
+      else {
+        document.getElementById('phenGraphContent').innerHTML = 'No observed phenotypes.'; }
   }
 });
 </script>
 
+<div id="phenGraphContent">
 <div id="cyPhenGraph" style="height: 750px; width: 950px; position: relative; float: left; border: 1px solid #aaa;">
   <div id="cyPhenGraphLoading" style="width: 950px; padding: 20px 0 0 0; position: absolute; text-align: center;"><img src="/img/ajax-loader.gif" alt="Loading graph..." /></div>
 </div>
@@ -66,3 +70,4 @@ $jq(function(){
   <div id="info" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">Mouseover or click node for more information.</div><br/>
 </div>
 <img id="png-export" style="border: 1px solid #ddd; display: none;">
+</div>
