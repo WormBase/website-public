@@ -1238,12 +1238,12 @@ sub _retrieve_molecular_changes {
 
 	# This should be handled by change_data above. Oh well.
 	if ($change_type eq 'Missense') {
-	    my ($aa_position,$aa_change_string) = $change_type->row(1);
+	    my ($aa_position,$aa_change_string) = $change_type->right->row;
 	    $aa_change_string =~ /(.*)\sto\s(.*)/;
 	    $change_data{aa_change} = "$1$aa_position$2";
 	}  elsif ($change_type eq 'Nonsense') {
 	    # "Position" here really one of Amber, Ochre, etc.
-	    my ($aa_position,$aa_change) = $change_type->row(1);
+	    my ($aa_position,$aa_change) = $change_type->right->row;
 	    $change_data{aa_change} = "$aa_change";
 	}
 
