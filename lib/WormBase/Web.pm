@@ -211,7 +211,7 @@ sub _get_json {
         $ftp->get($remote_path, $fh);
         close $fh;
 
-        my $json = _parse_json($json_string);
+        $json = _parse_json($json_string);
         # update local copy
         open($fh, '>', $local_copy_path);
         print $fh $json_string;
