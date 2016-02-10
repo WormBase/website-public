@@ -155,16 +155,28 @@ sub _setup_species {
     my $original_species = $c->config->{sections}->{species_list};
     my $new_species = {};
 
-    my $species_file_remote_path = '/pub/wormbase/releases/' . $c->config->{wormbase_release} . '/species/ASSEMBLIES.' . $c->config->{wormbase_release} . '.json';
+    my $species_file_remote_path = '/pub/wormbase/releases/current-development-release/species/ASSEMBLIES.' . $c->config->{wormbase_release} . '.json';
     my $species_file_local_path = $c->path_to('/conf/species/', 'species_ASSEMBLIES.json');
-    my $available_species = _get_json($c, $species_file_remote_path, $species_file_local_path);
+    my @available_species = _parse_wb_species(_get_json($c, $species_file_remote_path, $species_file_local_path));
 
-    foreach my $species (keys $original_species){
-        if ($available_species->{$species} || $species eq 'all'){
-            # include a species ONLY if it is available
-            $new_species->{$species} = $original_species->{$species};
+    foreach my $species (@available_species) {
+        # include a species ONLY if it is available and configured in wormbase.conf
+
+        my $name = $species->{name};
+        my $bioproject = $species->{bioproject};
+        my $long_name = "$name\_$bioproject";
+
+        if ($original_species->{$long_name}){
+            # a typical strain
+            $new_species->{$long_name} = $original_species->{$long_name};
+        } elsif ($original_species->{$name}->{bioprojects}->{$bioproject}){
+            # default strain
+            $new_species->{$name} = $original_species->{$name};
         }
     }
+
+    $new_species->{all} = $original_species->{all};
+
     $c->config->{sections}->{species_list} = $new_species;
     $c->_setup_parasite_species;
 }
@@ -315,6 +327,27 @@ sub _with_ftp_site {
 
 }
 
+sub _parse_wb_species {
+    my ($hash) = @_;
+    my @species = ();
+    foreach my $species (keys %$hash){
+        my $species_name = $hash->{$species}->{full_name};
+
+        foreach my $assembly (@{$hash->{$species}->{assemblies}}){
+            my $strain_name = $assembly->{strain};
+
+            push @species, {
+                #    'url' => '/Schmidtea_mediterranea_prjna12585/Info/Index',
+                'name' => $species,
+                'bioproject' => $assembly->{bioproject},
+                'label' => "$species_name ($strain_name)"
+            };
+        }
+    }
+
+    return @species;
+}
+
 # traverse the parasite species tree to get the leaf species
 sub _parse_parasite_species {
     my ($tree, $name_prefix) = @_;
@@ -335,6 +368,7 @@ sub _parse_parasite_species {
         # parse parent species
         push @species, _parse_parasite_species($subtree, $tree->{label});
     }
+
     return @species;
 
 }
