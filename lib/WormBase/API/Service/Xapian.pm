@@ -76,10 +76,7 @@ sub search {
       }
     }
 
-    if($species){
-        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s" if defined $s;
-    }
+    $q = $class->_add_species($q, $species) if $species;
 
     my ($query, $error) =$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
@@ -171,10 +168,7 @@ sub count_estimate {
       }
     }
 
-    if($species){
-        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s" if defined $s;
-    }
+    $q = $class->_add_species($q, $species) if $species;
 
     my $query=$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
@@ -442,8 +436,7 @@ sub _add_type_range {
 sub _add_species {
     my ($class, $q, $species) = @_;
     if($species){
-        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s" if defined $s;
+        $q .= " species:$species..$species" if defined $species;
     }
     return $q;
 }
