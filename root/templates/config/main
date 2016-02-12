@@ -208,13 +208,23 @@
 
 
     MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url) BLOCK;
-      queries = is_preview_url && taxonomy == 'c_elegans' ? {
+      IF is_preview_url && taxonomy == 'c_elegans';
+        queries = {
             data => 'data/' _ taxonomy _ '_simple',
             loc => position_string
-        } : {
+        };
+      ELSIF taxonomy.match('(?i).+_(PRJ\w+)');
+        queries = {
+            data => 'data/' _ taxonomy,
+            loc => position_string
+        };
+      ELSE;
+        queries = {
             data => 'data/' _ taxonomy _ '_' _ bioproject,
             loc => position_string
-          };
+        };
+      END;
+
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
         'http://staging.wormbase.org';
