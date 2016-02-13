@@ -195,7 +195,11 @@
         bioproject = data.bioproject || c.config.sections.species_list.$species.bioprojects.keys;
         FOREACH bp IN bioproject;
           IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-              url = gbrowse_url(species, item.name.class _ ":" _ item.name.id, bp);
+              # if applicable, hack to remove bioproject prefix in WBID(ie. PRJNA248909:FL81_00001 becomes FL81_00001)
+              matched = item.name.id.match('PRJ.+:(\w+)');
+              query = matched ? matched.0 : item.name.id;
+
+              url = gbrowse_url(species, item.name.class _ ":" _ query, bp);
               linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
           ELSIF(!search);
               url = gbrowse_url(species, '', bp);
