@@ -66,10 +66,16 @@ sub current_assemblies {
     # Multiple assemblies for a given species are
     # represented by linking from the live Sequence_collection
     # to others.
-    my $data = $self->_get_assemblies('current');
+    my @data = $self->_get_assemblies('current');
+    foreach (@data) {
+        my $genomic_sequence = $self->_genomic_seq_ftp($_->{name}->{taxonomy},
+                                                       $_->{name}->{bioproject},
+                                                       $self->_api->config->{wormbase_release});
+        $_->{genomic_sequence} = $genomic_sequence;
+    }
     return {
         description => "current genomic assemblies",
-        data => @$data ? $data : undef
+        data => @data ? \@data : undef
     }
 }
 
@@ -84,10 +90,18 @@ sub previous_assemblies {
     # Multiple assemblies for a given species are
     # represented by linking from the live Sequence_collection
     # to others.
-    my $data = $self->_get_assemblies('previous');
+    my @data = $self->_get_assemblies('previous');
+    foreach (@data) {
+        my $genomic_release = $_->{latest_wb_release};
+        my $genomic_sequence = $self->_genomic_seq_ftp($_->{name}->{taxonomy},
+                                                       $_->{name}->{bioproject},
+                                                       "$genomic_release");
+        $_->{genomic_sequence} = $genomic_sequence;
+    }
+
     return {
         description => "previous genomic assemblies",
-        data => @$data ? $data : undef
+        data => @data ? \@data : undef
     }
 }
 
@@ -108,7 +122,7 @@ sub _get_assemblies {
         push @data,$self->_process_assembly($_) unless ($_->Status eq 'Live' && $type eq 'previous');
     }
 
-    return \@data;
+    return @data;
 }
 
 
@@ -129,13 +143,9 @@ sub _process_assembly {
     $label = $self->_pack_obj($assembly->Name, "$label", coord => { start => 1 });
 
     my ($g, $species) = $self->object =~ /(.).*[ _](.+)/o;
+
     $label->{taxonomy} = lc "${g}_$species";
-    $label->{bioproject} = $bioproject;
-
-
-    my $genomic_release = $assembly->Superceded_by ? $assembly->Latest_WS_release : $assembly->First_WS_release;
-    my $genomic_sequence = $self->_genomic_seq_ftp($label->{taxonomy},$bioproject,"$genomic_release",'genomic','fa','gz');
-
+    $label->{bioproject} = "$bioproject";
 
     my $data = {
         name => $label,
@@ -145,27 +155,32 @@ sub _process_assembly {
         wb_release_range  => $wb_range,
         reference         => $self->_pack_obj($ref),
         status            => $status,
-        bioproject        => $bioproject,
-        genomic_sequence => $genomic_sequence
+        bioproject        => $bioproject
     };
     return $data;
 }
 
-# link to files with base url ftp://ftp.wormbase.org/pub/wormbase/species/
+
+# link to files with base url ftp://ftp.wormbase.org/pub/wormbase/releases/
 sub _genomic_seq_ftp {
     my ($self,$species,$bioproject,$release) = @_;
-    my $genomic_seq_file;
-    my $species_full = $release > 236 ? "$species.$bioproject" : "$species";
+    my ($release_number) = $release =~ /WS(\d+)/;
 
-    $genomic_seq_file = join('.',$species_full,"WS$release",'genomic','fa','gz');
-
-    my $genomic_seq_path = join('/','species',$species,'sequence','genomic', $genomic_seq_file);
+    my $genomic_seq_path;
+    if ($release_number > 236) {
+        my $filename = join('.',$species,$bioproject,$release,'genomic','fa','gz');
+        $genomic_seq_path = join('/','releases',$release,'species',$species,$bioproject,$filename);
+    } else {
+        my $filename = join('.',$species,$release,'genomic','fa','gz');
+        $genomic_seq_path = join('/','releases',$release,'species',$species,$filename);
+    }
     my $genomic_sequence = {
         class => 'ftp',
         label => join('.',"$species",'fa','gz'),
         id => $genomic_seq_path,
         };
     return $genomic_sequence;
+
 }
 
 
