@@ -286,10 +286,13 @@ sub _get_obj {
   my %ret;
   $ret{name} = $self->_pack_search_obj($doc);
   my $species = $ret{name}{taxonomy};
-  if($species =~ m/^(.*)_([^_]*)$/){
+
+  if($species =~ m/^(.*?)_(.*?)(_(.*))?$/){
     my $s = $self->_api->config->{sections}{species_list}{$species};
     $ret{taxonomy}{genus} = $s->{genus} || ucfirst($1);
     $ret{taxonomy}{species} = $s->{species} || $2;
+    my $strain = $s->{strain} || $4;
+    $ret{taxonomy}{species} .= ($strain && " ($strain)") || '';
   }
   $ret{ptype} = $doc->get_value(7) if $doc->get_value(7);
   %ret = %{$self->_split_fields(\%ret, uri_unescape($doc->get_data()))};
