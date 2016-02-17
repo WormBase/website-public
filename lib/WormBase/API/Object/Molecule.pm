@@ -198,7 +198,7 @@ sub affected_rnai {
             "$_" eq "$phenotype" ? ($_) : ();
         } ($rnai->$phenotype_tag_name);
 
-        my @affected_gene = $rnai->Gene;
+        my @affected_gene = grep { $_->get('Inferred_automatically',1) eq 'RNAi_primary'; } $rnai->Gene;
 
         return ($phenotype_info, @affected_gene);
     }
