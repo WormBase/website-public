@@ -18,7 +18,7 @@ table_settings = '
     "columnDefs": [
         { "targets": 3, "width": "40%" }
     ],
-    aaSorting: [],
+    aaSorting: [[0, "asc"]],
     "autoWidth": false
 ';
 
