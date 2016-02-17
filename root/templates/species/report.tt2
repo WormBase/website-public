@@ -7,7 +7,9 @@
         breadcrumbs.push('<span>All Species</span>');
       ELSE;
         breadcrumbs.push('<a href="' _ c.uri_for('/species','all').path _ '">Species</a>');
-        species_name = (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
+        species_name = c.config.sections.species_list.defined(species) ?
+            c.config.sections.species_list.$species.title
+            : (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
         IF class == 'all';
           breadcrumbs.push('<span class="species">'
                 _ species_name
@@ -35,7 +37,3 @@
       title = breadcrumbs.join(' &raquo; ');
       report_page(title);
 %]
-
-
-
-
