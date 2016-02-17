@@ -88,11 +88,14 @@ sub molecule_use {
 
 sub affected_genes {
     my ($self) = @_;
+
     my $genes_by_variations = $self->affected_variations->{data} || [];
     my $genes_by_transgenes = $self->affected_transgenes->{data} || [];
+    my $genes_by_rnai = $self->affected_rnai->{data} || [];
 
     my @genes = ();
     push @genes, @$genes_by_transgenes;
+    push @genes, @$genes_by_rnai;
     push @genes, @$genes_by_variations;
 
     return {
