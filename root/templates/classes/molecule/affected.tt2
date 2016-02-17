@@ -18,7 +18,7 @@ table_settings = '
     "columnDefs": [
         { "targets": 3, "width": "40%" }
     ],
-    aaSorting: [],
+    aaSorting: [[0, "asc"]],
     "autoWidth": false
 ';
 
@@ -26,16 +26,15 @@ table_settings = '
 WRAPPER $field_block title="RNAi" key="affected_rnai";
 #      tableAffected('RNAi', 'affected_rnai');
     build_data_table(
-	order = ['affected','phenotype'],
+	order = ['affected_gene','phenotype','phenotype_not','affected'],
 	columns = {
-	    affected  => "RNAi",
+	    affected  => "Details",
         affected_gene => 'Gene',
 	    phenotype => 'Phenotype',
 	    phenotype_not => 'Phenotype not observed',
-	},
-    key = "affected_rnai",
-    separator = '<br/>',
-    style='"columnDefs": [{ "targets": 0, "width": "40%" }]'
+	}, key = "affected_rnai",
+      style = table_settings,
+      separator = '<br/>'
      );
 END;
 
