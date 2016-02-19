@@ -1,4 +1,8 @@
-<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;">
+<h2><i>[% fields.name.data.label %]</i>
+[% IF fields.classification.data.type == 'pseudogene'; %]
+   [% fields.classification.data.type _ ' '; %]
+[% END %]
+<span id="fade" style="font-size:0.7em;">
 [% IF fields.gene_class.data %]
   ([% fields.gene_class.data.description %])
 [% END %]
