@@ -88,11 +88,14 @@ sub molecule_use {
 
 sub affected_genes {
     my ($self) = @_;
+
     my $genes_by_variations = $self->affected_variations->{data} || [];
     my $genes_by_transgenes = $self->affected_transgenes->{data} || [];
+    my $genes_by_rnai = $self->affected_rnai->{data} || [];
 
     my @genes = ();
     push @genes, @$genes_by_transgenes;
+    push @genes, @$genes_by_rnai;
     push @genes, @$genes_by_variations;
 
     return {
@@ -198,43 +201,15 @@ sub affected_rnai {
             "$_" eq "$phenotype" ? ($_) : ();
         } ($rnai->$phenotype_tag_name);
 
-        my @affected_gene = $rnai->Gene;
+        my @affected_gene = grep { $_->get('Inferred_automatically',1) eq 'RNAi_primary'; } $rnai->Gene;
 
         return ($phenotype_info, @affected_gene);
     }
 
-    # fetching RNAi could reuse the functionality shared with
-    #fetching transgene and variations. But let's wait for feedback
-    #before actually putting it up
-    #my $data_pack = $self->_affects('RNAi', \&get_primary_targets);
-
-    my @data;
-    foreach my $affected ($self->object->RNAi){
-
-        my $phenotype = $affected->right;
-        my $phenotype_tag;
-
-        my ($phenotype_info, @affected_genes) = get_primary_targets($affected, $phenotype, 'Phenotype');
-        if (@affected_genes) {
-            $phenotype_tag = 'phenotype';
-        }else{
-            ($phenotype_info, @affected_genes) = get_primary_targets($affected, $phenotype, 'Phenotype_not_observed');
-            $phenotype_tag = 'phenotype_not' if @affected_genes;
-        }
-
-        my $affected_packed = $self->_pack_obj($affected);
-        my $evidence = {text => $self->_pack_obj($phenotype), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
-
-        push @data, {
-            affected  =>  $affected_packed,
-          #  affected_gene => $self->_pack_list([@affected_genes]),
-            $phenotype_tag => $evidence ? $evidence : $self->_pack_obj($phenotype)
-        };
-
-    }
+    my $data_pack = $self->_affects('RNAi', \&get_primary_targets);
 
     return {
-        data        => @data ? \@data : undef,
+        data        => $data_pack,
         description => 'rnai affected by molecule'
     };
 }
