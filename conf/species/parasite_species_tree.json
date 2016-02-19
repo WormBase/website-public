@@ -637,6 +637,25 @@
                   "url" : "/",
                   "children" : [
                      {
+                        "url" : "/Panagrellus_redivivus/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Panagrellus_redivivus/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA186477"
+                           }
+                        ],
+                        "label" : "Panagrellus redivivus"
+                     }
+                  ],
+                  "label" : "Panagrellus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
                         "url" : "/Parastrongyloides_trichosuri_prjeb515/Info/Index/",
                         "aliases" : [],
                         "children" : [
@@ -763,7 +782,7 @@
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "Wellcome Trust Sanger Institute genome project",
+                              "summary" : "ARRAY(0x7ffa4dd79120) genome project",
                               "url" : "/Strongyloides_ratti_prjeb125/Info/Index",
                               "children" : null,
                               "label" : "PRJEB125"
@@ -888,6 +907,116 @@
                      }
                   ],
                   "label" : "Angiostrongylus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Caenorhabditis_angaria/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_angaria/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA51225"
+                           }
+                        ],
+                        "label" : "Caenorhabditis angari"
+                     },
+                     {
+                        "url" : "/Caenorhabditis_brenneri/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_brenneri/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA20035"
+                           }
+                        ],
+                        "label" : "Caenorhabditis brenneri"
+                     },
+                     {
+                        "url" : "/Caenorhabditis_briggsae/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_briggsae/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA10731"
+                           }
+                        ],
+                        "label" : "Caenorhabditis briggsae"
+                     },
+                     {
+                        "url" : "/Caenorhabditis_elegans/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_elegans/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA13758"
+                           }
+                        ],
+                        "label" : "Caenorhabditis elegans"
+                     },
+                     {
+                        "url" : "/Caenorhabditis_japonica/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_japonica/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA12591"
+                           }
+                        ],
+                        "label" : "Caenorhabditis japonica"
+                     },
+                     {
+                        "url" : "/Caenorhabditis_remanei/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_remanei/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA53967"
+                           }
+                        ],
+                        "label" : "Caenorhabditis remanei"
+                     },
+                     {
+                        "url" : "/Caenorhabditis_sinica/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_sinica/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA194557"
+                           }
+                        ],
+                        "label" : "Caenorhabditis sinica"
+                     },
+                     {
+                        "url" : "/Caenorhabditis_tropicalis/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "WormBase genome project",
+                              "url" : "/Caenorhabditis_tropicalis/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA53597"
+                           }
+                        ],
+                        "label" : "Caenorhabditis tropicalis"
+                     }
+                  ],
+                  "label" : "Caenorhabditis"
                },
                {
                   "url" : "/",

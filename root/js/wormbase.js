@@ -2359,6 +2359,11 @@ var Scrolling = (function(){
 
         function update(){
           var cleanData = preprocess_data(experiments, data);
+          if (cleanData.length < 1){
+            $jq(container).html('<span class="caveat-emptor" style="position:relative;top:1.5em;">There is no FPKM expression data for this gene from the selected modENCODE libraries.</span>');
+            return;
+          }
+
           var lifeStage2Data = cleanData.reduce(function(prev, d){
             var lifeStage = bin(d.lifeStage);
             var dat = prev[lifeStage] || [];

@@ -161,17 +161,21 @@
     # generate the gbrowse url. Figure out which bioproject (cannonical) to use if none supplied
     # generates the gbrowse_img link if image = 1
     MACRO gbrowse_url(taxonomy, id, bioproject, image) BLOCK;
-      IF !bioproject && c.config.sections.species_list.$taxonomy;
+      IF taxonomy.match('(?i).+_(PRJ\w+)');
+        full_taxonomy = taxonomy;
+      ELSIF bioproject;
+        full_taxonomy = taxonomy _ '_' _ bioproject;
+      ELSIF c.config.sections.species_list.defined(taxonomy);
         FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
           NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
-          bioproject = bp;
+          full_taxonomy = taxonomy _ '_' _ bp;
         END;
       END;
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
         'http://staging.wormbase.org';
       END;
-      c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), (bioproject ? taxonomy _ '_' _ bioproject : taxonomy)).path _ (id ? '?name=' _ id : '');
+      c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), full_taxonomy).path _ (id ? '?name=' _ id : '');
     END;
 
 
@@ -191,7 +195,11 @@
         bioproject = data.bioproject || c.config.sections.species_list.$species.bioprojects.keys;
         FOREACH bp IN bioproject;
           IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-              url = gbrowse_url(species, item.name.class _ ":" _ item.name.id, bp);
+              # if applicable, hack to remove bioproject prefix in WBID(ie. PRJNA248909:FL81_00001 becomes FL81_00001)
+              matched = item.name.id.match('PRJ.+:(\w+)');
+              query = matched ? matched.0 : item.name.id;
+
+              url = gbrowse_url(species, item.name.class _ ":" _ query, bp);
               linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
           ELSIF(!search);
               url = gbrowse_url(species, '', bp);
@@ -204,13 +212,23 @@
 
 
     MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url) BLOCK;
-      queries = is_preview_url && taxonomy == 'c_elegans' ? {
+      IF is_preview_url && taxonomy == 'c_elegans';
+        queries = {
             data => 'data/' _ taxonomy _ '_simple',
             loc => position_string
-        } : {
+        };
+      ELSIF taxonomy.match('(?i).+_(PRJ\w+)');
+        queries = {
+            data => 'data/' _ taxonomy,
+            loc => position_string
+        };
+      ELSE;
+        queries = {
             data => 'data/' _ taxonomy _ '_' _ bioproject,
             loc => position_string
-          };
+        };
+      END;
+
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
         'http://staging.wormbase.org';
