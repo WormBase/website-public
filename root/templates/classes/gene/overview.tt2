@@ -32,6 +32,10 @@ WRAPPER highlight_box;
            tag2link(fields.gene_class.data.tag);
    END;
 
+   WRAPPER $field_block title="Gene cluster" key="gene_cluster";
+           tag2link(fields.gene_cluster.data);
+   END;
+
    WRAPPER $field_block title="Operon" key="operon";
            tag2link(fields.operon.data);
    END;
