@@ -156,6 +156,24 @@
 
     }
 
+    sub test_flanking_more {
+        # relates to #4324 finding wrong flanking region due to duplicate name
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'C47D2.2' });
+        my ($len_us, $len_ds) = (20, 20);  #upstream and downstream length to fetch
+        my ($flanked_seq, $flanked_seq_range, $up_range, $down_range) =
+            $transcript->_get_flanking_region($len_us, $len_ds);
+        my ($flanked_start, $flanked_end) = ($flanked_seq_range->start,
+                                             $flanked_seq_range->end);
+
+        is($flanked_start, 8208731, 'correct start coord of flanked transcript');
+        is($flanked_end, 8211169, 'correct end coord of un-flanked transcript');
+
+        is($flanked_seq, 'cccccacatactcactctttccccattcacagtacatttagaaaggcaaagttcttacaggaatggtgaatggggaaatgtaattaaaaattttaatttttacgtctgttcttgatacttattttgatttgtccttggatggaatattttataacataagttgaagtttgtacaaatttcgaagacggttagaaagcaaagttctccatgcaacgaaaaattggagcaaatattgactatccgattcatttgctttatttagttttcacatcctaactaaccacgtgcgaattgaatctactgtttgcaagcttctttttcttagtttagccaaaattttcaacaatagttttaagttttaaaaaatttacagaatgactacaacaaaggcaaaccttaccgagtttgagcagcaacttgttgataaagcaattggagcaatggagaatgcttactggtatttcaaaaaagcacggtaaatgttttacaaaaaacatttttagcaagtatagcaacttcaaagttggagctgcgctggtgtgtgacgacggagaaattatcataggaggtgggtggagactatgattttcgtccttgtctgattcattagtaaatgtgagaacttgaaagtgcaacatttacatccgattactaactattcacaatcattcgagtattttcagctaaccatgagaatgcgtcatacggagcaacgatttgtgcagagagaagcgcaatagttaccgccttgaccaagggacacagaaaatttaagtacattgttgttggtgagttgaaaaaaaggttctaacgtttttaaagtattcatactacattatataagatacgcagttgaaaattgaaactcagaatttacaaattctgttaaaaatgaaacttgatagtacacctactcatcttcatgtcataaatgatcttacgaactttgaagagtaatgaacaattttaaacgggttttaaaaagctcctgttttgagaatatctgtctgacactaataataaaaatatcttatttcttttttcattttgaaaatgacatcccaaaacagtatatcatattttgagtaaacctcaaatatcaaaattatgttatattattgcgaaaataatagattttaaaatagtttaaatgttcaattacaatttgaagttgacattcttaaatgtagtgtgggtggaattccatattttgaagacagacagactcatatttccgaaatcccgatagttgcataaattgagacaaataatacatcatgatgaaaatttgaaacgcacttcaaatcgaaatgaaggttgtttgtaaatgttctgacttcatttttatataaaaaaaaaatcaaagacataatgaaaactaaaattgatggtttgctgggtttgtaaaaaattaaattcatatgaatgtactaactcaaaaattaaaaactaaaattaatagcaaaatataatttttgaagggtttcacgtgaaaattttttagttcaagaacaagaaacttctccgaatacagtgtcaatcatgaaacgatcaatttttttaaacttagtcatttcaaagttccagtctcgacaatagaatgcgatttaaaaaaaatagagagagagttttgtataccaggctgatcaaaaatacatttagtgaaaaattgtaattgtttcacagtaggaagatacattcacaatatgaggcagaactctttaaatatcacacaattgaactttaaaacagctaaacgtcgtaactaaatttgaactaaatttttaatgtttttagcaaccgaactagaggctccctgctcgccatgtggagtatgccgacaggtccttatcgaatttggagactacaaggttggttagaaatatttcaaaatttaatatgcataacaaaatttaatatgcataactaaactatgctgattctttttttcatagttttcaaatttatgctcgctattataaaattatgtgagcaattatatttgaagaaagccttgcatattctctgaaaacaaagtaaaaaatggaggaaaaatacgaatgaaaaagtcataatgagtgttttcccttcaacctgcaagagtctactccatttccactattcgtttcgtttatttccagatgaattgttttctggaccacccacgtcttcggtttcaaatgtcatttttcttgttcaggtcattctcgggtcttcgactagtgatcaaattatcgagactacaacatacgagcttctgccatatgcattcactccaaaatcactcgatgatcatgaaaaggagactgaagagcgcaaacatcacaatgatcacaacaataaggaatagggaaaattttcagaaattcataaatgttatgaacacagtaatttctattaataaaacatggttgttgaatatatttctggtttgacttt', 'correct flanking sequence is returned');
+
+    }
+
+
+
     #related to issue #2710
     sub test_expression_widget {
         my $transcript = $api->fetch({ class => 'Transcript', name => 'B0336.6.1' });
