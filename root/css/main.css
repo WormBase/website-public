@@ -2145,6 +2145,12 @@ div.field .field .field-content {
   max-width:35em;
 }
 
+/* list as direct child of field content */
+.field-content > ul {
+  margin: 0 0;
+  padding: 0 0 0 1em;
+}
+
 
 
 /* Special field elements */
