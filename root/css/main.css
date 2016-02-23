@@ -2257,6 +2257,12 @@ table#table_control_data_by td:nth-child(3) {
   width: 40%;
 }
 
+/* million mutation project allele table */
+#million_mutation_project_alleles_toggle {
+  padding: 5px 0 15px;
+  font-weight: bold;
+}
+
 /* SEQUENCE STYLING */
 /* sequence display formatting */
 .sequence-container {
