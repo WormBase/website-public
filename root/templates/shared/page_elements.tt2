@@ -545,7 +545,7 @@ END; %]
 END; %]
 
 
-[% MACRO cell_content(cell, separator) BLOCK;
+[% MACRO cell_content(cell, separator, max_row) BLOCK;
     IF ref(cell) == 'HASH';
       IF cell.defined('species');
           '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
@@ -577,7 +577,7 @@ END; %]
         END;
       END;
     ELSIF ref(cell) == 'ARRAY';
-      IF (!separator) && (cell.size > 10);
+      IF (!separator) && (cell.size > (max_row || 10));
           WRAPPER toggle title=cell.size _ ' Results';
             list_cell_content(cell, separator);
           END;
