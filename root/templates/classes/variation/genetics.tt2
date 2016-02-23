@@ -36,6 +36,9 @@ WRAPPER $field_block  title="Other alleles" key="other_alleles";
 		key = 'other_alleles');
    END;
 
+WRAPPER $field_block  title="Linked to" key="linked_to";
+    cell_content(fields.linked_to.data);
+END;
 
    # Strains
    WRAPPER $field_block title="Strains" key="strains";
