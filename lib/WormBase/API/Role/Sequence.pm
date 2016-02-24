@@ -1135,7 +1135,7 @@ sub _get_flanking_region {
       : (- $long_seg->end + $seq_obj->end + 1,
          - $long_seg->start + $seq_obj->end + 1);
 
-    my $long_seg_rel = $self->gff->segment($seq_obj->name, $start_rel, $end_rel);
+    my ($long_seg_rel) = grep { $_->{primary_id} eq $seq_obj->{primary_id}; } $self->gff->segment($seq_obj->name, $start_rel, $end_rel);
     # its strand is set based on $seq_obj automatically
     my $long_seg_dna = $long_seg_rel->dna;
 

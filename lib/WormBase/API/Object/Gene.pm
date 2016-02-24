@@ -91,17 +91,23 @@ sub _build__alleles {
     my $count = $self->_get_count($object, 'Allele');
     my @all = $object->Allele;
     my @alleles;
+    my @mmp_alleles;
     my @polymorphisms;
 
     foreach my $allele (@all) {
-              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_process_variation($allele)) :
-                    push(@alleles, $self->_process_variation($allele));
+        if (grep {/Natural_variant|RFLP/} $allele->Variation_type){
+            push(@polymorphisms, $self->_process_variation($allele));
+        }elsif($allele->Analysis && $allele->Method . '' eq 'Million_mutation'){
+            push(@mmp_alleles, $self->_process_variation($allele));
+        }else{
+            push(@alleles, $self->_process_variation($allele));
+        }
     }
 
     return {
         alleles        => @alleles ? \@alleles : undef,
         polymorphisms  => @polymorphisms ? \@polymorphisms : undef,
+        million_mutation_project_alleles => @mmp_alleles ? \@mmp_alleles : undef
     };
 
 }
@@ -388,6 +394,18 @@ sub gene_class {
 }
 
 
+# gene_cluster
+# This method will return a data structure containing
+# the gene_cluster packed tag of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00004512/gene_cluster
+sub gene_cluster {
+    my $self = shift;
+    my $gene_cluster = $self->object->In_cluster;
+    return  {
+        description => 'The gene cluster for this gene',
+        data => $gene_cluster ? $self->_pack_obj($gene_cluster) : undef
+    };
+}
 
 # operon { }
 # This method will return a data structure containing
@@ -557,8 +575,8 @@ sub merged_into {
 
 # alleles { }
 # This method will return a complex data structure
-# containing alleles of the gene (but not including
-# polymorphisms or other natural variations.
+# containing classic alleles of the gene (but not including
+# polymorphisms or other natural variations, or million mutation project alleles)
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
 
 sub alleles {
@@ -569,10 +587,30 @@ sub alleles {
     my @alleles = @{$count} if(ref($count) eq 'ARRAY');
 
     return {
-        description => 'alleles contained in the strain',
+        description => 'classical alleles contained in the strain',
         data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef
     };
 }
+
+
+# million_mutation_project_alleles { }
+# This method will return a complex data structure
+# containing alleles of the gene by million mutation project
+# polymorphisms or other natural variations.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
+sub million_mutation_project_alleles {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my $count = $self->_alleles->{million_mutation_project_alleles};
+    my @alleles = @{$count} if(ref($count) eq 'ARRAY');
+
+    return {
+        description => 'Million Mutation Project alleles contained in the strain',
+        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef
+    };
+}
+
 
 # polymorphisms { }
 # This method will return a complex data structure
@@ -1334,20 +1372,20 @@ sub phenotype_graph {
     };
 }
 
-sub phenotype_graph_json {
-  my $self = shift;
-  my $geneId = $self->object;
-# dev server
-#   my $url = 'http://wobr.caltech.edu:82/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
-# live server
-  my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
-  my $data = get $url;
-
-  return {
-    data               => "$data",
-    description        => 'JSON for Phenotype Graph of the gene',
-  };
-}
+# Was used to get around cross server restriction, now replaced with jsonp call from phenotype_graph.tt2
+# sub phenotype_graph_json {
+#   my $self = shift;
+#   my $geneId = $self->object;
+# # dev server
+# #   my $url = 'http://wobr.caltech.edu:82/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+# # live server
+#   my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+#   my $data = get $url;
+#   return {
+#     data               => "$data",
+#     description        => 'JSON for Phenotype Graph of the gene',
+#   };
+# }
 
 
 

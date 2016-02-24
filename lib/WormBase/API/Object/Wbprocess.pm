@@ -317,7 +317,6 @@ sub go_term{
     my @data;
 
     foreach my $go_obj ( @go_objs ){
-        my $name    = $go_obj->Term;
         my $type    = $go_obj->Type;
         my $def     = $go_obj->Definition;
 

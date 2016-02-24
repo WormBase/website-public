@@ -155,16 +155,28 @@ sub _setup_species {
     my $original_species = $c->config->{sections}->{species_list};
     my $new_species = {};
 
-    my $species_file_remote_path = "/pub/wormbase/releases/WS250/species/ASSEMBLIES." . $c->config->{wormbase_release} .".json";
+    my $species_file_remote_path = '/pub/wormbase/releases/current-development-release/species/ASSEMBLIES.' . $c->config->{wormbase_release} . '.json';
     my $species_file_local_path = $c->path_to('/conf/species/', 'species_ASSEMBLIES.json');
-    my $available_species = _get_json($c, $species_file_remote_path, $species_file_local_path);
+    my @available_species = _parse_wb_species(_get_json($c, $species_file_remote_path, $species_file_local_path));
 
-    foreach my $species (keys $original_species){
-        if ($available_species->{$species} || $species eq 'all'){
-            # include a species ONLY if it is available
-            $new_species->{$species} = $original_species->{$species};
+    foreach my $species (@available_species) {
+        # include a species ONLY if it is available and configured in wormbase.conf
+
+        my $name = $species->{name};
+        my $bioproject = $species->{bioproject};
+        my $long_name = "$name\_$bioproject";
+
+        if ($original_species->{$long_name}){
+            # a typical strain
+            $new_species->{$long_name} = $original_species->{$long_name};
+        } elsif ($original_species->{$name}->{bioprojects}->{$bioproject}){
+            # default strain
+            $new_species->{$name} = $original_species->{$name};
         }
     }
+
+    $new_species->{all} = $original_species->{all};
+
     $c->config->{sections}->{species_list} = $new_species;
     $c->_setup_parasite_species;
 }
@@ -193,35 +205,46 @@ sub _setup_parasite_species {
 # if the ftp site fails, fallback to a local copy
 sub _get_json {
     my ($c, $remote_path, $local_copy_path) = @_;
-    my $json_string = "";
+    my $json;
 
-    local *_callback = sub {
+    local *_process_local_copy = sub {
+        my $json_string = `cat $local_copy_path`;
+        chomp $json_string;
 
-        my ($ftp, $error) = @_;
-        if ($error) {
-            $json_string = `cat $local_copy_path`;
-            chomp $json_string;
-        } else {
-            my $fh;
-            open( $fh, '>', \$json_string) || die "cannot open fh";
-            $ftp->get($remote_path, $fh);
-            close $fh;
+        $json = _parse_json($json_string);  # update reference in closure
+    };
 
-            if ($c->config->{installation_type} eq 'development'){
-                # only update local copy on a development instance
-                # to avoid uncommited change in git repo
-                open($fh, '>', $local_copy_path);
-                print $fh $json_string;
-                close $fh;
-            }
-        }
+    local *_process_remote_copy = sub {
+
+        my ($ftp) = @_;
+        my $fh;
+        my $json_string;
+        open( $fh, '>', \$json_string) || die "cannot open fh";
+        $ftp->get($remote_path, $fh);
+        close $fh;
+
+        $json = _parse_json($json_string);
+        # update local copy
+        open($fh, '>', $local_copy_path);
+        print $fh $json_string;
+        close $fh;
 
     };
 
-    _with_ftp_site(\&_callback);
+    sub _parse_json {
+        my ($my_json_string) = @_;
+        return (new JSON)->allow_nonref->utf8->relaxed->decode($my_json_string);
+    }
+
+    # consider remote copy only on a development instance
+    if ($c->config->{installation_type} eq 'development'){
+        _with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+    }else{
+        _process_local_copy();
+    }
     # unlike with javascript, _with_ftp_site is blocking
-    my $parsed    = (new JSON)->allow_nonref->utf8->relaxed->decode($json_string);
-    return $parsed;
+
+    return $json;
 }
 
 
@@ -237,33 +260,42 @@ sub _get_latest_release {
         return $num;
     }
 
-    local *_callback = sub {
-        my ($ftp, $error) = @_;
-
-        if ($error) {
-            $latest_release_number = `cat $latest_release_number_path`;
-            chomp $latest_release_number;
-        } else {
-            my $all_releases = $ftp->ls($release_dir_path);
-            my @all_release_numbers = map {
-                my $num = get_release_number($_);
-                $num ? $num : ();
-            } @$all_releases;
-            ($latest_release_number) = sort {
-                $b <=> $a
-            } @all_release_numbers;
-
-            if ($c->config->{installation_type} eq 'development'){
-                # only update local copy on a development instance
-                # to avoid uncommited change in git repo
-                open(my $fh, '>', $latest_release_number_path);
-                print $fh $latest_release_number;
-                close $fh;
-            }
-        }
+    local *_process_local_copy = sub {
+        $latest_release_number = `cat $latest_release_number_path`;
+        chomp $latest_release_number;
     };
 
-    _with_ftp_site(\&_callback);
+    local *_process_remote_copy = sub {
+        my ($ftp) = @_;
+
+        my $all_releases = $ftp->ls($release_dir_path);
+        my @all_release_numbers = map {
+            my $num = get_release_number($_);
+            $num ? $num : ();
+        } @$all_releases;
+        ($latest_release_number) = sort {
+            $b <=> $a
+        } @all_release_numbers;
+
+        die "Failed to get ParaSite release number from FTP" unless $latest_release_number;
+
+        if ($c->config->{installation_type} eq 'development'){
+            # only update local copy on a development instance
+            # to avoid uncommited change in git repo
+            open(my $fh, '>', $latest_release_number_path);
+                print $fh $latest_release_number;
+            close $fh;
+        }
+
+    };
+
+    # consider remote copy only on a development instance
+    if ($c->config->{installation_type} eq 'development'){
+        _with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+    }else{
+        _process_local_copy();
+    }
+
     # unlike with javascript, _with_ftp_site is blocking
     return 'WBPS' .  $latest_release_number;
 }
@@ -271,17 +303,49 @@ sub _get_latest_release {
 
 # helper method to handle setup and teardown of ftp site connection
 sub _with_ftp_site {
-    my ($function, @args) = @_;
+    my ($on_success, $on_error, @args) = @_;
 
+    my $error;
     my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
-                            Timeout=>5, Passive=>1)
-        or return $function->(undef, "Cannot connect to ftp.wormbase.org: $@");
+                            Timeout=>5, Passive=>1);
 
-    $ftp->login();
-    my $result = $function->($ftp, @args);
-    $ftp->quit();
+    eval {
+        if ($ftp){
+            $ftp->login();
+            $on_success->($ftp, @args);
+            $ftp->quit();
+        } else {
+            die "Cannot connect to ftp.wormbase.org: $@";
+        }
+        1;  # expression returns a truety value at the end
+    } or do {
+        $error = $@;
+        warn "!!!FAILED!!! to retrieve species configuration from FTP site:\n$error";
+    };
 
-    return $result;
+    $on_error->($error, @args) if $error;
+
+}
+
+sub _parse_wb_species {
+    my ($hash) = @_;
+    my @species = ();
+    foreach my $species (keys %$hash){
+        my $species_name = $hash->{$species}->{full_name};
+
+        foreach my $assembly (@{$hash->{$species}->{assemblies}}){
+            my $strain_name = $assembly->{strain};
+
+            push @species, {
+                #    'url' => '/Schmidtea_mediterranea_prjna12585/Info/Index',
+                'name' => $species,
+                'bioproject' => $assembly->{bioproject},
+                'label' => "$species_name ($strain_name)"
+            };
+        }
+    }
+
+    return @species;
 }
 
 # traverse the parasite species tree to get the leaf species
@@ -304,6 +368,7 @@ sub _parse_parasite_species {
         # parse parent species
         push @species, _parse_parasite_species($subtree, $tree->{label});
     }
+
     return @species;
 
 }

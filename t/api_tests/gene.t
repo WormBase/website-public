@@ -116,8 +116,9 @@
 
         my $evidence = $c_desc->{data}->{evidence};
         ok($evidence->{Inferred_automatically}, 'description is inferred automatically');
-        my ($inferred_auto_label) = map { $_->{label} } @{$evidence->{Inferred_automatically}};
-        ok($inferred_auto_label =~ /^This description was generated automatically/,
+
+        my ($inferred_auto_label) = grep { $_->{label} =~ /^This description was generated automatically/; } @{$evidence->{Inferred_automatically}};
+        ok($inferred_auto_label,
            'correct text marking automatically inferred description');
 
     }
@@ -215,11 +216,17 @@
 
         can_ok('WormBase::API::Object::Gene', ('alleles'));
         my $alleles = $gene->alleles()->{data};
-        ok(grep($_->{variation}->{label} eq 'gk175216', @$alleles), 'correct allele returned');
+        ok(grep($_->{variation}->{label} eq 'ok640', @$alleles), 'correct allele returned');
+        my ($mmp_allele1) = grep { $_->{method_name} eq 'Million mutation'; } @$alleles;
+        is($mmp_allele1, undef, 'classical alleles correctly excludes million mutation project alleles');
 
         can_ok('WormBase::API::Object::Gene', ('polymorphisms'));
         my $polymorphisms = $gene->polymorphisms()->{data};
         ok(grep($_->{variation}->{label} eq 'WBVar00061322', @$polymorphisms), 'correct polymprphism returned');
+
+        can_ok('WormBase::API::Object::Gene', ('million_mutation_project_alleles'));
+        my $mmp_alleles =  $gene->million_mutation_project_alleles()->{data};
+        ok(grep($_->{variation}->{label} eq 'gk175216', @$mmp_alleles), 'correct million mutation allele returned');
 
     }
 
