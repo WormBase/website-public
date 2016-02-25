@@ -1,16 +1,8 @@
 [%
-   build_data_table(
-        order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain'],
-        columns={ variation         => 'Allele',
-                  molecular_change  => 'Molecular<br /> change',
-                  effects           => 'Protein<br /> effects',
-                  locations         => 'Locations',
-                  phen_count        => '# of<br /> Phenotypes',
-          composite_change  => 'Protein<br />change',
-                  isoform           => 'Isoform',
-                  method_name       => 'Method',
-                  strain            => 'Strain',
-        },
+   variation_table(
+        order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain']
         passed_data=million_mutation_project_alleles.data,
-        classsearch='variation');
+        key='million_mutation_project_alleles',
+        order_by_phen_count=false
+   );
 %]

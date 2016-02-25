@@ -8,20 +8,9 @@
    # Alleles
    IF fields.alleles.data || fields.alleles.million_mutation_project_alleles;
    WRAPPER $field_block title="Alleles";
-       build_data_table(
+       variation_table(
             order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain'],
-            columns={ variation         => 'Allele',
-                      molecular_change  => 'Molecular<br /> change',
-                      effects           => 'Protein<br /> effects',
-                      locations         => 'Locations',
-                      phen_count        => '# of<br /> Phenotypes',
-		      composite_change  => 'Protein<br />change',
-                      isoform           => 'Isoform',
-                      method_name       => 'Method',
-                      strain            => 'Strain',
-            },
-            key='alleles',
-            classsearch='variation');
+            key='alleles');
 
         WRAPPER toggle title="Load the million mutation project alleles" lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'million_mutation_project_alleles').path id="million_mutation_project_alleles_toggle";
         END;
@@ -31,19 +20,12 @@
 
    # Polymorphisms
    WRAPPER $field_block title="Polymorphisms & Natural variants" key="polymorphisms";
-        build_data_table(
+        variation_table(
             order=['variation','type','molecular_change','locations', 'effects','composite_change','phen_count', 'strain'],
-            columns={ variation         => 'Polymorphism',
-                      type              => 'Type',
-                      molecular_change  => 'Molecular<br /> change',
-                      effects           => 'Protein<br /> effects',
-                      locations         => 'Locations',
-                      phen_count        => '# of<br /> Phenotypes',
-		      composite_change  => 'Protein<br />change',
-                      strain            => 'Strain',
+            columns={
+                variation         => 'Polymorphism'
             },
-            key='polymorphisms',
-            classsearch='variation');
+            key='polymorphisms');
     END;
 
    # Strains

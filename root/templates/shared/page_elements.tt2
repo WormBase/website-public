@@ -1055,10 +1055,16 @@ END;
                       strain            => 'Strain',
             };
     columns.import(args.columns || {});
+
     phenotype_index = -1;
     FOREACH column_key IN args.order;
         phenotype_index = phenotype_index + 1;
         LAST IF column_key == 'phen_count';
+    END;
+
+    style = '';
+    UNLESS args.defined('order_by_phen_count') && args.order_by_phen_count;
+        style = style _ "order: [[$phenotype_index, 'desc']],";
     END;
 
     build_data_table(
@@ -1067,8 +1073,7 @@ END;
         passed_data=args.passed_data,
         key=args.key,
         classsearch='variation',
-        style="
-            order: [[$phenotype_index, 'desc']],"
+        style=style
     );
 
  END;
