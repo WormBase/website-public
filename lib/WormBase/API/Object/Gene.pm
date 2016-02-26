@@ -78,38 +78,48 @@ has 'tracks' => (
     }
 );
 
-has '_alleles' => (
+
+has 'alleles_count' => (
     is      => 'ro',
     lazy    => 1,
-    builder => '_build__alleles',
+    builder => '_build__alleles_count',
 );
 
-sub _build__alleles {
+sub _build__alleles_count {
     my ($self) = @_;
     my $object = $self->object;
+    my @alleles_all = $object->Allele;
 
-    my $count = $self->_get_count($object, 'Allele');
-    my @all = $object->Allele;
-    my @alleles;
-    my @mmp_alleles;
-    my @polymorphisms;
-
-    foreach my $allele (@all) {
-        if (grep {/Natural_variant|RFLP/} $allele->Variation_type){
-            push(@polymorphisms, $self->_process_variation($allele));
-        }elsif($allele->Analysis && $allele->Method . '' eq 'Million_mutation'){
-            push(@mmp_alleles, $self->_process_variation($allele));
-        }else{
-            push(@alleles, $self->_process_variation($allele));
-        }
-    }
+   # my @alleles = grep { $self->_is_allele($_); } @alleles_all;
+    my @alleles_other = grep { $self->_is_allele_other($_); } @alleles_all;
+    my @polymorphisms = grep { $self->_is_polymorphism_other($_); } @alleles_all;
 
     return {
-        alleles        => @alleles ? \@alleles : undef,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : undef,
-        million_mutation_project_alleles => @mmp_alleles ? \@mmp_alleles : undef
+        description => 'Counts for variations (used internally)',
+        data => {
+            #     alleles        => length(@alleles),
+            polymorphisms  => length(@polymorphisms) || undef,
+            alleles_other  => length(@alleles_other) || undef
+        }
     };
 
+}
+
+sub _is_allele {
+    my ($self, $allele) = @_;
+    return $self->_get_count($_, 'Phenotype');
+}
+
+sub _is_polymorphism_other {
+    my ($self, $allele) = @_;
+    my ($match) = grep {/Natural_variant|RFLP/} $_->Variation_type;
+    return $match && !$self->_get_count($_, 'Phenotype');
+}
+
+sub _is_allele_other {
+    my ($self, $allele) = @_;
+    my ($match) = grep {/Natural_variant|RFLP/} $_->Variation_type;
+    return !$match && !$self->_get_count($_, 'Phenotype');
 }
 
 
@@ -583,12 +593,13 @@ sub alleles {
     my $self   = shift;
     my $object = $self->object;
 
-    my $count = $self->_alleles->{alleles};
-    my @alleles = @{$count} if(ref($count) eq 'ARRAY');
+    my @alleles = map {
+        $self->_process_variation($_);
+    } grep { $self->_is_allele($_); } $object->Allele;
 
     return {
-        description => 'classical alleles contained in the strain',
-        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef
+        description => 'Alleles and polymorphisms with associated phenotype',
+        data        => @alleles ? \@alleles : undef
     };
 }
 
@@ -598,16 +609,17 @@ sub alleles {
 # containing alleles of the gene by million mutation project
 # polymorphisms or other natural variations.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
-sub million_mutation_project_alleles {
+sub alleles_other {
     my $self   = shift;
     my $object = $self->object;
 
-    my $count = $self->_alleles->{million_mutation_project_alleles};
-    my @alleles = @{$count} if(ref($count) eq 'ARRAY');
+    my @alleles = map {
+        $self->_process_variation($_);
+    } grep { $self->_is_allele_other($_); } $object->Allele;
 
     return {
-        description => 'Million Mutation Project alleles contained in the strain',
-        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef
+        description => 'Alleles currently with no associated phenotype',
+        data        => @alleles ? \@alleles : undef
     };
 }
 
@@ -622,12 +634,13 @@ sub polymorphisms {
     my $self    = shift;
     my $object  = $self->object;
 
-    my $count = $self->_alleles->{polymorphisms};
-    my @polymorphisms = @{$count} if(ref($count) eq 'ARRAY');
+    my @polymorphisms = map {
+        $self->_process_variation($_);
+    } grep { $self->_is_polymorphism_other($_); } $object->Allele;
 
     return {
-        description => 'polymorphisms and natural variations found within this gene',
-        data        => @polymorphisms ? \@polymorphisms : $count > 0 ? "$count found" : undef
+        description => 'polymorphisms and natural variations in wild isolate strains',
+        data        => @polymorphisms ? \@polymorphisms : undef
     };
 }
 
