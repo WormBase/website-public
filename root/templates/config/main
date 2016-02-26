@@ -59,7 +59,7 @@
 
    # Link a hash of objects
    # Suitable for hashes of objects created by _pack_objects()
-   MACRO tags2link(data, separator, expandable_title) BLOCK;
+   MACRO tags2link(data, separator, expandable_title, max_size) BLOCK;
       result = [];
       IF data.keys;
         IF data.class.defined;
@@ -76,7 +76,7 @@
       ELSE;
         data;
       END;
-      IF (expandable_title && (result.size > 10));
+      IF (expandable_title && (result.size > (max_size || 10)));
         WRAPPER toggle title=result.size _ ' ' _ expandable_title;
           result.join(separator || '<br />');
         END;
