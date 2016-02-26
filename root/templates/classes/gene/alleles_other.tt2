@@ -1,6 +1,6 @@
 [%
    variation_table(
-        order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain']
+        order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'strain']
         passed_data=alleles_other.data,
         key='alleles_other',
         order_by_phen_count=false

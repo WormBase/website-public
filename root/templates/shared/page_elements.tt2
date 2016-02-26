@@ -1051,7 +1051,7 @@ END;
                       phen_count        => '# of<br /> Phenotypes',
 		              composite_change  => 'Protein<br />change',
                       isoform           => 'Isoform',
-                      method_name       => 'Method',
+                      sources       => 'Source',
                       strain            => 'Strain',
             };
     columns.import(args.columns || {});
