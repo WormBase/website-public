@@ -37,7 +37,7 @@ WRAPPER $field_block  title="Other alleles" key="other_alleles";
    END;
 
 WRAPPER $field_block  title="Linked to" key="linked_to";
-    cell_content(fields.linked_to.data, undef, 5);
+    tags2link(fields.linked_to.data, undef, 'alleles', 5);
 END;
 
    # Strains
