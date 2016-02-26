@@ -1,8 +1,8 @@
 [%
    variation_table(
         order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain']
-        passed_data=million_mutation_project_alleles.data,
-        key='million_mutation_project_alleles',
+        passed_data=alleles_other.data,
+        key='alleles_other',
         order_by_phen_count=false
    );
 %]

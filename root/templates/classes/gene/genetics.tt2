@@ -6,13 +6,13 @@
    END;
 
    # Alleles
-   IF fields.alleles.data || fields.alleles.million_mutation_project_alleles;
+   IF fields.alleles.data || fields.alleles_count.alleles_other;
    WRAPPER $field_block title="Alleles";
        variation_table(
             order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain'],
             key='alleles');
 
-        WRAPPER toggle title="Load the million mutation project alleles" lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'million_mutation_project_alleles').path id="million_mutation_project_alleles_toggle";
+        WRAPPER toggle title="Load other alleles (with currently no associated phenotype)" lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'alleles_other').path id="alleles_other_toggle";
         END;
    END;
    END;
