@@ -2114,6 +2114,11 @@ div.field-content {
   table-layout:fixed;
 }
 
+/* used in field-title tooltip */
+.qtip-tooltip {
+  font-size: 9pt;
+}
+
 /* Curator specific fields */
 div.field-curator {
   margin:1em;
