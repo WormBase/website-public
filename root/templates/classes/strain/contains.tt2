@@ -1,19 +1,8 @@
 [%
   WRAPPER $field_block title="Variations" key="alleles";
-               build_data_table(
-              order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'gene'],
-              columns={ variation         => 'Allele',
-                        molecular_change  => 'Molecular<br /> change',
-                        effects           => 'Protein<br /> effects',
-                        locations         => 'Locations',
-                        phen_count        => '# of<br /> Phenotypes',
-                        composite_change  => 'Protein<br />change',
-                        isoform           => 'Isoform',
-                        gene              => 'Gene',
-                        method_name       => 'Method'
-              },
-              key='alleles',
-              classsearch='variation');
+              variation_table(
+              order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'gene'],
+              key='alleles');
   END;
  %]
 

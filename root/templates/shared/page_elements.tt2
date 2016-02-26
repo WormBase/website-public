@@ -1040,6 +1040,47 @@ END;
 %]
 
 
+[% MACRO variation_table(args) BLOCK ;
+    args = args || {};
+    columns = {
+                      variation         => 'Allele',
+                      type              => 'Type',
+                      molecular_change  => 'Molecular<br /> change',
+                      effects           => 'Protein<br /> effects',
+                      locations         => 'Locations',
+                      phen_count        => '# of<br /> Phenotypes',
+		              composite_change  => 'Protein<br />change',
+                      isoform           => 'Isoform',
+                      sources       => 'Source',
+                      strain            => 'Strain',
+                      gene              => 'Gene',
+            };
+    columns.import(args.columns || {});
+
+    style = '';
+    IF args.order_by;
+        order_by_index = -1;
+        FOREACH column_key IN args.order;
+            order_by_index = order_by_index + 1;
+            LAST IF column_key == args.order_by;
+        END;
+        style = style _ "order: [[$order_by_index, 'desc']],";
+    END;
+
+    build_data_table(
+        order=args.order,
+        columns=columns,
+        passed_data=args.passed_data,
+        key=args.key,
+        classsearch='variation',
+        style=style
+    );
+
+ END;
+%]
+
+
+
 [% MACRO remarks BLOCK;
    # Expects the remarks key to be defined in the data stash
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
