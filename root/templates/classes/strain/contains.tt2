@@ -1,7 +1,7 @@
 [%
   WRAPPER $field_block title="Variations" key="alleles";
               variation_table(
-              order=['variation','molecular_change','locations','effects','aa_change','aa_position','isoform', 'phen_count', 'sources', 'gene'],
+              order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'gene'],
               key='alleles');
   END;
  %]

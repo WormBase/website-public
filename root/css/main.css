@@ -2145,6 +2145,12 @@ div.field .field .field-content {
   max-width:35em;
 }
 
+/* list as direct child of field content */
+.field-content > ul {
+  margin: 0 0;
+  padding: 0 0 0 1em;
+}
+
 
 
 /* Special field elements */
@@ -2249,6 +2255,12 @@ div#google-map {
 table#table_control_data_by td:nth-child(2),
 table#table_control_data_by td:nth-child(3) {
   width: 40%;
+}
+
+/* million mutation project allele table */
+#million_mutation_project_alleles_toggle {
+  padding: 5px 0 15px;
+  font-weight: bold;
 }
 
 /* SEQUENCE STYLING */

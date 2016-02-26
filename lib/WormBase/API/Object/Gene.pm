@@ -404,6 +404,18 @@ sub gene_class {
 }
 
 
+# gene_cluster
+# This method will return a data structure containing
+# the gene_cluster packed tag of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00004512/gene_cluster
+sub gene_cluster {
+    my $self = shift;
+    my $gene_cluster = $self->object->In_cluster;
+    return  {
+        description => 'The gene cluster for this gene',
+        data => $gene_cluster ? $self->_pack_obj($gene_cluster) : undef
+    };
+}
 
 # operon { }
 # This method will return a data structure containing
