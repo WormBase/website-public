@@ -74,6 +74,7 @@
           $jq(".lightbox").colorbox();
         });
       }
+
     }
 
 
@@ -596,6 +597,7 @@
             settings.success(data);
           }else{
             ajaxPanel.html(data);
+            WB.tooltipInit();
           }
         },
         error:function(xhr, textStatus, thrownError){
@@ -606,6 +608,23 @@
         }
       });
     }
+
+    function tooltipInit(){
+      WB.getPlugin("qtip", function(){
+        $jq('[title]').qtip({ // Grab some elements to apply the tooltip to
+          content: {
+            attr: 'title'
+          },
+          style: {
+            classes: 'qtip-light qtip-shadow qtip-tooltip'
+          },
+          position: {
+            my: 'top left',
+            at: 'bottom center',
+          }
+        });
+      });
+    };
 
       function operator(){
 
@@ -936,6 +955,7 @@
       settings.success = function(data){
         var field = $jq('<div/>').html(data).hide();
         container.append(field);
+        WB.tooltipInit();
         setTimeout(function(){
           // a long wait to ensure field is rendered before showing,
           // to avoid miscalculating field height
@@ -3138,7 +3158,8 @@ var Scrolling = (function(){
       FpkmPlots: FpkmPlots,                         // fpkm by life stage plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
-      partitioned_table: partitioned_table          // augment to a datatable setting, when table rows are partitioned by certain attributes
+      partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
+      tooltipInit: tooltipInit                      // initalize tooltip
     };
   })();
 
