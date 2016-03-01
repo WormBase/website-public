@@ -2259,8 +2259,11 @@ table#table_control_data_by td:nth-child(3) {
 
 /* million mutation project allele table */
 #alleles_other_toggle {
+  padding: 5px 0 0;
+}
+
+#polymorphisms_toggle {
   padding: 5px 0 15px;
-  font-weight: bold;
 }
 
 /* SEQUENCE STYLING */
