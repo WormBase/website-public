@@ -6,45 +6,24 @@
    END;
 
    # Alleles
-   IF fields.alleles.data || fields.alleles.million_mutation_project_alleles;
-   WRAPPER $field_block title="Alleles";
-       build_data_table(
-            order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'method_name', 'strain'],
-            columns={ variation         => 'Allele',
-                      molecular_change  => 'Molecular<br /> change',
-                      effects           => 'Protein<br /> effects',
-                      locations         => 'Locations',
-                      phen_count        => '# of<br /> Phenotypes',
-		      composite_change  => 'Protein<br />change',
-                      isoform           => 'Isoform',
-                      method_name       => 'Method',
-                      strain            => 'Strain',
-            },
-            key='alleles',
-            classsearch='variation');
+   IF fields.alleles.data || fields.alleles_count.data.alleles_other || fields.alleles_count.data.polymorphisms;
+       WRAPPER $field_block title="Alleles with phenotype data";
+           variation_table(
+                order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'strain'],
+                order_by='phen_count',
+                key='alleles');
 
-        WRAPPER toggle title="Load the million mutation project alleles" lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'million_mutation_project_alleles').path id="million_mutation_project_alleles_toggle";
-        END;
+            IF fields.alleles_count.data.alleles_other;
+                WRAPPER toggle title="<strong>Load other alleles</strong> (currently with no associated phenotype)" lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'alleles_other').path id="alleles_other_toggle";
+                END;
+            END;
+
+            IF fields.alleles_count.data.polymorphisms;
+                WRAPPER toggle title="<strong>Load other polymorphisms & natural variants</strong> (currently with no associated phenotype)" lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'polymorphisms').path id="polymorphisms_toggle";
+                END;
+            END;
+       END;
    END;
-   END;
-
-
-   # Polymorphisms
-   WRAPPER $field_block title="Polymorphisms & Natural variants" key="polymorphisms";
-        build_data_table(
-            order=['variation','type','molecular_change','locations', 'effects','composite_change','phen_count', 'strain'],
-            columns={ variation         => 'Polymorphism',
-                      type              => 'Type',
-                      molecular_change  => 'Molecular<br /> change',
-                      effects           => 'Protein<br /> effects',
-                      locations         => 'Locations',
-                      phen_count        => '# of<br /> Phenotypes',
-		      composite_change  => 'Protein<br />change',
-                      strain            => 'Strain',
-            },
-            key='polymorphisms',
-            classsearch='variation');
-    END;
 
    # Strains
    WRAPPER $field_block title="Strains" key="strains";
