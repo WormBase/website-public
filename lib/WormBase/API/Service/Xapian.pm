@@ -76,10 +76,7 @@ sub search {
       }
     }
 
-    if($species){
-        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s" if defined $s;
-    }
+    $q = $class->_add_species($q, $species) if $species;
 
     my ($query, $error) =$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
@@ -171,10 +168,7 @@ sub count_estimate {
       }
     }
 
-    if($species){
-        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s" if defined $s;
-    }
+    $q = $class->_add_species($q, $species) if $species;
 
     my $query=$class->_setup_query($q, $class->qp, 1|2|512|16);
     my $enq       = $class->db->enquire ( $query );
@@ -292,10 +286,13 @@ sub _get_obj {
   my %ret;
   $ret{name} = $self->_pack_search_obj($doc);
   my $species = $ret{name}{taxonomy};
-  if($species =~ m/^(.*)_([^_]*)$/){
+
+  if($species =~ m/^(.*?)_(.*?)(_(.*))?$/){
     my $s = $self->_api->config->{sections}{species_list}{$species};
     $ret{taxonomy}{genus} = $s->{genus} || ucfirst($1);
     $ret{taxonomy}{species} = $s->{species} || $2;
+    my $strain = $s->{strain} || $4;
+    $ret{taxonomy}{species} .= ($strain && " ($strain)") || '';
   }
   $ret{ptype} = $doc->get_value(7) if $doc->get_value(7);
   %ret = %{$self->_split_fields(\%ret, uri_unescape($doc->get_data()))};
@@ -385,14 +382,11 @@ sub _get_tag_info {
 }
 
 # why is species sometimes getting stored weird in xapian?
-# eg. c_caenorhabditis_elegans instead of c_elegans
-#
-# Snips of possible BioProject suffix. For example,
-# 'c_elegans_PRJNA13758' becomes 'c_elegans'. This
-# is (probably) the right behaviour for this sub.
+# eg. c_caenorhabditis_elegans instead of c_elegans.
+# - Any example?
 sub _get_taxonomy {
   my ($self, $doc) = @_;
-  my $taxonomy = $doc->get_value(5);
+  my $taxonomy = $doc->get_value(12);
   return $taxonomy;
 }
 
@@ -442,8 +436,7 @@ sub _add_type_range {
 sub _add_species {
     my ($class, $q, $species) = @_;
     if($species){
-        my $s = $class->_api->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s" if defined $s;
+        $q .= " species:$species..$species" if defined $species;
     }
     return $q;
 }

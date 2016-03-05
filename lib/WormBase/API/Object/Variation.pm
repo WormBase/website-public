@@ -264,6 +264,17 @@ sub other_alleles {
     };
 }
 
+sub linked_to {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data = $self->_pack_list([$object->Linked_to]);
+
+    return {
+        description => 'linked_to',
+        data => @data ? \@data : undef
+    }
+}
+
 # strains { }
 # This method returns a data structure containing
 # strains carrying the variation.

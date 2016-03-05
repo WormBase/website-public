@@ -104,7 +104,7 @@ sub _build_xapian {
 
   my $ptype_svrp = Search::Xapian::NumberValueRangeProcessor->new(8, "ptype:");
   my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
-  my $species_svrp = Search::Xapian::NumberValueRangeProcessor->new(3, "species:");
+  my $species_svrp = Search::Xapian::StringValueRangeProcessor->new(12, "species:");
   $qp->add_valuerangeprocessor($ptype_svrp);
   $qp->add_valuerangeprocessor($species_svrp);
   $qp->add_valuerangeprocessor($type_svrp);

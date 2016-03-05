@@ -71,7 +71,7 @@
     </a>
               <ul class="wb-dropdown">
                 [% FOREACH bioproject IN c.config.sections.species_list.$species_name.bioprojects.keys %]
-                  <li>[% text2link('genomic_location','','Browse Genome: ' _ c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, species_name _ '_' _ bioproject) %]</li>
+                  <li>[% text2link('genomic_location','','Browse Genome: ' _ c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, species_name) %]</li>
                 [% END %]
 
               [% FOREACH class IN c.config.sections.species_list.$species_name.available_classes.class %]

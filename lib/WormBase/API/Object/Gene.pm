@@ -78,32 +78,48 @@ has 'tracks' => (
     }
 );
 
-has '_alleles' => (
+
+has 'alleles_count' => (
     is      => 'ro',
     lazy    => 1,
-    builder => '_build__alleles',
+    builder => '_build__alleles_count',
 );
 
-sub _build__alleles {
+sub _build__alleles_count {
     my ($self) = @_;
     my $object = $self->object;
+    my @alleles_all = $object->Allele;
 
-    my $count = $self->_get_count($object, 'Allele');
-    my @all = $object->Allele;
-    my @alleles;
-    my @polymorphisms;
-
-    foreach my $allele (@all) {
-              (grep {/Natural_variant|RFLP/} $allele->Variation_type) ?
-                    push(@polymorphisms, $self->_process_variation($allele)) :
-                    push(@alleles, $self->_process_variation($allele));
-    }
+   # my @alleles = grep { $self->_is_allele($_); } @alleles_all;
+    my @alleles_other = grep { $self->_is_allele_other($_); } @alleles_all;
+    my @polymorphisms = grep { $self->_is_polymorphism_other($_); } @alleles_all;
 
     return {
-        alleles        => @alleles ? \@alleles : undef,
-        polymorphisms  => @polymorphisms ? \@polymorphisms : undef,
+        description => 'Counts for variations (used internally)',
+        data => {
+            #     alleles        => length(@alleles),
+            polymorphisms  => length(@polymorphisms) || undef,
+            alleles_other  => length(@alleles_other) || undef
+        }
     };
 
+}
+
+sub _is_allele {
+    my ($self, $allele) = @_;
+    return $self->_get_count($_, 'Phenotype');
+}
+
+sub _is_polymorphism_other {
+    my ($self, $allele) = @_;
+    my ($match) = grep {/Natural_variant|RFLP/} $_->Variation_type;
+    return $match && !$self->_get_count($_, 'Phenotype');
+}
+
+sub _is_allele_other {
+    my ($self, $allele) = @_;
+    my ($match) = grep {/Natural_variant|RFLP/} $_->Variation_type;
+    return !$match && !$self->_get_count($_, 'Phenotype');
 }
 
 
@@ -388,6 +404,18 @@ sub gene_class {
 }
 
 
+# gene_cluster
+# This method will return a data structure containing
+# the gene_cluster packed tag of the gene, if one exists.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00004512/gene_cluster
+sub gene_cluster {
+    my $self = shift;
+    my $gene_cluster = $self->object->In_cluster;
+    return  {
+        description => 'The gene cluster for this gene',
+        data => $gene_cluster ? $self->_pack_obj($gene_cluster) : undef
+    };
+}
 
 # operon { }
 # This method will return a data structure containing
@@ -557,22 +585,44 @@ sub merged_into {
 
 # alleles { }
 # This method will return a complex data structure
-# containing alleles of the gene (but not including
-# polymorphisms or other natural variations.
+# containing classic alleles of the gene (but not including
+# polymorphisms or other natural variations, or million mutation project alleles)
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
 
 sub alleles {
     my $self   = shift;
     my $object = $self->object;
 
-    my $count = $self->_alleles->{alleles};
-    my @alleles = @{$count} if(ref($count) eq 'ARRAY');
+    my @alleles = map {
+        $self->_process_variation($_);
+    } grep { $self->_is_allele($_); } $object->Allele;
 
     return {
-        description => 'alleles contained in the strain',
-        data        => @alleles ? \@alleles : $count > 0 ? "$count found" : undef
+        description => 'Alleles and polymorphisms with associated phenotype',
+        data        => @alleles ? \@alleles : undef
     };
 }
+
+
+# million_mutation_project_alleles { }
+# This method will return a complex data structure
+# containing alleles of the gene by million mutation project
+# polymorphisms or other natural variations.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/alleles
+sub alleles_other {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my @alleles = map {
+        $self->_process_variation($_);
+    } grep { $self->_is_allele_other($_); } $object->Allele;
+
+    return {
+        description => 'Alleles currently with no associated phenotype',
+        data        => @alleles ? \@alleles : undef
+    };
+}
+
 
 # polymorphisms { }
 # This method will return a complex data structure
@@ -584,12 +634,13 @@ sub polymorphisms {
     my $self    = shift;
     my $object  = $self->object;
 
-    my $count = $self->_alleles->{polymorphisms};
-    my @polymorphisms = @{$count} if(ref($count) eq 'ARRAY');
+    my @polymorphisms = map {
+        $self->_process_variation($_);
+    } grep { $self->_is_polymorphism_other($_); } $object->Allele;
 
     return {
-        description => 'polymorphisms and natural variations found within this gene',
-        data        => @polymorphisms ? \@polymorphisms : $count > 0 ? "$count found" : undef
+        description => 'polymorphisms and natural variations in wild isolate strains',
+        data        => @polymorphisms ? \@polymorphisms : undef
     };
 }
 
@@ -1334,20 +1385,20 @@ sub phenotype_graph {
     };
 }
 
-sub phenotype_graph_json {
-  my $self = shift;
-  my $geneId = $self->object;
-# dev server
-#   my $url = 'http://wobr.caltech.edu:82/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
-# live server
-  my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
-  my $data = get $url;
-
-  return {
-    data               => "$data",
-    description        => 'JSON for Phenotype Graph of the gene',
-  };
-}
+# Was used to get around cross server restriction, now replaced with jsonp call from phenotype_graph.tt2
+# sub phenotype_graph_json {
+#   my $self = shift;
+#   my $geneId = $self->object;
+# # dev server
+# #   my $url = 'http://wobr.caltech.edu:82/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+# # live server
+#   my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
+#   my $data = get $url;
+#   return {
+#     data               => "$data",
+#     description        => 'JSON for Phenotype Graph of the gene',
+#   };
+# }
 
 
 

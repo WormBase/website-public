@@ -1,0 +1,12 @@
+[%
+# Polymorphisms
+
+variation_table(
+    order=['variation','type','molecular_change','locations', 'effects','composite_change','strain'],
+    columns={
+        variation         => 'Polymorphism'
+    },
+    passed_data=polymorphisms.data,
+    key='polymorphisms');
+
+%]

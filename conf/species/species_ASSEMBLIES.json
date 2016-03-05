@@ -2,9 +2,9 @@
    "b_malayi" : {
       "assemblies" : [
          {
-            "appeared_in" : "WS244",
+            "appeared_in" : "WS251",
             "assembly_accession" : null,
-            "assembly_name" : "B_malayi-3.1",
+            "assembly_name" : "B_malayi-4.0",
             "bioproject" : "PRJNA10729",
             "bioproject_description" : "University of Pittsburgh B. malayi genome project",
             "is_canonical" : true,
@@ -128,6 +128,18 @@
                "Washington University, St. Louis MO"
             ],
             "strain" : "PB4641"
+         },
+         {
+            "appeared_in" : "WS250",
+            "assembly_accession" : null,
+            "assembly_name" : "C_remanei_Oregon_v1",
+            "bioproject" : "PRJNA248909",
+            "bioproject_description" : "University of Oregon University C. remanei PX356 genome project",
+            "is_canonical" : false,
+            "laboratory" : [
+               "University of Texas, Arlington TX"
+            ],
+            "strain" : "PX356"
          }
       ],
       "full_name" : "Caenorhabditis remanei"

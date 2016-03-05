@@ -116,8 +116,9 @@
 
         my $evidence = $c_desc->{data}->{evidence};
         ok($evidence->{Inferred_automatically}, 'description is inferred automatically');
-        my ($inferred_auto_label) = map { $_->{label} } @{$evidence->{Inferred_automatically}};
-        ok($inferred_auto_label =~ /^This description was generated automatically/,
+
+        my ($inferred_auto_label) = grep { $_->{label} =~ /^This description was generated automatically/; } @{$evidence->{Inferred_automatically}};
+        ok($inferred_auto_label,
            'correct text marking automatically inferred description');
 
     }
@@ -215,11 +216,17 @@
 
         can_ok('WormBase::API::Object::Gene', ('alleles'));
         my $alleles = $gene->alleles()->{data};
-        ok(grep($_->{variation}->{label} eq 'gk175216', @$alleles), 'correct allele returned');
+        ok(grep($_->{variation}->{label} eq 'tm494', @$alleles), 'correct allele returned');
+        my ($other_allele1) = grep { $_->{phen_count} eq 0; } @$alleles;
+        is($other_allele1, undef, 'alleles correctly excludes alleles without phenotypes');
 
         can_ok('WormBase::API::Object::Gene', ('polymorphisms'));
         my $polymorphisms = $gene->polymorphisms()->{data};
         ok(grep($_->{variation}->{label} eq 'WBVar00061322', @$polymorphisms), 'correct polymprphism returned');
+
+        can_ok('WormBase::API::Object::Gene', ('alleles_other'));
+        my $mmp_alleles =  $gene->alleles_other()->{data};
+        ok(grep($_->{variation}->{label} eq 'gk175216', @$mmp_alleles), 'an allele without phenotype is returned');
 
     }
 

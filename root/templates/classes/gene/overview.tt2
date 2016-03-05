@@ -1,4 +1,8 @@
-<h2><i>[% fields.name.data.label %]</i><span id="fade" style="font-size:0.7em;">
+<h2><i>[% fields.name.data.label %]</i>
+[% IF fields.classification.data.type == 'pseudogene'; %]
+   [% fields.classification.data.type _ ' '; %]
+[% END %]
+<span id="fade" style="font-size:0.7em;">
 [% IF fields.gene_class.data %]
   ([% fields.gene_class.data.description %])
 [% END %]
@@ -26,6 +30,10 @@ WRAPPER highlight_box;
 
    WRAPPER $field_block title="Gene class" key="gene_class";
            tag2link(fields.gene_class.data.tag);
+   END;
+
+   WRAPPER $field_block title="Gene cluster" key="gene_cluster";
+           tag2link(fields.gene_cluster.data);
    END;
 
    WRAPPER $field_block title="Operon" key="operon";
