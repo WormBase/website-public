@@ -967,6 +967,7 @@
 	search      = 'http://www.ebi.uniprot.org/entry/%s'
     'UniProtKB-KW' = 'http://www.uniprot.org/keywords/%s'
     'UniProtKB-SubCell' = 'http://www.uniprot.org/locations/%s'
+    	protein     = 'http://www.uniprot.org/uniprot/%s'
 	}
 
  WormAtlas = {
