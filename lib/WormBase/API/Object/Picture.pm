@@ -125,8 +125,10 @@ sub image {
         data        => undef,
     };
 
-    my $reference = $self->reference->{data} || $self->contact->{data}
-        or return $datapack;
+    my $reference = $self->_source();
+
+    return $datapack unless $reference;
+
     $reference = $reference->{id}; # we only need the id;
 
     my $filename = $self ~~ 'Name'
@@ -192,6 +194,23 @@ sub external_source {
     };
 }
 
+# _source {}
+# used internally
+# returns the paper of person source of the Picture
+sub _source {
+    my ($self) = @_;
+    my $object = $self->object;
+
+    my $reference;
+    # decide whether the source is a Paper or a Person
+    if ($object->Template =~ /Journal_URL/){
+        $reference = $self->reference->{data};
+    } elsif ($object->Template =~ /Person_name/) {
+        $reference = $self->contact->{data};
+    }
+    return $reference;
+}
+
 # remarks {}
 # Supplied by Role
 
@@ -231,4 +250,3 @@ sub anatomy_terms {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
