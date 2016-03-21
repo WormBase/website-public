@@ -1236,6 +1236,31 @@ sub rest_config_GET {
     );
 }
 
+
+sub parasite_api :Path('/rest/parasite') :Args :ActionClass('REST') {}
+
+sub parasite_api_GET {
+    my ($self, $c, @args) = @_;
+    my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
+
+    # construct url for parasite api
+    my $url = join('/', 'http://parasite.wormbase.org/rest', @args);
+    $url = $url . '?' . $paramString if $paramString;
+
+    # handover and parse parasite api response
+    my $lwp       = LWP::UserAgent->new;
+    $lwp->default_header('Content-type' => 'application/json');
+    my $response = $lwp->get($url);
+    my $json = new JSON;
+    my $decoded = $json->allow_nonref->utf8->relaxed->decode($response->content);
+
+    $c->res->header( 'Content-Type' => 'application/json' );
+    $self->status_ok($c, entity => $decoded);
+
+
+}
+
+
 ######################################################
 #
 #   Private methods
