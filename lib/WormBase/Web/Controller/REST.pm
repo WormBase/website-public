@@ -890,24 +890,41 @@ sub widget_GET {
             push @fields, 'name';
         }
 
+        my ($resp, $resp_content);
+	my $rest_server = $c->config->{'rest_server'};
+        $resp = HTTP::Tiny->new->get("$rest_server/rest/widget/$class/$name/$widget");
+        if ($resp->{'status'} == 200 && $resp->{'content'}) {
+            $resp_content = decode_json($resp->{'content'})->{fields};
+        }
+
         my $skip_cache;
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
-            my $data = $object->$field;
 
-            if ($c->config->{fatal_non_compliance}) {
-                # checking for data compliance can be an overhead, only use
-                # in testing env where its explicitly enabled
-                my ($fixed_data, @problems) = $object->_check_data( $data, $class );
-                if ( @problems ){
-                    my $log = 'fatal';
-                    $c->log->$log("${class}::$field returns non-compliant data: ");
-                    $c->log->$log("\t$_") foreach @problems;
+            my $data;
+            if ($resp_content && $resp_content->{$field}) {
+                $data = $resp_content->{$field};
 
-                    die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+            } elsif ($object->can($field)) {
+                # try Perl API
+                $data = $object->$field;
+                if ($c->config->{fatal_non_compliance}) {
+                    # checking for data compliance can be an overhead, only use
+                    # in testing env where its explicitly enabled
+                    my ($fixed_data, @problems) = $object->_check_data( $data, $class );
+                    if ( @problems ){
+                        my $log = 'fatal';
+                        $c->log->$log("${class}::$field returns non-compliant data: ");
+                        $c->log->$log("\t$_") foreach @problems;
+
+                        die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                    }
                 }
+            } else {
+                die "REST query failed at $field: $resp->{'content'}";
             }
+
 
             # a field can force an entire widget to not caching
             if ($data->{'error'}){
@@ -1235,31 +1252,6 @@ sub rest_config_GET {
         }
     );
 }
-
-
-sub parasite_api :Path('/rest/parasite') :Args :ActionClass('REST') {}
-
-sub parasite_api_GET {
-    my ($self, $c, @args) = @_;
-    my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
-
-    # construct url for parasite api
-    my $url = join('/', 'http://parasite.wormbase.org/rest', @args);
-    $url = $url . '?' . $paramString if $paramString;
-
-    # handover and parse parasite api response
-    my $lwp       = LWP::UserAgent->new;
-    $lwp->default_header('Content-type' => 'application/json');
-    my $response = $lwp->get($url);
-    my $json = new JSON;
-    my $decoded = $json->allow_nonref->utf8->relaxed->decode($response->content);
-
-    $c->res->header( 'Content-Type' => 'application/json' );
-    $self->status_ok($c, entity => $decoded);
-
-
-}
-
 
 ######################################################
 #
