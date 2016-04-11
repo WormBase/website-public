@@ -16,6 +16,8 @@ use Text::MultiMarkdown 'markdown';
 use DateTime;
 use Encode;
 use Data::Dumper;
+use HTTP::Tiny;
+
 
 __PACKAGE__->config(
     'default'          => 'text/x-yaml',
