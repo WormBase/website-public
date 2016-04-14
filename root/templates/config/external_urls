@@ -701,9 +701,9 @@
 
  Pfam = {
 	description = 'Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains and families'
-	base        = 'http://pfam.sanger.ac.uk/'
+	base        = 'http://pfam.xfam.org/'
 	email       = 'pfam-help@sanger.ac.uk'
-	search      = 'http://pfam.sanger.ac.uk/family/%s'
+	search      = 'http://pfam.xfam.org/family/%s'
 	}
 
  Phenobank2 = {
