@@ -3,6 +3,7 @@ package WormBase::Web::Controller::REST;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
+use feature qw(say);
 use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
@@ -844,9 +845,6 @@ sub widget_GET {
     my ( $self, $c, $class, $name, $widget ) = @_;
     $c->log->debug("        ------> we're requesting the widget $widget");
 
-    # Cache key - "$class_$widget_$name"
-    my $key = join( '_', $class, $widget, $name );
-
     # set header and content-type
     my $headers = $c->req->headers;
     my $content_type
@@ -862,15 +860,23 @@ sub widget_GET {
           $c->go('search', 'search');
     }
 
-    # check_cache checks couchdb
-    my ( $cached_data, $cache_source ) = $c->check_cache($key);
-    if($cached_data && (ref $cached_data eq 'HASH')){
+    my $skip_cache =  (exists $c->request->params->{"skip-cache"})? 1 : 0;
+
+    # Cache key - "$class_$widget_$name"
+    my ($cached_data, $cache_source, $key); 
+    if ( not $skip_cache ) {
+        # check_cache checks couchdb
+        ( $cached_data, $cache_source ) = $c->check_cache($key);
+        $key = join( '_', $class, $widget, $name );
+    }
+
+    if ((not $skip_cache) && $cached_data && (ref $cached_data eq 'HASH')){
         $c->stash->{fields} = $cached_data;
 
 	# Served from cache? Let's include a link to it in the cache.
 	# Primarily a debugging element.
 	$c->stash->{served_from_cache} = $key;
-    } elsif ($cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
+    } elsif ((not $skip_cache) && $cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
         $c->response->status(200);
         $c->response->body($cached_data);
         $c->detach();
@@ -892,14 +898,18 @@ sub widget_GET {
             push @fields, 'name';
         }
 
-        my ($resp, $resp_content);
-	my $rest_server = $c->config->{'rest_server'};
-        $resp = HTTP::Tiny->new->get("$rest_server/rest/widget/$class/$name/$widget");
-        if ($resp->{'status'} == 200 && $resp->{'content'}) {
-            $resp_content = decode_json($resp->{'content'})->{fields};
+        my $skip_datomic = (exists $c->req->params->{"skip-datomic"})? 1: 0;
+        my $skip_ace     = (exists $c->req->params->{"skip-ace"})?     1: 0;
+
+        my ($resp_content, $resp);
+        if (not $skip_datomic) {
+            my $rest_server = $c->config->{'rest_server'};
+            $resp = HTTP::Tiny->new->get("$rest_server/rest/widget/$class/$name/$widget");
+            if ($resp->{'status'} == 200 && $resp->{'content'}) {
+                $resp_content = decode_json($resp->{'content'})->{fields};
+            }
         }
 
-        my $skip_cache;
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
@@ -908,7 +918,7 @@ sub widget_GET {
             if ($resp_content && $resp_content->{$field}) {
                 $data = $resp_content->{$field};
 
-            } elsif ($object->can($field)) {
+            } elsif ((not $skip_ace) && $object->can($field)) {
                 # try Perl API
                 $data = $object->$field;
                 if ($c->config->{fatal_non_compliance}) {
@@ -924,7 +934,9 @@ sub widget_GET {
                     }
                 }
             } else {
-                die "REST query failed at $field: $resp->{'content'}";
+                my $response_content = (exists $resp->{'content'})? 
+                                                     $resp->{'content'} : '';
+                die "REST query failed at $field: $response_content";
             }
 
 
