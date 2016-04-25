@@ -49,7 +49,7 @@ sub _get_feature_associations {
         my $description = $feature->Description;
         (my $method = $feature->Method) =~ s/_/ /g;
         my @bound_by = map { $self->_pack_obj($_) } $feature->Bound_by_product_of;
-        my $tf = $self->_pack_obj($feature->Transcription_factor);
+        my $tf = $self->_pack_obj($feature->Associated_with_transcription_factor);
 
         my @interactions = map { $self->_pack_obj($_) } $feature->Associated_with_Interaction;
 
