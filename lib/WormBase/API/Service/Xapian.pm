@@ -213,7 +213,7 @@ sub _search_exact {
         $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
         $qu = $class->_add_type_range("$qu", $type);
         $qu = $class->_add_species($qu, $species) if $species;
-        $query=$class->_setup_query($qu, $class->syn_qp, 1|2|16|512);
+        $query=$class->_setup_query($qu, $class->syn_qp, 1|2|16);
         $enq       = $class->syn_db->enquire ( $query );
         @mset      = $enq->matches( 0,10 ) if $enq;
 
@@ -228,7 +228,7 @@ sub _search_exact {
       $qu = "\"$qu\"" if(($qu =~ m/\s/) && !($qu =~ m/_/) && !($qu =~ m/\"/));
       $qu = $class->_add_type_range("$qu", $type);
       $qu = $class->_add_species($qu, $species) if $species;
-      $query=$class->_setup_query($qu, $class->qp, 1|2|512|16);
+      $query=$class->_setup_query($qu, $class->qp, 1|2|16);
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0,10 );
 

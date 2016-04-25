@@ -290,6 +290,7 @@ sub associations {
     foreach my $assoc_type (@association_types) { # assoc_type is tag
     	foreach my $association_object ($assoc_type->col) {
 	    (my $label = "$assoc_type") =~ s/Associated_with_(.)/\u$1/;
+        $label =~ s/_/ /g if $label;
 	    push @data, { association 	=> $self->_pack_obj($association_object),
 			  label 	=> $label && "$label"      };
 	}
@@ -324,7 +325,7 @@ sub transcription_factor {
     my $object = $self->object;
 
     return { description => 'Transcription factor of the feature',
-	     data        => $self->_pack_obj($object->Transcription_factor) };
+	     data        => $self->_pack_obj($object->Associated_with_transcription_factor) };
 }
 
 sub _build__segments {
