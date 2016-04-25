@@ -277,7 +277,7 @@
         my $model = $transcript->corresponding_all();
         my $model_data = $model->{data}->[0];
         my @lengths = @{$model_data->{length_unspliced}};
-        my ($transcript_length) = grep { $_ =~ 1098 } @lengths;
+        my ($transcript_length) = grep { $_ =~ 1094 } @lengths;
         ok($transcript_length, 'got correct transcript length');
 
     }
