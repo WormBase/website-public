@@ -234,7 +234,7 @@
         'http://staging.wormbase.org';
       END;
       IF is_preview_url;
-          # queries.tracklist=0;
+          queries.tracklist=0;
           queries.nav=0;
           queries.overview=0;
           url = c.uri_for('/tools', 'genome', 'jbrowse-simple', 'full.html', queries).path_query();
