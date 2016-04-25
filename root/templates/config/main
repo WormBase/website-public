@@ -237,10 +237,10 @@
           # queries.tracklist=0;
           queries.nav=0;
           queries.overview=0;
-          url = c.uri_for('/tools', 'genome', '/jbrowse', 'full.html', queries).path_query();
+          url = c.uri_for('/tools', 'genome', 'jbrowse-simple', 'full.html', queries).path_query();
       ELSE;
-          # the leading and trailing / for jbrowse url part is important..
-          url = c.uri_for('/tools', 'genome', '/jbrowse/', queries).path_query();
+          # the trailing / for jbrowse url part is important..
+          url = c.uri_for('/tools', 'genome', 'jbrowse-simple/', queries).path_query();
       END;
       url;
     END;
