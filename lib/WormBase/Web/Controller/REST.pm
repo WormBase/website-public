@@ -3,6 +3,7 @@ package WormBase::Web::Controller::REST;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
+use feature qw(say);
 use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
@@ -16,6 +17,8 @@ use Text::MultiMarkdown 'markdown';
 use DateTime;
 use Encode;
 use Data::Dumper;
+use HTTP::Tiny;
+
 
 __PACKAGE__->config(
     'default'          => 'text/x-yaml',
@@ -842,9 +845,6 @@ sub widget_GET {
     my ( $self, $c, $class, $name, $widget ) = @_;
     $c->log->debug("        ------> we're requesting the widget $widget");
 
-    # Cache key - "$class_$widget_$name"
-    my $key = join( '_', $class, $widget, $name );
-
     # set header and content-type
     my $headers = $c->req->headers;
     my $content_type
@@ -860,15 +860,26 @@ sub widget_GET {
           $c->go('search', 'search');
     }
 
-    # check_cache checks couchdb
-    my ( $cached_data, $cache_source ) = $c->check_cache($key);
-    if($cached_data && (ref $cached_data eq 'HASH')){
+    my $skip_cache = (((exists $c->config->{skip_cache})
+                          && ($c->config->{skip_cache} == 1)) 
+                      ||  ((exists $c->request->params->{"skip-cache"}) 
+                          && ($c->request->params->{"skip-cache"} == 1))) ? 1 : 0;
+
+    # Cache key - "$class_$widget_$name"
+    my ($cached_data, $cache_source, $key); 
+    if ( not $skip_cache ) {
+        # check_cache checks couchdb
+        ( $cached_data, $cache_source ) = $c->check_cache($key);
+        $key = join( '_', $class, $widget, $name );
+    }
+
+    if ((not $skip_cache) && $cached_data && (ref $cached_data eq 'HASH')){
         $c->stash->{fields} = $cached_data;
 
 	# Served from cache? Let's include a link to it in the cache.
 	# Primarily a debugging element.
 	$c->stash->{served_from_cache} = $key;
-    } elsif ($cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
+    } elsif ((not $skip_cache) && $cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
         $c->response->status(200);
         $c->response->body($cached_data);
         $c->detach();
@@ -890,24 +901,51 @@ sub widget_GET {
             push @fields, 'name';
         }
 
-        my $skip_cache;
+        my $skip_datomic = ((( exists $c->config->{"skip_datomic"}) 
+                               && ($c->config->{"skip_datomic"} == 1))
+                          ||  ((exists $c->req->params->{"skip-datomic"})
+                               && ($c->req->params->{"skip-datomic"} == 1)))? 1: 0;
+        my $skip_ace = (((exists $c->config->{"skip_ace"})
+                               && ($c->config->{"skip_ace"} == 1)) 
+                        ||  ((exists $c->req->params->{"skip-ace"}) 
+                               && ($c->req->params->{"skip-ace"} == 1)))? 1: 0;
+
+        my ($resp_content, $resp);
+        if (not $skip_datomic) {
+            my $rest_server = $c->config->{'rest_server'};
+            $resp = HTTP::Tiny->new->get("$rest_server/rest/widget/$class/$name/$widget");
+            if ($resp->{'status'} == 200 && $resp->{'content'}) {
+                $resp_content = decode_json($resp->{'content'})->{fields};
+            }
+        }
+
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
-            my $data = $object->$field;
+            my $data;
+            if ($resp_content && $resp_content->{$field}) {
+                $data = $resp_content->{$field};
+            } elsif ((not $skip_ace) && $object->can($field)) {
+                # try Perl API
+                $data = $object->$field;
+                if ($c->config->{fatal_non_compliance}) {
+                    # checking for data compliance can be an overhead, only use
+                    # in testing env where its explicitly enabled
+                    my ($fixed_data, @problems) = $object->_check_data( $data, $class );
+                    if ( @problems ){
+                        my $log = 'fatal';
+                        $c->log->$log("${class}::$field returns non-compliant data: ");
+                        $c->log->$log("\t$_") foreach @problems;
 
-            if ($c->config->{fatal_non_compliance}) {
-                # checking for data compliance can be an overhead, only use
-                # in testing env where its explicitly enabled
-                my ($fixed_data, @problems) = $object->_check_data( $data, $class );
-                if ( @problems ){
-                    my $log = 'fatal';
-                    $c->log->$log("${class}::$field returns non-compliant data: ");
-                    $c->log->$log("\t$_") foreach @problems;
-
-                    die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                        die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                    }
                 }
+            } else {
+                my $response_content = (exists $resp->{'content'})? 
+                                                     $resp->{'content'} : '';
+                die "REST query failed at $field: $response_content";
             }
+
 
             # a field can force an entire widget to not caching
             if ($data->{'error'}){
@@ -1235,31 +1273,6 @@ sub rest_config_GET {
         }
     );
 }
-
-
-sub parasite_api :Path('/rest/parasite') :Args :ActionClass('REST') {}
-
-sub parasite_api_GET {
-    my ($self, $c, @args) = @_;
-    my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
-
-    # construct url for parasite api
-    my $url = join('/', 'http://parasite.wormbase.org/rest', @args);
-    $url = $url . '?' . $paramString if $paramString;
-
-    # handover and parse parasite api response
-    my $lwp       = LWP::UserAgent->new;
-    $lwp->default_header('Content-type' => 'application/json');
-    my $response = $lwp->get($url);
-    my $json = new JSON;
-    my $decoded = $json->allow_nonref->utf8->relaxed->decode($response->content);
-
-    $c->res->header( 'Content-Type' => 'application/json' );
-    $self->status_ok($c, entity => $decoded);
-
-
-}
-
 
 ######################################################
 #
