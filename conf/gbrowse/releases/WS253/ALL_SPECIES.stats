@@ -144,8 +144,8 @@ nc_primary_transcript:history	history	nc_primary_transcript	Gene Models (histori
 nucleotide_match:BLAT_TC1_BEST	BLAT_TC1_BEST	nucleotide_match	NO CONFIG AVAILABLE	0	0	0	0	1043	0	0	0	0	0	0	0	0	0	0
 nucleotide_match:BLAT_TC1_OTHER	BLAT_TC1_OTHER	nucleotide_match	NO CONFIG AVAILABLE	0	0	0	0	3579	0	0	0	0	0	0	0	0	0	0
 nucleotide_match:Brugia_BAC	Brugia_BAC	nucleotide_match	NO CONFIG AVAILABLE	7083	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-nucleotide_match:EXONERATE_BAC_END_BEST	EXONERATE_BAC_END_BEST	nucleotide_match	 (bac_ends)	0	0	0	36872	0	0	0	0	0	0	0	0	0	0	0
-nucleotide_match:EXONERATE_BAC_END_OTHER	EXONERATE_BAC_END_OTHER	nucleotide_match	 (bac_ends)	0	0	0	12895	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:EXONERATE_BAC_END_BEST	EXONERATE_BAC_END_BEST	nucleotide_match	BAC end reads (bac_ends)	0	0	0	36872	0	0	0	0	0	0	0	0	0	0	0
+nucleotide_match:EXONERATE_BAC_END_OTHER	EXONERATE_BAC_END_OTHER	nucleotide_match	BAC end reads (bac_ends)	0	0	0	12895	0	0	0	0	0	0	0	0	0	0	0
 nucleotide_match:TEC_RED	TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	0	0	0	7064	7993	0	0	0	0	0	0	0	0	0	0
 nucleotide_match:Vancouver_fosmid	Vancouver_fosmid	nucleotide_match	YACs, Fosmids, & Cosmids (clones)	0	0	0	0	12874	0	0	0	0	0	0	0	0	0	0
 operon:deprecated_operon	deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	0	0	0	0	110	0	0	0	0	0	0	0	0	0	0

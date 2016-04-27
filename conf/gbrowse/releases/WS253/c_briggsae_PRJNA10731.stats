@@ -45,8 +45,8 @@ ncRNA:WormBase		WormBase	ncRNA	Curated Genes (noncoding) (genes_noncoding)	116
 	piRNA:WormBase	WormBase	piRNA	Curated Genes (noncoding) (genes_noncoding)	0
 	lincRNA:WormBase	WormBase	lincRNA	Curated Genes (noncoding) (genes_noncoding)	0
 	antisense_RNA:WormBase	WormBase	antisense_RNA	Curated Genes (noncoding) (genes_noncoding)	0
-nucleotide_match:EXONERATE_BAC_END_BEST		EXONERATE_BAC_END_BEST	nucleotide_match	 (bac_ends)	36872
-	nucleotide_match:EXONERATE_BAC_END_OTHER	EXONERATE_BAC_END_OTHER	nucleotide_match	 (bac_ends)	12895
+nucleotide_match:EXONERATE_BAC_END_BEST		EXONERATE_BAC_END_BEST	nucleotide_match	BAC end reads (bac_ends)	36872
+	nucleotide_match:EXONERATE_BAC_END_OTHER	EXONERATE_BAC_END_OTHER	nucleotide_match	BAC end reads (bac_ends)	12895
 nucleotide_match:TEC_RED		TEC_RED	nucleotide_match	TEC-RED tags (tecred_tags)	7064
 polypeptide_motif:translated_feature		translated_feature	polypeptide_motif	Protein motifs (protein_motifs)	303479
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	311382
