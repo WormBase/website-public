@@ -1,6 +1,6 @@
 [TRANSCRIPTIONALLY_ACTIVE_REGION]
 feature       = transcribed_fragment:TranscriptionallyActiveRegion
-category      = Transcription:Supporting Evidence
+category      = Genes:Supporting Evidence
 glyph         = box
 bgcolor       = green
 fgcolor       = black

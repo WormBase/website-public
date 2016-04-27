@@ -1,6 +1,6 @@
 [EST_OTHER]
 key           = ESTs (other)
-category      = Transcription:Supporting Evidence
+category      = Genes:Supporting Evidence
 feature       = expressed_sequence_match:BLAT_EST_OTHER
 glyph         = segments
 draw_target   = 1

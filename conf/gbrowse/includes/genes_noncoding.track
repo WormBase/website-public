@@ -1,6 +1,6 @@
 [GENES_NONCODING]
 key          = Curated Genes (noncoding)
-category     = Genes
+category     = Genes:Curated Genes
 feature = miRNA:WormBase
           miRNA_primary_transcript:WormBase
           ncRNA:WormBase        

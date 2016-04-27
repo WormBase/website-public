@@ -1,6 +1,6 @@
 [POLYA_SITES]
 key          = PolyA sites and signal sequences
-category     = Transcription:Signals
+category     = Sequence Features:Signals & Motifs
 feature      = polyA_signal_sequence polyA_site
 glyph        = sub {
 		my $f = shift;
