@@ -1707,6 +1707,21 @@ sub _get_feed_from {
     $c->res->body($response->content);
 }
 
+
+sub parasite_api :Path('/rest/parasite') :Args :ActionClass('REST') {}
+
+sub parasite_api_GET {
+    my ($self, $c, @args) = @_;
+    my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
+
+    # construct url for parasite api
+    my $url = join('/', 'http://parasite.wormbase.org/rest-6', @args);
+    $url = $url . '?' . 'content-type=application/json';
+    $url = $url . ";$paramString" if $paramString;
+
+    $c->res->redirect($url);
+}
+
 ########################################
 #
 # Admin level REST endpoints
