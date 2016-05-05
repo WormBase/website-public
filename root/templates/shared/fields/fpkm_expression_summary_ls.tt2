@@ -11,24 +11,27 @@
         fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
         # used by plot Julie proposes selected experiments
         experiments = fields.fpkm_expression_summary_ls.data.experiments;
+
+        # hack to trick field_block into think fpkm_controls is a field
+        fields.fpkm_controls = {
+            description => 'Estimates of expression calculated by averaging the FPKMs for all control (untreated) samples for each life-stage',
+            data => fields.fpkm_expression_summary_ls.data.controls || undef
+        };
     END;
 
     WRAPPER $field_block title="FPKM expression data from selected modENCODE libraries" key="fpkm_expression_summary_ls";
         '<div class="fpkm-selected-container"></div>';
     END;
 
-    WRAPPER $field_block title="FPKM expression control statistics" key="fpkm_expression_summary_ls";
+    WRAPPER $field_block title="Aggregate expression estimates" key="fpkm_controls";
         #table for control stats
-        control_stats_hash = fields.fpkm_expression_summary_ls.data.controls;
-
         build_data_table(order = ['life_stage', 'control median', 'control mean'],
                          columns = {
                              life_stage => 'Life stage',
-                             'control mean' => 'Control mean'
-                             'control median' => 'Control median'
+                             'control mean' => 'Mean'
+                             'control median' => 'Median'
                          },
-                         passed_data = control_stats_hash,
-                         key='control_data');
+                         key='fpkm_controls');
 
     END;
 
