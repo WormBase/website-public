@@ -599,6 +599,14 @@
 	search      = 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
 	}
 
+ NCBI = {
+	description = 'The National Center for Biotechnology Information advances science and health by providing access to biomedical and genomic information.'
+	base        = 'http://www.ncbi.nlm.nih.gov/',
+	email       = 'info@ncbi.nlm.nih.gov'
+	search      = 'http://www.ncbi.nlm.nih.gov/%s'
+	gene        = 'http://www.ncbi.nlm.nih.gov/gene/?term=%s'
+	}
+
  NCBI_Genome_Assembly = {
 	description = 'Genome assembly archive at NCBI',
 	base        = 'http://www.ncbi.nlm.nih.gov/assembly/',
