@@ -36,6 +36,12 @@
        search      = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
       	}
 
+ addgene = {
+	description = 'Addgene is a nonprofit organization dedicated to making it easier for scientists to share plasmids.'
+	base        = 'http://www.addgene.org/',
+	search      = 'http://www.addgene.org/%s'
+	}
+
  cgc = {
 	description = 'The C. elegans Genetics Center'
 	maintainer  = 'Aric Daul'
@@ -597,6 +603,14 @@
 	base        = 'http://shigen.lab.nig.ac.jp/c.elegans/index.jsp'
 	email       = 'mitani1@research.twmu.ac.jp'
 	search      = 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
+	}
+
+ NCBI = {
+	description = 'The National Center for Biotechnology Information advances science and health by providing access to biomedical and genomic information.'
+	base        = 'http://www.ncbi.nlm.nih.gov/',
+	email       = 'info@ncbi.nlm.nih.gov'
+	search      = 'http://www.ncbi.nlm.nih.gov/%s'
+	gene        = 'http://www.ncbi.nlm.nih.gov/gene/?term=%s'
 	}
 
  NCBI_Genome_Assembly = {
