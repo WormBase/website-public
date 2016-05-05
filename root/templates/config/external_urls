@@ -36,6 +36,12 @@
        search      = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
       	}
 
+ addgene = {
+	description = 'Addgene is a nonprofit organization dedicated to making it easier for scientists to share plasmids.'
+	base        = 'http://www.addgene.org/',
+	search      = 'http://www.addgene.org/%s'
+	}
+
  cgc = {
 	description = 'The C. elegans Genetics Center'
 	maintainer  = 'Aric Daul'
