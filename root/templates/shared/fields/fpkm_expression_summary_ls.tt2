@@ -17,9 +17,14 @@
             description => 'Estimates of expression calculated by averaging the FPKMs for all control (untreated) samples for each life-stage',
             data => fields.fpkm_expression_summary_ls.data.controls || undef
         };
+
+        fields.fpkm_summary_plot_data = {
+            description => 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.',
+            data => fpkm_data || undef
+        };
     END;
 
-    WRAPPER $field_block title="FPKM expression data from selected modENCODE libraries" key="fpkm_expression_summary_ls";
+    WRAPPER $field_block title="FPKM expression data from selected modENCODE libraries" key="fpkm_summary_plot_data";
         '<div class="fpkm-selected-container"></div>';
     END;
 
@@ -44,10 +49,6 @@
             <div class="fpkm-plot-canvas"></div>
         </div>
     </div>';
-
-
-
-        fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
 
         FOREACH analysis IN fpkm_data;
             analysis.project_link = tag2link(analysis.project_info);
