@@ -114,16 +114,18 @@ sub homologies {
     	Homol_homol => 'Other',
     };
 
-    foreach my $homology_type (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
-	if (my @homol = $object->$homology_type) {
-	    foreach my $homologous_object (@homol) {
-		my $type = $types->{$homology_type};
-		push @data,	{
-		    homolog => $self->_pack_obj($homologous_object),
-		    type => "$type" || undef,
-		}
-	    }
-	}
+    foreach my $homology_type (keys %$types) {
+        if (my @homol = $object->$homology_type) {
+            foreach my $homologous_object (@homol) {
+                my $type = $types->{$homology_type};
+                my $species = $homologous_object->Species;
+                push @data,	{
+                    homolog => $self->_pack_obj($homologous_object),
+                    type => "$type" || undef,
+                    species => $self->_pack_obj($species),
+                }
+            }
+        }
     }
 
     return { data => @data ? \@data : undef,
@@ -145,5 +147,3 @@ sub homologies {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-
