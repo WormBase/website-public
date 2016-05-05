@@ -1,6 +1,6 @@
 [PREDICTION_JIGSAW]
 key          = Prediction: Jigsaw
-category     = Transcription:Ab-initio predictions
+category     = Genes:Ab-initio predictions
 feature      = CDS:Jigsaw
 glyph        = gene
 bgcolor      = palevioletred

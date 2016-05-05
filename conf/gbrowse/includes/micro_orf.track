@@ -1,7 +1,7 @@
 [MICRO_ORF]
 feature      = five_prime_open_reading_frame:micro_ORF
 glyph        = box
-category     = Transcription:Supporting Evidence
+category     = Genes:Supporting Evidence
 bgcolor      = green
 key          = Micro ORF
 link         = sub {

@@ -1,7 +1,7 @@
 [GENES]
 # Key and citation should be provided by each species.
 key          = Genes
-category     = Genes
+category     = Genes:Curated Genes
 feature  = gene:WormBase gene:WormBase_imported
 glyph = gene
 title = sub {

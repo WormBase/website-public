@@ -1,6 +1,6 @@
 [ORFEOME_SEQUENCE_TAGS]
 key           = C. elegans OSTs
-category      = Transcription:Supporting Evidence
+category      = Genes:Supporting Evidence
 feature       = expressed_sequence_match:BLAT_OST_BEST
 glyph         = segments
 draw_target   = 1
