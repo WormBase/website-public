@@ -1,0 +1,15 @@
+[SEQUENCE_SIMILARITY_TRINITY_RNASEQ]
+key            = Trinity-assembled RNAseq 
+category       = Genes:Supporting Evidence
+feature        = expressed_sequence_match:BLAT_Trinity_BEST
+split_on_cigar = 1
+glyph          = segments
+title          = $name
+fgcolor        = mediumpurple
+bgcolor        = mediumpurple
+height         = 4
+connector      = solid
+citation       = Native (same species) RNAseq data was assembled with Trinity and then aligned to the genome with BLAT
+
+[SEQUENCE_SIMILARITY_TRINITY_RNASEQ:50000]
+glyph = box
