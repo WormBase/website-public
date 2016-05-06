@@ -21,6 +21,36 @@ WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
 	tags2link(fields.gene_regulation.data);
 END;
 
+WRAPPER $field_block title="" key="chebi_id";
+    chebi_base_url = 'http://www.ebi.ac.uk/chebi/';
+
+    MACRO format_url(url_base, params) BLOCK;
+      paramStrings = [];
+      FOREACH key IN params.keys;
+        value =  params.$key;
+        paramStrings.push("$key=$value");
+      END;
+      url_base _ '?' _ paramStrings.join('&');
+    END;
+
+    chebi_image = image(format_url(chebi_base_url _ 'displayImage.do', {
+        chebiId => fields.chebi_id.data,
+        defaultImage => 'true',
+        imageIndex => 0,
+        dimensions => 400
+    }));
+
+    chebi_url = format_url(chebi_base_url _ 'searchId.do', {
+        chebiId => 'CHEBI:' _ fields.chebi_id.data
+    });
+
+    '<div class="molecule--chebi-image" style="width:250px; position:relative;">' _
+    external_link(chebi_url, chebi_image) _
+    '<p class="fade" style="text-align:center;">Molecular structure powered by ' _ external_link(chebi_base_url, 'ChEBI') _ '</p>' _
+    '</div>';
+
+END;
+
 remarks(no_toggle=1);
 '</div>';
 %]
