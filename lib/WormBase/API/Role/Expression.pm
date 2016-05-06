@@ -584,7 +584,13 @@ sub _pack_analysis_record {
     my $label = $name->{label};
     if ($label =~ /([^\.]+).(control_(mean|median))/){
         # This analysis object statics for the control
-        $life_stage = $1;
+
+
+        if ($1 ne $analysis_record->{life_stage}->{id}){
+            # handle case for "total over all stages"
+            ($analysis_record->{life_stage} = $1) =~ s/_/ /g;
+        }
+
         (my $stat_type = $2) =~ s/_/ /;
         $analysis_record->{control} = 1;
         $analysis_record->{stat_type} = $stat_type;
