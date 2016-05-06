@@ -1,4 +1,13 @@
 [%
+
+  WRAPPER $field_block title=pluralize('Corresponding sequence', fields.sequences.data.size) key='sequences';
+     tags2link(fields.sequences.data);
+  END;
+
+  WRAPPER $field_block title=pluralize('End reads', fields.end_reads.data.size) key='end_reads';
+     tags2link(fields.end_reads.data);
+  END;
+
   sequence('print_sequence');
 
   WRAPPER $field_block title="Strand" key='strand';
