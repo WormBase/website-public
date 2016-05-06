@@ -41,10 +41,10 @@ WRAPPER $field_block title="" key="chebi_id";
     }));
 
     chebi_url = format_url(chebi_base_url _ 'searchId.do', {
-        chebiId => 'CHEBI:15377'
+        chebiId => 'CHEBI:' _ fields.chebi_id.data
     });
 
-    '<div class="molecule--chebi-image" style="width:300px; position:relative;">' _
+    '<div class="molecule--chebi-image" style="width:250px; position:relative;">' _
     external_link(chebi_url, chebi_image) _
     '<p class="fade" style="text-align:center;">Molecular structure powered by ' _ external_link(chebi_base_url, 'ChEBI') _ '</p>' _
     '</div>';
