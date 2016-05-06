@@ -2257,8 +2257,8 @@ div#google-map {
 }
 
 /* FPKM control statistics table on Expression widget */
-table#table_control_data_by td:nth-child(2),
-table#table_control_data_by td:nth-child(3) {
+table#table_fpkm_controls_by td:nth-child(2),
+table#table_fpkm_controls_by td:nth-child(3) {
   width: 40%;
 }
 
