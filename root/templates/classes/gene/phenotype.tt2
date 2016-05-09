@@ -76,7 +76,7 @@
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
 				 evidence => 'Supporting Evidence',
-			}, key='phenotype',
+			}, key='phenotype_overexpression',
 			passed_data=fields.drives_overexpression.data.Phenotype.values);
   END;
 END %]
