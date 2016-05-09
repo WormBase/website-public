@@ -2083,7 +2083,7 @@ li.visible div.widget-container {
 /* widget field titles: ie Identification > IDs */
 div.field {
   clear:left;
-  /* float:left; */
+  /* float:left; breaks toggle for Phenotype_not_observed field */
   line-height:1.2em;
   padding:0.2em;
   width:100%;
