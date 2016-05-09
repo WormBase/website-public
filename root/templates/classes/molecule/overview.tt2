@@ -37,7 +37,8 @@ WRAPPER $field_block title="" key="chebi_id";
         chebiId => fields.chebi_id.data,
         defaultImage => 'true',
         imageIndex => 0,
-        dimensions => 400
+        dimensions => 400,
+        transbg => 'true'
     }));
 
     chebi_url = format_url(chebi_base_url _ 'searchId.do', {
