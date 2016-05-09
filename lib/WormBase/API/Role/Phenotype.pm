@@ -142,6 +142,7 @@ sub _get_pato {
         $pato_term = $pato_term && $pato_term->Name;
         return {
             pato_evidence => {
+                entity_type => $entity_type && "$entity_type",
                 entity_term => $self->_pack_obj($entity_term),
                 pato_term   =>  $pato_term ? "$pato_term" : 'abnormal',
             },
