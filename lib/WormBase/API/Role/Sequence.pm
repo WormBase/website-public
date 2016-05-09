@@ -297,7 +297,7 @@ sub available_from {
     };
 
     return { description => 'availability of clones of the sequence',
-         data        => "$data" || undef };
+         data        => $data || undef };
 }
 
 =head3 analysis

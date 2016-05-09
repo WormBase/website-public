@@ -1,6 +1,6 @@
 [TRANSCRIPTION_END_SITE]
 feature       = transcription_end_site:RNASeq
-category      = Transcription:Signals
+category      = Sequence Features:Signals & Motifs
 glyph         = box
 bgcolor       = white
 fgcolor       = black
@@ -10,3 +10,4 @@ label         = sub {
 	      }
 key           = Transcription end site
 citation      = Transcription_end_site defined by analysis of RNASeq short read datasets (example Hillier et al.)
+

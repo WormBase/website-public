@@ -1,6 +1,6 @@
 [ORFEOME_PCR_PRODUCTS]
 key           = ORFeome PCR Products
-category      = Transcription:Supporting Evidence
+category      = Genes:Supporting Evidence
 feature       = PCR_product:Orfeome
 glyph         = sub {
 		my $f = shift;

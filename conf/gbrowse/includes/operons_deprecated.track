@@ -1,6 +1,6 @@
 [OPERONS_DEPRECATED]
 key          = Operons (deprecated)
-category     = Genes
+category     = Genes:Curated Genes
 feature      = operon:deprecated_operon
 glyph        = generic
 strand_arrow = 1

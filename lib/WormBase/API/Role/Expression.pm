@@ -69,7 +69,7 @@ sub expression_patterns {
     my $object = $self->_gene;
 
     my @non_array_patterns = map {
-        $self->_is_array_expression($_) ? () : $self->_expression_pattern_details($_);
+        $self->_is_expression_profile($_) ? () : $self->_expression_pattern_details($_);
     } $object->Expr_pattern;
     @non_array_patterns = $self->_sort_expression_patterns(\@non_array_patterns);
 
@@ -86,7 +86,7 @@ sub expression_profiling_graphs {
     my $object = $self->_gene;
 
     my @array_patterns = map {
-        $self->_is_array_expression($_) ? $self->_expression_pattern_details($_) : ();
+        $self->_is_expression_profile($_) ? $self->_expression_pattern_details($_) : ();
     } $object->Expr_pattern;
     @array_patterns = $self->_sort_expression_patterns(\@array_patterns);
 
@@ -97,9 +97,9 @@ sub expression_profiling_graphs {
 
 }
 
-sub _is_array_expression {
+sub _is_expression_profile {
     my ($self, $expr) = @_;
-    return first { "$_" =~ /Microarray|Tiling_array/;} $expr->Type;
+    return first { "$_" =~ /Microarray|Tiling_array|RNASeq/;} $expr->Type;
 }
 
 sub _expression_pattern_details {
@@ -584,7 +584,13 @@ sub _pack_analysis_record {
     my $label = $name->{label};
     if ($label =~ /([^\.]+).(control_(mean|median))/){
         # This analysis object statics for the control
-        $life_stage = $1;
+
+
+        if ($1 ne $analysis_record->{life_stage}->{id}){
+            # handle case for "total over all stages"
+            ($analysis_record->{life_stage} = $1) =~ s/_/ /g;
+        }
+
         (my $stat_type = $2) =~ s/_/ /;
         $analysis_record->{control} = 1;
         $analysis_record->{stat_type} = $stat_type;

@@ -79,6 +79,26 @@ sub molecule_use {
     };
 }
 
+
+# chebi { }
+# This method will return a data structure of ChEBI ID of the molecule
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/chebi
+
+sub chebi_id {
+    my $self = shift;
+    my $object = $self->object;
+
+    my ($chebi_id) = map {
+        my ($db, $namespace, $id) = $_->row();
+        "$db" eq 'ChEBI' && "$namespace" eq 'CHEBI_ID' ? "$id" : ();
+    } $object->Database;
+
+    return {
+        'data'        => $chebi_id,
+        'description' => 'ChEBI id of the molecule'
+    };
+}
+
 ############################
 #
 # The Phenotype Widget

@@ -1,7 +1,7 @@
 # Citation should be added by users
 [SEQUENCE_SIMILARITY_TIGR_GENE_MODELS]
 feature  = nucleotide_match:TIGR_BEST
-category = Genes
+category = Genes:Curated Genes
 key      = TIGR genes models
 glyph    = segments
 bgcolor  = yellow
