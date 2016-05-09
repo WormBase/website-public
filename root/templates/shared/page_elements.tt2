@@ -430,6 +430,7 @@ WB.getPlugin("dataTables", function(){
             if($jq.fn.dataTable.fnIsDataTable('#[% table_name %]')){
               // Hack! avoid warning of reinitializing table seen by some users, not sure why
               $jq('#[% table_name %]').dataTable();
+              console.warn('#[% table_name %] is reinitialized, likely because two tables are using the same key. This could cause problem.');
             }else{
               $jq('#[% table_name %]').dataTable({
                 "bPaginate"        : [% paginate %],
