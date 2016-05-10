@@ -2,8 +2,8 @@
 [% phenotype_table_settings = '
 "drawCallback": WB.partitioned_table(0),
 "columnDefs": [
-            { "targets": 0, "visible": false },
-            { "targets": 1, "width": "50%" },
+            { "targets": 0, "visible": true },
+            { "targets": 2, "width": "40%" },
         ],
         "autoWidth": false
 '%]
@@ -16,11 +16,11 @@
     <p><i>The following phenotypes have been observed in [% object.name.data.label %]</i>:</p>
 
 [%
-	build_data_table(order=['phenotype','entity', 'evidence'],
+	build_data_table(order=['phenotype', 'entity', 'evidence'],
             columns={
-                phenotype  => '_Phenotype',
-                 entity => 'Phenotype',
-                 evidence => 'Supporting Evidence',
+                phenotype  => 'Phenotype',
+                entity => 'Entities Affected',
+                evidence => 'Supporting Evidence',
             }, key='phenotype',
             style = phenotype_table_settings
     );
@@ -35,8 +35,8 @@
       [%
     	build_data_table(order=['phenotype','entity', 'evidence'],
             columns={
-                phenotype  => '_Phenotype',
-                entity => 'Phenotype',
+                phenotype  => 'Phenotype',
+                entity => 'Entities Affected',
                 evidence => 'Supporting Evidence',
         }, key='phenotype_not_observed',
         style = phenotype_table_settings);
@@ -76,7 +76,7 @@
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
 				 evidence => 'Supporting Evidence',
-			}, key='phenotype',
+			}, key='phenotype_overexpression',
 			passed_data=fields.drives_overexpression.data.Phenotype.values);
   END;
 END %]
