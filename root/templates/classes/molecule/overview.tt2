@@ -50,6 +50,7 @@ WRAPPER $field_block title="" key="chebi_id";
     external_link(chebi_url, chebi_image) _
     '<p class="fade" style="text-align:center;">Molecular structure powered by ' _ external_link(chebi_base_url, 'ChEBI') _ '</p>' _
     '<script type="application/javascript">
+        // avoid broken image link when ChEBI image isn\'t available
         $jq.ajax({
             type: "GET",
             url: "' _ chebi_image_url _ '",
