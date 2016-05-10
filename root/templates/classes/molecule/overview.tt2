@@ -33,22 +33,33 @@ WRAPPER $field_block title="" key="chebi_id";
       url_base _ '?' _ paramStrings.join('&');
     END;
 
-    chebi_image = image(format_url(chebi_base_url _ 'displayImage.do', {
+    chebi_image_url = format_url(chebi_base_url _ 'displayImage.do', {
         chebiId => fields.chebi_id.data,
         defaultImage => 'true',
         imageIndex => 0,
         dimensions => 300
-    }));
+    });
+    chebi_image = image(chebi_image_url);
 
     chebi_url = format_url(chebi_base_url _ 'searchId.do', {
         chebiId => 'CHEBI:' _ fields.chebi_id.data
     });
 
-    '<div class="molecule--chebi-image" style="width:180px; position:relative;">' _
+    '<div class="molecule--chebi-image" style="width:180px; position:relative;display:none;">' _
     external_link(chebi_url, chebi_image) _
     '<p class="fade" style="text-align:center;">Molecular structure powered by ' _ external_link(chebi_base_url, 'ChEBI') _ '</p>' _
+    '<script type="application/javascript">
+        $jq.ajax({
+            type: "GET",
+            url: "' _ chebi_image_url _ '",
+            success: function(data, status, jqxhr) {
+                if (data.length > 0) {
+                    $jq(".molecule--chebi-image").show();
+                }
+            }
+        });
+    </script>' _
     '</div>';
-
 END;
 
 remarks(no_toggle=1);
