@@ -25,11 +25,6 @@ WRAPPER $field_block title=pluralize('Corresponding sequence', fields.sequences.
    tags2link(fields.sequences.data);
 END;
 
-WRAPPER $field_block title=pluralize('End reads', fields.end_reads.data.size) key='end_reads';
-   tags2link(fields.end_reads.data);
-END;
-
-
 # this looks suspiciously like Genomic position in the Location widget...
 WRAPPER $field_block title=pluralize('Genomic position', fields.sequences.data.size) key='genomic_position';
   FOREACH position IN fields.genomic_position.data;
@@ -121,4 +116,3 @@ END;
 '</div>';
 
 %]
-

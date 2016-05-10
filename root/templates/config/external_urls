@@ -361,6 +361,13 @@
 	search      = c.uri_for('/tools', 'genome', 'gbrowse_img').path _ '/%s'
 	}
 
+
+ GenBank = {
+	description = 'GenBank ® is the NIH genetic sequence database, an annotated collection of all publicly available DNA sequences'
+	base        = 'http://www.ncbi.nlm.nih.gov/genbank/'
+	search      = 'http://www.ncbi.nlm.nih.gov/nuccore/?term=%s'
+	}
+
  Gene = {
 	description = 'Gene'
 	base        = 'http://www.journals.elsevier.com/gene/'

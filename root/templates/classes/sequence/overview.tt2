@@ -49,6 +49,10 @@ END;
 
 laboratory;
 
+WRAPPER $field_block title="Source Clone" key="source_clone";
+    tags2link(fields.source_clone.data);
+END;
+
 WRAPPER $field_block title="Subsequence" key='subsequence';
      tags2link(fields.subsequence.data);
 END;

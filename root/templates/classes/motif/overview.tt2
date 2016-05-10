@@ -22,16 +22,13 @@
      END;
 
      WRAPPER $field_block title="Homologs" key="homologies";
-           build_data_table (
-		      order=[
-			     'homolog',
-		     	     'type',
-			     ],
-                    columns={
-        	         homolog => 'Homolog',
-			    type => 'Type',
-			     },
-                     key='homologies');
+        build_data_table(order=['homolog', 'type', 'species'],
+            columns={
+                homolog => 'Homolog',
+                type => 'Type',
+                species => 'Species'
+            },
+            key='homologies');
      END;
 
      remarks;

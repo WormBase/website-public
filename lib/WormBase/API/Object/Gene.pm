@@ -349,9 +349,12 @@ sub parent_sequence {
 sub clone {
     my $self      = shift;
     my $object = $self->object;
+    my @clones = map {
+        $self->_pack_obj($_);
+    } $object->Positive_clone;
     return {
         description => 'parent clone of this gene',
-        data        => $self->_pack_obj($object->Positive_clone),
+        data        => @clones ? \@clones : undef
     };
 }
 
