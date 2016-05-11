@@ -212,6 +212,17 @@
 
 
     MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url) BLOCK;
+      IF taxonomy.match('(?i).+_(PRJ\w+)');
+        full_taxonomy = taxonomy;
+      ELSIF bioproject;
+        full_taxonomy = taxonomy _ '_' _ bioproject;
+      ELSIF c.config.sections.species_list.defined(taxonomy);
+        FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
+          NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          full_taxonomy = taxonomy _ '_' _ bp;
+        END;
+      END;
+
       IF is_preview_url && taxonomy == 'c_elegans';
         queries = {
             data => 'data/' _ taxonomy _ '_simple',
@@ -222,12 +233,34 @@
             data => 'data/' _ taxonomy,
             loc => position_string
         };
+      ELSIF full_taxonomy;
+        queries = {
+            data => 'data/' _ full_taxonomy,
+            loc  => position_string
+        };
       ELSE;
         queries = {
             data => 'data/' _ taxonomy _ '_' _ bioproject,
             loc => position_string
         };
       END;
+
+      IF position_string.match('add=.*;?');
+        coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\d+)\-(\d+);?');
+        refseq = coord_parts.0;
+        label  = coord_parts.1;
+        start  = coord_parts.3;
+        end    = coord_parts.4;
+
+        track_part   = encode_uri('[{"label":"' _ label _ '","type":"JBrowse/View/Track/HTMLFeatures"}]');
+        feature_part = encode_uri('[{"seq_id":"'_ refseq _'","start":'_ start _',"end":'_ end _',"name":"'_ label _'"}]');
+        loc_part     = position_string.match('^([^;]+);?');
+        position_string = loc_part.0;
+        queries.addFeatures = feature_part;
+        queries.addTracks   = track_part;
+        queries.loc         = position_string;
+      END;
+
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
@@ -612,6 +645,14 @@
     use URI::Escape;
     my $uri = uri_unescape($coded_uri);
     print "$uri";
+[% END %]
+
+[% MACRO encode_uri(uri) PERL%]
+    my $uri = $stash->get('uri');
+
+    use URI::Escape;
+    my $coded_uri = uri_escape($uri);
+    print "$coded_uri";
 [% END %]
 
 [% MACRO json_encode(hash) BLOCK %]

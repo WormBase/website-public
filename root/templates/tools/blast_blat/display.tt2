@@ -70,7 +70,7 @@
 				     <img class="expand_button" expand_area_count="[% expand_area_counter _ count %]" src="/img/blast_blat/blank.png"/>
 				  [% END %]
 				  [% IF re.type == "header" %]<a href="[% line.link.alignment_link _ '_' _ count %]">[Alignment]</a>[% END %]
-				  [% IF line.link.genome_link.id %] <a href="[% gbrowse_url(line.link.genome_link.taxonomy, line.link.genome_link.id) %]" target="_blank">[Genome View]</a>[% END %]
+				  [% IF line.link.genome_link.id %] <a href="[% gbrowse_url(line.link.genome_link.taxonomy, line.link.genome_link.id) %]" target="_blank">[Genome View (GBrowse)]</a> or <a href="[% jbrowse_url(line.link.genome_link.taxonomy, line.link.genome_link.id) %]" target="_blank">[Genome View (JBrowse)]</a>[% END %]
 				  [% # tag2link(line.link.genome_link) %]
 				  [% tag2link(line.link.gene_link) %]
 				  [% tag2link(line.link.protein_link) %]
