@@ -252,13 +252,14 @@
         start  = coord_parts.3;
         end    = coord_parts.4;
 
-        track_part   = encode_uri('[{"label":"' _ label _ '","type":"JBrowse/View/Track/HTMLFeatures"}]');
-        feature_part = encode_uri('[{"seq_id":"'_ refseq _'","start":'_ start _',"end":'_ end _',"name":"'_ label _'"}]');
+        track_part   = '[{"label":"' _ label _ '","type":"JBrowse/View/Track/HTMLFeatures","store":"url"}]';
+        feature_part = '[{"seq_id":"'_ refseq _'","start":'_ start _',"end":'_ end _',"name":"'_ label _'"}]';
         loc_part     = position_string.match('^([^;]+);?');
         position_string = loc_part.0;
         queries.addFeatures = feature_part;
         queries.addTracks   = track_part;
         queries.loc         = position_string;
+        queries.tracks      = 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
       END;
 
 
@@ -645,14 +646,6 @@
     use URI::Escape;
     my $uri = uri_unescape($coded_uri);
     print "$uri";
-[% END %]
-
-[% MACRO encode_uri(uri) PERL%]
-    my $uri = $stash->get('uri');
-
-    use URI::Escape;
-    my $coded_uri = uri_escape($uri);
-    print "$coded_uri";
 [% END %]
 
 [% MACRO json_encode(hash) BLOCK %]
