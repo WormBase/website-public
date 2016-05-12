@@ -11,15 +11,6 @@ END;
 
 
 '<div class="description">';
-WRAPPER $field_block title="Molecule Use" key="molecule_use";
-    FOREACH mu IN fields.molecule_use.data;
-    evidence(mu.evidence, '', mu.text);
-    END;
-END;
-
-WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
-	tags2link(fields.gene_regulation.data);
-END;
 
 WRAPPER $field_block title="" key="chebi_id";
     chebi_base_url = 'http://www.ebi.ac.uk/chebi/';
@@ -62,6 +53,16 @@ WRAPPER $field_block title="" key="chebi_id";
         });
     </script>' _
     '</div>';
+END;
+
+WRAPPER $field_block title="Molecule Use" key="molecule_use";
+    FOREACH mu IN fields.molecule_use.data;
+    evidence(mu.evidence, '', mu.text);
+    END;
+END;
+
+WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
+	tags2link(fields.gene_regulation.data);
 END;
 
 WRAPPER $field_block title=pluralize('Biofunction role', fields.biofunction_role.data.size) key="biofunction_role";
