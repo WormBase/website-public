@@ -70,6 +70,10 @@ WRAPPER $field_block title=pluralize('Biofunction role', fields.biofunction_role
     END;
 END;
 
+WRAPPER $field_block title="Status" key="detection_status";
+    cell_content(fields.detection_status.data);
+END;
+
 remarks(no_toggle=1);
 '</div>';
 %]

@@ -85,15 +85,34 @@ sub molecule_use {
 sub biofunction_role {
     my $self = shift;
     my $object = $self->object;
-    # TODO: deal with evidence
+
     my @bf_roles = map {text=>"$_", evidence=>$self->_get_evidence($_)}, $object->Biofunction_role;
-    # (use, evidence type, evidence)
+
     return {
         'data'        => @bf_roles ? \@bf_roles : undef,
         'description' => 'Controlled vocabulary for specific role of molecule in nematode biology, with particular regards to biological pathways'
     };
 }
 
+# detection_status { }
+# This method will return a data structure with information on how the molecule is used.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00005495/detection_status
+sub detection_status {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $status_ace = $object->Status;
+    my $evidence = $self->_get_evidence($status_ace);
+    my $status = $status_ace ? $evidence ? {
+        text => "$status_ace",
+        evidence => $evidence
+    } : "$status_ace" : undef;
+
+    return {
+        'data'        => $status,
+        'description' => 'Signifies if the molecule is predicted to be present in the animal or was shown to be present in the organism through a direct detection method'
+    };
+}
 
 
 # chebi { }
