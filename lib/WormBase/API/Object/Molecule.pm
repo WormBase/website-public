@@ -162,6 +162,97 @@ sub nonspecies_source {
     };
 }
 
+
+# inchi { }
+# This method will return a data structure with information on the InChi structure.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00004910/inchi
+sub inchi {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $value =  $object->InChi;
+
+    return {
+        'data'        => $value && "$value",
+        'description' => 'InChi structure'
+    };
+}
+
+# inchi_key { }
+# This method will return a data structure with information on the InChi structure key.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00004910/inchi_Key
+sub inchi_key {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $value =  $object->InChiKey;
+
+    return {
+        'data'        => $value && "$value",
+        'description' => 'InChi structure key'
+    };
+}
+
+# smiles { }
+# This method will return a data structure with information on the SMILES structure.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00004910/smiles
+sub smiles {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $value =  $object->SMILES;
+
+    return {
+        'data'        => $value && "$value",
+        'description' => 'SMILES structure'
+    };
+}
+
+# formula { }
+# This method will return a data structure with information on the Molecular formula from ChEBI
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00004910/formula
+sub formula {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $value =  $object->Formula;
+
+    return {
+        'data'        => $value && "$value",
+        'description' => 'Molecular formula from ChEBI'
+    };
+}
+
+# iupac { }
+# This method will return a data structure with information on the IUPAC name.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00004910/iupac
+sub iupac {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $value =  $object->IUPAC;
+
+    return {
+        'data'        => $value && "$value",
+        'description' => 'IUPAC name'
+    };
+}
+
+# monoisotopic_mass { }
+# This method will return a data structure with information on the monoisotopic mass calculated from the chemical formula of the molecule.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00004910/monoisotopic_mass
+sub monoisotopic_mass {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $value =  $object->Monoisotopic_mass;
+
+    return {
+        'data'        => $value && "$value",
+        'description' => 'Monoisotopic mass calculated from the chemical formula of the molecule'
+    };
+}
+
 # chebi { }
 # This method will return a data structure of ChEBI ID of the molecule
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/chebi

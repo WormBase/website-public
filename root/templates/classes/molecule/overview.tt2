@@ -7,6 +7,30 @@ WRAPPER highlight_box;
    tags2link(fields.synonyms.data);
 END;
 
+    WRAPPER $field_block title='InChi', key="inchi";
+        fields.inchi.data;
+    END;
+
+    WRAPPER $field_block title='InChi Key', key="inchi_key";
+        fields.inchi_key.data;
+    END;
+
+    WRAPPER $field_block title='IUPAC', key="iupac";
+        fields.iupac.data;
+    END;
+
+    WRAPPER $field_block title='Formula', key="formula";
+        fields.formula.data;
+    END;
+
+    WRAPPER $field_block title='SMILES', key="smiles";
+        fields.smiles.data;
+    END;
+
+    WRAPPER $field_block title='Monoisotopic mass', key="monoisotopic_mass";
+        fields.monoisotopic_mass.data;
+    END;
+
 END;
 
 
