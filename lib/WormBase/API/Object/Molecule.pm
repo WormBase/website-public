@@ -54,7 +54,7 @@ sub synonyms {
     my @data    = map {"$_"} $object->Synonym;
     return {
         'data'        => @data ? \@data : undef,
-        'description' => 'synonyms for the molecule name'
+        'description' => 'Other common names for the molecule'
     };
 }
 
@@ -75,9 +75,25 @@ sub molecule_use {
     # (use, evidence type, evidence)
     return {
         'data'        => @uses ? \@uses : undef,
-        'description' => 'uses for the molecule'
+        'description' => 'Reported uses/affects of the molecule with regards to nematode species biology'
     };
 }
+
+# biofunction_role { }
+# This method will return a data structure with information on how the molecule is used.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00005495/biofunction_role
+sub biofunction_role {
+    my $self = shift;
+    my $object = $self->object;
+    # TODO: deal with evidence
+    my @bf_roles = map {text=>"$_", evidence=>$self->_get_evidence($_)}, $object->Biofunction_role;
+    # (use, evidence type, evidence)
+    return {
+        'data'        => @bf_roles ? \@bf_roles : undef,
+        'description' => 'Controlled vocabulary for specific role of molecule in nematode biology, with particular regards to biological pathways'
+    };
+}
+
 
 
 # chebi { }

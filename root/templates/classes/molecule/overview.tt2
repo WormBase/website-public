@@ -64,6 +64,12 @@ WRAPPER $field_block title="" key="chebi_id";
     '</div>';
 END;
 
+WRAPPER $field_block title=pluralize('Biofunction role', fields.biofunction_role.data.size) key="synonyms";
+    FOREACH role IN fields.biofunction_role.data;
+        evidence(role.evidence, '', role.text);
+    END;
+END;
+
 remarks(no_toggle=1);
 '</div>';
 %]
