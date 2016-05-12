@@ -246,14 +246,29 @@
       END;
 
       IF position_string.match('add=.*;?');
-        coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\d+)\-(\d+);?');
+        coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\S+)$');
         refseq = coord_parts.0;
         label  = coord_parts.1;
-        start  = coord_parts.3;
-        end    = coord_parts.4;
+        coords = coord_parts.3;
 
-        track_part   = '[{"label":"' _ label _ '","type":"JBrowse/View/Track/HTMLFeatures","store":"url"}]';
-        feature_part = '[{"seq_id":"'_ refseq _'","start":'_ start _',"end":'_ end _',"name":"'_ label _'"}]';
+        pairs  = coords.split(',');
+
+        minstart = 2000000000;
+        maxend   = 0;
+        subfeatures = [];
+        USE Dumper;
+        FOREACH pair IN pairs;
+          coord = pair.match('(\d+)\-(\d+)');
+          start = coord.0;
+          end   = coord.1;
+          minstart = start < minstart ? start : minstart;
+          maxend   = end   > maxend   ? end   : maxend;
+          subfeatures.push('{"seq_id":"'_ refseq _'","start":'_ start _',"end":'_ end _',"type":"match_part"}');
+        END; 
+
+        feature_part = '[{"seq_id":"'_ refseq _'","start":'_ minstart _',"end":'_ maxend _',"name":"'_ label _'","type":"match","subfeatures":['_ subfeatures.join(',')  _']}]';
+
+        track_part   = '[{"label":"' _ label _ '","type":"JBrowse/View/Track/CanvasFeatures","store":"url","subParts":"match_part","glyph":"JBrowse/View/FeatureGlyph/Segments"}]';
         loc_part     = position_string.match('^([^;]+);?');
         position_string = loc_part.0;
         queries.addFeatures = feature_part;
