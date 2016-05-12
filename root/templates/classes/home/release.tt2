@@ -1,0 +1,39 @@
+<script type="text/javascript">
+    function parse_data(tsv){
+        var sections = tsv.split("\n\n");
+        console.log(sections);
+    }
+    // parse_data([% json_encode(change_summary.content) %]);
+</script>
+
+
+[%
+    USE Dumper
+    Dumper.dump(json_encode(change_summary));
+
+
+build_data_table(
+    order = [
+          'old_CGC',
+          'old_GeneID',
+          'old_SequenceID',
+          'old_Biotype',
+          'new_CGC',
+          'new_GeneID',
+          'new_SequenceID',
+          'new_Biotype'
+        ]
+    columns = {
+    },
+    passed_data = change_summary.content.Genes_with_changed_CGC_names,
+    key = 'Genes_with_changed_CGC_names');
+
+
+
+# $VAR1 = 'new_CGC_names';
+# $VAR2 = 'Biotype_changed';
+# $VAR3 = 'assigned_Gene_changed';
+# $VAR4 = 'removed_CGC_names';
+# $VAR5 = 'Genes_with_changed_CGC_names';
+# $VAR6 = 'other_changes';
+%]

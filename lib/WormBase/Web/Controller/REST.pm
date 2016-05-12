@@ -861,12 +861,12 @@ sub widget_GET {
     }
 
     my $skip_cache = (((exists $c->config->{skip_cache})
-                          && ($c->config->{skip_cache} == 1)) 
-                      ||  ((exists $c->request->params->{"skip-cache"}) 
+                          && ($c->config->{skip_cache} == 1))
+                      ||  ((exists $c->request->params->{"skip-cache"})
                           && ($c->request->params->{"skip-cache"} == 1))) ? 1 : 0;
 
     # Cache key - "$class_$widget_$name"
-    my ($cached_data, $cache_source, $key); 
+    my ($cached_data, $cache_source, $key);
     if ( not $skip_cache ) {
         # check_cache checks couchdb
         ( $cached_data, $cache_source ) = $c->check_cache($key);
@@ -901,13 +901,13 @@ sub widget_GET {
             push @fields, 'name';
         }
 
-        my $skip_datomic = ((( exists $c->config->{"skip_datomic"}) 
+        my $skip_datomic = ((( exists $c->config->{"skip_datomic"})
                                && ($c->config->{"skip_datomic"} == 1))
                           ||  ((exists $c->req->params->{"skip-datomic"})
                                && ($c->req->params->{"skip-datomic"} == 1)))? 1: 0;
         my $skip_ace = (((exists $c->config->{"skip_ace"})
-                               && ($c->config->{"skip_ace"} == 1)) 
-                        ||  ((exists $c->req->params->{"skip-ace"}) 
+                               && ($c->config->{"skip_ace"} == 1))
+                        ||  ((exists $c->req->params->{"skip-ace"})
                                && ($c->req->params->{"skip-ace"} == 1)))? 1: 0;
 
         my ($resp_content, $resp);
@@ -941,7 +941,7 @@ sub widget_GET {
                     }
                 }
             } else {
-                my $response_content = (exists $resp->{'content'})? 
+                my $response_content = (exists $resp->{'content'})?
                                                      $resp->{'content'} : '';
                 die "REST query failed at $field: $response_content";
             }
@@ -1196,10 +1196,64 @@ sub widget_home_GET {
 
       $c->stash->{question} = $question;
       $c->stash->{answers} = \@answers;
-    }
+  }elsif ($widget eq 'release'){
+      _release_note_helper($c);
+  }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
+}
+
+sub _release_note_helper {
+    my ($c) = @_;
+    local *read_file_to_stash = sub {
+        my ($ftp, $path, $namespace) = @_;
+        my $fh;
+        my $content;
+        open( $fh, '>', \$content) || die "cannot open fh";
+        $ftp->get($path, $fh);
+        close $fh;
+
+        # parse changed_CGC_names file
+        my @sections = split '\n\n', $content;
+        my %parsed_content = map {
+            # parse a section
+            my ($name, $header_line, @data_lines) = split '\n', $_;
+            $name =~ s/# //;
+            $name =~ s/ /_/g;
+            $header_line =~ s/# //;
+            $header_line =~ s/ /_/g;
+
+            my @headers = split '\t', $header_line;
+            my @entries = map {
+                # parse a line
+                my @values = split '\t', $_;
+                my $index = 0;
+                my %entry = map {
+                    my $key = $headers[$index];
+                    $index += 1;
+                    $key => $_;
+                } @values;
+                \%entry;
+            } @data_lines;
+print Dumper \@headers;
+            { $name => \@entries };
+        } @sections;
+
+        $c->stash->{$namespace}->{content} = \%parsed_content;
+    };
+    local *handle_error = sub {
+        my ($error, $path, $namespace) = @_;
+        $c->log->error($error);
+        $c->stash->{$namespace}->{error} = $error;
+    };
+
+    my $release = $c->config->{wormbase_release};
+    my $name_change_file_path = "/pub/wormbase/releases/$release/species/c_elegans/PRJNA13758/annotation/c_elegans.PRJNA13758.$release.changed_CGC_names.txt";
+    $c->_with_ftp_site(\&read_file_to_stash,
+                       \&handle_error,
+                       $name_change_file_path,
+                       'change_summary');
 }
 
 
