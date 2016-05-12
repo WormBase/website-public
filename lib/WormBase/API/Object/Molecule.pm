@@ -114,6 +114,37 @@ sub detection_status {
     };
 }
 
+# detection_method { }
+# This method will return a data structure with information on how the molecule is used.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00005495/detection_method
+sub detection_method {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @methods = map {text=>"$_", evidence=>$self->_get_evidence($_)}, $object->Detection_method;
+
+    return {
+        'data'        => @methods ? \@methods : undef,
+        'description' => 'Experimental tool used to detect molecule'
+    };
+}
+
+
+# extraction_method { }
+# This method will return a data structure with information on how the molecule is used.
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/WBMol:00005495/extraction_method
+sub extraction_method {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @methods = map {text=>"$_", evidence=>$self->_get_evidence($_)}, $object->Extraction_method;
+
+    return {
+        'data'        => @methods ? \@methods : undef,
+        'description' => 'Method used to extract the molecule during detection'
+    };
+}
+
 
 # chebi { }
 # This method will return a data structure of ChEBI ID of the molecule

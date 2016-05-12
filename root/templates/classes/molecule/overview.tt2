@@ -74,6 +74,14 @@ WRAPPER $field_block title="Status" key="detection_status";
     cell_content(fields.detection_status.data);
 END;
 
+WRAPPER $field_block title=pluralize('Detection method', fields.detection_method.data.size) key="detection_method";
+    cell_content(fields.detection_method.data);
+END;
+
+WRAPPER $field_block title=pluralize('Extraction method', fields.extraction_method.data.size) key="extraction_method";
+    cell_content(fields.extraction_method.data);
+END;
+
 remarks(no_toggle=1);
 '</div>';
 %]
