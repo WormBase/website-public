@@ -212,6 +212,17 @@
 
 
     MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url) BLOCK;
+      IF taxonomy.match('(?i).+_(PRJ\w+)');
+        full_taxonomy = taxonomy;
+      ELSIF bioproject;
+        full_taxonomy = taxonomy _ '_' _ bioproject;
+      ELSIF c.config.sections.species_list.defined(taxonomy);
+        FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
+          NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          full_taxonomy = taxonomy _ '_' _ bp;
+        END;
+      END;
+
       IF is_preview_url && taxonomy == 'c_elegans';
         queries = {
             data => 'data/' _ taxonomy _ '_simple',
@@ -222,12 +233,49 @@
             data => 'data/' _ taxonomy,
             loc => position_string
         };
+      ELSIF full_taxonomy;
+        queries = {
+            data => 'data/' _ full_taxonomy,
+            loc  => position_string
+        };
       ELSE;
         queries = {
             data => 'data/' _ taxonomy _ '_' _ bioproject,
             loc => position_string
         };
       END;
+
+      IF position_string.match('add=.*;?');
+        coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\S+)$');
+        refseq = coord_parts.0;
+        label  = coord_parts.1;
+        coords = coord_parts.3;
+
+        pairs  = coords.split(',');
+
+        minstart = 2000000000;
+        maxend   = 0;
+        subfeatures = [];
+        FOREACH pair IN pairs;
+          coord = pair.match('(\d+)\-(\d+)');
+          start = coord.0;
+          end   = coord.1;
+          minstart = start < minstart ? start : minstart;
+          maxend   = end   > maxend   ? end   : maxend;
+          subfeatures.push('{"seq_id":"'_ refseq _'","start":'_ start _',"end":'_ end _',"type":"match_part"}');
+        END; 
+
+        feature_part = '[{"seq_id":"'_ refseq _'","start":'_ minstart _',"end":'_ maxend _',"name":"'_ label _'","type":"match","subfeatures":['_ subfeatures.join(',')  _']}]';
+
+        track_part   = '[{"label":"' _ label _ '","type":"JBrowse/View/Track/CanvasFeatures","store":"url","subParts":"match_part","glyph":"JBrowse/View/FeatureGlyph/Segments"}]';
+        loc_part     = position_string.match('^([^;]+);?');
+        position_string = loc_part.0;
+        queries.addFeatures = feature_part;
+        queries.addTracks   = track_part;
+        queries.loc         = position_string;
+        queries.tracks      = 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
+      END;
+
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
