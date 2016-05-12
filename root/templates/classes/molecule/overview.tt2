@@ -64,7 +64,7 @@ WRAPPER $field_block title="" key="chebi_id";
     '</div>';
 END;
 
-WRAPPER $field_block title=pluralize('Biofunction role', fields.biofunction_role.data.size) key="synonyms";
+WRAPPER $field_block title=pluralize('Biofunction role', fields.biofunction_role.data.size) key="biofunction_role";
     FOREACH role IN fields.biofunction_role.data;
         evidence(role.evidence, '', role.text);
     END;
@@ -80,6 +80,10 @@ END;
 
 WRAPPER $field_block title=pluralize('Extraction method', fields.extraction_method.data.size) key="extraction_method";
     cell_content(fields.extraction_method.data);
+END;
+
+WRAPPER $field_block title='Nonspecies source' key="nonspecies_source";
+    fields.nonspecies_source.data;
 END;
 
 remarks(no_toggle=1);
