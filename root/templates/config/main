@@ -256,7 +256,6 @@
         minstart = 2000000000;
         maxend   = 0;
         subfeatures = [];
-        USE Dumper;
         FOREACH pair IN pairs;
           coord = pair.match('(\d+)\-(\d+)');
           start = coord.0;
