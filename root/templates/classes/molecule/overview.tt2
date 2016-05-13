@@ -105,11 +105,17 @@ WRAPPER $field_block title="" key="chebi_id";
                 border: "1px solid grey",
                 "z-index": 10000
             });
+            $jq(this).closest("#overview-content").css({
+                "min-height": "450px"
+            });
         }, function() {
             $jq(this).css({
                 width: "initial",
                 border: "initial",
                 "z-index": "initial"
+            });
+            $jq(this).closest("#overview-content").css({
+                "min-height": "initial"
             });
         });
     </script>' _
