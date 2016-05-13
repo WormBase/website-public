@@ -61,7 +61,7 @@ WRAPPER $field_block title="" key="chebi_id";
         chebiId => 'CHEBI:' _ fields.chebi_id.data
     });
 
-    '<div class="molecule--chebi-image" style="width:180px; position:relative;display:none;">' _
+    '<div class="molecule--chebi-image" style="width:180px; position:relative;display:none;margin:0 auto;">' _
     external_link(chebi_url, chebi_image) _
     '<p class="fade" style="text-align:center;">Molecular structure powered by ' _ external_link(chebi_base_url, 'ChEBI') _ '</p>' _
     '<script type="application/javascript">
