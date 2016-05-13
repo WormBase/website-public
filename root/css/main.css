@@ -2739,20 +2739,22 @@ div#all-search-results {
 }
 
 div.detail-box div.field div.field-title {
-  width: 8em;
+  width: 100px;
+  min-width: 100px;
   padding-right: 0.5em;
 }
 
 div.detail-box div.field div.field-content{
   margin-left:0;
-  min-width:11em;
+  min-width: 100px;
+  max-width: 200px;
 }
 
 div.detail-box div.field div.field-title, div.detail-box div.field div.field-content {
   display:table-cell;
   float:none;
   position:static;
-  vertical-align:middle;
+  vertical-align:top;
   table-layout:fixed;
 }
 
