@@ -157,7 +157,7 @@ sub biological_role {
     my $papers = {};
     foreach my $tag ('Biofunction_role', 'Status', 'Detection_method', 'Extraction_method') {
         my @items = map { "$_" } $object->$tag;
-        $data->{lc $tag} = @items ? \@items : undef;
+        $data->{lc $tag} = \@items if @items;
 
         if (@items) {
             # keep track of paper evidence seen
