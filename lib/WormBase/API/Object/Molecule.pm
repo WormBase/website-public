@@ -168,7 +168,7 @@ sub biological_role {
     $data->{paper_evidence} = [values %$papers] if %$papers;
 
     return {
-        'data'        => %$data ? $data : undef,
+        'data'        => %$data ? [$data] : undef,
         'description' => 'Controlled vocabulary for specific role of molecule in nematode biology, with particular regards to biological pathways'
     };
 }

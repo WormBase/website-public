@@ -156,34 +156,16 @@ WRAPPER $field_block title='Nonspecies source' key="nonspecies_source";
 END;
 
 
-biological_role_data = {};
-biological_paper_evidences = {};
-biological_role_columns = ['biofunction_role', 'detection_status', 'detection_method', 'extraction_method'];
-
-FOREACH fname IN biological_role_columns;
-    field_data = fields.$fname.data;
-    biological_role_data.$fname = field_data.text;
-
-    # compile a list of paper evidence
-    paper_evidence_list = (field_data && field_data.evidence && field_data.evidence.Paper_evidence) || [];
-    FOREACH paper_evidence IN paper_evidence_list;
-        paper_id = paper_evidence.id;
-        biological_paper_evidences.$paper_id = paper_evidence;
-    END;
-END;
-biological_role_data.paper_evidence = biological_paper_evidences.values;
-
-IF biological_role_data.size > 0;
-    build_data_table(order = biological_role_columns.merge(['paper_evidence']),
+WRAPPER $field_block title='' key="biological_role";
+    build_data_table(order = ['biofunction_role', 'status', 'detection_method', 'extraction_method', 'paper_evidence'],
         columns = {
             biofunction_role => 'Biofunction role',
-            detection_status => 'Status',
+            status => 'Status',
             detection_method => 'Detection method',
             extraction_method => 'Extraction method',
-            paper_evidence => ''
+            paper_evidence => 'Reference'
         },
-        passed_data = [biological_role_data],
-        key = 'biological_role_table');
+        key = 'biological_role');
 END;
 
 remarks(no_toggle=1);
