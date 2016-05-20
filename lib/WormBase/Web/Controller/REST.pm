@@ -16,7 +16,6 @@ use URI::Escape;
 use Text::MultiMarkdown 'markdown';
 use DateTime;
 use Encode;
-use Data::Dumper;
 use HTTP::Tiny;
 
 
@@ -1206,6 +1205,15 @@ sub widget_home_GET {
 
 sub _release_note_helper {
     my ($c) = @_;
+    my $key = 'home_release_widget';
+    my ( $cached_data, $cache_source ) = $c->check_cache($key);
+    if ($cached_data) {
+        # load from cache and skip the rest of the function
+        # that generates the cache
+        $c->stash->{fields} = $cached_data;
+        return;
+    }
+
     local *read_file_to_stash = sub {
         my ($ftp, $path, $namespace) = @_;
         my $fh;
@@ -1236,24 +1244,43 @@ sub _release_note_helper {
                 } @values;
                 \%entry;
             } @data_lines;
-print Dumper \@headers;
             { $name => \@entries };
         } @sections;
 
-        $c->stash->{$namespace}->{content} = \%parsed_content;
+        #reformat content
+        %parsed_content = map {
+            my @entries = @{$parsed_content{$_}};
+            @entries = map {
+                my $entry = $_;
+                my $new_columns = {
+                    new_gene => {
+                        id => $entry->{new_GeneID},
+                        class => 'gene',
+                        label => $entry->{new_CGC}
+                    }
+                };
+                my %new_entry = (%$entry, %$new_columns);
+                \%new_entry;
+            } @entries;
+            $_ => {
+                data => \@entries
+            };
+        } keys %parsed_content;
+
+        $c->set_cache($key => \%parsed_content);
+        $c->stash->{fields} = \%parsed_content;
     };
     local *handle_error = sub {
         my ($error, $path, $namespace) = @_;
         $c->log->error($error);
-        $c->stash->{$namespace}->{error} = $error;
+        $c->stash->{error} = $error;
     };
 
     my $release = $c->config->{wormbase_release};
     my $name_change_file_path = "/pub/wormbase/releases/$release/species/c_elegans/PRJNA13758/annotation/c_elegans.PRJNA13758.$release.changed_CGC_names.txt";
     $c->_with_ftp_site(\&read_file_to_stash,
                        \&handle_error,
-                       $name_change_file_path,
-                       'change_summary');
+                       $name_change_file_path);
 }
 
 
