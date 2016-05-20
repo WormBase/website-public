@@ -861,16 +861,16 @@ sub widget_GET {
     }
 
     my $skip_cache = (((exists $c->config->{skip_cache})
-                          && ($c->config->{skip_cache} == 1)) 
-                      ||  ((exists $c->request->params->{"skip-cache"}) 
+                          && ($c->config->{skip_cache} == 1))
+                      ||  ((exists $c->request->params->{"skip-cache"})
                           && ($c->request->params->{"skip-cache"} == 1))) ? 1 : 0;
 
     # Cache key - "$class_$widget_$name"
-    my ($cached_data, $cache_source, $key); 
+    my ($cached_data, $cache_source, $key);
     if ( not $skip_cache ) {
         # check_cache checks couchdb
-        ( $cached_data, $cache_source ) = $c->check_cache($key);
         $key = join( '_', $class, $widget, $name );
+        ( $cached_data, $cache_source ) = $c->check_cache($key);
     }
 
     if ((not $skip_cache) && $cached_data && (ref $cached_data eq 'HASH')){
@@ -901,13 +901,13 @@ sub widget_GET {
             push @fields, 'name';
         }
 
-        my $skip_datomic = ((( exists $c->config->{"skip_datomic"}) 
+        my $skip_datomic = ((( exists $c->config->{"skip_datomic"})
                                && ($c->config->{"skip_datomic"} == 1))
                           ||  ((exists $c->req->params->{"skip-datomic"})
                                && ($c->req->params->{"skip-datomic"} == 1)))? 1: 0;
         my $skip_ace = (((exists $c->config->{"skip_ace"})
-                               && ($c->config->{"skip_ace"} == 1)) 
-                        ||  ((exists $c->req->params->{"skip-ace"}) 
+                               && ($c->config->{"skip_ace"} == 1))
+                        ||  ((exists $c->req->params->{"skip-ace"})
                                && ($c->req->params->{"skip-ace"} == 1)))? 1: 0;
 
         my ($resp_content, $resp);
@@ -941,7 +941,7 @@ sub widget_GET {
                     }
                 }
             } else {
-                my $response_content = (exists $resp->{'content'})? 
+                my $response_content = (exists $resp->{'content'})?
                                                      $resp->{'content'} : '';
                 die "REST query failed at $field: $response_content";
             }

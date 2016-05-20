@@ -307,7 +307,7 @@ sub make_genetic_position_object {
         description => "the genetic position of the $class:$object",
         data        => {
 	    chromosome => $chromosome && "$chromosome",
-	    position   => $position   && "$position",
+	    position   => defined $position ? "$position" : undef,  # watch out for 0 value
 	    error      => $error      && "$error",
 	    formatted  => $label      && "$label",
 	    method     => $method     && "$method",

@@ -1306,6 +1306,18 @@ END;
   END;
 %]
 
+[% MACRO data_submission_link(url, label) BLOCK;
+    '<a class="button data-submission-link" href="' _ url _ '">' _
+        label _
+    '</a>';
+END; %]
+
+[% MACRO phenotype_submission_link BLOCK;
+    '<p class="data-submission-link-wrapper">' _
+    '<strong>Notice a missing phenotype?</strong> Please let us know via our';
+    data_submission_link('/submissions/phenotype.cgi', 'Phenotype Form') _
+    '</p>';
+END; %]
 
 [%#
     #######################################################
