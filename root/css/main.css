@@ -2739,20 +2739,22 @@ div#all-search-results {
 }
 
 div.detail-box div.field div.field-title {
-  width: 8em;
+  width: 100px;
+  min-width: 100px;
   padding-right: 0.5em;
 }
 
 div.detail-box div.field div.field-content{
   margin-left:0;
-  min-width:11em;
+  min-width: 100px;
+  max-width: 200px;
 }
 
 div.detail-box div.field div.field-title, div.detail-box div.field div.field-content {
   display:table-cell;
   float:none;
   position:static;
-  vertical-align:middle;
+  vertical-align:top;
   table-layout:fixed;
 }
 
@@ -3476,9 +3478,15 @@ button::-moz-focus-inner {
   min-height: 300px
 }
 
+/* data submission reminder text */
+.data-submission-link-wrapper {
+    text-align:center;
+    margin-top:10px;
+}
+
 /* standardize static widget */
 /* components like buttons */
-.static-widget-content a.button {
+.static-widget-content a.button, a.data-submission-link {
   float: none;
   border: 1px solid #AAA;
   background: #EEE;
@@ -3487,12 +3495,13 @@ button::-moz-focus-inner {
   font-size: x-small;
   color: black;
   font-size: small;
-  border-radius: .8em;
+  border-radius: .5em;
   text-decoration: none;
   padding: 0.2em 0.4em;
   margin: 0.5em;
+  display: inline-block;
 }
-.static-widget-content a.button:hover {
+.static-widget-content a.button:hover, a.data-submission-link:hover {
   background: #DDD;
 }
 .static-widget-content a.highlight {

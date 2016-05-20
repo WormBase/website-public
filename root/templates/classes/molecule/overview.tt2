@@ -7,19 +7,26 @@ WRAPPER highlight_box;
    tags2link(fields.synonyms.data);
 END;
 
+    WRAPPER $field_block title='IUPAC', key="iupac";
+        fields.iupac.data;
+    END;
+
+    WRAPPER $field_block title='Formula', key="formula";
+        fields.formula.data;
+    END;
+
+    WRAPPER $field_block title='InChi Key', key="inchi_key";
+        fields.inchi_key.data;
+    END;
+
+    WRAPPER $field_block title='Monoisotopic mass', key="monoisotopic_mass";
+        fields.monoisotopic_mass.data;
+    END;
+
 END;
 
 
 '<div class="description">';
-WRAPPER $field_block title="Molecule Use" key="molecule_use";
-    FOREACH mu IN fields.molecule_use.data;
-    evidence(mu.evidence, '', mu.text);
-    END;
-END;
-
-WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
-	tags2link(fields.gene_regulation.data);
-END;
 
 WRAPPER $field_block title="" key="chebi_id";
     chebi_base_url = 'http://www.ebi.ac.uk/chebi/';
@@ -46,9 +53,31 @@ WRAPPER $field_block title="" key="chebi_id";
         chebiId => 'CHEBI:' _ fields.chebi_id.data
     });
 
-    '<div class="molecule--chebi-image" style="width:180px; position:relative;display:none;">' _
+    '<style type = "text/css" scoped>
+        .molecule--chebi-image-container {
+            width:180px;
+            height:210px;
+            position:relative;
+            display:none;
+            margin:0 auto;
+         }
+        .molecule--chebi-image {
+            position: absolute;
+            background-color: white;
+        }
+        .molecule--chebi-image-caption {
+            text-align:center;
+            position:absolute;
+            top:180px;
+        }
+    </style>';
+
+
+    '<div class="molecule--chebi-image-container">' _
+    '<div class="molecule--chebi-image">' _
     external_link(chebi_url, chebi_image) _
-    '<p class="fade" style="text-align:center;">Molecular structure powered by ' _ external_link(chebi_base_url, 'ChEBI') _ '</p>' _
+    '</div>' _
+    '<p class="fade molecule--chebi-image-caption">Molecular structure powered by ' _ external_link(chebi_base_url, 'ChEBI') _ '</p>' _
     '<script type="application/javascript">
         // avoid broken image link when ChEBI image isn\'t available
         $jq.ajax({
@@ -56,12 +85,79 @@ WRAPPER $field_block title="" key="chebi_id";
             url: "' _ chebi_image_url _ '",
             success: function(data, status, jqxhr) {
                 if (data.length > 0) {
-                    $jq(".molecule--chebi-image").show();
+                    $jq(".molecule--chebi-image-container").show();
                 }
             }
         });
+
+        // expand image on hover
+        $jq(".molecule--chebi-image").hover(function(){
+            $jq(this).css({
+                width: "400px",
+                border: "1px solid grey",
+                "z-index": 10000
+            });
+            $jq(this).closest("#overview-content").css({
+                "min-height": "450px"
+            });
+        }, function() {
+            $jq(this).css({
+                width: "initial",
+                border: "initial",
+                "z-index": "initial"
+            });
+            $jq(this).closest("#overview-content").css({
+                "min-height": "initial"
+            });
+        });
     </script>' _
     '</div>';
+END;
+
+WRAPPER $field_block title="Molecule Use" key="molecule_use";
+    FOREACH mu IN fields.molecule_use.data;
+    evidence(mu.evidence, '', mu.text);
+    END;
+END;
+
+WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
+	tags2link(fields.gene_regulation.data);
+END;
+
+## These fields have been moved to Biological role table
+# WRAPPER $field_block title=pluralize('Biofunction role', fields.biofunction_role.data.size) key="biofunction_role";
+#     FOREACH role IN fields.biofunction_role.data;
+#         evidence(role.evidence, '', role.text);
+#     END;
+# END;
+
+# WRAPPER $field_block title="Status" key="detection_status";
+#     cell_content(fields.detection_status.data);
+# END;
+
+# WRAPPER $field_block title=pluralize('Detection method', fields.detection_method.data.size) key="detection_method";
+#     cell_content(fields.detection_method.data);
+# END;
+
+# WRAPPER $field_block title=pluralize('Extraction method', fields.extraction_method.data.size) key="extraction_method";
+#     cell_content(fields.extraction_method.data);
+# END;
+
+WRAPPER $field_block title='Nonspecies source' key="nonspecies_source";
+    fields.nonspecies_source.data;
+END;
+
+
+WRAPPER $field_block title='' key="biological_role";
+    build_data_table(order = ['biofunction_role', 'status', 'detection_method', 'extraction_method', 'paper_evidence'],
+        columns = {
+            biofunction_role => 'Biofunction role',
+            status => 'Status',
+            detection_method => 'Detection method',
+            extraction_method => 'Extraction method',
+            paper_evidence => 'Reference'
+        },
+        key = 'biological_role');
 END;
 
 remarks(no_toggle=1);

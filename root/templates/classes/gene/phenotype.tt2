@@ -80,3 +80,5 @@
 			passed_data=fields.drives_overexpression.data.Phenotype.values);
   END;
 END %]
+
+[% phenotype_submission_link; %]

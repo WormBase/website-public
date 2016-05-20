@@ -869,8 +869,8 @@ sub widget_GET {
     my ($cached_data, $cache_source, $key);
     if ( not $skip_cache ) {
         # check_cache checks couchdb
-        ( $cached_data, $cache_source ) = $c->check_cache($key);
         $key = join( '_', $class, $widget, $name );
+        ( $cached_data, $cache_source ) = $c->check_cache($key);
     }
 
     if ((not $skip_cache) && $cached_data && (ref $cached_data eq 'HASH')){
