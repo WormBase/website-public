@@ -1,12 +1,18 @@
-
 [% BLOCK release_widget_field_block %]
     <div class="release-widget--field">
-    <h4 class="release-widget--field--title">[% title %]:</h4>
-    [% content %]
+    [% IF fields.$key %]
+        <h4 class="release-widget--field--title">[% title %]:</h4>
+        [% content %]
+    [% ELSE %]
+        <p class="fade"><em>There are no [% title %] in this release.</em></p>
+    [% END %]
     </div>
 [% END %]
 
 [%
+IF error && error.collapse;
+    '<em>Sorry, we encountered a problem with fetching change information. Please check back later.</em>';
+ELSE;
 
 WRAPPER release_widget_field_block title="Genes with changed CGC names" key="Genes_with_changed_CGC_names";
 build_data_table(
@@ -68,6 +74,8 @@ build_data_table(
         'old_Biotype' => 'Old Biotype'
     },
     key = 'Biotype_changed');
+END;
+
 END;
 
 
