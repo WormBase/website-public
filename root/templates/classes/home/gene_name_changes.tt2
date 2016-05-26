@@ -8,10 +8,10 @@
     '</em>';
 %]
 
-[% BLOCK release_widget_field_block %]
-    <div class="release-widget--field">
+[% BLOCK change_summary_field_block %]
+    <div class="change-summary-field">
     [% IF fields.$key %]
-        <h4 class="release-widget--field--title">[% title %]:</h4>
+        <h4 class="change-summary-field--title">[% title %]:</h4>
         [% content %]
     [% ELSE %]
         <p class="fade"><em>There are no [% title %] in this release.</em></p>
@@ -24,7 +24,7 @@ IF error && error.collapse;
     '<em>Sorry, we encountered a problem with fetching change information. Please check back later.</em>';
 ELSE;
 
-WRAPPER release_widget_field_block title="Genes with new approved names" key="new_CGC_names";
+WRAPPER change_summary_field_block title="Genes with new approved names" key="new_CGC_names";
 build_data_table(
     order = [
           'new_gene',
@@ -41,7 +41,7 @@ build_data_table(
 END;
 
 
-WRAPPER release_widget_field_block title="Genes with changed approved names" key="Genes_with_changed_CGC_names";
+WRAPPER change_summary_field_block title="Genes with changed approved names" key="Genes_with_changed_CGC_names";
 build_data_table(
     order = [
           'new_gene',
@@ -59,7 +59,7 @@ build_data_table(
 END;
 
 
-WRAPPER release_widget_field_block title="Removed approved names" key="removed_CGC_names";
+WRAPPER change_summary_field_block title="Removed approved names" key="removed_CGC_names";
 build_data_table(
     order = [
           'old_CGC',
@@ -76,7 +76,7 @@ build_data_table(
     key = 'removed_CGC_names');
 END;
 
-WRAPPER release_widget_field_block title="Biotype changes" key="Biotype_changed";
+WRAPPER change_summary_field_block title="Biotype changes" key="Biotype_changed";
 build_data_table(
     order = [
           'new_gene',
