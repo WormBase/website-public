@@ -610,7 +610,11 @@
     }
 
     function tooltipInit(){
+      // for compatibility with jbrowse
+      if ((window.location.pathname || '').match('/tools/genome/jbrowse')) return;
+
       WB.getPlugin("qtip", function(){
+        if (!$jq('[title]').qtip) return; // for compatibility with jbrowse
         $jq('[title]').qtip({ // Grab some elements to apply the tooltip to
           content: {
             attr: 'title'

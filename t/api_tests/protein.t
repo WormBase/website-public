@@ -94,7 +94,7 @@
 
         isnt($hits, undef, 'data returned');
         isnt($hits->{'data'}, undef, 'data hash not empty');
-        is  (@{$hits->{'data'}{'hits'}}[0]->{'hit'}{'class'}, 'protein', 'hit returned correct class')
+        like(@{$hits->{'data'}{'hits'}}[0]->{'hit'}{'class'}, qr/protein/i, 'hit returned correct class')
 
     }
 

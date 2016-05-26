@@ -1,6 +1,6 @@
 [TRANSCRIPTION_START_SITE]
 feature       = TSS:RNASeq
-category      = Transcription:Signals
+category      = Sequence Features:Signals & Motifs
 glyph         = box
 bgcolor       = white
 fgcolor       = black

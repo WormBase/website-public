@@ -11,6 +11,10 @@ WRAPPER highlight_box;
         fields.aka.data.join("<br />");
    END;
 
+   WRAPPER $field_block key="orcid" title="ORCID";
+        tags2link(fields.orcid.data);
+   END;
+
    # WRAPPER $field_block title="Lab Phone";
        # fields.lab_phone.data;
    # END;

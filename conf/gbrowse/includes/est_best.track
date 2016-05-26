@@ -1,6 +1,6 @@
 [EST_BEST]
 key            = ESTs (best)
-category       = Transcription:Supporting Evidence
+category       = Genes:Supporting Evidence
 feature        = expressed_sequence_match:BLAT_EST_BEST
 glyph          = segments
 das category   = transcription

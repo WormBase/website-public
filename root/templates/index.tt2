@@ -32,7 +32,7 @@
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
   [%# widget_list = ['vote', 'news', 'discussion', 'activity'] %]
-  [% widget_list = ['news', 'discussion', 'activity'] %]
+  [% widget_list = ['news', 'discussion', 'activity', 'release'] %]
   [% FOREACH widget_name IN widget_list -%]
     [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
@@ -48,4 +48,4 @@
 
  [% title = '' %]
 
- [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1 layout="01-23-6"%]
+ [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1 layout="0124-3-6"%]

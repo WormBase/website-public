@@ -36,6 +36,12 @@
        search      = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
       	}
 
+ addgene = {
+	description = 'Addgene is a nonprofit organization dedicated to making it easier for scientists to share plasmids.'
+	base        = 'http://www.addgene.org/',
+	search      = 'http://www.addgene.org/%s'
+	}
+
  cgc = {
 	description = 'The C. elegans Genetics Center'
 	maintainer  = 'Aric Daul'
@@ -355,6 +361,13 @@
 	search      = c.uri_for('/tools', 'genome', 'gbrowse_img').path _ '/%s'
 	}
 
+
+ GenBank = {
+	description = 'GenBank ® is the NIH genetic sequence database, an annotated collection of all publicly available DNA sequences'
+	base        = 'http://www.ncbi.nlm.nih.gov/genbank/'
+	search      = 'http://www.ncbi.nlm.nih.gov/nuccore/?term=%s'
+	}
+
  Gene = {
 	description = 'Gene'
 	base        = 'http://www.journals.elsevier.com/gene/'
@@ -599,6 +612,14 @@
 	search      = 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
 	}
 
+ NCBI = {
+	description = 'The National Center for Biotechnology Information advances science and health by providing access to biomedical and genomic information.'
+	base        = 'http://www.ncbi.nlm.nih.gov/',
+	email       = 'info@ncbi.nlm.nih.gov'
+	search      = 'http://www.ncbi.nlm.nih.gov/%s'
+	gene        = 'http://www.ncbi.nlm.nih.gov/gene/?term=%s'
+	}
+
  NCBI_Genome_Assembly = {
 	description = 'Genome assembly archive at NCBI',
 	base        = 'http://www.ncbi.nlm.nih.gov/assembly/',
@@ -701,9 +722,9 @@
 
  Pfam = {
 	description = 'Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains and families'
-	base        = 'http://pfam.sanger.ac.uk/'
+	base        = 'http://pfam.xfam.org/'
 	email       = 'pfam-help@sanger.ac.uk'
-	search      = 'http://pfam.sanger.ac.uk/family/%s'
+	search      = 'http://pfam.xfam.org/family/%s'
 	}
 
  Phenobank2 = {
@@ -967,6 +988,7 @@
 	search      = 'http://www.ebi.uniprot.org/entry/%s'
     'UniProtKB-KW' = 'http://www.uniprot.org/keywords/%s'
     'UniProtKB-SubCell' = 'http://www.uniprot.org/locations/%s'
+    	protein     = 'http://www.uniprot.org/uniprot/%s'
 	}
 
  WormAtlas = {

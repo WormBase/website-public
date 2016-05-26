@@ -1,6 +1,6 @@
 [HISTORICAL_GENES]
 key          = Gene Models (historical)
-category     = Genes
+category     = Genes:Curated Genes
 feature  = pseudogenic_transcript:history
 	   transposable_element:history
 	   protein_coding_primary_transcript:history

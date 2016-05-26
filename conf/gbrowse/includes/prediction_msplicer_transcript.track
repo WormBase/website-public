@@ -1,6 +1,6 @@
 [PREDICTION_MSPLICER_TRANSCRIPT]
 key          = Prediction: mSplicer
-category     = Transcription:Ab-initio predictions
+category     = Genes:Ab-initio predictions
 feature      = CDS:mSplicer_transcript
 glyph        = gene
 bgcolor      = palevioletred

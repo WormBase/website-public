@@ -238,7 +238,7 @@ sub _get_json {
 
     # consider remote copy only on a development instance
     if ($c->config->{installation_type} eq 'development'){
-        _with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+        $c->_with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
     }else{
         _process_local_copy();
     }
@@ -291,7 +291,7 @@ sub _get_latest_release {
 
     # consider remote copy only on a development instance
     if ($c->config->{installation_type} eq 'development'){
-        _with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+        $c->_with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
     }else{
         _process_local_copy();
     }
@@ -303,7 +303,7 @@ sub _get_latest_release {
 
 # helper method to handle setup and teardown of ftp site connection
 sub _with_ftp_site {
-    my ($on_success, $on_error, @args) = @_;
+    my ($c, $on_success, $on_error, @args) = @_;
 
     my $error;
     my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,

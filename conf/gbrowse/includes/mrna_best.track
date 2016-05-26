@@ -1,6 +1,6 @@
 [MRNA_BEST]
 key        = mRNAs/ncRNAs (best)
-category = Transcription:Supporting Evidence
+category = Genes:Supporting Evidence
 feature    = expressed_sequence_match:BLAT_mRNA_BEST 
              expressed_sequence_match:BLAT_ncRNA_BEST
 glyph = segments

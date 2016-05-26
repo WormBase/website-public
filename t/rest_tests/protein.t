@@ -44,7 +44,7 @@
         my $response_html = get($url_html);
 
         ok($response_html =~ /PFAM\:PF01030/, 'contains PFAM:PF01030 motif');
-        my $pfam_obj_url = 'http://pfam.sanger.ac.uk/family/PF01030';
+        my $pfam_obj_url = 'http://pfam.xfam.org/family/PF01030';
         ok($response_html =~ /<a href="\Q$pfam_obj_url\E"/, 'links to Pfam');
 
         ok($response_html =~ /INTERPRO\:IPR020635/, 'contains INTERPRO:IPR020635 motif');
@@ -56,4 +56,3 @@
 }
 
 1;
-

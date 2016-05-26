@@ -1,6 +1,6 @@
 [GENES_PSEUDOGENES]
 key          = Genes (pseudogenes)
-category     = Genes
+category     = Genes:Curated Genes
 feature = pseudogenic_transcript:WormBase pseudogenic_rRNA:WormBase pseudogenic_tRNA:WormBase
 glyph = gene
 title = sub {

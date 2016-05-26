@@ -1,0 +1,101 @@
+[% BLOCK release_widget_field_block %]
+    <div class="release-widget--field">
+    [% IF fields.$key %]
+        <h4 class="release-widget--field--title">[% title %]:</h4>
+        [% content %]
+    [% ELSE %]
+        <p class="fade"><em>There are no [% title %] in this release.</em></p>
+    [% END %]
+    </div>
+[% END %]
+
+[%
+IF error && error.collapse;
+    '<em>Sorry, we encountered a problem with fetching change information. Please check back later.</em>';
+ELSE;
+
+WRAPPER release_widget_field_block title="Genes with changed CGC names" key="Genes_with_changed_CGC_names";
+build_data_table(
+    order = [
+          'old_CGC',
+          'new_gene',
+          'new_SequenceID'
+        ]
+    columns = {
+        'old_CGC' => 'Old CGC',
+        'new_gene' => 'New CGC',
+        'new_SequenceID' => 'Sequence ID'
+    },
+    key = 'Genes_with_changed_CGC_names');
+END;
+
+WRAPPER release_widget_field_block title="Genes with new CGC names" key="new_CGC_names";
+build_data_table(
+    order = [
+          'new_gene',
+          'new_SequenceID'
+        ]
+    columns = {
+        'new_Biotype' => 'Biotype',
+        'new_SequenceID' => 'Sequence ID',
+        'new_gene' => 'New CGC'
+    },
+    key = 'new_CGC_names');
+END;
+
+WRAPPER release_widget_field_block title="Removed CGC names" key="removed_CGC_names";
+build_data_table(
+    order = [
+          'old_CGC',
+          'old_SequenceID',
+          'old_Biotype'
+        ]
+    columns = {
+        'old_CGC' => 'Old CGC',
+        'old_SequenceID' => 'Old Sequence ID',
+        'old_GeneID' => 'Old Gene ID',
+        'old_Biotype' => 'Old Biotype'
+    },
+    key = 'removed_CGC_names');
+END;
+
+WRAPPER release_widget_field_block title="Biotype changes" key="Biotype_changed";
+build_data_table(
+    order = [
+          'new_gene',
+          'new_SequenceID',
+          'old_Biotype',
+          'new_Biotype'
+        ]
+    columns = {
+        'new_gene' => 'Gene',
+        'new_SequenceID' => 'Sequence ID',
+        'new_Biotype' => 'New Biotype',
+        'old_Biotype' => 'Old Biotype'
+    },
+    key = 'Biotype_changed');
+END;
+
+END;
+
+
+
+# available columns
+# 'new_gene',    # programmatically added field
+# 'old_CGC',
+# 'old_GeneID',
+# 'old_SequenceID',
+# 'old_Biotype',
+# 'new_CGC',
+# 'new_GeneID',
+# 'new_SequenceID',
+# 'new_Biotype'
+
+# available fields
+# $VAR1 = 'new_CGC_names';
+# $VAR2 = 'Biotype_changed';
+# $VAR3 = 'assigned_Gene_changed';
+# $VAR4 = 'removed_CGC_names';
+# $VAR5 = 'Genes_with_changed_CGC_names';
+# $VAR6 = 'other_changes';
+%]

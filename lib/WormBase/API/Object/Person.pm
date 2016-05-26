@@ -252,7 +252,27 @@ sub previous_addresses {
 	     description => 'previous addresses of the person'};
 }
 
+# orcid { }
+# This method returns a data structure containing the
+# orchid IDs of the user
+# eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/orcid
+sub orcid {
+    my $self = shift;
+    my $object = $self->object;
+    my @orcids = map {
+        my ($db, $namespace, $id) = $_->row();
+        "$db" eq 'ORCID' ? {
+            class => "$db",
+            id => "$id",
+            label => "$id"
+        } : ();
+    } $object->Database;
 
+    return {
+        data => @orcids ? \@orcids : undef,
+        description => 'ORCID ID of the person'
+    };
+}
 
 
 #######################################
