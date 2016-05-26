@@ -1,3 +1,13 @@
+[%
+    release_number = c.config.wormbase_release.match('WS(\d+)').0;
+    prior_release_number = release_number - 1;
+    '<em>';
+    'Below are changes in name since the previous release <strong>WS' _ prior_release_number _'</strong>. ';
+    'Name changes for for each release since WS252 are archived <strong>' _
+    external_link('ftp://ftp.wormbase.org/pub/wormbase/species/c_elegans/annotation/changed_CGC_names/', 'here') _ '</strong>.';
+    '</em>';
+%]
+
 [% BLOCK release_widget_field_block %]
     <div class="release-widget--field">
     [% IF fields.$key %]
