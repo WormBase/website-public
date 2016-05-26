@@ -24,6 +24,23 @@ IF error && error.collapse;
     '<em>Sorry, we encountered a problem with fetching change information. Please check back later.</em>';
 ELSE;
 
+WRAPPER release_widget_field_block title="Genes with new approved names" key="new_CGC_names";
+build_data_table(
+    order = [
+          'new_gene',
+          'new_GeneID',
+          'new_SequenceID'
+        ]
+    columns = {
+        'new_Biotype' => 'Biotype',
+        'new_SequenceID' => 'Sequence',
+        'new_GeneID' => 'Gene ID',
+        'new_gene' => 'New approved name'
+    },
+    key = 'new_CGC_names');
+END;
+
+
 WRAPPER release_widget_field_block title="Genes with changed approved names" key="Genes_with_changed_CGC_names";
 build_data_table(
     order = [
@@ -41,21 +58,6 @@ build_data_table(
     key = 'Genes_with_changed_CGC_names');
 END;
 
-WRAPPER release_widget_field_block title="Genes with new approved names" key="new_CGC_names";
-build_data_table(
-    order = [
-          'new_gene',
-          'new_GeneID',
-          'new_SequenceID'
-        ]
-    columns = {
-        'new_Biotype' => 'Biotype',
-        'new_SequenceID' => 'Sequence',
-        'new_GeneID' => 'Gene ID',
-        'new_gene' => 'New approved name'
-    },
-    key = 'new_CGC_names');
-END;
 
 WRAPPER release_widget_field_block title="Removed approved names" key="removed_CGC_names";
 build_data_table(
