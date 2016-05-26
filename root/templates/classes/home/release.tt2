@@ -19,11 +19,13 @@ build_data_table(
     order = [
           'old_CGC',
           'new_gene',
+          'new_GeneID',
           'new_SequenceID'
         ]
     columns = {
         'old_CGC' => 'Old approved name',
         'new_gene' => 'New approved name',
+        'new_GeneID' => 'Gene ID',
         'new_SequenceID' => 'Sequence'
     },
     key = 'Genes_with_changed_CGC_names');
@@ -33,11 +35,13 @@ WRAPPER release_widget_field_block title="Genes with new approved names" key="ne
 build_data_table(
     order = [
           'new_gene',
+          'new_GeneID',
           'new_SequenceID'
         ]
     columns = {
         'new_Biotype' => 'Biotype',
         'new_SequenceID' => 'Sequence',
+        'new_GeneID' => 'Gene ID',
         'new_gene' => 'New approved name'
     },
     key = 'new_CGC_names');
@@ -47,6 +51,7 @@ WRAPPER release_widget_field_block title="Removed approved names" key="removed_C
 build_data_table(
     order = [
           'old_CGC',
+          'old_GeneID',
           'old_SequenceID',
           'old_Biotype'
         ]
@@ -63,12 +68,14 @@ WRAPPER release_widget_field_block title="Biotype changes" key="Biotype_changed"
 build_data_table(
     order = [
           'new_gene',
+          'new_GeneID',
           'new_SequenceID',
           'old_Biotype',
           'new_Biotype'
         ]
     columns = {
         'new_gene' => 'Gene',
+        'new_GeneID' => 'Gene ID',
         'new_SequenceID' => 'Sequence',
         'new_Biotype' => 'New biotype',
         'old_Biotype' => 'Old biotype'
