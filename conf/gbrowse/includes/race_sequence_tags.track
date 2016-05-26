@@ -1,6 +1,6 @@
 [RACE_SEQUENCE_TAGS]
 key           = C.elegans RSTs
-category      = Transcription:Supporting Evidence
+category      = Genes:Supporting Evidence
 feature       = expressed_sequence_match:BLAT_RST_BEST
 glyph         = segments
 strand_arrow  = 1

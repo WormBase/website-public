@@ -430,6 +430,7 @@ WB.getPlugin("dataTables", function(){
             if($jq.fn.dataTable.fnIsDataTable('#[% table_name %]')){
               // Hack! avoid warning of reinitializing table seen by some users, not sure why
               $jq('#[% table_name %]').dataTable();
+              console.warn('#[% table_name %] is reinitialized, likely because two tables are using the same key. This could cause problem.');
             }else{
               $jq('#[% table_name %]').dataTable({
                 "bPaginate"        : [% paginate %],
@@ -540,7 +541,8 @@ END; %]
 
 
 [% MACRO pato_evidence(obj) BLOCK;
-    'Entity: ';
+    entity_type = obj.entity_type || 'Entity';
+    entity_type.replace('_', ' ') _ ': ';
     tag2link(obj.entity_term) _ ', ' _ obj.pato_term;
 END; %]
 
@@ -1304,6 +1306,18 @@ END;
   END;
 %]
 
+[% MACRO data_submission_link(url, label) BLOCK;
+    '<a class="button data-submission-link" href="' _ url _ '">' _
+        label _
+    '</a>';
+END; %]
+
+[% MACRO phenotype_submission_link BLOCK;
+    '<p class="data-submission-link-wrapper">' _
+    '<strong>Notice a missing phenotype?</strong> Please let us know via our';
+    data_submission_link('/submissions/phenotype.cgi', 'Phenotype Form') _
+    '</p>';
+END; %]
 
 [%#
     #######################################################

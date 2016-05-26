@@ -139,10 +139,12 @@ sub _get_pato {
 
     my @patos = map {
         my ($entity_type, $entity_term, $pato_term) = $_->row();
+        $pato_term = $pato_term && $pato_term->Name;
         return {
             pato_evidence => {
+                entity_type => $entity_type && "$entity_type",
                 entity_term => $self->_pack_obj($entity_term),
-                pato_term   => eval { $pato_term->Name } ? $pato_term->Name : 'abnormal',
+                pato_term   =>  $pato_term ? "$pato_term" : 'abnormal',
             },
             key => join('_', "$entity_term", "$pato_term")
         };

@@ -51,7 +51,7 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title="Clone" key="clone";
-           tag2link(fields.clone.data);
+           tags2link(fields.clone.data);
    END;
 
    WRAPPER $field_block title="Parent seq" key="parent_sequence";

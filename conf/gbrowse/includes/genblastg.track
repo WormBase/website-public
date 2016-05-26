@@ -1,6 +1,6 @@
 [GENBLASTG]
 feature = CDS:genBlastG
-category     = Genes
+category     = Genes:Ab-initio predictions
 #frame2f = darkblue
 #frame0r = darkred
 #require_subparts = 1

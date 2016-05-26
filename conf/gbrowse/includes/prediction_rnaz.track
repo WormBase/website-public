@@ -1,6 +1,6 @@
 [PREDICTION_RNAZ]
 key          = RNAz non-coding RNA genes
-category     = Transcription:Ab-initio predictions
+category     = Genes:Ab-initio predictions
 feature      = ncRNA:RNAz
 glyph        = transcript
 bgcolor      = white

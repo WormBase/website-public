@@ -3,6 +3,7 @@ package WormBase::Web::Controller::REST;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
+use feature qw(say);
 use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
@@ -15,7 +16,8 @@ use URI::Escape;
 use Text::MultiMarkdown 'markdown';
 use DateTime;
 use Encode;
-use Data::Dumper;
+use HTTP::Tiny;
+
 
 __PACKAGE__->config(
     'default'          => 'text/x-yaml',
@@ -842,9 +844,6 @@ sub widget_GET {
     my ( $self, $c, $class, $name, $widget ) = @_;
     $c->log->debug("        ------> we're requesting the widget $widget");
 
-    # Cache key - "$class_$widget_$name"
-    my $key = join( '_', $class, $widget, $name );
-
     # set header and content-type
     my $headers = $c->req->headers;
     my $content_type
@@ -860,15 +859,26 @@ sub widget_GET {
           $c->go('search', 'search');
     }
 
-    # check_cache checks couchdb
-    my ( $cached_data, $cache_source ) = $c->check_cache($key);
-    if($cached_data && (ref $cached_data eq 'HASH')){
+    my $skip_cache = (((exists $c->config->{skip_cache})
+                          && ($c->config->{skip_cache} == 1))
+                      ||  ((exists $c->request->params->{"skip-cache"})
+                          && ($c->request->params->{"skip-cache"} == 1))) ? 1 : 0;
+
+    # Cache key - "$class_$widget_$name"
+    my ($cached_data, $cache_source, $key);
+    if ( not $skip_cache ) {
+        # check_cache checks couchdb
+        $key = join( '_', $class, $widget, $name );
+        ( $cached_data, $cache_source ) = $c->check_cache($key);
+    }
+
+    if ((not $skip_cache) && $cached_data && (ref $cached_data eq 'HASH')){
         $c->stash->{fields} = $cached_data;
 
 	# Served from cache? Let's include a link to it in the cache.
 	# Primarily a debugging element.
 	$c->stash->{served_from_cache} = $key;
-    } elsif ($cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
+    } elsif ((not $skip_cache) && $cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
         $c->response->status(200);
         $c->response->body($cached_data);
         $c->detach();
@@ -890,24 +900,51 @@ sub widget_GET {
             push @fields, 'name';
         }
 
-        my $skip_cache;
+        my $skip_datomic = ((( exists $c->config->{"skip_datomic"})
+                               && ($c->config->{"skip_datomic"} == 1))
+                          ||  ((exists $c->req->params->{"skip-datomic"})
+                               && ($c->req->params->{"skip-datomic"} == 1)))? 1: 0;
+        my $skip_ace = (((exists $c->config->{"skip_ace"})
+                               && ($c->config->{"skip_ace"} == 1))
+                        ||  ((exists $c->req->params->{"skip-ace"})
+                               && ($c->req->params->{"skip-ace"} == 1)))? 1: 0;
+
+        my ($resp_content, $resp);
+        if (not $skip_datomic) {
+            my $rest_server = $c->config->{'rest_server'};
+            $resp = HTTP::Tiny->new->get("$rest_server/rest/widget/$class/$name/$widget");
+            if ($resp->{'status'} == 200 && $resp->{'content'}) {
+                $resp_content = decode_json($resp->{'content'})->{fields};
+            }
+        }
+
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
-            my $data = $object->$field;
+            my $data;
+            if ($resp_content && $resp_content->{$field}) {
+                $data = $resp_content->{$field};
+            } elsif ((not $skip_ace) && $object->can($field)) {
+                # try Perl API
+                $data = $object->$field;
+                if ($c->config->{fatal_non_compliance}) {
+                    # checking for data compliance can be an overhead, only use
+                    # in testing env where its explicitly enabled
+                    my ($fixed_data, @problems) = $object->_check_data( $data, $class );
+                    if ( @problems ){
+                        my $log = 'fatal';
+                        $c->log->$log("${class}::$field returns non-compliant data: ");
+                        $c->log->$log("\t$_") foreach @problems;
 
-            if ($c->config->{fatal_non_compliance}) {
-                # checking for data compliance can be an overhead, only use
-                # in testing env where its explicitly enabled
-                my ($fixed_data, @problems) = $object->_check_data( $data, $class );
-                if ( @problems ){
-                    my $log = 'fatal';
-                    $c->log->$log("${class}::$field returns non-compliant data: ");
-                    $c->log->$log("\t$_") foreach @problems;
-
-                    die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                        die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                    }
                 }
+            } else {
+                my $response_content = (exists $resp->{'content'})?
+                                                     $resp->{'content'} : '';
+                die "REST query failed at $field: $response_content";
             }
+
 
             # a field can force an entire widget to not caching
             if ($data->{'error'}){
@@ -1158,10 +1195,92 @@ sub widget_home_GET {
 
       $c->stash->{question} = $question;
       $c->stash->{answers} = \@answers;
-    }
+  }elsif ($widget eq 'release'){
+      _release_note_helper($c);
+  }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
+}
+
+sub _release_note_helper {
+    my ($c) = @_;
+    my $key = 'home_release_widget';
+    my ( $cached_data, $cache_source ) = $c->check_cache($key);
+    if ($cached_data) {
+        # load from cache and skip the rest of the function
+        # that generates the cache
+        $c->stash->{fields} = $cached_data;
+        return;
+    }
+
+    local *read_file_to_stash = sub {
+        my ($ftp, $path, $namespace) = @_;
+        my $fh;
+        my $content;
+        open( $fh, '>', \$content) || die "cannot open fh";
+        $ftp->get($path, $fh);
+        close $fh;
+
+        # parse changed_CGC_names file
+        my @sections = split '\n\n', $content;
+        my %parsed_content = map {
+            # parse a section
+            my ($name, $header_line, @data_lines) = split '\n', $_;
+            $name =~ s/# //;
+            $name =~ s/ /_/g;
+            $header_line =~ s/# //;
+            $header_line =~ s/ /_/g;
+
+            my @headers = split '\t', $header_line;
+            my @entries = map {
+                # parse a line
+                my @values = split '\t', $_;
+                my $index = 0;
+                my %entry = map {
+                    my $key = $headers[$index];
+                    $index += 1;
+                    $key => $_;
+                } @values;
+                \%entry;
+            } @data_lines;
+            { $name => \@entries };
+        } @sections;
+
+        #reformat content
+        %parsed_content = map {
+            my @entries = @{$parsed_content{$_}};
+            @entries = map {
+                my $entry = $_;
+                my $new_columns = {
+                    new_gene => {
+                        id => $entry->{new_GeneID},
+                        class => 'gene',
+                        label => $entry->{new_CGC}
+                    }
+                };
+                my %new_entry = (%$entry, %$new_columns);
+                \%new_entry;
+            } @entries;
+            $_ => {
+                data => \@entries
+            };
+        } keys %parsed_content;
+
+        $c->set_cache($key => \%parsed_content);
+        $c->stash->{fields} = \%parsed_content;
+    };
+    local *handle_error = sub {
+        my ($error, $path, $namespace) = @_;
+        $c->log->error($error);
+        $c->stash->{error} = $error;
+    };
+
+    my $release = $c->config->{wormbase_release};
+    my $name_change_file_path = "/pub/wormbase/releases/$release/species/c_elegans/PRJNA13758/annotation/c_elegans.PRJNA13758.$release.changed_CGC_names.txt";
+    $c->_with_ftp_site(\&read_file_to_stash,
+                       \&handle_error,
+                       $name_change_file_path);
 }
 
 
@@ -1667,6 +1786,21 @@ sub _get_feed_from {
     my $response  = $lwp->request($new_request);
     $c->res->header( 'Content-Type' => 'text/xml' );
     $c->res->body($response->content);
+}
+
+
+sub parasite_api :Path('/rest/parasite') :Args :ActionClass('REST') {}
+
+sub parasite_api_GET {
+    my ($self, $c, @args) = @_;
+    my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
+
+    # construct url for parasite api
+    my $url = join('/', 'http://parasite.wormbase.org/rest-6', @args);
+    $url = $url . '?' . 'content-type=application/json';
+    $url = $url . ";$paramString" if $paramString;
+
+    $c->res->redirect($url);
 }
 
 ########################################

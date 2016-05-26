@@ -2,7 +2,7 @@
 # It is restricted to C. elegans.
 [GENETIC_LIMITS]
 key           = Genetic limits
-category      = Genes
+category      = Genes:Curated Genes
 feature       = gene:interpolated_pmap_position
 		gene:absolute_pmap_position
 glyph         = sub {

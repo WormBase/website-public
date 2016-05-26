@@ -315,7 +315,9 @@ sub curated_images { # Caveat: this is very tightly coupled with the Picture mod
 
         my $id          = $pic->object->name;
         my $extsrc_data = $pic->external_source->{data};
-        my $src_data    = $pic->reference->{data} || $pic->contact->{data};
+
+        my $src_data = $pic->_source();
+
 
         # assumption: extsrc_data has 1 to 1 relation to src_data
         my $group = ($src_data && $src_data->{id}) || 'none';

@@ -1,6 +1,6 @@
 [GENES_PROTEIN_CODING]
 key          = Genes (protein coding) 
-category     = Genes
+category     = Genes:Curated Genes
 feature = CDS:WormBase
 glyph = gene
 title = sub {

@@ -1,6 +1,6 @@
 [OPERONS]
 key          = Operons
-category     = Genes
+category     = Genes:Curated Genes
 feature      = operon:operon
 glyph        = generic
 strand_arrow = 1
