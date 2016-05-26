@@ -1,3 +1,13 @@
+[%
+    release_number = c.config.wormbase_release.match('WS(\d+)').0;
+    prior_release_number = release_number - 1;
+    '<em>';
+    'Below are changes in name since the previous release <strong>WS' _ prior_release_number _'</strong>. ';
+    'Name changes for for each release since WS252 are archived <strong>' _
+    external_link('ftp://ftp.wormbase.org/pub/wormbase/species/c_elegans/annotation/changed_CGC_names/', 'here') _ '</strong>.';
+    '</em>';
+%]
+
 [% BLOCK release_widget_field_block %]
     <div class="release-widget--field">
     [% IF fields.$key %]
@@ -14,47 +24,54 @@ IF error && error.collapse;
     '<em>Sorry, we encountered a problem with fetching change information. Please check back later.</em>';
 ELSE;
 
-WRAPPER release_widget_field_block title="Genes with changed CGC names" key="Genes_with_changed_CGC_names";
-build_data_table(
-    order = [
-          'old_CGC',
-          'new_gene',
-          'new_SequenceID'
-        ]
-    columns = {
-        'old_CGC' => 'Old CGC',
-        'new_gene' => 'New CGC',
-        'new_SequenceID' => 'Sequence ID'
-    },
-    key = 'Genes_with_changed_CGC_names');
-END;
-
-WRAPPER release_widget_field_block title="Genes with new CGC names" key="new_CGC_names";
+WRAPPER release_widget_field_block title="Genes with new approved names" key="new_CGC_names";
 build_data_table(
     order = [
           'new_gene',
+          'new_GeneID',
           'new_SequenceID'
         ]
     columns = {
         'new_Biotype' => 'Biotype',
-        'new_SequenceID' => 'Sequence ID',
-        'new_gene' => 'New CGC'
+        'new_SequenceID' => 'Sequence',
+        'new_GeneID' => 'Gene ID',
+        'new_gene' => 'New approved name'
     },
     key = 'new_CGC_names');
 END;
 
-WRAPPER release_widget_field_block title="Removed CGC names" key="removed_CGC_names";
+
+WRAPPER release_widget_field_block title="Genes with changed approved names" key="Genes_with_changed_CGC_names";
+build_data_table(
+    order = [
+          'new_gene',
+          'old_CGC',
+          'new_GeneID',
+          'new_SequenceID'
+        ]
+    columns = {
+        'old_CGC' => 'Old approved name',
+        'new_gene' => 'New approved name',
+        'new_GeneID' => 'Gene ID',
+        'new_SequenceID' => 'Sequence'
+    },
+    key = 'Genes_with_changed_CGC_names');
+END;
+
+
+WRAPPER release_widget_field_block title="Removed approved names" key="removed_CGC_names";
 build_data_table(
     order = [
           'old_CGC',
+          'old_GeneID',
           'old_SequenceID',
           'old_Biotype'
         ]
     columns = {
-        'old_CGC' => 'Old CGC',
-        'old_SequenceID' => 'Old Sequence ID',
-        'old_GeneID' => 'Old Gene ID',
-        'old_Biotype' => 'Old Biotype'
+        'old_CGC' => 'Old approved name',
+        'old_SequenceID' => 'Old sequence',
+        'old_GeneID' => 'Old gene ID',
+        'old_Biotype' => 'Old biotype'
     },
     key = 'removed_CGC_names');
 END;
@@ -63,15 +80,17 @@ WRAPPER release_widget_field_block title="Biotype changes" key="Biotype_changed"
 build_data_table(
     order = [
           'new_gene',
+          'new_GeneID',
           'new_SequenceID',
-          'old_Biotype',
-          'new_Biotype'
+          'new_Biotype',
+          'old_Biotype'
         ]
     columns = {
         'new_gene' => 'Gene',
-        'new_SequenceID' => 'Sequence ID',
-        'new_Biotype' => 'New Biotype',
-        'old_Biotype' => 'Old Biotype'
+        'new_GeneID' => 'Gene ID',
+        'new_SequenceID' => 'Sequence',
+        'new_Biotype' => 'New biotype',
+        'old_Biotype' => 'Old biotype'
     },
     key = 'Biotype_changed');
 END;
