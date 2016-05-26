@@ -17,8 +17,8 @@ ELSE;
 WRAPPER release_widget_field_block title="Genes with changed approved names" key="Genes_with_changed_CGC_names";
 build_data_table(
     order = [
-          'old_CGC',
           'new_gene',
+          'old_CGC',
           'new_GeneID',
           'new_SequenceID'
         ]
@@ -70,8 +70,8 @@ build_data_table(
           'new_gene',
           'new_GeneID',
           'new_SequenceID',
-          'old_Biotype',
-          'new_Biotype'
+          'new_Biotype',
+          'old_Biotype'
         ]
     columns = {
         'new_gene' => 'Gene',
