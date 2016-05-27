@@ -3,7 +3,8 @@
     prior_release_number = release_number - 1;
     '<em>';
     'Below are changes in gene names since the previous release <strong>WS' _ prior_release_number _'</strong>. ';
-    'Gene name changes for each release since WS252 are archived <strong>' _
+    be_word = prior_release_number > 252 ? 'are' : 'will be';
+    'Gene name changes for each release since WS252 ' _ be_word _ ' archived <strong>' _
     external_link('ftp://ftp.wormbase.org/pub/wormbase/species/c_elegans/annotation/changed_CGC_names/', 'here') _ '</strong>.';
     '</em>';
 %]
