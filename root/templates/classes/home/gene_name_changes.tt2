@@ -12,8 +12,10 @@
 [% BLOCK change_summary_field_block %]
     <div class="change-summary-field">
     [% IF fields.$key %]
-        <h4 class="change-summary-field--title">[% title %]:</h4>
-        [% content %]
+        [% formatted_title = '<h4 class="change-summary-field--title">' _ title _ '</h4>' %]
+        [% WRAPPER toggle title=formatted_title open=open %]
+            [% content %]
+        [% END %]
     [% ELSE %]
         <p class="fade"><em>There are no [% title %] in this release.</em></p>
     [% END %]
@@ -25,7 +27,7 @@ IF error && error.collapse;
     '<em>Sorry, we encountered a problem with fetching change information. Please check back later.</em>';
 ELSE;
 
-WRAPPER change_summary_field_block title="Genes with new primary names" key="new_CGC_names";
+WRAPPER change_summary_field_block title="Genes with new primary names" key="new_CGC_names" open=1;
 build_data_table(
     order = [
           'new_gene',

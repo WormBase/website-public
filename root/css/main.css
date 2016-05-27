@@ -2407,10 +2407,10 @@ h3.jbrowse-view-header {
 }
 
 .change-summary-field {
-  margin: 10px 5px 15px;
+  margin: 5px 5px;
 }
 
-.change-summary-field--title {
+.change-summary-field .toggle {
   margin: 5px;
 }
 
