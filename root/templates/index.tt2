@@ -48,4 +48,4 @@
 
  [% title = '' %]
 
- [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1 layout="0124-3-5"%]
+ [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1 layout="012-34-5"%]
