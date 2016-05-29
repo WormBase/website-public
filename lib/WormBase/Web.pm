@@ -7,10 +7,12 @@ use Hash::Merge;
 use Log::Log4perl::Catalyst;
 use Log::Any::Adapter;
 use HTTP::Status qw(:constants :is status_message);
-use Env 'API_TESTS';
+use Env qw(API_TESTS @API_TESTS_BLACKLIST);
 use JSON;
 use LWP;
 use Net::FTP;
+
+use feature qw(say);
 
 # Required for API unit tests:
 use File::Basename;
@@ -750,12 +752,13 @@ sub api_tests {
     # Don't check "uninitialized" variables. All variables below are initialized.
     # Perl is just claiming that $pkg has not been set, which is a lie.
     no warnings 'uninitialized';
-
+ 
     my $self = shift;
     my $api = $self->model('WormBaseAPI');
     my @tests = <t/api_tests/*.t>;
     foreach my $test (@tests) {
-        next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t');
+        next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t'); # Only skip if a test set was specified by API_TEST and it is not the current one. 
+        next if (defined @API_TESTS_BLACKLIST && ( grep {$_ eq basename($test, '.t')} @API_TESTS_BLACKLIST)); # skip if current test file is in blacklist
         require_ok($test);
         my $pkg = basename($test, '.t') . '::';
         &{$pkg->{'config'}}($api);
