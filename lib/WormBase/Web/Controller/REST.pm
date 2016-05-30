@@ -903,7 +903,7 @@ sub widget_GET {
             push @fields, 'name';
         }
 
-        my ($resp_content, $resp, $object);
+        my ($resp_content, $resp);
         if (not $skip_datomic) {
             my $rest_server = $c->config->{'rest_server'};
             $resp = HTTP::Tiny->new->get("$rest_server/rest/widget/$class/$name/$widget");
@@ -911,7 +911,9 @@ sub widget_GET {
                 $resp_content = decode_json($resp->{'content'})->{fields};
             }
         }
-        else {
+
+        my $object;
+        if (not $skip_ace) {
             my $api = $c->model('WormBaseAPI');
             $object = ($name eq '*' || $name eq 'all'
                    ? $api->instantiate_empty(ucfirst $class)
@@ -943,7 +945,7 @@ sub widget_GET {
             } else {
                 my $response_content = (exists $resp->{'content'})?
                                                      $resp->{'content'} : '';
-                warn "REST query failed at $field: $response_content";
+                die "REST query failed at $field: $response_content";
             }
 
 
