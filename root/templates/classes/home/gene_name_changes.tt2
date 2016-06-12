@@ -1,0 +1,122 @@
+[%
+    release_number = c.config.wormbase_release.match('WS(\d+)').0;
+    prior_release_number = release_number - 1;
+    '<em>';
+    'Below are changes in gene names since the previous release <strong>WS' _ prior_release_number _'</strong>. ';
+    be_word = prior_release_number > 252 ? 'are' : 'will be';
+    'Gene name changes for each release since WS252 ' _ be_word _ ' archived <strong>' _
+    external_link('ftp://ftp.wormbase.org/pub/wormbase/species/c_elegans/annotation/changed_CGC_names/', 'here') _ '</strong>.';
+    '</em>';
+%]
+
+[% BLOCK change_summary_field_block %]
+    <div class="change-summary-field">
+    [% IF fields.$key %]
+        [% formatted_title = '<h4 class="change-summary-field--title">' _ title _ '</h4>' %]
+        [% WRAPPER toggle title=formatted_title open=open %]
+            [% content %]
+        [% END %]
+    [% ELSE %]
+        <p class="fade"><em>There are no [% title %] in this release.</em></p>
+    [% END %]
+    </div>
+[% END %]
+
+[%
+IF error && error.collapse;
+    '<em>Sorry, we encountered a problem with fetching change information. Please check back later.</em>';
+ELSE;
+
+WRAPPER change_summary_field_block title="Genes with new primary names" key="new_CGC_names" open=1;
+build_data_table(
+    order = [
+          'new_gene',
+          'new_GeneID',
+          'new_SequenceID'
+        ]
+    columns = {
+        'new_Biotype' => 'Biotype',
+        'new_SequenceID' => 'Sequence',
+        'new_GeneID' => 'Gene ID',
+        'new_gene' => 'New primary name'
+    },
+    key = 'new_CGC_names');
+END;
+
+
+WRAPPER change_summary_field_block title="Genes with changed primary names" key="Genes_with_changed_CGC_names";
+build_data_table(
+    order = [
+          'new_gene',
+          'old_CGC',
+          'new_GeneID',
+          'new_SequenceID'
+        ]
+    columns = {
+        'old_CGC' => 'New other name',
+        'new_gene' => 'New primary name',
+        'new_GeneID' => 'Gene ID',
+        'new_SequenceID' => 'Sequence'
+    },
+    key = 'Genes_with_changed_CGC_names');
+END;
+
+WRAPPER change_summary_field_block title="Removed primary names" key="removed_CGC_names";
+build_data_table(
+    order = [
+          'old_CGC',
+          'old_GeneID',
+          'old_SequenceID',
+          'old_Biotype'
+        ]
+    columns = {
+        'old_CGC' => 'Old primary name',
+        'old_SequenceID' => 'Old sequence',
+        'old_GeneID' => 'Old gene ID',
+        'old_Biotype' => 'Old biotype'
+    },
+    key = 'removed_CGC_names');
+END;
+
+WRAPPER change_summary_field_block title="Biotype changes" key="Biotype_changed";
+build_data_table(
+    order = [
+          'new_gene',
+          'new_GeneID',
+          'new_SequenceID',
+          'new_Biotype',
+          'old_Biotype'
+        ]
+    columns = {
+        'new_gene' => 'Gene',
+        'new_GeneID' => 'Gene ID',
+        'new_SequenceID' => 'Sequence',
+        'new_Biotype' => 'New biotype',
+        'old_Biotype' => 'Old biotype'
+    },
+    key = 'Biotype_changed');
+END;
+
+END;
+
+
+
+# available columns
+# 'new_gene',    # programmatically added field
+# 'old_CGC',
+# 'old_GeneID',
+# 'old_SequenceID',
+# 'old_Biotype',
+# 'new_CGC',
+# 'new_GeneID',
+# 'new_SequenceID',
+# 'new_Biotype'
+
+# available fields
+# $VAR1 = 'new_CGC_names';
+# $VAR2 = 'Biotype_changed';
+# $VAR3 = 'assigned_Gene_changed';
+# $VAR4 = 'removed_CGC_names';
+# $VAR5 = 'Genes_with_changed_CGC_names';
+# $VAR6 = 'other_changes';
+%]

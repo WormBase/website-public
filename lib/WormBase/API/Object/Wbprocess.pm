@@ -355,7 +355,7 @@ sub pathway{
 
         foreach my $id (@pathway_ids){
             my $revision;
-            my $url = "http://www.wikipathways.org/wpi/webservice/webservice.php/getCurationTagsByName?tagName=Curation:WormBase_Approved";
+            my $url = "http://webservice.wikipathways.org/getCurationTagsByName?tagName=Curation:WormBase_Approved";
             my $req = HTTP::Request->new(GET => $url);
             my $lwp       = LWP::UserAgent->new;
             my $response  = $lwp->request($req);

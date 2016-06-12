@@ -2406,15 +2406,16 @@ h3.jbrowse-view-header {
   padding: 5px  20px;
 }
 
-#widget-home #release-content .wb_table_wrapper{
-  min-width: 0;
+.change-summary-field {
+  margin: 5px 5px;
 }
 
-.release-widget--field {
-  margin: 10px 5px 15px;
-}
-.release-widget--field--title {
+.change-summary-field .toggle {
   margin: 5px;
+}
+
+#widget-home .change-summary-field .wb_table_wrapper{
+  min-width: 0;
 }
 
 /*********************************

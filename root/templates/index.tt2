@@ -32,9 +32,9 @@
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
   [%# widget_list = ['vote', 'news', 'discussion', 'activity'] %]
-  [% widget_list = ['news', 'discussion', 'activity', 'release'] %]
+  [% widget_list = ['news', 'discussion', 'activity', 'gene_name_changes'] %]
   [% FOREACH widget_name IN widget_list -%]
-    [% t = widget_name FILTER ucfirst %]
+    [% t = widget_name FILTER ucfirst FILTER replace('_', ' ') %]
     [% w = { id = widget_name
              title = t
              href =  c.uri_for('/rest','widget','home',widget_name).path
@@ -48,4 +48,4 @@
 
  [% title = '' %]
 
- [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1 layout="0124-3-6"%]
+ [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1 layout="012-34-5"%]

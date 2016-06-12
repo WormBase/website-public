@@ -1195,17 +1195,17 @@ sub widget_home_GET {
 
       $c->stash->{question} = $question;
       $c->stash->{answers} = \@answers;
-  }elsif ($widget eq 'release'){
-      _release_note_helper($c);
+  }elsif ($widget eq 'gene_name_changes'){
+      _gene_name_changes_helper($c);
   }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
 }
 
-sub _release_note_helper {
+sub _gene_name_changes_helper {
     my ($c) = @_;
-    my $key = 'home_release_widget';
+    my $key = 'home_gene_name_changes_widget';
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
     if ($cached_data) {
         # load from cache and skip the rest of the function
