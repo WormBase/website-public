@@ -28,6 +28,14 @@ link = sub {
     my $name = $f->name;
     return "/get?name=$name;class=Sequence";
   }
+balloon hover = sub {
+  my $f = shift;
+  my $name = $f->name;
+  my $ref  = $f->ref;
+  my $start = $f->start;
+  my $end   = $f->end;
+  return "<i>WormBase nematode mRNAs/ESTs (best):</i> $name<br/>$ref:$start-$end";
+  }
 citation = ESTs and mRNAs from other WormBase core species aligned to the genome using 
            <a href="http://genome.cse.ucsc.edu/cgi-bin/hgBlat">BLAT</a>. This track
            shows the best location for each cDNA sequence. 
