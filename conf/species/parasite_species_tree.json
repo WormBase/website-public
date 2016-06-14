@@ -782,7 +782,7 @@
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "ARRAY(0x7ffa4dd79120) genome project",
+                              "summary" : "ARRAY(0x7f9d92f63040) genome project",
                               "url" : "/Strongyloides_ratti_prjeb125/Info/Index",
                               "children" : null,
                               "label" : "PRJEB125"
@@ -922,7 +922,7 @@
                               "label" : "PRJNA51225"
                            }
                         ],
-                        "label" : "Caenorhabditis angari"
+                        "label" : "Caenorhabditis angaria"
                      },
                      {
                         "url" : "/Caenorhabditis_brenneri/Info/Index/",
@@ -1733,6 +1733,25 @@
          {
             "url" : "/",
             "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Macrostomum_lignano_prjna284736/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Schatz Laboratory genome project",
+                              "url" : "/Macrostomum_lignano_prjna284736/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA284736"
+                           }
+                        ],
+                        "label" : "Macrostomum lignano"
+                     }
+                  ],
+                  "label" : "Macrostomum"
+               },
                {
                   "url" : "/",
                   "children" : [
