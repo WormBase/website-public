@@ -112,7 +112,7 @@ expressed_sequence_match:NEMBASE_cDNAs-BLAT	NEMBASE_cDNAs-BLAT	expressed_sequenc
 expressed_sequence_match:NEMBASE_cDNAs-STAR	NEMBASE_cDNAs-STAR	expressed_sequence_match	NEMBASE cDNAs (sequence_similarity_nembase_cdnas)	0	0	0	0	0	0	0	8354	0	2178	0	0	0	0	0
 five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	8386	0	3174	9292	31259	0	3681	0	2526	0	0	12178	763	0	1412
 five_prime_UTR:WormBase_imported	WormBase_imported	five_prime_UTR	Genes (genes)	0	0	0	0	0	0	0	8559	0	0	0	0	0	0	0
-gene:WormBase	WormBase	gene	Genes (genes)	11841	0	33224	23247	46774	0	32405	0	32934	0	0	12564	24216	0	12448
+gene:WormBase	WormBase	gene	Genes (genes)	11841	0	33224	23247	46774	0	32405	0	32934	0	0	12613	24216	0	12933
 gene:WormBase_imported	WormBase_imported	gene	Genes (genes)	0	27970	0	0	0	0	0	26226	0	34696	22326	0	0	24249	0
 gene:WormBase_transposon	WormBase_transposon	gene	Transposon Genes (transposon_genes)	0	0	0	13	350	0	0	0	0	0	0	0	0	0	0
 gene:absolute_pmap_position	absolute_pmap_position	gene	Genetic limits (genetic_limits)	0	0	0	0	26004	0	0	0	0	0	0	0	0	0	0

@@ -21,7 +21,7 @@ expressed_sequence_match:BLAT_EST_BEST		BLAT_EST_BEST	expressed_sequence_match	E
 expressed_sequence_match:BLAT_EST_OTHER		BLAT_EST_OTHER	expressed_sequence_match	ESTs (other) (est_other)	13710
 expressed_sequence_match:BLAT_mRNA_BEST		BLAT_mRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	93
 	expressed_sequence_match:BLAT_ncRNA_BEST	BLAT_ncRNA_BEST	expressed_sequence_match	mRNAs/ncRNAs (best) (mrna_best)	0
-gene:WormBase		WormBase	gene	Genes (genes)	12448
+gene:WormBase		WormBase	gene	Genes (genes)	12933
 	mRNA:WormBase	WormBase	mRNA	Genes (genes)	12545
 	five_prime_UTR:WormBase	WormBase	five_prime_UTR	Genes (genes)	1412
 	three_prime_UTR:WormBase	WormBase	three_prime_UTR	Genes (genes)	2269
