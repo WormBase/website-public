@@ -13,7 +13,7 @@
         <div id="top-system-message" class="system-message">
           [% c.config.system_message.message %]
           <span class="system-message-close" data-id="[% message_id %]">
-            <span class=" ui-icon ui-icon-close"></span>
+            <!--<span class=" ui-icon ui-icon-close"></span>-->
           </span>
         </div>
         <div class="system-message" ></div>
