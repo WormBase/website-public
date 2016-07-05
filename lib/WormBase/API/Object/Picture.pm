@@ -205,7 +205,7 @@ sub _source {
     # decide whether the source is a Paper or a Person
     if ($object->Template =~ /Journal_URL/){
         $reference = $self->reference->{data};
-    } elsif ($object->Template =~ /Person_name/) {
+    } else {
         $reference = $self->contact->{data};
     }
     return $reference;
