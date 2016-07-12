@@ -1806,6 +1806,20 @@ sub parasite_api_GET {
     $c->res->redirect($url);
 }
 
+sub ensembl_api :Path('/rest/ensembl') :Args :ActionClass('REST') {}
+
+sub ensembl_api_GET {
+    my ($self, $c, @args) = @_;
+    my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
+
+    # construct url for ensembl api
+    my $url = join('/', 'http://rest.ensembl.org', @args);
+    $url = $url . '?' . 'content-type=application/json';
+    $url = $url . ";$paramString" if $paramString;
+
+    $c->res->redirect($url);
+}
+
 ########################################
 #
 # Admin level REST endpoints
