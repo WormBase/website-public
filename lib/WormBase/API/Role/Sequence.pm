@@ -1137,7 +1137,7 @@ sub _get_flanking_region {
 
     my ($long_seg_rel) = grep { $_->{primary_id} eq $seq_obj->{primary_id}; } $self->gff->segment($seq_obj->name, $start_rel, $end_rel);
     # its strand is set based on $seq_obj automatically
-    my $long_seg_dna = $long_seg_rel->dna;
+    my $long_seg_dna = lc $long_seg_rel->dna;
 
     return ($long_seg_dna, $long_seg, @flankings);
 
@@ -1674,12 +1674,12 @@ sub _print_unspliced {
 # markup alternative exons
 sub _print_spliced {
     my ($markup,@features) = @_;
-    my $spliced = join('',map {$_->dna} @features);
+    my $spliced = lc (join('',map {$_->dna} @features));
     my $splen   = length $spliced;
     my $last    = 0;
     my $counter = 0;
     my @markup  = ();
-    my $prefasta = $spliced;
+
     for my $feature (@features) {
         # print ("\n   $feature, primary_tag:" . $feature->primary_tag . ", source: " . $feature->source . ", strand:" . $feature->strand);
         my $length = abs($feature->stop - $feature->start) + 1;
