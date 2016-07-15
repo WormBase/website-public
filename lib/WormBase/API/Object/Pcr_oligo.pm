@@ -251,7 +251,8 @@ sub segment {
 	my %data;
 	if (my ($segment) = @{$self->_segments}) {
 		%data = map { $_ => $segment->$_ }
-		        qw(refseq ref start end start stop length dna);
+            qw(refseq ref start end start stop length);
+        $data{dna} = lc ($segment->dna);
 	} elsif(my $l = $self->object->get('Length', 1)) {
           my $dna = $self->object->get('Sequence', 1);
           $data{length} = "$l";
@@ -389,4 +390,3 @@ sub pcr_products {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

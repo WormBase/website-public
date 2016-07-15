@@ -81,7 +81,7 @@
 
         isnt($longest, undef, 'data returned');
         # this might change over time?
-        is  ($longest, 'IV:7499433..7516371', 'correct segment');
+        is  ($longest, 'IV:7499433..7516372', 'correct segment');
     }
 
 
