@@ -2220,15 +2220,10 @@ div#google-map {
     display: inline-block;
     margin-right: 0.2em;
 }
-.img-link > div {
-    height: 100px;
+.img-link > div.expr-img-wrapper {
+    max-height: 100px;
     width: 100px;
     overflow: hidden;
-}
-.img-link > div.expr-worm-wrapper {
-    height: 50px;
-    vertical-align: middle;
-    display: table-cell;
 }
 .img-link img {
     width: 100%;
