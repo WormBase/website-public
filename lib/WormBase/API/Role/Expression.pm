@@ -136,11 +136,14 @@ sub _expression_pattern_details {
 
     my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$expr.jpg");
     $expr_packed->{image}=catfile($self->pre_compile->{expression_object_path}, "$expr.jpg")  if (-e $file && ! -z $file);
+
     foreach($expr->Picture) {
         next unless($_->class eq 'Picture');
         my $pic = $self->_api->wrap($_);
         if( $pic->image->{data}) {
-            push @{$expr_packed->{curated_images}}, $self->_pack_obj($pic->object);
+            my $image_tag = $self->_pack_obj($pic->object);
+            $image_tag->{thumbnail} = $pic->image->{data};
+            push @{$expr_packed->{curated_images}}, $image_tag;
         }
     }
     my $sub = $expr->Subcellular_localization;

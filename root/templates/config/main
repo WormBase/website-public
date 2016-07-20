@@ -39,13 +39,20 @@
 
         IF data.image;
           '<div class="slink img-link"  rel="expression_pattern_images" href="' _ data.image _ '" title="expression image for ' _ data.id _ '" data-group="' _ data.id _ '">';
-          '<span class="ui-icon ui-icon-image exprcamera"></span>';
+#          '<span class="ui-icon ui-icon-image exprcamera"></span>'
+             '<div class="expr-worm-wrapper">';
+             '<img src="' _ data.image _ '" />';
+             '</div>';
           '<span><small>view images</small></span>';
     '</div>';
         END;
         FOREACH cur_img IN data.curated_images;
           '<div class="slink img-link" href="/rest/widget/picture/' _ cur_img.id _ '/lightbox"  title="curated pictures for ' _ data.id _ '" data-group="' _ data.id _ '">';
-            '<span class="ui-icon ui-icon-image exprcamera"></span>';
+#            '<span class="ui-icon ui-icon-image exprcamera"></span>';
+             img = cur_img.thumbnail;
+             '<div>';
+             '<img src="' _ img.class _ '/' _ img.name _ '_200.' _ img.format _ '" />';
+             '</div>';
             '<span><small>view images</small></span>';
           '</div>';
         END;
@@ -263,7 +270,7 @@
           minstart = start < minstart ? start : minstart;
           maxend   = end   > maxend   ? end   : maxend;
           subfeatures.push('{"seq_id":"'_ refseq _'","start":'_ start _',"end":'_ end _',"type":"match_part"}');
-        END; 
+        END;
 
         feature_part = '[{"seq_id":"'_ refseq _'","start":'_ minstart _',"end":'_ maxend _',"name":"'_ label _'","type":"match","subfeatures":['_ subfeatures.join(',')  _']}]';
 
