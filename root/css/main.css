@@ -2210,12 +2210,30 @@ div#google-map {
 /* image icon ex linking from expression widget to image*/
 .img-link {
     cursor: pointer;
+    border: 1px solid #666;
+    background: white;
+    text-align: center;
+    margin-top: 5px;
 }
 .img-link span{
     vertical-align: middle;
     display: inline-block;
     margin-right: 0.2em;
 }
+.img-link > div {
+    height: 100px;
+    width: 100px;
+    overflow: hidden;
+}
+.img-link > div.expr-worm-wrapper {
+    height: 50px;
+    vertical-align: middle;
+    display: table-cell;
+}
+.img-link img {
+    width: 100%;
+}
+
 
 /* cytoscape legend */
 #cyto_legend {
