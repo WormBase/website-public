@@ -10,7 +10,8 @@ use LWP::Simple qw(get);
 use threads;
 
 my $WEBSITE_HOST = 'localhost';
-my $WEBSITE_PORT = 28000 + int(rand(4000));
+#my $WEBSITE_PORT = 28000 + int(rand(4000));
+my $WEBSITE_PORT = 9015;
 
 my $configuration = {
     'host' => $WEBSITE_HOST,
@@ -75,4 +76,3 @@ sub wait_for_catalyst {
 }
 
 1;
-
