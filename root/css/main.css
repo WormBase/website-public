@@ -2089,6 +2089,9 @@ div.field {
   width:100%;
   position:relative;
 }
+div.detail-box div.field {
+  padding: 0.2em;
+}
 
 div.field-title {
   display:inline-table;
