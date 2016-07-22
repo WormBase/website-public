@@ -2085,7 +2085,7 @@ div.field {
   clear:left;
   /* float:left; breaks toggle for Phenotype_not_observed field */
   line-height:1.2em;
-  padding:0.2em;
+  padding: 7px 0.2em;
   width:100%;
   position:relative;
 }
@@ -2281,7 +2281,15 @@ table#table_fpkm_controls_by td:nth-child(3) {
 }
 
 #polymorphisms_toggle {
-  padding: 5px 0 15px;
+  padding: 5px 0 0;
+}
+
+#genetics-alleles p {
+  margin: 5px 0 0;
+}
+
+#genetics-alleles {
+  margin-bottom: 5px;
 }
 
 /* SEQUENCE STYLING */
