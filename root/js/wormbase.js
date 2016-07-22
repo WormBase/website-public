@@ -663,19 +663,53 @@
         $jq(this).removeClass("active");
       });
 
-      searchBox.autocomplete({
-          source: function( request, response ) {
-              lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
-                  if ( xhr === lastXhr ) {
-                      response( data );
-                  }
-              });
-          },
-          minLength: 2,
-          select: function( event, ui ) {
-              location.href = ui.item.url;
-          }
+      var proto = $jq.ui.autocomplete.prototype,
+	      initSource = proto._initSource;
+
+      function filter( array, term ) {
+        var matcher = new RegExp( $jq.ui.autocomplete.escapeRegex(term), "i" );
+        return $jq.grep( array, function(value) {
+		  return matcher.test($jq( "<div>" ).html( value.label || value.value || value ).text());
+	    });
+      }
+
+      $jq.extend( proto, {
+	    _initSource: function() {
+		  if ( this.options.html && $jq.isArray(this.options.source) ) {
+			this.source = function( request, response ) {
+			  response( filter( this.options.source, request.term ) );
+			};
+		  } else {
+			initSource.call( this );
+		  }
+	    },
+
+	    _renderItem: function( ul, item) {
+		  return $jq( "<li></li>" )
+			.data( "item.autocomplete", item )
+			.append( $jq( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.labelHtml || item.label ) )
+			.appendTo( ul );
+	    }
       });
+
+      searchBox.autocomplete({
+        source: function( request, response ) {
+          lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
+            if ( xhr === lastXhr ) {
+              data.forEach(function(dat) {
+                dat.labelHtml = '<div class="autocomplete-item-wrapper">' + dat.label + '<br/>' + '<span class="species">' + dat.taxonomy + '</span></div>';
+              });
+              response( data );
+            }
+          });
+        },
+        minLength: 2,
+        select: function( event, ui ) {
+          location.href = ui.item.url;
+        },
+        html: true
+      });
+
 
 
     }
