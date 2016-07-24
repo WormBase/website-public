@@ -2085,9 +2085,12 @@ div.field {
   clear:left;
   /* float:left; breaks toggle for Phenotype_not_observed field */
   line-height:1.2em;
-  padding:0.2em;
+  padding: 7px 0.2em;
   width:100%;
   position:relative;
+}
+div.detail-box div.field {
+  padding: 0.2em;
 }
 
 div.field-title {
@@ -2210,12 +2213,25 @@ div#google-map {
 /* image icon ex linking from expression widget to image*/
 .img-link {
     cursor: pointer;
+    border: 1px solid #666;
+    background: white;
+    text-align: center;
+    margin-top: 5px;
 }
 .img-link span{
     vertical-align: middle;
     display: inline-block;
     margin-right: 0.2em;
 }
+.img-link > div.expr-img-wrapper {
+    max-height: 100px;
+    width: 100px;
+    overflow: hidden;
+}
+.img-link img {
+    width: 100%;
+}
+
 
 /* cytoscape legend */
 #cyto_legend {
@@ -2268,7 +2284,15 @@ table#table_fpkm_controls_by td:nth-child(3) {
 }
 
 #polymorphisms_toggle {
-  padding: 5px 0 15px;
+  padding: 5px 0 0;
+}
+
+#genetics-alleles p {
+  margin: 5px 0 0;
+}
+
+#genetics-alleles {
+  margin-bottom: 5px;
 }
 
 /* SEQUENCE STYLING */

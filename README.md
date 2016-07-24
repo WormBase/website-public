@@ -63,6 +63,10 @@ Running WormBase Perl API tests for just the gene class:
 
     API_TESTS=gene perl t/api.t
 
+Running WormBase Perl API tests with blacklist
+
+    API_TESTS=1 API_TESTS_BLACKLIST=gene:cds perl t/api.t
+
 Comparative Testing
 -------------------
 
