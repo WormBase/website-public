@@ -1601,7 +1601,7 @@ sub _build_sequence_strings {
     my $offset = 500;
     my ($full_segment) = $db->segment($sourceseq, $abs_start - $offset, $abs_stop  + $offset);
     my $dna = $full_segment->dna;
-     $dna = $db->fetch_sequence($sourceseq, $abs_start - $offset, $abs_stop  + $offset);
+     $dna = lc $db->fetch_sequence($sourceseq, $abs_start - $offset, $abs_stop  + $offset);
 
     # MOVE INTO TEST
     # $debug .= "WT SNIPPET DNA FROM GFF: $dna" . br if DEBUG_ADVANCED;

@@ -261,8 +261,16 @@ sub _check_exact_match {
 
   my $label = $doc->get_value(6);
   my $id = $doc->get_value(1);
+  my $species = $doc->get_value(5);
 
-  return (($label && $q =~ m/\Q$label\E/i) || ($id && $q =~ m/\Q$id\E/i));
+  if ($id && $q =~ m/\Q$id\E/i) {
+      # matching WBID is alway is a correct match
+      return 1;
+  } elsif ($species && $species ne 'c_elegans') {
+      return 0;  # to reduce mismathes, ignore exact match on entities associated with non- c elegans species
+  } else {
+      return $label && $q =~ m/\Q$label\E/i;
+  }
 }
 
 

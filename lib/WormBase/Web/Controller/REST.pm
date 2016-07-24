@@ -884,22 +884,6 @@ sub widget_GET {
         $c->detach();
         return;
     } else {
-        my $api = $c->model('WormBaseAPI');
-        my $object = ($name eq '*' || $name eq 'all'
-                   ? $api->instantiate_empty(ucfirst $class)
-                   : $api->fetch({ class => ucfirst $class, name => $name }))
-            or die "Could not fetch object $name, $class";
-
-        # Generate and cache the widget.
-        # Load the stash with the field contents for this widget.
-        # The widget itself is loaded by REST; fields are not.
-        my @fields = $c->_get_widget_fields( $class, $widget );
-
-        # Store name on all widgets - needed for display
-        unless (grep /^name$/, @fields) {
-            push @fields, 'name';
-        }
-
         my $skip_datomic = ((( exists $c->config->{"skip_datomic"})
                                && ($c->config->{"skip_datomic"} == 1))
                           ||  ((exists $c->req->params->{"skip-datomic"})
@@ -909,6 +893,16 @@ sub widget_GET {
                         ||  ((exists $c->req->params->{"skip-ace"})
                                && ($c->req->params->{"skip-ace"} == 1)))? 1: 0;
 
+         # Generate and cache the widget.
+        # Load the stash with the field contents for this widget.
+        # The widget itself is loaded by REST; fields are not.
+        my @fields = $c->_get_widget_fields( $class, $widget );
+
+        # Store name on all widgets - needed for display
+        unless (grep /^name$/, @fields) {
+            push @fields, 'name';
+        }
+
         my ($resp_content, $resp);
         if (not $skip_datomic) {
             my $rest_server = $c->config->{'rest_server'};
@@ -916,6 +910,15 @@ sub widget_GET {
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
                 $resp_content = decode_json($resp->{'content'})->{fields};
             }
+        }
+
+        my $object;
+        if (not $skip_ace) {
+            my $api = $c->model('WormBaseAPI');
+            $object = ($name eq '*' || $name eq 'all'
+                   ? $api->instantiate_empty(ucfirst $class)
+                   : $api->fetch({ class => ucfirst $class, name => $name }))
+            or die "Could not fetch object $name, $class";
         }
 
         foreach my $field (@fields) {
@@ -1797,6 +1800,20 @@ sub parasite_api_GET {
 
     # construct url for parasite api
     my $url = join('/', 'http://parasite.wormbase.org/rest-6', @args);
+    $url = $url . '?' . 'content-type=application/json';
+    $url = $url . ";$paramString" if $paramString;
+
+    $c->res->redirect($url);
+}
+
+sub ensembl_api :Path('/rest/ensembl') :Args :ActionClass('REST') {}
+
+sub ensembl_api_GET {
+    my ($self, $c, @args) = @_;
+    my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
+
+    # construct url for ensembl api
+    my $url = join('/', 'http://rest.ensembl.org', @args);
     $url = $url . '?' . 'content-type=application/json';
     $url = $url . ";$paramString" if $paramString;
 
