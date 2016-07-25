@@ -153,22 +153,42 @@ sub biological_role {
     my $self = shift;
     my $object = $self->object;
 
-    my $data = {};
-    my $papers = {};
+    my @data;
     foreach my $tag ('Biofunction_role', 'Status', 'Detection_method', 'Extraction_method') {
-        my @items = map { "$_" } $object->$tag;
-        $data->{lc $tag} = \@items if @items;
-
-        if (@items) {
-            # keep track of paper evidence seen
-            my $paper = $self->_pack_obj($object->$tag->at('Paper_evidence'));
-            $papers->{$paper->{id}} = $paper if $paper;
+        foreach my $value ($object->$tag) {
+            foreach my $paper ($value->fetch('Paper_evidence')) {
+                push @data, {
+                    value => "$value",
+                    column => lc "$tag",
+                    paper_evidence => $self->_pack_obj($paper)
+                };
+            }
         }
     }
-    $data->{paper_evidence} = [values %$papers] if %$papers;
+
+    my @data_by_paper = values %{$self->_group_and_combine(
+        \@data,
+        (sub {
+             # paper ID will be used as split key to create groups
+             my $paper = $_[0]->{paper_evidence};
+             return $paper && $paper->{id};
+         }),
+        (sub {
+             # merge data by the same group ID into a single row
+             my $row_data = shift @_;
+             my %row;
+             foreach (@{$row_data}) {
+                 my $value = $_->{value};
+                 my $column = $_->{column};
+                 $row{$column} = [] unless $row{$column};
+                 push @{$row{$column}}, $value;
+             }
+             $row{paper_evidence} = $row_data->[0]->{paper_evidence};
+             return \%row;
+         }))};
 
     return {
-        'data'        => %$data ? [$data] : undef,
+        'data'        => @data_by_paper ? \@data_by_paper : undef,
         'description' => 'Controlled vocabulary for specific role of molecule in nematode biology, with particular regards to biological pathways'
     };
 }
