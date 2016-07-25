@@ -25,13 +25,6 @@ has 'exp_sequences' => (
     builder => '_build_sequences',
 );
 
-has 'rnaseq_plot' => (
-    is  => 'ro',
-    required => 1,
-    lazy     => 1,
-    builder  => '_build__rnaseq_plot',
-);
-
 requires '_build__gene'; # no fallback to build segments... yet (or ever?).
 
 
@@ -349,31 +342,6 @@ sub anatomy_function {
         data        => @data_pack ? \@data_pack : undef,
         description => 'anatomy functions associatated with this gene',
     };
-}
-
-
-sub _build__rnaseq_plot {
-    my ($self) = @_;
-    my $gene = $self->_gene;
-    my $RNAseq_plot = $self->_api->_tools->{rnaseq_plot};
-
-    my %data = $self->__build_rnaseq_plot_data;
-
-    my @plots = ();
-
-    foreach my $type (keys %data){
-        my $type_data = $data{$type};
-        foreach my $name (keys %{$type_data} ) {
-            if (scalar keys %{$type_data->{$name}} == 0) {print "No data found for $name\n"; next} # no data
-            my $plot = $RNAseq_plot->draw_graph($type, $type_data->{$name}, $name, $gene->name);
-            push @plots, $plot;
-        }
-    }
-    return {
-        data => @plots ? \@plots : undef,
-        description => 'This shows the FPKM expression values of PolyA+ and Ribozero modENCODE libraries across life-stages. The grey bars show the median value of the libraries plotted. Other modENCODE libraries which were made using other protocols or which are from a particular tissue or attack by a pathogen have been excluded.'
-    };
-
 }
 
 sub __build_rnaseq_plot_data {
