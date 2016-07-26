@@ -1118,11 +1118,12 @@ cursor:pointer;}
 }
 .autocomplete-item-wrapper {
     font-size: smaller;
-   /* line-height: 20px; */
     overflow:hidden;
     border: 1 solid #666;
 }
 .autocomplete-item-wrapper .species {
+    display: block;
+    line-height: 1em;
     font-size: small;
     color: #666;
 }

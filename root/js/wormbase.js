@@ -697,7 +697,7 @@
           lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
             if ( xhr === lastXhr ) {
               data.forEach(function(dat) {
-                dat.labelHtml = '<div class="autocomplete-item-wrapper">' + dat.label + '<br/>' + '<span class="species">' + dat.taxonomy + '</span></div>';
+                dat.labelHtml = '<span class="autocomplete-item-wrapper"><span style="margin-bottom: 0px;">' + dat.label + '</span>' + '<span class="species">' + dat.taxonomy + '</span></span>';
               });
               response( data );
             }
@@ -709,7 +709,6 @@
         },
         html: true
       });
-
 
 
     }
