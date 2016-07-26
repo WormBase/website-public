@@ -663,34 +663,39 @@
         $jq(this).removeClass("active");
       });
 
-      var proto = $jq.ui.autocomplete.prototype,
-	      initSource = proto._initSource;
+      (function(){
+        // Extend the autocomplete plugin to handle html in items
+        // Adapted based on https://github.com/scottgonzalez/jquery-ui-extensions/blob/master/src/autocomplete/jquery.ui.autocomplete.html.js by Scott González (http://scottgonzalez.com)
 
-      function filter( array, term ) {
-        var matcher = new RegExp( $jq.ui.autocomplete.escapeRegex(term), "i" );
-        return $jq.grep( array, function(value) {
-		  return matcher.test($jq( "<div>" ).html( value.label || value.value || value ).text());
-	    });
-      }
+        var proto = $jq.ui.autocomplete.prototype,
+	        initSource = proto._initSource;
 
-      $jq.extend( proto, {
-	    _initSource: function() {
-		  if ( this.options.html && $jq.isArray(this.options.source) ) {
-			this.source = function( request, response ) {
-			  response( filter( this.options.source, request.term ) );
-			};
-		  } else {
-			initSource.call( this );
-		  }
-	    },
+        function filter( array, term ) {
+          var matcher = new RegExp( $jq.ui.autocomplete.escapeRegex(term), "i" );
+          return $jq.grep( array, function(value) {
+		    return matcher.test($jq( "<div>" ).html( value.label || value.value || value ).text());
+	      });
+        }
 
-	    _renderItem: function( ul, item) {
-		  return $jq( "<li></li>" )
-			.data( "item.autocomplete", item )
-			.append( $jq( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.labelHtml || item.label ) )
-			.appendTo( ul );
-	    }
-      });
+        $jq.extend( proto, {
+	      _initSource: function() {
+		    if ( this.options.html && $jq.isArray(this.options.source) ) {
+			  this.source = function( request, response ) {
+			    response( filter( this.options.source, request.term ) );
+			  };
+		    } else {
+			  initSource.call( this );
+		    }
+	      },
+
+	      _renderItem: function( ul, item) {
+		    return $jq( "<li></li>" )
+			  .data( "item.autocomplete", item )
+			  .append( $jq( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.labelHtml || item.label ) )
+			  .appendTo( ul );
+	      }
+        });
+      })();
 
       searchBox.autocomplete({
         source: function( request, response ) {
