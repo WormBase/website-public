@@ -702,7 +702,8 @@
           lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
             if ( xhr === lastXhr ) {
               data.forEach(function(dat) {
-                dat.labelHtml = '<span class="autocomplete-item-wrapper"><span style="margin-bottom: 0px;">' + dat.label + '</span>' + '<span class="species">' + dat.taxonomy + '</span></span>';
+                var speciesHtml = (dat.taxonomy && dat.taxonomy.species) ? '<span class="species">'  + dat.taxonomy.genus + ' ' + dat.taxonomy.species + '</span>' : '';
+                dat.labelHtml = '<span class="autocomplete-item-wrapper"><span>' + dat.label + '</span>' + speciesHtml + '</span>';
               });
               response( data );
             }

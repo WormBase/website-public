@@ -119,7 +119,11 @@ sub autocomplete {
       $enq       = $class->db->enquire ( $query );
       @mset      = $enq->matches( 0, 10 );
     }
-    @mset = map { $class->_pack_search_obj($_->get_document ) } @mset;
+    @mset = map {
+        my $item = $class->_pack_search_obj($_->get_document );
+        $item->{taxonomy} = $class->_pack_species($item->{taxonomy});
+        $item;
+    } @mset;
 
     return ({ struct=>\@mset,
               search=>$class,
@@ -287,13 +291,7 @@ sub _get_obj {
   $ret{name} = $self->_pack_search_obj($doc);
   my $species = $ret{name}{taxonomy};
 
-  if($species =~ m/^(.*?)_(.*?)(_(.*))?$/){
-    my $s = $self->_api->config->{sections}{species_list}{$species};
-    $ret{taxonomy}{genus} = $s->{genus} || ucfirst($1);
-    $ret{taxonomy}{species} = $s->{species} || $2;
-    my $strain = $s->{strain} || $4;
-    $ret{taxonomy}{species} .= ($strain && " ($strain)") || '';
-  }
+  $ret{taxonomy} = $self->_pack_species($species);
   $ret{ptype} = $doc->get_value(7) if $doc->get_value(7);
   %ret = %{$self->_split_fields(\%ret, uri_unescape($doc->get_data()))};
   if($doc->get_value(4) =~ m/^(\d{4})/){
@@ -303,6 +301,19 @@ sub _get_obj {
   $ret{footer} = $footer if $footer;
   return \%ret;
 }
+
+sub _pack_species {
+    my ($self, $species) = @_;  # species being indexed value(12)
+    my %taxonomy = ();
+    if($species =~ m/^(.*?)_(.*?)(_(.*))?$/){
+        my $s = $self->_api->config->{sections}{species_list}{$species};
+        $taxonomy{genus} = $s->{genus} || ucfirst($1);
+        $taxonomy{species} = $s->{species} || $2;
+        my $strain = $s->{strain} || $4;
+        $taxonomy{species} .= ($strain && " ($strain)") || '';
+    }
+    return \%taxonomy;
+  }
 
 sub _split_fields {
   my ($self, $ret, $data) = @_;
