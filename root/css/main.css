@@ -1108,6 +1108,32 @@ cursor:pointer;}
 .ui-autocomplete {
   z-index:15 !important;
 }
+.ui-autocomplete ul, .ui-autocomplete li{
+    padding: 0;
+    margin: 0;
+}
+.ui-autocomplete .ui-menu, .ui-autocomplete .ui-menu-item{
+    padding: 0;
+    margin: 0;
+
+}
+.ui-autocomplete .ui-menu-item a {
+    border: 1px solid transparent;
+}
+.ui-autocomplete .ui-menu-item a.ui-state-focus {
+    border: 1px solid #999;
+}
+.autocomplete-item-wrapper {
+    font-size: smaller;
+    overflow:hidden;
+    border: 1 solid #666;
+}
+.autocomplete-item-wrapper .species {
+    display: block;
+    line-height: 1em;
+    font-size: small;
+    color: #666;
+}
 
 
 
