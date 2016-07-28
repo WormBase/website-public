@@ -8,6 +8,18 @@
         "autoWidth": false
 '%]
 
+[% MACRO process_phenotype_data(phenotype_data) BLOCK;
+    # NOTE: phenotype_data is mutated by this MACRO
+    FOREACH dat IN phenotype_data;
+        IF dat.entity;
+            dat.entity_formatted = dat.entity;
+        ELSE;
+            dat.entity_formatted = '<span class="fade">N/A</span>';
+        END;
+    END;
+   END;
+%]
+
 
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
    Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
@@ -16,12 +28,14 @@
     <p><i>The following phenotypes have been observed in [% object.name.data.label %]</i>:</p>
 
 [%
-	build_data_table(order=['phenotype', 'entity', 'evidence'],
+    process_phenotype_data(fields.phenotype.data);
+	build_data_table(order=['phenotype', 'entity_formatted', 'evidence'],
             columns={
                 phenotype  => 'Phenotype',
-                entity => 'Entities Affected',
+                entity_formatted => 'Entities Affected',
                 evidence => 'Supporting Evidence',
             }, key='phenotype',
+            passed_data = fields.phenotype.data,  #fields.phenotype.data has been mutated by process_phenotype_data
             style = phenotype_table_settings
     );
 %]
@@ -33,12 +47,14 @@
 [% WRAPPER $field_block title="Phenotype not observed" key="phenotype_not_observed" %]
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
       [%
-    	build_data_table(order=['phenotype','entity', 'evidence'],
+        process_phenotype_data(fields.phenotype_not_observed.data);
+    	build_data_table(order=['phenotype','entity_formatted', 'evidence'],
             columns={
                 phenotype  => 'Phenotype',
-                entity => 'Entities Affected',
+                entity_formatted => 'Entities Affected',
                 evidence => 'Supporting Evidence',
         }, key='phenotype_not_observed',
+        passed_data = fields.phenotype_not_observed.data,  #fields.phenotype_not_observed.data has been mutated by process_phenotype_data
         style = phenotype_table_settings);
       %]
    [% END %]
@@ -72,12 +88,11 @@
 
 [% WRAPPER $field_block title="Overexpression" key="drives_overexpression";
    WRAPPER toggle title="<i>Overexpression from the " _  object.name.data.label _ " promoter results in the following phenotypes.</i>";
-
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
 				 evidence => 'Supporting Evidence',
 			}, key='phenotype_overexpression',
-			passed_data=fields.drives_overexpression.data.Phenotype.values);
+            passed_data = fields.drives_overexpression.data.Phenotype.values);
   END;
 END %]
 
