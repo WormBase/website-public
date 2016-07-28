@@ -29,7 +29,7 @@
 
 [%
     process_phenotype_data(fields.phenotype.data);
-	build_data_table(order=['phenotype', 'entity_formatted', 'evidence'],
+    build_data_table(order=['phenotype', 'entity_formatted', 'evidence'],
             columns={
                 phenotype  => 'Phenotype',
                 entity_formatted => 'Entities Affected',
@@ -48,7 +48,7 @@
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
       [%
         process_phenotype_data(fields.phenotype_not_observed.data);
-    	build_data_table(order=['phenotype','entity_formatted', 'evidence'],
+        build_data_table(order=['phenotype','entity_formatted', 'evidence'],
             columns={
                 phenotype  => 'Phenotype',
                 entity_formatted => 'Entities Affected',
@@ -68,14 +68,14 @@
 
     <div>
 [%
-	build_data_table(
+    build_data_table(
             order=['phenotype','interactions','interaction_type', 'citations'],
-			columns={
+            columns={
                 phenotype  => 'Phenotype',
                 interactions => 'Interactions',
                 interaction_type => 'Interaction Type',
-				citations => 'Citations'
-			}, key='phenotype_by_interaction');
+                citations => 'Citations'
+            }, key='phenotype_by_interaction');
 %]
     </div>
 
@@ -88,10 +88,10 @@
 
 [% WRAPPER $field_block title="Overexpression" key="drives_overexpression";
    WRAPPER toggle title="<i>Overexpression from the " _  object.name.data.label _ " promoter results in the following phenotypes.</i>";
-	build_data_table(order=['object','evidence'],
-			columns={object  => 'Phenotype',
-				 evidence => 'Supporting Evidence',
-			}, key='phenotype_overexpression',
+        build_data_table(order=['object','evidence'],
+            columns={object  => 'Phenotype',
+                 evidence => 'Supporting Evidence',
+            }, key='phenotype_overexpression',
             passed_data = fields.drives_overexpression.data.Phenotype.values);
   END;
 END %]
