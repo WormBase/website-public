@@ -515,15 +515,9 @@ table ul {
  background-color: #aaa;
 }
 .dataTable tr.group {
-     /* background-color: #888; */
-     /* color: white; */
-     width: 100%;
-background: linear-gradient(#eee, #ddd);
-    /* border-top: 1px solid #AAA; */
-
-    /* border-collapse: collapse; */
-    /* border-space: 0; */
-
+  width: 100%;
+  background: linear-gradient(#e9eef2, #ddd);
+  border-top: 1px dotted #AAA;
 }
 .dataTable tr.group td:first-child {
     /* background-color: #999; */
@@ -1107,6 +1101,32 @@ cursor:pointer;}
 
 .ui-autocomplete {
   z-index:15 !important;
+}
+.ui-autocomplete ul, .ui-autocomplete li{
+    padding: 0;
+    margin: 0;
+}
+.ui-autocomplete .ui-menu, .ui-autocomplete .ui-menu-item{
+    padding: 0;
+    margin: 0;
+
+}
+.ui-autocomplete .ui-menu-item a {
+    border: 1px solid transparent;
+}
+.ui-autocomplete .ui-menu-item a.ui-state-focus {
+    border: 1px solid #999;
+}
+.autocomplete-item-wrapper {
+    font-size: smaller;
+    overflow:hidden;
+    border: 1 solid #666;
+}
+.autocomplete-item-wrapper .species {
+    display: block;
+    line-height: 1em;
+    font-size: small;
+    color: #666;
 }
 
 
@@ -2268,8 +2288,12 @@ div#google-map {
 }
 
 /* gene phenotypes table */
+#table_phenotype_by tbody ul {
+  list-style-type: none;
+  padding-left: 0;
+}
 #table_phenotype_by tbody td:nth-child(2) > .evidence{
-  margin-left: 1em; /* so it aligns with non-list elements, in the same column */
+ /* margin-left: 1em; /* so it aligns with non-list elements, in the same column */
 }
 
 /* FPKM control statistics table on Expression widget */

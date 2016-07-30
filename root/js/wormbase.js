@@ -663,18 +663,57 @@
         $jq(this).removeClass("active");
       });
 
+      (function(){
+        // Extend the autocomplete plugin to handle html in items
+        // Adapted based on https://github.com/scottgonzalez/jquery-ui-extensions/blob/master/src/autocomplete/jquery.ui.autocomplete.html.js by Scott González (http://scottgonzalez.com)
+
+        var proto = $jq.ui.autocomplete.prototype,
+	        initSource = proto._initSource;
+
+        function filter( array, term ) {
+          var matcher = new RegExp( $jq.ui.autocomplete.escapeRegex(term), "i" );
+          return $jq.grep( array, function(value) {
+		    return matcher.test($jq( "<div>" ).html( value.label || value.value || value ).text());
+	      });
+        }
+
+        $jq.extend( proto, {
+	      _initSource: function() {
+		    if ( this.options.html && $jq.isArray(this.options.source) ) {
+			  this.source = function( request, response ) {
+			    response( filter( this.options.source, request.term ) );
+			  };
+		    } else {
+			  initSource.call( this );
+		    }
+	      },
+
+	      _renderItem: function( ul, item) {
+		    return $jq( "<li></li>" )
+			  .data( "item.autocomplete", item )
+			  .append( $jq( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.labelHtml || item.label ) )
+			  .appendTo( ul );
+	      }
+        });
+      })();
+
       searchBox.autocomplete({
-          source: function( request, response ) {
-              lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
-                  if ( xhr === lastXhr ) {
-                      response( data );
-                  }
+        source: function( request, response ) {
+          lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
+            if ( xhr === lastXhr ) {
+              data.forEach(function(dat) {
+                var speciesHtml = (dat.taxonomy && dat.taxonomy.species) ? '<span class="species">'  + dat.taxonomy.genus + ' ' + dat.taxonomy.species + '</span>' : '';
+                dat.labelHtml = '<span class="autocomplete-item-wrapper"><span>' + dat.label + '</span>' + speciesHtml + '</span>';
               });
-          },
-          minLength: 2,
-          select: function( event, ui ) {
-              location.href = ui.item.url;
-          }
+              response( data );
+            }
+          });
+        },
+        minLength: 2,
+        select: function( event, ui ) {
+          location.href = ui.item.url;
+        },
+        html: true
       });
 
 
