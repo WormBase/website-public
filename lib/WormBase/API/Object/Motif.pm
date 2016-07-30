@@ -118,7 +118,7 @@ sub homologies {
         if (my @homol = $object->$homology_type) {
             foreach my $homologous_object (@homol) {
                 my $type = $types->{$homology_type};
-                my $species = $homologous_object->Species;
+                my $species = eval { $homologous_object->Species };
                 push @data,	{
                     homolog => $self->_pack_obj($homologous_object),
                     type => "$type" || undef,
