@@ -2,7 +2,7 @@
 description =  OrthoCluster Perfect Synteny Blocks
 
 # The synteny database
-join        = dbi:mysql:database=gbrowse_syn_join_orthocluster_perfect_WS204;host=localhost;user=wormbase;password=sea3l3ganz
+join        = dbi:mysql:database=gbrowse_syn_join_orthocluster_perfect_WS204;host=10.0.0.181;user=wormbase;password=sea3l3ganz
 
 #     symbolic src   config file (without the ".conf")    Description
 source_map =      Cele     c_elegans_synteny     "C. elegans"
@@ -89,26 +89,32 @@ stylesheet  = /css/wormbase-gbrowse.css
 
 
 # species-specific databases
-[c_elegans_synteny200]
+#[c_elegans_synteny200]
+[c_elegans_synteny]
 tracks    = CG 
 color     = green
 
-[c_remanei_synteny200]
+#[c_remanei_synteny200]
+[c_remanei_synteny]
 tracks    = CG
 color     = red
 
-[c_briggsae_synteny200]
+#[c_briggsae_synteny200]
+[c_briggsae_synteny]
 tracks    = CG
 color     = blue
 
-[c_brenneri_synteny200]
+#[c_brenneri_synteny200]
+[c_brenneri_synteny]
 tracks    = CG
 color     = purple
 
-[c_japonica_synteny200]
+#[c_japonica_synteny200]
+[c_japonica_synteny]
 tracks    = CG
 color     = black
 
-[p_pacificus_synteny200]
+#[p_pacificus_synteny200]
+[p_pacificus_synteny]
 tracks    = CG
 color     = steelblue
