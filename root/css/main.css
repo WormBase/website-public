@@ -708,10 +708,10 @@ div#create-prompt {
   text-overflow: ellipsis;
 }
 
-.text-min:hover div.more, 
-div.more:hover, 
-.result:hover div.ev-more-text span, 
-.result:hover .v, 
+.text-min:hover div.more,
+div.more:hover,
+.result:hover div.ev-more-text span,
+.result:hover .v,
 div.columns div.ui-icon-close:hover {
   opacity:1;
   filter:alpha(opacity=100);
@@ -729,6 +729,10 @@ div.columns div.ui-icon-close:hover {
 
 .ev-more-text {
   font-size:0.8em;
+  margin:-8px auto -3px;
+}
+
+.description .ev-more-text {
   margin:-8px auto 0;
 }
 
@@ -745,7 +749,7 @@ tr.odd .ev-more-text span {
 .ev-more {
   height:1em;
   text-align: center;
-  margin: 15px 10px;
+  margin: 10px 10px;
   border-top: 1px solid rgba(0,0,0,0.3);
 }
 
