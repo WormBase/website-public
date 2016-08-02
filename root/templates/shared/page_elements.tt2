@@ -27,7 +27,6 @@
     [% END %]
 [% IF text %]    </div>
     <div class="ev-more">
-      <div class="v ev-more-line"></div>
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
       <div class="v ui-icon ui-icon-triangle-1-s"></div>
     </div>
@@ -223,11 +222,13 @@ END;
 
 [%# The Floating Box on the overview widget %]
 [% BLOCK highlight_box %]
-    <div class="detail-box ui-corner-all">
-       [% taxonomy %]
-       [% content %]
-       [% wb_id_field %]
-       [% download_field %]
+    <div class="detail-box-wrapper">
+        <div class="detail-box ui-corner-all">
+           [% taxonomy %]
+           [% content %]
+           [% wb_id_field %]
+           [% download_field %]
+        </div>
     </div>
 [% END %]
 
