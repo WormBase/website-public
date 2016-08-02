@@ -41,7 +41,7 @@ has 'blast_databases' => (
         my $self = shift;
         my $data;
         my $base_dir = catfile($self->pre_compile->{base});
-        my $assemblies_info = catfile(WormBase::Web->config->{metadata_path}, "ASSEMBLIES." . WormBase::Web->config->{wormbase_release} . ".json");
+        my $assemblies_info = WormBase::Web->path_to('/conf/species/', 'species_ASSEMBLIES.json');
         unless (-e $assemblies_info) {
             error("Misconfigured set-up. Cannot find metadata file that describes assemblies.");
         }
