@@ -1974,6 +1974,12 @@ div#column-dropdown ul li.ui-state-disabled:hover {
   color:#333;
 }
 
+#page-title .assembly-name {
+  color: #333;
+  margin-left: 5px;
+
+}
+
 
 /*********************************
 

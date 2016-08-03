@@ -27,6 +27,7 @@
     [% END %]
 [% IF text %]    </div>
     <div class="ev-more">
+      <div class="v ev-more-line"></div>
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
       <div class="v ui-icon ui-icon-triangle-1-s"></div>
     </div>

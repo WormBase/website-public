@@ -11,6 +11,10 @@
         species_name = c.config.sections.species_list.defined(species) ?
             c.config.sections.species_list.$species.title
             : (s_arr = species.split('_').1) ? species.substr(0,1) _ '. ' _ s_arr : species FILTER ucfirst;
+
+        assembly = c.config.sections.species_list.defined(species) ?
+            c.config.sections.species_list.$species.assembly_name : '';
+
         IF class == 'all';
           breadcrumbs.push('<span class="species">'
                 _ species_name
@@ -23,7 +27,8 @@
           IF species != 'all';
             breadcrumbs.push('<span class="species"><a href="' _ c.uri_for('/species',species).path _ '">'
                       _ species_name
-                      _ '</a></span>');
+                      _ '</a></span>'
+                      _ "<span class=\"assembly-name\">(Genome assembly: $assembly)</span>");
           END;
           UNLESS object.name.data.label;
             breadcrumbs.push('<span>'_ class_title  _ '</span>');
