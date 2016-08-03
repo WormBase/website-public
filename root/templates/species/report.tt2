@@ -24,16 +24,18 @@
                       _ species_name
                       _ '</a></span>');
           END;
+          titles = [];
           UNLESS object.name.data.label;
-            breadcrumbs.push('<span>'_ class_title  _ '</span>');
+            titles.push('<span>'_ class_title  _ '</span>');
           ELSE;
-            breadcrumbs.push('<a href="' _ c.uri_for('/species',species,class).path _ '">'
+            titles.push('<a href="' _ c.uri_for('/species',species,class).path _ '">'
                     _ class_title _ '</a>');
-            breadcrumbs.push('<span>' _ markup(object.name.data.label, 0, 1, 1, 1) _ '</span>');
+            titles.push('<span>' _ markup(object.name.data.label, 0, 1, 1, 1) _ '</span>');
           END;
         END;
       END;
 
-      title = breadcrumbs.join(' &raquo; ');
-      report_page(title);
+      breadcrumbs_string = breadcrumbs.join(' &raquo; ');
+      title_string = titles.join(' &raquo; ');
+      report_page();
 %]

@@ -52,14 +52,14 @@
         <div style="clear:both"></div>
       </div>
 
-      [% title = '<span id="breadcrumbs">' _ title _ '</span>' %]
+      [% title = title_string %]
       <div id="page-title" class="[% section %]-bg">
-      <h2
-        [% UNLESS c.req.action == 'me' %]
-          >
+      [% UNLESS c.req.action == 'me' %]
           [% wbid = get_star_id(object.name.data.id || c.req.path) %]
           [% make_star(wbid) %]
-        [% ELSE; '>'; END; %]
+      [% END; %]
+      [%  '<span id="breadcrumbs">' _ breadcrumbs_string _ '</span>'; %]
+      <h2>
           [% title %]
     [% IF c.request.param('from');
         from_uri = c.request.param('from');

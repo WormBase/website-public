@@ -317,7 +317,7 @@
 
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
-      Layout.Breadcrumbs.init();
+//      Layout.Breadcrumbs.init();
       if(location.hash.length > 0){
         Layout.readHash();
       }else if(layout = widgetHolder.data("layout")){

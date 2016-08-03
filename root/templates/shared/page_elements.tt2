@@ -21,13 +21,12 @@
     [% FOREACH type IN data.keys -%]
         <b>[% type_label = '' _ type; type_label.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]:
           [% IF (type == 'curatorial_remarks'); '<br />'; END; %]
-          [% tags2link(data.$type, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items') %]
+          [% tags2link(data.$type, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items', 50) %]
         [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
 [% IF text %]    </div>
     <div class="ev-more">
-      <div class="v ev-more-line"></div>
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
       <div class="v ui-icon ui-icon-triangle-1-s"></div>
     </div>
