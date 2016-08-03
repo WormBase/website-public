@@ -52,12 +52,23 @@
         <div style="clear:both"></div>
       </div>
 
-      [% title = title_string %]
       <div id="page-title" class="[% section %]-bg">
       [% UNLESS c.req.action == 'me' %]
           [% wbid = get_star_id(object.name.data.id || c.req.path) %]
           [% make_star(wbid) %]
       [% END; %]
+
+
+      [% IF breadcrumbs.size < 3;
+          titles = breadcrumbs;
+          breadcrumbs = [];
+      ELSE;
+          titles = breadcrumbs.slice(2);
+          breadcrumbs = breadcrumbs.slice(0,1);
+      END; %]
+      [% title = titles.join(" &raquo; "); %]
+      [% breadcrumbs_string = breadcrumbs.join(" &raquo; "); %]
+
       [%  '<span id="breadcrumbs">' _ breadcrumbs_string _ '</span>'; %]
       <h2>
           [% title %]

@@ -3,6 +3,7 @@
 [%
       species = species || object.name.data.taxonomy;
       breadcrumbs = [];
+
       IF (species == 'all' && class=='all');
         breadcrumbs.push('<span>All Species</span>');
       ELSE;
@@ -24,18 +25,14 @@
                       _ species_name
                       _ '</a></span>');
           END;
-          titles = [];
           UNLESS object.name.data.label;
-            titles.push('<span>'_ class_title  _ '</span>');
+            breadcrumbs.push('<span>'_ class_title  _ '</span>');
           ELSE;
-            titles.push('<a href="' _ c.uri_for('/species',species,class).path _ '">'
+            breadcrumbs.push('<a href="' _ c.uri_for('/species',species,class).path _ '">'
                     _ class_title _ '</a>');
-            titles.push('<span>' _ markup(object.name.data.label, 0, 1, 1, 1) _ '</span>');
+            breadcrumbs.push('<span>' _ markup(object.name.data.label, 0, 1, 1, 1) _ '</span>');
           END;
         END;
       END;
-
-      breadcrumbs_string = breadcrumbs.join(' &raquo; ');
-      title_string = titles.join(' &raquo; ');
-      report_page();
+      report_page(breadcrumbs);
 %]
