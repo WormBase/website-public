@@ -297,6 +297,12 @@
 	base        = 'http://www.ensemblgenomes.org'
 	search      = 'http://www.ensemblgenomes.org/search/eg/%s'
 	}
+	
+ EntrezGene = {
+        description = 'NCBI-Gene integrated gene information'
+        base        = 'http://www.ncbi.nlm.nih.gov'
+        search      = 'http://www.ncbi.nlm.nih.gov/gene/?term=%s'
+ }
 
  ExperimentalCellResearch = {
 	description = 'Experimental Cell Research'
@@ -445,6 +451,13 @@
 	base        = 'http://hamap.expasy.org/'
 	HAMAP_annotation_rule = 'http://hamap.expasy.org/unirule/%s'
 	}
+	
+ HGNC = {
+        description = 'HUGO Gene Nomenclature Committee'
+        base        = 'http://www.genenames.org'
+        search      = 'http://www.genenames.org/cgi-bin/gene_symbol_report?match=%s'
+        }
+	
  hi = {
 	description = 'H-InvDB: Annotated Human Gene Database'
 	search      = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
