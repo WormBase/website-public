@@ -960,6 +960,13 @@
 	base        = 'http://www.rupress.org/'
 	}
 
+ TransgeneOme = {
+	description = 'Through a focused effort on protein groups of interest and an open collaboration with the community the TransgeneOme Project aims to systematically generate transgenic worm lines on a genome scale.'
+	maintainer  = ''
+	base        = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/projects.html'
+	search      = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/clone.html?wellId='
+	}
+	
  TREEFAM = {
 	description = 'TreeFam (Tree families database) is a database of phylogenetic trees of animal genes. It aims at developing a curated resource that gives reliable information about ortholog and paralog assignments, and evolutionary history of various gene families.'
 	maintainer  = ''
