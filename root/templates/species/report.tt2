@@ -18,7 +18,8 @@
         IF class == 'all';
           breadcrumbs.push('<span class="species">'
                 _ species_name
-                _ '</span>');
+                _ '</span>'
+                _ "<span class=\"assembly-name\">(Genome assembly: $assembly)</span>");
         ELSE;
           class_title = c.config.sections.species.$class.title || c.config.sections.resources.$class.title;
           IF !(object.name.data.id.defined);

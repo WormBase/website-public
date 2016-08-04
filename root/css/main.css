@@ -1938,13 +1938,22 @@ div#column-dropdown ul li.ui-state-disabled:hover {
 /* END Formatting for column selection dropdown */
 
 
+#page-title-wrapper {
+  margin: 0 -1em -2.2em 175px;
+  position: relative;
+  top: -2.2em;
+  width: calc(100% - 160px);
+  display: table;
+  z-index: 10;
+}
 
 #page-title {
-  margin:1.5em -1em -2.2em 175px;
-  padding:0.5em 1.5em 0;
-  position:relative;
-  z-index:10;
-  height:3em;
+  height: 3em;
+  display: table-cell;
+  width: 100%;
+  vertical-align: middle;
+  padding: 0 1.5em;
+  /* padding: 0.5em 1.5em 0; */
 }
 
 #page-title.search-bg {
@@ -1961,8 +1970,9 @@ div#column-dropdown ul li.ui-state-disabled:hover {
 }
 
 #page-title .bench-update{
-  padding-top:5px;
-  margin-top: 0.5em;
+  /* padding-top:5px; */
+  /* margin-top: 0.5em; */
+  margin: 15px;
 }
 
 #page-title h2 .note {
@@ -1980,6 +1990,10 @@ div#column-dropdown ul li.ui-state-disabled:hover {
 
 }
 
+#page-title h2 .assembly-name {
+  font-size: 0.6em;
+  font-weight: normal;
+}
 
 /*********************************
 
@@ -3285,6 +3299,8 @@ div.title {
 /* Effects */
 #breadcrumbs {
   position:relative;
+  display: block;
+  margin-top: 8px;
   font-size: 0.8em;
   width:100%;
 }

@@ -52,7 +52,8 @@
         <div style="clear:both"></div>
       </div>
 
-      <div id="page-title" class="[% section %]-bg">
+    <div id="page-title-wrapper" class="[% section %]-bg">
+      <div id="page-title">
       [% UNLESS c.req.action == 'me' %]
           [% wbid = get_star_id(object.name.data.id || c.req.path) %]
           [% make_star(wbid) %]
@@ -82,6 +83,7 @@
       </h2>
 
       </div>
+    </div>
     [% END %]
 
 
