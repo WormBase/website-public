@@ -3302,21 +3302,6 @@ div.title {
   width:100%;
 }
 
-/* #breadcrumbs-hide { */
-/*   font-size:0.6em; */
-/*   white-space: nowrap; */
-/*   height:auto; */
-/*   width: auto; */
-/*   overflow:hidden; */
-/*   margin:0 4px 0 12px; */
-/* } */
-/* #breadcrumbs-expand  { */
-/*   position:absolute; */
-/*   left:-12px; */
-/*   top:5px; */
-/*   cursor:pointer; */
-/* } */
-
 span.page-title{
   overflow:hidden;
 }
