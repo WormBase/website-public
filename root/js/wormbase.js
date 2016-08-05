@@ -317,7 +317,7 @@
 
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
-      Layout.Breadcrumbs.init();
+
       if(location.hash.length > 0){
         Layout.readHash();
       }else if(layout = widgetHolder.data("layout")){
@@ -1277,52 +1277,6 @@ var Layout = (function(){
       }
     }
 
-
-
-
-  var Breadcrumbs = (function(){
-    var bc = $jq("#breadcrumbs"),
-        bExp = false,
-        hiddenContainer,
-        bWidth,
-        bCount;
-
-    function init() {
-      if (!bc || ((bCount = bc.children().size()) < 3)) { return; }
-      var children = bc.children(),
-          hidden = children.slice(0, (bCount - 2)),
-          shown = children.slice((bCount - 2)),
-          expand;
-      bc.empty();
-      hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
-      hiddenContainer.append(hidden).children().after(' &raquo; ');
-
-      bc.append('<span id="breadcrumbs-expand" class="ui-icon-large ui-icon-triangle-1-e tl" tip="exapand"></span>').append(hiddenContainer).append(shown);
-      bc.children(':last').addClass("page-title").before(" &raquo; ");
-
-      expand = $jq("#breadcrumbs-expand");
-      expand.click( function(){
-        (bExp = !bExp) ? show($jq(this)) : hide($jq(this));
-      });
-      bWidth = hiddenContainer.width();
-      hide(expand);
-    }
-
-    function show(expand){
-      hiddenContainer.animate({width:bWidth}, function(){ hiddenContainer.css("width", "auto");}).css("visibility", 'visible');
-      expand.attr("tip", "minimize").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-w");
-    }
-
-    function hide(expand){
-      hiddenContainer.animate({width:0}, function(){ hiddenContainer.css("visibility", 'hidden');});
-      expand.attr("tip", "expand").removeClass("ui-icon-triangle-1-w").addClass("ui-icon-triangle-1-e");
-    }
-
-    return {
-     init: init
-    }
-  })();
-
   return {
       resize: resize,
       deleteLayout: deleteLayout,
@@ -1334,7 +1288,6 @@ var Layout = (function(){
       readHash: readHash,
       getLeftWidth: getLeftWidth,
       updateLayout: updateLayout,
-      Breadcrumbs: Breadcrumbs,
       newLayout: newLayout
   }
 })();

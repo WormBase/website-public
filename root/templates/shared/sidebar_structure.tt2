@@ -52,14 +52,26 @@
         <div style="clear:both"></div>
       </div>
 
-      [% title = '<span id="breadcrumbs">' _ title _ '</span>' %]
-      <div id="page-title" class="[% section %]-bg">
-      <h2
-        [% UNLESS c.req.action == 'me' %]
-          >
+    <div id="page-title-wrapper" class="[% section %]-bg">
+      <div id="page-title">
+      [% UNLESS c.req.action == 'me' %]
           [% wbid = get_star_id(object.name.data.id || c.req.path) %]
           [% make_star(wbid) %]
-        [% ELSE; '>'; END; %]
+      [% END; %]
+
+
+      [% IF breadcrumbs.size < 3;
+          titles = breadcrumbs;
+          breadcrumbs = [];
+      ELSE;
+          titles = breadcrumbs.slice(2);
+          breadcrumbs = breadcrumbs.slice(0,1);
+      END; %]
+      [% title = titles.join(" &raquo; "); %]
+      [% breadcrumbs_string = breadcrumbs.join(" &raquo; "); %]
+
+      [%  '<span id="breadcrumbs">' _ breadcrumbs_string _ '</span>'; %]
+      <h2>
           [% title %]
     [% IF c.request.param('from');
         from_uri = c.request.param('from');
@@ -71,6 +83,7 @@
       </h2>
 
       </div>
+    </div>
     [% END %]
 
 

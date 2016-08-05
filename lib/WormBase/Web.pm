@@ -167,13 +167,19 @@ sub _setup_species {
         my $name = $species->{name};
         my $bioproject = $species->{bioproject};
         my $long_name = "$name\_$bioproject";
+        my $assembly_name = $species->{assembly_name};
 
+        my $merged_species;
         if ($original_species->{$long_name}){
             # a typical strain
-            $new_species->{$long_name} = $original_species->{$long_name};
+            $merged_species = $original_species->{$long_name};
+            $merged_species->{assembly_name} = $species->{assembly_name};
+            $new_species->{$long_name} = $merged_species;
         } elsif ($original_species->{$name}->{bioprojects}->{$bioproject}){
             # default strain
-            $new_species->{$name} = $original_species->{$name};
+            $merged_species = $original_species->{$name};
+            $merged_species->{assembly_name} = $species->{assembly_name};
+            $new_species->{$name} = $merged_species;
         }
     }
 
@@ -339,10 +345,10 @@ sub _parse_wb_species {
             my $strain_name = $assembly->{strain};
 
             push @species, {
-                #    'url' => '/Schmidtea_mediterranea_prjna12585/Info/Index',
                 'name' => $species,
                 'bioproject' => $assembly->{bioproject},
-                'label' => "$species_name ($strain_name)"
+                'label' => "$species_name $strain_name",
+                'assembly_name' => $assembly->{assembly_name},
             };
         }
     }
@@ -752,12 +758,12 @@ sub api_tests {
     # Don't check "uninitialized" variables. All variables below are initialized.
     # Perl is just claiming that $pkg has not been set, which is a lie.
     no warnings 'uninitialized';
- 
+
     my $self = shift;
     my $api = $self->model('WormBaseAPI');
     my @tests = <t/api_tests/*.t>;
     foreach my $test (@tests) {
-        next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t'); # Only skip if a test set was specified by API_TEST and it is not the current one. 
+        next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t'); # Only skip if a test set was specified by API_TEST and it is not the current one.
         next if (defined @API_TESTS_BLACKLIST && ( grep {$_ eq basename($test, '.t')} @API_TESTS_BLACKLIST)); # skip if current test file is in blacklist
         require_ok($test);
         my $pkg = basename($test, '.t') . '::';
