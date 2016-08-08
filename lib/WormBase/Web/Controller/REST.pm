@@ -1799,7 +1799,7 @@ sub parasite_api_GET {
     my ($path, $paramString) = split /\?/, $c->req->uri->as_string;
 
     # construct url for parasite api
-    my $url = join('/', 'http://parasite.wormbase.org/rest-6', @args);
+    my $url = join('/', 'http://parasite.wormbase.org/rest-7', @args);
     $url = $url . '?' . 'content-type=application/json';
     $url = $url . ";$paramString" if $paramString;
 
