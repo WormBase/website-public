@@ -1,15 +1,22 @@
-[% IF c.config.installation_type == 'development' ||
-    c.config.installation_type == 'staging' %]
-    <div class="widget-data-source-wrapper">
-    [% IF data_from_datomic %]
-        <span class="widget-data-source datomic">Datomic</span>
+[% MACRO widget_data_source BLOCK %]
+    [%# display the data source of the widget to help with testing %]
+    [%# development and staging instance only %]
+    [% IF c.config.installation_type == 'development' ||
+        c.config.installation_type == 'staging' %]
+        <div class="widget-data-source-wrapper">
+        [% IF data_from_datomic %]
+            <span class="widget-data-source datomic"
+                title="This widget contains data from Datomic.">Datomic</span>
+        [% END %]
+        [% IF data_from_ace %]
+            <span class="widget-data-source"
+             title="This widget contains data from ACeDB.">ACeDB</span>
+        [% END %]
+        </div>
     [% END %]
-    [% IF data_from_ace %]
-        <span class="widget-data-source">ACeDB</span>
-    [% END %]
-    </div>
 [% END %]
 
+[% widget_data_source %]
 [% empty_widget_check %]
 [% PROCESS $child_template %]
 
