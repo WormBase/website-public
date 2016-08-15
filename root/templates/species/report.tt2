@@ -19,7 +19,7 @@
           breadcrumbs.push('<span class="species">'
                 _ species_name
                 _ '</span>'
-                _ "<span class=\"assembly-name\">(Genome assembly: $assembly)</span>");
+                _ (assembly ? "<span class=\"assembly-name\">(Genome assembly: $assembly)</span>" : ''));
         ELSE;
           class_title = c.config.sections.species.$class.title || c.config.sections.resources.$class.title;
           IF !(object.name.data.id.defined);
@@ -29,7 +29,7 @@
             breadcrumbs.push('<span class="species"><a href="' _ c.uri_for('/species',species).path _ '">'
                       _ species_name
                       _ '</a></span>'
-                      _ "<span class=\"assembly-name\">(Genome assembly: $assembly)</span>");
+                      _ (assembly ? "<span class=\"assembly-name\">(Genome assembly: $assembly)</span>" : ''));
           END;
           UNLESS object.name.data.label;
             breadcrumbs.push('<span>'_ class_title  _ '</span>');
