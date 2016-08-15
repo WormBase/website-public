@@ -927,9 +927,11 @@ sub widget_GET {
             my $data;
             if ($resp_content && $resp_content->{$field}) {
                 $data = $resp_content->{$field};
+                $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
             } elsif ((not $skip_ace) && $object->can($field)) {
                 # try Perl API
                 $data = $object->$field;
+                $c->stash->{data_from_ace} = 1;  # widget contains data from acedb
                 if ($c->config->{fatal_non_compliance}) {
                     # checking for data compliance can be an overhead, only use
                     # in testing env where its explicitly enabled

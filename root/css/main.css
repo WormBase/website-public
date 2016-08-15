@@ -2076,6 +2076,21 @@ li.visible div.widget-container {
   height:150px;
 }
 
+.widget-container .widget-data-source-wrapper {
+  position: absolute;
+  top: 5px;
+  right: 30px;
+}
+.widget-container .widget-data-source {
+  border-radius: 5px;
+  background-color: white;
+  padding: 4px;
+  display: inline-block;
+}
+.widget-container .widget-data-source.datomic {
+  background-color: yellow;
+}
+
 /* colour changes for the different types of widgets */
 
 #widget-me {
