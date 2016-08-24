@@ -81,6 +81,19 @@
 
     }
 
+    sub test_negative_strand_deletion {
+        my $variation = $api->fetch({ class => 'Variation', name => 'WBVar00275092' });
+
+        can_ok('WormBase::API::Object::Variation', ('_build_sequence_strings'));
+
+        my ($wt_seq,$mut_seq,$wt_full,$mut_full) = $variation->_build_sequence_strings();
+
+        my $match_wt_seq = $wt_seq =~ /acaccattgaacttccaattgcatACGGAAGCGGTAGACGCATTTCGCAAACGGGTAGACCTGTTAGGCTGAAATTTGAATTTTTGATAGGATTATCAGTATATATAGTTATCCATACTTATTGATGGTTACTTTCGACCCAAAACCGAAGCCTAATGGAGCCGCACCAATTCCTGCGGATATCAGCCATAccagaactatcacgtaatttatacg/i;
+        ok($match_wt_seq, 'correct wild type sequence');
+        ok($mut_seq =~ /acaccattgaacttccaattgcatccagaactatcacgtaatttatacg/i, 'correct mutant sequence');
+
+    }
+
 }
 
 1;

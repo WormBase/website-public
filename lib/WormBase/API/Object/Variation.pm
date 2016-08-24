@@ -1345,7 +1345,7 @@ sub _compile_nucleotide_changes {
 
             my $segment = $self->_segments->[0];
             if ($segment) {
-                $wt  = $segment->dna;
+                $wt  = lc $segment->dna;
             }
 
             # CGH tested deletions.
@@ -1643,11 +1643,8 @@ sub _build_sequence_strings {
             # Reverse complement the mutant sequence
             $strand = '-';  # Set the $strand flag if not already set.
             unless ($mut =~ /transposon/i) {
-                $mut = reverse $mut;
-                $mut =~ tr/[acgt]/[tgca]/;
-
-                $wt = reverse $wt;
-                $wt =~ tr/[acgt]/[tgca]/;
+                $mut = &reverse_complement($mut);
+                $wt = &reverse_complement($wt);
             }
         }
 
