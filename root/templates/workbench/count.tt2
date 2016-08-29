@@ -1,6 +1,6 @@
 
 
-([% c.stash.count %])
+([% c.stash.count %] <span class="ui-icon ui-icon-stars ui-icon-star-yellow"></span>)
 [% IF c.stash.notify %]
 <script>
   WB.displayNotification("[% c.stash.notify %]");

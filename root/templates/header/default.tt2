@@ -26,7 +26,7 @@
 [% wbid = get_star_id(object.name.data.id || c.req.path) %]
 [% label = label.remove('[\'"]') %]
 
-<div id="header" data-page='{
+<div id="header" class="clearfix" data-page='{
     "ref": "[% url %]",
     "wbid": "[% wbid || class %]",
     "name": "[% label | uri %]",
@@ -47,14 +47,10 @@
         END;
     %]
 }'>
-
-  [% PROCESS "boilerplate/search_bar.tt2" %]
+  <div class="status-bar"></div>
 
   <div id="title">
-      <a href="/" title="WormBase Home">
-          <img src="/img/logo/logo_wormbase_gradient_small.png" />
-          <!-- <h1>[%# template.title or c.config.site_name %]</h1> -->
-      </a>
+      <a href="/" title="WormBase Home"><img src="/img/logo/logo_wormbase_gradient_small.png" /><!-- <h1>[%# template.title or c.config.site_name %]</h1> --></a>
     <div class="release_date">
       <p>
          Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a>
@@ -62,146 +58,103 @@
     </div>
   </div>
 
-
-[% MACRO nav_species(species_name,display_title) BLOCK %]
-  <li>
-    <a href="/[% title %]/[% species_name %]" [% UNLESS species_name == 'all' %] class="species" [% END %]>
-         <span class="ui-icon ui-icon-triangle-1-e"></span>
-     [% c.config.sections.species_list.$species_name.title %]
-    </a>
-              <ul class="wb-dropdown">
-                [% FOREACH bioproject IN c.config.sections.species_list.$species_name.bioprojects.keys %]
-                  <li>[% text2link('genomic_location','','Browse Genome: ' _ c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, c.config.sections.species_list.$species_name.bioprojects.$bioproject.title, species_name) %]</li>
-                [% END %]
-
-              [% FOREACH class IN c.config.sections.species_list.$species_name.available_classes.class %]
-                <li><a href="[% c.uri_for('/species',species_name,class).path  %]">[% pluralize(c.config.sections.species.$class.title || c.config.sections.resources.$class.title) %]</a></li>
-              [% END %]
-
-              </ul>
-            </li>
-
-[% END %]
-
-[% BLOCK nav_sublist %]
-    <li>
-        <a>
-            <span class="ui-icon ui-icon-triangle-1-s"></span>
-            [% sublist_title %]
-        </a>
-        <ul class="wb-dropdown">
-            [% content %]
-        </ul>
-    </li>
-[% END %]
+  [% PROCESS "boilerplate/search_bar.tt2" %]
 
   <div id="nav-bar">
-    <ul class="nav-bar">
+    <ul class="nav-bar main-menu">
     [% FOREACH title IN c.config.nav_bar.option %]
       [% url = c.config.sections.$title.url || title %]
-      <li><a href="/[% url %]" id="section-[% title %]" class="[% IF(c.stash.section == title); 'selected'; END;%]">
+      <li id="section-[% title %]"><a href="/[% url %]" class="trigger [% IF(c.stash.section == title); 'selected'; END;%]">
           <span class="ui-icon ui-icon-triangle-1-s"></span>
           [% c.config.sections.$title.title %]</a>
-          <ul class="wb-dropdown">
 
-            [% IF (title == 'species') %]
+          <!-- START: New dropdown menu statics -->
+          <div class="wb-dropdown submenu" style="display:none;">
 
-
-              [% genus_list = {} %]
-              [% FOREACH s IN c.config.sections.species_list.keys.sort;
-                # avoid duplicate listing if already in 1st level of menu
-                NEXT IF c.config.sections.species_list.$s.display_in_dropdown == 'yes';
-                genus = c.config.sections.species_list.$s.genus;
-                NEXT UNLESS genus;
-                genus_list.$genus = genus_list.$genus || [];
-                genus_list.$genus.push(s);
-               END %]
-
-              [% g_sort = c.config.sections.species_list.keys.sort %]
-              [% #Caenorhabditis species first, #other species later %]
-              [% g_sort = g_sort.grep('^c_.+').merge(g_sort.grep('^[^c]_.+')); %]
-              [% g_sort.unshift('c_elegans') %]
-              [% g_sort.unshift('all') %]
-              [% g_sort = g_sort.unique %]
-
-
-              [% others_list = genus_list.keys.sort %]
-              [% others_list.unshift('Caenorhabditis') %]
-              [% others_list = others_list.unique %]
-
-              <li>[% text2link('genomic_location','all','<span class="ui-icon ui-icon-triangle-1-e"></span><b>Browse Genomes</b>') %]
-                <ul class="wb-dropdown">
-                  <li class="species">
-                    [% text2link('genomic_location', '' ,c.config.sections.species_list.c_elegans.title, '', 'c_elegans') %]</li>
-                  [% FOREACH option IN c.config.sections.species_list.keys.sort %]
-                    [% NEXT IF (option == 'all' || option == 'c_elegans' || option == 'others') %]
-                    <li class="species">
-                    [% text2link('genomic_location', '' ,c.config.sections.species_list.$option.title, '', option) %]</li>
-                  [% END %]
+            <div class="submenu-main">
+                <div class="submenu-title">
+                    <p class=""><strong><a href="http://www.wormbase.org">Directory</a></strong></p>
+                    <p>Start here for encyclopedic information about the worm genome and its genes, proteins, and other encoded features… <a href="http://www.wormbase.org">Find out more</a></p>
+                </div>
+                <div class="submenu-links">
+                    <div class="submenu-menu">
+                        <p class=""><strong>Get Started</strong></p>
+                        <ul>
+                            <li><a href="http://www.wormbase.org">About the directory</a></li>
+                        </ul>
+                    </div>
+                    <div class="submenu-menu">
+                        <p class=""><strong>Search</strong></p>
+                        <ul>
+                            <li><a href="http://www.wormbase.org">Link 1</a></li>
+                            <li><a href="http://www.wormbase.org">Link 2</a></li>
+                        </ul>
+                    </div>
+                     <div class="submenu-menu">
+                         <p class=""><strong>Browse</strong></p>
+                        <ul>
+                            <li><a href="http://www.wormbase.org">By Species</a>
+                                <ul>
+                                    <li><a href="http://www.wormbase.org">Link 1</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="http://www.wormbase.org">Link 2</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="http://www.wormbase.org">Link 3</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="http://www.wormbase.org">Link 4</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="http://www.wormbase.org">Link 5</a></li>
+                                    <li><a href="http://www.wormbase.org">Link 6</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="http://www.wormbase.org">By Resource</a>
+                                <ul>
+                                    <li><a href="http://www.wormbase.org">Link 1</a></li>
+                                    <li><a href="http://www.wormbase.org">Link 2</a></li>
+                                    <li><a href="http://www.wormbase.org">Link 3</a></li>
+                                    <li><a href="http://www.wormbase.org">Link 4</a></li>
+                                    <li><a href="http://www.wormbase.org">Link 5</a></li>
+                                    <li><a href="http://www.wormbase.org">Link 6</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="submenu-menu">
+                        <p class=""><strong>Tools</strong></p>
+                        <ul>
+                            <li><a href="http://www.wormbase.org">Link 1</a></li>
+                            <li><a href="http://www.wormbase.org">Link 2</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="submenu-sub">
+                <p class=""><strong>Latest updates</strong></p>
+                <ul class="more">
+                    <li><a href="http://www.wormbase.org">Report page 1</a></li>
+                    <li><a href="http://www.wormbase.org">Report page 2</a></li>
+                    <li><a href="http://www.wormbase.org">Report page 3</a></li>
                 </ul>
-              </li>
+                <p class=""><strong>Need help?</strong></p>
+                <ul>
+                    <li><a href="http://www.wormbase.org">Support link 1</a></li>
+                    <li><a href="http://www.wormbase.org">Support link 2</a></li>
+                    <li><a href="http://www.wormbase.org" target="_blank">External link</a></li>
+                    <li class="more-github"><a href="http://www.wormbase.org">External link</a></li>
+                </ul>
 
-              [% FOREACH option IN g_sort %]
+            </div>
 
-                [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
-                  [% nav_species(option); %]
-                [% END %]
-              [% END %]
-
-              [% WRAPPER nav_sublist sublist_title='Others...' %]
-                [% FOREACH g IN others_list %] [%# per genus %]
-                  [% WRAPPER nav_sublist sublist_title=g%]
-                    [% FOREACH s IN genus_list.$g %] [%# per species %]
-                      [% nav_species(s); %]
-                    [% END %]
-                  [% END %]
-                [% END %]
-              [% END %]
-
-        [% ELSE %]
-          [% FOREACH option IN c.config.sections.$title.keys.sort %]
-            [% IF option == 'title'; NEXT; END; %]
-            [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
-            <li>
-              <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]">
-            [% IF title == 'resources'; pluralize(c.config.sections.$title.$option.title); ELSE; c.config.sections.$title.$option.title; END; %]</a></li>
-          [% END %]
-          [% IF title == 'tools' %]
-           <li>
-           <a>
-              <span class="ui-icon ui-icon-triangle-1-e"></span>More tools
-            </a>
-           <ul class="wb-dropdown">
-            [% FOREACH option IN c.config.sections.$title.keys.sort %]
-              [% IF option == 'title'; NEXT; END; %]
-              [% IF c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
-              [% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
-              [% IF ((option == 'epic') && (!c.check_any_user_role("admin"))); NEXT; END; %]
-              <li>
-                <a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]">
-                    [% c.config.sections.$title.$option.title;%]</a></li>
-            [% END %]
-            </ul>
-            </li>
-          [% END %]
-        [% END %]
-          </ul>
+          </div>
+          <!-- END: New dropdown menu statics -->
       </li>
     [% END %]
-<li><a href="http://parasite.wormbase.org">ParaSite</a></li>
-  <span class="status-bar"></span>
+  
+    </ul>
+    <ul class="nav-bar parasite-menu">
+      <li><a class="" href="http://parasite.wormbase.org/">ParaSite</a></li>
     </ul>
   </div>
 
   [% PROCESS timer %]
 </div>
 
-
-
-
-
 <!-- END boilerplate/banner -->
-
-
 
     <div id="content">

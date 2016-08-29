@@ -105,14 +105,14 @@
           var navItem = $jq(this);
           $jq("div.columns>ul").hide();
           if(timer){
-            navItem.siblings("li").children("ul.wb-dropdown").hide();
+            navItem.siblings("li").children("div.wb-dropdown").hide();
             navItem.siblings("li").children("a").removeClass("hover");
-            navItem.children("ul.wb-dropdown").find("a").removeClass("hover");
-            navItem.children("ul.wb-dropdown").find("ul.wb-dropdown").hide();
+            navItem.children("div.wb-dropdown").find("a").removeClass("hover");
+            navItem.children("div.wb-dropdown").find("div.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
-          navItem.children("ul.wb-dropdown").show();
+          navItem.children("div.wb-dropdown").show();
           navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
@@ -121,7 +121,7 @@
             timer = undefined;
           }
           timer = setTimeout(function() {
-                toHide.children("ul.wb-dropdown").hide();
+                toHide.children("div.wb-dropdown").hide();
                 toHide.children("a").removeClass("hover");
               }, 300)
         });
@@ -196,7 +196,7 @@
       colDropdown.hover(function () {
           if(timer){
             $jq("#nav-bar").find("ul li .hover").removeClass("hover");
-            $jq("#nav-bar").find("ul.wb-dropdown").hide();
+            $jq("#nav-bar").find("div.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
