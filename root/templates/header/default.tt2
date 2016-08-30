@@ -26,6 +26,7 @@
 [% wbid = get_star_id(object.name.data.id || c.req.path) %]
 [% label = label.remove('[\'"]') %]
 
+<!-- START: Revised header region -->
 <div id="header" class="clearfix" data-page='{
     "ref": "[% url %]",
     "wbid": "[% wbid || class %]",
@@ -47,20 +48,20 @@
         END;
     %]
 }'>
+
   <div class="status-bar"></div>
 
   <div id="title">
       <a href="/" title="WormBase Home"><img src="/img/logo/logo_wormbase_gradient_small.png" /><!-- <h1>[%# template.title or c.config.site_name %]</h1> --></a>
     <div class="release_date">
-      <p>
-         Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a>
-      </p>
+      <p>Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a></p>
     </div>
   </div>
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
   <div id="nav-bar">
+    <!-- START: Revised main menu -->
     <ul class="nav-bar main-menu">
     [% FOREACH title IN c.config.nav_bar.option %]
       [% url = c.config.sections.$title.url || title %]
@@ -69,74 +70,73 @@
           [% c.config.sections.$title.title %]</a>
 
           <!-- START: New dropdown menu statics -->
-          <div class="wb-dropdown submenu" style="display:none;">
-
+          <div class="wb-dropdown submenu" style="display: none;">
             <div class="submenu-main">
                 <div class="submenu-title">
-                    <p class=""><strong><a href="http://www.wormbase.org">Directory</a></strong></p>
-                    <p>Start here for encyclopedic information about the worm genome and its genes, proteins, and other encoded features… <a href="http://www.wormbase.org">Find out more</a></p>
+                    <p><strong><a href="">Directory</a></strong></p>
+                    <p>Start here for encyclopedic information about the worm genome and its genes, proteins, and other encoded features… <a href="/">Find out more</a></p>
                 </div>
                 <div class="submenu-links">
                     <div class="submenu-menu">
-                        <p class=""><strong>Get Started</strong></p>
+                        <p><strong>Get Started</strong></p>
                         <ul>
-                            <li><a href="http://www.wormbase.org">About the directory</a></li>
+                            <li><a href="/">About the directory</a></li>
                         </ul>
                     </div>
                     <div class="submenu-menu">
-                        <p class=""><strong>Search</strong></p>
+                        <p><strong>Search</strong></p>
                         <ul>
-                            <li><a href="http://www.wormbase.org">Link 1</a></li>
-                            <li><a href="http://www.wormbase.org">Link 2</a></li>
+                            <li><a href="/">Link 1</a></li>
+                            <li><a href="/">Link 2</a></li>
                         </ul>
                     </div>
                      <div class="submenu-menu">
-                         <p class=""><strong>Browse</strong></p>
+                         <p><strong>Browse</strong></p>
                         <ul>
-                            <li><a href="http://www.wormbase.org">By Species</a>
+                            <li><a href="/">By Species</a>
                                 <ul>
-                                    <li><a href="http://www.wormbase.org">Link 1</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="http://www.wormbase.org">Link 2</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="http://www.wormbase.org">Link 3</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="http://www.wormbase.org">Link 4</a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="http://www.wormbase.org">Link 5</a></li>
-                                    <li><a href="http://www.wormbase.org">Link 6</a></li>
+                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
+                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
                                 </ul>
                             </li>
-                            <li><a href="http://www.wormbase.org">By Resource</a>
+                            <li><a href="/">By Resource</a>
                                 <ul>
-                                    <li><a href="http://www.wormbase.org">Link 1</a></li>
-                                    <li><a href="http://www.wormbase.org">Link 2</a></li>
-                                    <li><a href="http://www.wormbase.org">Link 3</a></li>
-                                    <li><a href="http://www.wormbase.org">Link 4</a></li>
-                                    <li><a href="http://www.wormbase.org">Link 5</a></li>
-                                    <li><a href="http://www.wormbase.org">Link 6</a></li>
+                                    <li><a href="/">Link 1</a></li>
+                                    <li><a href="/">Link 2</a></li>
+                                    <li><a href="/">Link 3</a></li>
+                                    <li><a href="/">Link 4</a></li>
+                                    <li><a href="/">Link 5</a></li>
+                                    <li><a href="/">Link 6</a></li>
                                 </ul>
                             </li>
                         </ul>
                     </div>
                     <div class="submenu-menu">
-                        <p class=""><strong>Tools</strong></p>
+                        <p><strong>Tools</strong></p>
                         <ul>
-                            <li><a href="http://www.wormbase.org">Link 1</a></li>
-                            <li><a href="http://www.wormbase.org">Link 2</a></li>
+                            <li><a href="/">Link 1</a></li>
+                            <li><a href="/">Link 2</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="submenu-sub">
-                <p class=""><strong>Latest updates</strong></p>
-                <ul class="more">
-                    <li><a href="http://www.wormbase.org">Report page 1</a></li>
-                    <li><a href="http://www.wormbase.org">Report page 2</a></li>
-                    <li><a href="http://www.wormbase.org">Report page 3</a></li>
+                <p><strong>Latest updates</strong></p>
+                <ul class="wb-more">
+                    <li><a href="/">Report page 1</a></li>
+                    <li><a href="/">Report page 2</a></li>
+                    <li><a href="/">Report page 3</a></li>
                 </ul>
-                <p class=""><strong>Need help?</strong></p>
-                <ul>
-                    <li><a href="http://www.wormbase.org">Support link 1</a></li>
-                    <li><a href="http://www.wormbase.org">Support link 2</a></li>
-                    <li><a href="http://www.wormbase.org" target="_blank">External link</a></li>
-                    <li class="more-github"><a href="http://www.wormbase.org">External link</a></li>
+                <p><strong>Need help?</strong></p>
+                <ul class="wb-more">
+                    <li><a href="/">Support link 1</a></li>
+                    <li><a href="/">Support link 2</a></li>
+                    <li><a href="/" target="_blank" class="wb-ext" title="Link opens in a new window">External link</a></li>
+                    <li class="more-github"><a href="/" target="_blank" class="wb-ext" title="Link opens in a new window">External link</a></li>
                 </ul>
 
             </div>
@@ -145,15 +145,20 @@
           <!-- END: New dropdown menu statics -->
       </li>
     [% END %]
-  
+
+      <li id="section-community"><a href="/" class="trigger">Community</a></li>
     </ul>
+    <!-- END: Revised main menu -->
+    <!-- START: New parasite menu -->
     <ul class="nav-bar parasite-menu">
-      <li><a class="" href="http://parasite.wormbase.org/">ParaSite</a></li>
+      <li><a href="http://parasite.wormbase.org/">ParaSite</a></li>
     </ul>
+    <!-- END: New parasite menu -->
   </div>
 
   [% PROCESS timer %]
 </div>
+<!-- END: Revised header region -->
 
 <!-- END boilerplate/banner -->
 

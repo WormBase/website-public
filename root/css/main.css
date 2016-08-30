@@ -850,6 +850,7 @@ a#fade:hover, a.fade:hover {
   border:none;
 }
 
+/* REVISED */
 #searchForm {
     background-color: #fff;
     border-color: #b2bcc2 #c2d1df #c2d1df #b2bcc2;
@@ -870,9 +871,9 @@ a#fade:hover, a.fade:hover {
     margin: 0 15px 12px;
 }
 
-#searchForm input.text, #searchResultForm input.text{
+#searchForm input.text,
+#searchResultForm input.text{
   float:none;
-/*  width:8em;*/
   color: #565656;
   border:none;
   padding: 0 0.3em;
@@ -882,8 +883,8 @@ a#fade:hover, a.fade:hover {
   margin:0;
 }
 
-
-#searchForm input.ui-icon, #searchResultForm input.ui-icon{
+#searchForm input.ui-icon,
+#searchResultForm input.ui-icon{
   float:left;
   margin:0.3em 0.5em 0 0;
   padding:0;
@@ -979,7 +980,6 @@ a#fade:hover, a.fade:hover {
 #references-content #all-search-results {
   padding-top:0;
 }
-
 
 #notifications {
   display:none;
@@ -1127,11 +1127,6 @@ cursor:pointer;}
 
 /* = DOCUMENT ========================== */
 
-.clearfix {
-  overflow: auto;
-  zoom: 1;
-}
-
 body, html {
     padding: 0px;
     margin: 0px;
@@ -1215,10 +1210,15 @@ p  {
 
 /*********************************
 
-   Headers
-
+   REVISED - Headers
 
 *********************************/
+
+.clearfix {
+  overflow: auto;
+  zoom: 1;
+}
+
 div#header {
   padding:0;
   position:relative;
@@ -1241,16 +1241,14 @@ div#header a:active {
     text-decoration: underline;
 }
 
-div#header h1 a, 
 div#header h1, 
+div#header h1 a, 
 div#header p a  {
   padding: 0.2em 0.2em 0.2em 0;
   margin:0;
 }
 
-div#header p {
-}
-
+/* Status bar */
 div#header .status-bar {
     float: right;
     margin: 12px 15px 6px;
@@ -1292,6 +1290,7 @@ div#header .status-bar .ui-icon {
     vertical-align: top;
 }
 
+/* Title and release date */
 div#header div#title {
   float:left;
   margin: 36px 15px 0;
@@ -1308,9 +1307,6 @@ div#header .release_date {
     line-height: 24px;
     margin-left: 5px;
 }
-
-
-
 
 /* *************************************
 
@@ -1433,18 +1429,15 @@ div.error-message-technical {
     line-height: 100%;
 }
 
-/* New Navbar */
+/*  
+ * NEW - Navbar menu
+ */
 
+/* -- Type and Colours -- */
 div#header #nav-bar {
-  clear:both;
   background:#fff;
-  height:36px;
-  margin:0;
-  padding: 0 15px;
   border-bottom:1px solid #97a1a8;
   border-top: 1px solid #d1dde7;
-  position: relative;
-  overflow: visible;
 }
 
 #nav-bar a,
@@ -1474,6 +1467,7 @@ div#header #nav-bar {
     border-bottom: 3px solid #dee8ef;
 }
 
+/* Custom colours for specific sections */
 #nav-bar #section-resources a.trigger.selected,
 #nav-bar #section-resources a.trigger:hover,
 #nav-bar #section-resources a.trigger:active {
@@ -1502,12 +1496,45 @@ div#header #nav-bar {
     border-bottom-color: #f4ccf0;
 }
 
+/* All menus */
+ul.nav-bar {
+  list-style-type: none;
+  font-size:1em;
+}
+
+/* Parasite menu */
+ul.nav-bar.parasite-menu > li {
+  border-right:1px solid #d1dde7;
+  border-left:1px solid #d1dde7;
+}
+
+ul.nav-bar.parasite-menu > li a {
+  text-indent: -5000px;
+  overflow: none;
+  background-image: url(/img/logo-parasite.png);
+  background-repeat:no-repeat;
+  background-position: center 10px;
+  width:81px;
+  height: 20px;
+}
+
+ul.nav-bar.parasite-menu > li a:hover {
+  background-color: #e0e8ef;
+}
+
+/* --- Everything else --- */
+div#header #nav-bar {
+  clear:both;
+  height:36px;
+  margin:0;
+  padding: 0 15px;
+  position: relative;
+  overflow: visible;
+}
 
 ul.nav-bar {
   margin:0;
   padding:0em;
-  list-style-type: none;
-  font-size:1em;
 }
 
 ul.nav-bar.parasite-menu {
@@ -1520,10 +1547,6 @@ ul.nav-bar > li {
   height:36px;
 }
 
-ul.nav-bar.parasite-menu > li {
-  border-right:1px solid #d1dde7;
-  border-left:1px solid #d1dde7;
-}
 
 ul.nav-bar > li a.trigger,
 ul.nav-bar.parasite-menu > li a {
@@ -1546,9 +1569,11 @@ ul.nav-bar > li span.ui-icon {
   visibility:hidden;
 }
 
-/* New dropdown menu */
+/*  
+ * NEW - Navbar menu Dropdown
+ */
 
-/* Type and colours */
+/* -- Type and colours -- */
 li .submenu {
     background-color: #dee8ef;
     border-top: 5px solid #c6d1da;
@@ -1562,7 +1587,7 @@ li .submenu {
 
 /* Custom colours for specific sections */
 li#section-resources .submenu {
-    background-color: #c1deba;
+    background-color: #beebb4;
     border-top: 5px solid #a9d4a4;
 }
 
@@ -1593,22 +1618,39 @@ li#section-community .submenu {
     text-decoration: underline;
 }
 
-#navbar .submenu .wb-detail a {
+#nav-bar .submenu .wb-detail a {
     color: #666;
 }
 
 .submenu-main {
-    border-right: 1px solid #ccc;
+    border-right: 1px dotted #6a839c;
+}
+
+/* Title region */
+.submenu .submenu-title p {
+    font-size: 15px;    
 }
 
 .submenu .submenu-title p strong {
     font-size: 17px;
 }
 
-.submenu .submenu-title p {
-    font-size: 15px;    
+.wb-ext {
+  padding-right: 19px;
+  background-image: url(/img/icon-new-win.png);
+  background-repeat: no-repeat;
+  background-position: right center;
 }
 
+/* Title region: Custom icon for specific sections */
+#section-resources .submenu .submenu-title {
+  padding-left: 58px;
+  background-image: url(/img/icon-open-book.png);
+  background-repeat: no-repeat;
+  background-position: left top;
+}
+
+/* Links region */
 .submenu .submenu-links > div > ul {
     margin: 0;
     padding: 0;
@@ -1619,22 +1661,19 @@ li#section-community .submenu {
     list-style-image:  none;
 }
 
-
-
 .submenu .submenu-links li,
 .submenu .submenu-sub li{
-    font-size: 15px;
-}
-
-.submenu .submenu-links li li {
-    font-size: 14px;
-}
-
-.submenu .submenu-links li li .wb-detail {
     font-size: 13px;
 }
 
+.submenu .submenu-links li li {
+    font-size: 12px;
+    list-style-type: disc;
+}
 
+.submenu .submenu-links li li .wb-detail {
+    font-size: 11px;
+}
 
 .submenu .submenu-links p strong {
    font-size: 13px;
@@ -1645,10 +1684,7 @@ li#section-community .submenu {
    font-size: 14px;
 }
 
-
-
-
-/* Everything else */
+/* -- Everything else -- */
 ul.nav-bar li .submenu {
     position: absolute;
     top: 37px;
@@ -1661,7 +1697,8 @@ ul.nav-bar li .submenu {
 .submenu {
     display:flex;
     flex-flow: row nowrap;
-    justify-content: space-around;
+    justify-content:space-between;
+    align-items: stretch;
 }
 
 .submenu > div {
@@ -1671,11 +1708,14 @@ ul.nav-bar li .submenu {
 
 .submenu-main {
     width: 75%;
-
 }
 
-.submenu-links {
-    position: relative;
+.submenu-sub {
+    width: 25%;
+}
+
+.submenu-title {
+    margin-bottom: 24px;
 }
 
 .submenu-links > div {
@@ -1688,22 +1728,13 @@ ul.nav-bar li .submenu {
     margin-bottom: 6px;
 }
 
-.submenu .submenu-sub p {
-    margin-bottom: 6px;
-}
-
-.submenu .submenu-sub ul {
-    margin-top: 6px;
-}
-
-/* Additional styles specific to directory dropdown */
-
-#section-resources .submenu-sub {
-    width: 25%;
+/* Links region: Additional styles specific to section */
+#section-resources .submenu-links {
+    position: relative;
 }
 
 #section-resources .submenu-links > div {
-    width: 25%;
+    width: 20%;
 }
 
 #section-resources .submenu-links > div:nth-child(2) {
@@ -1717,7 +1748,12 @@ ul.nav-bar li .submenu {
 }
 
 #section-resources .submenu-links > div:nth-child(3) {
-    width: 50%;
+    width: 60%;
+}
+
+#section-resources .submenu-links > div:nth-child(3) > ul ul{
+    padding-left: 15px;
+    margin-top: 6px;
 }
 
 #section-resources .submenu-links > div:nth-child(3) > ul > li {
@@ -1727,22 +1763,40 @@ ul.nav-bar li .submenu {
 
 #section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(1) {
     width: 66.66%;
-} 
-
-#section-resources .submenu-links > div:nth-child(3) > ul ul{
-    padding-left: 15px;
-    margin-top: 6px;
-}
-
-#section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(1) li {
-    width: 49%;
-    float: left;
-    list-style-image: disc;
 }
 
 #section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(2) {
     width: 33.33%;
 } 
+
+#section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(1) li {
+    width: 48%;
+    margin-right: 2%;
+    float: left;
+}
+
+/* Submenu sidebar */
+.submenu .submenu-sub p {
+    margin-bottom: 6px;
+}
+
+.submenu .submenu-sub ul {
+    margin-top: 6px;
+}
+
+.submenu-sub ul.wb-more {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 12px;
+  list-style-type: none;
+}
+.submenu-sub ul.wb-more li {
+  list-style-image: none;
+  background-image: url(/img/bullet-arrow.png);
+  background-repeat: no-repeat;
+  background-position: left top;
+  padding-left: 23px;
+}
 
 
 /* Login and registration styling  - header, home page, and login popup */
