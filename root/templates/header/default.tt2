@@ -62,7 +62,15 @@
 
 
 [% MACRO submenu_item(nav_item) BLOCK %]
-    [% IF item.url %]
+
+    [% IF item.species %]
+        [% species = item.species %]
+        <a href="species/[% species %]">[% c.config.sections.species_list.$species.title %]</a>
+        <span class="wb-detail">[% text2link('genomic_location', '' , '(GBrowse)', '', species) %]</span>
+    [% ELSIF item.resource %]
+        [% resource = item.resource %]
+        <a href="resources/[% resource %]">[% c.config.sections.resources.$resource.title %]</a>
+    [% ELSIF item.url %]
         [% IF item.url.match('^http') %]
             <a href="[% item.url %]" target="_blank" class="wb-ext" title="Link opens in a new window">[% item.title %]</a>
         [% ELSE %]
@@ -71,6 +79,7 @@
     [% ELSE %]
         <span>[% item.title %]</span>
     [% END %]
+
 [% END %]
 
 [% MACRO build_submenus(nav_items, inner, style_class) BLOCK %]
