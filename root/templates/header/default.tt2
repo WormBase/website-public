@@ -61,10 +61,10 @@
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
 
-[% MACRO build_submenus(nav_option, inner) BLOCK %]
-    [% child_items = ref(nav_option.nav_item) == 'HASH' ? [nav_option.nav_item] : nav_option.nav_item; %]
-    [% FOREACH item IN child_items %]
-        [% inner ? '<li>' : '<div class="submenu-menu">' %]
+[% MACRO build_submenus(nav_items, inner, style_class) BLOCK %]
+    [% nav_items = ref(nav_items) == 'HASH' ? [nav_items] : nav_items; %]
+    [% FOREACH item IN nav_items %]
+        [% inner ? '<li>' : '<div class="' _ style_class _'">' %]
             [%# USE Dumper; Dumper.dump(item) %]
             [% IF item.nav_item %]
                 [% IF inner %]
@@ -73,7 +73,7 @@
                     <p><strong>[% item.title %]</strong></p>
                 [% END %]
                 <ul>
-                    [% build_submenus(item, 1) %]
+                    [% build_submenus(item.nav_item, 1) %]
                 </ul>
             [% ELSE %]
                 <a href="[% item.url %]">[% item.title %]</a>
@@ -100,28 +100,11 @@
                     <p>[% nav_option.description %]… <a href="[% nav_option.url %]">Find out more</a></p>
                 </div>
                 <div class="submenu-links">
-                    [% build_submenus(nav_option) %]
+                    [% build_submenus(nav_option.nav_item, 0, 'submenu-menu') %]
                 </div>
             </div>
             <div class="submenu-sub">
-                <div>
-                <p><strong>Latest updates</strong></p>
-                <ul class="wb-more">
-                    <li><a href="/">Report page 1</a></li>
-                    <li><a href="/">Report page 2</a></li>
-                    <li><a href="/">Report page 3</a></li>
-                </ul>
-                </div>
-                <div>
-                <p><strong>Need help?</strong></p>
-                <ul class="wb-more">
-                    <li><a href="/">Support link 1</a></li>
-                    <li><a href="/">Support link 2</a></li>
-                    <li><a href="/" target="_blank" class="wb-ext" title="Link opens in a new window">External link</a></li>
-                    <li class="more-github"><a href="/" target="_blank" class="wb-ext" title="Link opens in a new window">External link</a></li>
-                </ul>
-                </div>
-
+                [% build_submenus(nav_option.more.nav_item, 0, 'wb-more') %]
             </div>
 
           </div>

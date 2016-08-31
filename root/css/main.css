@@ -1241,8 +1241,8 @@ div#header a:active {
     text-decoration: underline;
 }
 
-div#header h1, 
-div#header h1 a, 
+div#header h1,
+div#header h1 a,
 div#header p a  {
   padding: 0.2em 0.2em 0.2em 0;
   margin:0;
@@ -1429,7 +1429,7 @@ div.error-message-technical {
     line-height: 100%;
 }
 
-/*  
+/*
  * NEW - Navbar menu
  */
 
@@ -1557,7 +1557,7 @@ ul.nav-bar.parasite-menu > li a {
 }
 
 ul.nav-bar.parasite-menu > li a  {
-  padding: 11px 15px 5px;    
+  padding: 11px 15px 5px;
 }
 
 
@@ -1569,7 +1569,7 @@ ul.nav-bar > li span.ui-icon {
   visibility:hidden;
 }
 
-/*  
+/*
  * NEW - Navbar menu Dropdown
  */
 
@@ -1628,7 +1628,7 @@ li#section-community .submenu {
 
 /* Title region */
 .submenu .submenu-title p {
-    font-size: 15px;    
+    font-size: 15px;
 }
 
 .submenu .submenu-title p strong {
@@ -1767,7 +1767,7 @@ ul.nav-bar li .submenu {
 
 #section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(2) {
     width: 33.33%;
-} 
+}
 
 #section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(1) li {
     width: 48%;
@@ -1784,13 +1784,13 @@ ul.nav-bar li .submenu {
     margin-top: 6px;
 }
 
-.submenu-sub ul.wb-more {
+.submenu-sub .wb-more ul{
   margin: 0;
   padding: 0;
   margin-bottom: 12px;
   list-style-type: none;
 }
-.submenu-sub ul.wb-more li {
+.submenu-sub .wb-more ul li {
   list-style-image: none;
   background-image: url(/img/bullet-arrow.png);
   background-repeat: no-repeat;
