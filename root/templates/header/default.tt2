@@ -60,16 +60,39 @@
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
+
+[% MACRO build_submenus(nav_option, inner) BLOCK %]
+    [% child_items = ref(nav_option.nav_item) == 'HASH' ? [nav_option.nav_item] : nav_option.nav_item; %]
+    [% FOREACH item IN child_items %]
+        [% inner ? '<li>' : '<div class="submenu-menu">' %]
+            [%# USE Dumper; Dumper.dump(item) %]
+            [% IF item.nav_item %]
+                [% IF inner %]
+                    <a href="[% item.url %]">[% item.title %]</a>
+                [% ELSE %]
+                    <p><strong>[% item.title %]</strong></p>
+                [% END %]
+                <ul>
+                    [% build_submenus(item, 1) %]
+                </ul>
+            [% ELSE %]
+                <a href="[% item.url %]">[% item.title %]</a>
+            [% END %]
+        [% inner ? '</li>' : '</div>' %]
+     [% END %]
+[% END %]
+
   <div id="nav-bar">
     <!-- START: Revised main menu -->
     <ul class="nav-bar main-menu">
-    [% FOREACH title IN c.config.nav_bar.option %]
-      [% url = c.config.sections.$title.url || title %]
-      <li id="section-[% title %]"><a href="/[% url %]" class="trigger [% IF(c.stash.section == title); 'selected'; END;%]">
+    [% FOREACH nav_option IN c.config.nav_bar.option %]
+      [% title = nav_option.title; %]
+      [% url = nav_option.url %]
+      <li id="section-[% nav_option.id %]"><a href="/[% url %]" class="trigger [% IF(c.stash.section == nav_option.id); 'selected'; END;%]">
           <span class="ui-icon ui-icon-triangle-1-s"></span>
-          [% c.config.sections.$title.title %]</a>
+          [% title %]</a>
 
-          <!-- START: New dropdown menu statics -->
+          <!-- START: New dropdown menu -->
           <div class="wb-dropdown submenu" style="display: none;">
             <div class="submenu-main">
                 <div class="submenu-title">
@@ -77,51 +100,7 @@
                     <p>Start here for encyclopedic information about the worm genome and its genes, proteins, and other encoded features… <a href="/">Find out more</a></p>
                 </div>
                 <div class="submenu-links">
-                    <div class="submenu-menu">
-                        <p><strong>Get Started</strong></p>
-                        <ul>
-                            <li><a href="/">About the directory</a></li>
-                        </ul>
-                    </div>
-                    <div class="submenu-menu">
-                        <p><strong>Search</strong></p>
-                        <ul>
-                            <li><a href="/">Link 1</a></li>
-                            <li><a href="/">Link 2</a></li>
-                        </ul>
-                    </div>
-                     <div class="submenu-menu">
-                         <p><strong>Browse</strong></p>
-                        <ul>
-                            <li><a href="/">By Species</a>
-                                <ul>
-                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                    <li><a href="/"><i>C. elegans</i></a> <span class="wb-detail">(<a href="">GBrowse</a>)</span></li>
-                                </ul>
-                            </li>
-                            <li><a href="/">By Resource</a>
-                                <ul>
-                                    <li><a href="/">Link 1</a></li>
-                                    <li><a href="/">Link 2</a></li>
-                                    <li><a href="/">Link 3</a></li>
-                                    <li><a href="/">Link 4</a></li>
-                                    <li><a href="/">Link 5</a></li>
-                                    <li><a href="/">Link 6</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="submenu-menu">
-                        <p><strong>Tools</strong></p>
-                        <ul>
-                            <li><a href="/">Link 1</a></li>
-                            <li><a href="/">Link 2</a></li>
-                        </ul>
-                    </div>
+                [% build_submenus(nav_option) %]
                 </div>
             </div>
             <div class="submenu-sub">
