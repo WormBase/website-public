@@ -1275,14 +1275,18 @@ div#header .status-bar li.status-me {
     margin-right: 2px;
 }
 
+div#header .status-bar li.status-me a {
+  word-break:break-all;
+}
+
 div#header .status-bar li.status-contact {
-    background-color: #e0e8ef;
-    border-radius: 3px;
-    padding: 0 7px;
+  background-color: #e0e8ef;
+  border-radius: 3px;
+  padding: 0 7px;
 }
 
 div#header .status-bar a#login {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 div#header .status-bar .ui-icon {
@@ -1525,7 +1529,7 @@ ul.nav-bar.parasite-menu > li a:hover {
 /* --- Everything else --- */
 div#header #nav-bar {
   clear:both;
-  height:36px;
+  height:37px;
   margin:0;
   padding: 0 15px;
   position: relative;
@@ -1688,7 +1692,7 @@ li#section-community .submenu {
 /* -- Everything else -- */
 ul.nav-bar li .submenu {
     position: absolute;
-    top: 37px;
+    top: 38px;
     left: 0;
     width: 100%;
     z-index: 500;
