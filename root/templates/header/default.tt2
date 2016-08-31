@@ -96,20 +96,23 @@
           <div class="wb-dropdown submenu" style="display: none;">
             <div class="submenu-main">
                 <div class="submenu-title">
-                    <p><strong><a href="">Directory</a></strong></p>
-                    <p>Start here for encyclopedic information about the worm genome and its genes, proteins, and other encoded features… <a href="/">Find out more</a></p>
+                    <p><strong><a href="">[% nav_option.title %]</a></strong></p>
+                    <p>[% nav_option.description %]… <a href="[% nav_option.url %]">Find out more</a></p>
                 </div>
                 <div class="submenu-links">
-                [% build_submenus(nav_option) %]
+                    [% build_submenus(nav_option) %]
                 </div>
             </div>
             <div class="submenu-sub">
+                <div>
                 <p><strong>Latest updates</strong></p>
                 <ul class="wb-more">
                     <li><a href="/">Report page 1</a></li>
                     <li><a href="/">Report page 2</a></li>
                     <li><a href="/">Report page 3</a></li>
                 </ul>
+                </div>
+                <div>
                 <p><strong>Need help?</strong></p>
                 <ul class="wb-more">
                     <li><a href="/">Support link 1</a></li>
@@ -117,6 +120,7 @@
                     <li><a href="/" target="_blank" class="wb-ext" title="Link opens in a new window">External link</a></li>
                     <li class="more-github"><a href="/" target="_blank" class="wb-ext" title="Link opens in a new window">External link</a></li>
                 </ul>
+                </div>
 
             </div>
 
@@ -124,8 +128,6 @@
           <!-- END: New dropdown menu statics -->
       </li>
     [% END %]
-
-      <li id="section-community"><a href="/" class="trigger">Community</a></li>
     </ul>
     <!-- END: Revised main menu -->
     <!-- START: New parasite menu -->
