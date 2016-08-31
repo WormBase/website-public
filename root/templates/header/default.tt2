@@ -61,14 +61,30 @@
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
 
+[% MACRO submenu_item(nav_item) BLOCK %]
+    [% IF item.url %]
+        [% IF item.url.match('^http') %]
+            <a href="[% item.url %]" target="_blank" class="wb-ext" title="Link opens in a new window">[% item.title %]</a>
+        [% ELSE %]
+            <a href="[% item.url %]">[% item.title %]</a>
+        [% END %]
+    [% ELSE %]
+        <span>[% item.title %]</span>
+    [% END %]
+[% END %]
+
 [% MACRO build_submenus(nav_items, inner, style_class) BLOCK %]
     [% nav_items = ref(nav_items) == 'HASH' ? [nav_items] : nav_items; %]
     [% FOREACH item IN nav_items %]
-        [% inner ? '<li>' : '<div class="' _ style_class _'">' %]
+        [% IF inner %]
+            <li [% item.class ? 'class="more-' _ item.class _ '"' : '' %]">
+        [% ELSE %]
+            <div class="[% style_class %]">
+        [% END %]
             [%# USE Dumper; Dumper.dump(item) %]
             [% IF item.nav_item %]
                 [% IF inner %]
-                    <a href="[% item.url %]">[% item.title %]</a>
+                    [% submenu_item(item); %]
                 [% ELSE %]
                     <p><strong>[% item.title %]</strong></p>
                 [% END %]
@@ -76,7 +92,7 @@
                     [% build_submenus(item.nav_item, 1) %]
                 </ul>
             [% ELSE %]
-                <a href="[% item.url %]">[% item.title %]</a>
+                [% submenu_item(item); %]
             [% END %]
         [% inner ? '</li>' : '</div>' %]
      [% END %]
@@ -108,7 +124,7 @@
             </div>
 
           </div>
-          <!-- END: New dropdown menu statics -->
+          <!-- END: New dropdown menu -->
       </li>
     [% END %]
     </ul>

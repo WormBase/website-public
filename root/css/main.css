@@ -1606,6 +1606,7 @@ li#section-community .submenu {
     border-top: 5px solid #e1cae4;
 }
 
+#nav-bar .submenu span,
 #nav-bar .submenu a,
 #nav-bar .submenu a:link,
 #nav-bar .submenu a:visited {
