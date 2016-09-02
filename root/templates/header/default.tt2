@@ -65,13 +65,13 @@
 
     [% IF item.species %]
         [% species = item.species %]
-        <a href="species/[% species %]">[% c.config.sections.species_list.$species.title %]</a>
+        <a href="/species/[% species %]"><i>[% c.config.sections.species_list.$species.title %]</i></a>
         <span class="wb-detail">[% text2link('genomic_location', '' , '(GBrowse)', '', species) %]</span>
     [% ELSIF item.resource %]
         [% resource = item.resource %]
-        <a href="resources/[% resource %]">[% c.config.sections.resources.$resource.title %]</a>
+        <a href="/resources/[% resource %]">[% c.config.sections.resources.$resource.title %]</a>
     [% ELSIF item.url %]
-        [% IF item.url.match('^http') %]
+        [% IF item.url.match('^http') || item.url.match('^ftp') %]
             <a href="[% item.url %]" target="_blank" class="wb-ext" title="Link opens in a new window">[% item.title %]</a>
         [% ELSE %]
             <a href="[% item.url %]">[% item.title %]</a>
@@ -122,7 +122,7 @@
             <div class="submenu-main">
                 <div class="submenu-title">
                     <p><strong><a href="">[% nav_option.title %]</a></strong></p>
-                    <p>[% nav_option.description %]… <a href="[% nav_option.url %]">Find out more</a></p>
+                    <p>[% nav_option.description %]… <a href="[% nav_option.url %]" class="read-more">Find out more</a></p>
                 </div>
                 <div class="submenu-links">
                     [% build_submenus(nav_option.nav_item, 0, 'submenu-menu') %]
@@ -140,7 +140,7 @@
     <!-- END: Revised main menu -->
     <!-- START: New parasite menu -->
     <ul class="nav-bar parasite-menu">
-      <li><a href="http://parasite.wormbase.org/">ParaSite</a></li>
+      <li><a href="http://parasite.wormbase.org/" target="_blank" title="Link opens in a new window">ParaSite</a></li>
     </ul>
     <!-- END: New parasite menu -->
   </div>

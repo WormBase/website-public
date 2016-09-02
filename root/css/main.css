@@ -1472,9 +1472,9 @@ div#header #nav-bar {
 }
 
 /* Custom colours for specific sections */
-#nav-bar #section-resources a.trigger.selected,
-#nav-bar #section-resources a.trigger:hover,
-#nav-bar #section-resources a.trigger:active {
+#nav-bar #section-directory a.trigger.selected,
+#nav-bar #section-directory a.trigger:hover,
+#nav-bar #section-directory a.trigger:active {
     color: #4fb14b;
     border-bottom-color: #c1deba;
 }
@@ -1486,9 +1486,9 @@ div#header #nav-bar {
     border-bottom-color: #dadafe;
 }
 
-#nav-bar #section-submit_data a.trigger.selected,
-#nav-bar #section-submit_data a.trigger:hover,
-#nav-bar #section-submit_data a.trigger:active {
+#nav-bar #section-downloads a.trigger.selected,
+#nav-bar #section-downloads a.trigger:hover,
+#nav-bar #section-downloads a.trigger:active {
     color: #6fb2dc;
     border-bottom-color: #c4e5f8;
 }
@@ -1590,7 +1590,7 @@ li .submenu {
 }
 
 /* Custom colours for specific sections */
-li#section-resources .submenu {
+li#section-directory .submenu {
     background-color: #beebb4;
     border-top: 5px solid #a9d4a4;
 }
@@ -1600,7 +1600,7 @@ li#section-tools .submenu {
     border-top: 5px solid #c2c5e8;
 }
 
-li#section-submit_data .submenu {
+li#section-downloads .submenu {
     background-color: #c4e5f8;
     border-top: 5px solid #afcfe2;
 }
@@ -1610,7 +1610,6 @@ li#section-community .submenu {
     border-top: 5px solid #e1cae4;
 }
 
-#nav-bar .submenu span,
 #nav-bar .submenu a,
 #nav-bar .submenu a:link,
 #nav-bar .submenu a:visited {
@@ -1621,6 +1620,10 @@ li#section-community .submenu {
 #nav-bar .submenu a:active {
     color: #333;
     text-decoration: underline;
+}
+
+.submenu .wb-detail {
+    font-size: 11px;
 }
 
 #nav-bar .submenu .wb-detail a {
@@ -1634,6 +1637,7 @@ li#section-community .submenu {
 /* Title region */
 .submenu .submenu-title p {
     font-size: 15px;
+    line-height: 18px;
 }
 
 .submenu .submenu-title p strong {
@@ -1648,7 +1652,28 @@ li#section-community .submenu {
 }
 
 /* Title region: Custom icon for specific sections */
-#section-resources .submenu .submenu-title {
+#section-directory .submenu .submenu-title {
+  padding-left: 58px;
+  background-image: url(/img/icon-open-book.png);
+  background-repeat: no-repeat;
+  background-position: left top;
+}
+
+#section-tools .submenu .submenu-title {
+  padding-left: 58px;
+  background-image: url(/img/icon-open-book.png);
+  background-repeat: no-repeat;
+  background-position: left top;
+}
+
+#section-downloads .submenu .submenu-title {
+  padding-left: 58px;
+  background-image: url(/img/icon-open-book.png);
+  background-repeat: no-repeat;
+  background-position: left top;
+}
+
+#section-community .submenu .submenu-title {
   padding-left: 58px;
   background-image: url(/img/icon-open-book.png);
   background-repeat: no-repeat;
@@ -1676,9 +1701,7 @@ li#section-community .submenu {
     list-style-type: disc;
 }
 
-.submenu .submenu-links li li .wb-detail {
-    font-size: 11px;
-}
+
 
 .submenu .submenu-links p strong {
    font-size: 13px;
@@ -1713,6 +1736,7 @@ ul.nav-bar li .submenu {
 
 .submenu-main {
     width: 75%;
+    
 }
 
 .submenu-sub {
@@ -1723,62 +1747,99 @@ ul.nav-bar li .submenu {
     margin-bottom: 24px;
 }
 
+.submenu .submenu-title p a.read-more {
+    display: inline-block;
+}
+
 .submenu-links > div {
     width: 33.33%;
     display: block;
     float: left;
+    padding-bottom: 12px;
 }
 
 .submenu .submenu-links p {
     margin-bottom: 6px;
 }
 
-/* Links region: Additional styles specific to section */
-#section-resources .submenu-links {
+/* Links region: Additional styles for specific sections */
+#section-directory .submenu-links,
+#section-tools .submenu-links {
     position: relative;
-}
+} 
 
-#section-resources .submenu-links > div {
+#section-directory .submenu-links > div {
     width: 20%;
 }
 
-#section-resources .submenu-links > div:nth-child(2) {
+#section-directory .submenu-links > div:nth-child(2) {
     position: absolute;
     left: 0;
-    top: 3em;
+    top: 5em;
 }
 
-#section-resources .submenu-links > div:nth-child(2) p {
-    margin-top: 23px;
-}
-
-#section-resources .submenu-links > div:nth-child(3) {
+#section-directory .submenu-links > div:nth-child(3) {
     width: 60%;
 }
 
-#section-resources .submenu-links > div:nth-child(3) > ul ul{
+#section-directory .submenu-links > div:nth-child(3) > ul ul{
     padding-left: 15px;
     margin-top: 6px;
 }
 
-#section-resources .submenu-links > div:nth-child(3) > ul > li {
+#section-directory .submenu-links > div:nth-child(3) > ul > li {
     display: block;
     float: left;
 }
 
-#section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(1) {
+#section-directory .submenu-links > div:nth-child(3) > ul > li:nth-child(1) {
     width: 66.66%;
 }
 
-#section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(2) {
+#section-directory .submenu-links > div:nth-child(3) > ul > li:nth-child(2) {
     width: 33.33%;
 }
 
-#section-resources .submenu-links > div:nth-child(3) > ul > li:nth-child(1) li {
+#section-directory .submenu-links > div:nth-child(3) > ul > li:nth-child(1) li {
     width: 48%;
     margin-right: 2%;
     float: left;
 }
+
+/* Links region: Additional styles specific to tools section tab */
+#section-tools .submenu-links > div {
+    width: 22.22%;
+}
+
+#section-tools .submenu-links > div:nth-child(2) {
+    position: absolute;
+    left: 0;
+    top: 6em;
+}
+
+#section-tools .submenu-links > div:nth-child(5) {
+    position: absolute;
+    left: 44.44%;
+    top: 5em;
+}
+
+#section-tools .submenu-links > div:nth-child(6),
+#section-tools .submenu-links > div:nth-child(7),
+#section-tools .submenu-links > div:nth-child(8) {
+    width: 33.33%;
+}
+
+#section-tools .submenu-links > div:nth-child(7),
+#section-tools .submenu-links > div:nth-child(8) {
+  margin-left: 22.22%;
+}
+
+/* Links region: Additional styles specific to support section tab */
+#section-support .submenu-links > div {
+    width: 50%;
+}
+
+
 
 /* Submenu sidebar */
 .submenu .submenu-sub p {
@@ -1801,6 +1862,19 @@ ul.nav-bar li .submenu {
   background-repeat: no-repeat;
   background-position: left top;
   padding-left: 23px;
+}
+
+.submenu-sub .more-file {
+  font-size: 11px;
+}
+
+.submenu-sub .more-file:after {
+  content: '(includes subsidiary files, ~40GB)';
+}
+
+.submenu-sub .more-file a {
+  display: inline-block;
+  font-size: font-size: 13px;
 }
 
 
