@@ -113,7 +113,7 @@
     [% FOREACH nav_option IN c.config.nav_bar.option %]
       [% title = nav_option.title; %]
       [% url = nav_option.url %]
-      <li id="section-[% nav_option.id %]"><a href="/[% url %]" class="trigger [% IF(c.stash.section == nav_option.id); 'selected'; END;%]">
+      <li id="section-[% nav_option.id %]"><a href="[% url %]" class="trigger [% IF(c.stash.section == nav_option.id); 'selected'; END;%]">
           <span class="ui-icon ui-icon-triangle-1-s"></span>
           [% title %]</a>
 
