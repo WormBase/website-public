@@ -140,7 +140,7 @@
     <!-- END: Revised main menu -->
     <!-- START: New parasite menu -->
     <ul class="nav-bar parasite-menu">
-      <li><a href="http://parasite.wormbase.org/" target="_blank" title="Link opens in a new window">ParaSite</a></li>
+      <li><a href="http://parasite.wormbase.org/">ParaSite</a></li>
     </ul>
     <!-- END: New parasite menu -->
   </div>

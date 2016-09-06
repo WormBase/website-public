@@ -869,6 +869,14 @@ a#fade:hover, a.fade:hover {
 #header #searchForm {
     clear: right;
     margin: 0 15px 12px;
+    float:right;
+}
+
+@media screen and (max-width: 767px)  {
+  #header #searchForm {
+      float:left;
+      clear:left;
+  }
 }
 
 #searchForm input.text,
@@ -1250,8 +1258,8 @@ div#header p a  {
 
 /* Status bar */
 div#header .status-bar {
-    float: right;
     margin: 12px 15px 6px;
+    float:right;
 }
 
 div#header .status-bar ul {
@@ -1310,6 +1318,15 @@ div#header .release_date {
     font-size:0.8em;
     line-height: 24px;
     margin-left: 5px;
+}
+
+@media screen and (max-width: 767px) {
+  div#header .status-bar {
+    float:none;
+  }
+  div#header div#title {
+    margin: 0 15px;
+  }
 }
 
 /* *************************************
@@ -1506,6 +1523,12 @@ ul.nav-bar {
   font-size:1em;
 }
 
+@media screen and (max-width: 767px)  {
+  ul.nav-bar {
+    font-size:0.9em;
+  }
+}
+
 /* Parasite menu */
 ul.nav-bar.parasite-menu > li {
   border-right:1px solid #d1dde7;
@@ -1518,7 +1541,7 @@ ul.nav-bar.parasite-menu > li a {
   background-image: url(/img/logo-parasite.png);
   background-repeat:no-repeat;
   background-position: center 10px;
-  width:81px;
+  width:76px;
   height: 20px;
 }
 
@@ -1551,7 +1574,6 @@ ul.nav-bar > li {
   height:36px;
 }
 
-
 ul.nav-bar > li a.trigger,
 ul.nav-bar.parasite-menu > li a {
   padding: 11px 15px 5px;
@@ -1562,6 +1584,28 @@ ul.nav-bar.parasite-menu > li a {
 
 ul.nav-bar.parasite-menu > li a  {
   padding: 11px 15px 5px;
+}
+
+@media screen and (max-width: 991px) {
+  ul.nav-bar > li a.trigger,
+  ul.nav-bar.parasite-menu > li a {
+    padding: 11px 8px 5px;
+  }
+
+  ul.nav-bar.parasite-menu > li a  {
+    padding: 11px 8px 5px;
+  }
+}
+
+@media screen and (max-width: 767px)  {
+  ul.nav-bar > li a.trigger,
+  ul.nav-bar.parasite-menu > li a {
+    padding: 11px 4px 5px;
+  }
+
+  ul.nav-bar.parasite-menu > li a  {
+    padding: 11px 4px 5px;
+  }
 }
 
 
@@ -1582,7 +1626,7 @@ li .submenu {
     background-color: #dee8ef;
     border-top: 5px solid #c6d1da;
     font-size: 1em;
-    line-height: 24px;
+    line-height: 20.8px;
     color: #6a839c;
     -webkit-box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.25);
     -moz-box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.25);
@@ -1606,7 +1650,7 @@ li#section-downloads .submenu {
 }
 
 li#section-community .submenu {
-    background-color: #f4ccf0;
+    background-color: #fde0fa;
     border-top: 5px solid #e1cae4;
 }
 
@@ -1661,21 +1705,21 @@ li#section-community .submenu {
 
 #section-tools .submenu .submenu-title {
   padding-left: 58px;
-  background-image: url(/img/icon-open-book.png);
+  background-image: url(/img/icon-map.png);
   background-repeat: no-repeat;
   background-position: left top;
 }
 
 #section-downloads .submenu .submenu-title {
   padding-left: 58px;
-  background-image: url(/img/icon-open-book.png);
+  background-image: url(/img/icon-download.png);
   background-repeat: no-repeat;
   background-position: left top;
 }
 
 #section-community .submenu .submenu-title {
   padding-left: 58px;
-  background-image: url(/img/icon-open-book.png);
+  background-image: url(/img/icon-team.png);
   background-repeat: no-repeat;
   background-position: left top;
 }
@@ -1700,8 +1744,6 @@ li#section-community .submenu {
     font-size: 12px;
     list-style-type: disc;
 }
-
-
 
 .submenu .submenu-links p strong {
    font-size: 13px;
@@ -1744,7 +1786,11 @@ ul.nav-bar li .submenu {
 }
 
 .submenu-title {
-    margin-bottom: 24px;
+    margin-bottom: 20.8px;
+}
+
+.submenu-title p {
+  padding-right: 5px;
 }
 
 .submenu .submenu-title p a.read-more {
@@ -1755,11 +1801,33 @@ ul.nav-bar li .submenu {
     width: 33.33%;
     display: block;
     float: left;
-    padding-bottom: 12px;
+    padding-bottom: 10.4px;
+}
+
+.submenu-links > div > p,
+.submenu .submenu-links > div > ul  {
+  margin-right: 5px;
+}
+
+.submenu .submenu-links li,
+.submenu .submenu-sub li{
+    padding-bottom:5.85px;
+}
+.submenu .submenu-links > ul,
+.submenu .submenu-sub > ul {
+    padding-bottom:1.95px;
+}
+
+.submenu .submenu-links li li {
+    padding-bottom: 3.3px;
+}
+
+.submenu .submenu-links li > ul {
+    padding-bottom: 1.1px;
 }
 
 .submenu .submenu-links p {
-    margin-bottom: 6px;
+    margin-bottom: 6.8px;
 }
 
 /* Links region: Additional styles for specific sections */
@@ -1775,7 +1843,13 @@ ul.nav-bar li .submenu {
 #section-directory .submenu-links > div:nth-child(2) {
     position: absolute;
     left: 0;
-    top: 5em;
+    top: 5.2em;
+}
+
+@media screen and (max-width: 767px) {
+  #section-directory .submenu-links > div:nth-child(2) {
+      top: 6.5em;
+  }
 }
 
 #section-directory .submenu-links > div:nth-child(3) {
@@ -1814,13 +1888,23 @@ ul.nav-bar li .submenu {
 #section-tools .submenu-links > div:nth-child(2) {
     position: absolute;
     left: 0;
-    top: 6em;
+    top: 5.2em;
 }
 
 #section-tools .submenu-links > div:nth-child(5) {
     position: absolute;
     left: 44.44%;
-    top: 5em;
+    top: 5.2em;
+}
+
+@media screen and (max-width: 767px) {
+  #section-tools .submenu-links > div:nth-child(2) {
+      top: 6.5em;
+  }
+
+  #section-tools .submenu-links > div:nth-child(5) {
+      top: 6.5em;
+  }
 }
 
 #section-tools .submenu-links > div:nth-child(6),
@@ -1838,8 +1922,6 @@ ul.nav-bar li .submenu {
 #section-support .submenu-links > div {
     width: 50%;
 }
-
-
 
 /* Submenu sidebar */
 .submenu .submenu-sub p {
@@ -1862,6 +1944,22 @@ ul.nav-bar li .submenu {
   background-repeat: no-repeat;
   background-position: left top;
   padding-left: 23px;
+}
+
+.submenu-sub .wb-more ul li.more-file {
+  background-image: url(/img/bullet-file.png);
+}
+
+.submenu-sub .wb-more ul li.more-tool {
+  background-image: url(/img/bullet-wrench.png);
+}
+
+.submenu-sub .wb-more ul li.more-twitter {
+  background-image: url(/img/bullet-twitter.png);
+}
+
+.submenu-sub .wb-more ul li.more-github {
+  background-image: url(/img/bullet-github.png);
 }
 
 .submenu-sub .more-file {
