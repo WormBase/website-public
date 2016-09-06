@@ -104,26 +104,17 @@
       $jq("#nav-bar").find("ul li").hover(function () {
           var navItem = $jq(this);
           $jq("div.columns>ul").hide();
-          if(timer){
-            navItem.siblings("li").children("div.wb-dropdown").hide();
-            navItem.siblings("li").children("a").removeClass("hover");
-            navItem.children("div.wb-dropdown").find("a").removeClass("hover");
-            navItem.children("div.wb-dropdown").find("div.wb-dropdown").hide();
-            clearTimeout(timer);
-            timer = undefined;
-          }
-          navItem.children("div.wb-dropdown").show();
+
+          navItem.siblings("li").children("div.wb-dropdown").stop(true, false);
+
+          navItem.siblings("li").children("div.wb-dropdown").hide();
+          navItem.siblings("li").children("a").removeClass("hover");
+          navItem.children("div.wb-dropdown").delay(500).slideDown(400);
           navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
-          if(timer){
-            clearTimeout(timer);
-            timer = undefined;
-          }
-          timer = setTimeout(function() {
-                toHide.children("div.wb-dropdown").hide();
-                toHide.children("a").removeClass("hover");
-              }, 300)
+          toHide.children("div.wb-dropdown").hide();
+          toHide.children("a").removeClass("hover");
         });
 
         ajaxGet($jq(".status-bar"), "/rest/auth", {cache : false}, function(){
