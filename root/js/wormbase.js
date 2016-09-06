@@ -113,6 +113,7 @@
           navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
+          toHide.children("div.wb-dropdown").stop(true, false);
           toHide.children("div.wb-dropdown").hide();
           toHide.children("a").removeClass("hover");
         });
