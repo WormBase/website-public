@@ -1311,13 +1311,14 @@ div#header div#title {
 div#header div#title > a,
 div#header div#title .release_date {
     display: inline-block;
-    vertical-align: bottom;
+    vertical-align: top;
 }
 
 div#header .release_date {
     font-size:0.8em;
-    line-height: 24px;
+    line-height: 20.8px;
     margin-left: 5px;
+    margin-top:13px;
 }
 
 @media screen and (max-width: 767px) {
