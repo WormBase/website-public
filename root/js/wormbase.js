@@ -104,26 +104,35 @@
       $jq("#nav-bar").find("ul li").hover(function () {
           var navItem = $jq(this);
           $jq("div.columns>ul").hide();
+
+
           if(timer){
-            navItem.siblings("li").children("ul.wb-dropdown").hide();
-            navItem.siblings("li").children("a").removeClass("hover");
-            navItem.children("ul.wb-dropdown").find("a").removeClass("hover");
-            navItem.children("ul.wb-dropdown").find("ul.wb-dropdown").hide();
+            // remove timer for pending dropdown hide operation
             clearTimeout(timer);
             timer = undefined;
           }
-          navItem.children("ul.wb-dropdown").show();
+
+          // hide all sibling dropdowns immediately
+          // instead of waiting for timeout to complete
+          navItem.siblings("li").children("div.wb-dropdown").stop(true, false);
+          navItem.siblings("li").children("div.wb-dropdown").hide();
+          navItem.siblings("li").children("a").removeClass("hover");
+
+          navItem.children("div.wb-dropdown").delay(500).slideDown(400);
           navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
           if(timer){
+            // ensure only one timer is active
             clearTimeout(timer);
             timer = undefined;
           }
           timer = setTimeout(function() {
-                toHide.children("ul.wb-dropdown").hide();
-                toHide.children("a").removeClass("hover");
-              }, 300)
+            // delay hiding dropdown
+            toHide.children("div.wb-dropdown").stop(true, false);
+            toHide.children("div.wb-dropdown").slideUp(200);
+            toHide.children("a").removeClass("hover");
+          }, 300);
         });
 
         ajaxGet($jq(".status-bar"), "/rest/auth", {cache : false}, function(){
@@ -196,7 +205,7 @@
       colDropdown.hover(function () {
           if(timer){
             $jq("#nav-bar").find("ul li .hover").removeClass("hover");
-            $jq("#nav-bar").find("ul.wb-dropdown").hide();
+            $jq("#nav-bar").find("div.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
