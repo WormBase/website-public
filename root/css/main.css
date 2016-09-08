@@ -1761,7 +1761,7 @@ ul.nav-bar li .submenu {
     top: 38px;
     left: 0;
     width: 100%;
-    z-index: 500;
+    z-index: 1000;
     padding: 24px 0;
 }
 
@@ -1779,7 +1779,7 @@ ul.nav-bar li .submenu {
 
 .submenu-main {
     width: 75%;
-    
+
 }
 
 .submenu-sub {
@@ -1835,7 +1835,7 @@ ul.nav-bar li .submenu {
 #section-directory .submenu-links,
 #section-tools .submenu-links {
     position: relative;
-} 
+}
 
 #section-directory .submenu-links > div {
     width: 20%;
