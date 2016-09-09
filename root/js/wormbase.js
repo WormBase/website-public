@@ -463,7 +463,7 @@
               });
             if(tog.hasClass("load-toggle")){
               if (tog.attr("iframe")) {
-                  tog.next().html('<iframe src="' + tog.attr("href") + '" id=\"jbrowse-frame-a\"></iframe>');
+                  tog.next().html('<iframe src="' + tog.attr("href") + '></iframe>');
               } else {
                   ajaxGet(tog.next(), tog.attr("href"));
               }
@@ -2909,6 +2909,12 @@ var Scrolling = (function(){
 
   })();
 
+    var initJbrowseView = function(elementSelector, url) {
+      function reset() {
+        $jq(elementSelector).attr('src', url);
+      }
+      return reset;
+    };
 
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
@@ -3164,7 +3170,8 @@ var Scrolling = (function(){
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
-      tooltipInit: tooltipInit                      // initalize tooltip
+      tooltipInit: tooltipInit,                      // initalize tooltip
+      initJbrowseView: initJbrowseView              // initialize jbrowse view iframe to specified src
     };
   })();
 
