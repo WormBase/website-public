@@ -353,7 +353,7 @@
       label = label || data.label;
 
       IF species;
-        "<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>Beta</sup></h3>";
+        "<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>New</sup></h3>";
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
             true_coords = data.label; #don't use the data.pos_string which is padded for GBrowse
@@ -362,7 +362,7 @@
             view_id = "jbrowse-view-$padded_coords-$bp";
             view_id = view_id.replace('\W+', '_');
 
-            '<p class="fade">Experimental feature - please use Chrome Browser for the best viewing result.</p>';
+            '<p class="fade">Please use Chrome Browser for the best viewing result.</p>';
 
             WRAPPER toggle title="Click here to view" lazy=1 iframe=".jbrowse-view-iframe" href=view_url;
                 '<div id="' _ view_id _ '" class="jbrowse-view-container">';
