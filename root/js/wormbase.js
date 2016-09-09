@@ -463,7 +463,10 @@
               });
             if(tog.hasClass("load-toggle")){
               if (tog.attr("iframe")) {
-                  tog.next().html('<iframe src="' + tog.attr("href") + '></iframe>');
+                var iframeContainer = tog.attr("iframe")
+                      ? tog.next().find(tog.attr("iframe"))
+                      : tog.next();
+                iframeContainer.html('<iframe src="' + tog.attr("href") + '"></iframe>');
               } else {
                   ajaxGet(tog.next(), tog.attr("href"));
               }

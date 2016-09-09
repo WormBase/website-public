@@ -361,17 +361,17 @@
             view_url = jbrowse_url(taxonomy, padded_coords, bp, 1);
             '<p class="fade">Experimental feature - please use Chrome Browser for the best viewing result.</p>';
 
-            '<button id="jbrowse-view-reset" class="button ui-corner-all">';
-            '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
-            '</span>';
-            'Reset';
-            '</button>';
-
-            WRAPPER toggle title="Click here to view" lazy=1 iframe=1 href=view_url toggle_class="jbrowse-view-container";
+            WRAPPER toggle title="Click here to view" lazy=1 iframe=".jbrowse-view-iframe" href=view_url toggle_class="jbrowse-view-container";
+                '<button class="jbrowse-view-reset button ui-corner-all">';
+                '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
+                '</span>';
+                'Reset';
+                '</button>';
+                '<div class="jbrowse-view-iframe"></div>';
             END;
             '<script type="text/javascript">';
             'var reset = WB.initJbrowseView(".jbrowse-view-container iframe", "' _ view_url _ '");';
-            '$jq("#jbrowse-view-reset").click(reset);';
+            '$jq(".jbrowse-view-reset").click(reset);';
             '</script>';
         END;
       END;
