@@ -2914,7 +2914,7 @@ var Scrolling = (function(){
 
     var initJbrowseView = function(elementSelector, url) {
       function reset() {
-        $jq(elementSelector).attr('src', url);
+        $jq(elementSelector).find('iframe').attr('src', url);
       }
       return reset;
     };
