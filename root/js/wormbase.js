@@ -3192,7 +3192,7 @@ var Scrolling = (function(){
 
   $jq(window).bind('beforeunload', function(){
     // scroll top upon page refresh
-    $jq(window).scrollTop(0);
+    WB.scrollToTop();
   });
 
   window.WB = WB;
