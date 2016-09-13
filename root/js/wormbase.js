@@ -101,6 +101,13 @@
 
     function navBarInit(){
       searchInit();
+      $jq("#nav-bar").find("ul li a.trigger").bind('touchstart', function(e) {
+        // on touch device, touch start should open dropdown
+        // prevent touch event follow href
+        e.preventDefault();
+        $jq(this).parent().trigger('mouseenter');
+      });
+
       $jq("#nav-bar").find("ul li").hover(function () {
           var navItem = $jq(this);
           $jq("div.columns>ul").hide();
