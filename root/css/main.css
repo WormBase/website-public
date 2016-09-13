@@ -552,7 +552,7 @@ div#tutorial-left{
   height:225px;
   position:absolute;
   left:20px;
-  top:10px;
+  top:5px;
   z-index:-1;
 }
 
@@ -560,7 +560,7 @@ div#tutorial-right{
   background-image:url('/img/tutorial.png');
   background-repeat:no-repeat;
   position:absolute;
-  right:30px;
+  right:0;
   top:10px;
   background-repeat:no-repeat;
   width:229px;
@@ -569,14 +569,37 @@ div#tutorial-right{
 }
 
 #skip-tutorial:hover{
-  background:url('/img/home-arrow.png') no-repeat 110px 10px;
+  background:url('/img/home-arrow.png') no-repeat 110px 5px;
+}
+
+@media screen and (max-width: 991px) {
+  div#tutorial-left{
+    background-image:url('/img/tutorial-narrow.png');
+    left:40px;
+  }
+
+  #skip-tutorial:hover{
+    left: 320px !important;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  div#tutorial-left{
+    background-image:url('/img/tutorial-narrow.png');
+    left:20px;
+  }
+
+  #skip-tutorial:hover{
+    left: 300px !important;
+  }
 }
 
 div.star-tutorial{
   height:110px;
   width:170px;
   position:absolute;
-  right:52px;
+  top: 82px;
+  right:43px;
   bottom:16px;
   cursor:pointer;
 }
@@ -839,7 +862,7 @@ a#fade:hover, a.fade:hover {
   margin: 0.4em;
   position:relative;
   background:white;
-  min-width: 235px;
+  width: 100%;
   max-height: 1.3em;
   justify-content: space-between;
 }
@@ -861,18 +884,18 @@ a#fade:hover, a.fade:hover {
     float: right;
     height: 2em;
     margin: 0.5em 1.5em 0 0;
-    min-width: 275px;
+    min-width: 385px;
     padding: 0;
     position: relative;
 }
 
 #header #searchForm {
     clear: right;
-    margin: 0 15px 12px;
+    margin: 0 15px 6px;
     float:right;
 }
 
-@media screen and (max-width: 767px)  {
+@media screen and (max-width: 823px)  {
   #header #searchForm {
       float:left;
       clear:left;
@@ -889,6 +912,7 @@ a#fade:hover, a.fade:hover {
   text-align: left;
   height:1.3em;
   margin:0;
+  min-width: 242px;
 }
 
 #searchForm input.ui-icon,
@@ -1258,7 +1282,7 @@ div#header p a  {
 
 /* Status bar */
 div#header .status-bar {
-    margin: 12px 15px 6px;
+    margin: 6px 15px 3px;
     float:right;
 }
 
@@ -1266,8 +1290,8 @@ div#header .status-bar ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
-    font-size: 0.9em;
-    line-height: 24px;
+    font-size: 13px;
+    line-height: 20.8px;
 }
 
 div#header .status-bar li {
@@ -1287,9 +1311,18 @@ div#header .status-bar li.status-me a {
   word-break:break-all;
 }
 
+div#header .status-bar li.status-developers {
+  background-color: #fff;
+  border: 1px solid #C1D3E8;
+  border-radius: 3px;
+  padding: 0 7px;
+}
+
 div#header .status-bar li.status-contact {
   background-color: #e0e8ef;
+  border: 1px solid #e0e8ef;
   border-radius: 3px;
+  margin: 0;
   padding: 0 7px;
 }
 
@@ -1305,7 +1338,12 @@ div#header .status-bar .ui-icon {
 /* Title and release date */
 div#header div#title {
   float:left;
-  margin: 36px 15px 0;
+  margin: 24px 15px 0;
+}
+
+div#header div#title img {
+  height: 40px;
+  width: auto;
 }
 
 div#header div#title > a,
@@ -1318,15 +1356,15 @@ div#header .release_date {
     font-size:0.8em;
     line-height: 20.8px;
     margin-left: 5px;
-    margin-top:13px;
+    margin-top:16px;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 823px) {
   div#header .status-bar {
     float:none;
   }
   div#header div#title {
-    margin: 0 15px;
+    margin: 6px 15px 3px;
   }
 }
 
@@ -1550,6 +1588,21 @@ ul.nav-bar.parasite-menu > li a:hover {
   background-color: #e0e8ef;
 }
 
+/* Submit data menu */
+#nav-bar .submit-data-menu a:link,
+#nav-bar .submit-data-menu  a:visited {
+  background-color: #beebb4;
+  color: #406f9c;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+#nav-bar .submit-data-menu  a:hover,
+#nav-bar .submit-data-menu a:active {
+  background-color: #d3f7cb;
+  text-decoration: none;
+}
+
 /* --- Everything else --- */
 div#header #nav-bar {
   clear:both;
@@ -1566,6 +1619,10 @@ ul.nav-bar {
 }
 
 ul.nav-bar.parasite-menu {
+  float:right;
+}
+
+ul.nav-bar.submit-data-menu {
   float:right;
 }
 
@@ -1587,14 +1644,24 @@ ul.nav-bar.parasite-menu > li a  {
   padding: 11px 15px 5px;
 }
 
+ul.nav-bar.submit-data-menu li {
+  height: 30px;
+  padding: 4px 15px 3px;
+}
+
+ul.nav-bar.submit-data-menu li a {
+  display: block;
+  padding: 7px 10px;
+}
+
 @media screen and (max-width: 991px) {
   ul.nav-bar > li a.trigger,
   ul.nav-bar.parasite-menu > li a {
     padding: 11px 8px 5px;
   }
 
-  ul.nav-bar.parasite-menu > li a  {
-    padding: 11px 8px 5px;
+  ul.nav-bar.submit-data-menu li {
+    padding: 4px 8px 3px;
   }
 }
 
@@ -1604,11 +1671,10 @@ ul.nav-bar.parasite-menu > li a  {
     padding: 11px 4px 5px;
   }
 
-  ul.nav-bar.parasite-menu > li a  {
-    padding: 11px 4px 5px;
+    ul.nav-bar.submit-data-menu li {
+    padding: 5px 4px 3px;
   }
 }
-
 
 ul.nav-bar > li span.ui-icon {
   position:absolute;
@@ -1895,27 +1961,36 @@ ul.nav-bar li .submenu {
 #section-tools .submenu-links > div:nth-child(5) {
     position: absolute;
     left: 44.44%;
-    top: 5.2em;
+    top: 4.55em;
 }
 
+#section-tools .submenu-links > div:nth-child(6) {
+    position: absolute;
+    left: 44.44%;
+    top: 10.4em;
+}
 @media screen and (max-width: 767px) {
   #section-tools .submenu-links > div:nth-child(2) {
       top: 6.5em;
   }
 
   #section-tools .submenu-links > div:nth-child(5) {
-      top: 6.5em;
+      top: 7.15em;
   }
+
+  #section-tools .submenu-links > div:nth-child(6) {
+      top: 16.25em;
+  }  
 }
 
-#section-tools .submenu-links > div:nth-child(6),
 #section-tools .submenu-links > div:nth-child(7),
-#section-tools .submenu-links > div:nth-child(8) {
+#section-tools .submenu-links > div:nth-child(8),
+#section-tools .submenu-links > div:nth-child(9) {
     width: 33.33%;
 }
 
-#section-tools .submenu-links > div:nth-child(7),
-#section-tools .submenu-links > div:nth-child(8) {
+#section-tools .submenu-links > div:nth-child(8),
+#section-tools .submenu-links > div:nth-child(9) {
   margin-left: 22.22%;
 }
 

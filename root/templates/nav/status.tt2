@@ -11,6 +11,7 @@
         </ul>
       </li>
     [% END %]
+      <li class="status-developers"><a href="/about/userguide/for_developers#012345--10">For Developers</a></li>
       <li class="status-contact"><a href="/tools/support?url=/">Contact Us</a></li>
     </ul>
 
