@@ -52,7 +52,7 @@
   <div class="status-bar"></div>
 
   <div id="title">
-      <a href="/" title="WormBase Home"><img src="/img/logo/logo_wormbase_gradient_small.png" /><!-- <h1>[%# template.title or c.config.site_name %]</h1> --></a>
+      <a href="/" title="WormBase Home"><img src="/img/logo/logo_wormbase_gradient.svg" /><!-- <h1>[%# template.title or c.config.site_name %]</h1> --></a>
     <div class="release_date">
       <p>Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a></p>
     </div>
@@ -143,6 +143,11 @@
       <li><a href="http://parasite.wormbase.org/">ParaSite</a></li>
     </ul>
     <!-- END: New parasite menu -->
+    <!-- START: New submit data menu -->
+    <ul class="nav-bar submit-data-menu">
+      <li><a href="/about/userguide/submit_data#01--10">Submit Data</a></li>
+    </ul>
+    <!-- END: New submit data menu -->
   </div>
 
   [% PROCESS timer %]
