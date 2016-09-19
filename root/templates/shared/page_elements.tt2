@@ -570,6 +570,8 @@ END; %]
         cell_content(cell.text) _ format_footnotes(cell.footnotes);
       ELSIF cell.defined('pato_evidence');
           pato_evidence(cell.pato_evidence);
+      ELSIF cell.defined('curated_images');
+          tag2link(cell);
       ELSE;
 
         # assumes that hash passed to cell should be output as the key followed by its value
