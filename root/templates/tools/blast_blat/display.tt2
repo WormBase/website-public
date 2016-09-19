@@ -77,7 +77,7 @@
 				  [% tag2link(line.link.corr_gene_link) %]
 
 				  [% IF line.link.expand_link %]
-				    <br/><div class="expand_area"  expand_area_count="[% expand_area_counter _ count %]" expand_link="[% site.external_urls.gbrowse_image.base _ line.link.expand_link %]"></div>
+				    <br/><div class="expand_area"  expand_area_count="[% expand_area_counter _ count %]" expand_link="[% gbrowse_url(line.link.genome_link.taxonomy, line.link.genome_link.id, obj.bioproject, 1) %]"></div>
 				    [% expand_area_counter = expand_area_counter+1 %]
 				   [% END %]
 
