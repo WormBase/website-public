@@ -2939,8 +2939,18 @@ table#table_fpkm_controls_by td:nth-child(3) {
 }
 
 /* referenced widget on paper page */
+/* referenced widget layout the thumbnails horizontally */
 #referenced-content .img-link {
-  width: 100px;
+  float: left;
+  margin: 3px;
+  padding: 2px;
+}
+#referenced-content .img-link .expr-img-wrapper {
+  height: 100px;
+}
+#referenced-content .img-link .expr-img-wrapper img {
+  width: auto;
+  height: 100%
 }
 
 /* SEQUENCE STYLING */
