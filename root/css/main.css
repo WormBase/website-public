@@ -1083,7 +1083,7 @@ a#fade:hover, a.fade:hover {
   /* display:none; previously used for hide button until texts are entered */
 }
 
-.ui-autocomplete-loading { background: white url(/img/ajax-loader.gif) right center no-repeat; }
+.ui-autocomplete-loading { background: white url(/img/ajax-loader.gif) center no-repeat; }
 
 
 /* Icons
@@ -1589,16 +1589,17 @@ ul.nav-bar.parasite-menu > li a:hover {
 }
 
 /* Submit data menu */
-#nav-bar .submit-data-menu a:link,
-#nav-bar .submit-data-menu  a:visited {
+.submit-data-menu a,
+.submit-data-menu a:link,
+.submit-data-menu  a:visited {
   background-color: #d3f7cb;
-  color: #406f9c;
+  color: #666;
   border-radius: 3px;
-  font-size: 0.9em;
+  padding: 0.5em 0.7em;
 }
 
-#nav-bar .submit-data-menu  a:hover,
-#nav-bar .submit-data-menu a:active {
+.submit-data-menu  a:hover,
+.submit-data-menu a:active {
   background-color: #beebb4;
   text-decoration: none;
 }
@@ -1651,6 +1652,7 @@ ul.nav-bar.submit-data-menu li {
 
 ul.nav-bar.submit-data-menu li a {
   display: block;
+  font-size: 0.9em;
   padding: 7px 10px;
 }
 
