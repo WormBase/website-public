@@ -1589,25 +1589,19 @@ ul.nav-bar.parasite-menu > li a:hover {
 }
 
 /* Submit data menu */
+.submit-data-menu a,
 .submit-data-menu a:link,
 .submit-data-menu  a:visited {
   background-color: #d3f7cb;
   color: #666;
   border-radius: 3px;
+  padding: 0.5em 0.7em;
 }
 
 .submit-data-menu  a:hover,
 .submit-data-menu a:active {
   background-color: #beebb4;
   text-decoration: none;
-}
-
-.submit-data-menu a {
-  padding: 0.5em 0.7em;
-}
-
-#nav-bar .submit-data-menu a {
-  font-size: 0.9em;
 }
 
 /* --- Everything else --- */
@@ -1658,6 +1652,7 @@ ul.nav-bar.submit-data-menu li {
 
 ul.nav-bar.submit-data-menu li a {
   display: block;
+  font-size: 0.9em;
   padding: 7px 10px;
 }
 
