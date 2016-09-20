@@ -482,15 +482,20 @@ sub refers_to {
 
             my @ref_items;
             if ($ref_type eq 'GO_annotation') {
-                @ref_items = $self->_get_go_term($ref_type);
+                @ref_items = $self->_get_go_term();
                 $ref_type = 'GO_term';
+                $data{"$ref_type"} = @ref_items ? \@ref_items : undef;
+            } elsif ($ref_type eq 'Picture') {
+                @ref_items = $self->_get_referenced_pictures();
+                $data{"$ref_type"} = @ref_items ? {curated_images => \@ref_items} : undef;
             } else {
                 @ref_items = map {
                     my $ev = $self->_get_evidence($_, \@evidence_types);
                     $ev ? { text => $self->_pack_obj($_), evidence => $ev } : $self->_pack_obj($_);
                 } $ref_type->col;
+                $data{"$ref_type"} = @ref_items ? \@ref_items : undef;
             }
-            $data{"$ref_type"} = @ref_items ? \@ref_items : undef;
+
 
         # Or build some data tables for different object types
         #	foreach $ref_type ($ref_type->col) {
@@ -509,15 +514,32 @@ sub refers_to {
 
 # collect GO_terms that the paper refers to
 sub _get_go_term {
-    my ($self, $ref_type) = @_;
+    my ($self) = @_;
 
     my %ref_items_map = map {
         my $go_term = $_->GO_term;
         ("$go_term", $self->_pack_obj($go_term));
         #(key, val), so val become unique in the map/hash
-    } $ref_type->col;
+    } $self->object->Refers_to('GO_annotation');
 
     return values %ref_items_map;
+}
+
+sub _get_referenced_pictures {
+    my ($self) = @_;
+
+    my @pictures = map {
+        my $pic = $self->_api->wrap($_);
+        if ($pic->image->{data}) {
+            my $image_tag = $self->_pack_obj($pic->object);
+            $image_tag->{thumbnail} = $pic->image->{data};
+            $image_tag;
+#            push @{$expr_packed->{curated_images}}, $image_tag;
+        } else {
+            ();
+        }
+    } $self->object->Refers_to('Picture');
+    return @pictures;
 }
 
 

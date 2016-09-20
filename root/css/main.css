@@ -1980,7 +1980,7 @@ ul.nav-bar li .submenu {
 
   #section-tools .submenu-links > div:nth-child(6) {
       top: 16.25em;
-  }  
+  }
 }
 
 #section-tools .submenu-links > div:nth-child(7),
@@ -2686,6 +2686,11 @@ li.visible div.widget-container {
   background-color: yellow;
 }
 
+#cboxContent .widget-data-source-wrapper {
+  /* avoid showing data source for modal box*/
+  display: none;
+}
+
 /* colour changes for the different types of widgets */
 
 #widget-me {
@@ -2931,6 +2936,21 @@ table#table_fpkm_controls_by td:nth-child(3) {
 
 #genetics-alleles {
   margin-bottom: 5px;
+}
+
+/* referenced widget on paper page */
+/* referenced widget layout the thumbnails horizontally */
+#referenced-content .img-link {
+  float: left;
+  margin: 3px;
+  padding: 2px;
+}
+#referenced-content .img-link .expr-img-wrapper {
+  height: 100px;
+}
+#referenced-content .img-link .expr-img-wrapper img {
+  width: auto;
+  height: 100%
 }
 
 /* SEQUENCE STYLING */
