@@ -1,7 +1,6 @@
 
   [% path = c.uri_for('/me').path %]
-  [% title = "My WormBase"  %]
-
+  [% breadcrumbs = ["My WormBase"] %]
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
@@ -52,6 +51,3 @@
   [% END %]
 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets layout="1-0-5"%]
-
-
-

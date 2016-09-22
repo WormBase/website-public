@@ -5,7 +5,6 @@
 [%- #    title   - the title of the page                   -%]
 
    [%
-    title = "<span>Tools</span>";
-    report_page(title);
+    breadcrumbs = "<span>Tools</span>";
+    report_page(breadcrumbs);
  %]
-

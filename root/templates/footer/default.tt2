@@ -20,6 +20,7 @@
           <li><a href="[% c.uri_for('/about','policies').path  _ '#2--10' %]">Copyright</a></li>
           <li><a href="[% c.uri_for('/about','release_schedule').path  _ '#01--10' %]">Release Schedule</a></li>
           <li><a href="[% c.uri_for('/about','citing_wormbase').path  _ '#012--10' %]">How to Cite</a></li>
+          <li><a href="[% c.uri_for('/about', 'acknowledgments').path _ '#0--10' %]">Acknowledgments</a></li>
           <li><a href="[% c.uri_for('/about','staff').path  _ '#01--10' %]">WormBase Staff</a></li>
           <li>[% external_link("http://legacy.wormbase.org/", 'Legacy Site') %]</li>
         </ul>

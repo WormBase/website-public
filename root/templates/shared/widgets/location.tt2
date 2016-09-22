@@ -60,7 +60,7 @@
                  WRAPPER $field_block title="Genomic position" key="genomic_position";
 
                    tag2link(position);
-                   '<span class="jbrowse_link">(Try the new Genome Browser: ' _ jbrowselink(position) _ ' <sup>Beta</sup>)</span>';
+                   '<span class="jbrowse_link">(Try the new Genome Browser: ' _ jbrowselink(position) _ ' <sup>New</sup>)</span>';
                    UNLESS loop.last;
      	                 ',&nbsp;';
                    END;

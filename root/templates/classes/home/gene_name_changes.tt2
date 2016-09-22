@@ -11,13 +11,14 @@
 
 [% BLOCK change_summary_field_block %]
     <div class="change-summary-field">
-    [% IF fields.$key %]
+    [% IF fields.$key.data.size > 0 %]
         [% formatted_title = '<h4 class="change-summary-field--title">' _ title _ '</h4>' %]
         [% WRAPPER toggle title=formatted_title open=open %]
             [% content %]
         [% END %]
     [% ELSE %]
-        <p class="fade"><em>There are no [% title %] in this release.</em></p>
+        <span style="float:left;margin-left:5px;" class="ui-icon ui-icon-triangle-1-e ui-state-disabled"></span>
+        <p style="color:#999999;font-size:0.9em">There are no [% title | lower %] in this release.</p>
     [% END %]
     </div>
 [% END %]

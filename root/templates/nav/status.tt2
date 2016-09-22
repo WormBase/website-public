@@ -1,13 +1,17 @@
 [% ref = c.req.referer.split('/').last %]
-[% IF c.user_exists %]
-  <li><a href="[% c.uri_for('/me').path %]" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">Welcome [% c.user.username %]<span href="/me" id="bench-status"></span></a></li>
-  <li><a id="logout" href="javascript:void(0)">Logout</a></li>
-[% ELSE %]
-  <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench-status"></span></a></li>
-  <li id="login-box"><a id="login">Login</a>
-    <ul class="wb-dropdown ui-corner-all login-form">
-    [% PROCESS auth/login.tt2 %]
+    <ul>
+    [% IF c.user_exists %]
+      <li class="status-me"><a href="[% c.uri_for('/me').path %]" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">Welcome [% c.user.username %]<span href="/me" id="bench-status"></span></a></li>
+      <li class="status-user"><a id="logout" href="javascript:void(0)">Logout</a></li>
+    [% ELSE %]
+      <li class="status-me"><a href="/me" title="go to your workspace" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench-status"></span></a></li>
+      <li id="login-box" class="status-user"><a id="login">Login</a>
+        <ul class="wb-dropdown ui-corner-all login-form" style="display:none;">
+        [% PROCESS auth/login.tt2 %]
+        </ul>
+      </li>
+    [% END %]
+      <li class="status-developers"><a href="/about/userguide/for_developers#012345--10">For Developers</a></li>
+      <li class="status-contact"><a href="/tools/support?url=/">Contact Us</a></li>
     </ul>
-  </li>
-[% END %]
 

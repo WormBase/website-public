@@ -11,9 +11,5 @@
          END;
       END;
 
-      title = breadcrumbs.join(' &raquo; ');
-      report_page(title);
+      report_page(breadcrumbs);
 %]
-
-
-

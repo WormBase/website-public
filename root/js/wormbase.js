@@ -101,29 +101,45 @@
 
     function navBarInit(){
       searchInit();
+      $jq("#nav-bar").find("ul li a.trigger").bind('touchstart', function(e) {
+        // on touch device, touch start should open dropdown
+        // prevent touch event follow href
+        e.preventDefault();
+        $jq(this).parent().trigger('mouseenter');
+      });
+
       $jq("#nav-bar").find("ul li").hover(function () {
           var navItem = $jq(this);
           $jq("div.columns>ul").hide();
+
+
           if(timer){
-            navItem.siblings("li").children("ul.wb-dropdown").hide();
-            navItem.siblings("li").children("a").removeClass("hover");
-            navItem.children("ul.wb-dropdown").find("a").removeClass("hover");
-            navItem.children("ul.wb-dropdown").find("ul.wb-dropdown").hide();
+            // remove timer for pending dropdown hide operation
             clearTimeout(timer);
             timer = undefined;
           }
-          navItem.children("ul.wb-dropdown").show();
+
+          // hide all sibling dropdowns immediately
+          // instead of waiting for timeout to complete
+          navItem.siblings("li").children("div.wb-dropdown").stop(true, false);
+          navItem.siblings("li").children("div.wb-dropdown").hide();
+          navItem.siblings("li").children("a").removeClass("hover");
+
+          navItem.children("div.wb-dropdown").delay(500).slideDown(400);
           navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
           if(timer){
+            // ensure only one timer is active
             clearTimeout(timer);
             timer = undefined;
           }
           timer = setTimeout(function() {
-                toHide.children("ul.wb-dropdown").hide();
-                toHide.children("a").removeClass("hover");
-              }, 300)
+            // delay hiding dropdown
+            toHide.children("div.wb-dropdown").stop(true, false);
+            toHide.children("div.wb-dropdown").slideUp(200);
+            toHide.children("a").removeClass("hover");
+          }, 300);
         });
 
         ajaxGet($jq(".status-bar"), "/rest/auth", {cache : false}, function(){
@@ -196,7 +212,7 @@
       colDropdown.hover(function () {
           if(timer){
             $jq("#nav-bar").find("ul li .hover").removeClass("hover");
-            $jq("#nav-bar").find("ul.wb-dropdown").hide();
+            $jq("#nav-bar").find("div.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
@@ -317,7 +333,7 @@
 
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
-      Layout.Breadcrumbs.init();
+
       if(location.hash.length > 0){
         Layout.readHash();
       }else if(layout = widgetHolder.data("layout")){
@@ -454,7 +470,10 @@
               });
             if(tog.hasClass("load-toggle")){
               if (tog.attr("iframe")) {
-                  tog.next().html('<iframe src="' + tog.attr("href") + '" id=\"jbrowse-frame-a\"></iframe>');
+                var iframeContainer = tog.attr("iframe")
+                      ? tog.next().find(tog.attr("iframe"))
+                      : tog.next();
+                iframeContainer.html('<iframe src="' + tog.attr("href") + '"></iframe>');
               } else {
                   ajaxGet(tog.next(), tog.attr("href"));
               }
@@ -1277,52 +1296,6 @@ var Layout = (function(){
       }
     }
 
-
-
-
-  var Breadcrumbs = (function(){
-    var bc = $jq("#breadcrumbs"),
-        bExp = false,
-        hiddenContainer,
-        bWidth,
-        bCount;
-
-    function init() {
-      if (!bc || ((bCount = bc.children().size()) < 3)) { return; }
-      var children = bc.children(),
-          hidden = children.slice(0, (bCount - 2)),
-          shown = children.slice((bCount - 2)),
-          expand;
-      bc.empty();
-      hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
-      hiddenContainer.append(hidden).children().after(' &raquo; ');
-
-      bc.append('<span id="breadcrumbs-expand" class="ui-icon-large ui-icon-triangle-1-e tl" tip="exapand"></span>').append(hiddenContainer).append(shown);
-      bc.children(':last').addClass("page-title").before(" &raquo; ");
-
-      expand = $jq("#breadcrumbs-expand");
-      expand.click( function(){
-        (bExp = !bExp) ? show($jq(this)) : hide($jq(this));
-      });
-      bWidth = hiddenContainer.width();
-      hide(expand);
-    }
-
-    function show(expand){
-      hiddenContainer.animate({width:bWidth}, function(){ hiddenContainer.css("width", "auto");}).css("visibility", 'visible');
-      expand.attr("tip", "minimize").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-w");
-    }
-
-    function hide(expand){
-      hiddenContainer.animate({width:0}, function(){ hiddenContainer.css("visibility", 'hidden');});
-      expand.attr("tip", "expand").removeClass("ui-icon-triangle-1-w").addClass("ui-icon-triangle-1-e");
-    }
-
-    return {
-     init: init
-    }
-  })();
-
   return {
       resize: resize,
       deleteLayout: deleteLayout,
@@ -1334,7 +1307,6 @@ var Layout = (function(){
       readHash: readHash,
       getLeftWidth: getLeftWidth,
       updateLayout: updateLayout,
-      Breadcrumbs: Breadcrumbs,
       newLayout: newLayout
   }
 })();
@@ -2947,6 +2919,12 @@ var Scrolling = (function(){
 
   })();
 
+    var initJbrowseView = function(elementSelector, url) {
+      function reset() {
+        $jq(elementSelector).find('iframe').attr('src', url);
+      }
+      return reset;
+    };
 
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
@@ -3202,7 +3180,8 @@ var Scrolling = (function(){
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
-      tooltipInit: tooltipInit                      // initalize tooltip
+      tooltipInit: tooltipInit,                      // initalize tooltip
+      initJbrowseView: initJbrowseView              // initialize jbrowse view iframe to specified src
     };
   })();
 
@@ -3220,7 +3199,7 @@ var Scrolling = (function(){
 
   $jq(window).bind('beforeunload', function(){
     // scroll top upon page refresh
-    $jq(window).scrollTop(0);
+    WB.scrollToTop();
   });
 
   window.WB = WB;
