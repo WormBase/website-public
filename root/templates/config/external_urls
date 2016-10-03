@@ -657,6 +657,12 @@
 	base        = 'http://www.ncbi.nlm.nih.gov/Taxonomy/'
 	search      = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s'
 	}
+	
+ NDB = {
+        description = 'A generic database name for any of the INSDC consortium members.'
+	base        = 'http://www.insdc.org/'
+	search      = 'http://www.ebi.ac.uk/ena/data/search?query=%s'
+        }
 
  NemaGENETAG_Consortium = {
 	description = 'NemaGENETAG Consortium. Transposon insertion project.'
