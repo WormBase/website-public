@@ -559,6 +559,12 @@
 	search      = 'http://www.ncbi.nlm.nih.gov/pubmed/%s'
 	}
 
+ 'Micropublication: Biology' = {
+	description = 'Micropublication:Biology'
+	base        = 'http://www.micropublicationbiology.org/'
+	search      = 'http://www.micropublicationbiology.org/%s'
+	}
+	
  'Midwest Center for Structural Genomics' = {
 	description = 'The objective of the Midwest Center for Structural Genomics (MCSG) is to develop and optimize new, rapid, integrated methods for highly cost-effective determination of protein structures through X-ray crystallography'
 	base        = 'http://www.mcsg.anl.gov/'
