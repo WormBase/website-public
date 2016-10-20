@@ -297,7 +297,7 @@
 	base        = 'http://www.ensemblgenomes.org'
 	search      = 'http://www.ensemblgenomes.org/search/eg/%s'
 	}
-	
+
  EntrezGene = {
         description = 'NCBI-Gene integrated gene information'
         base        = 'http://www.ncbi.nlm.nih.gov'
@@ -451,13 +451,13 @@
 	base        = 'http://hamap.expasy.org/'
 	HAMAP_annotation_rule = 'http://hamap.expasy.org/unirule/%s'
 	}
-	
+
  HGNC = {
         description = 'HUGO Gene Nomenclature Committee'
         base        = 'http://www.genenames.org'
         search      = 'http://www.genenames.org/cgi-bin/gene_symbol_report?match=%s'
         }
-	
+
  hi = {
 	description = 'H-InvDB: Annotated Human Gene Database'
 	search      = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
@@ -564,7 +564,7 @@
 	base        = 'http://www.micropublicationbiology.org/'
 	search      = 'http://www.micropublicationbiology.org/%s'
 	}
-	
+
  'Midwest Center for Structural Genomics' = {
 	description = 'The objective of the Midwest Center for Structural Genomics (MCSG) is to develop and optimize new, rapid, integrated methods for highly cost-effective determination of protein structures through X-ray crystallography'
 	base        = 'http://www.mcsg.anl.gov/'
@@ -663,7 +663,7 @@
 	base        = 'http://www.ncbi.nlm.nih.gov/Taxonomy/'
 	search      = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s'
 	}
-	
+
  NDB = {
         description = 'A generic database name for any of the INSDC consortium members.'
 	base        = 'http://www.insdc.org/'
@@ -976,9 +976,11 @@
 	description = 'Through a focused effort on protein groups of interest and an open collaboration with the community the TransgeneOme Project aims to systematically generate transgenic worm lines on a genome scale.'
 	maintainer  = ''
 	base        = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/projects.html'
-	search      = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/clone.html?wellId='
+    search      = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/clone.html?wellId=%s'
+	gene        = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/geneLocalization.html?geneDbId=%s'
+    construct   = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/clone.html?wellId=%s'
 	}
-	
+
  TREEFAM = {
 	description = 'TreeFam (Tree families database) is a database of phylogenetic trees of animal genes. It aims at developing a curated resource that gives reliable information about ortholog and paralog assignments, and evolutionary history of various gene families.'
 	maintainer  = ''
@@ -1034,6 +1036,12 @@
 	maintainer  = 'help@wormbook.org'
 	base        = 'http://www.wormbook.org/'
 	search      = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
+	}
+
+ WormFlux = {
+	description = 'Metabolic Network Modeling of C. elegans'
+	base        = 'http://wormflux.umassmed.edu/'
+	search      = 'http://wormflux.umassmed.edu/Genes/%s.php'
 	}
 
  WORMPEP = {
