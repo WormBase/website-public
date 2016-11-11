@@ -1,12 +1,13 @@
 [%
 
+   # USE Dumper; Dumper.dump(fields);
    # Reference allele
    WRAPPER $field_block title=pluralize("Reference allele", fields.reference_allele.data.size) key="reference_allele";
-	   tags2link(fields.reference_allele.data);
+       tags2link(fields.reference_allele.data);
    END;
 
     # Alleles
-    IF fields.alleles.data || fields.alleles_count.data.alleles_other || fields.alleles_count.data.polymorphisms;
+    IF fields.alleles.data;
     '<div id="genetics-alleles">';
         WRAPPER $field_block title="Alleles";
             WRAPPER toggle open=1 title="<strong>Alleles with phenotype</strong>";
@@ -21,24 +22,27 @@
             END;
 
             alleles_other_title = "<strong>Other alleles</strong> (currently with no associated phenotype)";
-            alleles_other_id = "alleles_other_toggle";
-            IF fields.alleles_count.data.alleles_other;
-                WRAPPER toggle lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'alleles_other').path title=alleles_other_title id=alleles_other_id;
-                END;
-            ELSE;
-                WRAPPER toggle open=1 title=alleles_other_title id=alleles_other_id;
-                '<p class="fade"><em>No data available for alleles without phenotype.</em></p>';
+            WRAPPER toggle open=!fields.alleles_other.data title=alleles_other_title;
+                IF fields.alleles_other.data;
+                    variation_table(
+                        order=['variation','molecular_change','locations','effects','composite_change','isoform','sources', 'strain']
+                        key='alleles_other');
+                ELSE;
+                    '<p class="fade"><em>No data available for alleles without phenotype.</em></p>';
                 END;
             END;
 
             polymorphism_title = "<strong>Other polymorphisms & natural variants</strong> (currently with no associated phenotype)";
-            polymorphism_id = "polymorphisms_toggle";
-            IF fields.alleles_count.data.polymorphisms;
-                WRAPPER toggle title=polymorphism_title lazy=1 href=c.uri_for('/rest','field','gene', object.name.data.id,'polymorphisms').path id=polymorphism_id;
-                END;
-            ELSE;
-                WRAPPER toggle open=1 title=polymorphism_title id=polymorphism_id;
-                '<p class="fade"><em>No data available for polymorphisms & natural variants without phenotype.</em></p>';
+            WRAPPER toggle open=!fields.polymorphisms.data; title=polymorphism_title;
+                IF fields.polymorphisms.data;
+                    variation_table(
+                        order=['variation','type','molecular_change','locations', 'effects','composite_change','strain'],
+                        columns={
+                            variation         => 'Polymorphism'
+                        },
+                        key='polymorphisms');
+                ELSE;
+                    '<p class="fade"><em>No data available for polymorphisms & natural variants without phenotype.</em></p>';
                 END;
             END;
        END;
