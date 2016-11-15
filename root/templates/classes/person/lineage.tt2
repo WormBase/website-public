@@ -1,18 +1,47 @@
+
+  <div id="cyPersonLineageAll" style="height: 750px; width: 950px; position: relative; float: left; border: 1px solid #aaa; left: 0; top: 0;"></div>
+  <img id="png-export" style="border: 1px solid #ddd; display: none;">
+  <div id="optionsdiv" style="z-index: 9999; position: absolute; top: 60px; right: 10px; width: 200px; border: 1px solid #aaa;  background: #e9eef2 none repeat scroll 0 0;">
+    <div id="optionsborderdiv" style="border: 10px solid #e9eef2; ">
+      [% fields.ancestors_data.helpRow %]
+      [% fields.ancestors_data.viewPngRow %]
+      [% fields.ancestors_data.arrowExplanation %]
+      <table id="directViewTable"><tbody>
+        <tr><td valign="center"><a id="toggleToFullView" href="javascript:void(0)">To Full View</a></td></tr>
+        [% fields.ancestors_data.roleRowsDirect %]
+      </tbody></table>
+      <table id="fullViewTable" style="display: none;"><tbody>
+        <tr><td valign="center"><a id="toggleToDirectView" href="javascript:void(0)">To Direct View</a></td></tr>
+        [% fields.ancestors_data.roleRowsFull %]
+      </tbody></table>
+      [% fields.ancestors_data.updateInfoRow %]
+    </div>
+  </div>
+
 [%
+
+
+WRAPPER $field_block title="Ancestors" key="ancestors";
+    build_data_table(
+                    key="ancestors",
+                    columns={'name'=>'Name','foo'=>'FOO','level'=>'Position','duration'=>'Period'},
+		    order=['name','foo','level','duration']);
+END;
+
 
 WRAPPER $field_block title="Supervised" key="supervised";
       build_data_table(
                     key="supervised",
-                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
-		    order=['name','level','duration']);
+                    columns={'name'=>'Name','foo'=>'FOO','level'=>'Position','duration'=>'Period'},
+		    order=['name','foo','level','duration']);
 END;
 
 
 WRAPPER $field_block title="Supervised By" key="supervised_by";
     build_data_table(
                     key="supervised_by",
-                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
-		    order=['name','level','duration']);
+                    columns={'name'=>'Name','foo'=>'FOO','level'=>'Position','duration'=>'Period'},
+		    order=['name','foo','level','duration']);
 END;
 
 
@@ -24,3 +53,12 @@ WRAPPER $field_block title="Worked With" key="worked_with";
 END;
 
 %]
+
+
+<script>
+    var thisPerson     = '[% fields.ancestors_data.thisPerson %]';
+    var elementsFull   = [% fields.ancestors_data.elementsFull %];
+    var elementsDirect = [% fields.ancestors_data.elementsDirect %];
+    WB.setupCytoscapePersonLineage(elementsDirect, elementsFull, thisPerson);
+</script>
+
