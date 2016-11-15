@@ -733,7 +733,6 @@ sub _get_ancestor_data {
 
         push @data, {
             'name'       => $self->_pack_obj($relation, $name && "$name"),
-            'foo'        => $relation,
             'level'      => @levels ? \@levels : undef,
             'duration'   => @duration ? \@duration : undef
         };
@@ -763,7 +762,6 @@ sub _get_lineage_data {
 
         push @data, {
             'name'       => $self->_pack_obj($relation, $name && "$name"),
-            'foo'        => $relation,
             'level'      => @levels ? \@levels : undef,
             'duration'   => @duration ? \@duration : undef
         };

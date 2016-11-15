@@ -24,24 +24,24 @@
 WRAPPER $field_block title="Ancestors" key="ancestors";
     build_data_table(
                     key="ancestors",
-                    columns={'name'=>'Name','foo'=>'FOO','level'=>'Position','duration'=>'Period'},
-		    order=['name','foo','level','duration']);
+                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
+		    order=['name','level','duration']);
 END;
 
 
 WRAPPER $field_block title="Supervised" key="supervised";
       build_data_table(
                     key="supervised",
-                    columns={'name'=>'Name','foo'=>'FOO','level'=>'Position','duration'=>'Period'},
-		    order=['name','foo','level','duration']);
+                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
+		    order=['name','level','duration']);
 END;
 
 
 WRAPPER $field_block title="Supervised By" key="supervised_by";
     build_data_table(
                     key="supervised_by",
-                    columns={'name'=>'Name','foo'=>'FOO','level'=>'Position','duration'=>'Period'},
-		    order=['name','foo','level','duration']);
+                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
+		    order=['name','level','duration']);
 END;
 
 
