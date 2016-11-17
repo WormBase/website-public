@@ -511,7 +511,6 @@ sub ancestors_data {
     my %roleColour;
     $roleColour{'Phd'}                 = '#B40431';
     $roleColour{'Postdoc'}             = '#00E300';
-    $roleColour{'Undergrad'}           = '#00E300';
     $roleColour{'Masters'}             = '#FF8000';
     $roleColour{'Research staff'}      = '#08298A';
     $roleColour{'Highschool'}          = '#05C1F0';
@@ -556,26 +555,10 @@ sub ancestors_data {
       $elements{$graphType} = qq({ nodes: [ $nodes ], edges: [ $edges ] });
     }
 
-    my $roleRowsDirect = '';
-    foreach my $role (sort keys %{ $existingRoles{'Direct'} }) {
-       $roleRowsDirect .= qq(<tr><td valign="center"><input type="checkbox" id="edge${role}" value="$role"" checked="checked"><span style="color: $existingRoles{'Direct'}{$role}">$role</span></td></tr>); }
-    my $roleRowsFull = '';
-    foreach my $role (sort keys %{ $existingRoles{'Full'} }) {
-       $roleRowsFull .= qq(<tr><td valign="center"><span style="color: $existingRoles{'Full'}{$role}">$role</span></td></tr>); }
-
-    my $helpRow = qq(<a href="#" onClick="alert('Intellectual Lineage Graph:\\n\\nWe present two graphs illustrating intellectual mentoring relationships where nodes represent persons and arrows person-to-person relationships.  A Direct View graph \(shown by default\) shows only direct relationships between the focus person and his/her mentors and between the focus person and the persons he/she mentors. Another Full View graph includes all mentoring relationships that center around the focus person.\\n\\nMentoring relationships include studentship of several levels, high school, college, master&#8217;s, and PhD, as well as postdoctoral fellowship, and research staff employment. Mentoring relationships are considered transitive for the purpose of determining the &quot;karma&quot; of a mentor, such that mentee’s mentee is one’s mentee. More mentees means more karma and is indicated by a bigger person node \(focus node is kept at fixed size\).\\n\\nUsing the mouse or key actions, one can zoom in and out in a graph.  Click a node will fire up a new person page in another tab. In the Direct View graph, one can choose what types of relationships are included in the display. The default is set to all.')">help</a><br/>);
-    my $updateInfoRow = qq(<a href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person_lineage.cgi?action=Display&number=$object" target="new">Add or update</a> your lineage information.<br/>);
-    my $viewPngRow = qq(<div id="view_png_div"><button id="view_png_button">Export PNG</button></div><div id="view_edit_div" style="display: none;"><button id="view_edit_button">go back</button><br/>drag image to desktop, or right-click and save image as</div><br/>);
-    my $arrowExplanation = qq(Mentor -> Mentee<br/>);
-
     my $data = { description => 'ancestors_data',
-                     helpRow => $helpRow,
-                  viewPngRow => $viewPngRow,
-               updateInfoRow => $updateInfoRow,
-            arrowExplanation => $arrowExplanation,
-                roleRowsFull => $roleRowsFull,
                   thisPerson => $object,
-              roleRowsDirect => $roleRowsDirect,
+           existingRolesFull => $existingRoles{'Full'},
+         existingRolesDirect => $existingRoles{'Direct'},
 	      elementsDirect => $elements{'Direct'}, 
 	        elementsFull => $elements{'Full'}, };
 }
