@@ -278,6 +278,17 @@ sub orcid {
     };
 }
 
+sub lab_representative_for {
+    my $self = shift;
+    my $object = $self->object;
+    my $lab = $self->_pack_obj($object->CGC_representative_for);
+
+    return {
+        data => $lab,
+        description => 'Principal Investigator/Lab representativef for'
+    }
+}
+
 
 #######################################
 #

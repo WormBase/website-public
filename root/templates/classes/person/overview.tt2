@@ -27,7 +27,9 @@ WRAPPER highlight_box;
           # fields.fax.data;
    # END;
 
-
+    WRAPPER $field_block title="Lab representative for" key="lab_representative_for";
+        cell_content(fields.lab_representative_for.data);
+    END;
 END;
 
 
