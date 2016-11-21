@@ -859,21 +859,9 @@ sub widget_GET {
           $c->go('search', 'search');
     }
 
-    my $skip_cache = (((exists $c->config->{skip_cache})
-                          && ($c->config->{skip_cache} == 1))
-                      ||  ((exists $c->request->params->{"skip-cache"})
-                           && ($c->request->params->{"skip-cache"} == 1))) ? 1 : 0;
-
-    my $skip_datomic = ((( exists $c->config->{"skip_datomic"})
-                             && ($c->config->{"skip_datomic"} == 1))
-                            ||  ((exists $c->req->params->{"skip-datomic"})
-                                 && ($c->req->params->{"skip-datomic"} == 1)))? 1: 0;
-
-    my $skip_ace = (((exists $c->config->{"skip_ace"})
-                         && ($c->config->{"skip_ace"} == 1))
-                        ||  ((exists $c->req->params->{"skip-ace"})
-                             && ($c->req->params->{"skip-ace"} == 1)))? 1: 0;
-
+    my $skip_cache = $c->config->{skip_cache} || $c->request->params->{"skip-cache"};
+    my $skip_datomic = $c->config->{skip_datomic} || $c->request->params->{"skip-datomic"};
+    my $skip_ace = $c->config->{skip_ace} || $c->request->params->{"skip-ace"};
 
 
     # check Datomic first before checking cache (for now)
