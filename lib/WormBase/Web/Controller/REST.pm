@@ -885,6 +885,8 @@ sub widget_GET {
         if ($resp->{'status'} == 200 && $resp->{'content'}) {
             $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
             $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
+        } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
+            die "failed to load widget $class::$widget from datomic-to-catalyst";
         }
     }
 
@@ -957,7 +959,10 @@ sub widget_GET {
         }
     }
 
-    $c->set_cache($key => $c->stash->{fields}) if $c->stash->{fields} && !$skip_cache;
+    if ($c->stash->{fields}) {
+        $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+    }
+
 
     # Forward to the view to render HTML, set stash variables
     if ( $content_type eq 'text/html' ) {
