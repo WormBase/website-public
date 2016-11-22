@@ -1680,8 +1680,9 @@ sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 sub field_GET {
     my ( $self, $c, $class, $name, $field ) = @_;
 
-    # Cache key - "$class_$field_$name"
-    my $key = join( '_', $class, $field, $name );
+    my $skip_cache = $c->config->{skip_cache} || $c->request->params->{"skip-cache"};
+    my $skip_datomic = $c->config->{skip_datomic} || $c->request->params->{"skip-datomic"};
+    my $skip_ace = $c->config->{skip_ace} || $c->request->params->{"skip-ace"};
 
     my $headers = $c->req->headers;
     $c->log->debug( $headers->header('Content-Type') );
@@ -1691,10 +1692,34 @@ sub field_GET {
         || $c->req->params->{'content-type'}
         || 'text/html';
 
-    my ( $cached_data, $cache_source ) = $c->check_cache($key);
-    if($cached_data && (ref $cached_data eq 'HASH')){
-        $c->stash->{$field} = $cached_data;
-    } else {
+
+    # Cache key - "$class_$field_$name"
+    my $key = join( '_', $class, $field, $name );
+
+    # check Datomic first before checking cache (for now)
+    #to access the performance of Datomic without cache
+    unless ($skip_datomic) {
+        my $rest_server = $c->config->{'rest_server'};
+        my $url = "$rest_server/rest/field/$class/$name/$field";
+        my $resp = HTTP::Tiny->new->get($url);
+        if ($resp->{'status'} == 200 && $resp->{'content'}) {
+            $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
+            $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
+            $c->set_cache($key => $c->stash->{$field});
+        } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
+            #die "failed to load field $class::$field from datomic-to-catalyst";
+        }
+    }
+
+    unless ($skip_cache || $c->stash->{$field}) {
+        my ( $cached_data, $cache_source ) = $c->check_cache($key);
+        if ($cached_data && (ref $cached_data eq 'HASH')){
+            $c->stash->{$field} = $cached_data;
+            $c->stash->{served_from_cache} = $key;
+        }
+    }
+
+    unless ($skip_ace || $c->stash->{$field}) {
       my $api = $c->model('WormBaseAPI');
       my $object = $name eq '*' || $name eq 'all'
                  ? $api->instantiate_empty(ucfirst $class)
@@ -1702,16 +1727,16 @@ sub field_GET {
 
       my $data   = $object->$field();
       $c->stash->{$field} = $data;
+      $c->stash->{data_from_ace} = 1;
+      $c->set_cache($key => $data);
 
       # Include the full uri to the *requested* object.
       # IE the page on WormBase where this should go.
       # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
-
-      $c->set_cache($key => $data);
     }
 
     # Supress boilerplate wrapping.
-    $c->stash->{noboiler} = 1;
+    $c->stash->{noboiler} = 1 unless $skip_cache;
 
     my $uri = $c->uri_for( "/species", $class, $name )->path;
 
