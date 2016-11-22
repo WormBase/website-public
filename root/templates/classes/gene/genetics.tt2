@@ -6,11 +6,11 @@
    END;
 
     # Alleles
-    IF fields.alleles.data || fields.alleles_count.data.alleles_other || fields.alleles_count.data.polymorphisms;
     '<div id="genetics-alleles">';
-        WRAPPER $field_block title="Alleles";
+        has_alleles = fields.alleles.data.size || fields.alleles_count.data.alleles_other || fields.alleles_count.data.polymorphisms;
+        WRAPPER $field_block title="Alleles" disabled=!has_alleles;
             WRAPPER toggle open=1 title="<strong>Alleles with phenotype</strong>";
-                IF fields.alleles.data;
+                IF fields.alleles.data.size;
                 variation_table(
                     order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'strain'],
                     order_by='phen_count',
@@ -43,7 +43,6 @@
             END;
        END;
        '</div>';
-   END;
 
    # Strains
    WRAPPER $field_block title="Strains" key="strains";
