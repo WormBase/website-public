@@ -863,6 +863,7 @@ sub widget_GET {
     my $skip_datomic = $c->config->{skip_datomic} || $c->request->params->{"skip-datomic"};
     my $skip_ace = $c->config->{skip_ace} || $c->request->params->{"skip-ace"};
 
+    my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
 
     # check Datomic first before checking cache (for now)
     #to access the performance of Datomic without cache
@@ -873,12 +874,12 @@ sub widget_GET {
         if ($resp->{'status'} == 200 && $resp->{'content'}) {
             $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
             $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
+            $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
         } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
             die "failed to load widget $class::$widget from datomic-to-catalyst";
         }
     }
 
-    my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
     unless ($skip_cache || $c->stash->{fields}) {
         # use cached fields data, if available
         my ($cached_data, $cache_source) = $c->check_cache($key);  # check_cache checks couchdb
@@ -945,10 +946,7 @@ sub widget_GET {
             # Conditionally load up the stash (for now) for HTML requests.
             $c->stash->{fields}->{$field} = $data;
         }
-    }
-
-    if ($c->stash->{fields}) {
-        $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+        $c->set_cache($key => $c->stash->{fields}) if !$skip_cache && $c->stash->{fields};
     }
 
 
