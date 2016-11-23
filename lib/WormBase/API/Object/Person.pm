@@ -1,6 +1,10 @@
 package WormBase::API::Object::Person;
 use Moose;
 
+use LWP::Simple;
+use JSON;
+
+
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
@@ -274,6 +278,17 @@ sub orcid {
     };
 }
 
+sub lab_representative_for {
+    my $self = shift;
+    my $object = $self->object;
+    my $lab = $self->_pack_obj($object->CGC_representative_for);
+
+    return {
+        data => $lab,
+        description => 'Principal Investigator/Lab representativef for'
+    }
+}
+
 
 #######################################
 #
@@ -484,6 +499,117 @@ sub worked_with {
 
 
 
+# ancestors_data { }
+# This method will return a data structure containing
+# elements for js.cytoscape for a direct relationship,
+# and a full lineage view, as well as messages and 
+# controls for the legend.
+
+sub ancestors_data {
+    my $self    = shift;
+    my $json        = JSON->new->allow_nonref;
+    my $jsonUrl     = 'http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/wbpersonLineageScaling.json';
+    my $page        = get $jsonUrl;
+    my $perl_scalar = $json->decode( $page );         # get the solr data
+    my %scaling     = %$perl_scalar;                     # decode the solr page into a hash
+
+    my $object = $self->object;
+    my @aka = map { "$_" } grep { "$_" ne $self->name->{data}{label} } $object->Supervised_by;
+
+    my %parents;  my $parentsHashref;	# key child, subkey parent, subkey role
+    my %nodes;    my $nodesHashref;
+
+    my %roleColour;
+    $roleColour{'Phd'}                 = '#B40431';
+    $roleColour{'Postdoc'}             = '#00E300';
+    $roleColour{'Masters'}             = '#FF8000';
+    $roleColour{'Research staff'}      = '#08298A';
+    $roleColour{'Highschool'}          = '#05C1F0';
+    $roleColour{'Undergrad'}           = '#B58904';
+
+    my @graphTypes = qw( Direct Full );
+    foreach my $graphType (@graphTypes) {
+      $nodes{$graphType}{$object} = $object->Standard_name;
+      ($parentsHashref, $nodesHashref) = &add_parents($object, 'Supervised_by', $graphType, \%parents, \%nodes, \%roleColour);	# traveling through ancestors
+      %parents = %$parentsHashref; %nodes   = %$nodesHashref;
+      ($parentsHashref, $nodesHashref) = &add_parents($object, 'Supervised', $graphType, \%parents, \%nodes, \%roleColour);	# traveling through descendants
+      %parents = %$parentsHashref; %nodes   = %$nodesHashref;
+    }
+
+    my %elements;
+    my %existingRoles;
+    foreach my $graphType (@graphTypes) {
+      my @edges;
+      foreach my $target (sort keys %{ $parents{$graphType} }) {
+        foreach my $source (sort keys %{ $parents{$graphType}{$target} }) {
+          foreach my $role (sort keys %{ $parents{$graphType}{$target}{$source} }) {
+            my $lineStyle = 'solid'; if ($target eq $object) { if ($graphType eq 'Direct') { $lineStyle = 'dashed'; } }
+            my $targetArrowShape = 'triangle';
+            my $colour = '#ccc';
+            if ($roleColour{$role}) { $colour = $roleColour{$role}; }
+            $existingRoles{$graphType}{$role} = $colour;
+            push @edges, qq({ data: { source: '${graphType}$source', target: '${graphType}$target', role: '$role', targetArrowShape: '$targetArrowShape', lineStyle: '$lineStyle', lineColor: '$colour' } }); } } }
+      my @nodes;
+      my $largestScaling = 0;
+      foreach my $wbperson (sort keys %{ $nodes{$graphType} }) {
+        unless ($scaling{$wbperson}) { $scaling{$wbperson} = 1; }
+        if ($scaling{$wbperson} > $largestScaling) { $largestScaling = $scaling{$wbperson}; } }
+      if ($largestScaling == 1) { $largestScaling = 2; }
+      foreach my $node (sort keys %{ $nodes{$graphType} }) {
+        my $scaling = $scaling{$node};
+        my $radius = 25 + log($scaling{$node})/log($largestScaling) * 50;
+        my $nodeshape = 'ellipse'; if ($node eq $object) { $nodeshape = 'rectangle'; $radius = 100; }
+        push @nodes, qq({ data: { id: '${graphType}$node', name: '$nodes{$graphType}{$node}', url: '$node', scaling: '$scaling', radius: '$radius', nodeshape: '$nodeshape' } });
+      }
+      my $nodes = join",", @nodes;
+      my $edges = join",", @edges;
+      $elements{$graphType} = qq({ nodes: [ $nodes ], edges: [ $edges ] });
+    }
+
+    my $data = { description => 'ancestors_data',
+                  thisPerson => $object,
+           existingRolesFull => $existingRoles{'Full'},
+         existingRolesDirect => $existingRoles{'Direct'},
+	      elementsDirect => $elements{'Direct'}, 
+	        elementsFull => $elements{'Full'}, };
+}
+
+# add_parents { }
+# This method will return a hash of parent-child roles
+# between people, and a hash of persons existing in the
+# hash.
+
+sub add_parents {
+  my ($personId, $tag, $fullOrDirect, $parentsHashref, $nodesHashref, $roleColourRef) = @_;
+  my %parents      = %$parentsHashref;
+  my %nodes        = %$nodesHashref;
+  my %roleColour   = %$roleColourRef;
+  my @otherPersons = eval{$personId->$tag};
+  foreach my $otherPerson (@otherPersons) {
+    my $name = $otherPerson->Standard_name;
+    next unless ($name);
+    if ($name =~ m/\'/) { $name =~ s/\'//g; }
+    my $goodRole = 0;
+    foreach ($otherPerson->col){
+      my ($role, $start, $end) = $_->row;
+      ($role = "$role") =~ s/_/ /g;
+      next unless $roleColour{$role};
+      $goodRole++;
+      if ($tag eq 'Supervised_by') {    $parents{$fullOrDirect}{$personId}{$otherPerson}{$role}++; }
+        elsif ($tag eq 'Supervised') {  $parents{$fullOrDirect}{$otherPerson}{$personId}{$role}++; }
+    }
+    next unless $goodRole;
+    next if ($nodes{$fullOrDirect}{$otherPerson});			# skip if parent has already been processed through another relationship
+    $nodes{$fullOrDirect}{$otherPerson} = $name;
+    if ($fullOrDirect eq 'Full') {
+      my ($parentsHashref, $nodesHashref) = &add_parents($otherPerson, $tag, $fullOrDirect, \%parents, \%nodes, \%roleColour);
+      %parents = %$parentsHashref; %nodes = %$nodesHashref; }
+  }
+  return (\%parents, \%nodes);
+}
+
+
+
 
 
 #######################################
@@ -579,6 +705,35 @@ sub aka {
 # Private methods
 #
 ######################
+sub _get_ancestor_data {
+    my $self   = shift;
+    my $tag    = shift;
+    my $object = $self->object;
+
+    my @relationship = eval{$object->$tag};
+
+    my @data;
+    foreach my $relation (@relationship) {
+        my $name = $relation->Standard_name;
+
+        my @levels;
+        my @duration;
+        foreach ($relation->col){
+            my ($level, $start, $end) = $_->row;
+            ($level = "$level") =~ s/_/ /g;
+            push @levels, $level;
+            push @duration, $self->_format_duration($start, $end);
+        }
+
+        push @data, {
+            'name'       => $self->_pack_obj($relation, $name && "$name"),
+            'level'      => @levels ? \@levels : undef,
+            'duration'   => @duration ? \@duration : undef
+        };
+    }
+    return @data ? \@data : undef;
+}
+
 sub _get_lineage_data {
     my $self   = shift;
     my $tag    = shift;

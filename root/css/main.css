@@ -2736,7 +2736,7 @@ li.visible div.widget-container {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
-  clear:left;
+  clear:both;
   /* float:left; breaks toggle for Phenotype_not_observed field */
   line-height:1.2em;
   padding: 7px 0.2em;
@@ -3117,6 +3117,11 @@ h3.jbrowse-view-header {
 
 #widget-home .change-summary-field .wb_table_wrapper{
   min-width: 0;
+}
+
+/* person overview */
+.person div.detail-box div.field div.field-title {
+  width: 130px;
 }
 
 /*********************************
