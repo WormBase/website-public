@@ -1715,7 +1715,7 @@ sub field_GET {
         my ( $cached_data, $cache_source ) = $c->check_cache($key);
         if ($cached_data && (ref $cached_data eq 'HASH')){
             $c->stash->{$field} = $cached_data;
-            $c->stash->{served_from_cache} = $key;
+            $c->stash->{served_from_cache} = $key unless $skip_cache;
         }
     }
 
@@ -1728,7 +1728,7 @@ sub field_GET {
       my $data   = $object->$field();
       $c->stash->{$field} = $data;
       $c->stash->{data_from_ace} = 1;
-      $c->set_cache($key => $data);
+      $c->set_cache($key => $data) unless $skip_cache;
 
       # Include the full uri to the *requested* object.
       # IE the page on WormBase where this should go.
@@ -1736,7 +1736,7 @@ sub field_GET {
     }
 
     # Supress boilerplate wrapping.
-    $c->stash->{noboiler} = 1 unless $skip_cache;
+    $c->stash->{noboiler} = 1;
 
     my $uri = $c->uri_for( "/species", $class, $name )->path;
 
