@@ -859,41 +859,47 @@ sub widget_GET {
           $c->go('search', 'search');
     }
 
-    my $skip_cache = (((exists $c->config->{skip_cache})
-                          && ($c->config->{skip_cache} == 1))
-                      ||  ((exists $c->request->params->{"skip-cache"})
-                          && ($c->request->params->{"skip-cache"} == 1))) ? 1 : 0;
+    my $skip_cache = $c->config->{skip_cache} || $c->request->params->{"skip-cache"};
+    my $skip_datomic = $c->config->{skip_datomic} || $c->request->params->{"skip-datomic"};
+    my $skip_ace = $c->config->{skip_ace} || $c->request->params->{"skip-ace"};
 
-    # Cache key - "$class_$widget_$name"
-    my ($cached_data, $cache_source, $key);
-    if ( not $skip_cache ) {
-        # check_cache checks couchdb
-        $key = join( '_', $class, $widget, $name );
-        ( $cached_data, $cache_source ) = $c->check_cache($key);
+    my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
+
+    # check Datomic first before checking cache (for now)
+    #to access the performance of Datomic without cache
+    unless ($skip_datomic) {
+        my $rest_server = $c->config->{'rest_server'};
+        my $url = "$rest_server/rest/widget/$class/$name/$widget";
+        my $resp = HTTP::Tiny->new->get($url);
+        if ($resp->{'status'} == 200 && $resp->{'content'}) {
+            $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
+            $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
+            $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+        } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
+            die "failed to load widget $class::$widget from datomic-to-catalyst";
+        }
     }
 
-    if ((not $skip_cache) && $cached_data && (ref $cached_data eq 'HASH')){
-        $c->stash->{fields} = $cached_data;
+    unless ($skip_cache || $c->stash->{fields}) {
+        # use cached fields data, if available
+        my ($cached_data, $cache_source) = $c->check_cache($key);  # check_cache checks couchdb
 
-	# Served from cache? Let's include a link to it in the cache.
-	# Primarily a debugging element.
-	$c->stash->{served_from_cache} = $key;
-    } elsif ((not $skip_cache) && $cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
-        $c->response->status(200);
-        $c->response->body($cached_data);
-        $c->detach();
-        return;
-    } else {
-        my $skip_datomic = ((( exists $c->config->{"skip_datomic"})
-                               && ($c->config->{"skip_datomic"} == 1))
-                          ||  ((exists $c->req->params->{"skip-datomic"})
-                               && ($c->req->params->{"skip-datomic"} == 1)))? 1: 0;
-        my $skip_ace = (((exists $c->config->{"skip_ace"})
-                               && ($c->config->{"skip_ace"} == 1))
-                        ||  ((exists $c->req->params->{"skip-ace"})
-                               && ($c->req->params->{"skip-ace"} == 1)))? 1: 0;
+        if ($cached_data && (ref $cached_data eq 'HASH')){
+            $c->stash->{fields} = $cached_data;
 
-         # Generate and cache the widget.
+            # Served from cache? Let's include a link to it in the cache.
+            # Primarily a debugging element.
+            $c->stash->{served_from_cache} = $key;
+        } elsif ($cached_data && (ref $cached_data ne 'HASH') && ($content_type eq 'text/html')) {
+            $c->response->status(200);
+            $c->response->body($cached_data);
+            $c->detach();
+            return;
+        }
+    }
+
+    unless ($skip_ace || $c->stash->{fields}) {
+        # Generate the widget from ACeDB
         # Load the stash with the field contents for this widget.
         # The widget itself is loaded by REST; fields are not.
         my @fields = $c->_get_widget_fields( $class, $widget );
@@ -903,32 +909,18 @@ sub widget_GET {
             push @fields, 'name';
         }
 
-        my ($resp_content, $resp);
-        if (not $skip_datomic) {
-            my $rest_server = $c->config->{'rest_server'};
-            $resp = HTTP::Tiny->new->get("$rest_server/rest/widget/$class/$name/$widget");
-            if ($resp->{'status'} == 200 && $resp->{'content'}) {
-                $resp_content = decode_json($resp->{'content'})->{fields};
-            }
-        }
-
-        my $object;
-        if (not $skip_ace) {
-            my $api = $c->model('WormBaseAPI');
-            $object = ($name eq '*' || $name eq 'all'
-                   ? $api->instantiate_empty(ucfirst $class)
-                   : $api->fetch({ class => ucfirst $class, name => $name }))
+        my $api = $c->model('WormBaseAPI');
+        my $object = ($name eq '*' || $name eq 'all'
+                       ? $api->instantiate_empty(ucfirst $class)
+                       : $api->fetch({ class => ucfirst $class, name => $name }))
             or die "Could not fetch object $name, $class";
-        }
 
         foreach my $field (@fields) {
             unless ($field) { next; }
             $c->log->debug("Processing field: $field");
             my $data;
-            if ($resp_content && $resp_content->{$field}) {
-                $data = $resp_content->{$field};
-                $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
-            } elsif ((not $skip_ace) && $object->can($field)) {
+
+            if ($object->can($field)) {
                 # try Perl API
                 $data = $object->$field;
                 $c->stash->{data_from_ace} = 1;  # widget contains data from acedb
@@ -944,12 +936,7 @@ sub widget_GET {
                         die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
                     }
                 }
-            } else {
-                my $response_content = (exists $resp->{'content'})?
-                                                     $resp->{'content'} : '';
-                die "REST query failed at $field: $response_content";
             }
-
 
             # a field can force an entire widget to not caching
             if ($data->{'error'}){
@@ -959,9 +946,9 @@ sub widget_GET {
             # Conditionally load up the stash (for now) for HTML requests.
             $c->stash->{fields}->{$field} = $data;
         }
-
-        $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+        $c->set_cache($key => $c->stash->{fields}) if !$skip_cache && $c->stash->{fields};
     }
+
 
     # Forward to the view to render HTML, set stash variables
     if ( $content_type eq 'text/html' ) {
@@ -1693,8 +1680,9 @@ sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 sub field_GET {
     my ( $self, $c, $class, $name, $field ) = @_;
 
-    # Cache key - "$class_$field_$name"
-    my $key = join( '_', $class, $field, $name );
+    my $skip_cache = $c->config->{skip_cache} || $c->request->params->{"skip-cache"};
+    my $skip_datomic = $c->config->{skip_datomic} || $c->request->params->{"skip-datomic"};
+    my $skip_ace = $c->config->{skip_ace} || $c->request->params->{"skip-ace"};
 
     my $headers = $c->req->headers;
     $c->log->debug( $headers->header('Content-Type') );
@@ -1704,10 +1692,34 @@ sub field_GET {
         || $c->req->params->{'content-type'}
         || 'text/html';
 
-    my ( $cached_data, $cache_source ) = $c->check_cache($key);
-    if($cached_data && (ref $cached_data eq 'HASH')){
-        $c->stash->{$field} = $cached_data;
-    } else {
+
+    # Cache key - "$class_$field_$name"
+    my $key = join( '_', $class, $field, $name );
+
+    # check Datomic first before checking cache (for now)
+    #to access the performance of Datomic without cache
+    unless ($skip_datomic) {
+        my $rest_server = $c->config->{'rest_server'};
+        my $url = "$rest_server/rest/field/$class/$name/$field";
+        my $resp = HTTP::Tiny->new->get($url);
+        if ($resp->{'status'} == 200 && $resp->{'content'}) {
+            $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
+            $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
+            $c->set_cache($key => $c->stash->{$field}) unless $skip_cache;
+        } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
+            die "failed to load field $class::$field from datomic-to-catalyst";
+        }
+    }
+
+    unless ($skip_cache || $c->stash->{$field}) {
+        my ( $cached_data, $cache_source ) = $c->check_cache($key);
+        if ($cached_data && (ref $cached_data eq 'HASH')){
+            $c->stash->{$field} = $cached_data;
+            $c->stash->{served_from_cache} = $key;
+        }
+    }
+
+    unless ($skip_ace || $c->stash->{$field}) {
       my $api = $c->model('WormBaseAPI');
       my $object = $name eq '*' || $name eq 'all'
                  ? $api->instantiate_empty(ucfirst $class)
@@ -1715,12 +1727,12 @@ sub field_GET {
 
       my $data   = $object->$field();
       $c->stash->{$field} = $data;
+      $c->stash->{data_from_ace} = 1;
+      $c->set_cache($key => $data) unless $skip_cache;
 
       # Include the full uri to the *requested* object.
       # IE the page on WormBase where this should go.
       # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
-
-      $c->set_cache($key => $data);
     }
 
     # Supress boilerplate wrapping.
