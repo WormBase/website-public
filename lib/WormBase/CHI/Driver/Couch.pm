@@ -68,6 +68,12 @@ sub fetch {
     return $doc->{data};
 }
 
+sub has_document {
+    my ($self, $key) = @_;
+
+    return $self->_couchagent->get_document({ id => $self->escape_key($key) });
+}
+
 sub fetch_multi_hashref {
     my ($self, $keys) = @_;
 

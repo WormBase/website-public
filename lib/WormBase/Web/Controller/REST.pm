@@ -874,7 +874,7 @@ sub widget_GET {
         if ($resp->{'status'} == 200 && $resp->{'content'}) {
             $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
             $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
-            $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+            $c->set_cache($key => $c->stash->{fields}) unless $skip_cache || $c->has_cache($key);;
         } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
             die "failed to load widget $class::$widget from datomic-to-catalyst";
         }
@@ -1705,7 +1705,7 @@ sub field_GET {
         if ($resp->{'status'} == 200 && $resp->{'content'}) {
             $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
             $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
-            $c->set_cache($key => $c->stash->{$field}) unless $skip_cache;
+            $c->set_cache($key => $c->stash->{$field}) unless $skip_cache || $c->has_cache($key);
         } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
             die "failed to load field $class::$field from datomic-to-catalyst";
         }
