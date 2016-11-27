@@ -1951,6 +1951,17 @@ var Scrolling = (function(){
     }
 
 
+    function loadCytoscapeForPersonLineage(elementsDirect, elementsFull, thisPerson) {
+      setupCyPersonLineage(elementsDirect, elementsFull, thisPerson)
+    }
+
+    function setupCytoscapePersonLineage(elementsDirect, elementsFull, thisPerson){
+      Plugin.getPlugin('cytoscape_js',function(){
+        loadCytoscapeForPersonLineage(elementsDirect, elementsFull, thisPerson)
+        return;
+      });
+    }
+
 
     function loadCytoscapeForInteraction(data, types, clazz) {
       Plugin.getPlugin('cytoscape_js_arbor', function() {
@@ -1982,6 +1993,150 @@ var Scrolling = (function(){
         return;
       });
     }
+
+    function setupCyPersonLineage(elementsDirect, elementsFull, thisPerson) {
+      var cyPersonLineageAll = window.cyPersonLineageAll = cytoscape({
+        container: document.getElementById('cyPersonLineageAll'),
+        layout: { name: 'cose', directed: true, padding: 10 },
+        style: cytoscape.stylesheet()
+           .selector('node')
+             .css({
+               'content': 'data(name)',
+               'text-valign': 'center',
+               'color': 'black',
+               'width': 'data(radius)',
+               'height': 'data(radius)',
+               'shape':'data(nodeshape)',
+               'text-outline-width': 2,
+               'background-color': '#bbb',
+               'text-outline-color': '#bbb',
+               'url' : 'data(url)'
+             })
+           .selector('edge')
+             .css({
+               'label': 'data(label)',
+               'role': 'data(role)',
+               'curve-style': 'bezier',
+               'line-style': 'data(lineStyle)',
+               'target-arrow-shape': 'data(targetArrowShape)',
+               'target-arrow-color': 'data(lineColor)',
+               'line-color': 'data(lineColor)',
+               'color': 'data(lineColor)',
+               'width': 5
+             })
+           .selector(':selected')
+             .css({
+               'background-color': 'black',
+               'line-color': 'black',
+               'target-arrow-color': 'black',
+               'source-arrow-color': 'black'
+             })
+           .selector('.faded')
+             .css({
+               'opacity': 0.25,
+               'text-opacity': 0
+             }),
+        elements: elementsDirect,
+        wheelSensitivity: 0.2,
+
+        ready: function(){
+          window.cyPersonLineageAll = this;
+          cyPersonLineageAll.elements().unselectify();
+          $jq('#cyPersonLineageAllLoading').hide();
+          cyPersonLineageAll.on('tap', 'node', function(e){
+            var node     = e.cyTarget;
+            var nodeId   = node.data('id');
+            var neighborhood = node.neighborhood().add(node);
+            cyPersonLineageAll.elements().addClass('faded');
+            neighborhood.removeClass('faded');
+            var url = this.data('url');
+            window.open(url);
+          });
+          cyPersonLineageAll.on('tap', function(e){
+            if( e.cyTarget === cyPersonLineageAll ){
+              cyPersonLineageAll.elements().removeClass('faded');
+            }
+          });
+        }
+      });
+
+      var jsonExportSaveDirect = '';
+      var jsonExportSaveFull   = '';
+      $jq('#toggleToFullView').on('click', function(){
+        jsonExportSaveDirect = cyPersonLineageAll.json();     // save Full view for loading later
+        $jq('#directViewTable').hide();
+        $jq('#fullViewTable').show();
+        if (jsonExportSaveFull === '') {                      // if there is no previous save for Full, render from elements
+            cyPersonLineageAll.json( { elements: elementsFull } );
+            cyPersonLineageAll.elements().layout({ name: 'breadthfirst', directed: true, padding: 10  });
+          // for some reason needs to happen twice to render properly
+            cyPersonLineageAll.json( { elements: elementsFull } );
+            cyPersonLineageAll.elements().layout({ name: 'breadthfirst', directed: true, padding: 10  });
+            if (elementsFull.nodes.length > 15) {             // arbitrary node amount cutoff to trigger zooming
+              var pos = cyPersonLineageAll.nodes("#Full"+thisPerson).position();
+              cyPersonLineageAll.zoom({ level: 1, position: pos }); }
+          } else {                                            // if had previously loaded Full, render from saved json
+            cyPersonLineageAll.json( jsonExportSaveFull );
+        }
+      });
+
+      $jq('#toggleToDirectView').on('click', function(){
+        jsonExportSaveFull = cyPersonLineageAll.json();       // save Full view for loading later
+        $jq('#directViewTable').show();
+        $jq('#fullViewTable').hide();
+        cyPersonLineageAll.json( jsonExportSaveDirect );      // render Direct view from saved json
+        updateFromCheckboxes();                               // when reloading 'Direct', update based on checkboxes, not sure why they become unhidden
+      });
+
+      $jq('#view_png_button').on('click', function(){
+        var png64 = cyPersonLineageAll.png({ bg: 'white' });
+        $jq('#png-export').attr('src', png64);
+        $jq('#png-export').show();
+        $jq('#cyPersonLineageAll').hide();
+        $jq('#view_png_div').hide();
+        $jq('#view_edit_div').show();
+        $jq('#info').text('drag image to desktop, or right-click and save image as');
+      });
+      $jq('#view_edit_button').on('click', function(){
+        $jq('#png-export').hide();
+        $jq('#cyPersonLineageAll').show();
+        $jq('#view_png_div').show();
+        $jq('#view_edit_div').hide();
+      });
+
+
+      var optionsdiv        = document.getElementById('optionsdiv');
+      var arrayOfInputs     = optionsdiv.getElementsByTagName("input");
+      var arrayOfCheckboxes = [];
+      for (i = 0; i < arrayOfInputs.length; i++) {
+        if (arrayOfInputs[i].type == "checkbox") {
+          arrayOfCheckboxes.push(arrayOfInputs[i]);
+          arrayOfInputs[i].onclick = function(event) { updateFromCheckboxes(); }    // when checkbox is clicked, update based on checkboxes
+      } }
+      
+      function updateFromCheckboxes() {                                     // update cytoscape graph based on state of checkboxes
+        cyPersonLineageAll.elements('edge').hide();                     // hide all edges
+        var nodeHash = new Object();                                    // put nodes here that have an edge that shows
+        for (j = 0; j < arrayOfCheckboxes.length; j++) {                // for each checkbox
+          if (arrayOfCheckboxes[j].checked) {                           // if the checkbox is checked
+            var role = arrayOfCheckboxes[j].value;                      // get the role
+            var arrayEdges = cyPersonLineageAll.elements('edge');       // get the edges in an array
+            for (k = 0; k < arrayEdges.length; k++) {                   // for each edge
+              if (arrayEdges[k].data().role == role) {                  // if the edge has the checked role
+                nodeHash[arrayEdges[k].data().source]++                 // add the source node to hash of nodes to show
+                nodeHash[arrayEdges[k].data().target]++                 // add the target node to hash of nodes to show
+                arrayEdges[k].show();                                   // show the edge
+            } }
+          }
+        }
+        cyPersonLineageAll.elements('node').hide();                     // hide all nodes
+        cyPersonLineageAll.elements('node').filter(function(i, ele){    // filter on nodes
+          if (nodeHash.hasOwnProperty(ele.id())) {                      // if the node is is in the hash of nodes to show
+            ele.show();                                                 // show the node
+          }
+        });
+      }
+    } // function setupCyPersonLineage(elementsFull, elementsDirect, thisPerson)
 
     function setupCyPhenGraph(elements){
       var cyPhenGraph = window.cyPhenGraph = cytoscape({
@@ -3174,13 +3329,14 @@ var Scrolling = (function(){
       // miscellaneous
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
+      setupCytoscapePersonLineage: setupCytoscapePersonLineage,       // setup cytoscape for use by PersonLineage
       setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
       setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
       FpkmPlots: FpkmPlots,                         // fpkm by life stage plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
-      tooltipInit: tooltipInit,                      // initalize tooltip
+      tooltipInit: tooltipInit,                     // initalize tooltip
       initJbrowseView: initJbrowseView              // initialize jbrowse view iframe to specified src
     };
   })();

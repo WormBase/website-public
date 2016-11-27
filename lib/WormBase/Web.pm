@@ -570,6 +570,15 @@ sub get_example_object {
 #  Helper methods for interacting with the cache.
 #
 ########################################
+sub has_cache {
+    my ($self, $key, $cache_name) = @_;
+
+    return unless $self->config->{cache}{enabled};
+    $cache_name ||= 'default';
+
+    my $cache = $self->cache($cache_name);
+    return $cache->has_document($key);
+}
 
 sub check_cache {
     my ($self, $key, $cache_name) = @_;
@@ -578,6 +587,7 @@ sub check_cache {
     $cache_name ||= 'default';
 
     my $cache = $self->cache($cache_name);
+
     unless ($cache) {
         $self->log->error('No cache backend with name ', $cache_name);
         return;
