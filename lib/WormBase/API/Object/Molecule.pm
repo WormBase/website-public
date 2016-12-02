@@ -358,7 +358,7 @@ sub affected_variations {
             "$_" eq "$phenotype" ? ($_) : ();
         } ($variation->$phenotype_tag_name);
 
-        my @affected_gene = $variation->Gene;
+        my @affected_gene = $variation->Gene if $phenotype_info;
 
         return ($phenotype_info, @affected_gene);
     }
@@ -441,7 +441,7 @@ sub affected_rnai {
             "$_" eq "$phenotype" ? ($_) : ();
         } ($rnai->$phenotype_tag_name);
 
-        my @affected_gene = grep { $_->get('Inferred_automatically',1) eq 'RNAi_primary'; } $rnai->Gene;
+        my @affected_gene = grep { $_->get('Inferred_automatically',1) eq 'RNAi_primary'; } $rnai->Gene if $phenotype_info;
 
         return ($phenotype_info, @affected_gene);
     }
@@ -474,22 +474,15 @@ sub affected_rnai {
 sub _affects {
     my ($self, $tag, $affected_gene_function) = @_;
     my $object = $self->object;
+    return unless $affected_gene_function;
 
     my @data;
     foreach my $affected ($object->$tag){
 
         my $phenotype = $affected->right;
-        my $phenotype_info;
-        my $phenotype_tag;
 
-        if ($affected_gene_function) {
-            my ($phenotype_info, @affected_genes) = $affected_gene_function->($affected, $phenotype, 'Phenotype');
-            if (@affected_genes) {
-                $phenotype_tag = 'phenotype';
-            }else{
-                ($phenotype_info, @affected_genes) = $affected_gene_function->($affected, $phenotype, 'Phenotype_not_observed');
-                $phenotype_tag = 'phenotype_not' if @affected_genes;
-            }
+        foreach my $phenotype_tag ('Phenotype', 'Phenotype_not_observed') {
+            my ($phenotype_info, @affected_genes) = $affected_gene_function->($affected, $phenotype, $phenotype_tag);
 
             my ($remark) = $phenotype_info->at('Remark') if $phenotype_info;
             my $affected_packed = $self->_pack_obj($affected);
@@ -504,7 +497,7 @@ sub _affects {
                 my $data_per_phenotype =  {
                     affected  =>  $evidence ? $evidence : $affected_packed,
                     affected_gene => $self->_pack_obj($gene),
-                    $phenotype_tag => $self->_pack_obj($phenotype)
+                    lc $phenotype_tag => $self->_pack_obj($phenotype)
                 };
                 push @data, $data_per_phenotype;
             }

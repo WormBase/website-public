@@ -26,12 +26,12 @@ table_settings = '
 WRAPPER $field_block title="RNAi" key="affected_rnai";
 #      tableAffected('RNAi', 'affected_rnai');
     build_data_table(
-	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	order = ['affected_gene','phenotype','phenotype_not_observed','affected'],
 	columns = {
 	    affected  => "Details",
         affected_gene => 'Gene',
 	    phenotype => 'Phenotype',
-	    phenotype_not => 'Phenotype not observed',
+	    phenotype_not_observed => 'Phenotype not observed',
 	}, key = "affected_rnai",
       style = table_settings,
       separator = '<br/>'
@@ -42,12 +42,12 @@ END;
 WRAPPER $field_block title="Genes" key="affected_genes";
 
     build_data_table(
-	order = ['affected_gene','phenotype','phenotype_not','affected'],
+	order = ['affected_gene','phenotype','phenotype_not_observed','affected'],
 	columns = {
 	    affected  => "Details",
         affected_gene => 'Gene',
 	    phenotype => 'Phenotype',
-	    phenotype_not => 'Phenotype not observed',
+	    phenotype_not_observed => 'Phenotype not observed',
 	}, key = "affected_genes",
       style = table_settings,
       separator = '<br/>'
@@ -58,12 +58,12 @@ END;
 WRAPPER $field_block title="Transgenes" key="affected_transgenes";
 
     build_data_table(
-	order = ['affected_gene','phenotype','phenotype_not','affected'],
+    order = ['affected_gene','phenotype','phenotype_not_observed','affected'],
 	columns = {
 	    affected  => "Details",
         affected_gene => 'Gene',
 	    phenotype => 'Phenotype',
-	    phenotype_not => 'Phenotype not observed',
+	    phenotype_not_observed => 'Phenotype not observed',
 	}, key = "affected_transgenes",
       style = table_settings,
       separator = '<br/>'
@@ -73,12 +73,12 @@ END;
 
 WRAPPER $field_block title="Variations" key="affected_variations";
     build_data_table(
-	order = ['affected_gene','phenotype','phenotype_not','affected'],
+    order = ['affected_gene','phenotype','phenotype_not_observed','affected'],
 	columns = {
 	    affected  => "Details",
         affected_gene => 'Gene',
 	    phenotype => 'Phenotype',
-	    phenotype_not => 'Phenotype not observed',
+	    phenotype_not_observed => 'Phenotype not observed',
 	}, key = "affected_variations",
       style = table_settings,
       separator = '<br/>'
