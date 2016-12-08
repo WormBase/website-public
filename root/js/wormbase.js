@@ -2113,7 +2113,7 @@ var Scrolling = (function(){
           arrayOfCheckboxes.push(arrayOfInputs[i]);
           arrayOfInputs[i].onclick = function(event) { updateFromCheckboxes(); }    // when checkbox is clicked, update based on checkboxes
       } }
-      
+
       function updateFromCheckboxes() {                                     // update cytoscape graph based on state of checkboxes
         cyPersonLineageAll.elements('edge').hide();                     // hide all edges
         var nodeHash = new Object();                                    // put nodes here that have an edge that shows
@@ -2695,7 +2695,7 @@ var Scrolling = (function(){
         function preprocess_data(experiments, data){
           var selectedData = data.filter(function(d){
             var experimentId = d.project_info.experiment;
-            return d.project_info.id === 'SRP000401'
+            return (d.project_info.id === 'SRP000401' || d.project_info.id === 'RNASeq_Study.SRP000401')
               && experiments[experimentId];
           });
 
@@ -2883,7 +2883,7 @@ var Scrolling = (function(){
       var plotCanvas = container.find('.fpkm-plot-canvas');
 
       var projectToData = groupBy(function(item){
-        return item.project;
+        return item.project_info.id;
       }, data);
 
 
