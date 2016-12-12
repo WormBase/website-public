@@ -2688,18 +2688,22 @@ li.visible div.widget-container {
 
 .widget-container .widget-data-source-wrapper {
   position: absolute;
-  top: 5px;
+  top: 2px;
   right: 30px;
 }
-.widget-container .widget-data-source {
+.widget-container .data-source-label {
   border-radius: 5px;
+  border: 1px solid grey;
   background-color: white;
   padding: 4px;
+  margin: 3px;
   display: inline-block;
 }
-.widget-container .widget-data-source.datomic {
+.widget-container .data-source-label.datomic {
   background-color: yellow;
+  border: none;
 }
+
 
 #cboxContent .widget-data-source-wrapper {
   /* avoid showing data source for modal box*/
