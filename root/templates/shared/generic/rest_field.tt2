@@ -1,0 +1,5 @@
+<div style="position:relative">
+[% data_source_label; %]
+[% PROCESS $child_template %]
+[% PROCESS timer %]
+</div>

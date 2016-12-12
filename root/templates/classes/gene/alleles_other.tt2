@@ -1,4 +1,3 @@
-[% data_source_label; %]
 [%
    variation_table(
         order=['variation','molecular_change','locations','effects','composite_change','isoform','sources', 'strain']
