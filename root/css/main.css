@@ -2686,9 +2686,10 @@ li.visible div.widget-container {
   height:150px;
 }
 
-.widget-container .widget-data-source-wrapper {
+.widget-container .content > .data-source-wrapper {
   position: absolute;
-  top: 2px;
+  padding: 5px;
+  top: 0px;
   right: 30px;
 }
 .widget-container .data-source-label {
@@ -2696,7 +2697,6 @@ li.visible div.widget-container {
   border: 1px solid grey;
   background-color: white;
   padding: 4px;
-  margin: 3px;
   display: inline-block;
 }
 .widget-container .data-source-label.datomic {
@@ -2704,8 +2704,15 @@ li.visible div.widget-container {
   border: none;
 }
 
+.independent-field-container {
+  position: relative;
+}
+.independent-field-container .data-source-wrapper {
+  text-align: right;
+  margin-bottom: 5px;
+}
 
-#cboxContent .widget-data-source-wrapper {
+#cboxContent .data-source-wrapper {
   /* avoid showing data source for modal box*/
   display: none;
 }

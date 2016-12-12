@@ -1,5 +1,7 @@
-<div style="position:relative">
-[% data_source_label; %]
-[% PROCESS $child_template %]
-[% PROCESS timer %]
+<div class="independent-field-container">
+    <div class="data-source-wrapper">
+    [% data_source_label; %]
+    </div>
+    [% PROCESS $child_template %]
+    [% PROCESS timer %]
 </div>

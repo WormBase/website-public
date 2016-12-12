@@ -1,4 +1,4 @@
-<div class="widget-data-source-wrapper">
+<div class="data-source-wrapper">
     [% data_source_label %]
 </div>
 
