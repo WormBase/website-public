@@ -2692,14 +2692,14 @@ li.visible div.widget-container {
   top: 0px;
   right: 30px;
 }
-.widget-container .data-source-label {
+.data-source-label {
   border-radius: 5px;
   border: 1px solid grey;
   background-color: white;
   padding: 4px;
   display: inline-block;
 }
-.widget-container .data-source-label.datomic {
+.data-source-label.datomic {
   background-color: yellow;
   border: none;
 }
@@ -2714,7 +2714,9 @@ li.visible div.widget-container {
 
 #cboxContent .data-source-wrapper {
   /* avoid showing data source for modal box*/
-  display: none;
+  position: absolute;
+  top: 15px;
+  right: 30px;
 }
 
 /* colour changes for the different types of widgets */
