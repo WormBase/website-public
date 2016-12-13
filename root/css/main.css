@@ -2688,7 +2688,6 @@ li.visible div.widget-container {
 
 .widget-container .content > .data-source-wrapper {
   position: absolute;
-  padding: 5px;
   top: 0px;
   right: 30px;
 }
@@ -2697,6 +2696,7 @@ li.visible div.widget-container {
   border: 1px solid grey;
   background-color: white;
   padding: 4px;
+  margin: 4px;
   display: inline-block;
 }
 .data-source-label.datomic {
@@ -2709,12 +2709,10 @@ li.visible div.widget-container {
 }
 .independent-field-container .data-source-wrapper {
   text-align: right;
-  margin-bottom: 5px;
 }
 
 #cboxContent .data-source-wrapper {
   text-align: right;
-  padding: 5px;
   background-color: lightgray;
 }
 
