@@ -1742,8 +1742,10 @@ sub field_GET {
 
     $c->response->header( 'Content-Type' => $content_type );
     if ( $content_type eq 'text/html' ) {
-      $c->stash->{template} = $self->_select_template( 'field', $class, $field );
-      $c->forward('WormBase::Web::View::TT');
+   # Set the template
+        $c->stash->{template} = 'shared/generic/rest_field.tt2';
+        $c->stash->{child_template} = $self->_select_template('field', $class, $field );
+        $c->forward('WormBase::Web::View::TT');
     }elsif($content_type =~ m/image/i) {
 
       $c->res->body($c->stash->{$field});

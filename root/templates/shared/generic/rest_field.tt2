@@ -1,0 +1,7 @@
+<div class="independent-field-container">
+    <div class="data-source-wrapper">
+    [% data_source_label; %]
+    </div>
+    [% PROCESS $child_template %]
+    [% PROCESS timer %]
+</div>
