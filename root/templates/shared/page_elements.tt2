@@ -208,16 +208,36 @@ END;
     <div class="ui-state-highlight ui-corner-all" style="position:absolute; left:30%; top:0.6em;">
     <span class="ui-icon ui-icon-clock" style="float: left; margin-right: .3em;"></span>
     [% server_details("") %] in [% FILTER format("%2.2f") %][% c.stats.elapsed %][% END %]s
-         [%- IF c.stash.served_from_cache -%]; served from couch:
-              <a target="_blank" href="http://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a>
-              |
-             <a target="_blank" href="http://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a>
-         [% END %]
-      [% cache %]
-
     </div>
   [% END %]
 [% END %]
+
+[% MACRO data_source_label BLOCK %]
+    [%# display the data source of the widget to help with testing %]
+    [%# development and staging instance only %]
+    [% IF c.config.installation_type == 'development' ||
+        c.config.installation_type == 'staging' ||
+        c.check_user_roles('admin') ||
+        c.config.timer %]
+        Served from
+        [% IF c.stash.data_from_datomic %]
+            <span class="data-source-label datomic"
+                title="This widget contains data from Datomic.">Datomic</span>
+        [% END %]
+        [% IF c.stash.data_from_ace %]
+            <span class="data-source-label"
+             title="This widget contains data from ACeDB.">ACeDB</span>
+        [% END %]
+        [%- IF c.stash.served_from_cache -%]
+        <span class="data-source-label">Couch
+            <a target="_blank" href="http://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a>
+             |
+            <a target="_blank" href="http://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a>
+        </span>
+        [% END %]
+    [% END %]
+[% END %]
+
 
 
 [%# The Floating Box on the overview widget %]

@@ -2686,24 +2686,41 @@ li.visible div.widget-container {
   height:150px;
 }
 
-.widget-container .widget-data-source-wrapper {
+.widget-container .content > .data-source-wrapper {
   position: absolute;
-  top: 5px;
+  top: 0px;
   right: 30px;
 }
-.widget-container .widget-data-source {
+.data-source-label {
   border-radius: 5px;
+  border: 1px solid grey;
   background-color: white;
   padding: 4px;
+  margin: 4px;
   display: inline-block;
 }
-.widget-container .widget-data-source.datomic {
+.data-source-label.datomic {
   background-color: yellow;
+  border: none;
 }
 
-#cboxContent .widget-data-source-wrapper {
-  /* avoid showing data source for modal box*/
-  display: none;
+.independent-field-container {
+  position: relative;
+}
+.independent-field-container .data-source-wrapper {
+  text-align: right;
+}
+
+#cboxContent .data-source-wrapper {
+  text-align: right;
+  background-color: lightgray;
+}
+
+#cboxLoadedContent {
+  padding: 0px;
+}
+#cboxContent .widget-data-content-inner {
+  padding: 0.5em 1em;
 }
 
 /* colour changes for the different types of widgets */
