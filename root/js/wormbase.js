@@ -2888,7 +2888,26 @@ var Scrolling = (function(){
 
 
       function setupMenu(projects){
-        var listItems = Object.keys(projects).map(function(projectID, index){
+        var listItems = Object.keys(projects).sort(function(a, b) {
+          // sort projects by author name
+          function getAuthor(projectID) {
+            var pattern = /.+\((.+)\)\s*/;
+            var matches = (projects[projectID].title || "").match(pattern);
+            if (matches) {
+              return matches[1];
+            } else {
+              return '';
+            }
+          }
+
+          if (getAuthor(a) < getAuthor(b)) {
+            return -1;
+          } else if (getAuthor(a) > getAuthor(b)) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }).map(function(projectID, index){
           var project = projects[projectID];
           var className = index === 0 ? 'ui-state-focus' : '';
 
