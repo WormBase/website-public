@@ -567,8 +567,8 @@
 	search      = 'http://www.ncbi.nlm.nih.gov/pubmed/%s'
 	}
 
- 'Micropublication: Biology' = {
-	description = 'Micropublication:Biology'
+ 'Micropublication: biology' = {
+	description = 'Micropublication: biology'
 	base        = 'http://www.micropublicationbiology.org/'
 	search      = 'http://www.micropublicationbiology.org/%s'
 	}
