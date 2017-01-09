@@ -177,6 +177,14 @@
 	search      = 'http://www.sciencedirect.com/science/article/pii/%s'
 	}
 
+ CeNDR = {
+        description = 'Caenorhabditis elegans Natural Diversity Resource'
+	maintainer  = 'Erik Andersen'
+	email       = 'erik.andersen@northwestern.edu'
+	base        = 'https://elegansvariation.org/strain/'
+	search      = 'https://elegansvariation.org/strain/%s'
+	}
+	
  CharlesUnivPrague = {
 	description = 'Charles Univ Prague'
 	base        = 'http://fb.cuni.cz/'
@@ -559,8 +567,8 @@
 	search      = 'http://www.ncbi.nlm.nih.gov/pubmed/%s'
 	}
 
- 'Micropublication: Biology' = {
-	description = 'Micropublication:Biology'
+ 'Micropublication: biology' = {
+	description = 'Micropublication: biology'
 	base        = 'http://www.micropublicationbiology.org/'
 	search      = 'http://www.micropublicationbiology.org/%s'
 	}
