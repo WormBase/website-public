@@ -579,7 +579,7 @@ END; %]
             searchlink(cell.class, cell.id, cell.id);
           END;
       ELSIF cell.defined('evidence');
-          evidence(cell.evidence,table_name _ index, cell_content(cell.text, separator), 'details');
+          evidence(cell.evidence,table_name _ index, cell.text, 'details');
       ELSIF cell.defined('interaction');
           interaction_cell(cell);
       ELSIF cell.defined('xrefs');
