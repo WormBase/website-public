@@ -960,12 +960,12 @@ has 'phenotypes' => (
 ## method to build data
 
 sub _build_phenotypes {
-	my $self = shift;
-	my $data = $self->_build_phenotypes_data('Phenotype');
-	return {
-		data => @$data ? $data : undef,
-		description =>'phenotypes annotated with this term',
-	};
+    my $self = shift;
+    my @data = $self->_build_phenotypes_data('Phenotype');
+    return {
+        data => @data ? \@data : undef,
+        description =>'phenotypes annotated with this term',
+    };
 }
 
 =head3 phenotypes_not_observed
@@ -1029,29 +1029,54 @@ has 'phenotypes_not_observed' => (
 
 sub _build_phenotypes_not_observed {
 	my $self = shift;
-	my $data = $self->_build_phenotypes_data('Phenotype_not_observed');
-	return {
-		data => @$data ? $data : undef,
-		description =>'phenotypes NOT observed or associated with this object' };
+    my @data = $self->_build_phenotypes_data('Phenotype_not_observed');
+    return {
+        data => @data ? \@data : undef,
+        description =>'phenotypes NOT observed or associated with this object'
+    };
 }
 
 sub _build_phenotypes_data {
     my $self = shift;
     my $tag = shift;
     my $object = $self->object;
-#     $tag = '@'.$tag;
-    return [ map {
+
+    return map {
         my $desc = $_->Description;
         my $remark = $_->Remark;
-        my $ev = $self->_get_evidence($_);
+        my $ev = $self->_get_evidence($_, undef, ['EQ_annotations']);
+        my @patos = $self->_get_pato($_);
         {
             phenotype   => $self->_pack_obj($_),
             evidence => $ev ? {evidence => $ev} : undef,
-            description => $desc    && "$desc",
+            entities_affected => @patos ? \@patos : undef,
+            description => $desc && "$desc",
             remarks     => $remark && "$remark",
         };
-    } @{$self ~~ '@'.$tag} ];
+    } $object->$tag;
 }
+
+sub _get_pato {
+    my ($self, $phenotype_info_obj, $pato_tag) = @_;
+    my @entities = $phenotype_info_obj->at('EQ_annotations');
+
+    my @patos = map {
+        my ($entity_type, $entity_term, $pato_term) = $_->row();
+        $pato_term = $pato_term && $pato_term->Name;
+        return {
+            pato_evidence => {
+                entity_type => $entity_type && "$entity_type",
+                entity_term => $self->_pack_obj($entity_term),
+                pato_term   =>  $pato_term ? "$pato_term" : 'abnormal',
+            },
+            key => join('_', "$entity_term", "$pato_term")
+        };
+    } @entities;
+
+    return @patos;
+}
+
+
 
 
 # TH: This was pulled (and still exists) in Variation.pm.

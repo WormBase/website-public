@@ -8,11 +8,20 @@ use Moose::Role;
 #
 #######################################################
 
-has 'features' => (
-    is  => 'ro',
-    lazy => 1,
-    builder => '_build_features',
+has 'phenotype' => (
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build__phenotypes',
 );
+
+has 'phenotype_not_observed' => (
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build__phenotypes_not_observed',
+);
+
 
 #######################################
 #
