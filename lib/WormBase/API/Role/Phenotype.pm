@@ -142,27 +142,6 @@ sub _get_phenotypes_by_experiment {
 }
 
 
-sub _get_pato {
-    my ($self, $phenotype_info_obj, $pato_tag) = @_;
-    my @entities = $phenotype_info_obj->at($pato_tag);
-
-    my @patos = map {
-        my ($entity_type, $entity_term, $pato_term) = $_->row();
-        $pato_term = $pato_term && $pato_term->Name;
-        return {
-            pato_evidence => {
-                entity_type => $entity_type && "$entity_type",
-                entity_term => $self->_pack_obj($entity_term),
-                pato_term   =>  $pato_term ? "$pato_term" : 'abnormal',
-            },
-            key => join('_', "$entity_term", "$pato_term")
-        };
-    } @entities;
-
-    return @patos;
-}
-
-
 sub _get_rnai_info {
    my ($self, $rnai_obj) = @_;
 
