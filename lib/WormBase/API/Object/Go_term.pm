@@ -407,21 +407,14 @@ sub _get_tag_data {
     return @data_pack ? \@data_pack : undef;
 }
 
+ sub _get_GO_evidence {
+    my ( $self,$term, $other_object ) = @_;
 
-sub _get_GO_evidence {
-    my ($self, $annotation) = @_;
-    my $code = $annotation->GO_code;
-    my $ev_names = ['Reference', 'Contributed_by', 'Date_last_updated'];
-    my $evidence = $self->_get_evidence($annotation->fetch(), $ev_names);
+    my $association = $other_object->fetch()->get('GO_term')->at("$term");
+    my $code = $association->right if $association;
 
-    return {text => $code && "$code",
-            evidence => $evidence,
-    };
-    # my $association = $gene->fetch()->get('GO_term')->at("$term");
-    # my $code = $association->right if $association;
-    # return {text => $code && "$code", evidence => $self->_get_evidence($code)};
+    return {text => $code && "$code", evidence => $self->_get_evidence($code)};
 }
-
 
 
 __PACKAGE__->meta->make_immutable;

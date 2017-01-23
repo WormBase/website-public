@@ -1,4 +1,3 @@
-
 [%
 
     # use the field as if it comes from a widget;
@@ -10,7 +9,224 @@
         by_study = fields.fpkm_expression_summary_ls.data.by_study;
         fpkm_data = fields.fpkm_expression_summary_ls.data.table.fpkm.data;
         # used by plot Julie proposes selected experiments
-        experiments = fields.fpkm_expression_summary_ls.data.experiments;
+        #experiments = fields.fpkm_expression_summary_ls.data.experiments;
+        experiments = {
+         SRX092477 => ['0','polyA', 'N2_EE_50-0'],
+         SRX092478 => ['0','polyA', 'N2_EE_50-0'],
+         SRX099902 => ['0','polyA', 'N2_EE_50-0'],
+         SRX099901 => ['0','polyA', 'N2_EE_50-0'],
+         SRX103649 => ['0','polyA', 'N2_EE_50-0'],
+         SRX1022600 => ['0','ribozero', '20120411_EMB-0'],
+         SRX1020637 => ['0','ribozero', '20120223_EMB-0'],
+         SRX1020636 => ['0','ribozero', '20120223_EMB-0'],
+
+         SRX092371 => ['30','polyA', 'N2_EE_50-30'],
+         SRX092372 => ['30','polyA', 'N2_EE_50-30'],
+         SRX099908 => ['30','polyA', 'N2_EE_50-30'],
+         SRX099907 => ['30','polyA', 'N2_EE_50-30'],
+         SRX103650 => ['30','polyA', 'N2_EE_50-30'],
+         SRX1020634 => ['30','ribozero', '20120223_EMB-30'],
+         SRX1022610 => ['30','ribozero', '20120419_EMB-30'],
+         SRX1020635 => ['30','ribozero', '20120223_EMB-30'],
+
+         SRX085112 => ['60','polyA', 'N2_EE_50-60'],
+         SRX085111 => ['60','polyA', 'N2_EE_50-60'],
+         SRX1022599 => ['60','ribozero', '20120411_EMB-60'],
+         SRX1020638 => ['60','ribozero', '20120223_EMB-60'],
+         SRX1020639 => ['60','ribozero', '20120223_EMB-60'],
+
+         SRX092480 => ['90','polyA', 'N2_EE_50-90'],
+         SRX092479 => ['90','polyA', 'N2_EE_50-90'],
+         SRX099915 => ['90','polyA', 'N2_EE_50-90'],
+         SRX103651 => ['90','polyA', 'N2_EE_50-90'],
+         SRX1022605 => ['90','ribozero', '20120411_EMB-90'],
+         SRX1020640 => ['90','ribozero', '20120223_EMB-90'],
+         SRX1020641 => ['90','ribozero', '20120223_EMB-90'],
+         SRX1022611 => ['90','ribozero', '20120419_EMB-90'],
+
+         SRX085217 => ['120','polyA', 'N2_EE_50-120'],
+         SRX085218 => ['120','polyA', 'N2_EE_50-120'],
+         SRX1022602 => ['120','ribozero', '20120411_EMB-120'],
+         SRX1022645 => ['120','ribozero', '20120419_EMB-120'],
+         SRX1020630 => ['120','ribozero', '20120223_EMB-120'],
+         SRX1020631 => ['120','ribozero', '20120223_EMB-120'],
+
+         SRX099995 => ['150','polyA', 'N2_EE_50-150'],
+         SRX1022601 => ['150','ribozero', '20120411_EMB-150'],
+         SRX1020632 => ['150','ribozero', '20120223_EMB-150'],
+         SRX1020633 => ['150','ribozero', '20120223_EMB-150'],
+         SRX1022646 => ['150','ribozero', '20120419_EMB-150'],
+
+         SRX099985 => ['180','polyA', 'N2_EE_50-180'],
+         SRX1022603 => ['180','ribozero', '20120411_EMB-180'],
+         SRX1022584 => ['180','ribozero', '20120223_EMB-180'],
+         SRX1022585 => ['180','ribozero', '20120223_EMB-180'],
+         SRX1022647 => ['180','ribozero', '20120419_EMB-180'],
+
+         SRX099996 => ['210','polyA', 'N2_EE_50-210'],
+         SRX099997 => ['210','polyA', 'N2_EE_50-210'],
+         SRX099998 => ['210','polyA', 'N2_EE_50-210'],
+         SRX103652 => ['210','polyA', 'N2_EE_50-210'],
+         SRX1022570 => ['210','ribozero', '20120223_EMB-210'],
+         SRX1022571 => ['210','ribozero', '20120223_EMB-210'],
+
+         SRX099986 => ['240','polyA', 'N2_EE_50-240'],
+         SRX099987 => ['240','polyA', 'N2_EE_50-240'],
+         SRX103653 => ['240','polyA', 'N2_EE_50-240'],
+         SRX1022604 => ['240','ribozero', '20120411_EMB-240'],
+         SRX1022566 => ['240','ribozero', '20120223_EMB-240'],
+         SRX1022567 => ['240','ribozero', '20120223_EMB-240'],
+         SRX1022648 => ['240','ribozero', '20120419_EMB-240'],
+
+         SRX099999 => ['270','polyA', 'N2_EE_50-270'],
+         SRX100000 => ['270','polyA', 'N2_EE_50-270'],
+         SRX100001 => ['270','polyA', 'N2_EE_50-270'],
+         SRX103677 => ['270','polyA', 'N2_EE_50-270'],
+         SRX1022568 => ['270','ribozero', '20120223_EMB-270'],
+         SRX1022569 => ['270','ribozero', '20120223_EMB-270'],
+         SRX1022649 => ['270','ribozero', '20120419_EMB-270'],
+
+         SRX100819 => ['300','polyA', 'N2_EE_50-300'],
+         SRX1022580 => ['300','ribozero', '20120223_EMB-300'],
+         SRX1022581 => ['300','ribozero', '20120223_EMB-300'],
+         SRX1022608 => ['300','ribozero', '20120411_EMB-300'],
+         SRX1022650 => ['300','ribozero', '20120419_EMB-300'],
+
+         SRX099980 => ['330','polyA', 'N2_EE_50-330'],
+         SRX1022572 => ['330','ribozero', '20120223_EMB-330'],
+         SRX1022573 => ['330','ribozero', '20120223_EMB-330'],
+         SRX1022651 => ['330','ribozero', '20120419_EMB-330'],
+
+         SRX099981 => ['360','polyA', 'N2_EE_50-360'],
+         SRX1022574 => ['360','ribozero', '20120223_EMB-360'],
+         SRX1022575 => ['360','ribozero', '20120223_EMB-360'],
+         SRX1022607 => ['360','ribozero', '20120411_EMB-360'],
+         SRX1022652 => ['360','ribozero', '20120419_EMB-360'],
+
+         SRX099982 => ['390','polyA', 'N2_EE_50-390'],
+         SRX099983 => ['390','polyA', 'N2_EE_50-390'],
+         SRX1022576 => ['390','ribozero', '20120223_EMB-390'],
+         SRX1022577 => ['390','ribozero', '20120223_EMB-390'],
+
+         SRX099984 => ['420','polyA', 'N2_EE_50-420'],
+         SRX1022578 => ['420','ribozero', '20120223_EMB-420'],
+         SRX1022579 => ['420','ribozero', '20120223_EMB-420'],
+         SRX1022653 => ['420','ribozero', '20120419_EMB-420'],
+
+         SRX100002 => ['450','polyA', 'N2_EE_50-450'],
+         SRX1022582 => ['450','ribozero', '20120223_EMB-450'],
+         SRX1022583 => ['450','ribozero', '20120223_EMB-450'],
+         SRX1022654 => ['450','ribozero', '20120419_EMB-450'],
+
+         SRX099988 => ['480','polyA', 'N2_EE_50-480'],
+         SRX099989 => ['480','polyA', 'N2_EE_50-480'],
+         SRX099990 => ['480','polyA', 'N2_EE_50-480'],
+         SRX103672 => ['480','polyA', 'N2_EE_50-480'],
+         SRX1022586 => ['480','ribozero', '20120223_EMB-480'],
+         SRX1022587 => ['480','ribozero', '20120223_EMB-480'],
+
+         SRX100003 => ['510','polyA', 'N2_EE_50-510'],
+         SRX100004 => ['510','polyA', 'N2_EE_50-510'],
+         SRX100005 => ['510','polyA', 'N2_EE_50-510'],
+         SRX103673 => ['510','polyA', 'N2_EE_50-510'],
+         SRX1022588 => ['510','ribozero', '20120223_EMB-510'],
+         SRX1022589 => ['510','ribozero', '20120223_EMB-510'],
+
+         SRX099991 => ['540','polyA', 'N2_EE_50-540'],
+         SRX099992 => ['540','polyA', 'N2_EE_50-540'],
+         SRX099993 => ['540','polyA', 'N2_EE_50-540'],
+         SRX103669 => ['540','polyA', 'N2_EE_50-540'],
+         SRX1022592 => ['540','ribozero', '20120223_EMB-540'],
+         SRX1022593 => ['540','ribozero', '20120223_EMB-540'],
+
+         SRX099973 => ['570','polyA', 'N2_EE_50-570'],
+         SRX099974 => ['570','polyA', 'N2_EE_50-570'],
+         SRX103671 => ['570','polyA', 'N2_EE_50-570'],
+         SRX1022597 => ['570','ribozero', '20120223_EMB-570'],
+         SRX1022598 => ['570','ribozero', '20120223_EMB-570'],
+
+         SRX099975 => ['600','polyA', 'N2_EE_50-600'],
+         SRX099976 => ['600','polyA', 'N2_EE_50-600'],
+         SRX099977 => ['600','polyA', 'N2_EE_50-600'],
+         SRX103670 => ['600','polyA', 'N2_EE_50-600'],
+         SRX1022596 => ['600','ribozero', '20120223_EMB-600'],
+         SRX1022595 => ['600','ribozero', '20120223_EMB-600'],
+         SRX1022609 => ['600','ribozero', '20120411_EMB-600'],
+
+         SRX099978 => ['630','polyA', 'N2_EE_50-630'],
+
+         SRX099979 => ['660','polyA', 'N2_EE_50-660'],
+
+         SRX099994 => ['690','polyA', 'N2_EE_50-690'],
+
+         SRX100006 => ['720','polyA', 'N2_EE_50-720'],
+
+         SRX004863 => ['EE','polyA', 'EE_ce0128_rw005'],
+         SRX004864 => ['EE','polyA', 'EE_ce1003_rw005'],
+         SRX037186 => ['EE','polyA', 'N2_EE-2'],
+         SRX004866 => ['EE','polyA', 'EE_ce0129_rw006'], # checked with LaDeana - she says this is an early embryo
+         SRX145660 => ['EE','ribozero', 'N2_EE_RZ-54'],
+         SRX190369 => ['EE','ribozero', 'N2_EE_RZ-54'],
+
+         SRX004865 => ['LE','polyA', 'LE_ce0129_rw006'],
+         SRX047446 => ['LE','polyA', 'N2_LE-1'],
+
+         SRX004867 => ['L1','polyA', 'L1_ce0132_rw007'], # fastq files downloaded again because they were in an odd format - all ok now
+         SRX037288 => ['L1','polyA', 'N2_L1-1'],
+
+         SRX001872 => ['L2','polyA', 'L2_ce0109_rw001'],
+         SRX047653 => ['L2','polyA', 'N2_L2-4'],
+         SRX190370 => ['L2','ribozero', 'N2_L2_RZ-53'],
+         SRX145661 => ['L2','ribozero', 'N2_L2_RZ-53'],
+
+         SRX001875 => ['L3','polyA', 'L3_ce0120_rw002'],
+         SRX036881 => ['L3','polyA', 'N2_L3-1'],
+
+         SRX008144 => ['L4','polyA', 'L4_ce1009_rw1001'],
+         SRX001874 => ['L4','polyA', 'L4_ce0121_rw003'],
+
+         SRX001873 => ['YA','polyA', 'YA_ce0122_rw004'],
+         SRX047787 => ['YA','polyA', 'N2_Yad-1'],
+         SRX103986 => ['YA','ribozero', 'N2_YA_RZ-1'],
+         SRX103987 => ['YA','ribozero', 'N2_YA_RZ-1'],
+         SRX103988 => ['YA','ribozero', 'N2_YA_RZ-1'],
+         SRX103989 => ['YA','ribozero', 'N2_YA_RZ-1'],
+
+         SRX011569 => ['Male EM','polyA', 'EmMalesHIM8_ce1005_rw1001'],
+         SRX037198 => ['Male EM','polyA', 'EmMalesHIM8-2'],
+
+         SRX004868 => ['Male L4','polyA', 'L4_ce1001_rw1001'],
+         SRX047469 => ['Male L4','polyA', 'L4MALE5'],
+
+         SRX014010 => ['Soma L4','polyA', 'L4JK1107soma_ce1014_rw1001'],
+         SRX037200 => ['Soma L4','polyA', 'L4JK1107soma-2'],
+
+         SRX008139 => ['Dauer entry','polyA', 'DauerEntryDAF2_ce1007_rw1001'],
+         SRX047470 => ['Dauer entry','polyA', 'DauerEntryDAF2-2'],
+         SRX103273 => ['Dauer entry','polyA', 'DauerEntryDAF2-1-1'],
+         SRX103274 => ['Dauer entry','polyA', 'DauerEntryDAF2-1-1'],
+         SRX103275 => ['Dauer entry','polyA', 'DauerEntryDAF2-1-1'],
+         SRX103276 => ['Dauer entry','polyA', 'DauerEntryDAF2-1-1'],
+         SRX103277 => ['Dauer entry','polyA', 'DauerEntryDAF2-4-1'],
+
+         SRX008138 => ['Dauer','polyA', 'DauerDAF2_ce1006_rw1001'],
+         SRX103983 => ['Dauer','polyA', 'DauerDAF2-2-1'],
+         SRX103984 => ['Dauer','polyA', 'DauerDAF2-2'],
+         SRX103985 => ['Dauer','polyA', 'DauerDAF2-5-1'],
+
+         SRX008140 => ['Dauer exit','polyA', 'DauerExitDAF2_ce1008_rw1001'],
+         SRX037199 => ['Dauer exit','polyA', 'DauerExitDAF2-2'],
+         SRX103269 => ['Dauer exit','polyA', 'DauerExitDAF2-3-1'],
+         SRX103270 => ['Dauer exit','polyA', 'DauerExitDAF2-3-1'],
+         SRX103271 => ['Dauer exit','polyA', 'DauerExitDAF2-3-1'],
+         SRX103272 => ['Dauer exit','polyA', 'DauerExitDAF2-3-1'],
+         SRX103278 => ['Dauer exit','polyA', 'DauerExitDAF2-6-1'],
+         SRX103281 => ['Dauer exit','polyA', 'DauerExitDAF2-6-1'],
+         SRX103280 => ['Dauer exit','polyA', 'DauerExitDAF2-6-1'],
+         SRX103279 => ['Dauer exit','polyA', 'DauerExitDAF2-6-1'],
+
+        };
+
 
         # hack to trick field_block into think fpkm_controls is a field
         fields.fpkm_controls = {

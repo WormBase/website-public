@@ -433,7 +433,11 @@ sub molecules {
     my $object = $self->object;
     my @data;
     foreach my $molecule ($object->Molecule){
-        push @data, {text => $self->_pack_obj($molecule), evidence => $self->_get_evidence($molecule)};
+        my $ev = $self->_get_evidence($molecule);
+        push @data, {
+            molecule => $self->_pack_obj($molecule),
+            evidence => $ev ? {evidence => $ev} : undef
+        }
     }
     return {
         description => "Molecules related to this topic",
