@@ -35,6 +35,8 @@
   [% ELSE %]
     [% IF text.exists('label') %]
 	[% tag2link(text) %]
+    [% ELSIF( text.match(".*\\<[^>]+>.*") ) # don't link html %]
+    [% "$text" %]
     [% ELSE %]
 	[% markup(text) %]
     [% END %]
@@ -581,7 +583,7 @@ END; %]
             searchlink(cell.class, cell.id, cell.id);
           END;
       ELSIF cell.defined('evidence');
-          evidence(cell.evidence,table_name _ index, cell.text, 'details');
+          evidence(cell.evidence,table_name _ index, cell_content(cell.text, separator), 'details');
       ELSIF cell.defined('interaction');
           interaction_cell(cell);
       ELSIF cell.defined('xrefs');
