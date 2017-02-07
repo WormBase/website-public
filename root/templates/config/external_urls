@@ -845,6 +845,11 @@
 	base        = 'http://rnajournal.cshlp.org/'
 	search      = 'http://rnajournal.cshlp.org/content/%s'
 	}
+ RNAcentral = {
+        description = 'The non-coding RNA sequence database'
+	base        = 'http://rnacentral.org'
+	search      = 'http://rnacentral.org/rna/%s'
+        }
 
  RNAi = {
  	description = 'RNAiDB'
