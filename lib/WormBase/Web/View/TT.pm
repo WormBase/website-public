@@ -11,10 +11,11 @@ $Template::Stash::ROOT_OPS->{ ref } = sub {
 };
 
 __PACKAGE__->config({
-		     INCLUDE_PATH => [
-				      WormBase::Web->path_to( 'root', 'templates' ),
-				      WormBase::Web->path_to( 'root', 'templates' , 'config'),
-				     ],
+             INCLUDE_PATH => [
+                 WormBase::Web->path_to( 'client', 'build'),
+                 WormBase::Web->path_to( 'root', 'templates' ),
+                 WormBase::Web->path_to( 'root', 'templates' , 'config'),
+             ],
 		     PRE_PROCESS  => ['config/main','shared/page_elements.tt2'],
 		     WRAPPER      => 'wrapper.tt2',
 #		     ERROR        => 'error',
@@ -41,7 +42,7 @@ __PACKAGE__->config({
 		     CONSTANTS    => {
 			 acedb_version => sub {
 			     WormBase::Web->model('WormBaseAPI')->version
-			 }
+               }
 		     },
 		    });
 
@@ -71,4 +72,3 @@ it under the same terms as Perl itself.
 =cut
 
 1;
-

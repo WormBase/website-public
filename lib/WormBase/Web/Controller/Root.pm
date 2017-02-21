@@ -8,6 +8,9 @@ use JSON;
 use File::Spec;
 use namespace::autoclean -except => 'meta';
 
+require LWP::Simple;
+
+
 __PACKAGE__->config(
     'default'          => 'text/x-yaml',
     'stash_key'        => 'rest',
@@ -116,7 +119,18 @@ sub footer :Path("/footer") Args(0) {
       $c->stash->{template} = 'footer/default.tt2';
 }
 
+# everything processed by webpack
+sub static :Local :Path('/static') :Args   {
+    my ($self,$c,@path_parts) = @_;
+    my $path = $c->request->path;
 
+    my $dev_server_url = $c->config->{webpack_dev_server};
+    if ($dev_server_url && LWP::Simple::head($dev_server_url)) {
+        $c->response->redirect("$dev_server_url/$path");
+    } else {
+        $c->serve_static_file("client/build/$path");
+    }
+}
 
 sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
@@ -190,7 +204,19 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
       $c->serve_static_file($c->path_to("root/static/$path"));
   }
-  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw' || $path =~ /\.png/)) {
+  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw' || $path =~ /\.(png|js|css)/)) {
+
+      # when webpack dev server is used, save the index.html as a tt2 template
+      my $dev_server_url = $c->config->{webpack_dev_server};
+      if ($dev_server_url && (my $dev_template = LWP::Simple::get($dev_server_url))) {
+          my $template_filepath = $c->path_to("root/templates/boilerplate/dev_html");
+          open(my $fh, ">", $template_filepath)
+              or die "Can't open > $template_filepath $!";
+          print $fh $dev_template;
+          close $fh;
+          $c->stash->{use_dev_template} = 1;
+      }
+
       $c->forward('WormBase::Web::View::TT');
   }
 }
