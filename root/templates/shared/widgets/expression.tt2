@@ -1,18 +1,57 @@
 [%
+IF fields.anatomic_expression_patterns.data;
+  gene_image = fields.anatomic_expression_patterns.data.image;
+  '<div style="max-width:500px;">';
+    '<a href="'_ gene_image _ '" target="_blank">' _
+       '<img src="' _ gene_image _ '" width="100%">' _
+    '</a>';
+  '</div>';
+END;
+
+# IF fields.expressed_in.data || fields.expressed_during.data || fields.subcellular_localization.data;
+#     '<h4>Spatio-Temporal Expression Patterns</h4>';
+# END;
 
 
+WRAPPER $field_block title="Expressed in" key="expressed_in";
 
+    build_data_table(order=['ontology_term', 'expression_pattern', 'details'],
+                     columns={
+                          expression_pattern => 'Expression pattern',
+                          ontology_term => 'Anatomy term',
+                          details  => 'Supporting evidence',
+                     },
+                     key='expressed_in');
 
+END;
 
+WRAPPER $field_block title="Expressed during" key="expressed_during";
+
+    build_data_table(order=['ontology_term', 'expression_pattern', 'details'],
+                     columns={
+                          expression_pattern => 'Expression pattern',
+                          ontology_term => 'Life stage',
+                          details  => 'Supporting evidence',
+                     },
+                     key='expressed_during');
+
+END;
+
+WRAPPER $field_block title="Subcellular localization" key="subcellular_localization";
+
+    build_data_table(order=['ontology_term', 'expression_pattern', 'details'],
+                     columns={
+                          expression_pattern => 'Expression pattern',
+                          ontology_term => 'Cellular component',
+                          details  => 'Supporting evidence',
+                     },
+                     key='subcellular_localization');
+
+END;
+
+# expression_pattern field can be removed once we are certain we like the expressed_in, expressed_during, subcellular_localization, and EPIC tables
 WRAPPER $field_block title="Spatio-Temporal Expression Patterns" key="expression_patterns";
-    gene_image = fields.anatomic_expression_patterns.data.image;
-    IF gene_image;
-      '<div style="max-width:500px;">';
-        '<a href="'_ gene_image _ '" target="_blank">' _
-           '<img src="' _ gene_image _ '" width="100%">' _
-        '</a>';
-      '</div>';
-    END;
+
            build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
                       columns={
                           expression_pattern => 'Pattern',
@@ -30,8 +69,25 @@ WRAPPER $field_block title="Spatio-Temporal Expression Patterns" key="expression
 END;
 
 
+WRAPPER $field_block title="EPIC dataset" key="epic_expr_patterns";
+           build_data_table(order=['expression_pattern','type', 'description', 'database', 'life_stage', 'expressed_in', 'go_term'],
+                      columns={
+                          expression_pattern => 'Pattern',
+                          description  => 'Description',
+                          database => 'Database',
+                          type => 'Type',
+                          expressed_in => 'Expressed in',
+                          life_stage => 'Life stage',
+                          go_term => 'GO term',
+                          transgene => 'Transgene'
+                             },
+                    style = '"aaSorting": [],',
+                    key='epic_expr_patterns');
+
+END;
+
 WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profiling_graphs";
-           build_data_table(order=['expression_pattern','type', 'description', 'database', 'expressed_in', 'life_stage', 'go_term', 'transgene'],
+           build_data_table(order=['expression_pattern','type', 'description', 'database'],
                       columns={
                           expression_pattern => 'Pattern',
                           description  => 'Description',
@@ -46,6 +102,7 @@ WRAPPER $field_block title="Expression Profiling Graphs" key="expression_profili
                     key='expression_profiling_graphs');
 
 END;
+
 WRAPPER $field_block title="Anatomy terms" key="anatomy_terms";
   tags2link(fields.anatomy_terms.data, '<br />', 'anatomy terms');
 END;
