@@ -184,7 +184,7 @@
 	base        = 'https://elegansvariation.org/strain/'
 	search      = 'https://elegansvariation.org/strain/%s'
 	}
-	
+
  CharlesUnivPrague = {
 	description = 'Charles Univ Prague'
 	base        = 'http://fb.cuni.cz/'
@@ -989,7 +989,7 @@
 	description = 'Through a focused effort on protein groups of interest and an open collaboration with the community the TransgeneOme Project aims to systematically generate transgenic worm lines on a genome scale.'
 	maintainer  = ''
 	base        = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/projects.html'
-    search      = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/clone.html?wellId=%s'
+    search      = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/geneLocalization.html?geneDbId=%s'
 	gene        = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/geneLocalization.html?geneDbId=%s'
     construct   = 'https://transgeneome.mpi-cbg.de/transgeneomics/public/clone.html?wellId=%s'
 	}

@@ -2983,6 +2983,11 @@ table#table_fpkm_controls_by td:nth-child(3) {
   height: 100%
 }
 
+/* expression widget */
+#expression-content .img-link {
+  max-width: 100px;
+}
+
 /* SEQUENCE STYLING */
 /* sequence display formatting */
 .sequence-container {
