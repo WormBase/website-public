@@ -12,6 +12,10 @@ END;
 #     '<h4>Spatio-Temporal Expression Patterns</h4>';
 # END;
 
+# IF fields.expr_pattern_images.data;
+#     cell_content(fields.expr_pattern_images.data);
+# END;
+
 
 WRAPPER $field_block title="Expressed in" key="expressed_in";
 
