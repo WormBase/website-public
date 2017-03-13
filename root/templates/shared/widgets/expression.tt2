@@ -1,16 +1,18 @@
 [%
-IF fields.anatomic_expression_patterns.data;
-  gene_image = fields.anatomic_expression_patterns.data.image;
-  '<div style="max-width:500px;">';
-    '<a href="'_ gene_image _ '" target="_blank">' _
-       '<img src="' _ gene_image _ '" width="100%">' _
-    '</a>';
-  '</div>';
-END;
 
 # IF fields.expressed_in.data || fields.expressed_during.data || fields.subcellular_localization.data;
 #     '<h4>Spatio-Temporal Expression Patterns</h4>';
 # END;
+
+# IF fields.anatomic_expression_patterns.data;
+#   gene_image = fields.anatomic_expression_patterns.data.image;
+#   '<div style="max-width:500px;">';
+#     '<a href="'_ gene_image _ '" target="_blank">' _
+#        '<img src="' _ gene_image _ '" width="100%">' _
+#     '</a>';
+#   '</div>';
+# END;
+
 
 # IF fields.expr_pattern_images.data;
 #     cell_content(fields.expr_pattern_images.data);
@@ -19,10 +21,10 @@ END;
 
 WRAPPER $field_block title="Expressed in" key="expressed_in";
 
-    build_data_table(order=['ontology_term', 'expression_pattern', 'details'],
+    build_data_table(order=['ontology_term', 'details', 'images'],
                      columns={
-                          expression_pattern => 'Expression pattern',
-                          ontology_term => 'Anatomy term',
+                          images => 'Images',
+                          ontology_term => 'Life stage',
                           details  => 'Supporting evidence',
                      },
                      key='expressed_in');
@@ -31,9 +33,9 @@ END;
 
 WRAPPER $field_block title="Expressed during" key="expressed_during";
 
-    build_data_table(order=['ontology_term', 'expression_pattern', 'details'],
+    build_data_table(order=['ontology_term', 'details', 'images'],
                      columns={
-                          expression_pattern => 'Expression pattern',
+                          images => 'Images',
                           ontology_term => 'Life stage',
                           details  => 'Supporting evidence',
                      },
@@ -43,10 +45,10 @@ END;
 
 WRAPPER $field_block title="Subcellular localization" key="subcellular_localization";
 
-    build_data_table(order=['ontology_term', 'expression_pattern', 'details'],
+    build_data_table(order=['ontology_term', 'details', 'images'],
                      columns={
-                          expression_pattern => 'Expression pattern',
-                          ontology_term => 'Cellular component',
+                          images => 'Images',
+                          ontology_term => 'Life stage',
                           details  => 'Supporting evidence',
                      },
                      key='subcellular_localization');
