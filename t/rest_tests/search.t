@@ -37,12 +37,12 @@
         my $response_html = get($url_html);
 
         isnt($response_html, undef, 'data returned');
-        ok($response_html =~ /dpy-3/, 'contains gene dpy-3');
+        ok($response_html =~ /dpy-23/, 'contains gene dpy-23');
 
-        ok($response_html =~ /<span class="locus"><a href="\/search\/gene\/dpy-3" class="gene-link">dpy-3<\/a><\/span>/,
-           'contains links to gene dpy-3');
-        ok($response_html =~ /<span class="locus"><a href="\/search\/gene\/dpy-3" class="gene-link">dpy-3<\/a><\/span> encodes/,
-           'contains link in description to gene dpy-3');
+        ok($response_html =~ /<span class="locus"><a href="\/search\/gene\/dpy-23" class="gene-link">dpy-23<\/a><\/span>/,
+           'contains links to gene dpy-23');
+        ok($response_html =~ /<span class="locus"><a href="\/search\/gene\/dpy-23" class="gene-link">dpy-23<\/a><\/span> encodes/,
+           'contains link in description to gene dpy-23');
     }
 
     # test external linking - #3025
