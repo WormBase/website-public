@@ -2984,9 +2984,50 @@ table#table_fpkm_controls_by td:nth-child(3) {
 }
 
 /* expression widget */
-#expression-content .img-link {
-  max-width: 100px;
+#expression-content .img-link-collection {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
+
+#expression-content .img-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #aaa;
+  margin: 0 5px 5px 0;
+}
+
+#expression-content .img-link .expr-img-wrapper img {
+  width: auto;
+  height: auto;
+  max-width: 200px;
+  max-height: 200px;
+}
+
+#expression-content .img-link .expr-img-wrapper {
+  align-self: center;
+  max-height: 200px;
+  width: 200px;
+}
+
+#expression-content td .img-link .expr-img-wrapper img {
+  width: auto;
+  height: auto;
+  max-width: 40px;
+  max-height: 40px;
+}
+
+#expression-content td .img-link .expr-img-wrapper {
+  align-self: center;
+  max-height: 40px;
+  width: 40px;
+}
+
+#expression-content td .img-link span {
+  display: none;
+}
+
 
 /* SEQUENCE STYLING */
 /* sequence display formatting */

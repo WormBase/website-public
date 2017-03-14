@@ -9,10 +9,11 @@ WRAPPER $field_block title="Anatomic expression pattern";
     '<div id="anatomy-expression-pattern" style="max-width:500px;"></div>';
 END;
 
-
-# IF fields.expr_pattern_images.data;
-#     cell_content(fields.expr_pattern_images.data);
-# END;
+WRAPPER $field_block title="Expression pattern images" key="expr_pattern_images";
+    '<div id="expr-pattern-images">';
+        images_cell(fields.expr_pattern_images.data);
+    '</div>';
+END;
 
 
 WRAPPER $field_block title="Expressed in" key="expressed_in";

@@ -55,13 +55,17 @@
           '<span><small>view images</small></span>';
           '</div>';
         END;
-        FOREACH cur_img IN data.curated_images;
-          '<div class="slink img-link" href="/rest/widget/picture/' _ cur_img.id _ '/lightbox"  title="curated pictures for ' _ data.id _ '" data-group="' _ data.id _ '">';
-             '<div class="expr-img-wrapper">';
-             '<img src="' _ expr_img_url(cur_img.thumbnail, 200)  _ '" />';
-             '</div>';
-            '<span><small>view images</small></span>';
-          '</div>';
+        IF data.curated_images.defined;
+            '<div class="img-link-collection">';
+            FOREACH cur_img IN data.curated_images;
+              '<div class="slink img-link" href="/rest/widget/picture/' _ cur_img.id _ '/lightbox"  title="curated pictures for ' _ data.id _ '" data-group="' _ data.id _ '">';
+                 '<div class="expr-img-wrapper">';
+                 '<img src="' _ expr_img_url(cur_img.thumbnail, 200)  _ '" />';
+                 '</div>';
+                '<span><small>view images</small></span>';
+              '</div>';
+            END;
+            '</div>';
         END;
     END;
 
