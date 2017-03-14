@@ -4,14 +4,6 @@
 #     '<h4>Spatio-Temporal Expression Patterns</h4>';
 # END;
 
-# IF fields.anatomic_expression_patterns.data;
-#   gene_image = fields.anatomic_expression_patterns.data.image;
-#   '<div style="max-width:500px;">';
-#     '<a href="'_ gene_image _ '" target="_blank">' _
-#        '<img src="' _ gene_image _ '" width="100%">' _
-#     '</a>';
-#   '</div>';
-# END;
 
 WRAPPER $field_block title="Anatomic expression pattern";
     '<div id="anatomy-expression-pattern" style="max-width:500px;"></div>';
