@@ -87,9 +87,9 @@
 
         ok($response_html =~ /B0280\.1\b/, 'lists a topo map');
         ok($response_html =~ /B0280\.11\b/, 'lists another topo map');
-        ok($response_html =~ /href=\"\/species\/c_elegans\/expr_profile\/B0280.1\"/,
+        ok($response_html =~ /href=\"\/species\/(c_elegans|all)\/expr_profile\/B0280.1\"/,
            'contains links to one topo map');
-        ok($response_html =~ /href=\"\/species\/c_elegans\/expr_profile\/B0280.11\"/,
+        ok($response_html =~ /href=\"\/species\/(c_elegans|all)\/expr_profile\/B0280.11\"/,
            'contains links to another topo map');
 
     }
@@ -97,4 +97,3 @@
 }
 
 1;
-
