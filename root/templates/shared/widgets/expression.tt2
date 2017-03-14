@@ -20,7 +20,7 @@ WRAPPER $field_block title="Expressed in" key="expressed_in";
     build_data_table(order=['ontology_term', 'details', 'images'],
                      columns={
                           images => 'Images',
-                          ontology_term => 'Life stage',
+                          ontology_term => 'Anatomy term',
                           details  => 'Supporting evidence',
                      },
                      key='expressed_in');
@@ -44,7 +44,7 @@ WRAPPER $field_block title="Subcellular localization" key="subcellular_localizat
     build_data_table(order=['ontology_term', 'details', 'images'],
                      columns={
                           images => 'Images',
-                          ontology_term => 'Life stage',
+                          ontology_term => 'Cellular component',
                           details  => 'Supporting evidence',
                      },
                      key='subcellular_localization');
