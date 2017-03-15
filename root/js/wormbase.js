@@ -490,21 +490,24 @@
       });
 
       content.delegate(".slink", 'mouseover', function(){
-          var slink0 =  $jq(this);
-          var slinkAll;
+        var slink0 =  $jq(this);
+        var slinkAll;
+        var slinkContainer = slink0.closest('.img-link-collection');
+        var groupId;
 
-          // occasionally, several iamges needs to be be grouped into a set
-          // of slides
-          var grpId = slink0.attr('data-group');
-          if (grpId){
-            slinkAll = slink0.closest('td').find('.slink[data-group='+ grpId +']'); //all slinks in the cell that will be grouped
-          }
+        if (slinkContainer.length) {
+          // if slinks are wrapped in .img-link-collectionnn, they will be group together
+          // into a gallery, that can be stepped through
+          slinkContainer.uniqueId(); // jquery ui function, create and apply unique id to an element
+          groupId = slinkContainer.attr('id');
+          slinkAll = slinkContainer.find('.slink'); //all slinks in the cell that will be grouped
+        }
 
           Plugin.getPlugin("colorbox", function(){
             (slinkAll || slink0).each(function(){
               var slink = $jq(this);
               slink.colorbox({data: slink.attr("href"),
-                            rel: slink.attr("data-group"),
+                              rel: groupId,
                             width: "800px",
                             // height: "550px",
                             scrolling: false,

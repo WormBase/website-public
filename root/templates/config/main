@@ -48,7 +48,7 @@
 
     MACRO images_cell(data) BLOCK;
         IF data.image;
-          '<div class="slink img-link"  rel="expression_pattern_images" href="' _ data.image _ '" title="expression image for ' _ data.id _ '" data-group="' _ data.id _ '">';
+          '<div class="slink img-link"  rel="expression_pattern_images" href="' _ data.image _ '" title="expression image for ' _ data.id _ '">';
              '<div class="expr-img-wrapper">';
              '<img src="' _ data.image _ '" />';
              '</div>';
@@ -59,7 +59,7 @@
             '<div class="img-link-collection">';
             FOREACH cur_img IN data.curated_images;
               description = cur_img.description || 'curated pictures for ' _ data.id;
-              '<div class="slink img-link" href="/rest/widget/picture/' _ cur_img.id _ '/lightbox"  title="' _ description _ '" data-group="' _ data.id _ '">';
+              '<div class="slink img-link" href="/rest/widget/picture/' _ cur_img.id _ '/lightbox"  title="' _ description _  '">';
                  '<div class="expr-img-wrapper">';
                  '<img src="' _ expr_img_url(cur_img.thumbnail, 200)  _ '" />';
                  '</div>';
