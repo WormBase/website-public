@@ -3001,27 +3001,27 @@ table#table_fpkm_controls_by td:nth-child(3) {
 #expression-content .img-link .expr-img-wrapper img {
   width: auto;
   height: auto;
-  max-width: 200px;
-  max-height: 200px;
+  max-width: 150px;
+  max-height: 150px;
 }
 
 #expression-content .img-link .expr-img-wrapper {
   align-self: center;
-  max-height: 200px;
-  width: 200px;
+  max-height: 150px;
+  width: 150px;
 }
 
 #expression-content td .img-link .expr-img-wrapper img {
   width: auto;
   height: auto;
-  max-width: 40px;
-  max-height: 40px;
+  max-width: 100px;
+  max-height: 100px;
 }
 
 #expression-content td .img-link .expr-img-wrapper {
   align-self: center;
-  max-height: 40px;
-  width: 40px;
+  max-height: 100px;
+  width: 100px;
 }
 
 #expression-content td .img-link span {
