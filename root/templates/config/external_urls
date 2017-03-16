@@ -617,8 +617,8 @@
 
  MRC_geneservice = {
 	description = 'Supplier of genomic products and contract research company'
-	base        = 'http://www.geneservice.co.uk/products/rnai/index.jsp'
-	search      = 'http://www.lifesciences.sourcebioscience.com/genomecube?kw=%s'
+	base        = 'http://www.sourcebioscience.com/products/life-science-research/clones/rnai-resources/'
+	search      = 'http://www.sourcebioscience.com/search?search=%s'
 	email       = 'webmaster@geneservice.co.uk'
 	}
 
@@ -845,6 +845,11 @@
 	base        = 'http://rnajournal.cshlp.org/'
 	search      = 'http://rnajournal.cshlp.org/content/%s'
 	}
+ RNAcentral = {
+        description = 'The non-coding RNA sequence database'
+	base        = 'http://rnacentral.org'
+	search      = 'http://rnacentral.org/rna/%s'
+        }
 
  RNAi = {
  	description = 'RNAiDB'
