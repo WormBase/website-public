@@ -567,11 +567,12 @@ sub ancestors_data {
     }
 
     my $data = { description => 'ancestors_data',
-                  thisPerson => $object,
+                  thisPerson => "$object",
            existingRolesFull => $existingRoles{'Full'},
          existingRolesDirect => $existingRoles{'Direct'},
 	      elementsDirect => $elements{'Direct'}, 
 	        elementsFull => $elements{'Full'}, };
+    return $data;
 }
 
 # add_parents { }
