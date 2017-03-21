@@ -4,19 +4,16 @@
 #     '<h4>Spatio-Temporal Expression Patterns</h4>';
 # END;
 
-# IF fields.anatomic_expression_patterns.data;
-#   gene_image = fields.anatomic_expression_patterns.data.image;
-#   '<div style="max-width:500px;">';
-#     '<a href="'_ gene_image _ '" target="_blank">' _
-#        '<img src="' _ gene_image _ '" width="100%">' _
-#     '</a>';
-#   '</div>';
-# END;
 
+WRAPPER $field_block title="Anatomic expression pattern";
+    '<div id="anatomy-expression-pattern" style="max-width:500px;"></div>';
+END;
 
-# IF fields.expr_pattern_images.data;
-#     cell_content(fields.expr_pattern_images.data);
-# END;
+WRAPPER $field_block title="Expression pattern images" key="expr_pattern_images";
+    '<div id="expr-pattern-images">';
+        images_cell(fields.expr_pattern_images.data);
+    '</div>';
+END;
 
 
 WRAPPER $field_block title="Expressed in" key="expressed_in";
@@ -24,7 +21,7 @@ WRAPPER $field_block title="Expressed in" key="expressed_in";
     build_data_table(order=['ontology_term', 'details', 'images'],
                      columns={
                           images => 'Images',
-                          ontology_term => 'Life stage',
+                          ontology_term => 'Anatomy term',
                           details  => 'Supporting evidence',
                      },
                      key='expressed_in');
@@ -48,7 +45,7 @@ WRAPPER $field_block title="Subcellular localization" key="subcellular_localizat
     build_data_table(order=['ontology_term', 'details', 'images'],
                      columns={
                           images => 'Images',
-                          ontology_term => 'Life stage',
+                          ontology_term => 'Cellular component',
                           details  => 'Supporting evidence',
                      },
                      key='subcellular_localization');
@@ -173,6 +170,22 @@ END;
 
 
 <script type="text/javascript" >
+    (function() {
+        // note transcript will use the gene url
+        var imageUrl = "/img-static/virtualworm/Gene_Expr_Renders/[%  fields.gene_name.data.id || fields.name.data.id %].jpg";
+        var element = $jq("#anatomy-expression-pattern");
+        $jq.ajax({
+            url: imageUrl,
+            success: function() {
+                element.html('<a href="' + imageUrl + '" target="_blank">' +
+                    '<img src="' + imageUrl + '" width="100%"/>' +
+                    '</a>');
+            },
+            error: function() {
+                element.closest(".field").addClass("disabled");
+            }
+        });
+    })();
     setTimeout(function(){  // sorry, need time to load summary fpkm plot first
         WB.openField($jq("#fpkm_holder"), "[% '/rest/field/' _ class _ '/' _ fields.name.data.id _ '/fpkm_expression_summary_ls' %]", {noLoadImg: true});
     }, 1000);
