@@ -291,9 +291,9 @@
         queries.addFeatures = feature_part;
         queries.addTracks   = track_part;
         queries.loc         = position_string;
-        queries.tracks      = 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
       END;
 
+      queries.tracks = 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
@@ -368,16 +368,17 @@
 
             '<p class="fade">Please use Chrome Browser for the best viewing result.</p>';
 
-            WRAPPER toggle title="Click here to view" lazy=1 iframe=".jbrowse-view-iframe" href=view_url;
-                '<div id="' _ view_id _ '" class="jbrowse-view-container">';
-                '<button class="jbrowse-view-reset button ui-corner-all">';
-                '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
-                '</span>';
-                'Reset';
-                '</button>';
-                '<div class="jbrowse-view-iframe"></div>';
-                '</div>';
-            END;
+            '<div id="' _ view_id _ '" class="jbrowse-view-container">';
+            '<button class="jbrowse-view-reset button ui-corner-all">';
+            '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
+            '</span>';
+            'Reset';
+            '</button>';
+            '<div class="jbrowse-view-iframe">';
+            '<iframe src="' _ view_url _ '"></iframe>';
+            '</div>';
+            '</div>';
+
             '<script type="text/javascript">';
             'var reset = WB.initJbrowseView("#' _ view_id _ ' .jbrowse-view-iframe", "' _ view_url _ '");';
             '$jq("#' _ view_id _ ' .jbrowse-view-reset").click(reset);';
