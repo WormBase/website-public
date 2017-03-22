@@ -357,7 +357,6 @@
       label = label || data.label;
 
       IF species;
-        "<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>New</sup></h3>";
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
             true_coords = data.label; #don't use the data.pos_string which is padded for GBrowse
