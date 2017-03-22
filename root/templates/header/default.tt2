@@ -66,7 +66,9 @@
     [% IF item.species %]
         [% species = item.species %]
         <a href="/species/[% species %]"><i>[% c.config.sections.species_list.$species.title %]</i></a>
-        <span class="wb-detail">[% text2link('genomic_location', '' , '(GBrowse)', '', species) %]</span>
+        <br/>
+        [<span class="wb-detail"><a href="[% jbrowse_url(species)  %]"><sup class="new">new</sup>JBrowse</a></span>]
+        [<span class="wb-detail">[% text2link('genomic_location', '' , 'GBrowse', '', species) %]</span>]
     [% ELSIF item.resource %]
         [% resource = item.resource %]
         <a href="/resources/[% resource %]">[% c.config.sections.resources.$resource.title %]</a>
