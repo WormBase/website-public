@@ -72,13 +72,14 @@
                  ELSE;
                    genomic_image = fields.genomic_image.data;
                  END;
+
                  img_url = gbrowse_url(genomic_image.taxonomy, genomic_image.id, '', 1);
                  IF fields.tracks.data;
                    img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
                  END;
+                 jbrowse_view(position);
                  '<br><br>';
                  tag2link(genomic_image, image(img_url));
-                 jbrowse_view(position);
                  '</div>';
                END;
     ELSE;
