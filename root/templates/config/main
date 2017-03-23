@@ -264,6 +264,7 @@
       END;
 
       IF position_string.match('add=.*;?');
+        # for BLAST results
         coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\S+)$');
         refseq = coord_parts.0;
         label  = coord_parts.1;
@@ -291,9 +292,10 @@
         queries.addFeatures = feature_part;
         queries.addTracks   = track_part;
         queries.loc         = position_string;
+        queries.tracks = 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
+      ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
+        queries.tracks = 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
       END;
-
-      queries.tracks = 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
