@@ -829,6 +829,10 @@ div.more .ui-icon {
    font-size: 0.8em;
 }
 
+sup.new {
+  color: brown;
+}
+
 a#fade:hover, a.fade:hover {
   text-decoration:underline;
 }
@@ -3098,15 +3102,6 @@ table#table_fpkm_controls_by td:nth-child(3) {
   color: #555;
 }
 
-.jbrowse_link sup, .jbrowse-view-header sup {
-  color: brown;
-}
-
-.jbrowse-view-container {
-  background-color: #EEE;
-  padding: 10px 20px;
-}
-
 .jbrowse-view-reset {
   margin-bottom: 5px;
   margin-left: 2px;
@@ -3119,8 +3114,16 @@ table#table_fpkm_controls_by td:nth-child(3) {
   background-color: white;
 }
 
-h3.jbrowse-view-header {
-  margin: 1em auto 0.5em;
+.gbrowse-image-container {
+  overflow: scroll;
+}
+.gbrowse-image-container a {
+  display: flex;
+}
+.gbrowse-image-container img {
+  position: relative;
+  left: -56px;
+  width: auto;
 }
 
 
