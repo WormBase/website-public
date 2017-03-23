@@ -381,12 +381,13 @@
             'Reset';
             '</button>';
             '<div class="jbrowse-view-iframe">';
-            '<iframe src="' _ view_url _ '"></iframe>';
+            '<iframe></iframe>';
             '</div>';
             '</div>';
 
             '<script type="text/javascript">';
             'var reset = WB.initJbrowseView("#' _ view_id _ ' .jbrowse-view-iframe", "' _ view_url _ '");';
+            'reset();';
             '$jq("#' _ view_id _ ' .jbrowse-view-reset").click(reset);';
             '</script>';
         END;
