@@ -223,7 +223,7 @@
               query = matched ? matched.0 : item.name.id;
 
               url = gbrowse_url(species, item.name.class _ ":" _ query, bp);
-              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
+              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">GBrowse</a>]</span>");
           ELSIF(!search);
               url = gbrowse_url(species, '', bp);
               linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
@@ -322,15 +322,21 @@
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
       species = c.config.sections.species_list.$taxonomy;
       label = label || data.label;
-
-      pos_display_string = pad_jbrowse_coordinates(label);
-
       IF species;
         linkouts = [];
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
-            url = jbrowse_url(taxonomy, pos_display_string, bp);
-            linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
+            valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
+            IF label.match('[IVX]+:.*');
+                pos_display_string = pad_jbrowse_coordinates(label);
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);;
+                pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
+            END;
+
+            IF pos_display_string;
+                url = jbrowse_url(taxonomy, pos_display_string, bp);
+                linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">Browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+            END;
         END;
         linkouts.join(' ');
       END;
