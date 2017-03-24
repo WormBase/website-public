@@ -223,7 +223,7 @@
               query = matched ? matched.0 : item.name.id;
 
               url = gbrowse_url(species, item.name.class _ ":" _ query, bp);
-              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
+              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">GBrowse</a>]</span>");
           ELSIF(!search);
               url = gbrowse_url(species, '', bp);
               linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
@@ -269,6 +269,7 @@
       END;
 
       IF position_string.match('add=.*;?');
+        # for BLAST results
         coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\S+)$');
         refseq = coord_parts.0;
         label  = coord_parts.1;
@@ -296,9 +297,10 @@
         queries.addFeatures = feature_part;
         queries.addTracks   = track_part;
         queries.loc         = position_string;
-        queries.tracks      = 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
+        queries.tracks = 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
+      ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
+        queries.tracks = 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
       END;
-
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
@@ -320,15 +322,21 @@
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
       species = c.config.sections.species_list.$taxonomy;
       label = label || data.label;
-
-      pos_display_string = pad_jbrowse_coordinates(label);
-
       IF species;
         linkouts = [];
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
-            url = jbrowse_url(taxonomy, pos_display_string, bp);
-            linkouts.push(label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">(BioProject $bp)</a>]</span>");
+            valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
+            IF label.match('[IVX]+:.*');
+                pos_display_string = pad_jbrowse_coordinates(label);
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);;
+                pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
+            END;
+
+            IF pos_display_string;
+                url = jbrowse_url(taxonomy, pos_display_string, bp);
+                linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">Browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+            END;
         END;
         linkouts.join(' ');
       END;
@@ -362,7 +370,6 @@
       label = label || data.label;
 
       IF species;
-        "<h3 class=\"jbrowse-view-header\">New Genome Browser Preview <sup>New</sup></h3>";
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
             true_coords = data.label; #don't use the data.pos_string which is padded for GBrowse
@@ -373,20 +380,27 @@
 
             '<p class="fade">Please use Chrome Browser for the best viewing result.</p>';
 
-            WRAPPER toggle title="Click here to view" lazy=1 iframe=".jbrowse-view-iframe" href=view_url;
-                '<div id="' _ view_id _ '" class="jbrowse-view-container">';
-                '<button class="jbrowse-view-reset button ui-corner-all">';
-                '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
-                '</span>';
-                'Reset';
-                '</button>';
-                '<div class="jbrowse-view-iframe"></div>';
-                '</div>';
-            END;
-            '<script type="text/javascript">';
-            'var reset = WB.initJbrowseView("#' _ view_id _ ' .jbrowse-view-iframe", "' _ view_url _ '");';
-            '$jq("#' _ view_id _ ' .jbrowse-view-reset").click(reset);';
-            '</script>';
+            '<div id="' _ view_id _ '" class="jbrowse-view-container">';
+            '<button class="jbrowse-view-reset button ui-corner-all">';
+            '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
+            '</span>';
+            'Reset';
+            '</button>';
+            '<div class="jbrowse-view-iframe">';
+            '<iframe></iframe>';
+            '</div>';
+            '</div>';
+%]
+            <script type="text/javascript">
+            (function() {
+                var viewId = "#[% view_id %]";
+                var viewUrl = "[% view_url %]";
+                var reset = WB.initJbrowseView(viewId + " .jbrowse-view-iframe", viewUrl);
+                reset();
+                $jq(viewId + " .jbrowse-view-reset").click(reset);
+            })();
+            </script>
+[%
         END;
       END;
     END;
