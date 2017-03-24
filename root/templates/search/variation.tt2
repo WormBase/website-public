@@ -1,5 +1,4 @@
       [% tag2link(item.name) %]
-      [% jbrowselink(item.name, '', 1); %]
       [% gbrowselink(item.name) %]
     </li>
 
