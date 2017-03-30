@@ -11,7 +11,7 @@ END;
 
 WRAPPER $field_block title="Expression pattern images" key="expr_pattern_images";
     '<div id="expr-pattern-images">';
-        images_cell(fields.expr_pattern_images.data);
+        images_cell({curated_images => fields.expr_pattern_images.data});
     '</div>';
 END;
 
