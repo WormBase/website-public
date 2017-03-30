@@ -2986,8 +2986,7 @@ var Scrolling = (function(){
           function(lifeStageA, lifeStageB) {
             return lifeStageValue(lifeStageA) - lifeStageValue(lifeStageB);
           });
-console.log(projectID);
-console.log(categories);
+
         var allData = categories.map(function(category){
           return seriesDataRaw[category].map(function(item){
             return Number(item.value);
