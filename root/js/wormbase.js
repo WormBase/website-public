@@ -2936,12 +2936,58 @@ var Scrolling = (function(){
         return menuContainer.find('li.ui-state-focus').first().attr('data-project-id');
       }
 
+      function lifeStageValue(lifeStageName) {
+        var LARGE_NUMBER = 10000; // 10000 as arbitury large number to ensure (x / 10000) < 1
+        if (/early embryo/i.test(lifeStageName)) {
+          return 0;
+        } else if (/(\d+)-cell embryo/i.test(lifeStageName)) {
+          var cellCount = parseInt(/(\d+)-cell embryo/i.exec(lifeStageName)[1]);
+          return cellCount / LARGE_NUMBER;
+        } else if (/(\d+) min post first-cleavage/i.test(lifeStageName)) {
+          var minCount = parseInt(/(\d+) min post first-cleavage/i.exec(lifeStageName)[1]);
+          return 1 + (minCount / LARGE_NUMBER);
+        } else if (/late embryo/i.test(lifeStageName)) {
+          return 40;
+        } else if (/embryo/i.test(lifeStageName)) {
+          return 30;
+        } else if (/L1/i.test(lifeStageName)) {
+          return 41;
+        } else if (/L2d/i.test(lifeStageName)) {
+          return 42;
+        } else if (/L2/i.test(lifeStageName)) {
+          return 42.5;
+        } else if (/L3/i.test(lifeStageName)) {
+          return 43;
+        } else if (/post\s*dauer/i.test(lifeStageName)) {
+          return 44;
+        } else if (/dauer/i.test(lifeStageName)) {
+          return 43;
+        } else if (/^(post-)L4(\.\d+)*/i.test(lifeStageName)) {
+          return 45;
+        } else if (/larva/i.test(lifeStageName)) {
+          return 45.5;
+        } else if (/young adult/i.test(lifeStageName)) {
+          return 46;
+        } else if (/(\d+)-day(s?) post-L4 adult/i.test(lifeStageName)) {
+          var dayCount = parseInt(/(\d+)-day(s?) post-L4 adult/i.exec(lifeStageName)[1]);
+          return 46 + (dayCount / LARGE_NUMBER);
+        } else if (/adult/i.test(lifeStageName)) {
+          return 47;
+        } else {
+          return 48;
+        }
+      }
+
       function updatePlot(projectID){
         var seriesDataRaw = groupBy(function(item){
           return item.life_stage.label;
         }, projectToData[projectID]);
-        var categories = Object.keys(seriesDataRaw);
-
+        var categories = Object.keys(seriesDataRaw).sort(
+          function(lifeStageA, lifeStageB) {
+            return lifeStageValue(lifeStageA) - lifeStageValue(lifeStageB);
+          });
+console.log(projectID);
+console.log(categories);
         var allData = categories.map(function(category){
           return seriesDataRaw[category].map(function(item){
             return Number(item.value);
