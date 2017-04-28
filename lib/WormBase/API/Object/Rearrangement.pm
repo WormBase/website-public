@@ -243,21 +243,6 @@ sub chromosome {
 # phenotypes_not_observed {}
 # Supplied by Role
 
-sub _build_phenotypes_data {
-    my $self = shift;
-    my $tag = shift;
-    my $object = $self->object;
-#     $tag = '@'.$tag;
-    return [ map {
-        my $desc = $_->Description;
-        my $remark = $_->Remark;
-        {
-            phenotype   => $self->_pack_obj($_),
-            evidence => { text=> $desc && "$desc", evidence => $self->_get_evidence($desc)},
-        };
-    } @{$self ~~ '@'.$tag} ];
-}
-
 #######################################
 #
 # The References Widget
@@ -402,4 +387,3 @@ sub _get_position {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
