@@ -469,7 +469,7 @@ sub corresponding_all {
         $data{gene} = $self->_pack_obj($gene);
         push @rows, \%data;
     }else{
-        if($object->class eq 'Transcript'){ # if caller is an ncRNA
+        if($object->class eq 'Transcript' && $object->Gene){ # if caller is an ncRNA
             my $gene = $object->Gene;
             $data{gene} = $self->_pack_obj($gene);
             my @sequences = $gene->Corresponding_transcript;
