@@ -283,7 +283,9 @@ END;
 
     <div class="field
     [%# Add a class to disable / hide empty fields %]
-    [% TRY; IF (key && !fields.$key.defined('data')) || disabled; " disabled "; END; END;%]
+    [% TRY; IF (key && (!fields.$key.defined('data')
+                        || (ref(fields.$key.data) && fields.$key.data.size == 0)))
+                || disabled; " disabled "; END; END;%]
 
         ">
       [% IF title; %]
@@ -655,7 +657,7 @@ END %]
   not_empty;
   FOREACH field IN fields.keys;
     NEXT IF field == 'name';
-    IF fields.$field.defined('data');
+    IF fields.$field.defined('data') && !(ref(fields.$field.data) && fields.$field.data.size == 0);
       not_empty = 1;
       LAST;
     END;
