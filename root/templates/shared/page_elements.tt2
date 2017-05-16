@@ -6,7 +6,7 @@
 ####################################################
 %]
 
-[% MACRO evidence(data, id, text, label) BLOCK %]
+[% MACRO evidence(data, id, text, label, expand) BLOCK %]
   [% IF data %]
   <div class="evidence [% IF text %] result[% END %]">
     [% IF text.exists('label') %]
@@ -17,7 +17,7 @@
       [% markup("$text") %]
     [% END %]
     [% id = id || 0; %]
-[% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
+  [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" style="display: [% expand ? 'block' : 'none' %];"> [% END %]
     [% FOREACH type IN data.keys -%]
         <b>[% type_label = '' _ type; type_label.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]:
           [% IF (type == 'curatorial_remarks'); '<br />'; END; %]
@@ -28,7 +28,7 @@
 [% IF text %]    </div>
     <div class="ev-more">
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
-      <div class="v ui-icon ui-icon-triangle-1-s"></div>
+      <div class="v ui-icon [% expand ? 'ui-icon-triangle-1-n' : 'ui-icon-triangle-1-s' %]"></div>
     </div>
 [% END %]
   </div>
