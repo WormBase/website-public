@@ -6,7 +6,7 @@
 ####################################################
 %]
 
-[% MACRO evidence(data, id, text, label) BLOCK %]
+[% MACRO evidence(data, id, text, label, expand) BLOCK %]
   [% IF data %]
   <div class="evidence [% IF text %] result[% END %]">
     [% IF text.exists('label') %]
@@ -17,7 +17,7 @@
       [% markup("$text") %]
     [% END %]
     [% id = id || 0; %]
-[% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
+  [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" style="display: [% expand ? 'block' : 'none' %];"> [% END %]
     [% FOREACH type IN data.keys -%]
         <b>[% type_label = '' _ type; type_label.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]:
           [% IF (type == 'curatorial_remarks'); '<br />'; END; %]
@@ -28,7 +28,7 @@
 [% IF text %]    </div>
     <div class="ev-more">
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
-      <div class="v ui-icon ui-icon-triangle-1-s"></div>
+      <div class="v ui-icon [% expand ? 'ui-icon-triangle-1-n' : 'ui-icon-triangle-1-s' %]"></div>
     </div>
 [% END %]
   </div>
@@ -355,7 +355,7 @@ END;
         FOREACH o IN order; headers.push(columns.$o); END;
 
         # generate table
-        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener);
+        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener, column_args);
       END;
     END; # END of MACRO
 %]
@@ -370,7 +370,7 @@ END;
      styling via javascript.
 %]
 
-[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator, listener) BLOCK %]
+[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns, separator, listener, column_args) BLOCK %]
 
   [% IF rows && rows.size > 0;
        # Set up some suitable defaults
@@ -421,7 +421,7 @@ END;
 			cell='<a href="' _ cell _ '">Lab link</a>';
 		    END;
 		    '<td>';
-		    cell_content(cell, separator);
+		    cell_content(cell, separator, undef, column_args.$col);
 		    '</td>';
 		END;
 	    ELSE;
@@ -574,7 +574,7 @@ END; %]
 END; %]
 
 
-[% MACRO cell_content(cell, separator, max_row) BLOCK;
+[% MACRO cell_content(cell, separator, max_row, args) BLOCK;
     IF ref(cell) == 'HASH';
       IF cell.defined('species');
           '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
@@ -585,7 +585,7 @@ END; %]
             searchlink(cell.class, cell.id, cell.id);
           END;
       ELSIF cell.defined('evidence');
-          evidence(cell.evidence,table_name _ index, cell_content(cell.text, separator), 'details');
+          evidence(cell.evidence,table_name _ index, cell_content(cell.text, separator), 'details', args.expand_evidence);
       ELSIF cell.defined('interaction');
           interaction_cell(cell);
       ELSIF cell.defined('xrefs');
@@ -601,19 +601,19 @@ END; %]
       ELSE;
 
         # assumes that hash passed to cell should be output as the key followed by its value
-        # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
+        # e.g. evidecne column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
         FOREACH key IN cell.keys.sort;
-          "$key";
-          cell_content(cell.$key);
+          "$key:";
+          cell_content(cell.$key, undef, undef, args);
         END;
       END;
     ELSIF ref(cell) == 'ARRAY';
       IF (!separator) && (cell.size > (max_row || 10));
           WRAPPER toggle title=cell.size _ ' Results';
-            list_cell_content(cell, separator);
+            list_cell_content(cell, separator, args);
           END;
       ELSE;
-          list_cell_content(cell, separator);
+          list_cell_content(cell, separator, args);
       END;
     ELSE;
       cell;
@@ -621,16 +621,16 @@ END; %]
   END;
 %]
 
-[% MACRO list_cell_content(cell, separator) BLOCK;
+[% MACRO list_cell_content(cell, separator, args) BLOCK;
     IF cell.size < 2;
-       FOREACH item IN cell; cell_content(item, ' '); END;
+       FOREACH item IN cell; cell_content(item, ' ', undef, args); END;
     ELSE;
       WRAPPER ul_unless_separator;
         FOREACH item IN cell;
           IF separator;
-            cell_content(item, ' ');
+            cell_content(item, ' ', undef, args);
           ELSE;
-            '<li>' _ cell_content(item, ' ') _ '</li>';
+            '<li>' _ cell_content(item, ' ', undef, args) _ '</li>';
           END;
           IF !(ref(item) && item.defined('evidence')) && !loop.last;
               # scalar.defined always return true, so check item is ref
@@ -1049,6 +1049,11 @@ END;
             entity => 'Entities Affected',
             evidence => 'Supporting Evidence',
         },
+        column_args => {
+            evidence => {
+                expand_evidence => 1
+            }
+        },
         key => 'phenotypes',
         style => '
             "drawCallback": WB.partitioned_table(0),
@@ -1070,6 +1075,7 @@ END;
     build_data_table(
         order=phenotype_table_args.order,
         columns=phenotype_table_args.columns,
+        column_args=phenotype_table_args.column_args,
         passed_data=phenotype_table_args.passed_data,
         key=phenotype_table_args.key,
         style=phenotype_table_args.style
