@@ -603,7 +603,7 @@ END; %]
         # assumes that hash passed to cell should be output as the key followed by its value
         # e.g. evidecne column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
         FOREACH key IN cell.keys.sort;
-          "$key";
+          "$key:";
           cell_content(cell.$key, undef, undef, args);
         END;
       END;
