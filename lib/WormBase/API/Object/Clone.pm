@@ -122,7 +122,7 @@ sub _seq2coords {
 sub lengths {
     my ($self) = @_;
     my %data;
-    map { if(my $len = $self ~~ "$_") { $data{$_} = $len; } } qw(Seq_length Gel_length);
+    map { if(my $len = $self ~~ "$_") { $data{$_} = "$len"; } } qw(Seq_length Gel_length);
     return {
       description => 'lengths relevant to this clone',
       data   	    => %data ? \%data : undef,
