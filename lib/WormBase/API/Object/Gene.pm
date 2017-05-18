@@ -1443,16 +1443,14 @@ sub drives_overexpression {
     my ($self) = @_;
     my $object = $self->object;
 
-    my %phenotypes;
+    my @phenotypes = ();
     foreach my $construct ($object->Construct_product) {
 
         foreach my $transgene ($construct->Transgene_construct){
 
             my $summary = $transgene->Summary;
 
-            # Retain in case we also want to add not_observed...
-            foreach my $obs ('Phenotype'){
-                foreach my $phene ($transgene->$obs){
+                foreach my $phene ($transgene->Phenotype){
 
                     # Only include those transgenes where the Caused_by in #Phenotype_info
                     # is the current gene.
@@ -1460,27 +1458,28 @@ sub drives_overexpression {
                     my ($caused_by) = $phene->at('Caused_by_gene');
                     next unless $caused_by eq $object;
 
-                    $phenotypes{$obs}{$phene}{object} //= $self->_pack_obj($phene);
                     my $evidence = $self->_get_evidence($phene);
                     # $evidence->{Summary}   = "$summary" if $summary;
                     $evidence->{Transgene} = $self->_pack_obj($transgene);
 
+                    my $ev;
                     if ($evidence && %$evidence){
                         my $transgene_label = $transgene->Public_name;
-                        my $ev = {
+                        $ev = {
                             text  => [$self->_pack_obj($transgene, $transgene_label),
                                       "<em>$summary</em>",
                                       $evidence->{Remark}],
                             evidence => $evidence
                         };
-                        push @{$phenotypes{$obs}{$phene}{evidence}}, $ev;
                     }
-
+                    push @phenotypes, {
+                        phenotype => $self->_pack_obj($phene),
+                        evidence => $ev
+                    };
                 }
-            }
         }
     }
-    return { data        => (defined $phenotypes{Phenotype}) ? \%phenotypes : undef ,
+    return { data        => @phenotypes ? \@phenotypes : undef ,
              description => 'phenotypes due to overexpression under the promoter of this gene', };
 
 }
