@@ -1001,9 +1001,10 @@ sub old_annot{
 
 sub nematode_orthologs {
     my $self   = shift;
+    my @other_orthologs = grep { "$_" =~ /^WBGene/ } $self->object->Ortholog;
 
     my $data = $self->_parse_homologs(
-        [ $self->object->Ortholog ],
+        \@other_orthologs,
         sub {
             return $_[0]->right(2) ? [map { $self->_pack_obj($_) } $_->right(2)->col] : undef;
         }
@@ -1029,26 +1030,15 @@ has '_other_orthologs' => (
 
 sub _build__other_orthologs {
     my ($self) = @_;
+    my @other_orthologs = grep { "$_" !~ /^WBGene/ } $self->object->Ortholog;
+
     return $self->_parse_homologs(
-        [ $self->object->Ortholog_other ],
+        \@other_orthologs,
         sub {
-            return $_[0]->right ? [map { $self->_pack_obj($_) } $_->right->col] : undef;
+            return $_[0]->right(2) ? [map { $self->_pack_obj($_) } $_->right(2)->col] : undef;
         }
     );
 }
-
-# I sure do wish we had some descriptions for human genes.
-sub human_orthologs {
-    my $self = shift;
-
-    my @data = grep { $_->{ortholog}{id} =~ /ENSEMBL:ENSP\d/ } @{$self->_other_orthologs};
-
-    return {
-        description => 'human orthologs of this gene',
-        data        => @data ? \@data : undef,
-    };
-}
-
 
 # other_orthologs { }
 # This method returns a data structure containing the
