@@ -73,7 +73,7 @@ sub gene_product {
 sub type_of_construct {
     my $self   = shift;
     my $object = $self->object;
-    my @types  = $object->Type_of_construct;
+    my @types  = map { "$_"; } $object->Type_of_construct;
     return { description => 'type of construct',
              data        => @types ? \@types : undef };
 }
@@ -84,7 +84,7 @@ sub fusion_reporter {
     my $object = $self->object;
     my $reporter = $object->Fusion_reporter;
     return { description => 'reporter construct for this construct',
-	     data        => $reporter ? $reporter : undef };
+	     data        => $reporter ? "$reporter" : undef };
 }
 
 # other_reporter {}
@@ -93,7 +93,7 @@ sub other_reporter {
     my $object = $self->object;
     my $reporter = $object->Other_reporter;
     return { description => 'other reporters of this construct',
-	     data        => $reporter ? $reporter : undef };
+	     data        => $reporter ? "$reporter" : undef };
 }
 
 
@@ -110,7 +110,7 @@ sub utr {
 sub selection_marker {
     my $self = shift;
     my $object = $self->object;
-    my @marker = $object->Selection_marker;
+    my @marker = map { "$_" } $object->Selection_marker;
     return { description => 'Coinjection marker for this transgene',
              data        => @marker ? \@marker : undef };
 }
@@ -207,9 +207,10 @@ sub _build__transgenes {
     foreach my $tg ($object->Transgene_construct) {
         my @tg_strains = map { $self->_pack_obj($_) } $tg->Strain;
         my @tg_refs = map { $self->_pack_obj($_) } $tg->Reference;
+        my $summary = $tg->Summary;
         push @data, {
             transgene => $self->_pack_obj($tg),
-            summary   => $tg->Summary,
+            summary   => "$summary",
             strain    => \@tg_strains,
             reference => \@tg_refs
         };
