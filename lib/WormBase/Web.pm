@@ -157,7 +157,7 @@ sub _setup_species {
     my $original_species = $c->config->{sections}->{species_list};
     my $new_species = {};
 
-    my $species_file_remote_path = '/pub/wormbase/releases/current-development-release/species/ASSEMBLIES.' . $c->config->{wormbase_release} . '.json';
+    my $species_file_remote_path = 'ftp://ftp.wormbase.org/pub/wormbase/releases/current-development-release/species/ASSEMBLIES.' . $c->config->{wormbase_release} . '.json';
     my $species_file_local_path = $c->path_to('/conf/species/', 'species_ASSEMBLIES.json');
     my @available_species = _parse_wb_species(_get_json($c, $species_file_remote_path, $species_file_local_path));
 
@@ -197,7 +197,7 @@ sub _setup_parasite_species {
     # determine the latest parasite release
     $c->config->{parasite_release} = _get_latest_release($c);
 
-    my $species_file_remote_path = "/pub/wormbase/parasite/releases/". $c->config->{parasite_release} . "/species_tree.json";
+    my $species_file_remote_path = "http://parasite.wormbase.org/Multi/Ajax/species_tree";
     my $species_file_local_path = $c->path_to('/conf/species/', 'parasite_species_tree.json');
 
     my $parasite_species_trees = _get_json($c,
@@ -222,21 +222,27 @@ sub _get_json {
         $json = _parse_json($json_string);  # update reference in closure
     };
 
-    local *_process_remote_copy = sub {
+    local *_process_ftp_copy = sub {
 
-        my ($ftp) = @_;
-        my $fh;
-        my $json_string;
-        open( $fh, '>', \$json_string) || die "cannot open fh";
-        $ftp->get($remote_path, $fh);
-        close $fh;
-
+        my ($json_string) = @_;
         $json = _parse_json($json_string);
+
         # update local copy
+        my $fh;
         open($fh, '>', $local_copy_path);
         print $fh $json_string;
         close $fh;
 
+    };
+
+    local *_process_http_copy = sub {
+        my ($content) = @_;
+        $json = _parse_json($content);
+        # update local copy
+        my $fh;
+        open($fh, '>', $local_copy_path);
+        print $fh $content;
+        close $fh;
     };
 
     sub _parse_json {
@@ -246,11 +252,15 @@ sub _get_json {
 
     # consider remote copy only on a development instance
     if ($c->config->{installation_type} eq 'development'){
-        $c->_with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+        if ($remote_path =~ /^https?:.+/) {
+            $c->_with_http($remote_path, \&_process_http_copy, \&_process_local_copy);
+        } else {
+            $c->_with_ftp($remote_path, \&_process_ftp_copy, \&_process_local_copy);
+        }
     }else{
         _process_local_copy();
     }
-    # unlike with javascript, _with_ftp_site is blocking
+    # unlike with javascript, _with_ftp is blocking
 
     return $json;
 }
@@ -258,7 +268,7 @@ sub _get_json {
 
 sub _get_latest_release {
     my ($c) = @_;
-    my $release_dir_path = '/pub/wormbase/parasite/releases/';
+    my $release_dir_path = 'ftp://ftp.wormbase.org/pub/wormbase/parasite/releases/';
     my $latest_release_number_path = $c->path_to('/conf/species/parasite_release_number.txt');
     my $latest_release_number;
 
@@ -274,9 +284,8 @@ sub _get_latest_release {
     };
 
     local *_process_remote_copy = sub {
-        my ($ftp) = @_;
+        my ($all_releases) = @_;
 
-        my $all_releases = $ftp->ls($release_dir_path);
         my @all_release_numbers = map {
             my $num = get_release_number($_);
             $num ? $num : ();
@@ -299,28 +308,37 @@ sub _get_latest_release {
 
     # consider remote copy only on a development instance
     if ($c->config->{installation_type} eq 'development'){
-        $c->_with_ftp_site(\&_process_remote_copy, \&_process_local_copy);
+        $c->_with_ftp($release_dir_path, \&_process_remote_copy, \&_process_local_copy);
     }else{
         _process_local_copy();
     }
 
-    # unlike with javascript, _with_ftp_site is blocking
+    # unlike with javascript, _with_ftp is blocking
     return 'WBPS' .  $latest_release_number;
 }
 
 
 # helper method to handle setup and teardown of ftp site connection
-sub _with_ftp_site {
-    my ($c, $on_success, $on_error, @args) = @_;
+sub _with_ftp {
+    my ($c, $url, $on_success, $on_error) = @_;
 
     my $error;
-    my $ftp = Net::FTP->new("ftp.wormbase.org", Debug => 0,
-                            Timeout=>5, Passive=>1);
+    my ($protocal, $domain, $path) = $url =~ /(ftp:\/\/)?(.+?)(\/.+)/;
+    my $ftp = Net::FTP->new($domain, Debug => 0, Timeout=>5, Passive=>1);
 
     eval {
         if ($ftp){
             $ftp->login();
-            $on_success->($ftp, @args);
+            my $content;
+            if ($path =~ /\/$/) {
+                $content = $ftp->ls($path);
+            } else {
+                my $fh;
+                open( $fh, '>', \$content) || die "cannot open fh";
+                $ftp->get($path, $fh);
+                close $fh;
+            }
+            $on_success->($content);
             $ftp->quit();
         } else {
             die "Cannot connect to ftp.wormbase.org: $@";
@@ -331,8 +349,25 @@ sub _with_ftp_site {
         warn "!!!FAILED!!! to retrieve species configuration from FTP site:\n$error";
     };
 
-    $on_error->($error, @args) if $error;
+    $on_error->($error) if $error;
 
+}
+
+sub _with_http {
+    my ($c, $url, $on_success, $on_error) = @_;
+    my $ua = LWP::UserAgent->new;
+    $ua->timeout(5);
+
+    my $response = $ua->get($url);
+
+    my $error;
+    if ($response->is_success) {
+        $on_success->($response->content());
+    } else {
+        $error = $response->status_line;
+        warn "!!!FAILED!!! to retrieve species configuration from $url:\n$error";
+    }
+    $on_error->($error) if $error;
 }
 
 sub _parse_wb_species {
