@@ -1270,9 +1270,9 @@ sub _gene_name_changes_helper {
 
     my $release = $c->config->{wormbase_release};
     my $name_change_file_path = "/pub/wormbase/releases/$release/species/c_elegans/PRJNA13758/annotation/c_elegans.PRJNA13758.$release.changed_CGC_names.txt";
-    $c->_with_ftp_site(\&read_file_to_stash,
-                       \&handle_error,
-                       $name_change_file_path);
+    $c->_with_ftp(\&read_file_to_stash,
+                  \&handle_error,
+                  $name_change_file_path);
 }
 
 
