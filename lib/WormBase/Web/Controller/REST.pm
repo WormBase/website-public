@@ -17,6 +17,8 @@ use Text::MultiMarkdown 'markdown';
 use DateTime;
 use Encode;
 use HTTP::Tiny;
+use Memoize;
+use Memoize::Expire;
 
 
 __PACKAGE__->config(
@@ -860,31 +862,54 @@ sub widget_GET {
     }
 
     my $skip_cache = $c->config->{skip_cache} || $c->request->params->{"skip-cache"};
-    my $skip_datomic = $c->config->{skip_datomic} || $c->request->params->{"skip-datomic"};
-    my $skip_ace = $c->config->{skip_ace} || $c->request->params->{"skip-ace"};
 
-    my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
 
-    # check Datomic first before checking cache (for now)
-    #to access the performance of Datomic without cache
-    unless ($skip_datomic) {
-        my $rest_server = $c->config->{'rest_server'};
-        my $url = "$rest_server/rest/widget/$class/$name/$widget";
-        my $resp = HTTP::Tiny->new->get($url);
-        if ($resp->{'status'} == 200 && $resp->{'content'}) {
-            $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
-            $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
-            $c->set_cache($key => $c->stash->{fields}) unless $skip_cache || $c->has_cache($key);;
-        } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
-            die "failed to load widget $class::$widget from datomic-to-catalyst";
+    my $rest_server = $c->config->{'rest_server'};
+    my $path_template = "/rest/widget/$class/{id}/$widget";
+    (my $path = $path_template) =~ s/\{id\}/$name/;
+    my $isDatomicEndpoint = grep {
+        $_ eq $path_template;
+    } get_rest_endpoints("$rest_server/swagger.json");
+
+
+    if ($isDatomicEndpoint) {
+        # Datomic workflow
+
+        my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
+        my ( $cached_data, $cache_source ) = $c->check_cache($key);
+
+        my $is_recent;
+        if ($cached_data && (my $time_cached = $cached_data->{time_cached})) {
+            my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
+            $is_recent = $since_cached->in_units('hours') < 24;
         }
-    }
 
-    unless ($skip_cache || $c->stash->{fields}) {
-        # use cached fields data, if available
-        my ($cached_data, $cache_source) = $c->check_cache($key);  # check_cache checks couchdb
+        if($cached_data && (ref $cached_data eq 'HASH') && $is_recent){
+            $c->stash->{fields} = $cached_data;
+            # Served from cache? Let's include a link to it in the cache.
+            # Primarily a debugging element.
+            $c->stash->{served_from_cache} = $key;
+        } else {
+            my $url = "$rest_server$path";
+            my $resp = HTTP::Tiny->new->get($url);
+            if ($resp->{'status'} == 200 && $resp->{'content'}) {
+                $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
+                $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
 
-        if ($cached_data && (ref $cached_data eq 'HASH')){
+                # hide timestamp in the fields for now to avoid changing structure of the cached data.
+                # in the future, time_cached should be a sibling of fields
+                $c->stash->{fields}->{time_cached} = DateTime->now()->epoch();
+                $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+            }
+        }
+
+
+    } else {
+        # ACeDB workflow
+        # check_cache checks couchdb
+        my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
+        my ( $cached_data, $cache_source ) = $c->check_cache($key);
+        if($cached_data && (ref $cached_data eq 'HASH')){
             $c->stash->{fields} = $cached_data;
 
             # Served from cache? Let's include a link to it in the cache.
@@ -895,35 +920,28 @@ sub widget_GET {
             $c->response->body($cached_data);
             $c->detach();
             return;
-        }
-    }
-
-    unless ($skip_ace || $c->stash->{fields}) {
-        # Generate the widget from ACeDB
-        # Load the stash with the field contents for this widget.
-        # The widget itself is loaded by REST; fields are not.
-        my @fields = $c->_get_widget_fields( $class, $widget );
-
-        # Store name on all widgets - needed for display
-        unless (grep /^name$/, @fields) {
-            push @fields, 'name';
-        }
-
-        my $api = $c->model('WormBaseAPI');
-        my $object = ($name eq '*' || $name eq 'all'
+        } else {
+            my $api = $c->model('WormBaseAPI');
+            my $object = ($name eq '*' || $name eq 'all'
                        ? $api->instantiate_empty(ucfirst $class)
                        : $api->fetch({ class => ucfirst $class, name => $name }))
-            or die "Could not fetch object $name, $class";
+                or die "Could not fetch object $name, $class";
 
-        foreach my $field (@fields) {
-            unless ($field) { next; }
-            $c->log->debug("Processing field: $field");
-            my $data;
+            # Generate and cache the widget.
+            # Load the stash with the field contents for this widget.
+            # The widget itself is loaded by REST; fields are not.
+            my @fields = $c->_get_widget_fields( $class, $widget );
 
-            if ($object->can($field)) {
-                # try Perl API
-                $data = $object->$field;
-                $c->stash->{data_from_ace} = 1;  # widget contains data from acedb
+            # Store name on all widgets - needed for display
+            unless (grep /^name$/, @fields) {
+                push @fields, 'name';
+            }
+
+            foreach my $field (@fields) {
+                unless ($field) { next; }
+                $c->log->debug("Processing field: $field");
+                my $data = $object->$field;
+
                 if ($c->config->{fatal_non_compliance}) {
                     # checking for data compliance can be an overhead, only use
                     # in testing env where its explicitly enabled
@@ -936,18 +954,23 @@ sub widget_GET {
                         die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
                     }
                 }
+
+                # a field can force an entire widget to not caching
+                if ($data->{'error'}){
+                    $skip_cache = 1;
+                }
+
+                # Conditionally load up the stash (for now) for HTML requests.
+                $c->stash->{fields}->{$field} = $data;
             }
 
-            # a field can force an entire widget to not caching
-            if ($data->{'error'}){
-                $skip_cache = 1;
-            }
-
-            # Conditionally load up the stash (for now) for HTML requests.
-            $c->stash->{fields}->{$field} = $data;
+            $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+            $c->stash->{data_from_ace} = 1;  # widget contains data from acedb
         }
-        $c->set_cache($key => $c->stash->{fields}) if !$skip_cache && $c->stash->{fields};
+
+
     }
+
 
 
     # Forward to the view to render HTML, set stash variables
@@ -994,6 +1017,21 @@ sub widget_GET {
     }
 }
 
+sub get_rest_endpoints {
+    my ($url, $fatal_non_compliance) = @_;
+
+    my $resp = HTTP::Tiny->new->get($url);
+    if ($resp->{'status'} == 200 && $resp->{'content'}) {
+        my $paths_info = decode_json($resp->{'content'})->{paths};
+        return keys %$paths_info;
+    } elsif ($resp->{'status'} == 500 && $fatal_non_compliance) {
+        die "failed to load REST endpoints from $url";
+    }
+}
+
+tie my %cache => 'Memoize::Expire',  # http://perldoc.perl.org/Memoize/Expire.html
+    LIFETIME => 300;    # In seconds
+memoize 'get_rest_endpoints', SCALAR_CACHE => [HASH => \%cache ];
 
 
 # For "static" pages
