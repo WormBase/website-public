@@ -861,22 +861,30 @@ sub widget_GET {
           $c->go('search', 'search');
     }
 
-    my $skip_cache = $c->config->{skip_cache} || $c->request->params->{"skip-cache"};
-
 
     my $rest_server = $c->config->{'rest_server'};
     my $path_template = "/rest/widget/$class/{id}/$widget";
     (my $path = $path_template) =~ s/\{id\}/$name/;
+    my @datomic_endpoints = get_rest_endpoints("$rest_server/swagger.json", $c->config->{fatal_non_compliance});
     my $isDatomicEndpoint = grep {
         $_ eq $path_template;
-    } get_rest_endpoints("$rest_server/swagger.json");
+    } @datomic_endpoints;
 
 
-    if ($isDatomicEndpoint) {
+    # check_cache checks couchdb
+    my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
+    my ( $cached_data, $cache_source ) = $c->check_cache($key);
+
+    if (!@datomic_endpoints) {
+        # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
+        if ($cached_data && $c->config->{installation_type} eq 'production') {
+            $c->stash->{fields} = $cached_data;
+            $c->stash->{served_from_cache} = $key;
+        } else {
+            die "failed to retrieve available REST API endpoints from $rest_server/swagger.json";
+        }
+    } elsif ($isDatomicEndpoint) {
         # Datomic workflow
-
-        my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
-        my ( $cached_data, $cache_source ) = $c->check_cache($key);
 
         my $is_recent;
         if ($cached_data && (my $time_cached = $cached_data->{time_cached})) {
@@ -899,16 +907,14 @@ sub widget_GET {
                 # hide timestamp in the fields for now to avoid changing structure of the cached data.
                 # in the future, time_cached should be a sibling of fields
                 $c->stash->{fields}->{time_cached} = DateTime->now()->epoch();
-                $c->set_cache($key => $c->stash->{fields}) unless $skip_cache;
+                $c->set_cache($key => $c->stash->{fields});
             }
         }
 
 
     } else {
         # ACeDB workflow
-        # check_cache checks couchdb
-        my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
-        my ( $cached_data, $cache_source ) = $c->check_cache($key);
+
         if($cached_data && (ref $cached_data eq 'HASH')){
             $c->stash->{fields} = $cached_data;
 
@@ -936,6 +942,8 @@ sub widget_GET {
             unless (grep /^name$/, @fields) {
                 push @fields, 'name';
             }
+
+            my $skip_cache;
 
             foreach my $field (@fields) {
                 unless ($field) { next; }
@@ -1024,8 +1032,10 @@ sub get_rest_endpoints {
     if ($resp->{'status'} == 200 && $resp->{'content'}) {
         my $paths_info = decode_json($resp->{'content'})->{paths};
         return keys %$paths_info;
-    } elsif ($resp->{'status'} == 500 && $fatal_non_compliance) {
+    } elsif ($fatal_non_compliance) {
         die "failed to load REST endpoints from $url";
+    } else {
+        return ();
     }
 }
 
