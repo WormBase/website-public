@@ -948,24 +948,29 @@ sub widget_GET {
             foreach my $field (@fields) {
                 unless ($field) { next; }
                 $c->log->debug("Processing field: $field");
-                my $data = $object->$field;
+                my $data;
 
-                if ($c->config->{fatal_non_compliance}) {
-                    # checking for data compliance can be an overhead, only use
-                    # in testing env where its explicitly enabled
-                    my ($fixed_data, @problems) = $object->_check_data( $data, $class );
-                    if ( @problems ){
-                        my $log = 'fatal';
-                        $c->log->$log("${class}::$field returns non-compliant data: ");
-                        $c->log->$log("\t$_") foreach @problems;
+                if ($object->can($field)) {
+                    # try Perl API
+                    $data = $object->$field;
 
-                        die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                    if ($c->config->{fatal_non_compliance}) {
+                        # checking for data compliance can be an overhead, only use
+                        # in testing env where its explicitly enabled
+                        my ($fixed_data, @problems) = $object->_check_data( $data, $class );
+                        if ( @problems ){
+                            my $log = 'fatal';
+                            $c->log->$log("${class}::$field returns non-compliant data: ");
+                            $c->log->$log("\t$_") foreach @problems;
+
+                            die "Non-compliant data in ${class}::$field. See log for fatal error.\n";
+                        }
                     }
-                }
 
-                # a field can force an entire widget to not caching
-                if ($data->{'error'}){
-                    $skip_cache = 1;
+                    # a field can force an entire widget to not caching
+                    if ($data->{'error'}){
+                        $skip_cache = 1;
+                    }
                 }
 
                 # Conditionally load up the stash (for now) for HTML requests.
