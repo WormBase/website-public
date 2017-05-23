@@ -886,13 +886,13 @@ sub widget_GET {
     } elsif ($isDatomicEndpoint) {
         # Datomic workflow
 
-        my $is_recent;
-        if ($cached_data && (my $time_cached = $cached_data->{time_cached})) {
+        my $is_cache_recent;
+        if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
             my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
-            $is_recent = $since_cached->in_units('hours') < 24;
+            $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
-        if($cached_data && (ref $cached_data eq 'HASH') && $is_recent){
+        if($is_cache_recent){
             $c->stash->{fields} = $cached_data;
             # Served from cache? Let's include a link to it in the cache.
             # Primarily a debugging element.
@@ -1757,13 +1757,13 @@ sub field_GET {
     } elsif ($isDatomicEndpoint) {
         # Datomic workflow
 
-        my $is_recent;
+        my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
             my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
-            $is_recent = $since_cached->in_units('hours') < 24;
+            $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
-        if ($is_recent){
+        if ($is_cache_recent){
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
