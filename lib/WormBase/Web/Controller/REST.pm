@@ -1723,10 +1723,6 @@ sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 sub field_GET {
     my ( $self, $c, $class, $name, $field ) = @_;
 
-    my $skip_cache = $c->config->{skip_cache} || $c->request->params->{"skip-cache"};
-    my $skip_datomic = $c->config->{skip_datomic} || $c->request->params->{"skip-datomic"};
-    my $skip_ace = $c->config->{skip_ace} || $c->request->params->{"skip-ace"};
-
     my $headers = $c->req->headers;
     $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
@@ -1736,43 +1732,71 @@ sub field_GET {
         || 'text/html';
 
 
+    my $rest_server = $c->config->{'rest_server'};
+    my $path_template = "/rest/field/$class/{id}/$field";
+    (my $path = $path_template) =~ s/\{id\}/$name/;
+    my @datomic_endpoints = get_rest_endpoints("$rest_server/swagger.json", $c->config->{fatal_non_compliance});
+    my $isDatomicEndpoint = grep {
+        $_ eq $path_template;
+    } @datomic_endpoints;
+
+
     # Cache key - "$class_$field_$name"
     my $key = join( '_', $class, $field, $name );
+    my ( $cached_data, $cache_source ) = $c->check_cache($key);
 
-    # check Datomic first before checking cache (for now)
-    #to access the performance of Datomic without cache
-    unless ($skip_datomic) {
-        my $rest_server = $c->config->{'rest_server'};
-        my $url = "$rest_server/rest/field/$class/$name/$field";
-        my $resp = HTTP::Tiny->new->get($url);
-        if ($resp->{'status'} == 200 && $resp->{'content'}) {
-            $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
-            $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
-            $c->set_cache($key => $c->stash->{$field}) unless $skip_cache || $c->has_cache($key);
-        } elsif ($resp->{'status'} == 500 && $c->config->{fatal_non_compliance}) {
-            die "failed to load field $class::$field from datomic-to-catalyst";
+
+    if (!@datomic_endpoints) {
+        # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
+        if ($cached_data && $c->config->{installation_type} eq 'production') {
+            $c->stash->{$field} = $cached_data;
+            $c->stash->{served_from_cache} = $key;
+        } else {
+            die "failed to retrieve available REST API endpoints from $rest_server/swagger.json";
         }
-    }
+    } elsif ($isDatomicEndpoint) {
+        # Datomic workflow
 
-    unless ($skip_cache || $c->stash->{$field}) {
-        my ( $cached_data, $cache_source ) = $c->check_cache($key);
+        my $is_recent;
+        if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
+            my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
+            $is_recent = $since_cached->in_units('hours') < 24;
+        }
+
+        if ($is_recent){
+            $c->stash->{$field} = $cached_data;
+            $c->stash->{served_from_cache} = $key;
+        } else {
+            my $resp = HTTP::Tiny->new->get("$rest_server$path");
+            if ($resp->{'status'} == 200 && $resp->{'content'}) {
+                $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
+                $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
+
+                # hide timestamp in the fields for now to avoid changing structure of the cached data.
+                # in the future, time_cached should be a sibling of $field
+                $c->stash->{$field}->{time_cached} = DateTime->now()->epoch();
+                $c->set_cache($key => $c->stash->{$field});
+            } else {
+                die "failed to load field $class::$field from datomic-to-catalyst";
+            }
+        }
+
+    } else {
+        # ACeDB workflow
         if ($cached_data && (ref $cached_data eq 'HASH')){
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
+        } else {
+            my $api = $c->model('WormBaseAPI');
+            my $object = $name eq '*' || $name eq 'all'
+                ? $api->instantiate_empty(ucfirst $class)
+                : $api->fetch({ class => ucfirst $class, name => $name });
+
+            my $data   = $object->$field();
+            $c->stash->{$field} = $data;
+            $c->stash->{data_from_ace} = 1;
+            $c->set_cache($key => $data);
         }
-    }
-
-    unless ($skip_ace || $c->stash->{$field}) {
-      my $api = $c->model('WormBaseAPI');
-      my $object = $name eq '*' || $name eq 'all'
-                 ? $api->instantiate_empty(ucfirst $class)
-                 : $api->fetch({ class => ucfirst $class, name => $name });
-
-      my $data   = $object->$field();
-      $c->stash->{$field} = $data;
-      $c->stash->{data_from_ace} = 1;
-      $c->set_cache($key => $data) unless $skip_cache;
-
       # Include the full uri to the *requested* object.
       # IE the page on WormBase where this should go.
       # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
