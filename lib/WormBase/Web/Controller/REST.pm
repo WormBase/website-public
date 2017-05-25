@@ -865,7 +865,9 @@ sub widget_GET {
     my $rest_server = $c->config->{'rest_server'};
     my $path_template = "/rest/widget/$class/{id}/$widget";
     (my $path = $path_template) =~ s/\{id\}/$name/;
-    my @datomic_endpoints = get_rest_endpoints("$rest_server/swagger.json", $c->config->{fatal_non_compliance});
+    my @datomic_endpoints = eval {
+        get_rest_endpoints("$rest_server/swagger.json");
+    };
     my $isDatomicEndpoint = grep {
         $_ eq $path_template;
     } @datomic_endpoints;
@@ -1030,23 +1032,23 @@ sub widget_GET {
     }
 }
 
+
+
 sub get_rest_endpoints {
-    my ($url, $fatal_non_compliance) = @_;
+    my ($url) = @_;
 
     my $resp = HTTP::Tiny->new->get($url);
     if ($resp->{'status'} == 200 && $resp->{'content'}) {
         my $paths_info = decode_json($resp->{'content'})->{paths};
         return keys %$paths_info;
-    } elsif ($fatal_non_compliance) {
-        die "failed to load REST endpoints from $url";
     } else {
-        return ();
+        die "failed to load REST endpoints from $url";
     }
 }
 
-tie my %cache => 'Memoize::Expire',  # http://perldoc.perl.org/Memoize/Expire.html
+tie my %endpoints_cache => 'Memoize::Expire',  # http://perldoc.perl.org/Memoize/Expire.html
     LIFETIME => 300;    # In seconds
-memoize 'get_rest_endpoints', SCALAR_CACHE => [HASH => \%cache ];
+memoize 'get_rest_endpoints', SCALAR_CACHE => [HASH => \%endpoints_cache ];
 
 
 # For "static" pages
@@ -1740,7 +1742,9 @@ sub field_GET {
     my $rest_server = $c->config->{'rest_server'};
     my $path_template = "/rest/field/$class/{id}/$field";
     (my $path = $path_template) =~ s/\{id\}/$name/;
-    my @datomic_endpoints = get_rest_endpoints("$rest_server/swagger.json", $c->config->{fatal_non_compliance});
+    my @datomic_endpoints = eval {
+        get_rest_endpoints("$rest_server/swagger.json");
+    };
     my $isDatomicEndpoint = grep {
         $_ eq $path_template;
     } @datomic_endpoints;
