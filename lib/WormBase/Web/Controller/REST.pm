@@ -879,7 +879,7 @@ sub widget_GET {
 
     if (!@datomic_endpoints) {
         # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
-        if ($cached_data && $c->config->{installation_type} eq 'production') {
+        if ($cached_data && !$c->config->{fatal_non_compliance}) {
             $c->stash->{fields} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
@@ -1760,7 +1760,7 @@ sub field_GET {
 
     if (!@datomic_endpoints) {
         # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
-        if ($cached_data && $c->config->{installation_type} eq 'production') {
+        if ($cached_data && !$c->config->{fatal_non_compliance}) {
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
