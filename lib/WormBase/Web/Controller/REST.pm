@@ -894,7 +894,7 @@ sub widget_GET {
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
-        if($is_cache_recent){
+        if($is_cache_recent || is_slow_endpoint($path_template)){
             $c->stash->{fields} = $cached_data;
             # Served from cache? Let's include a link to it in the cache.
             # Primarily a debugging element.
@@ -1053,6 +1053,14 @@ tie my %endpoints_cache => 'Memoize::Expire',  # http://perldoc.perl.org/Memoize
     LIFETIME => 300;    # In seconds
 memoize 'get_rest_endpoints', SCALAR_CACHE => [HASH => \%endpoints_cache ];
 
+sub is_slow_endpoint {
+    my ($endpoint_template) = @_;
+    return grep { $endpoint_template eq $_; } (
+        '/rest/widget/gene/{id}/interactions',
+        '/rest/field/gene/{id}/interaction_details',
+        '/rest/field/gene/{id}/interactions'
+    );
+}
 
 # For "static" pages
 # that do not need to handle objects. They have a different linking structure
@@ -1775,7 +1783,7 @@ sub field_GET {
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
-        if ($is_cache_recent){
+        if ($is_cache_recent || is_slow_endpoint($path_template)){
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
