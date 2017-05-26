@@ -910,6 +910,9 @@ sub widget_GET {
                 # in the future, time_cached should be a sibling of fields
                 $c->stash->{fields}->{time_cached} = DateTime->now()->epoch();
                 $c->set_cache($key => $c->stash->{fields});
+            } else {
+                my $resp_code = $resp->{status};
+                die "$url failed with $resp_code";
             }
         }
 
@@ -1776,7 +1779,8 @@ sub field_GET {
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
-            my $resp = HTTP::Tiny->new->get("$rest_server$path");
+            my $url = "$rest_server$path";
+            my $resp = HTTP::Tiny->new->get($url);
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
                 $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
                 $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
@@ -1786,7 +1790,8 @@ sub field_GET {
                 $c->stash->{$field}->{time_cached} = DateTime->now()->epoch();
                 $c->set_cache($key => $c->stash->{$field});
             } else {
-                die "failed to load field $class::$field from datomic-to-catalyst";
+                my $resp_code = $resp->{status};
+                die "$url failed with $resp_code";
             }
         }
 
