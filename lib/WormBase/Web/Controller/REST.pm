@@ -894,7 +894,7 @@ sub widget_GET {
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
-        if($is_cache_recent || is_slow_endpoint($path_template)){
+        if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
             $c->stash->{fields} = $cached_data;
             # Served from cache? Let's include a link to it in the cache.
             # Primarily a debugging element.
@@ -1783,7 +1783,7 @@ sub field_GET {
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
-        if ($is_cache_recent || is_slow_endpoint($path_template)){
+        if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
