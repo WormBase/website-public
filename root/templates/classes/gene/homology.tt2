@@ -3,18 +3,8 @@
    # Best BLASTP matches
    best_blastp_matches;
 
-   # Human orthologs. Not very informative at the moment.
-   WRAPPER $field_block title="Human Orthologs" key="human_orthologs";
-   build_data_table(order=['ortholog','method'],
-		    columns={
-			ortholog => 'Ortholog',
-			method   => 'Method',
-			},
-	       key='human_orthologs');
-    END;
-
     # Nematode orthologs (species hosted at WormBase)
-    WRAPPER $field_block title="Orthologs" key="nematode_orthologs";
+    WRAPPER $field_block title="Nematode orthologs" key="nematode_orthologs";
     build_data_table(order=['species','ortholog','method'],
    	             columns={species  => 'Species',
 		              ortholog => 'Ortholog',

@@ -1049,7 +1049,7 @@ sub _build_phenotypes_data {
         {
             phenotype   => $self->_pack_obj($_),
             evidence => $ev ? {evidence => $ev} : undef,
-            entities_affected => @patos ? \@patos : undef,
+            entity => @patos ? \@patos : undef,
             description => $desc && "$desc",
             remarks     => $remark && "$remark",
         };

@@ -485,7 +485,7 @@ sub _get_evidence {
 
               foreach my $accession ($evidence->col){
                 if(defined $accession || $database) {
-                  if($accession =~ m/\D*\:(\d*)$/){
+                  if($accession =~ m/\D+\:(\w*)$/){
                     $accession = $1;
                   }
                   if($database =~ m/^(.*):(\d*)$/){

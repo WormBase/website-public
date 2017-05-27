@@ -47,7 +47,33 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Trichinella_nativa_prjna179527/Info/Index/",
+                        "url" : "/Trichinella_britovi_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_britovi_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella britovi"
+                     },
+                     {
+                        "url" : "/Trichinella_murrelli_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_murrelli_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella murrelli"
+                     },
+                     {
+                        "url" : "/Trichinella_nativa_prjna179527/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -55,12 +81,133 @@
                               "url" : "/Trichinella_nativa_prjna179527/Info/Index",
                               "children" : null,
                               "label" : "PRJNA179527"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_nativa_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
                            }
                         ],
                         "label" : "Trichinella nativa"
                      },
                      {
-                        "url" : "/Trichinella_spiralis_prjna12603/Info/Index/",
+                        "url" : "/Trichinella_nelsoni_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_nelsoni_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella nelsoni"
+                     },
+                     {
+                        "url" : "/Trichinella_papuae_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_papuae_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella papuae"
+                     },
+                     {
+                        "url" : "/Trichinella_patagoniensis_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_patagoniensis_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella patagoniensis"
+                     },
+                     {
+                        "url" : "/Trichinella_pseudospiralis_iss13prjna257433/Info/SpeciesLanding/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_pseudospiralis_iss13prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_pseudospiralis_iss141prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_pseudospiralis_iss176prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_pseudospiralis_iss470prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_pseudospiralis_iss588prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella pseudospiralis"
+                     },
+                     {
+                        "url" : "/Trichinella_t6_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_t6_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella sp. T6"
+                     },
+                     {
+                        "url" : "/Trichinella_t8_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_t8_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella sp. T8"
+                     },
+                     {
+                        "url" : "/Trichinella_t9_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_t9_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella sp. T9"
+                     },
+                     {
+                        "url" : "/Trichinella_spiralis_prjna12603/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -68,9 +215,28 @@
                               "url" : "/Trichinella_spiralis_prjna12603/Info/Index",
                               "children" : null,
                               "label" : "PRJNA12603"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_spiralis_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
                            }
                         ],
                         "label" : "Trichinella spiralis"
+                     },
+                     {
+                        "url" : "/Trichinella_zimbabwensis_prjna257433/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Trichinella_zimbabwensis_prjna257433/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA257433"
+                           }
+                        ],
+                        "label" : "Trichinella zimbabwensis"
                      }
                   ],
                   "label" : "Trichinella"
@@ -510,7 +676,7 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Toxocara_canis_prjeb533/Info/Index/",
+                        "url" : "/Toxocara_canis_prjeb533/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -518,6 +684,12 @@
                               "url" : "/Toxocara_canis_prjeb533/Info/Index",
                               "children" : null,
                               "label" : "PRJEB533"
+                           },
+                           {
+                              "summary" : "University of Melbourne genome project",
+                              "url" : "/Toxocara_canis_prjna248777/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA248777"
                            }
                         ],
                         "label" : "Toxocara canis"
@@ -529,7 +701,7 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Wuchereria_bancrofti_prjeb536/Info/Index/",
+                        "url" : "/Wuchereria_bancrofti_prjeb536/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -537,6 +709,12 @@
                               "url" : "/Wuchereria_bancrofti_prjeb536/Info/Index",
                               "children" : null,
                               "label" : "PRJEB536"
+                           },
+                           {
+                              "summary" : "Case Western Reserve University genome project",
+                              "url" : "/Wuchereria_bancrofti_prjna275548/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA275548"
                            }
                         ],
                         "label" : "Wuchereria bancrofti"
@@ -573,6 +751,25 @@
                   "url" : "/",
                   "children" : [
                      {
+                        "url" : "/Ditylenchus_destructor_prjna312427/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Huazhong Agricultural University genome project",
+                              "url" : "/Ditylenchus_destructor_prjna312427/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA312427"
+                           }
+                        ],
+                        "label" : "Ditylenchus destructor"
+                     }
+                  ],
+                  "label" : "Ditylenchus"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
                         "url" : "/Globodera_pallida_prjeb123/Info/Index/",
                         "aliases" : [],
                         "children" : [
@@ -584,6 +781,19 @@
                            }
                         ],
                         "label" : "Globodera pallida"
+                     },
+                     {
+                        "url" : "/Globodera_rostochiensis_prjeb13504/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Globodera_rostochiensis_prjeb13504/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB13504"
+                           }
+                        ],
+                        "label" : "Globodera rostochiensis"
                      }
                   ],
                   "label" : "Globodera"
@@ -637,12 +847,12 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Panagrellus_redivivus/Info/Index/",
+                        "url" : "/Panagrellus_redivivus_prjna186477/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "WormBase genome project",
-                              "url" : "/Panagrellus_redivivus/Info/Index",
+                              "summary" : "California Institute of Technology genome project",
+                              "url" : "/Panagrellus_redivivus_prjna186477/Info/Index",
                               "children" : null,
                               "label" : "PRJNA186477"
                            }
@@ -782,7 +992,7 @@
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "ARRAY(0x7f9d92f63040) genome project",
+                              "summary" : "ARRAY(0x7f371cc1bea0) genome project",
                               "url" : "/Strongyloides_ratti_prjeb125/Info/Index",
                               "children" : null,
                               "label" : "PRJEB125"
@@ -912,12 +1122,12 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Caenorhabditis_angaria/Info/Index/",
+                        "url" : "/Caenorhabditis_angaria_prjna51225/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_angaria/Info/Index",
+                              "summary" : "California Institute of Technology genome project",
+                              "url" : "/Caenorhabditis_angaria_prjna51225/Info/Index",
                               "children" : null,
                               "label" : "PRJNA51225"
                            }
@@ -925,12 +1135,12 @@
                         "label" : "Caenorhabditis angaria"
                      },
                      {
-                        "url" : "/Caenorhabditis_brenneri/Info/Index/",
+                        "url" : "/Caenorhabditis_brenneri_prjna20035/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
                               "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_brenneri/Info/Index",
+                              "url" : "/Caenorhabditis_brenneri_prjna20035/Info/Index",
                               "children" : null,
                               "label" : "PRJNA20035"
                            }
@@ -938,12 +1148,12 @@
                         "label" : "Caenorhabditis brenneri"
                      },
                      {
-                        "url" : "/Caenorhabditis_briggsae/Info/Index/",
+                        "url" : "/Caenorhabditis_briggsae_prjna10731/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
                               "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_briggsae/Info/Index",
+                              "url" : "/Caenorhabditis_briggsae_prjna10731/Info/Index",
                               "children" : null,
                               "label" : "PRJNA10731"
                            }
@@ -951,12 +1161,12 @@
                         "label" : "Caenorhabditis briggsae"
                      },
                      {
-                        "url" : "/Caenorhabditis_elegans/Info/Index/",
+                        "url" : "/Caenorhabditis_elegans_prjna13758/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
                               "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_elegans/Info/Index",
+                              "url" : "/Caenorhabditis_elegans_prjna13758/Info/Index",
                               "children" : null,
                               "label" : "PRJNA13758"
                            }
@@ -964,12 +1174,12 @@
                         "label" : "Caenorhabditis elegans"
                      },
                      {
-                        "url" : "/Caenorhabditis_japonica/Info/Index/",
+                        "url" : "/Caenorhabditis_japonica_prjna12591/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
                               "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_japonica/Info/Index",
+                              "url" : "/Caenorhabditis_japonica_prjna12591/Info/Index",
                               "children" : null,
                               "label" : "PRJNA12591"
                            }
@@ -977,12 +1187,12 @@
                         "label" : "Caenorhabditis japonica"
                      },
                      {
-                        "url" : "/Caenorhabditis_remanei/Info/Index/",
+                        "url" : "/Caenorhabditis_remanei_prjna53967/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
                               "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_remanei/Info/Index",
+                              "url" : "/Caenorhabditis_remanei_prjna53967/Info/Index",
                               "children" : null,
                               "label" : "PRJNA53967"
                            }
@@ -990,12 +1200,12 @@
                         "label" : "Caenorhabditis remanei"
                      },
                      {
-                        "url" : "/Caenorhabditis_sinica/Info/Index/",
+                        "url" : "/Caenorhabditis_sinica_prjna194557/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_sinica/Info/Index",
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Caenorhabditis_sinica_prjna194557/Info/Index",
                               "children" : null,
                               "label" : "PRJNA194557"
                            }
@@ -1003,12 +1213,12 @@
                         "label" : "Caenorhabditis sinica"
                      },
                      {
-                        "url" : "/Caenorhabditis_tropicalis/Info/Index/",
+                        "url" : "/Caenorhabditis_tropicalis_prjna53597/Info/Index/",
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "WormBase genome project",
-                              "url" : "/Caenorhabditis_tropicalis/Info/Index",
+                              "summary" : "Genome Institute at Washington University genome project",
+                              "url" : "/Caenorhabditis_tropicalis_prjna53597/Info/Index",
                               "children" : null,
                               "label" : "PRJNA53597"
                            }
@@ -1104,8 +1314,9 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Heligmosomoides_polygyrus_prjeb1203/Info/Index/",
+                        "url" : "/Heligmosomoides_polygyrus_prjeb1203/Info/SpeciesLanding/",
                         "aliases" : [
+                           "Heligmosomoides bakeri",
                            "Heligmosomoides bakeri"
                         ],
                         "children" : [
@@ -1114,6 +1325,12 @@
                               "url" : "/Heligmosomoides_polygyrus_prjeb1203/Info/Index",
                               "children" : null,
                               "label" : "PRJEB1203"
+                           },
+                           {
+                              "summary" : "University of Edinburgh genome project",
+                              "url" : "/Heligmosomoides_polygyrus_prjeb15396/Info/Index",
+                              "children" : null,
+                              "label" : "PRJEB15396"
                            }
                         ],
                         "label" : "Heligmosomoides polygyrus"
@@ -1315,7 +1532,7 @@
                         "label" : "Echinococcus canadensis"
                      },
                      {
-                        "url" : "/Echinococcus_granulosus_prjeb121/Info/Index/",
+                        "url" : "/Echinococcus_granulosus_prjeb121/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -1323,6 +1540,12 @@
                               "url" : "/Echinococcus_granulosus_prjeb121/Info/Index",
                               "children" : null,
                               "label" : "PRJEB121"
+                           },
+                           {
+                              "summary" : "Chinese National Human Genome Center genome project",
+                              "url" : "/Echinococcus_granulosus_prjna182977/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA182977"
                            }
                         ],
                         "label" : "Echinococcus granulosus"
@@ -1470,7 +1693,7 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Taenia_asiatica_prjeb532/Info/Index/",
+                        "url" : "/Taenia_asiatica_prjeb532/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -1478,9 +1701,28 @@
                               "url" : "/Taenia_asiatica_prjeb532/Info/Index",
                               "children" : null,
                               "label" : "PRJEB532"
+                           },
+                           {
+                              "summary" : "Chinese Academy of Agricultural Sciences genome project",
+                              "url" : "/Taenia_asiatica_prjna299871/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA299871"
                            }
                         ],
                         "label" : "Taenia asiatica"
+                     },
+                     {
+                        "url" : "/Taenia_saginata_prjna71493/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Chinese Academy of Agricultural Sciences genome project",
+                              "url" : "/Taenia_saginata_prjna71493/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA71493"
+                           }
+                        ],
+                        "label" : "Taenia saginata"
                      },
                      {
                         "url" : "/Taenia_solium_prjna170813/Info/Index/",
@@ -1708,6 +1950,25 @@
          {
             "url" : "/",
             "children" : [
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
+                        "url" : "/Gyrodactylus_salaris_prjna244375/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Natural History Museum, University of Oslo genome project",
+                              "url" : "/Gyrodactylus_salaris_prjna244375/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA244375"
+                           }
+                        ],
+                        "label" : "Gyrodactylus salaris"
+                     }
+                  ],
+                  "label" : "Gyrodactylus"
+               },
                {
                   "url" : "/",
                   "children" : [
