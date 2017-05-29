@@ -172,8 +172,9 @@ sub consensus {
 sub bound_by_gene_product {
     my $self   = shift;
     my $object = $self->object;
-    my %data = $self->_pack_objects($object->Bound_by_gene_product);
-    return { data => %data ? \%data : undef,
+    my @data = map { $self->_pack_obj($_) } $object->Bound_by_gene_product;
+
+    return { data => @data ? \@data : undef,
 	     description => 'gene products that bind to the motif' };
 }
 
@@ -247,4 +248,3 @@ sub _build_hash {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
