@@ -259,10 +259,10 @@
 	}
 
  do = {
-	description = 'Disease Ontology'
-	base        = 'http://disease-ontology.org'
-	search      = 'http://disease-ontology.org/term/%s'
-	}
+    description = 'Disease Ontology'
+    base        = 'http://www.disease-ontology.org/'
+    search      = 'http://www.disease-ontology.org/?id=%s'
+    }
 
  DNAandCellBiol = {
 	description = 'DNA and Cell Biol'
