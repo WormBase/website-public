@@ -695,7 +695,7 @@ END %]
                 </div>
 
                 <div id="widget-footer" class="ui-helper-hidden">
-[% UNLESS (type.match('(tool)|(me)') || id == 'basic_search' ) %]
+[% UNLESS (type.match('^(tool)|(me)$') || id == 'basic_search' ) %]
                     <a   onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,is_class_index? 'all': this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
 [% END %]
 [% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
