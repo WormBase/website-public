@@ -55,7 +55,8 @@
         isnt($response_html, undef, 'data returned');
         ok($response_html =~ /DOID\:184/, 'contains doid:184');
 
-        ok($response_html =~ /http:\/\/disease-ontology.org\/term\/DOID:184/,
+        my $do_url = "http://www.disease-ontology.org/?id=DOID:184";
+        ok($response_html =~ qr/^\Q$do_url\E$/,
            'contains links to doid:184');
     }
 
