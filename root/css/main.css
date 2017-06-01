@@ -1660,7 +1660,7 @@ ul.nav-bar.parasite-menu > li a  {
 
 ul.nav-bar.submit-data-menu li {
   height: 30px;
-  padding: 4px 15px 3px;
+  padding: 4px 15px 3px 0px;
 }
 
 ul.nav-bar.submit-data-menu li a {
@@ -1676,7 +1676,7 @@ ul.nav-bar.submit-data-menu li a {
   }
 
   ul.nav-bar.submit-data-menu li {
-    padding: 4px 8px 3px;
+    padding: 4px 8px 3px 0px;
   }
 }
 
@@ -1687,7 +1687,7 @@ ul.nav-bar.submit-data-menu li a {
   }
 
     ul.nav-bar.submit-data-menu li {
-    padding: 5px 4px 3px;
+    padding: 5px 4px 3px 0px;
   }
 }
 
