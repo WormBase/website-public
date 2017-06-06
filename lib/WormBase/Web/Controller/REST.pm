@@ -17,8 +17,7 @@ use Text::MultiMarkdown 'markdown';
 use DateTime;
 use Encode;
 use HTTP::Tiny;
-use Memoize;
-use Memoize::Expire;
+
 
 
 __PACKAGE__->config(
@@ -1036,8 +1035,7 @@ sub widget_GET {
 }
 
 
-
-sub get_rest_endpoints {
+sub _fetch_rest_endpoints {
     my ($url) = @_;
 
     my $resp = HTTP::Tiny->new->get($url);
@@ -1049,9 +1047,31 @@ sub get_rest_endpoints {
     }
 }
 
-tie my %endpoints_cache => 'Memoize::Expire',  # http://perldoc.perl.org/Memoize/Expire.html
-    LIFETIME => 300;    # In seconds
-memoize 'get_rest_endpoints', SCALAR_CACHE => [HASH => \%endpoints_cache ];
+our %endpoints = (
+    last_updated => undef,
+    values => ()
+);
+
+sub time_since {
+    my ($epoch_timestamp) = @_;
+    return DateTime->now() - DateTime->from_epoch(
+        epoch => $epoch_timestamp
+    );
+}
+
+
+sub get_rest_endpoints {
+    my ($url) = @_;
+
+    if (!$endpoints{last_updated} || (time_since($endpoints{last_updated})->in_units('seconds') > 300)) {
+        my @paths = _fetch_rest_endpoints($url);
+        $endpoints{values} = \@paths;
+        $endpoints{last_updated} = DateTime->now()->epoch();
+    }
+
+    return @{$endpoints{values}};
+}
+
 
 sub is_slow_endpoint {
     my ($endpoint_template) = @_;
