@@ -1062,9 +1062,8 @@ sub time_since {
 
 sub get_rest_endpoints {
     my ($url) = @_;
-    use Data::Dumper;
-    print Dumper !$endpoints{last_updated} || time_since($endpoints{last_updated})->in_units('seconds');
-    if (!$endpoints{last_updated} || (time_since($endpoints{last_updated})->in_units('seconds') > 30)) {
+
+    if (!$endpoints{last_updated} || (time_since($endpoints{last_updated})->in_units('seconds') > 300)) {
         my @paths = _fetch_rest_endpoints($url);
         $endpoints{values} = \@paths;
         $endpoints{last_updated} = DateTime->now()->epoch();
