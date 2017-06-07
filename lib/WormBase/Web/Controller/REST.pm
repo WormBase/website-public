@@ -1063,7 +1063,7 @@ sub time_since {
 sub get_rest_endpoints {
     my ($url) = @_;
 
-    if (!$endpoints{last_updated} || (time_since($endpoints{last_updated})->in_units('seconds') > 300)) {
+    if (!$endpoints{last_updated} || (time_since($endpoints{last_updated})->in_units('minutes') > 5)) {
         my @paths = _fetch_rest_endpoints($url);
         $endpoints{values} = \@paths;
         $endpoints{last_updated} = DateTime->now()->epoch();

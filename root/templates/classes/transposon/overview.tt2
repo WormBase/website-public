@@ -1,6 +1,6 @@
 <h2>[% fields.name.data.label %] <span id="fade" style="font-size:0.7em;">
 [% IF fields.member_of.data %]
-  ([% fields.member_of.data %])
+  ([% tag2link(fields.member_of.data) %])
 [% END %]
 </span></h2>
 
