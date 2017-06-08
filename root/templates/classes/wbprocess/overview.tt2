@@ -1,11 +1,13 @@
-<h2>[% fields.name.data.label %]<span id="fade" style="font-size:0.7em;">
-[% IF fields.other_name.data %]
-  ([% fields.other_name.data %])
-[% END %]
-</span></h2>
+<h2>[% fields.name.data.label %]</h2>
 
 [%
   WRAPPER highlight_box;
+
+
+    WRAPPER $field_block title=pluralize("Other name", fields.other_name.data.size) key="other_name";
+        cell_content(fields.other_name.data);
+    END;
+
     WRAPPER $field_block title="Life stage" key="life_stage";
       cell_content( fields.life_stage.data );
     END;
