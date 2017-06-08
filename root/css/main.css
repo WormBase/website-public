@@ -3506,6 +3506,11 @@ div.detail-box{
   word-wrap: break-word;
 }
 
+div.detail-box .field-content ul {
+  list-style: none;
+  padding: 0;
+}
+
 div.description {
   clear:left;
   padding:0.5em 0;
