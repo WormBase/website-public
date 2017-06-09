@@ -2903,11 +2903,24 @@ div#google-map {
     width: 100%;
 }
 
-
 /* cytoscape legend */
+#cyto-wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+#cy-view {
+  width: 750px;
+  height: 750px;
+  margin-right: 1em;
+  z-index: 1;
+  overflow: hidden;
+}
+
+
 #cyto_legend {
     width:15em;
-    position:absolute;
     right:0;
     z-index:1001; /*
                      greater than cy div z-index 1000
