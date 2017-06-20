@@ -67,5 +67,6 @@ $jq(function(){
   </div><br/>
   <div id="info" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">Mouseover or click node for more information.</div><br/>
 </div>
-<img id="png-export" style="border: 1px solid #ddd; display: none;">
+<img id="png-export" style="border: 1px solid #ddd; display: none; max-width: 1050px; max-height: 1050px">
+
 </div>

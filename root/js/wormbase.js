@@ -2092,7 +2092,7 @@ var Scrolling = (function(){
       });
 
       $jq('#view_png_button').on('click', function(){
-        var png64 = cyPersonLineageAll.png({ bg: 'white' });
+        var png64 = cyPersonLineageAll.png({ full: true, maxWidth: 8000, maxHeight: 8000, bg: 'white' });
         $jq('#png-export').attr('src', png64);
         $jq('#png-export').show();
         $jq('#cyPersonLineageAll').hide();
@@ -2277,7 +2277,7 @@ var Scrolling = (function(){
         cyPhenGraph.layout();
       });
       $jq('#view_png_button').on('click', function(){
-        var png64 = cyPhenGraph.png({ bg: 'white' });
+        var png64 = cyPhenGraph.png({ full: true, maxWidth: 8000, maxHeight: 8000, bg: 'white' });
         $jq('#png-export').attr('src', png64);
         $jq('#png-export').show();
         $jq('#cyPhenGraph').hide();
