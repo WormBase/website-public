@@ -24,7 +24,9 @@ WRAPPER $field_block title="Other names" key="other_names";
 
 END;
 
-laboratory(title="Designating laboratory");
+laboratory(title="Designating laboratory",
+    passed_data=ref(fields.laboratory.data) == 'ARRAY' ? fields.laboratory.data : [fields.laboratory.data]
+);
 
 WRAPPER $field_block title="$title"||'Former Designating Laboratory' key="former_laboratory";
     untilDate = fields.former_laboratory.data.time;
