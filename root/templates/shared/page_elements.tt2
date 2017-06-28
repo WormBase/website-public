@@ -1004,7 +1004,8 @@ END;
     # The Laboratory field
     # Expects the stash to contain the "laboratory" key.
     WRAPPER $field_block title="$title"||'Laboratory' key="laboratory";
-        FOREACH lab IN fields.laboratory.data;
+        labs = passed_data || fields.laboratory.data;
+        FOREACH lab IN labs;
 
             '<div style="white-space:nowrap;">';
                 tag2link(lab.laboratory);
