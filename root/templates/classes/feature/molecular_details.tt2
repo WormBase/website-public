@@ -7,7 +7,7 @@ WRAPPER $field_block title='Flanking sequence' key='flanking_sequences';
 END;
 
 WRAPPER $field_block title='DNA text' key='dna_text';
-    '<div class="sequence-container">' _ fields.dna_text.data _ '</div>';
+    '<div class="sequence-container" style="word-wrap:break-word;">' _ fields.dna_text.data _ '</div>';
 END;
 
 %]
