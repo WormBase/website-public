@@ -22,7 +22,7 @@
 
 [% IF fields.interactions.data.edges.size> 0 %]
   [%# edges_all.size = 0, Interaction.pm has decided that there are too many edges to render with the widget %]
-  [% IF fields.interactions.data.edges_all.size > 0 %]
+  [% IF fields.interactions.data.edges_all.size <= 100 %]
       [% TYPES = fields.interactions.data.types %]
       [% NTYPES = fields.interactions.data.ntypes %]
       [% NODES = fields.interactions.data.nodes %]
