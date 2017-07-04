@@ -230,10 +230,11 @@ sub sequence {
 
 sub dna_text {
     my ($self) = @_;
+    my $dna = $self->object->DNA_text;
 
     return {
         description => 'DNA text of the sequence feature',
-        data => $self ~~ 'DNA_text',
+        data => "$dna"
     };
 }
 
