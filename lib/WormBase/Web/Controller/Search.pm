@@ -255,7 +255,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   my $api = $c->model('WormBaseAPI');
 
   $q = $self->_prep_query($q, 1);
-  my $it = $api->xapian->autocomplete($q, ($type=~/all/) ? undef : $type);
+  my $it = $api->elasticsearch->autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){

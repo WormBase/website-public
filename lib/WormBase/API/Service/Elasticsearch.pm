@@ -3,6 +3,7 @@ package WormBase::API::Service::Elasticsearch;
 use base qw/Catalyst::Model/;
 use Moose;
 use JSON;
+use URI::Escape;
 
 use strict;
 
@@ -29,33 +30,20 @@ sub search {
     }
 }
 
-# # Autocomplete - returns 10 results
-# sub autocomplete {
-#     my ( $class, $q, $type) = @_;
-#     $q = $class->_add_type_range($q . "*", $type);
+# Autocomplete - returns 10 results
+sub autocomplete {
+    my ($self, $q, $type) = @_;
 
-#     my $query=$class->_setup_query($q, $class->syn_qp,64|16);
-#     my $enq       = $class->syn_db->enquire ( $query );
-#     my @mset      = $enq->matches( 0, 10 );
+    my $url = $self->_get_elasticsearch_url("/autocomplete", {
+        type => $type,
+        query => $q
+    });
+    my $resp = HTTP::Tiny->new->get($url);
 
-#     unless($mset[0]){
-#       $query=$class->_setup_query($q, $class->qp,64|16);
-#       $enq       = $class->db->enquire ( $query );
-#       @mset      = $enq->matches( 0, 10 );
-#     }
-#     @mset = map {
-#         my $item = $class->_pack_search_obj($_->get_document );
-#         $item->{taxonomy} = $class->_pack_species($item->{taxonomy});
-#         $item;
-#     } @mset;
-
-#     return ({ struct=>\@mset,
-#               search=>$class,
-#               query=>$q,
-#               query_obj=>$query,
-#               page=>1,
-#               page_size=>10 });
-# }
+    if ($resp->{success}) {
+        return (decode_json($resp->{content}));
+    }
+}
 
 
 sub _get_elasticsearch_url {
@@ -63,7 +51,8 @@ sub _get_elasticsearch_url {
     my @paramParts = ();
     while(my($k, $v) = each %$args) {
         if ($v) {
-            push @paramParts, "$k=$v";
+            my $v_escaped = uri_escape($v);
+            push @paramParts, "$k=$v_escaped";
         }
     }
     return $self->base_url . "/integration$path?" . join('&', @paramParts);
