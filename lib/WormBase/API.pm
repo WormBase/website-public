@@ -4,6 +4,7 @@ use Moose;                       # Moosey goodness
 
 use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
+use WormBase::API::Service::Elasticsearch;
 use Search::Xapian;
 use Config::General;
 use Class::MOP;
@@ -67,6 +68,12 @@ has xapian => (
     lazy_build      => 1,
 );
 
+has elasticsearch => (
+    is     => 'rw',
+    isa    => 'WormBase::API::Service::Elasticsearch',
+    lazy_build      => 1,
+);
+
 # this is for the view (see /template/config/main)
 # it's a nasty hack. it simply reveals WormBase::API::ModelMap to the view
 # so that the maps can be accessed from there. this is heavily coupled
@@ -124,6 +131,12 @@ sub _build_xapian {
   $xapian->autocomplete("*", "gene");
 
   return $xapian;
+}
+
+sub _build_elasticsearch {
+    my $self = shift;
+    my $elasticsearch = WormBase::API::Service::Elasticsearch->new({base_url => $self->config->{search_server}});
+    return $elasticsearch;
 }
 
 

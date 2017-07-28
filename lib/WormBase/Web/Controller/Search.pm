@@ -80,12 +80,12 @@ sub search :Path('/search') Args {
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
         # if it finds an exact match, redirect to the page
-        my %fetch_args = ( query => $tmp_query,
+        my %fetch_args = ( query => $query,
                            class => $search,
                            %{$c->req->params},
                            redirect => ''
                        );
-        my $match = $api->xapian->fetch(\%fetch_args);
+        my $match = $api->elasticsearch->fetch(\%fetch_args);
 
         if($match){
           my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
