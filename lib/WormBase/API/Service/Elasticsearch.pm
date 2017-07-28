@@ -9,97 +9,25 @@ use strict;
 # base_url of the search web service running off elasticsearch
 has 'base_url' => (isa => 'Str', is => 'rw');
 
-# # Xapian search flags
-# #  FLAG_BOOLEAN = 1, FLAG_PHRASE = 2, FLAG_LOVEHATE = 4, FLAG_BOOLEAN_ANY_CASE = 8,
-# #  FLAG_WILDCARD = 16, FLAG_PURE_NOT = 32, FLAG_PARTIAL = 64, FLAG_SPELLING_CORRECTION = 128,
-# #  FLAG_SYNONYM = 256, FLAG_AUTO_SYNONYMS = 512, FLAG_AUTO_MULTIWORD_SYNONYMS = 1024 | FLAG_AUTO_SYNONYMS, FLAG_DEFAULT = FLAG_PHRASE|FLAG_BOOLEAN|FLAG_LOVEHATE
-
-# has 'db' => (isa => 'Search::Xapian::Database', is => 'rw');
-# has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
-
-# has 'qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
-# has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
-
-# has '_doccount' => (
-#     is          => 'ro',
-#     isa         => 'Int',
-#     default     => sub {
-#       my $self = shift;
-#       return $self->db->get_doccount;
-#     },
-# );
-
-# has 'modelmap' => (
-#     is => 'ro',
-#     lazy => 1,
-#     required => 1,
-#     default => sub {
-#         return WormBase::API::ModelMap->new; # just a blessed scalar ref
-#     },
-# );
 
 # has '_api' => (
 #     is => 'ro',
 # );
 
-# # Main search - returns a page of results
-# sub search {
-#     my ( $class, $args) = @_;
+# Main search - returns a page of results
+sub search {
+    my ($self, $args) = @_;
 
-#     my $q = $args->{query};
-#     my $page = $args->{page} || 1;
-#     my $type = $args->{type};
-#     my $species = $args->{species};
-#     my $page_size = $args->{page_size} || 10;
+    my $url = $self->_get_elasticsearch_url("/search", $args);
+    my $resp = HTTP::Tiny->new->get($url);
 
-#     my $t=[gettimeofday];
-#     my $count = $class->count_estimate($q, $type, $species);
-
-# #    my $stemmer = Search::Xapian::Stem->new('english');
-# #    $q = $stemmer->stem_word($q) unless $q =~ /[\/\@\<\>\=\*[\{\:]/;
-
-#     if($page eq 'all'){
-#       $page_size = $class->_doccount;
-#       $page = 1;
-#     }
-
-#     if($type){
-#       $q = $class->_add_type_range($q, $type);
-#       if(($type =~ m/paper/) && ($species)){
-#         my $s = $class->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
-#         $q .= " ptype:$s..$s" if defined $s;
-#         $species = undef;
-#       }
-#     }
-
-#     $q = $class->_add_species($q, $species) if $species;
-
-#     my ($query, $error) =$class->_setup_query($q, $class->qp, 1|2|512|16);
-#     my $enq       = $class->db->enquire ( $query );
-
-#     if($type && $type =~ /paper/){
-#           $enq->set_sort_by_value(4);
-#     }
-
-#     my $check_at_least_matches = 500;
-#     $check_at_least_matches = $count if $count < $check_at_least_matches;
-#     # coincidentally, $count is exact when < 500, no need to look further for potential matches
-#     my @mset      = $enq->matches( ($page-1)*$page_size,
-#                                      $page_size, $check_at_least_matches );
-
-#     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
-
-#     @mset = map { $class->_get_obj($_->get_document ) } @mset;
-
-#     return ({ matches=>\@mset,
-#               search=>$class,
-#               query=>$q,
-#               query_obj=>$query,
-#               querytime=>$time,
-#               page=>$page,
-#               count=>$count,
-#               page_size=>$page_size }, $error);
-# }
+    if ($resp->{success}) {
+        return (decode_json($resp->{content}));
+    } else {
+        my $resp_code = $resp->{status};
+        return (undef, "$url failed with $resp_code");
+    }
+}
 
 # # Autocomplete - returns 10 results
 # sub autocomplete {
@@ -134,17 +62,19 @@ sub _get_elasticsearch_url {
     my ($self, $path, $args) = @_;
     my @paramParts = ();
     while(my($k, $v) = each %$args) {
-        push @paramParts, "$k=$v";
+        if ($v) {
+            push @paramParts, "$k=$v";
+        }
     }
     return $self->base_url . "/integration$path?" . join('&', @paramParts);
 }
 
 
-# # This will fetch the object from Xapian and return a hashref containing the id, label and class (similar to _pack_obj)
-# # label - return the correct label (important for protein and interaction)
-# #       - default returns the label stored in Xapian
-# # fill - return more than just the name tag, all info from search results included
-# # footer - if a filled tag is returns, will insert this info as a footer
+# This will fetch the object from Xapian and return a hashref containing the id, label and class (similar to _pack_obj)
+# label - return the correct label (important for protein and interaction)
+#       - default returns the label stored in Xapian
+# fill - return more than just the name tag, all info from search results included
+# footer - if a filled tag is returns, will insert this info as a footer
 
 sub fetch {
     my ($self, $args) = @_;
@@ -156,11 +86,8 @@ sub fetch {
 
     my $url = $self->_get_elasticsearch_url("/search-exact", $args);
     my $resp = HTTP::Tiny->new->get($url);
-    if ($resp->{success}) {
+    if ($resp->{success} && $resp->{content}) {
         return decode_json($resp->{content});
-    } else {
-        my $resp_code = $resp->{status};
-        die "$url failed with $resp_code";
     }
   #return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->_search_exact($args);
 }

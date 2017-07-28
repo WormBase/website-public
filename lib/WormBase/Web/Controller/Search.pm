@@ -94,8 +94,8 @@ sub search :Path('/search') Args {
           }
           $c->res->redirect($url, 307);
           return;
+        }
       }
-    }
 
       # if we're on a search page, setup the search first. Load results as ajax later.
       #   - try to redirect to exact match first
@@ -108,10 +108,12 @@ sub search :Path('/search') Args {
     }
 
     # this is the actual search
-    my ($it, $error) = $api->xapian->search({ query => $tmp_query,
-                                              page => $page_count,
-                                              type => $search,
-                                              species => $c->stash->{species} });
+    my ($it, $error) = $api->elasticsearch->search({
+        query => $query,
+        page => $page_count,
+        type => $search,
+        species => $c->stash->{species}
+    });
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
