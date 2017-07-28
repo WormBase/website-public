@@ -1266,7 +1266,7 @@ sub widget_home_GET {
       if($c->check_any_user_role(qw/admin curator/)){
         $c->stash->{recent} = $self->_recently_saved($c,3);
       }
-      my @rand = ($c->model('WormBaseAPI')->xapian->random());
+      my @rand = ($c->model('WormBaseAPI')->elasticsearch->random());
       $c->stash->{random} = \@rand;
 
     } elsif($widget eq 'discussion') {

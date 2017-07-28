@@ -81,12 +81,18 @@ sub fetch {
   #return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->_search_exact($args);
 }
 
-# # Returns a random filled object from the database
 
-# sub random {
-#     my ( $class) = @_;
-#     return $class->_get_obj($class->db->get_document(int(rand($class->_doccount)) + 1));
-# }
+# Returns a random filled object from the database
+
+sub random {
+    my ($self) = @_;
+
+    my $url = $self->_get_elasticsearch_url("/random");
+    my $resp = HTTP::Tiny->new->get($url);
+    if ($resp->{success} && $resp->{content}) {
+        return decode_json($resp->{content});
+    }
+}
 
 # # Estimates the search results amount - accurate up to 500
 
