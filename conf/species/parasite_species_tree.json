@@ -992,7 +992,7 @@
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "ARRAY(0x7f54200f3e08) genome project",
+                              "summary" : "Wellcome Trust Sanger Institute / WormBase genome project",
                               "url" : "/Strongyloides_ratti_prjeb125/Info/Index",
                               "children" : null,
                               "label" : "PRJEB125"
