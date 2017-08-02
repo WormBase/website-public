@@ -378,8 +378,6 @@
             view_id = "jbrowse-view-$padded_coords-$bp";
             view_id = view_id.replace('\W+', '_');
 
-            '<p class="fade">Please use Chrome Browser for the best viewing result.</p>';
-
             '<div id="' _ view_id _ '" class="jbrowse-view-container">';
             '<button class="jbrowse-view-reset button ui-corner-all">';
             '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
