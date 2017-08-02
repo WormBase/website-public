@@ -135,7 +135,10 @@ sub _build_xapian {
 
 sub _build_elasticsearch {
     my $self = shift;
-    my $elasticsearch = WormBase::API::Service::Elasticsearch->new({base_url => $self->config->{search_server}});
+    my $elasticsearch = WormBase::API::Service::Elasticsearch->new({
+        base_url => $self->config->{search_server},
+        _api => $self
+    });
     return $elasticsearch;
 }
 

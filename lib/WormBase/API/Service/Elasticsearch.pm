@@ -11,15 +11,17 @@ use strict;
 has 'base_url' => (isa => 'Str', is => 'rw');
 
 
-# has '_api' => (
-#     is => 'ro',
-# );
+has '_api' => (
+    is => 'ro',
+);
 
 # Main search - returns a page of results
 sub search {
     my ($self, $args) = @_;
 
-    my $url = $self->_get_elasticsearch_url("/search", $args);
+    my $fixed_args = $self->_fix_args_paper_type($args);
+
+    my $url = $self->_get_elasticsearch_url("/search", $fixed_args);
     my $resp = HTTP::Tiny->new->get($url);
 
     if ($resp->{success}) {
@@ -94,31 +96,44 @@ sub random {
     }
 }
 
-# # Estimates the search results amount - accurate up to 500
+# Estimates the search results amount - accurate up to 500
 
-# sub count_estimate {
-#  my ( $class, $q, $type, $species) = @_;
+sub count_estimate {
+    my ($self, $q, $type, $species_or_paper) = @_;
 
-#     if($type){
-#       $q = $class->_add_type_range($q, $type);
+    my $fixed_args = $self->_fix_args_paper_type({
+        type => $type,
+        query => $q,
+        species => $species_or_paper
+    });
 
-#       if(($type =~ m/paper/) && ($species)){
-#         my $s = $class->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
-#         $q .= " ptype:$s..$s" if defined $s;
-#         $species = undef;
-#       }
-#     }
+    my $url = $self->_get_elasticsearch_url("/count", $fixed_args);
 
-#     $q = $class->_add_species($q, $species) if $species;
 
-#     my $query=$class->_setup_query($q, $class->qp, 1|2|512|16);
-#     my $enq       = $class->db->enquire ( $query );
+    my $resp = HTTP::Tiny->new->get($url);
 
-#     my $mset      = $enq->get_mset( 0, 0, 500 );
+    if ($resp->{success}) {
+        return decode_json($resp->{content})->{count};
+    }
+}
 
-#     my $amt = $mset->get_matches_estimated();
-#     return $amt;
-# }
+# args may need to be fixed as client uses species param to send paper_type
+# this will need to be fixed there.
+sub _fix_args_paper_type {
+    my ($self, $args) = @_;
+    my $type = $args->{type};
+    my $species_or_paper = $args->{species};
+
+    my %fixed_args;
+    if (($type =~ m/paper/) && ($species_or_paper)) {
+        my $paper_type = $self->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species_or_paper};
+        if (defined $paper_type) {
+            %fixed_args = (%$args, species => undef, paper_type => $species_or_paper);
+        }
+    }
+
+    return %fixed_args ? \%fixed_args : $args;
+}
 
 # sub _search_exact {
 #     my ($class, $args) = @_;
