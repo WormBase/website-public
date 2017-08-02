@@ -80,7 +80,7 @@ sub search :Path('/search') Args {
     }else{
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
         # if it finds an exact match, redirect to the page
-        my %fetch_args = ( query => $query,
+        my %fetch_args = ( query => $tmp_query,
                            class => $search,
                            %{$c->req->params},
                            redirect => ''
@@ -254,7 +254,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   $c->log->debug("autocomplete search: $q, $type");
   my $api = $c->model('WormBaseAPI');
 
-#  $q = $self->_prep_query($q, 1);
+  $q = $self->_prep_query($q, 1);
   my $it = $api->elasticsearch->autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
@@ -290,7 +290,7 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
   }
 
   my $tmp_query = $self->_prep_query($q);
-  my $count = $api->xapian->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
+  my $count = $api->elasticsearch->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
   $count = $self->_fuzzy_estimate($count);
 
   $c->response->body("$count");
@@ -342,32 +342,34 @@ sub _get_url {
 }
 
 sub _prep_query {
-  my ($self, $q, $ac) = @_;
-  # $ac flags autocomplete
-  my $error;
-  $q ||= "*";
+    my ($self, $q, $ac) = @_;
+    return $q;
 
-  my $phrase = $q =~ m/\"/;
+  # # $ac flags autocomplete
+  # my $error;
+  # $q ||= "*";
 
-  my $new_q = $q;
+  # my $phrase = $q =~ m/\"/;
 
-  my @words = $q =~ m/(\S+)/g;
-  @words = map {
-      (my $word_new = "$_" ) =~ s/-/_/g;
-      $word_new eq $_ ? "$_*" : $ac ? "$word_new*" : "($word_new $_)*";
-      # include wild card, as stemming hasn't been handled when indexing.
-  } @words unless $phrase;
+  # my $new_q = $q;
+
+  # my @words = $q =~ m/(\S+)/g;
+  # @words = map {
+  #     (my $word_new = "$_" ) =~ s/-/_/g;
+  #     $word_new eq $_ ? "$_*" : $ac ? "$word_new*" : "($word_new $_)*";
+  #     # include wild card, as stemming hasn't been handled when indexing.
+  # } @words unless $phrase;
 
 
-  if(@words > 8) {
-    @words = grep { $phrase ||length($_) > 3 } @words;
-    @words = @words[0..5];
-    $new_q = join(' ', @words);
-    $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
-  }else{
-    $new_q = join(' ', @words);
-  }
-  return wantarray ? ($new_q, $error) : $new_q;
+  # if(@words > 8) {
+  #   @words = grep { $phrase ||length($_) > 3 } @words;
+  #   @words = @words[0..5];
+  #   $new_q = join(' ', @words);
+  #   $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
+  # }else{
+  #   $new_q = join(' ', @words);
+  # }
+  # return wantarray ? ($new_q, $error) : $new_q;
 }
 
 
