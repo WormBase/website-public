@@ -109,7 +109,6 @@ sub count_estimate {
 
     my $url = $self->_get_elasticsearch_url("/count", $fixed_args);
 
-
     my $resp = HTTP::Tiny->new->get($url);
 
     if ($resp->{success}) {
@@ -125,7 +124,7 @@ sub _fix_args_paper_type {
     my $species_or_paper = $args->{species};
 
     my %fixed_args;
-    if (($type =~ m/paper/) && ($species_or_paper)) {
+    if (($type && $type =~ m/paper/) && ($species_or_paper)) {
         my $paper_type = $self->_api->config->{sections}->{resources}->{paper}->{paper_types}->{$species_or_paper};
         if (defined $paper_type) {
             %fixed_args = (%$args, species => undef, paper_type => $species_or_paper);
