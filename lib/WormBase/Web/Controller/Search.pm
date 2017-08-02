@@ -254,7 +254,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   $c->log->debug("autocomplete search: $q, $type");
   my $api = $c->model('WormBaseAPI');
 
-  $q = $self->_prep_query($q, 1);
+#  $q = $self->_prep_query($q, 1);
   my $it = $api->elasticsearch->autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
