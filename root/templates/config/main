@@ -327,9 +327,9 @@
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
             valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
-            IF label.match('[IVX]+:.*');
+            IF data.class == 'genomic_location';
                 pos_display_string = pad_jbrowse_coordinates(label);
-            ELSIF data.class && (valid_classes.grep(data.class).size > 0);;
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);
                 pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
             END;
 
