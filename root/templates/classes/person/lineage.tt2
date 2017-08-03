@@ -18,7 +18,7 @@
           <tr><td valign="center"><span style="color: [% fields.ancestors_data.existingRolesFull.$role %]">[% role %]</span></td></tr>
         [% END; %]
       </tbody></table>
-      <a href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person_lineage.cgi?action=Display&number=$object" target="new">Add or update</a> your lineage information.<br/>
+      <a href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person_lineage.cgi?action=Display&number=[%- fields.name.data.id -%]" target="new">Add or update</a> your lineage information.<br/>
     </div>
   </div>
 
@@ -65,4 +65,3 @@ END;
     var elementsDirect = [% fields.ancestors_data.elementsDirect %];
     WB.setupCytoscapePersonLineage(elementsDirect, elementsFull, thisPerson);
 </script>
-
