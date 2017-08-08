@@ -1009,7 +1009,11 @@ END;
         FOREACH lab IN labs;
 
             '<div style="white-space:nowrap;">';
+            IF title == "Available From" && lab.laboratory.label.match('CGC') && fields.name.data.class == 'strain';
+                external_link('cgc', lab.laboratory.label, fields.name.data.id);
+            ELSE;
                 tag2link(lab.laboratory);
+            END;
             '</div>';
 
             # Include the lab representative, if one exists
@@ -1021,15 +1025,6 @@ END;
               '<br /><br />';
             END;
 
-        END;
-
-
-        # HACK! On strain pages, link directly to the CGC
-        IF title == "Available From";
-            IF fields.laboratory.data.0.laboratory.label.match('CGC');
-            '<br />';
-            external_link('cgc', 'Visit the CGC home page', fields.name.data.id);
-            END;
         END;
     END;
 END;
