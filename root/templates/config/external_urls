@@ -47,9 +47,8 @@
 	maintainer  = 'Aric Daul'
 	email       = 'cgc@umn.edu'
 	base        = 'https://cgc.umn.edu/'
-	strains     = 'https://cgc.umn.edu/strain/'
-	search      = 'https://cgc.umn.edu/strain/search'
-	nomenclature = 'https://cgc.umn.edu/nomenclature'
+	search      = 'https://cgc.umn.edu/strain/%s'
+	nomenclature = 'https://cgc.umn.edu/nomenclature/'
 	}
 
  RefSeq = {

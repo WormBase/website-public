@@ -1027,7 +1027,8 @@ END;
         # HACK! On strain pages, link directly to the CGC
         IF title == "Available From";
             IF fields.laboratory.data.0.laboratory.label.match('CGC');
-            '<br /><a href="http://www.cbs.umn.edu/CGC/" target="_blank">Visit the CGC home page</a>.';
+            '<br />';
+            external_link('cgc', 'Visit the CGC home page', fields.name.data.id);
             END;
         END;
     END;
