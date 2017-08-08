@@ -505,7 +505,7 @@
         ext_url = get_external_url(link, id, dbt);
         "<a href=\"$ext_url\"
             onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\"
-            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
+            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ "><span class=\"wb-ext\">$text</span></a>";
        END;
     END;
 
