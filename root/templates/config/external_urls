@@ -46,10 +46,9 @@
 	description = 'The C. elegans Genetics Center'
 	maintainer  = 'Aric Daul'
 	email       = 'cgc@umn.edu'
-	base        = 'http://www.cbs.umn.edu/CGC/'
-	strains     = 'http://www.cbs.umn.edu/CGC/strains/'
-	search      = 'https://cgcdb.msi.umn.edu/search.php?st=%s'
-	nomenclature = 'http://www.cbs.umn.edu/CGC/nomenclature/'
+	base        = 'https://cgc.umn.edu/'
+	search      = 'https://cgc.umn.edu/strain/%s'
+	nomenclature = 'https://cgc.umn.edu/nomenclature/'
 	}
 
  RefSeq = {
