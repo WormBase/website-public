@@ -1,6 +1,6 @@
 
   <div id="cyPersonLineageAll" style="height: 750px; width: 950px; position: relative; float: left; border: 1px solid #aaa; left: 0; top: 0;"></div>
-  <img id="png-export" style="border: 1px solid #ddd; display: none;">
+  <img id="png-export" style="border: 1px solid #ddd; display: none; max-width: 1050px; max-height: 1050px">
   <div id="optionsdiv" style="z-index: 9999; position: absolute; top: 60px; right: 10px; width: 200px; border: 1px solid #aaa;  background: #e9eef2 none repeat scroll 0 0;">
     <div id="optionsborderdiv" style="border: 10px solid #e9eef2; ">
       <a href="#" onClick="alert('Intellectual Lineage Graph:\n\nWe present two graphs illustrating intellectual mentoring relationships where nodes represent persons and arrows person-to-person relationships.  A Direct View graph \(shown by default\) shows only direct relationships between the focus person and his/her mentors and between the focus person and the persons he/she mentors. Another Full View graph includes all mentoring relationships that center around the focus person.\n\nMentoring relationships include studentship of several levels, high school, college, master&#8217;s, and PhD, as well as postdoctoral fellowship, and research staff employment. Mentoring relationships are considered transitive for the purpose of determining the &quot;karma&quot; of a mentor, such that mentee\'s mentee is one\'s mentee. More mentees means more karma and is indicated by a bigger person node \(focus node is kept at fixed size\).\n\nUsing the mouse or key actions, one can zoom in and out in a graph.  Click a node will fire up a new person page in another tab. In the Direct View graph, one can choose what types of relationships are included in the display. The default is set to all.')">help</a><br/>
@@ -18,7 +18,7 @@
           <tr><td valign="center"><span style="color: [% fields.ancestors_data.existingRolesFull.$role %]">[% role %]</span></td></tr>
         [% END; %]
       </tbody></table>
-      <a href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person_lineage.cgi?action=Display&number=$object" target="new">Add or update</a> your lineage information.<br/>
+      <a href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person_lineage.cgi?action=Display&number=[%- fields.name.data.id -%]" target="new">Add or update</a> your lineage information.<br/>
     </div>
   </div>
 
@@ -65,4 +65,3 @@ END;
     var elementsDirect = [% fields.ancestors_data.elementsDirect %];
     WB.setupCytoscapePersonLineage(elementsDirect, elementsFull, thisPerson);
 </script>
-

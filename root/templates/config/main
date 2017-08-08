@@ -327,9 +327,9 @@
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
             valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
-            IF label.match('[IVX]+:.*');
+            IF data.class == 'genomic_location';
                 pos_display_string = pad_jbrowse_coordinates(label);
-            ELSIF data.class && (valid_classes.grep(data.class).size > 0);;
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);
                 pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
             END;
 
@@ -377,8 +377,6 @@
             view_url = jbrowse_url(taxonomy, padded_coords, bp, 1);
             view_id = "jbrowse-view-$padded_coords-$bp";
             view_id = view_id.replace('\W+', '_');
-
-            '<p class="fade">Please use Chrome Browser for the best viewing result.</p>';
 
             '<div id="' _ view_id _ '" class="jbrowse-view-container">';
             '<button class="jbrowse-view-reset button ui-corner-all">';
@@ -507,7 +505,7 @@
         ext_url = get_external_url(link, id, dbt);
         "<a href=\"$ext_url\"
             onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$ext_url\');\"
-            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ ">$text</a>";
+            target=\"_blank\"" _  (desc ? "title=\"$desc\"" : "" ) _ "><span class=\"wb-ext\">$text</span></a>";
        END;
     END;
 

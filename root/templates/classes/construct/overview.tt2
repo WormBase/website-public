@@ -10,8 +10,8 @@ END;
 fields.summary.data;
 '<br /><br />';
 
-WRAPPER $field_block title="Type of construct" key="Type of construct";
-        join(',',fields.type_of_construct.data);
+WRAPPER $field_block title="Type of construct" key="type_of_construct";
+        fields.type_of_construct.data.join(', ').replace('_', ' ');
 END;
 
 WRAPPER $field_block title=pluralize('Promoter', fields.driven_by_gene.data.size) key="driven_by_gene";

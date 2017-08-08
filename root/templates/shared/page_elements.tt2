@@ -284,7 +284,7 @@ END;
     <div class="field
     [%# Add a class to disable / hide empty fields %]
     [% TRY; IF (key && (!fields.$key.defined('data')
-                        || (ref(fields.$key.data) && fields.$key.data.size == 0)))
+                        || ((ref(fields.$key.data) == 'ARRAY' || ref(fields.$key.data) == 'HASH') && fields.$key.data.size == 0)))
                 || disabled; " disabled "; END; END;%]
 
         ">
@@ -657,7 +657,8 @@ END %]
   not_empty;
   FOREACH field IN fields.keys;
     NEXT IF field == 'name';
-    IF fields.$field.defined('data') && !(ref(fields.$field.data) && fields.$field.data.size == 0);
+    NEXT IF field == 'time_cached';  # time_cached should be moved outside of fields in WS260
+    IF fields.$field.defined('data') && !((ref(fields.$field.data) == 'ARRAY' || ref(fields.$field.data) == 'HASH') && fields.$field.data.size == 0);
       not_empty = 1;
       LAST;
     END;
@@ -695,7 +696,7 @@ END %]
                 </div>
 
                 <div id="widget-footer" class="ui-helper-hidden">
-[% UNLESS (type.match('(tool)|(me)') || id == 'basic_search' ) %]
+[% UNLESS (type.match('^(tool)|(me)$') || id == 'basic_search' ) %]
                     <a   onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,is_class_index? 'all': this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
 [% END %]
 [% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
@@ -1004,10 +1005,15 @@ END;
     # The Laboratory field
     # Expects the stash to contain the "laboratory" key.
     WRAPPER $field_block title="$title"||'Laboratory' key="laboratory";
-        FOREACH lab IN fields.laboratory.data;
+        labs = passed_data || fields.laboratory.data;
+        FOREACH lab IN labs;
 
             '<div style="white-space:nowrap;">';
+            IF title == "Available From" && lab.laboratory.label.match('CGC') && fields.name.data.class == 'strain';
+                external_link('cgc', lab.laboratory.label, fields.name.data.id);
+            ELSE;
                 tag2link(lab.laboratory);
+            END;
             '</div>';
 
             # Include the lab representative, if one exists
@@ -1019,14 +1025,6 @@ END;
               '<br /><br />';
             END;
 
-        END;
-
-
-        # HACK! On strain pages, link directly to the CGC
-        IF title == "Available From";
-            IF fields.laboratory.data.0.laboratory.label.match('CGC');
-            '<br /><a href="http://www.cbs.umn.edu/CGC/" target="_blank">Visit the CGC home page</a>.';
-            END;
         END;
     END;
 END;

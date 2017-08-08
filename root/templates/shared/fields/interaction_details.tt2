@@ -97,6 +97,7 @@ otherwise find them in Interaction->interaction_details %]
       <h6>Click, hold for 1 second, and drag to pan</h6>
       <h6>Use the scroll wheel to zoom</h6>
 
+      <div id="cyto-wrapper">
       <div id="cyto_legend" class="detail-box ui-corner-all">
         <p><center><h3>Legend</h3></center></p>
         [% IF TYPES.keys %]
@@ -180,14 +181,13 @@ otherwise find them in Interaction->interaction_details %]
 
 
 
-      <div id="resizable" class="ui-widget-content" style="float:left">
-
+      <div id="cy-view" class="ui-widget-content" style="float:left">
           <div id="cy" >
 
           </div>
-
       </div>
 
+      </div>
 
       <br style="clear:both"/>
 

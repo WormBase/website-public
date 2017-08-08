@@ -148,7 +148,7 @@
     <!-- START: New submit data menu -->
     <ul class="nav-bar submit-data-menu">
       <li><a href="/about/userguide/submit_data#01--10">Submit Data</a></li>
-      <li><a href="http://www.micropublicationbiology.org/"><span class="wb-ext">Micropublication</span></a></li>
+      <li><a href="http://www.micropublicationbiology.org/" target="_blank"><span class="wb-ext">Micropublication</span></a></li>
     </ul>
     <!-- END: New submit data menu -->
   </div>
