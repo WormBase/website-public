@@ -887,7 +887,10 @@ sub widget_GET {
     } elsif ($isDatomicEndpoint) {
         # Datomic workflow
 
-        return if $c->config->{precache_mode} && !is_slow_endpoint($path_template);
+        if ($c->config->{precache_mode} && !is_slow_endpoint($path_template)) {
+            $self->status_no_content($c);
+            return;
+        }
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
@@ -1800,7 +1803,10 @@ sub field_GET {
     } elsif ($isDatomicEndpoint) {
         # Datomic workflow
 
-        return if $c->config->{precache_mode} && !is_slow_endpoint($path_template);
+        if ($c->config->{precache_mode} && !is_slow_endpoint($path_template)) {
+            $self->status_no_content($c);
+            return;
+        }
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
