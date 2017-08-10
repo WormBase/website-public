@@ -865,7 +865,7 @@ sub widget_GET {
     my $path_template = "/rest/widget/$class/{id}/$widget";
     (my $path = $path_template) =~ s/\{id\}/$name/;
     my @datomic_endpoints = eval {
-        get_rest_endpoints("$rest_server/swagger.json");
+        get_rest_endpoints($c, "$rest_server/swagger.json");
     };
     my $isDatomicEndpoint = grep {
         $_ eq $path_template;
@@ -886,6 +886,8 @@ sub widget_GET {
         }
     } elsif ($isDatomicEndpoint) {
         # Datomic workflow
+
+        return if $c->config->{precache_mode} && !is_slow_endpoint($path_template);
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
@@ -1061,9 +1063,10 @@ sub time_since {
 
 
 sub get_rest_endpoints {
-    my ($url) = @_;
+    my ($c, $url) = @_;
+    my $expires_in = 0 + $c->config->{'cached_rest_endpoints_expires_in'};  # cast to number
 
-    if (!$endpoints{last_updated} || (time_since($endpoints{last_updated})->in_units('minutes') > 5)) {
+    if (!$endpoints{last_updated} || time_since($endpoints{last_updated})->in_units('minutes') > $expires_in) {
         my @paths = _fetch_rest_endpoints($url);
         $endpoints{values} = \@paths;
         $endpoints{last_updated} = DateTime->now()->epoch();
@@ -1774,7 +1777,7 @@ sub field_GET {
     my $path_template = "/rest/field/$class/{id}/$field";
     (my $path = $path_template) =~ s/\{id\}/$name/;
     my @datomic_endpoints = eval {
-        get_rest_endpoints("$rest_server/swagger.json");
+        get_rest_endpoints($c, "$rest_server/swagger.json");
     };
     my $isDatomicEndpoint = grep {
         $_ eq $path_template;
@@ -1796,6 +1799,8 @@ sub field_GET {
         }
     } elsif ($isDatomicEndpoint) {
         # Datomic workflow
+
+        return if $c->config->{precache_mode} && !is_slow_endpoint($path_template);
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
