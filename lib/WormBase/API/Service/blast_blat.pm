@@ -13,6 +13,9 @@ use File::Spec::Functions qw(catfile);
 use GD::Simple;
 use namespace::autoclean -except => 'meta';
 use JSON::Parse qw(json_file_to_perl);
+use JSON;
+use HTTP::Tiny;
+
 
 use Moose;
 with 'WormBase::API::Role::Object';
@@ -31,6 +34,10 @@ has 'image_dir' => (
     default => sub {
         return shift->tmp_image_dir('blast_blat');
     }
+);
+
+has '_api' => (
+    is => 'ro',
 );
 
 # A discoverable list of blast databases.
@@ -705,30 +712,20 @@ sub make_links {
         $protein_link  = '';
     }
 
-    # wormpep
-    elsif ($object = $self->dsn->{acedb}->fetch('Transcript' => $hit) || $self->dsn->{acedb}->fetch('CDS' => $hit)) {
-        my $protein = $object->Corresponding_CDS ? $object->Corresponding_CDS->Corresponding_protein : $object->Corresponding_protein;
-        my $gene = $object->Corresponding_CDS ? $object->Corresponding_CDS->Gene : $object->Gene;
-        $sequence_link = $self->_pack_obj($object);
-        $gene_link = $self->_pack_obj($gene || undef, '[Gene Summary]');
-        $protein_link = $self->_pack_obj($protein || undef, '[Protein Summary]');
-    }
-
-    # est
-    elsif($object = $self->dsn->{acedb}->fetch('Sequence' => $hit)){
-        $sequence_link = $self->_pack_obj($object);
-        my ($gene) = $object->Gene ? $object->Gene : $object->Matching_cds && $object->Matching_cds->Gene;
-        my $corr_gene_name = $gene && $self->_make_common_name($gene);
-        $corr_gene_link = $self->_pack_obj($gene || undef, $corr_gene_name && "[Corr. Gene: $corr_gene_name]");
-    }
-
-    elsif($object = $self->dsn->{acedb}->fetch('Protein' => $hit)){
-        $sequence_link = $self->_pack_obj($object);
-    }
-
     else {
-        $sequence_link = {label => $hit} if !$sequence_link;
+        my $rest_server_base = $self->_api->config->{rest_server};
+        my $resp = HTTP::Tiny->new->get("$rest_server_base/rest/convert/$hit");
+        if ($resp->{'status'} == 200 && $resp->{'content'}) {
+            my $result = decode_json($resp->{'content'});
+            $sequence_link = $result->{sequence};
+            $gene_link = $result->{gene};
+            $protein_link = $result->{protein};
+            $corr_gene_link = $result->{corresponding_gene};
+        } else {
+            $sequence_link = {label => $hit} if !$sequence_link;
+        }
     }
+
     return ($sequence_link, $gene_link, $protein_link, $corr_gene_link);
 }
 
