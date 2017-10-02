@@ -17,8 +17,8 @@
 [%
     WRAPPER $field_block title=pluralize("Clone", fields.clones.data.size) key="clones";
         clone_data = fields.clones.data;
-        IF clones_data;
-            tags2link(clones_data, '<br />', 'clones found');
+        IF ref(clone_data) == 'ARRAY';
+            tags2link(clone_data, '<br />', 'clones found');
         ELSE;  # a string is returned
             searchlink('clone', object.name.data.id, clone_data);
         END;
