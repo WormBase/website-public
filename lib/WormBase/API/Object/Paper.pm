@@ -368,7 +368,7 @@ sub pmid {
 # the history of the paper
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/history
 
-sub history {
+sub history_lite {
     my $self   = shift;
     my $object = $self->object;
     my @data;
