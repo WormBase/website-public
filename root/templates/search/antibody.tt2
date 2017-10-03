@@ -3,5 +3,6 @@
 
 <div class="text-min">
   [% summary = item.summary.join(); summary; %]
+  [% item.description %]
   [% tags2link(item.gene) %]
 </div>
