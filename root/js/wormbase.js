@@ -1439,7 +1439,7 @@ var Scrolling = (function(){
       if(sidebar.offset()){
         var objSmallerThanWindow = (sidebar.outerHeight() < ($window.height() - system_message)) || (sidebar.find(".closed").size() > 0),
             scrollTop = $window.scrollTop(),
-            maxScroll = $jq(document).height() - (sidebar.outerHeight() + footerHeight + system_message + 20); //the 20 is for padding before footer
+            maxScroll = $jq(document).height() - (sidebar.outerHeight() + $jq("#footer").outerHeight() + system_message + 20); //the 20 is for padding before footer
 
         // console.log({
         //   scrollTop: scrollTop,

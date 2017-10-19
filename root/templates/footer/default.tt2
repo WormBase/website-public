@@ -110,20 +110,24 @@
     <br clear="all" />
 
 
-
-    <div id="footercredit">
-
      <div id="footermeta">
       <a id="footer-mail" href="mailto:help@wormbase.org"><div class="social-icons"></div></a>
       <a id="footer-tweet" href="http://twitter.com/wormbase"><div class="social-icons"></div></a>
       <a id="footer-rss"  href="http://feeds.feedburner.com/wormbase"><div class="social-icons"></div></a>
     </div>
-    <br />
+    <div id="footercredit">
     <br style="clear:both" />
       [% IF git_update_time %]
       <span>Last software update: [% git_update_time %]
       </span><br />
       [% END %]
+        <div class="credit-badge-container">
+            <div class="credit-badge">[% external_link('AGR', '<img width="200px" src="/img/agr_founding_member_badge.png" alt="Alliance of Genome Resources" />'); %]</div>
+            <div class="credit-badge">[% external_link('http://www.caltech.edu/', '<img width="200px" src="/img/caltech_logo.png" alt="Caltech" />'); %]</div>
+            <div class="credit-badge">[% external_link('https://www.ebi.ac.uk/', '<img width="200px" src="/img/embl_ebi_logo_white.svg" alt="European Bioinformatics Institute" />'); %]</div>
+            <div class="credit-badge">[% external_link('https://oicr.on.ca/', '<img height="65px" src="/img/oicr_logo_white.png" alt="Ontario Institute for Cancer Research" />'); %]</div>
+        </div>
+        <div class="credit-text-container">
         <span>
           WormBase is supported by grant #U41 HG002223 from the
           [% external_link("http://www.genome.gov/", "National Human Genome Research Institute") %]
@@ -132,6 +136,7 @@
           the [% external_link("http://www.mrc.ac.uk/", "UK Medical Research Council") %] and the
           [% external_link("http://www.bbsrc.ac.uk/home/home.aspx", "UK Biotechnology and Biological Sciences Research Council") %].
         </span>
+        </div>
     </div>
 
 
