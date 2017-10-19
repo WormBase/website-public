@@ -124,6 +124,9 @@
       <span>Last software update: [% git_update_time %]
       </span><br />
       [% END %]
+        <div>
+            [% external_link('AGR', '<img width="200px" src="/img/agr_logo.png" alt="Alliance of Genome Resources" />'); %]
+        </div>
         <span>
           WormBase is supported by grant #U41 HG002223 from the
           [% external_link("http://www.genome.gov/", "National Human Genome Research Institute") %]
