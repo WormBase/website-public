@@ -2320,8 +2320,6 @@ fieldset {
     width:100%;
     clear:both;
     padding: 1.5em 1.5em 1em;
-    /* padding-bottom: 6em; */
-    /* min-height:30em; */
 }
 
 #footer a{
@@ -2332,11 +2330,6 @@ fieldset {
 }
 
 #footercredit {
-    /* text-align: left; */
-    /* position:absolute; */
-    /* bottom:1em; */
-    /* left:1.4em; */
-    /* overflow:hidden; */
     font-size:0.9em;
     line-height:1.4em;
 }
@@ -2352,8 +2345,6 @@ fieldset {
   display: inline-block;
   min-width: 200px;
   margin: 0.5em 0.5em 0.5em 0;
-  /* width: 250px; */
-  /* height: 60px; */
 }
 
 #footer .credit-text-container {
@@ -2366,9 +2357,6 @@ fieldset {
 
 
 #footer #footer-nav {
-    /* margin:0 1.5em; */
-    /* height:2em; */
-    /* padding:0 0 10em 0; */
     position:relative;
 }
 
@@ -2376,7 +2364,6 @@ fieldset {
 #footer .footer-column {
   float:left;
   display: inline-block;
-  /* padding-top:1.5em; */
   width:12em;
 }
 
@@ -2418,7 +2405,6 @@ fieldset {
   width: 30px;
   overflow: hidden;
   float:right;
-  /* padding:0 5px; */
   margin-right: 10px;
 }
 
