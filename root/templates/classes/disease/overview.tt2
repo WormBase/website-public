@@ -32,6 +32,13 @@
       WRAPPER $field_block title="Child" key="child";
         tags2link(fields.child.data);
       END;
+
+
+      WRAPPER $field_block title="Comparative Info";
+        'Learn more about this disease on other organisms at the ';
+        external_link('AGR', 'Alliance of Genome Resources', object.name.data.id, 'disease');
+      END;
+
   END;
 
 fields.omim_external;
