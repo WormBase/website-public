@@ -36,7 +36,7 @@
 
       WRAPPER $field_block title="Comparative Info";
         'Learn more about this disease on other organisms at the ';
-        external_link('AGR', 'Alliance of Genome Resources', object.name.data.id, 'disease');
+        agr_logo_link(object.name.data.id, 'disease');
       END;
 
   END;

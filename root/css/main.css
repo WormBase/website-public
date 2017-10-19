@@ -2903,6 +2903,11 @@ div#google-map {
     width: 100%;
 }
 
+/* link to AGR with AGR logo */
+.agr-logo-link {
+  margin-top: 5px;
+}
+
 /* cytoscape legend */
 #cyto-wrapper {
   display: flex;

@@ -65,7 +65,7 @@ WRAPPER highlight_box;
    IF fields.name.data.taxonomy == 'c_elegans';
        WRAPPER $field_block title="Comparative Info";
             'Integrated model organism details available at the ';
-            external_link('AGR', 'Alliance of Genome Resources', 'WB:' _ fields.name.data.id, 'gene');
+            agr_logo_link('WB:' _ fields.name.data.id, 'gene');
        END;
    END;
 
