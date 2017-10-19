@@ -2319,9 +2319,11 @@ fieldset {
     position:relative;
     width:100%;
     clear:both;
-    padding-bottom: 6em;
-    min-height:30em;
+    padding: 1.5em 1.5em 1em;
+    /* padding-bottom: 6em; */
+    /* min-height:30em; */
 }
+
 #footer a{
   color:white;
 }
@@ -2330,18 +2332,33 @@ fieldset {
 }
 
 #footercredit {
-    text-align: left;
-    position:absolute;
-    bottom:1em;
-    left:1.4em;
-    overflow:hidden;
+    /* text-align: left; */
+    /* position:absolute; */
+    /* bottom:1em; */
+    /* left:1.4em; */
+    /* overflow:hidden; */
     font-size:0.9em;
     line-height:1.4em;
 }
-div#footercredit a{
+#footercredit a{
   color:#6FA2D9;
 }
 
+#footer .credit-badge-container {
+  margin-bottom: 0.5em;
+}
+
+#footer .credit-badge {
+  display: inline-block;
+  min-width: 200px;
+  margin: 0.5em 0.5em 0.5em 0;
+  /* width: 250px; */
+  /* height: 60px; */
+}
+
+#footer .credit-text-container {
+  max-width: 70%;
+}
 
 #footermeta {
     float:left;
@@ -2349,9 +2366,9 @@ div#footercredit a{
 
 
 #footer #footer-nav {
-    margin:0 1.5em;
-    height:2em;
-    padding:0 0 10em 0;
+    /* margin:0 1.5em; */
+    /* height:2em; */
+    /* padding:0 0 10em 0; */
     position:relative;
 }
 
@@ -2359,7 +2376,7 @@ div#footercredit a{
 #footer .footer-column {
   float:left;
   display: inline-block;
-  padding-top:1.5em;
+  /* padding-top:1.5em; */
   width:12em;
 }
 
@@ -2401,7 +2418,8 @@ div#footercredit a{
   width: 30px;
   overflow: hidden;
   float:right;
-  padding:0 5px;
+  /* padding:0 5px; */
+  margin-right: 10px;
 }
 
 #footer-mail .social-icons  {
