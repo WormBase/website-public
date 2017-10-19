@@ -2343,8 +2343,8 @@ fieldset {
 
 #footer .credit-badge {
   display: inline-block;
-  min-width: 200px;
   margin: 0.5em 0.5em 0.5em 0;
+  vertical-align: middle;
 }
 
 #footer .credit-text-container {

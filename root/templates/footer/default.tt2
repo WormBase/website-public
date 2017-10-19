@@ -123,7 +123,7 @@
       [% END %]
         <div class="credit-badge-container">
             <div class="credit-badge">[% external_link('AGR', '<img width="200px" src="/img/agr_founding_member_badge.png" alt="Alliance of Genome Resources" />'); %]</div>
-            <div class="credit-badge">[% external_link('http://www.caltech.edu/', '<img width="200px" src="/img/caltech_logo.png" alt="Caltech" />'); %]</div>
+            <div class="credit-badge">[% external_link('http://www.caltech.edu/', '<img width="150px" src="/img/caltech_logo.png" alt="Caltech" />'); %]</div>
             <div class="credit-badge">[% external_link('https://www.ebi.ac.uk/', '<img width="200px" src="/img/embl_ebi_logo_white.svg" alt="European Bioinformatics Institute" />'); %]</div>
             <div class="credit-badge">[% external_link('https://oicr.on.ca/', '<img height="65px" src="/img/oicr_logo_white.png" alt="Ontario Institute for Cancer Research" />'); %]</div>
         </div>
