@@ -1083,6 +1083,9 @@ sub is_slow_endpoint {
     my ($endpoint_template) = @_;
     return grep { $endpoint_template eq $_; } (
         '/rest/widget/gene/{id}/interactions',
+        '/rest/widget/phenotype/{id}/rnai',
+        '/rest/widget/phenotype/{id}/variation',
+        '/rest/widget/transposon_family/{id}/var_motifs',
         '/rest/field/gene/{id}/interaction_details',
         '/rest/field/gene/{id}/interactions'
     );
