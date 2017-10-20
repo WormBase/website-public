@@ -142,6 +142,11 @@ sub _build_elasticsearch {
     return $elasticsearch;
 }
 
+sub get_search_engine {
+    my $self = shift;
+    my $search_engine = $self->elasticsearch;
+    return $search_engine;
+}
 
 # Version is provided by looking up the default datasource (acedb) and reading the
 # symlink target. This enables us to get the version even if acedb is down.

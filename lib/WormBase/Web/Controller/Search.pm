@@ -64,7 +64,8 @@ sub search :Path('/search') Args {
 
     my $api = $c->model('WormBaseAPI');
 
-    my ($tmp_query, $query_error) = $self->_prep_query($query);
+    my $search_engine = $api->get_search_engine();
+    my ($tmp_query, $query_error) = $self->_prep_query($search_engine, $query);
     $c->log->debug("search $tmp_query");
 
     my $search = $type unless($type=~/all/);
@@ -85,7 +86,7 @@ sub search :Path('/search') Args {
                            %{$c->req->params},
                            redirect => ''
                        );
-        my $match = $api->elasticsearch->fetch(\%fetch_args);
+        my $match = $search_engine->fetch(\%fetch_args);
 
         if($match){
           my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
@@ -108,7 +109,7 @@ sub search :Path('/search') Args {
     }
 
     # this is the actual search
-    my ($it, $error) = $api->elasticsearch->search({
+    my ($it, $error) = $api->get_search_engine()->search({
         query => $query,
         page => $page_count,
         type => $search,
@@ -254,8 +255,9 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   $c->log->debug("autocomplete search: $q, $type");
   my $api = $c->model('WormBaseAPI');
 
-  $q = $self->_prep_query($q, 1);
-  my $it = $api->elasticsearch->autocomplete($q, ($type=~/all/) ? undef : $type);
+  my $search_engine = $api->get_search_engine();
+  $q = $self->_prep_query($search_engine, $q, 1);
+  my $it = $api->get_search_engine()->autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
@@ -289,8 +291,9 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
     return;
   }
 
-  my $tmp_query = $self->_prep_query($q);
-  my $count = $api->elasticsearch->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
+  my $search_engine = $api->get_search_engine();
+  my $tmp_query = $self->_prep_query($search_engine, $q);
+  my $count = $api->get_search_engine()->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
   $count = $self->_fuzzy_estimate($count);
 
   $c->response->body("$count");
@@ -342,34 +345,37 @@ sub _get_url {
 }
 
 sub _prep_query {
-    my ($self, $q, $ac) = @_;
-    return $q;
+  my ($self, $search_engine, $q, $ac) = @_;
 
-  # # $ac flags autocomplete
-  # my $error;
-  # $q ||= "*";
+  if ($search_engine->meta->name =~ /Elasticsearch/) {
+      return $q;
+  }
 
-  # my $phrase = $q =~ m/\"/;
+  # $ac flags autocomplete
+  my $error;
+  $q ||= "*";
 
-  # my $new_q = $q;
+  my $phrase = $q =~ m/\"/;
 
-  # my @words = $q =~ m/(\S+)/g;
-  # @words = map {
-  #     (my $word_new = "$_" ) =~ s/-/_/g;
-  #     $word_new eq $_ ? "$_*" : $ac ? "$word_new*" : "($word_new $_)*";
-  #     # include wild card, as stemming hasn't been handled when indexing.
-  # } @words unless $phrase;
+  my $new_q = $q;
+
+  my @words = $q =~ m/(\S+)/g;
+  @words = map {
+      (my $word_new = "$_" ) =~ s/-/_/g;
+      $word_new eq $_ ? "$_*" : $ac ? "$word_new*" : "($word_new $_)*";
+      # include wild card, as stemming hasn't been handled when indexing.
+  } @words unless $phrase;
 
 
-  # if(@words > 8) {
-  #   @words = grep { $phrase ||length($_) > 3 } @words;
-  #   @words = @words[0..5];
-  #   $new_q = join(' ', @words);
-  #   $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
-  # }else{
-  #   $new_q = join(' ', @words);
-  # }
-  # return wantarray ? ($new_q, $error) : $new_q;
+  if(@words > 8) {
+    @words = grep { $phrase ||length($_) > 3 } @words;
+    @words = @words[0..5];
+    $new_q = join(' ', @words);
+    $error .= "Too many words in query. Only searching: <b>$new_q</b>. ";
+  }else{
+    $new_q = join(' ', @words);
+  }
+  return wantarray ? ($new_q, $error) : $new_q;
 }
 
 
