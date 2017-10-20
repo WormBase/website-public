@@ -43,22 +43,6 @@
         is ($go_term_evidence->{label}, 'GO:0040011(locomotion)','right GO term label for evidence is returned');
     }
 
-    sub test_go_term {
-
-        my $phenotype = $api->fetch({ class => 'Phenotype', name => 'WBPhenotype:0000583' });
-
-        can_ok('WormBase::API::Object::Phenotype', ('go_term'));
-
-        my $go_term = $phenotype->go_term;
-        isnt($go_term->{'data'}, undef, 'data returned');
-
-        my ($term1) = grep {
-            $_->{label} eq 'body morphogenesis';
-        } @{$go_term->{data}};
-        ok($term1, 'correct GO term returned');
-
-    }
-
 }
 
 1;
