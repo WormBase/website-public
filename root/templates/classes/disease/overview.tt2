@@ -35,7 +35,7 @@
 
 
       WRAPPER $field_block title="Comparative Info";
-        'Learn more about this disease model in other organisms at the ';
+        'Learn more about disease models in other organisms at the ';
         agr_logo_link(object.name.data.id, 'disease');
       END;
 
