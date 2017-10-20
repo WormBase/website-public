@@ -144,7 +144,12 @@ sub _build_elasticsearch {
 
 sub get_search_engine {
     my $self = shift;
-    my $search_engine = $self->elasticsearch;
+    my $search_engine;
+    if (rand() < $self->config->{max_ratio_elasticsearch_traffic}) {
+        $search_engine = $self->elasticsearch;
+    } else {
+        $search_engine = $self->xapian;
+    };
     return $search_engine;
 }
 
