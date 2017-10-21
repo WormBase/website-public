@@ -403,8 +403,16 @@
       END;
     END;
 
-
-
+MACRO agr_logo_link(id, dbt) BLOCK;
+    '<div class="agr-logo-link">';
+    external_link(
+        'AGR',
+        '<img width="150px" src="/img/agr_logo.png" alt="Alliance of Genome Resources" />',
+        id,
+        dbt
+    );
+    '</div>';
+END;
 
 
 # use this to pluraize a word

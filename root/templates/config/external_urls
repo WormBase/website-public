@@ -42,6 +42,14 @@
 	search      = 'http://www.addgene.org/%s'
 	}
 
+ AGR = {
+	description = 'Addgene is a nonprofit organization dedicated to making it easier for scientists to share plasmids.'
+	base        = 'http://www.alliancegenome.org/'
+	gene        = 'http://www.alliancegenome.org/gene/%s'
+	disease     = 'http://www.alliancegenome.org/disease/%s'
+	}
+
+
  cgc = {
 	description = 'The C. elegans Genetics Center'
 	maintainer  = 'Aric Daul'

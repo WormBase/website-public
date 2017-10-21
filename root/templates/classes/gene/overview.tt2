@@ -62,6 +62,14 @@ WRAPPER highlight_box;
            tags2link(fields.named_by.data, ";<br/>");
    END;
 
+   IF fields.name.data.taxonomy == 'c_elegans' && fields.classification.data.type != 'Transposon in origin';
+       WRAPPER $field_block title="Comparative Info";
+            'Integrated model organism details available at the ';
+            agr_logo_link('WB:' _ fields.name.data.id, 'gene');
+       END;
+   END;
+
+
 END;
 
 # The main concise description
