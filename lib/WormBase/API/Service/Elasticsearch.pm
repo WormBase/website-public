@@ -80,7 +80,6 @@ sub fetch {
     if ($resp->{success} && $resp->{content}) {
         return decode_json($resp->{content});
     }
-  #return ($fill || $footer || $label) ? $self->_get_tag_info($args) : $self->_search_exact($args);
 }
 
 
