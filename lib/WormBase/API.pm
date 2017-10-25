@@ -4,6 +4,7 @@ use Moose;                       # Moosey goodness
 
 use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
+use WormBase::API::Service::Elasticsearch;
 use Search::Xapian;
 use Config::General;
 use Class::MOP;
@@ -67,6 +68,12 @@ has xapian => (
     lazy_build      => 1,
 );
 
+has elasticsearch => (
+    is     => 'rw',
+    isa    => 'WormBase::API::Service::Elasticsearch',
+    lazy_build      => 1,
+);
+
 # this is for the view (see /template/config/main)
 # it's a nasty hack. it simply reveals WormBase::API::ModelMap to the view
 # so that the maps can be accessed from there. this is heavily coupled
@@ -126,6 +133,25 @@ sub _build_xapian {
   return $xapian;
 }
 
+sub _build_elasticsearch {
+    my $self = shift;
+    my $elasticsearch = WormBase::API::Service::Elasticsearch->new({
+        base_url => $self->config->{search_server},
+        _api => $self
+    });
+    return $elasticsearch;
+}
+
+sub get_search_engine {
+    my $self = shift;
+    my $search_engine;
+    if (rand() < $self->config->{max_ratio_elasticsearch_traffic}) {
+        $search_engine = $self->elasticsearch;
+    } else {
+        $search_engine = $self->xapian;
+    };
+    return $search_engine;
+}
 
 # Version is provided by looking up the default datasource (acedb) and reading the
 # symlink target. This enables us to get the version even if acedb is down.
