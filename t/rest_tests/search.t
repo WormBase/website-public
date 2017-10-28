@@ -33,7 +33,7 @@
     sub test_markup {
         my $host = $configuration->{'host'};
         my $port = $configuration->{'port'};
-        my $url_html = "http://$host:$port/search/gene/dpy-/1?inline=1&content-type=text%2Fhtml";
+        my $url_html = "http://$host:$port/search/gene/dpy-/all?inline=1&content-type=text%2Fhtml";
         my $response_html = get($url_html);
 
         isnt($response_html, undef, 'data returned');
