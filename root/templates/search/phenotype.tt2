@@ -2,7 +2,7 @@
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
-[% desc = item.description.1 %]
+[% desc = item.description.join() %]
 <div class="text-min">
   [% markup(desc) %]
 </div>

@@ -19,3 +19,9 @@
 
 [% END %]
 
+[% IF item.description%]
+<div class="text-min">
+  [% ab = item.description | html %]
+  [% markup(ab,0) %]
+</div>
+[% END %]

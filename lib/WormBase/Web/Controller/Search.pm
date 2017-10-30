@@ -64,7 +64,8 @@ sub search :Path('/search') Args {
 
     my $api = $c->model('WormBaseAPI');
 
-    my ($tmp_query, $query_error) = $self->_prep_query($query);
+    my $search_engine = $api->get_search_engine();
+    my ($tmp_query, $query_error) = $self->_prep_query($search_engine, $query);
     $c->log->debug("search $tmp_query");
 
     my $search = $type unless($type=~/all/);
@@ -85,7 +86,7 @@ sub search :Path('/search') Args {
                            %{$c->req->params},
                            redirect => ''
                        );
-        my $match = $api->xapian->fetch(\%fetch_args);
+        my $match = $search_engine->fetch(\%fetch_args);
 
         if($match){
           my $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy}, $match->{coord}->{start});
@@ -94,8 +95,8 @@ sub search :Path('/search') Args {
           }
           $c->res->redirect($url, 307);
           return;
+        }
       }
-    }
 
       # if we're on a search page, setup the search first. Load results as ajax later.
       #   - try to redirect to exact match first
@@ -108,10 +109,12 @@ sub search :Path('/search') Args {
     }
 
     # this is the actual search
-    my ($it, $error) = $api->xapian->search({ query => $tmp_query,
-                                              page => $page_count,
-                                              type => $search,
-                                              species => $c->stash->{species} });
+    my ($it, $error) = $api->get_search_engine()->search({
+        query => $query,
+        page => $page_count,
+        type => $search,
+        species => $c->stash->{species}
+    });
 
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
@@ -252,8 +255,9 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   $c->log->debug("autocomplete search: $q, $type");
   my $api = $c->model('WormBaseAPI');
 
-  $q = $self->_prep_query($q, 1);
-  my $it = $api->xapian->autocomplete($q, ($type=~/all/) ? undef : $type);
+  my $search_engine = $api->get_search_engine();
+  $q = $self->_prep_query($search_engine, $q, 1);
+  my $it = $api->get_search_engine()->autocomplete($q, ($type=~/all/) ? undef : $type);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
@@ -287,8 +291,9 @@ sub search_count_estimate :Path('/search/count') :Args(3) {
     return;
   }
 
-  my $tmp_query = $self->_prep_query($q);
-  my $count = $api->xapian->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
+  my $search_engine = $api->get_search_engine();
+  my $tmp_query = $self->_prep_query($search_engine, $q);
+  my $count = $api->get_search_engine()->count_estimate($tmp_query, ($type=~/all/) ? undef : $type, $species);
   $count = $self->_fuzzy_estimate($count);
 
   $c->response->body("$count");
@@ -340,7 +345,12 @@ sub _get_url {
 }
 
 sub _prep_query {
-  my ($self, $q, $ac) = @_;
+  my ($self, $search_engine, $q, $ac) = @_;
+
+  if ($search_engine->meta->name =~ /Elasticsearch/) {
+      return $q;
+  }
+
   # $ac flags autocomplete
   my $error;
   $q ||= "*";
