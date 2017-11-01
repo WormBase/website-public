@@ -1,4 +1,5 @@
-<div class="how-to-star ui-corner-all"><h3>You can save items on WormBase!</h3>
+<h3>You can save items on WormBase!</h3>
+<div class="how-to-star ui-corner-all">
 When you see a star on WormBase:
 <ol>
 <li style="width:11em"><div id="test-star" class="star-status-example"></div>
@@ -13,4 +14,3 @@ Click on the star: </li>
 <script>
 (function(){var a=$jq(".star-instructions");$jq(".star-status-example").load("/rest/workbench/star?wbid=example&save_to=reports&name=example&class=page&url=%2F",function(){$jq(this).find("#save").click(function(){a.children().size()==0&&a.append($jq('<li>You will be notified at the top of your screen that the item has been saved.<li>View your item by opening <br /> &nbsp &nbsp<a href="javascript:void(0)" onClick=\'$jq("#nav-reports").trigger("open"); return true;\'>\'My Favorites\'</a> or <a href="javascript:void(0)" onClick=\'$jq("#nav-my_library").trigger("open"); return true;\'>\'My Library\'</a> (literature).</li><img src="/img/reports_library.jpg"><li>View your item by going to <a href="/me">\'My Wormbase\'</a></li><img src="/img/my_wormbase.jpg">')),a.show()})}),a.hide()})()
 </script>
-

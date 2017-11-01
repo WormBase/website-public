@@ -1065,7 +1065,7 @@ a#fade:hover, a.fade:hover {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 1em;
-  margin: 1em;
+  margin: 0.5em 0;
 }
 
 .highlight {

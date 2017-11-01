@@ -21,7 +21,9 @@
   [% results = c.stash.popular %]
   [% PROCESS "search/results.tt2" no_count=1%]
 [% ELSE %]
+  <div style="margin:0.5em 0;>
   [% PROCESS "shared/fields/user_history.tt2" %]
+  </div>
     <span>You must activate history logging to view the popular items on WormBase</span>
 [% END %]
 <br />
