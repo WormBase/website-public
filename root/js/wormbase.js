@@ -3426,7 +3426,7 @@ var Scrolling = (function(){
   });
 
   window.WB = WB;
-}(this,document);
+}(window,document);
 
 
 
