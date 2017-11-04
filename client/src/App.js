@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './legacy/css/jquery-ui.min.css';
-import './legacy/css/main.css';
 import './App.css';
-import './legacy/js/wormbase.js';
 
 
 class App extends Component {
