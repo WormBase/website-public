@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*!
  * WormBase
  * http://wormbase.org/
