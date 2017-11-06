@@ -120,10 +120,9 @@ sub footer :Path("/footer") Args(0) {
 }
 
 # everything processed by webpack
-sub static :Local :Path('/static') :Args   {
+sub static :LocalRegex('^(\d+\.)?static\/.+') {
     my ($self,$c,@path_parts) = @_;
     my $path = $c->request->path;
-
     my $dev_server_url = $c->config->{webpack_dev_server};
     if ($dev_server_url && LWP::Simple::head($dev_server_url)) {
         $c->response->redirect("$dev_server_url/$path");
