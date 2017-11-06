@@ -131,6 +131,16 @@ sub static :LocalRegex('^(\d+\.)?static\/.+') {
     }
 }
 
+sub hot_update_json :LocalRegex('^.*\.hot-update\.js(on)?$') {
+    my ($self,$c,@path_parts) = @_;
+    my $path = $c->request->path;
+
+    my $dev_server_url = $c->config->{webpack_dev_server};
+    if ($dev_server_url && LWP::Simple::head($dev_server_url)) {
+        $c->response->redirect("$dev_server_url/$path");
+    }
+}
+
 sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
     $c->stash->{'section'} = 'me';
