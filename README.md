@@ -18,6 +18,10 @@ Execute the following commands in a BASH terminal:
     perl Makefile.PL
     make installdeps
 
+    cd client/
+    npm install
+    npm run build
+
 If you did not start off in `/usr/local`, then you can either change the preset paths in the application's configuration files, or alternatively, carry out these two steps:
 
     sudo -E su
@@ -25,13 +29,14 @@ If you did not start off in `/usr/local`, then you can either change the preset 
     ln -s $approot
 
 ### Dependencies
-
-Most dependencies will be installed with `make installdeps`, but `perl Makefile.PL` itself is depending on some prerequisites:
+Most backend dependencies will be installed with `make installdeps`, but `perl Makefile.PL` itself is depending on some prerequisites:
 
 1.  a development environment: Perl, make, gcc & co.
 2.  `sudo cpan Module::Install`
 
 On Mac OS X, Perl comes preinstalled. The C development tools are installed from within Xcode, which is free, and then selecting from the menu/dialogs: Xcode -> Preferences... -> Downloads -> Components -> "Command Line Tools" -> "Install".
+
+For client-side application (`client/`), Node.js (>=6) and NPM (>=3) needs to be installed . Once NPM is installed, addition dependencies needs to be installed by running `npm install` command in the `client/` directory.
 
 Running the application
 -----------------------
@@ -44,6 +49,32 @@ Running the application via Starman
 -----------------------------------
 
     starman --port 8000 --workers 10 wormbase.psgi
+
+
+Develop and deploy JavaScript/Client-Side application
+-----------------------------------------------------
+
+To build the static assets **for deployment**:
+
+    cd client/
+    npm run build
+
+To run Webpack dev server with hot module replacement **for development**:
+
+* Ensure the Catalyst server is running. Choose a free port MY_PORT_NUMBER (
+different from the port that runs your Catalyst server). Then:
+
+```
+    cd client/
+    PORT=[MY_PORT_NUMBER] npm run start
+```
+
+* In wormbase_local.conf, let Catalyst server know to Webpack dev server to
+use for static assets
+
+```
+    webpack_dev_server = "http://dev.wormbase.org:[MY_PORT_NUMBER]"
+```
 
 Unit Testing
 ------------
