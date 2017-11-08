@@ -38,12 +38,31 @@ On Mac OS X, Perl comes preinstalled. The C development tools are installed from
 
 For client-side application (`client/`), Node.js (>=6) and NPM (>=3) needs to be installed . Once NPM is installed, addition dependencies needs to be installed by running `npm install` command in the `client/` directory.
 
-Running the application
+Run the application in development
 -----------------------
+First, build the static assets:
 
-To run the app using the built-in Catalyst server:
+    cd client/
+    npm run build
 
-    script/wormbase_server.pl -p 8000
+- **Note**: static assets **need to be re-build** whenever a JS, CSS, or image file is modified
+- **Note**: If developing the client-side application, you may want to automate and speed up the re-build step with [Setup client-side development enviroment](#setup-client-side-development-enviroment) below.
+
+Then, to run the app using the built-in Catalyst server:
+
+    script/wormbase_server.pl -p 8000 -r -d
+
+-**-p** port
+-**-r** auto restart server, when change in code is detected
+-**-d** debug
+
+Prior to deployment
+----------------------
+Re-build the static assets:
+
+    cd client/
+    npm run build
+
 
 Running the application via Starman
 -----------------------------------
@@ -51,17 +70,15 @@ Running the application via Starman
     starman --port 8000 --workers 10 wormbase.psgi
 
 
-Develop and deploy JavaScript/Client-Side application
+Setup client-side development enviroment
 -----------------------------------------------------
+By default, client-side assets (such as JS, CSS, and images) require a full re-build every time a change is made. This step is slow and requires the developer to manually enter `npm run build`.
 
-To build the static assets **for deployment**:
+**During development**, you might want to automate the process and speed things up. To do so, you can enable automatic incremental build by running a Webpack Dev Server. Catalyst server is configured to load static assets from the Webpack Dev Server (if it detects one) instead of the client/build/ folder in the local files system. Webpack Dev Server re-builds the assets when source code is modified.
 
-    cd client/
-    npm run build
+To start Webpack dev server:
 
-To run Webpack dev server with hot module replacement **for development**:
-
-* Ensure the Catalyst server is running. Choose a free port MY_PORT_NUMBER (
+* On the same machine where Catalyst server is running, choose a free port MY_PORT_NUMBER (
 different from the port that runs your Catalyst server). Then:
 
 ```
@@ -69,8 +86,7 @@ different from the port that runs your Catalyst server). Then:
     PORT=[MY_PORT_NUMBER] npm run start
 ```
 
-* In wormbase_local.conf, let Catalyst server know to Webpack dev server to
-use for static assets
+* In wormbase_local.conf, set the URL of Webpack dev server (such as):
 
 ```
     webpack_dev_server = "http://dev.wormbase.org:[MY_PORT_NUMBER]"
