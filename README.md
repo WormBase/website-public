@@ -43,6 +43,7 @@ Run the application in development
 First, build the static assets:
 
     cd client/
+    npm install  # install dependencies, only necessary if (devD/d)ependencies in package.json have changed
     npm run build
 
 - **Note**: static assets **need to be re-build** whenever a JS, CSS, or image file is modified
@@ -61,6 +62,7 @@ Prior to deployment
 Re-build the static assets:
 
     cd client/
+    npm install
     npm run build
 
 
