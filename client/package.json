@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "react-scripts-wb-catalyst": "file:///mnt/user-data/sgao/wb/create-react-app-wb-catalyst/packages/react-scripts/react-scripts-wb-catalyst-0.9.0.tgz"
+    "@wormbase/react-scripts-for-catalyst": "0.9.1-0"
   },
   "dependencies": {
     "react": "16.0.0",
