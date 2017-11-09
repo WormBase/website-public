@@ -46,9 +46,11 @@ First, build the static assets:
     npm install  # install dependencies, only necessary if (devD/d)ependencies in package.json have changed
     npm run build
 
-- **Note**: You might see `npm install` and `npm run build` several times in this README. The reason is that:
-    - the former needs tobe re-run when and **only when** new (devD/d)ependencies are declared in package.json
-    - the latter needs to be re-run when and **only when** a JS, CSS, or image file is modified
+- **Note**: You might see `npm install` and `npm run build` several times in this README. Here is some explanation:
+    - The former needs to be re-run when and **only when** new (devD/d)ependencies are declared in client/package.json
+    - The latter needs to be re-run when and **only when** a JS, CSS, or image file is modified
+    - It’s always safe to do either command any time during development
+    - The client/mode_modules and client/build folder contain only derived/auto-generated content. The client/node_modules folder is created and modified by `npm install`. the client/build folder is created and modified by `npm build`. Both are considered safe to delete and recreate by calling the respective command during development. (So please don’t modify content of the folder manually, as the change won’t persist).
 - **Note**: If you are making changes to JS, CSS and images, you may want to automate and speed up the re-build step with instructions below to Setup development enviroment for JS and CSS development.
 
 Then, to run the app using the built-in Catalyst server:
