@@ -46,33 +46,20 @@ First, build the static assets:
     npm install  # install dependencies, only necessary if (devD/d)ependencies in package.json have changed
     npm run build
 
-- **Note**: static assets **need to be re-build** whenever a JS, CSS, or image file is modified
-- **Note**: If developing the client-side application, you may want to automate and speed up the re-build step with [Setup client-side development enviroment](#setup-client-side-development-enviroment) below.
+- **Note**: You might see `npm install` and `npm run build` several times in this README. The reason is that:
+    - the former needs tobe re-run when and **only when** new (devD/d)ependencies are declared in package.json
+    - the latter needs to be re-run when and **only when** a JS, CSS, or image file is modified
+- **Note**: If you are making changes to JS, CSS and images, you may want to automate and speed up the re-build step with instructions below to Setup development enviroment for JS and CSS development.
 
 Then, to run the app using the built-in Catalyst server:
 
     script/wormbase_server.pl -p 8000 -r -d
 
--**-p** port
--**-r** auto restart server, when change in code is detected
--**-d** debug
+- **-p** port
+- **-r** auto restart server, when change in code is detected
+- **-d** debug
 
-Prior to deployment
-----------------------
-Re-build the static assets:
-
-    cd client/
-    npm install
-    npm run build
-
-
-Running the application via Starman
------------------------------------
-
-    starman --port 8000 --workers 10 wormbase.psgi
-
-
-Setup client-side development enviroment
+(Additional hightly recommended) Setup development enviroment for JS and CSS development
 -----------------------------------------------------
 By default, client-side assets (such as JS, CSS, and images) require a full re-build every time a change is made. This step is slow and requires the developer to manually enter `npm run build`.
 
@@ -93,6 +80,21 @@ different from the port that runs your Catalyst server). Then:
 ```
     webpack_dev_server = "http://dev.wormbase.org:[MY_PORT_NUMBER]"
 ```
+
+Prior to deployment
+----------------------
+Re-build the static assets:
+
+    cd client/
+    npm install
+    npm run build
+
+
+Running the application via Starman
+-----------------------------------
+
+    starman --port 8000 --workers 10 wormbase.psgi
+
 
 Unit Testing
 ------------
