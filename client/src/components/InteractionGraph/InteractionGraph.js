@@ -60,32 +60,27 @@ export default class InteractionGraph extends Component {
     });
   }
 
-    render() {
-        return (
-            <div>
-            <div>
-            {
-                this.props.interactions.reduce((typeAccumulator, interaction) => {
-                    const interactionType = interaction.type;
-                    if (typeAccumulator.indexOf(interactionType) === -1) {
-                        typeAccumulator.push(interactionType);
-                    }
-                    return typeAccumulator;
-                }, []).map((interactionType) => {
-                    return (
-                        <p key={interactionType}>
-                        <input
-                        type="checkbox"
-                        onChange={() => this.handleInteractionTypeSelection(interactionType)}
-                        checked={this.isInteractionTypeSelected(interactionType)}
-                        />
-                        {interactionType}
-                        </p>
-                    );
-                })
-            }
-            </div>
-            </div>
-        );
+  render() {
+    const interactionTypes = [... new Set(this.props.interactions.map((interaction) => interaction.type))];
+    return (
+      <div>
+        <div>
+        {
+          interactionTypes.map((interactionType) => {
+            return (
+              <p key={interactionType}>
+                <input
+                  type="checkbox"
+                  onChange={() => this.handleInteractionTypeSelection(interactionType)}
+                  checked={this.isInteractionTypeSelected(interactionType)}
+                />
+                {interactionType}
+              </p>
+            );
+          })
+        }
+        </div>
+      </div>
+    );
   }
 }
