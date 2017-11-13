@@ -25,7 +25,7 @@ export default class InteractionGraph extends Component {
   }
 
   getInferredTypes = (type) => {
-    const inferredTypes = [type];
+    const inferredTypes = [type, 'all'];
     inferredTypes.push(type.split(":")[0]);
     if (type.match(/gi-module-.+/)) {
       inferredTypes.push("genetic");
@@ -46,8 +46,12 @@ export default class InteractionGraph extends Component {
       if (this.isInteractionTypeSelected(type)) {
         return {
           interactionTypeSelected: prevState.interactionTypeSelected.filter(
-            (type) => {
-              return inferredTypes.indexOf(type) === -1;
+            (prevType) => {
+              return (
+                inferredTypes.indexOf(prevType) === -1 &&
+                prevType.indexOf(type) === -1 &&
+                type !== 'all'
+              );
             }
           )
         };
@@ -60,26 +64,40 @@ export default class InteractionGraph extends Component {
     });
   }
 
+  getInteractionTypeName = (interactionType) => {
+    const parts = ('' || interactionType).split(':');
+    return parts[parts.length - 1];
+  }
+
+  renderInteractionTypeSelect = (interactionType) => {
+    return (
+      <span>
+        <input
+          type="checkbox"
+          onChange={() => this.handleInteractionTypeSelection(interactionType)}
+          checked={this.isInteractionTypeSelected(interactionType)}
+        />
+        {this.getInteractionTypeName(interactionType)}
+      </span>
+    );
+  }
+
   render() {
     const interactionTypes = [... new Set(this.props.interactions.map((interaction) => interaction.type))];
     return (
       <div>
-        <div>
-        {
-          interactionTypes.map((interactionType) => {
-            return (
-              <p key={interactionType}>
-                <input
-                  type="checkbox"
-                  onChange={() => this.handleInteractionTypeSelection(interactionType)}
-                  checked={this.isInteractionTypeSelected(interactionType)}
-                />
-                {interactionType}
-              </p>
-            );
-          })
-        }
-        </div>
+        {this.renderInteractionTypeSelect('all')}
+        <ul>
+          {
+            interactionTypes.map((interactionType) => {
+              return (
+                <li>
+                  {this.renderInteractionTypeSelect(interactionType)}
+                </li>
+              );
+            })
+          }
+        </ul>
       </div>
     );
   }
