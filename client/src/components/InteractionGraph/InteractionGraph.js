@@ -38,13 +38,22 @@ export default class InteractionGraph extends Component {
   }
 
   getDescentTypes = (type) => {
-    const interactionTypes = [... new Set(this.props.interactions.map((interaction) => interaction.type))];
+    const interactionTypes = [
+      'predicted',
+      'physical',
+      'regulatory',
+      'genetic',
+      'gi-module-one',
+      'gi-module-two',
+      'gi-module-three',
+      ... new Set(this.props.interactions.map((interaction) => interaction.type))
+    ];
     if (type === 'all') {
       return interactionTypes;
     } else if (type === 'genetic') {
       return interactionTypes.filter((t) => t.match(/gi-module-.+/));
     } else {
-      return interactionTypes.filter((t) => t.indexOf(type) !== -1);
+      return interactionTypes.filter((t) => t.indexOf(type) !== -1 && t !== type);
     }
   }
 
@@ -84,14 +93,14 @@ export default class InteractionGraph extends Component {
 
   renderInteractionTypeSelect = (interactionType) => {
     return (
-      <span>
+      <label>
         <input
           type="checkbox"
           onChange={() => this.handleInteractionTypeSelection(interactionType)}
           checked={this.isInteractionTypeSelected(interactionType)}
         />
         {this.getInteractionTypeName(interactionType)}
-      </span>
+      </label>
     );
   }
 
@@ -99,17 +108,62 @@ export default class InteractionGraph extends Component {
     const interactionTypes = [... new Set(this.props.interactions.map((interaction) => interaction.type))];
     return (
       <div>
+        <h4>Interaction types:</h4>
         {this.renderInteractionTypeSelect('all')}
         <ul>
-          {
-            interactionTypes.map((interactionType) => {
-              return (
-                <li>
-                  {this.renderInteractionTypeSelect(interactionType)}
-                </li>
-              );
-            })
-          }
+          <li>
+            {this.renderInteractionTypeSelect('predicted')}
+          </li>
+          <li>
+            {this.renderInteractionTypeSelect('physical')}
+            <ul>
+              {
+                this.getDescentTypes('physical').map((t) => {
+                  return (<li key={t}>{this.renderInteractionTypeSelect(t)}</li>)
+                })
+              }
+            </ul>
+          </li>
+          <li>
+            {this.renderInteractionTypeSelect('regulatory')}
+            <ul>
+              {
+                this.getDescentTypes('regulatory').map((t) => {
+                  return (<li key={t}>{this.renderInteractionTypeSelect(t)}</li>)
+                })
+              }
+            </ul>
+          </li>
+          <li>
+            {this.renderInteractionTypeSelect('genetic')}
+            <ul>
+              {
+                ['gi-module-one', 'gi-module-two', 'gi-module-three'].map((giModule) => {
+                  const descendentTypes = this.getDescentTypes(giModule);
+                  return (
+                    <li>
+                      {this.renderInteractionTypeSelect(giModule)}
+                      <ul key={giModule}>
+                        {
+                          descendentTypes.map((t) => (
+                            <li key={t}>
+                              {this.renderInteractionTypeSelect(t)}
+                            </li>
+                          ))
+                        }
+                      </ul>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </li>
+        </ul>
+        <ul>
+        </ul>
+        <h4>Interactor types</h4>
+        <ul>
+
         </ul>
       </div>
     );
