@@ -17,7 +17,19 @@
  * author: Abigail Cabunoc
  *         abigail.cabunoc@oicr.on.ca
  */
+import React, { Component } from '../../client/node_modules/react';
+import ReactDOM from '../../client/node_modules/react-dom';
+import InteractionGraph, { InteractionGraphDataProvider } from '../../client/src/components/InteractionGraph';
 
+class PlaceHolder extends Component {
+  render() {
+    return (
+      <h1>PlaceHolder</h1>
+    );
+  };
+}
+
+ReactDOM.render(<PlaceHolder />, document.getElementById('root'));
 
 +function(window, document, undefined){
   var location = window.location,
@@ -1974,10 +1986,18 @@ var Scrolling = (function(){
     }
 
     function setupCytoscapeInteraction(data, types, clazz){
-      Plugin.getPlugin('cytoscape_js',function(){
-        loadCytoscapeForInteraction(data, types, clazz)
-        return;
-      });
+      const InteractionGraphWithData = () => {
+        return (
+          <InteractionGraphDataProvider>
+            {(providedProps) => <InteractionGraph {...providedProps} />}
+          </InteractionGraphDataProvider>
+        );
+      };
+      ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
+      /* Plugin.getPlugin('cytoscape_js',function(){
+       *   loadCytoscapeForInteraction(data, types, clazz)
+       *   return;
+       * });*/
     }
 
 
