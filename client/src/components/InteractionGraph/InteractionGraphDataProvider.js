@@ -5,7 +5,9 @@ export default class InteractionGraphDataProvider extends Component {
       interactions: [
         {type: "gi-module-one"},
         {type: "gi-module-one:a-phenotypic"},
-        {type: "gi-module-two:semi-suppressing"}
+        {type: "gi-module-one:cis-phenotypic"},
+        {type: "gi-module-two:semi-suppressing"},
+        {type: "gi-module-three:neutral"}
       ]
     });
   }
