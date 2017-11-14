@@ -54,6 +54,7 @@ First, build the static assets:
 - **Note**: If you are making changes to JS, CSS and images, you may want to automate and speed up the re-build step with instructions below to Setup development enviroment for JS and CSS development.
 
 Then, to run the app using the built-in Catalyst server:
+
     # ensure you are at project root (for example `cd ..` if necessary)
     ./script/wormbase_server.pl -p 8000 -r -d
 
