@@ -1,13 +1,22 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
+
 export default class InteractionGraphDataProvider extends Component {
+
   render() {
-    return this.props.children({
-      interactions: [
-        {type: "gi-module-one:a-phenotypic"},
-        {type: "gi-module-one:cis-phenotypic"},
-        {type: "gi-module-two:semi-suppressing"},
-        {type: "gi-module-three:neutral"}
-      ]
-    });
+    console.log(this.props.data);
+    const data = this.props.data;
+    const error = this.props.error;
+    return (
+      <div>
+        {
+          error || (
+            data ? this.props.children({
+              interactorMap: data.data.nodes,
+              interactions: data.data.edges
+            }) : <span>Loading...</span>
+          )
+        }
+      </div>
+    );
   }
 }

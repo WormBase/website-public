@@ -1,6 +1,6 @@
 
 <div id="interaction-graph-view"></div>
 
-<script type="text/javascript">WB.setupCytoscapeInteraction([%- json_encode(interaction_details.data || fields.interactions.data || {}) -%]);</script>
+<script type="text/javascript">WB.setupCytoscapeInteraction([%- json_encode(interaction_details || fields.interactions || {}) -%]);</script>
 
 [%- content -%]

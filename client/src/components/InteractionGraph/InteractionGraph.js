@@ -8,14 +8,20 @@ export default class InteractionGraph extends Component {
       PropTypes.shape({
         type: PropTypes.string
       })
+    ),
+    interactorMap: PropTypes.objectOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired
+      })
     )
   };
 
   resetSelectedTypes = () => {
     const defaultExcludes = new Set(['predicted', 'does-not-regulate', 'gi-module-three:neutral']);
-    const availableTypes = [... new Set(this.props.interactions.map((interaction) => interaction.type))];
+    const availableTypes = new Set(this.props.interactions.map((interaction) => interaction.type));
     this.setState({
-      interactionTypeSelected: availableTypes.filter(
+      interactionTypeSelected: [...availableTypes].filter(
         (t) => !defaultExcludes.has(t)
       )
     })
@@ -23,6 +29,9 @@ export default class InteractionGraph extends Component {
 
   componentWillMount() {
     this.resetSelectedTypes();
+  }
+
+  componentDidMount() {
     this.setupCytoscape();
   }
 
@@ -31,7 +40,26 @@ export default class InteractionGraph extends Component {
   }
 
   setupCytoscape = () => {
-    console.log(cytoscape);
+    const nodes = Object.keys(this.props.interactorMap).map((interactorId) => {
+      const {label} = this.props.interactorMap[interactorId];
+      return {
+        id: interactorId,
+        label: label,
+        color: 'gray'
+      };
+    });
+    const edges = this.props.interactions.map(({effector, affected, direction, type}) => {
+      const source = effector.id;
+      const target = affected.id;
+      return {
+        id: `${source}|${target}|${type}`,
+        source: source,
+        target: target,
+        color: 'gray',
+        directioned: direction !== "non-directional"
+      };
+    });
+    console.log(nodes);
   }
 
   getInferredTypes = (type) => {
@@ -44,6 +72,7 @@ export default class InteractionGraph extends Component {
   }
 
   getDescentTypes = (type) => {
+    const availableTypes = new Set(this.props.interactions.map((interaction) => interaction.type));
     const interactionTypes = [
       'predicted',
       'physical',
@@ -52,7 +81,7 @@ export default class InteractionGraph extends Component {
       'gi-module-one',
       'gi-module-two',
       'gi-module-three',
-      ... new Set(this.props.interactions.map((interaction) => interaction.type))
+      ...availableTypes
     ];
     if (type === 'all') {
       return interactionTypes;
@@ -111,7 +140,6 @@ export default class InteractionGraph extends Component {
   }
 
   render() {
-    const interactionTypes = [... new Set(this.props.interactions.map((interaction) => interaction.type))];
     return (
       <div>
         <div ref={(c) => this._cytoscapeContainer = c } />
