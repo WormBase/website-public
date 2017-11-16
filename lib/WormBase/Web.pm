@@ -524,11 +524,11 @@ sub _setup_static {
     $c->config(static => {
         dirs         => [qw/ css js img media tmp /],
         include_path => [
+            'client/build',  # serve favicon and asset-manifest.json
+            'client/build/static',
             '/usr/local/wormbase/tmp',
             '/usr/local/wormbase/shared/tmp',
             '/usr/local/wormbase/website-admin/html',
-            'client/build',  # serve favicon and asset-manifest.json
-            'client/build/static',
             __PACKAGE__->config->{root},
             __PACKAGE__->config->{shared_html_base},
 	    ],
