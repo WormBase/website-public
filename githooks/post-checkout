@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+prevHEAD=$1
+newHEAD=$2
+checkoutType=$3
+
+
+if [ $checkoutType == "1" ]; then
+    echo "Post-checkout hook: re-building static assets in client/build"
+    (cd client/ && npm run build)
+    exit 1;
+fi
