@@ -64,8 +64,8 @@ Run the application in development
     - The former needs to be re-run when and **only when** new (devD/d)ependencies are declared in client/package.json
     - The latter needs to be re-run when and **only when** a JS, CSS, or image file is modified
     - It’s always safe to do either command any time during development
-    - If you have setup a **post-checkout** githook to automate static asset re-build, you may skip this step when and **only when you checkout a branch**. If you modify a JS or CSS file, or if you merge in changes involving JS or CSS, you still need to manually re-build with `npm install` (or `yarn install`) and `npm run build` (or `yarn run build`).
     - The client/mode_modules and client/build folder contain only derived/auto-generated content. The client/node_modules folder is created and modified by `npm install`. the client/build folder is created and modified by `npm run build`. Both are considered safe to delete and recreate by calling the respective command during development. (So please don’t modify content of the folder manually, as the change won’t persist).
+- **Note**: If you have setup a **post-checkout** githook to automate static asset re-build, you may skip this step when and **only when you checkout a branch**. This **does not help**, if you modify a JS or CSS file, or if you merge in changes involving JS or CSS. In those cases, you still need to manually re-build with `npm install` (or `yarn install`) and `npm run build` (or `yarn run build`).
 - **Note**: If you are making changes to JS, CSS and images, you may want to automate and speed up the re-build step with instructions below to Setup development enviroment for JS and CSS development.
 
 **Then, to run the app using the built-in Catalyst server:**
@@ -82,6 +82,8 @@ Run the application in development
 By default, client-side assets (such as JS, CSS, and images) require a full re-build every time a change is made. This step is slow and requires the developer to manually enter `npm run build`.
 
 **During development**, you might want to automate the process and speed things up. To do so, you can enable automatic incremental build by running a Webpack Dev Server. Catalyst server is configured to load static assets from the Webpack Dev Server (if it detects one) instead of the client/build/ folder in the local files system. Webpack Dev Server re-builds the assets when source code is modified.
+
+**Note**: the webpack dev server does **not** modify the content in client/build (but only re-build and serve what is memory). To change the content, you will need to run `npm run build`.
 
 To start Webpack dev server:
 
