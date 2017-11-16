@@ -9,6 +9,6 @@ checkoutType=$3
 
 if [ $checkoutType == "1" ]; then
     echo "Post-checkout hook: re-building static assets in client/build"
-    (cd client/ && npm run build)
+    (cd client/ && yarn install && yarn run build)
     exit 1;
 fi
