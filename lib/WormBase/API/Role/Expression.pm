@@ -432,8 +432,6 @@ sub fpkm_expression {
     my @controls = (); #tracks analysis object for control statistics
     my @regular_analyses = (); # tracks regular analysis object
 
-    my $rserve = $self->_api->_tools->{rserve};
-
     my @fpkm_map = map { # iterating on life stages
         my $life_stage_ace = $_;
 
