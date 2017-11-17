@@ -92,7 +92,7 @@ different from the port that runs your Catalyst server). Then:
 
 ```
     cd client/
-    PORT=[MY_PORT_NUMBER] npm run start
+    PORT=[MY_PORT_NUMBER] HOST=[MY_HOST_URL] npm run start
 ```
 
 * In wormbase_local.conf, set the URL of Webpack dev server (such as):
