@@ -14,7 +14,7 @@
    ELSE;
      debug("Applying HTML page layout wrappers to $template.name\n");
 
-     IF c.stash.use_dev_template;
+     IF should_use_dev_template;
          IF is_classic;
               content WRAPPER boilerplate/dev_html;
          ELSE;
