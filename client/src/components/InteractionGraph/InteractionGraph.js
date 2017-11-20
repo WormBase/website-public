@@ -141,9 +141,9 @@ export default class InteractionGraph extends Component {
                 ['gi-module-one', 'gi-module-two', 'gi-module-three'].map((giModule) => {
                   const descendentTypes = this.getDescentTypes(giModule);
                   return (
-                    <li>
+                    <li key={giModule}>
                       {this.renderInteractionTypeSelect(giModule)}
-                      <ul key={giModule}>
+                      <ul>
                         {
                           descendentTypes.map((t) => (
                             <li key={t}>
