@@ -17,19 +17,14 @@
  * author: Abigail Cabunoc
  *         abigail.cabunoc@oicr.on.ca
  */
-import React, { Component } from '../../client/node_modules/react';
-import ReactDOM from '../../client/node_modules/react-dom';
-import InteractionGraph, { InteractionGraphDataProvider } from '../../client/src/components/InteractionGraph';
 
-class PlaceHolder extends Component {
-  render() {
-    return (
-      <h1>PlaceHolder</h1>
-    );
-  };
-}
+/* This module stays in ES5 to avoid strict mode being enabled */
+/* https://github.com/facebookincubator/create-react-app/issues/3318 */
 
-ReactDOM.render(<PlaceHolder />, document.getElementById('root'));
+var React = require('../../client/node_modules/react');
+var ReactDOM = require('../../client/node_modules/react-dom');
+var InteractionGraph = require('../../client/src/components/InteractionGraph').default;
+var InteractionGraphDataProvider = require('../../client/src/components/InteractionGraph').InteractionGraphDataProvider;
 
 +function(window, document, undefined){
   var location = window.location,
