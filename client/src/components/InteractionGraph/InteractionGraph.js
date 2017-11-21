@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cytoscape from 'cytoscape';
+import cytoscapecola from 'cytoscape-cola';
+cytoscape.use(cytoscapecola);
 
 export default class InteractionGraph extends Component {
   static propTypes = {
@@ -120,9 +122,9 @@ export default class InteractionGraph extends Component {
           'opacity': 0.9,
           'border-width': 0,
           'shape': 'data(shape)',
-          'height': 10,
-          'width': 10,
-          'font-size': 4,
+          'height': 15,
+          'width': 15,
+          'font-size': 10,
           'text-valign': 'center',
           'color': 'black',
           'text-outline-color': 'white',
@@ -161,7 +163,8 @@ export default class InteractionGraph extends Component {
         }),
 
       layout: {
-        name: 'cose',
+        name: 'cola',
+//        name: 'cose',
 //        fit: false,
 
         // Node repulsion (non overlapping) multiplier
