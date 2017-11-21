@@ -23,8 +23,6 @@
 
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
-var InteractionGraph = require('../../client/src/components/InteractionGraph').default;
-var InteractionGraphDataProvider = require('../../client/src/components/InteractionGraph').InteractionGraphDataProvider;
 
 +function(window, document, undefined){
   var location = window.location,
@@ -1981,14 +1979,20 @@ var Scrolling = (function(){
     }
 
     function setupCytoscapeInteraction(data, types, clazz){
-      const InteractionGraphWithData = () => {
-        return (
-          <InteractionGraphDataProvider>
-            {(providedProps) => <InteractionGraph {...providedProps} />}
-          </InteractionGraphDataProvider>
-        );
-      };
-      ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
+      import('../../client/src/components/InteractionGraph').then(
+        (module) => {
+          const InteractionGraph = module.default;
+          const { InteractionGraphDataProvider } = module;
+          const InteractionGraphWithData = () => {
+            return (
+              <InteractionGraphDataProvider data={data}>
+                {(providedProps) => <InteractionGraph {...providedProps} />}
+              </InteractionGraphDataProvider>
+            );
+          };
+          ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
+        }
+      );
       /* Plugin.getPlugin('cytoscape_js',function(){
        *   loadCytoscapeForInteraction(data, types, clazz)
        *   return;

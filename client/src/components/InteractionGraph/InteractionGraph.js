@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import cytoscape from 'cytoscape';
 
 export default class InteractionGraph extends Component {
   static propTypes = {
@@ -22,10 +23,15 @@ export default class InteractionGraph extends Component {
 
   componentWillMount() {
     this.resetSelectedTypes();
+    this.setupCytoscape();
   }
 
   componentWillReceiveProps() {
     this.resetSelectedTypes();
+  }
+
+  setupCytoscape = () => {
+    console.log(cytoscape);
   }
 
   getInferredTypes = (type) => {
@@ -108,6 +114,7 @@ export default class InteractionGraph extends Component {
     const interactionTypes = [... new Set(this.props.interactions.map((interaction) => interaction.type))];
     return (
       <div>
+        <div ref={(c) => this._cytoscapeContainer = c } />
         <h4>Interaction types:</h4>
         {this.renderInteractionTypeSelect('all')}
         <ul>

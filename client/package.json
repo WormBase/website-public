@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "@wormbase/react-scripts-for-catalyst": "0.9.1-2"
+    "@wormbase/react-scripts-for-catalyst": "/home/sgao/wb/create-react-app-for-catalyst/packages/react-scripts/wormbase-react-scripts-for-catalyst-1.0.9-1.tgz"
   },
   "dependencies": {
+    "cytoscape": "^3.2.6",
     "react": "16.0.0",
     "react-dom": "16.0.0"
   },
