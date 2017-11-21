@@ -39,41 +39,65 @@ export default class InteractionGraph extends Component {
     this.resetSelectedTypes();
   }
 
+  componentDidUpdate() {
+    this.setupCytoscape();
+  }
+
   componentWillUnmount() {
     this._cy.destroy();
   }
 
   setupCytoscape = () => {
-    const nodes = Object.keys(this.props.interactorMap).map((interactorId) => {
-      const {label} = this.props.interactorMap[interactorId];
-      return {
-        group: 'nodes',
-        data: {
-          id: interactorId,
-          label: label,
-          color: 'gray',
-          shape: 'ellipse'
-        }
-      };
-    });
-    const edges = this.props.interactions.map(({effector, affected, direction, type, citations}) => {
-      const source = effector.id;
-      const target = affected.id;
-      return {
-        group: 'edges',
-        data: {
-          id: `${source}|${target}|${type}`,
-          source: source,
-          target: target,
-          color: 'gray',
-          directioned: direction !== "non-directional",
-          width: Math.min(citations.length, 10),
-          type: type,
-        }
-      };
-    });
+    const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
+    const edges = this.props.interactions.filter(
+      (edge) => {
+        return interactionTypeSelected.has(edge.type);
+      }
+    ).map(
+      ({effector, affected, direction, type, citations}) => {
+        const source = effector.id;
+        const target = affected.id;
+        return {
+          group: 'edges',
+          data: {
+            id: `${source}|${target}|${type}`,
+            source: source,
+            target: target,
+            color: 'gray',
+            directioned: direction !== "non-directional",
+            weight: Math.min(citations.length, 10),
+            type: type,
+          }
+        };
+      }
+    );
+
+    const participatingNodes = new Set([
+      ...edges.map((edge) => edge.data.source),
+      ...edges.map((edge) => edge.data.target)
+    ]);
+    const nodes = Object.keys(this.props.interactorMap).filter(
+      (interactorId) => participatingNodes.has(interactorId)
+    ).map(
+      (interactorId) => {
+        const {label} = this.props.interactorMap[interactorId];
+        return {
+          group: 'nodes',
+          data: {
+            id: interactorId,
+            label: label,
+            color: 'gray',
+            shape: 'ellipse'
+          }
+        };
+      }
+    );
+
     const elements = [...nodes, ...edges];
     console.log(elements);
+    if (this._cy) {
+      this._cy.destroy();
+    }
     this._cy = cytoscape({
       container: this._cytoscapeContainer,
       elements: elements,
@@ -95,7 +119,7 @@ export default class InteractionGraph extends Component {
         })
         .selector('edge')
         .css({
-          'width': 'data(width)',
+          'width': 'data(weight)',
           'opacity':0.4,
           'line-color': 'data(color)',
           'line-style': 'solid',
@@ -126,7 +150,16 @@ export default class InteractionGraph extends Component {
         }),
 
       layout: {
-        name: 'cose'
+        name: 'cose',
+//        fit: false,
+
+        // Node repulsion (non overlapping) multiplier
+        nodeRepulsion: function( node ){ return 1024; },
+        // Ideal edge (non nested) length
+//        idealEdgeLength: function( edge ){ return 4; },
+
+        // Divisor to compute edge forces
+        // edgeElasticity: function( edge ){ return 320 / edge._private.data.weight; },
       }
 
     });
