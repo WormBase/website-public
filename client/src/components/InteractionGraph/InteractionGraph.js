@@ -82,13 +82,16 @@ export default class InteractionGraph extends Component {
         .selector('node')
         .css({
           'label': 'data(label)',
-          'opacity': 0.7,
+          'opacity': 0.9,
           'border-width': 0,
           'shape': 'data(shape)',
+          'height': 10,
+          'width': 10,
+          'font-size': 4,
           'text-valign': 'center',
           'color': 'black',
           'text-outline-color': 'white',
-          'text-outline-width': 2
+          'text-outline-width': 1,
         })
         .selector('edge')
         .css({
@@ -119,7 +122,7 @@ export default class InteractionGraph extends Component {
         .css({
           'opacity': 1,
           'border-color': 'black',
-          'border-width': 2,
+          'border-width': 1,
         }),
 
       layout: {
