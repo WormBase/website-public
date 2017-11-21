@@ -49,6 +49,17 @@ export default class InteractionGraph extends Component {
 
   setupCytoscape = () => {
     const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
+    console.log(interactionTypeSelected);
+    const getEdgeColor = (type) => {
+      const colorScheme = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E" ];
+      const inferredTypes = new Set(this.getInferredTypes(type));
+      const tests = [
+        () => inferredTypes.has('physical'),
+        () => inferredTypes.has('genetic'),
+      ];
+      const colorIndex = tests.findIndex((test, index) => test());;
+      return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
+    }
     const edges = this.props.interactions.filter(
       (edge) => {
         return interactionTypeSelected.has(edge.type);
@@ -63,10 +74,10 @@ export default class InteractionGraph extends Component {
             id: `${source}|${target}|${type}`,
             source: source,
             target: target,
-            color: 'gray',
+            color: getEdgeColor(type),
             directioned: direction !== "non-directional",
             weight: Math.min(citations.length, 10),
-            type: type,
+            type: type
           }
         };
       }
@@ -154,7 +165,7 @@ export default class InteractionGraph extends Component {
 //        fit: false,
 
         // Node repulsion (non overlapping) multiplier
-        nodeRepulsion: function( node ){ return 1024; },
+//        nodeRepulsion: function( node ){ return 1024; },
         // Ideal edge (non nested) length
 //        idealEdgeLength: function( edge ){ return 4; },
 
