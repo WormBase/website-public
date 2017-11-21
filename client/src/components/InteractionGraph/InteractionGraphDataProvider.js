@@ -12,7 +12,7 @@ export default class InteractionGraphDataProvider extends Component {
           error || (
             data ? this.props.children({
               interactorMap: data.data.nodes,
-              interactions: data.data.edges
+              interactions: data.data.edges_all || data.data.edges
             }) : <span>Loading...</span>
           )
         }

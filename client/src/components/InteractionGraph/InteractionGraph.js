@@ -39,27 +39,94 @@ export default class InteractionGraph extends Component {
     this.resetSelectedTypes();
   }
 
+  componentWillUnmount() {
+    this._cy.destroy();
+  }
+
   setupCytoscape = () => {
     const nodes = Object.keys(this.props.interactorMap).map((interactorId) => {
       const {label} = this.props.interactorMap[interactorId];
       return {
-        id: interactorId,
-        label: label,
-        color: 'gray'
+        group: 'nodes',
+        data: {
+          id: interactorId,
+          label: label,
+          color: 'gray',
+          shape: 'ellipse'
+        }
       };
     });
-    const edges = this.props.interactions.map(({effector, affected, direction, type}) => {
+    const edges = this.props.interactions.map(({effector, affected, direction, type, citations}) => {
       const source = effector.id;
       const target = affected.id;
       return {
-        id: `${source}|${target}|${type}`,
-        source: source,
-        target: target,
-        color: 'gray',
-        directioned: direction !== "non-directional"
+        group: 'edges',
+        data: {
+          id: `${source}|${target}|${type}`,
+          source: source,
+          target: target,
+          color: 'gray',
+          directioned: direction !== "non-directional",
+          width: Math.min(citations.length, 10),
+          type: type,
+        }
       };
     });
-    console.log(nodes);
+    const elements = [...nodes, ...edges];
+    console.log(elements);
+    this._cy = cytoscape({
+      container: this._cytoscapeContainer,
+      elements: elements,
+      style: cytoscape
+        .stylesheet()
+        .selector('node')
+        .css({
+          'label': 'data(label)',
+          'opacity': 0.7,
+          'border-width': 0,
+          'shape': 'data(shape)',
+          'text-valign': 'center',
+          'color': 'black',
+          'text-outline-color': 'white',
+          'text-outline-width': 2
+        })
+        .selector('edge')
+        .css({
+          'width': 'data(width)',
+          'opacity':0.4,
+          'line-color': 'data(color)',
+          'line-style': 'solid',
+          'curve-style': 'bezier'
+
+        })
+        .selector('edge[type="predicted"]')
+        .css({
+          'line-style': 'dotted'
+        })
+        .selector('edge[?directioned]')
+        .css({
+          'target-arrow-shape': 'triangle',
+          'target-arrow-color': 'data(color)',
+          'source-arrow-color': 'data(color)'
+        })
+        .selector('node[mainNode]')
+        .css({
+          'height': '40px',
+          'width': '40px',
+          'background-color': 'red'
+        })
+        .selector(':selected')
+        .css({
+          'opacity': 1,
+          'border-color': 'black',
+          'border-width': 2,
+        }),
+
+      layout: {
+        name: 'cose'
+      }
+
+    });
   }
 
   getInferredTypes = (type) => {
@@ -142,7 +209,14 @@ export default class InteractionGraph extends Component {
   render() {
     return (
       <div>
-        <div ref={(c) => this._cytoscapeContainer = c } />
+        <div
+          ref={(c) => this._cytoscapeContainer = c }
+          style={{
+            height: 750,
+            width: 750,
+            border: 'solid 1px black',
+          }}
+        />
         <h4>Interaction types:</h4>
         {this.renderInteractionTypeSelect('all')}
         <ul>
