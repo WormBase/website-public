@@ -62,6 +62,7 @@ export default class InteractionGraph extends Component {
       const colorIndex = tests.findIndex((test, index) => test());;
       return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
     }
+
     const edges = this.props.interactions.filter(
       (edge) => {
         return interactionTypeSelected.has(edge.type);
@@ -93,14 +94,23 @@ export default class InteractionGraph extends Component {
       (interactorId) => participatingNodes.has(interactorId)
     ).map(
       (interactorId) => {
-        const {label} = this.props.interactorMap[interactorId];
+        const {label, ...rest} = this.props.interactorMap[interactorId];
+        const getShape = (type) => {
+          const type2shape = {
+            rearrangement: "hexagon",
+            molecule: "triangle",
+            feature: "rectangle",
+          };
+          return type2shape[type] || 'ellipse';
+        };
+
         return {
           group: 'nodes',
           data: {
             id: interactorId,
             label: label,
             color: 'gray',
-            shape: 'ellipse'
+            shape: getShape(rest.class)
           }
         };
       }
