@@ -14,12 +14,19 @@
    ELSE;
      debug("Applying HTML page layout wrappers to $template.name\n");
 
-     IF is_classic;
-          content WRAPPER boilerplate/html;
+     IF should_use_dev_template;
+         IF is_classic;
+              content WRAPPER boilerplate/dev_html;
+         ELSE;
+              content WRAPPER boilerplate/dev_html + layout/default.tt2;
+         END;
      ELSE;
-          content WRAPPER boilerplate/html + layout/default.tt2;
+         IF is_classic;
+              content WRAPPER index.html;
+         ELSE;
+              content WRAPPER index.html + layout/default.tt2;
+         END;
      END;
 
    END;
 -%]
-

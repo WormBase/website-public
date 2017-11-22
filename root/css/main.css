@@ -2063,7 +2063,7 @@ ul.nav-bar li .submenu {
 
 .submenu-sub .more-file a {
   display: inline-block;
-  font-size: font-size: 13px;
+  font-size: 13px;
 }
 
 
@@ -3105,7 +3105,7 @@ table#table_fpkm_controls_by td:nth-child(3) {
 }
 
 /* Ajax loading animations */
-#loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; }
+/* #loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; } */
 
 .tooltip {
   margin-left: 7px;

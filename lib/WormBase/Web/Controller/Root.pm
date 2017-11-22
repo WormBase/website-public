@@ -8,6 +8,9 @@ use JSON;
 use File::Spec;
 use namespace::autoclean -except => 'meta';
 
+require LWP::Simple;
+
+
 __PACKAGE__->config(
     'default'          => 'text/x-yaml',
     'stash_key'        => 'rest',
@@ -116,7 +119,27 @@ sub footer :Path("/footer") Args(0) {
       $c->stash->{template} = 'footer/default.tt2';
 }
 
+# everything processed by webpack
+sub static :LocalRegex('^(\d+\.)?static\/.+') {
+    my ($self,$c,@path_parts) = @_;
+    my $path = $c->request->path;
+    my $dev_server_url = $c->config->{webpack_dev_server};
+    if ($dev_server_url && LWP::Simple::head($dev_server_url)) {
+        $c->response->redirect("$dev_server_url/$path");
+    } else {
+        $c->serve_static_file("client/build/$path");
+    }
+}
 
+sub hot_update_json :LocalRegex('^.*\.hot-update\.js(on)?$') {
+    my ($self,$c,@path_parts) = @_;
+    my $path = $c->request->path;
+
+    my $dev_server_url = $c->config->{webpack_dev_server};
+    if ($dev_server_url && LWP::Simple::head($dev_server_url)) {
+        $c->response->redirect("$dev_server_url/$path");
+    }
+}
 
 sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
@@ -190,7 +213,7 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
       $c->serve_static_file($c->path_to("root/static/$path"));
   }
-  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw' || $path =~ /\.png/)) {
+  elsif (!($path =~ /cgi-?bin/i || $c->action->name eq 'draw' || $path =~ /\.(png|js|css)/)) {
       $c->forward('WormBase::Web::View::TT');
   }
 }
