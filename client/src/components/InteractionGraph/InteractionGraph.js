@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ResponsiveDrawer from '../ResponsiveDrawer';
 import cytoscape from 'cytoscape';
 import cytoscapecola from 'cytoscape-cola';
 cytoscape.use(cytoscapecola);
@@ -269,6 +270,7 @@ export default class InteractionGraph extends Component {
   render() {
     return (
       <div>
+        <ResponsiveDrawer />
         <div
           ref={(c) => this._cytoscapeContainer = c }
           style={{
