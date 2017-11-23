@@ -270,7 +270,11 @@ export default class InteractionGraph extends Component {
   render() {
     return (
       <div>
-        <ResponsiveDrawer />
+        <ResponsiveDrawer
+          anchor="right"
+          drawerContent={(() => <a>zzzzz</a>)() }
+          mainContent={(() => <a>mmmmm</a>)() }
+        />
         <div
           ref={(c) => this._cytoscapeContainer = c }
           style={{

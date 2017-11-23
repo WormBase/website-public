@@ -6,6 +6,7 @@
     "@wormbase/react-scripts-for-catalyst": "/home/sgao/wb/create-react-app-for-catalyst/packages/react-scripts/wormbase-react-scripts-for-catalyst-1.0.9-1.tgz"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "cytoscape": "^3.2.6",
     "cytoscape-cola": "^2.0.1",
     "material-ui": "^1.0.0-beta.21",

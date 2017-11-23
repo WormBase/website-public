@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
@@ -29,9 +30,16 @@ const styles = theme => ({
   },
   appBar: {
     position: 'absolute',
-    marginLeft: drawerWidth,
     [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
+    },
+  },
+  'appBar-left': {
+    marginLeft: drawerWidth,
+  },
+  'appBar-right': {
+    [theme.breakpoints.up('md')]: {
+      marginRight: drawerWidth,
     },
   },
   navIconHide: {
@@ -71,18 +79,34 @@ class ResponsiveDrawer extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
-
+    const { classes, theme, drawerContent, mainContent, anchor } = this.props;
     const drawer = (
       <div>
-        <div className={classes.drawerHeader} />
+        <div className={classes.drawerHeader}>
+          {drawerContent}
+        </div>
       </div>
+    );
+
+    const permanentDrawer = (
+      <Hidden mdDown implementation="css">
+        <Drawer
+          type="permanent"
+          anchor={anchor}
+          open
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Hidden>
     );
 
     return (
       <div className={classes.root}>
         <div className={classes.appFrame}>
-          <AppBar className={classes.appBar}>
+          <AppBar className={classNames(classes.appBar, classes[`appBar-${anchor}`])}>
             <Toolbar>
               <IconButton
                 color="contrast"
@@ -100,7 +124,7 @@ class ResponsiveDrawer extends React.Component {
           <Hidden mdUp>
             <Drawer
               type="temporary"
-              anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+              anchor={anchor}
               open={this.state.mobileOpen}
               classes={{
                 paper: classes.drawerPaper,
@@ -113,22 +137,11 @@ class ResponsiveDrawer extends React.Component {
               {drawer}
             </Drawer>
           </Hidden>
-          <Hidden mdDown implementation="css">
-            <Drawer
-              type="permanent"
-              open
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-            >
-              {drawer}
-            </Drawer>
-          </Hidden>
+          {anchor === 'left' ? permanentDrawer : null}
           <main className={classes.content}>
-            <Typography type="body1" noWrap>
-              {'You think water moves fast? You should see ice.'}
-            </Typography>
+            {mainContent}
           </main>
+          {anchor === 'right' ? permanentDrawer : null}
         </div>
       </div>
     );
@@ -138,6 +151,9 @@ class ResponsiveDrawer extends React.Component {
 ResponsiveDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  anchor: PropTypes.string,
+  drawerContent: PropTypes.element,
+  mainContent: PropTypes.element,
 };
 
 export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
