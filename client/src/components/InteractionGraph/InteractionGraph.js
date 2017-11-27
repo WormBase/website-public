@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import cytoscape from 'cytoscape';
 import cytoscapecola from 'cytoscape-cola';
+import { withStyles } from 'material-ui/styles';
 cytoscape.use(cytoscapecola);
 
-export default class InteractionGraph extends Component {
+class InteractionGraph extends Component {
   static propTypes = {
     interactions: PropTypes.arrayOf(
       PropTypes.shape({
@@ -17,7 +18,8 @@ export default class InteractionGraph extends Component {
         id: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired
       })
-    )
+    ),
+    classes: PropTypes.object.isRequired,
   };
 
   resetSelectedTypes = () => {
@@ -268,21 +270,25 @@ export default class InteractionGraph extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <ResponsiveDrawer
-          anchor="right"
-          drawerContent={(() => <a>zzzzz</a>)() }
-          mainContent={(() => <a>mmmmm</a>)() }
-        />
-        <div
-          ref={(c) => this._cytoscapeContainer = c }
-          style={{
-            height: 750,
-            width: 750,
-            border: 'solid 1px black',
-          }}
-        />
+    const {classes} = this.props;
+
+    const graphView = (
+      <div
+        ref={(c) => this._cytoscapeContainer = c }
+        className={classes.cytoscapeContainer}
+      />
+    );
+
+    const graphToolbar = (
+      <div className={classes.graphToolbar}>
+        <button onClick={() => this._drawerComponent.handleDrawerToggle()}>
+          Show legends
+        </button>
+      </div>
+    );
+
+    const graphSidebar = (
+      <div className={classes.graphSidebar}>
         <h4>Interaction types:</h4>
         {this.renderInteractionTypeSelect('all')}
         <ul>
@@ -342,5 +348,39 @@ export default class InteractionGraph extends Component {
         </ul>
       </div>
     );
+
+    return (
+      <div>
+        <ResponsiveDrawer
+          innerRef={(c) => this._drawerComponent = c}
+          anchor="right"
+          drawerContent={graphSidebar}
+          mainContent={graphView}
+          mainHeader={graphToolbar}
+        />
+      </div>
+    );
   }
 }
+
+const styles = (theme) => {
+  const toolbarHeight = 30;
+  return {
+    cytoscapeContainer: {
+      height: '70vh',
+      width: '100%',
+      border: 'solid 1px gray',
+      overflow: 'hidden',
+      marginTop: toolbarHeight,
+    },
+    graphToolbar: {
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
+    graphSidebar: {
+      margin: `${toolbarHeight}px ${theme.spacing.unit * 3}px`,
+    },
+  };
+};
+export default withStyles(styles, {withTheme: true})(InteractionGraph);
