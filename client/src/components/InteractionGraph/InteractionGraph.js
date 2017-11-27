@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ResponsiveDrawer from '../ResponsiveDrawer';
 import cytoscape from 'cytoscape';
 import cytoscapecola from 'cytoscape-cola';
 import { withStyles } from 'material-ui/styles';
+import ResponsiveDrawer from '../ResponsiveDrawer';
+import Button from '../Button';
+
 cytoscape.use(cytoscapecola);
 
 class InteractionGraph extends Component {
@@ -281,9 +283,13 @@ class InteractionGraph extends Component {
 
     const graphToolbar = (
       <div className={classes.graphToolbar}>
-        <button onClick={() => this._drawerComponent.handleDrawerToggle()}>
-          Show legends
-        </button>
+        <Button
+          raised
+          dense
+          onClick={() => this._drawerComponent.handleDrawerToggle()}
+        >
+          Legends
+        </Button>
       </div>
     );
 
@@ -364,7 +370,7 @@ class InteractionGraph extends Component {
 }
 
 const styles = (theme) => {
-  const toolbarHeight = 30;
+  const toolbarHeight = 35;
   return {
     cytoscapeContainer: {
       height: '70vh',

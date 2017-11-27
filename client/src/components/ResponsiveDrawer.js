@@ -3,14 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import Drawer from 'material-ui/Drawer';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import List from 'material-ui/List';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
 import Hidden from 'material-ui/Hidden';
-import Divider from 'material-ui/Divider';
-import MenuIcon from 'material-ui-icons/Menu';
 
 const drawerWidth = 240;
 
@@ -72,7 +65,7 @@ const styles = theme => ({
   },
 });
 
-class ResponsiveDrawer extends React.Component {
+class ResponsiveDrawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -85,7 +78,7 @@ class ResponsiveDrawer extends React.Component {
   };
 
   render() {
-    const { classes, theme, anchor, drawerContent, mainContent, mainHeader } = this.props;
+    const { classes, anchor, drawerContent, mainContent, mainHeader } = this.props;
 
     const drawer = (
       <div>
