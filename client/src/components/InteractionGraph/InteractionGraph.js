@@ -6,6 +6,8 @@ import { withStyles } from 'material-ui/styles';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
 import Switch from '../Switch';
+import Checkbox from '../Checkbox';
+import List, { ListItem, ListItemText, CompactList } from '../List';
 import { FormControlLabel } from '../Form';
 import ThemeProvider from '../ThemeProvider';
 
@@ -206,12 +208,12 @@ class InteractionGraph extends Component {
   }
 
   getInferredTypes = (type) => {
-    const inferredTypes = [type, 'all'];
-    inferredTypes.push(type.split(":")[0]);
+    const inferredTypes = new Set([type, 'all']);
+    inferredTypes.add(type.split(":")[0]);
     if (type.match(/gi-module-.+/)) {
-      inferredTypes.push("genetic");
+      inferredTypes.add("genetic");
     }
-    return inferredTypes;
+    return [...inferredTypes];
   }
 
   getDescentTypes = (type) => {
@@ -270,15 +272,25 @@ class InteractionGraph extends Component {
   }
 
   renderInteractionTypeSelect = (interactionType) => {
+    const level = this.getInferredTypes(interactionType).length - 1;
     return (
-      <label>
-        <input
+      <ListItem
+        button
+        level={level}
+        key={interactionType}
+        indentUnitWidth={24}
+        onClick={() => this.handleInteractionTypeSelection(interactionType)}
+      >
+        <Checkbox
           type="checkbox"
-          onChange={() => this.handleInteractionTypeSelection(interactionType)}
+          disableRipple
+          classes={{
+            default: this.props.classes.graphSidebarCheckbox,
+          }}
           checked={this.isInteractionTypeSelected(interactionType)}
         />
-        {this.getInteractionTypeName(interactionType)}
-      </label>
+        <ListItemText primary={this.getInteractionTypeName(interactionType)} />
+      </ListItem>
     );
   }
 
@@ -307,68 +319,54 @@ class InteractionGraph extends Component {
     const graphSidebar = (
       <div className={classes.graphSidebar}>
         <h4>Interaction types:</h4>
-        {this.renderInteractionTypeSelect('all')}
-        <ul>
-          <li>
+        <CompactList>
+          {this.renderInteractionTypeSelect('all')}
+          <CompactList>
             {this.renderInteractionTypeSelect('predicted')}
-          </li>
-          <li>
             {this.renderInteractionTypeSelect('physical')}
-            <ul>
+            <CompactList>
               {
                 this.getDescentTypes('physical').map((t) => {
-                  return (<li key={t}>{this.renderInteractionTypeSelect(t)}</li>)
+                  return this.renderInteractionTypeSelect(t)
                 })
               }
-            </ul>
-          </li>
-          <li>
+            </CompactList>
             {this.renderInteractionTypeSelect('regulatory')}
-            <ul>
+            <CompactList>
               {
                 this.getDescentTypes('regulatory').map((t) => {
-                  return (<li key={t}>{this.renderInteractionTypeSelect(t)}</li>)
+                  return this.renderInteractionTypeSelect(t)
                 })
               }
-            </ul>
-          </li>
-          <li>
+            </CompactList>
             {this.renderInteractionTypeSelect('genetic')}
-            <ul>
+            <CompactList>
               {
                 ['gi-module-one', 'gi-module-two', 'gi-module-three'].map((giModule) => {
                   const descendentTypes = this.getDescentTypes(giModule);
                   return (
-                    <li key={giModule}>
+                    <CompactList key={giModule}>
                       {this.renderInteractionTypeSelect(giModule)}
-                      <ul>
+                      <CompactList>
                         {
                           descendentTypes.map((t) => (
-                            <li key={t}>
-                              {this.renderInteractionTypeSelect(t)}
-                            </li>
+                            this.renderInteractionTypeSelect(t)
                           ))
                         }
-                      </ul>
-                    </li>
+                      </CompactList>
+                    </CompactList>
                   );
                 })
               }
-            </ul>
-          </li>
-        </ul>
-        <ul>
-        </ul>
+            </CompactList>
+          </CompactList>
+        </CompactList>
         <FormControlLabel
           control={
             <Switch checked={this.state.includeNearbyInteraction} onChange={(event, checked) => this.setState({includeNearbyInteraction: checked})} />
           }
           label={<strong>Nearby interaction</strong>}
         />
-        <h4>Interactor types</h4>
-        <ul>
-
-        </ul>
       </div>
     );
 
@@ -405,6 +403,10 @@ const styles = (theme) => {
     },
     graphSidebar: {
       margin: `${toolbarHeight}px ${theme.spacing.unit * 3}px`,
+    },
+    graphSidebarCheckbox: {
+      width: 24,
+      height: 30,
     },
   };
 };
