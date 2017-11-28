@@ -5,10 +5,20 @@ import cytoscapecola from 'cytoscape-cola';
 import { withStyles } from 'material-ui/styles';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
+import Switch from '../Switch';
+import { FormControlLabel } from '../Form';
+import ThemeProvider from '../ThemeProvider';
 
 cytoscape.use(cytoscapecola);
 
 class InteractionGraph extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      includeNearbyInteraction: true,
+    };
+  }
+
   static propTypes = {
     interactions: PropTypes.arrayOf(
       PropTypes.shape({
@@ -70,7 +80,8 @@ class InteractionGraph extends Component {
 
     const edges = this.props.interactions.filter(
       (edge) => {
-        return interactionTypeSelected.has(edge.type);
+        return interactionTypeSelected.has(edge.type) &&
+               (this.state.includeNearbyInteraction || !parseInt(edge.nearby));
       }
     ).map(
       ({effector, affected, direction, type, citations}) => {
@@ -179,13 +190,13 @@ class InteractionGraph extends Component {
 
       layout: {
         name: 'cola',
-//        name: 'cose',
-//        fit: false,
+        //        name: 'cose',
+        //        fit: false,
 
         // Node repulsion (non overlapping) multiplier
-//        nodeRepulsion: function( node ){ return 1024; },
+        //        nodeRepulsion: function( node ){ return 1024; },
         // Ideal edge (non nested) length
-//        idealEdgeLength: function( edge ){ return 4; },
+        //        idealEdgeLength: function( edge ){ return 4; },
 
         // Divisor to compute edge forces
         // edgeElasticity: function( edge ){ return 320 / edge._private.data.weight; },
@@ -348,6 +359,12 @@ class InteractionGraph extends Component {
         </ul>
         <ul>
         </ul>
+        <FormControlLabel
+          control={
+            <Switch checked={this.state.includeNearbyInteraction} onChange={(event, checked) => this.setState({includeNearbyInteraction: checked})} />
+          }
+          label={<strong>Nearby interaction</strong>}
+        />
         <h4>Interactor types</h4>
         <ul>
 
@@ -356,15 +373,17 @@ class InteractionGraph extends Component {
     );
 
     return (
-      <div>
-        <ResponsiveDrawer
-          innerRef={(c) => this._drawerComponent = c}
-          anchor="right"
-          drawerContent={graphSidebar}
-          mainContent={graphView}
-          mainHeader={graphToolbar}
-        />
-      </div>
+      <ThemeProvider>
+        <div>
+          <ResponsiveDrawer
+            innerRef={(c) => this._drawerComponent = c}
+            anchor="right"
+            drawerContent={graphSidebar}
+            mainContent={graphView}
+            mainHeader={graphToolbar}
+          />
+        </div>
+      </ThemeProvider>
     );
   }
 }
