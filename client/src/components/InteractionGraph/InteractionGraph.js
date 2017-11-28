@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import cytoscape from 'cytoscape';
 import cytoscapecola from 'cytoscape-cola';
 import { withStyles } from 'material-ui/styles';
+import classNames from 'classnames';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
 import Switch from '../Switch';
@@ -271,8 +272,8 @@ class InteractionGraph extends Component {
     return parts[parts.length - 1];
   }
 
-  renderInteractionTypeSelect = (interactionType) => {
-    const level = this.getInferredTypes(interactionType).length - 1;
+  renderInteractionTypeSelect = (interactionType, {label} = {}) => {
+    const level = Math.max(0, this.getInferredTypes(interactionType).length - 1);
     return (
       <ListItem
         button
@@ -289,9 +290,14 @@ class InteractionGraph extends Component {
           }}
           checked={this.isInteractionTypeSelected(interactionType)}
         />
-        <ListItemText primary={this.getInteractionTypeName(interactionType)} />
+        <ListItemText
+          primary={label || this.getInteractionTypeName(interactionType)}
+          classes={{
+            text: classNames([this.props.classes.graphSidebarText, this.props.classes[`graphSidebarTextLevel${level}`]])
+          }}
+        />
       </ListItem>
-    );
+        );
   }
 
   render() {
@@ -318,9 +324,10 @@ class InteractionGraph extends Component {
 
     const graphSidebar = (
       <div className={classes.graphSidebar}>
-        <h4>Interaction types:</h4>
         <CompactList>
-          {this.renderInteractionTypeSelect('all')}
+          {this.renderInteractionTypeSelect('all', {
+             label: <h4>All interaction types</h4>
+          })}
           <CompactList>
             {this.renderInteractionTypeSelect('predicted')}
             {this.renderInteractionTypeSelect('physical')}
@@ -402,11 +409,27 @@ const styles = (theme) => {
       },
     },
     graphSidebar: {
-      margin: `${toolbarHeight}px ${theme.spacing.unit * 3}px`,
+      margin: `${toolbarHeight}px 0 0 ${theme.spacing.unit * 3}px`,
     },
     graphSidebarCheckbox: {
       width: 24,
       height: 30,
+    },
+    graphSidebarText: {
+      fontStyle: 'italic',
+    },
+    graphSidebarTextLevel0: {
+      fontWeight: 'bold',
+      fontStyle: 'normal',
+      fontSize: '0.9em',
+      textTransform: 'uppercase',
+    },
+    graphSidebarTextLevel1: {
+      fontWeight: 'bold',
+      fontStyle: 'normal',
+    },
+    graphSidebarTextLevel2: {
+      fontStyle: 'normal',
     },
   };
 };
