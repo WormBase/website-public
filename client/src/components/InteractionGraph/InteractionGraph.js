@@ -369,10 +369,13 @@ class InteractionGraph extends Component {
           </CompactList>
         </CompactList>
         <FormControlLabel
+          classes={{
+            label: classNames([this.props.classes.graphSidebarText, this.props.classes.graphSidebarTextLevel0])
+          }}
           control={
             <Switch checked={this.state.includeNearbyInteraction} onChange={(event, checked) => this.setState({includeNearbyInteraction: checked})} />
           }
-          label={<strong>Nearby interaction</strong>}
+          label="Nearby interaction"
         />
       </div>
     );
@@ -417,6 +420,7 @@ const styles = (theme) => {
     },
     graphSidebarText: {
       fontStyle: 'italic',
+      marginLeft: '-0.5em',
     },
     graphSidebarTextLevel0: {
       fontWeight: 'bold',
