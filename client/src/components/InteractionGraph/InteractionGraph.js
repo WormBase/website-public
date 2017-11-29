@@ -349,11 +349,12 @@ class InteractionGraph extends Component {
             {this.renderInteractionTypeSelect('genetic')}
             <CompactList>
               {
-                ['gi-module-one', 'gi-module-two', 'gi-module-three'].map((giModule) => {
+                ['one', 'two', 'three'].map((giModuleNumber) => {
+                  const giModule = `gi-module-${giModuleNumber}`;
                   const descendentTypes = this.getDescentTypes(giModule);
                   return (
                     <CompactList key={giModule}>
-                      {this.renderInteractionTypeSelect(giModule)}
+                      {this.renderInteractionTypeSelect(giModule, {label: `module ${giModuleNumber}`})}
                       <CompactList>
                         {
                           descendentTypes.map((t) => (
@@ -421,6 +422,7 @@ const styles = (theme) => {
     graphSidebarText: {
       fontStyle: 'italic',
       marginLeft: '-0.5em',
+      textTransform: 'capitalize',
     },
     graphSidebarTextLevel0: {
       fontWeight: 'bold',
