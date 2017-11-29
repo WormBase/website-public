@@ -70,16 +70,6 @@ class InteractionGraph extends Component {
   setupCytoscape = () => {
     const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
     console.log(interactionTypeSelected);
-    const getEdgeColor = (type) => {
-      const colorScheme = ["#0A6314", "#08298A","#B40431","#FF8000", "#00E300","#05C1F0", "#8000FF", "#69088A", "#B58904", "#E02D8A", "#FFFC2E" ];
-      const inferredTypes = new Set(this.getInferredTypes(type));
-      const tests = [
-        () => inferredTypes.has('physical'),
-        () => inferredTypes.has('genetic'),
-      ];
-      const colorIndex = tests.findIndex((test, index) => test());;
-      return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
-    }
 
     const edges = this.props.interactions.filter(
       (edge) => {
@@ -96,7 +86,7 @@ class InteractionGraph extends Component {
             id: `${source}|${target}|${type}`,
             source: source,
             target: target,
-            color: getEdgeColor(type),
+            color: this.getEdgeColor(type),
             directioned: direction !== "non-directional",
             weight: Math.min(citations.length, 10),
             type: type
@@ -162,7 +152,7 @@ class InteractionGraph extends Component {
         .selector('edge')
         .css({
           'width': 'data(weight)',
-          'opacity':0.4,
+          'opacity':0.6,
           'line-color': 'data(color)',
           'line-style': 'solid',
           'curve-style': 'bezier'
@@ -272,6 +262,32 @@ class InteractionGraph extends Component {
     return parts[parts.length - 1];
   }
 
+  getEdgeColor = (type) => {
+    const colorScheme = [
+      "#33a02c",  //"#0A6314",  // green
+      "#6a3d9a",  //"#69088A",  // dark purple
+      "#ff7f00",  //"#FF8000",  // orange
+      "#1f78b4",  //"#08298A",  // blue
+      "#00E300",  // bright green
+      "#05C1F0",  // light blue
+      "#8000FF",  // purple
+      "#B40431",  // red
+      "#B58904",
+      "#E02D8A",
+      "#FFFC2E",
+    ];
+    const inferredTypes = new Set(this.getInferredTypes(type));
+    const tests = [
+      () => inferredTypes.has('physical'),
+      () => inferredTypes.has('genetic'),
+      () => inferredTypes.has('regulatory:positively regulates'),
+      () => inferredTypes.has('regulatory:negatively regulates'),
+    ];
+    const colorIndex = tests.findIndex((test, index) => test());;
+    return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
+  }
+
+
   renderInteractionTypeSelect = (interactionType, {label} = {}) => {
     const level = Math.max(0, this.getInferredTypes(interactionType).length - 1);
     return (
@@ -284,6 +300,7 @@ class InteractionGraph extends Component {
       >
         <Checkbox
           type="checkbox"
+          style={{color: this.getEdgeColor(interactionType)}}
           disableRipple
           classes={{
             default: this.props.classes.graphSidebarCheckbox,
@@ -297,7 +314,7 @@ class InteractionGraph extends Component {
           }}
         />
       </ListItem>
-        );
+    );
   }
 
   render() {
@@ -401,6 +418,8 @@ const styles = (theme) => {
   const toolbarHeight = 35;
   return {
     cytoscapeContainer: {
+      minHeight: 360,
+      minWidth: 360,
       height: '70vh',
       width: '100%',
       border: 'solid 1px gray',
