@@ -6,8 +6,10 @@
   WRAPPER $field_block title="Interactions" key="interactions";
       'Found ' _ (fields.interactions.data.edges.size || 0) _ pluralize(" interaction", fields.interactions.data.edges.size);
 
-      build_data_table(order=['interactions','type','effector','affected','direction','phenotype','citations'],
-                       columns={type  => 'Interaction Type',
+      build_data_table(order=['interactions','type','type','effector','affected','direction','phenotype','citations'],
+                       columns={
+                        type  => 'Type',
+                        subtype => 'Subtype',
                         effector => 'Effector',
                         affected  => 'Affected',
                 direction => 'Direction',
@@ -15,7 +17,27 @@
                 interactions => 'Interactions',
                 citations => 'Citations',
                         }, key='interaction',
-                   passed_data=fields.interactions.data.edges);
+                   passed_data=fields.interactions.data.edges,
+        style='
+"columnDefs": [
+  {
+    "targets": 1,
+    "render": function (data, type, row) {
+      var rawSupertype = data.split(":")[0];
+      return (rawSupertype || "").match(/gi-module-.+/) ? "genetic" : rawSupertype;
+    }
+  },
+  {
+    "targets": 2,
+    "title": "Subtype",
+    "render": function (data, type, row) {
+      var typeSegments = data.split(":");
+      return typeSegments[typeSegments.length - 1];
+    },
+  },
+]
+'
+        );
     END;
   END;
 %]
