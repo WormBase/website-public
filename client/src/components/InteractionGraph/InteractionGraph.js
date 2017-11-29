@@ -31,7 +31,8 @@ class InteractionGraph extends Component {
     interactorMap: PropTypes.objectOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
-        label: PropTypes.string.isRequired
+        label: PropTypes.string.isRequired,
+        main: PropTypes.any,
       })
     ),
     classes: PropTypes.object.isRequired,
@@ -119,6 +120,7 @@ class InteractionGraph extends Component {
             id: interactorId,
             label: label,
             color: 'gray',
+            main: rest.main,
             shape: getShape(rest.class)
           }
         };
@@ -168,7 +170,7 @@ class InteractionGraph extends Component {
           'target-arrow-color': 'data(color)',
           'source-arrow-color': 'data(color)'
         })
-        .selector('node[mainNode]')
+        .selector('node[?main]')
         .css({
           'height': '40px',
           'width': '40px',
