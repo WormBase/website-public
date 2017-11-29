@@ -38,7 +38,7 @@ class InteractionGraph extends Component {
   };
 
   resetSelectedTypes = () => {
-    const defaultExcludes = new Set(['predicted', 'does-not-regulate', 'gi-module-three:neutral']);
+    const defaultExcludes = new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral']);
     const availableTypes = new Set(this.props.interactions.map((interaction) => interaction.type));
     this.setState({
       interactionTypeSelected: [...availableTypes].filter(
@@ -326,7 +326,7 @@ class InteractionGraph extends Component {
       <div className={classes.graphSidebar}>
         <CompactList>
           {this.renderInteractionTypeSelect('all', {
-             label: <h4>All interaction types</h4>
+             label: 'All interaction types'
           })}
           <CompactList>
             {this.renderInteractionTypeSelect('predicted')}
