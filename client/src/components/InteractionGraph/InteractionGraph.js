@@ -9,6 +9,7 @@ import Button from '../Button';
 import Switch from '../Switch';
 import Checkbox from '../Checkbox';
 import List, { ListItem, ListItemText, CompactList } from '../List';
+import { buildUrl } from '../Link';
 import { FormControlLabel } from '../Form';
 import ThemeProvider from '../ThemeProvider';
 
@@ -25,7 +26,7 @@ class InteractionGraph extends Component {
   static propTypes = {
     interactions: PropTypes.arrayOf(
       PropTypes.shape({
-        type: PropTypes.string
+        type: PropTypes.string.isRequired,
       })
     ),
     interactorMap: PropTypes.objectOf(
@@ -33,6 +34,7 @@ class InteractionGraph extends Component {
         id: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
         main: PropTypes.any,
+        "class": PropTypes.string,
       })
     ),
     classes: PropTypes.object.isRequired,
@@ -197,6 +199,12 @@ class InteractionGraph extends Component {
         // edgeElasticity: function( edge ){ return 320 / edge._private.data.weight; },
       }
 
+    });
+
+    this._cy.on('tap', 'node', (event) => {
+      const nodeId = event.target.id();
+      const data = this.props.interactorMap[nodeId];
+      window.open(buildUrl({...data}));
     });
   }
 
