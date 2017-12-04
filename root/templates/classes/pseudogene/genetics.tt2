@@ -3,7 +3,7 @@
    # Alleles
    WRAPPER $field_block title="Alleles" key="alleles";
        build_data_table(
-            order=['variation','molecular_change','locations','effects','aa_change','aa_position','isoform', 'phen_count', 'method_name'],
+            order=['variation','molecular_change','locations', 'phen_count'],
             columns={ variation         => 'Allele',
                       molecular_change  => 'Molecular<br /> change',
                       effects           => 'Protein<br /> effects',
