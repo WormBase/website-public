@@ -41,11 +41,19 @@ class InteractionGraph extends Component {
   };
 
   resetSelectedTypes = () => {
-    const defaultExcludes = new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral']);
+    const defaultExcludes = this.props.interactions.length < 100 ?
+                            new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral']) :
+                            new Set(['predicted', 'regulatory', 'genetic']);
+    console.log(defaultExcludes);
     const availableTypes = new Set(this.props.interactions.map((interaction) => interaction.type));
     this.setState({
       interactionTypeSelected: [...availableTypes].filter(
-        (t) => !defaultExcludes.has(t)
+        (t) => {
+          const inferredTypes = this.getInferredTypes(t);
+          return inferredTypes.filter(
+            (tx) => defaultExcludes.has(tx)
+          ).length === 0;
+        }
       )
     })
   }
@@ -81,7 +89,6 @@ class InteractionGraph extends Component {
 
   subset = () => {
     const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
-    console.log(interactionTypeSelected);
     const edgesSubset = this.props.interactions.filter(
       (edge) => {
         return interactionTypeSelected.has(edge.type) &&
@@ -96,8 +103,6 @@ class InteractionGraph extends Component {
     ]);
 
   }
-
-
 
   setupCytoscape = () => {
     const edges = this.props.interactions.map(
@@ -148,7 +153,6 @@ class InteractionGraph extends Component {
     );
 
     const elements = [...nodes, ...edges];
-    console.log(elements);
     if (this._cy) {
       this._cy.destroy();
     }
