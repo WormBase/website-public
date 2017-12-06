@@ -235,6 +235,15 @@ class InteractionGraph extends Component {
     );
   }
 
+  subsetRedraw = () => {
+    const subset = this.subset();
+    this._cy.filter(
+      (ele) => subset.has(ele.id())
+    ).layout({
+      name: 'cola'
+    }).run();
+  }
+
   getInferredTypes = (type) => {
     const inferredTypes = new Set([type, 'all']);
     inferredTypes.add(type.split(":")[0]);
@@ -365,8 +374,16 @@ class InteractionGraph extends Component {
     );
 
     const graphToolbar = (
-      <div className={classes.graphToolbar}>
+      <div>
         <Button
+          raised
+          dense
+          onClick={() => this.subsetRedraw() }
+        >
+          Redraw
+        </Button>
+        <Button
+          className={classes.sidebarToggleButton}
           raised
           dense
           onClick={() => this._drawerComponent.handleDrawerToggle()}
@@ -464,6 +481,8 @@ const styles = (theme) => {
       marginTop: toolbarHeight,
     },
     graphToolbar: {
+    },
+    sidebarToggleButton: {
       [theme.breakpoints.up('md')]: {
         display: 'none',
       },
