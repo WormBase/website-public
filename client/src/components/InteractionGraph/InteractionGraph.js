@@ -56,55 +56,72 @@ class InteractionGraph extends Component {
 
   componentDidMount() {
     this.setupCytoscape();
+    this.updateCytoscape();
   }
 
   componentWillReceiveProps() {
     this.resetSelectedTypes();
+    this.setupCytoscape();
   }
 
   componentDidUpdate() {
-    this.setupCytoscape();
+    this.updateCytoscape();
   }
 
   componentWillUnmount() {
     this._cy.destroy();
   }
 
-  setupCytoscape = () => {
+  edgeId = (interaction) => {
+    const {effector, affected, type} = interaction;
+    const source = effector.id;
+    const target = affected.id;
+    return `${source}|${target}|${type}`;
+  }
+
+  subset = () => {
     const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
     console.log(interactionTypeSelected);
-
-    const edges = this.props.interactions.filter(
+    const edgesSubset = this.props.interactions.filter(
       (edge) => {
         return interactionTypeSelected.has(edge.type) &&
                (this.state.includeNearbyInteraction || !parseInt(edge.nearby));
       }
-    ).map(
-      ({effector, affected, direction, type, citations}) => {
+    );
+
+    return new Set([
+      ...edgesSubset.map((edge) => edge.effector.id),
+      ...edgesSubset.map((edge) => edge.affected.id),
+      ...edgesSubset.map((interaction) => this.edgeId(interaction))
+    ]);
+
+  }
+
+
+
+  setupCytoscape = () => {
+    const edges = this.props.interactions.map(
+      (interaction) => {
+        const {effector, affected, direction, type, citations} = interaction;
         const source = effector.id;
         const target = affected.id;
         return {
           group: 'edges',
           data: {
-            id: `${source}|${target}|${type}`,
+            id: this.edgeId(interaction),
             source: source,
             target: target,
             color: this.getEdgeColor(type),
             directioned: direction !== "non-directional",
             weight: Math.min(citations.length, 10),
-            type: type
+            type: type,
+            visibility: 'hidden',
           }
         };
       }
     );
 
-    const participatingNodes = new Set([
-      ...edges.map((edge) => edge.data.source),
-      ...edges.map((edge) => edge.data.target)
-    ]);
-    const nodes = Object.keys(this.props.interactorMap).filter(
-      (interactorId) => participatingNodes.has(interactorId)
-    ).map(
+    const nodes = Object.keys(this.props.interactorMap).map(
       (interactorId) => {
         const {label, ...rest} = this.props.interactorMap[interactorId];
         const getShape = (type) => {
@@ -123,7 +140,8 @@ class InteractionGraph extends Component {
             label: label,
             color: 'gray',
             main: rest.main,
-            shape: getShape(rest.class)
+            shape: getShape(rest.class),
+            visibility: 'hidden',
           }
         };
       }
@@ -142,6 +160,7 @@ class InteractionGraph extends Component {
         .selector('node')
         .css({
           'label': 'data(label)',
+          'visibility': 'data(visibility)',
           'opacity': 0.9,
           'border-width': 0,
           'shape': 'data(shape)',
@@ -155,6 +174,7 @@ class InteractionGraph extends Component {
         })
         .selector('edge')
         .css({
+          'visibility': 'data(visibility)',
           'width': 'data(weight)',
           'opacity':0.6,
           'line-color': 'data(color)',
@@ -206,6 +226,13 @@ class InteractionGraph extends Component {
       const data = this.props.interactorMap[nodeId];
       window.open(buildUrl({...data}));
     });
+  }
+
+  updateCytoscape = () => {
+    const subset = this.subset();
+    this._cy.filter('*').forEach(
+      (ele, i, eles) => ele.data('visibility', subset.has(ele.id()) ? 'visible' : 'hidden')
+    );
   }
 
   getInferredTypes = (type) => {
