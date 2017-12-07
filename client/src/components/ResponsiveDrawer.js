@@ -42,6 +42,7 @@ const styles = theme => ({
   drawerHeader: theme.mixins.toolbar,
   drawerPaper: {
     width: 250,
+    backgroundColor: theme.palette.background.default,
     [theme.breakpoints.up('md')]: {
       width: drawerWidth,
       position: 'relative',
@@ -81,7 +82,9 @@ class ResponsiveDrawer extends Component {
     const { classes, anchor, drawerContent, mainContent, mainHeader } = this.props;
 
     const drawer = (
-      <div>
+      <div
+        className={classes.drawerPaper}
+      >
         {drawerContent}
       </div>
     );
@@ -95,10 +98,6 @@ class ResponsiveDrawer extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.appFrame}>
-          <div className={classNames(classes.appBar, classes[`appBar-${anchor}`])}>
-            {mainHeader}
-          </div>
-
           <Hidden mdUp>
             <Drawer
               type="temporary"
@@ -120,6 +119,9 @@ class ResponsiveDrawer extends Component {
             {mainContent}
           </main>
           {anchor === 'right' ? permanentDrawer : null}
+          <div className={classNames(classes.appBar, classes[`appBar-${anchor}`])}>
+            {mainHeader}
+          </div>
         </div>
       </div>
     );

@@ -482,7 +482,6 @@ const styles = (theme) => {
       width: '100%',
       border: 'solid 1px gray',
       overflow: 'hidden',
-      marginTop: toolbarHeight,
     },
     graphToolbar: {
     },
@@ -492,7 +491,7 @@ const styles = (theme) => {
       },
     },
     graphSidebar: {
-      margin: `${toolbarHeight}px 0 0 ${theme.spacing.unit * 3}px`,
+      padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit}px`,
     },
     graphSidebarCheckbox: {
       width: 24,
