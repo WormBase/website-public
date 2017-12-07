@@ -378,8 +378,9 @@ class InteractionGraph extends Component {
     );
 
     const graphToolbar = (
-      <div>
+      <div className={classes.buttonWrapper}>
         <Button
+          className={classes.button}
           raised
           dense
           onClick={() => this.subsetRedraw() }
@@ -387,7 +388,7 @@ class InteractionGraph extends Component {
           Redraw
         </Button>
         <Button
-          className={classes.sidebarToggleButton}
+          className={classNames([classes.button, classes.sidebarToggleButton])}
           raised
           dense
           onClick={() => this._drawerComponent.handleDrawerToggle()}
@@ -484,6 +485,12 @@ const styles = (theme) => {
       overflow: 'hidden',
     },
     graphToolbar: {
+    },
+    buttonWrapper: {
+      margin: `${theme.spacing.unit / 2}px`,
+    },
+    button: {
+      margin: `${theme.spacing.unit / 2}px`,
     },
     sidebarToggleButton: {
       [theme.breakpoints.up('md')]: {
