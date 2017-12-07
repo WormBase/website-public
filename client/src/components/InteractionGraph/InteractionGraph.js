@@ -118,7 +118,7 @@ class InteractionGraph extends Component {
             target: target,
             color: this.getEdgeColor(type),
             directioned: direction !== "non-directional",
-            weight: Math.min(citations.length, 10),
+            weight: Math.min((citations || []).length, 10),
             type: type,
             visibility: 'hidden',
           }
