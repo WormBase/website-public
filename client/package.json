@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "@wormbase/react-scripts-for-catalyst": "1.0.9-1"
+    "@wormbase/react-scripts-for-catalyst": "1.0.9-2"
   },
   "dependencies": {
     "classnames": "^2.2.5",
