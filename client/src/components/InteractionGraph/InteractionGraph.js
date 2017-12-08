@@ -41,11 +41,11 @@ class InteractionGraph extends Component {
   };
 
   resetSelectedTypes = () => {
+    const defaultInclude = ['physical'];
     const defaultExcludes = this.props.interactions.length < 100 ?
                             new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral']) :
                             new Set(['predicted', 'regulatory', 'genetic']);
-    console.log(defaultExcludes);
-    const availableTypes = new Set(this.props.interactions.map((interaction) => interaction.type));
+    const availableTypes = new Set([...defaultInclude, ...this.props.interactions.map((interaction) => interaction.type)]);
     this.setState({
       interactionTypeSelected: [...availableTypes].filter(
         (t) => {
