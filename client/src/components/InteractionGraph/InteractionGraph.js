@@ -272,7 +272,7 @@ class InteractionGraph extends Component {
     if (type === 'all') {
       return interactionTypes;
     } else if (type === 'genetic') {
-      return interactionTypes.filter((t) => t.match(/gi-module-.+/));
+      return interactionTypes.filter((t) => t.match(/gi-module-.+/) || t === 'genetic:other');
     } else {
       return interactionTypes.filter((t) => t.indexOf(type) !== -1 && t !== type);
     }
@@ -425,7 +425,7 @@ class InteractionGraph extends Component {
             {this.renderInteractionTypeSelect('genetic')}
             <CompactList>
               {
-                ['one', 'two', 'three'].map((giModuleNumber) => {
+                ['two', 'three'].map((giModuleNumber) => {
                   const giModule = `gi-module-${giModuleNumber}`;
                   const descendentTypes = this.getDescentTypes(giModule);
                   return (
