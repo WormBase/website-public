@@ -43,7 +43,7 @@ class InteractionGraph extends Component {
   resetSelectedTypes = () => {
     const defaultInclude = ['physical'];
     const defaultExcludes = this.props.interactions.length < 100 ?
-                            new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral']) :
+                            new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral', 'genetic:other']) :
                             new Set(['predicted', 'regulatory', 'genetic']);
     const availableTypes = new Set([...defaultInclude, ...this.props.interactions.map((interaction) => interaction.type)]);
     this.setState({
@@ -338,7 +338,9 @@ class InteractionGraph extends Component {
 
 
   renderInteractionTypeSelect = (interactionType, {label} = {}) => {
-    const level = Math.max(0, this.getInferredTypes(interactionType).length - 1);
+    let level =  this.getInferredTypes(interactionType).length - 1;
+    level = Math.max(0, level);
+    level = Math.min(2, level);
     return (
       <ListItem
         button
@@ -434,9 +436,7 @@ class InteractionGraph extends Component {
                 ))
               }
               {
-                this.getDescentTypes('genetic:other').map((t) => (
-                  this.renderInteractionTypeSelect(t)
-                ))
+                this.renderInteractionTypeSelect('genetic:other')
               }
             </CompactList>
           </CompactList>
