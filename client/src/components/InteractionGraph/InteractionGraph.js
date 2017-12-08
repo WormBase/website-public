@@ -330,8 +330,7 @@ class InteractionGraph extends Component {
     const tests = [
       () => inferredTypes.has('physical'),
       () => inferredTypes.has('genetic'),
-      () => inferredTypes.has('regulatory:positively regulates'),
-      () => inferredTypes.has('regulatory:negatively regulates'),
+      () => inferredTypes.has('regulatory'),
     ];
     const colorIndex = tests.findIndex((test, index) => test());;
     return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
