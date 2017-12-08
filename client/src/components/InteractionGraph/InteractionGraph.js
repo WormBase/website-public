@@ -425,22 +425,19 @@ class InteractionGraph extends Component {
             {this.renderInteractionTypeSelect('genetic')}
             <CompactList>
               {
-                ['two', 'three'].map((giModuleNumber) => {
-                  const giModule = `gi-module-${giModuleNumber}`;
-                  const descendentTypes = this.getDescentTypes(giModule);
-                  return (
-                    <CompactList key={giModule}>
-                      {this.renderInteractionTypeSelect(giModule, {label: `module ${giModuleNumber}`})}
-                      <CompactList>
-                        {
-                          descendentTypes.map((t) => (
-                            this.renderInteractionTypeSelect(t)
-                          ))
-                        }
-                      </CompactList>
-                    </CompactList>
-                  );
-                })
+                this.getDescentTypes('gi-module-two').map((t) => (
+                  this.renderInteractionTypeSelect(t)
+                ))
+              }
+              {
+                this.getDescentTypes('gi-module-three').map((t) => (
+                  this.renderInteractionTypeSelect(t)
+                ))
+              }
+              {
+                this.getDescentTypes('genetic:other').map((t) => (
+                  this.renderInteractionTypeSelect(t)
+                ))
               }
             </CompactList>
           </CompactList>
