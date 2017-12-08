@@ -209,21 +209,11 @@ class InteractionGraph extends Component {
           'border-width': 1,
         }),
 
-      layout: {
-        name: 'cola',
-        //        name: 'cose',
-        //        fit: false,
-
-        // Node repulsion (non overlapping) multiplier
-        //        nodeRepulsion: function( node ){ return 1024; },
-        // Ideal edge (non nested) length
-        //        idealEdgeLength: function( edge ){ return 4; },
-
-        // Divisor to compute edge forces
-        // edgeElasticity: function( edge ){ return 320 / edge._private.data.weight; },
-      }
+      layout: this.getLayoutSetting()
 
     });
+
+    this._cy.userZoomingEnabled(false);
 
     this._cy.on('tap', 'node', (event) => {
       const nodeId = event.target.id();
@@ -231,6 +221,19 @@ class InteractionGraph extends Component {
       window.open(buildUrl({...data}));
     });
   }
+
+  getLayoutSetting = () => {
+    return {
+      name: 'cola',
+      fit: false,
+      ready: () => {
+        this._cy.userZoomingEnabled(true);
+      },
+      stop: () => {
+        this._cy.userZoomingEnabled(true);
+      },
+    };
+  };
 
   updateCytoscape = () => {
     const subset = this.subset();
@@ -241,11 +244,12 @@ class InteractionGraph extends Component {
 
   subsetRedraw = () => {
     const subset = this.subset();
+    this._cy.userZoomingEnabled(false);
     this._cy.filter(
       (ele) => subset.has(ele.id())
-    ).layout({
-      name: 'cola'
-    }).run();
+    ).layout(
+      this.getLayoutSetting()
+    ).run();
   }
 
   getInferredTypes = (type) => {
