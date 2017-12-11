@@ -8,7 +8,7 @@ import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
 import Switch from '../Switch';
 import Checkbox from '../Checkbox';
-import List, { ListItem, ListItemText, CompactList } from '../List';
+import { ListItem, ListItemText, CompactList } from '../List';
 import { buildUrl } from '../Link';
 import { FormControlLabel } from '../Form';
 import ThemeProvider from '../ThemeProvider';
@@ -92,7 +92,7 @@ class InteractionGraph extends Component {
     const edgesSubset = this.props.interactions.filter(
       (edge) => {
         return interactionTypeSelected.has(edge.type) &&
-               (this.state.includeNearbyInteraction || !parseInt(edge.nearby));
+               (this.state.includeNearbyInteraction || !parseInt(edge.nearby, 10));
       }
     );
 
@@ -474,7 +474,7 @@ class InteractionGraph extends Component {
 }
 
 const styles = (theme) => {
-  const toolbarHeight = 35;
+
   return {
     cytoscapeContainer: {
       minHeight: 360,

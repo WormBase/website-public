@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { createMuiTheme, MuiThemeProvider, withStyles } from 'material-ui/styles';
 import deepPurple from 'material-ui/colors/deepPurple';
 import blueGrey from 'material-ui/colors/blueGrey';
 import red from 'material-ui/colors/red';
-import Button from 'material-ui/Button';
 
 const wormbaseTheme = createMuiTheme({
   palette: {
@@ -22,3 +21,7 @@ const ThemeProvider = ({children, ...props}) => (
 );
 
 export default ThemeProvider;
+
+export {
+  withStyles
+};
