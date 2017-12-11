@@ -18,6 +18,11 @@
  *         abigail.cabunoc@oicr.on.ca
  */
 
+/* This module stays in ES5 to avoid strict mode being enabled */
+/* https://github.com/facebookincubator/create-react-app/issues/3318 */
+
+var React = require('../../client/node_modules/react');
+var ReactDOM = require('../../client/node_modules/react-dom');
 
 +function(window, document, undefined){
   var location = window.location,
@@ -1974,10 +1979,24 @@ var Scrolling = (function(){
     }
 
     function setupCytoscapeInteraction(data, types, clazz){
-      Plugin.getPlugin('cytoscape_js',function(){
-        loadCytoscapeForInteraction(data, types, clazz)
-        return;
-      });
+      import('../../client/src/components/InteractionGraph').then(
+        (module) => {
+          const InteractionGraph = module.default;
+          const { InteractionGraphDataProvider } = module;
+          const InteractionGraphWithData = () => {
+            return (
+              <InteractionGraphDataProvider data={data}>
+                {(providedProps) => <InteractionGraph {...providedProps} />}
+              </InteractionGraphDataProvider>
+            );
+          };
+          ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
+        }
+      );
+      /* Plugin.getPlugin('cytoscape_js',function(){
+       *   loadCytoscapeForInteraction(data, types, clazz)
+       *   return;
+       * });*/
     }
 
 
