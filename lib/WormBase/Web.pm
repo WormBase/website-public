@@ -522,13 +522,15 @@ sub get_cache_backend { # overriding Plugin::Cache
 sub _setup_static {
     my $c = shift;
     $c->config(static => {
-        dirs         => [qw/ css js img tmp /],
-	include_path => [
+        dirs         => [qw/ css js img media tmp /],
+        include_path => [
+            'client/build',  # serve favicon and asset-manifest.json
+            'client/build/static',
             '/usr/local/wormbase/tmp',
-	    '/usr/local/wormbase/shared/tmp',
-	    '/usr/local/wormbase/website-admin/html',
-	    __PACKAGE__->config->{root},
-	    __PACKAGE__->config->{shared_html_base},
+            '/usr/local/wormbase/shared/tmp',
+            '/usr/local/wormbase/website-admin/html',
+            __PACKAGE__->config->{root},
+            __PACKAGE__->config->{shared_html_base},
 	    ],
 	    #   logging  => 1,
 

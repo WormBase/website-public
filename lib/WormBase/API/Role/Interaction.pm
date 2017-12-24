@@ -328,16 +328,20 @@ sub _get_interaction_info {
 
 sub _get_interaction_type_name {
     my ($self, $interaction) = @_;
-    my $type = $interaction->Interaction_type;
-    $type = $type->right ? $type->right . '' : "$type";
-    $type =~ s/_/ /g;
-    if ($type eq 'Regulatory') {
-        if ( my $reg_result = $interaction->Regulation_result ) {
-            if ("$reg_result" =~ /^(.*tive)_regulate$/) { $type = $1 . "ly Regulates" }
-            elsif ("$reg_result" eq 'Does_not_regulate') { $type = "Does Not Regulate" }
+    my @types = $interaction->Interaction_type;
+    foreach my $type (@types) {
+        next if ("$type" eq "Genetic" && "" . $type->right ne "Genetic_interaction");
+        $type = $type->right ? "$type:" . $type->right : "$type";
+        if ($type eq 'Regulatory') {
+            if ( my $reg_result = $interaction->Regulation_result ) {
+                if ("$reg_result" =~ /^(.*tive)_regulate$/) { $type = $1 . "ly Regulates" }
+                elsif ("$reg_result" eq 'Does_not_regulate') { $type = "Does Not Regulate" }
+            }
         }
+        $type =~ s/_/-/g;
+        $type = lc $type;
+        return $type;
     }
-    return $type;
 }
 
 ##

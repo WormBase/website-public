@@ -867,9 +867,13 @@ sub getTopoHash {							# given a termId, get the topology_graph_json and regula
   my $page_data = get $url;						# get the URL
   my $perl_scalar = $json->decode( $page_data );			# get the solr data
   my %jsonHash = %$perl_scalar;
-  my $topoHashref  = $json->decode( $jsonHash{"response"}{"docs"}[0]{"topology_graph_json"} );
+  my %topoHash  = ( "edges" => [], "nodes" => [], ); my $topoHashref  = \%topoHash;
+  my %transHash = ( "edges" => [], "nodes" => [], ); my $transHashref = \%transHash;
+  if ($jsonHash{"response"}{"docs"}[0]{"topology_graph_json"}) {
+    $topoHashref  = $json->decode( $jsonHash{"response"}{"docs"}[0]{"topology_graph_json"} ); } 
 									# mostly use topology_graph_json
-  my $transHashref = $json->decode( $jsonHash{"response"}{"docs"}[0]{"regulates_transitivity_graph_json"} );
+  if ($jsonHash{"response"}{"docs"}[0]{"regulates_transitivity_graph_json"}) {
+    $transHashref = $json->decode( $jsonHash{"response"}{"docs"}[0]{"regulates_transitivity_graph_json"} ); }
 									# need this for inferred Tree View
   return ($topoHashref, $transHashref);
 } # sub getTopoHash

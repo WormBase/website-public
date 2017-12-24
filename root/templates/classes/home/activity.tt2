@@ -1,3 +1,14 @@
+<div>
+    <p>Here are our <strong>top 10 community curators</strong> for phenotype data in the last 3 months!<p>
+
+    <div style="height:245px;width:349px;z-index:100;margin:20px 0;overflow:hidden;border:1px solid #999;">
+        <iframe class="ui-autocomplete-loading" width="369px" height="500px" style="margin:-30px -2px -30px -1px;border:0;" src="https://docs.google.com/spreadsheets/d/1u2EuEEeeo5pa7hLZ_mw08qhS1yJQKyRZxCNTYm90ULQ/pubhtml?gid=873251968&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+    </div>
+
+    <p>Want to be a community curator? <span class="submit-data-menu"><a href="/about/userguide/submit_data#01--10">Submit data</a></span></p>
+</div>
+
+
 <entry><h3>Random page:</h3></entry>
   [% results = c.stash.random %]
   [% PROCESS "search/results.tt2" no_count=1 type='all'%]
@@ -10,12 +21,13 @@
   [% results = c.stash.popular %]
   [% PROCESS "search/results.tt2" no_count=1%]
 [% ELSE %]
+  <div style="margin:0.5em 0;>
   [% PROCESS "shared/fields/user_history.tt2" %]
+  </div>
     <span>You must activate history logging to view the popular items on WormBase</span>
 [% END %]
 <br />
 <br />
-
 
 [% IF c.check_any_user_role('admin', 'curator') %]
 <entry><h3>Recently saved by others on WormBase:</h3></entry>

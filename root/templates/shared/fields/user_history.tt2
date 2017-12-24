@@ -20,5 +20,3 @@
     <span id="fade">history logging is off</span>
   </div>
 [% END %]
-
-

@@ -329,7 +329,7 @@
         my ($interaction1) = grep { $_->{interactions}->[0]->{id} eq 'WBInteraction000518902' } @interactions;
         is($interaction1->{interactions}->[0]->{label}, 'unc-22 : unc-54', 'A correction interaction returned');
         is($interaction1->{direction}, 'Effector->Affected', 'correct direction of interacion returned');
-        is($interaction1->{type}, 'Suppression', 'correct interaction type returned');
+        is($interaction1->{type}, 'gi-module-two:suppressing', 'correct interaction type returned');
 
         # test low log-likelihood interaction
         my ($interaction2) = grep { $_->{interactions}->[0]->{id} eq 'WBInteraction000136005' } @interactions;
@@ -341,7 +341,7 @@
         # test high log-likelihood interaction
         my ($interaction3) = grep { $_->{interactions}->[0]->{id} eq 'WBInteraction000031891' } @interactions;
         is($interaction3->{interactions}->[0]->{label}, 'unc-105 : unc-22', 'A correction interaction returned');
-        is($interaction3->{type}, 'Predicted', 'A predicted interaction with high log-likelihood correction interaction IS returned');
+        is($interaction3->{type}, 'predicted', 'A predicted interaction with high log-likelihood correction interaction IS returned');
         is($interaction3->{direction}, 'non-directional', 'correct direction of interacion returned');
 
 

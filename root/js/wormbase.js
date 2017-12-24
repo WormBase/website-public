@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*!
  * WormBase
  * http://wormbase.org/
@@ -17,6 +18,11 @@
  *         abigail.cabunoc@oicr.on.ca
  */
 
+/* This module stays in ES5 to avoid strict mode being enabled */
+/* https://github.com/facebookincubator/create-react-app/issues/3318 */
+
+var React = require('../../client/node_modules/react');
+var ReactDOM = require('../../client/node_modules/react-dom');
 
 +function(window, document, undefined){
   var location = window.location,
@@ -1319,7 +1325,7 @@ var Layout = (function(){
 var Scrolling = (function(){
   var $window = $jq(window),
       system_message = 0,
-      static = 0,// 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
+      isStatic = 0,// 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
       footerHeight = $jq("#footer").outerHeight(),
       sidebar,
       offset,
@@ -1330,7 +1336,7 @@ var Scrolling = (function(){
       titles;
 
   function resetSidebar(){
-    static = 0;
+    isStatic = 0;
     sidebar.stop(false, true).css('position', 'relative').css('top', 0);
   }
 
@@ -1376,7 +1382,7 @@ var Scrolling = (function(){
     // must be set to check overflow
     sidebar.css('height', $jq(window).height() - system_message);
 
-    if (static===1 && sidebarUl.prop('scrollHeight') > sidebarUl.height()){
+    if (isStatic===1 && sidebarUl.prop('scrollHeight') > sidebarUl.height()){
       // allow only sticky sidebar to be scrollable, to avoid complications
 
       sidebarUl.css('overflow-y','scroll');
@@ -1445,7 +1451,7 @@ var Scrolling = (function(){
         //   scrollTop: scrollTop,
         //   maxScrool:maxScroll,
         //   offset: offset,
-        //   static:static,
+        //   static:isStatic,
         //   count:count,
         //   objSmallerThanWindow: objSmallerThanWindow
         // });
@@ -1454,13 +1460,13 @@ var Scrolling = (function(){
             resetSidebar();
             return;
         }
-          if(static===0){
+          if(isStatic===0){
             if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message);
-                static = 1;
+                isStatic = 1;
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
-                //static = 1;
+                //isStatic = 1;
             }else{
                 //resetSidebar();
             }
@@ -1470,7 +1476,7 @@ var Scrolling = (function(){
                 sidebarScroll.reset();
             }else if(scrollTop > maxScroll){
                 sidebar.stop(false, true).css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
-                static = 0;
+                isStatic = 0;
                 if(scrollingDown === 1){body.stop(false, true); scrollingDown = 0; }
             }else{
               // needed to re-position sidebar after close system message
@@ -1973,10 +1979,24 @@ var Scrolling = (function(){
     }
 
     function setupCytoscapeInteraction(data, types, clazz){
-      Plugin.getPlugin('cytoscape_js',function(){
-        loadCytoscapeForInteraction(data, types, clazz)
-        return;
-      });
+      import('../../client/src/components/InteractionGraph').then(
+        (module) => {
+          const InteractionGraph = module.default;
+          const { InteractionGraphDataProvider } = module;
+          const InteractionGraphWithData = () => {
+            return (
+              <InteractionGraphDataProvider data={data}>
+                {(providedProps) => <InteractionGraph {...providedProps} />}
+              </InteractionGraphDataProvider>
+            );
+          };
+          ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
+        }
+      );
+      /* Plugin.getPlugin('cytoscape_js',function(){
+       *   loadCytoscapeForInteraction(data, types, clazz)
+       *   return;
+       * });*/
     }
 
 
@@ -3426,7 +3446,7 @@ var Scrolling = (function(){
   });
 
   window.WB = WB;
-}(this,document);
+}(window,document);
 
 
 
