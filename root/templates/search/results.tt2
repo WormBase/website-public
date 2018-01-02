@@ -30,7 +30,7 @@
       [% IF widget == 'browse' %]
         Nothing to browse
       [% ELSE %]
-      No [% widget.replace('[/_]', ' ') %] associated with this [% req_class || 'class'%]
+      No [% widget.replace('[/_]', ' ') %] associated with this zz [% req_class || 'class'%]
       [% END %]
   </span>
   [% RETURN %]
