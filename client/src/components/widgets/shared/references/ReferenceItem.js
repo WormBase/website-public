@@ -16,6 +16,19 @@ class ReferenceItem extends Component {
     }),
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      expanded: false,
+    };
+  }
+
+  handleExpandToggle = () => {
+    this.setState((prevState) => ({
+      expanded: !prevState.expanded,
+    }));
+  }
+
   render() {
     const {data, classes} = this.props;
     return (
@@ -37,9 +50,12 @@ class ReferenceItem extends Component {
           }
         </div>
         <div>
-          [{data.journal[0]}, {data.year}]
+          [{data.ptype}] [{data.journal[0]}, {data.year}]
         </div>
-        <div className={classNames([classes.abstract, classes.fade])}>
+        <div
+          className={classNames(classes.abstract, classes.fade, {[classes.abstractExpanded]: this.state.expanded})}
+          onClick={() => this.handleExpandToggle() }
+        >
           <p>{data.abstract[0]}</p>
         </div>
       </div>
@@ -49,7 +65,7 @@ class ReferenceItem extends Component {
 
 const styles = (theme) => ({
   referenceItem: {
-    paddingTop: theme.spacing.unit / 2,
+    margin: `${theme.spacing.unit}px 0px`,
 
   },
   title: {
@@ -58,6 +74,14 @@ const styles = (theme) => ({
   abstract: {
     height: '3.8em',
     overflow: 'hidden',
+    cursor: 'pointer',
+    borderBottom: '1px solid lightgray',
+    '&:hover': {
+      backgroundColor: '#E9EEF2',
+    },
+  },
+  abstractExpanded: {
+    height: "initial",
   },
   fade: {
     position: 'relative',
@@ -68,7 +92,7 @@ const styles = (theme) => ({
       bottom: 0,
       left: 0,
       width: '100%',
-      height: '1.5em',
+      height: '1.0em',
       background: 'linear-gradient(to bottom, transparent, rgba(255,255,255, 0.7))',
     },
   },
