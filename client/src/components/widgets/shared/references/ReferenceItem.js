@@ -42,7 +42,7 @@ class ReferenceItem extends Component {
         <div>
           {
             data.author.map((tag, index) => (
-              <span>
+              <span key={tag.id}>
                 {index !== 0 ? <span>, </span> : null}
                 <Link {...tag} class="person" key={tag.id} />
               </span>

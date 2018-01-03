@@ -4,7 +4,11 @@ import Pagination from '../../../Pagination';
 
 export default class ReferenceList extends Component {
   static propTypes = {
-    data: PropTypes.array.isRequired,
+    data: PropTypes.arrayOf(
+      PropTypes.shape({
+        year: PropTypes.any,
+      }),
+    ).isRequired,
     children: PropTypes.func.isRequired,
   };
 
@@ -52,12 +56,7 @@ export default class ReferenceList extends Component {
           count={data.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
+
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
