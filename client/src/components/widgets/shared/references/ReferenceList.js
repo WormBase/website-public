@@ -27,10 +27,22 @@ export default class ReferenceList extends Component {
       rowsPerPage: event.target.value
     });
   }
+
+  filterData = (data) => {
+    return data.filter((row) => true);
+  };
+
+  compareYear = (rowA, rowB) => {
+    const parseRowYear = (row) => {
+      return parseInt(row.year, 10) || -1;
+    }
+    return parseRowYear(rowB) - parseRowYear(rowA);
+  }
+
   render() {
-    const {data} = this.props;
     const {page, rowsPerPage} = this.state;
-    const pageData = data.slice(page * rowsPerPage, Math.min(data.count, page * rowsPerPage + rowsPerPage));
+    const data = this.filterData(this.props.data).sort(this.compareYear);
+    const pageData = data.slice(page * rowsPerPage, Math.min(data.length, page * rowsPerPage + rowsPerPage));
     return (
       <div>
         {
