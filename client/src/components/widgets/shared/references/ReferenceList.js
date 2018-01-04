@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import Pagination from '../../../Pagination';
 
-export default class ReferenceList extends Component {
+class ReferenceList extends Component {
   static propTypes = {
-    data: PropTypes.arrayOf(
-      PropTypes.shape({
-        year: PropTypes.any,
-      }),
-    ).isRequired,
+    data: PropTypes.array.isRequired,
     children: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -32,23 +30,12 @@ export default class ReferenceList extends Component {
     });
   }
 
-  filterData = (data) => {
-    return data.filter((row) => true);
-  };
-
-  compareYear = (rowA, rowB) => {
-    const parseRowYear = (row) => {
-      return parseInt(row.year, 10) || -1;
-    }
-    return parseRowYear(rowB) - parseRowYear(rowA);
-  }
-
   render() {
     const {page, rowsPerPage} = this.state;
-    const data = this.filterData(this.props.data).sort(this.compareYear);
+    const {data, classes} = this.props;
     const pageData = data.slice(page * rowsPerPage, Math.min(data.length, page * rowsPerPage + rowsPerPage));
     return (
-      <div>
+      <div className={classes.root}>
         {
           this.props.children(pageData)
         }
@@ -56,7 +43,6 @@ export default class ReferenceList extends Component {
           count={data.length}
           rowsPerPage={rowsPerPage}
           page={page}
-
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
@@ -64,3 +50,10 @@ export default class ReferenceList extends Component {
     );
   }
 }
+
+const styles = (theme) => ({
+  root: {
+  },
+});
+
+export default withStyles(styles, {withTheme: true})(ReferenceList);

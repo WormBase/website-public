@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import List, { ListItem as MuiListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import MuiList, { ListItem as MuiListItem, ListItemIcon, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 
-const ListItem = ({level, indentUnitWidth, style, ...props}) => {
+const ListItemByLevel = ({level, indentUnitWidth, style, ...props}) => {
   const newStyle = {
     padding: 0,
     paddingLeft: (level || 0) * indentUnitWidth,
@@ -16,18 +16,24 @@ const ListItem = ({level, indentUnitWidth, style, ...props}) => {
     />
   );
 };
-ListItem.propTypes = {
+ListItemByLevel.propTypes = {
   level: PropTypes.number,
   indentUnitWidth: PropTypes.number,
 };
 
 const CompactList = (props) => (<List disablePadding {...props} />);
 
+const List = MuiList;
+
+const ListItem = (props) => <MuiListItem disableRipple {...props} />;
+
 export default List;
 
 export {
   ListItem,
+  ListItemByLevel,
   ListItemIcon,
   ListItemText,
+  ListItemSecondaryAction,
   CompactList,
 };
