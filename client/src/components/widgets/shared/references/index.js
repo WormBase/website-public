@@ -34,7 +34,7 @@ class References extends Component {
   }
 
   filterData = (data) => {
-    return data.filter((row) => true);
+    return data.filter((row) => !this.state.paperType || row.ptype === this.state.paperType);
   };
 
   compareYear = (rowA, rowB) => {
@@ -53,9 +53,9 @@ class References extends Component {
   }
 
   render() {
-    const data = this.filterData(this.props.data).sort(this.compareYear);
-    const counts = this.countsByPaperTypes(data);
+    const counts = this.countsByPaperTypes(this.props.data);
     const {classes} = this.props;
+    const data = this.filterData(this.props.data).sort(this.compareYear);
 
     const FittedListSubheader = fitComponent(ListSubheader);
 
@@ -94,9 +94,9 @@ class References extends Component {
           </List>
         </div>
         <div className={classes.content}>
-          <FittedListSubheader withOnly component="div">aaaa</FittedListSubheader>
+          <FittedListSubheader withOnly component="div"><strong>{data.length}</strong> reference(s) matching your filter out of {this.props.data.length} in total</FittedListSubheader>
           <ReferenceList
-            data={data.filter((row) => !this.state.paperType || row.ptype === this.state.paperType )}
+            data={data}
           >
             {
               (pageData) => pageData.map(
