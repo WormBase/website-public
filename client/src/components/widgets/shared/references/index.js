@@ -4,7 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import { fade } from 'material-ui/styles/colorManipulator';
 import classNames from 'classnames';
 import CancelIcon from 'material-ui-icons/Cancel';
-import List, { ListItem, ListItemText, ListItemSecondaryAction} from '../../../List';
+import List, { ListItem, ListItemText, ListItemSecondaryAction, ListSubheader } from '../../../List';
 import { IconButton } from '../../../Button';
 import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
@@ -58,7 +58,7 @@ class References extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.sidebar}>
-          <List>
+          <List dense subheader={<ListSubheader>Filter by article type</ListSubheader>}>
             {
               Object.keys(counts).sort().map(
                 (paperType) => {
