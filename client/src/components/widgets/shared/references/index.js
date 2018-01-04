@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import CancelIcon from 'material-ui-icons/Cancel';
 import List, { ListItem, ListItemText, ListItemSecondaryAction, ListSubheader } from '../../../List';
 import { IconButton } from '../../../Button';
-import Fit from '../../../Fit';
+import { fitComponent } from '../../../styles';
 import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
 
@@ -56,6 +56,9 @@ class References extends Component {
     const data = this.filterData(this.props.data).sort(this.compareYear);
     const counts = this.countsByPaperTypes(data);
     const {classes} = this.props;
+
+    const FittedListSubheader = fitComponent(ListSubheader);
+
     return (
       <div className={classes.root}>
         <div className={classes.sidebar}>
@@ -91,7 +94,7 @@ class References extends Component {
           </List>
         </div>
         <div className={classes.content}>
-          <Fit><ListSubheader component="div">aaaa</ListSubheader></Fit>
+          <FittedListSubheader withOnly component="div">aaaa</FittedListSubheader>
           <ReferenceList
             data={data.filter((row) => !this.state.paperType || row.ptype === this.state.paperType )}
           >
