@@ -50,7 +50,7 @@ class ReferenceItem extends Component {
           }
         </div>
         <div>
-          [{data.ptype}] [{data.journal[0]}, {data.year}]
+          [{data.ptype}] <em>{data.journal[0]}, {data.year}</em>
         </div>
         <div
           className={classNames(classes.abstract, classes.fade, {[classes.abstractExpanded]: this.state.expanded})}
