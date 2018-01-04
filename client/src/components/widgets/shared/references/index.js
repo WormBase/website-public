@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import CancelIcon from 'material-ui-icons/Cancel';
 import List, { ListItem, ListItemText, ListItemSecondaryAction, ListSubheader } from '../../../List';
 import { IconButton } from '../../../Button';
+import Fit from '../../../Fit';
 import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
 
@@ -89,18 +90,18 @@ class References extends Component {
             }
           </List>
         </div>
-        <ReferenceList
-          classes={{
-            root: classes.content,
-          }}
-          data={data.filter((row) => !this.state.paperType || row.ptype === this.state.paperType )}
-        >
-          {
-            (pageData) => pageData.map(
-              (itemData) => <ReferenceItem key={itemData.name.id} data={itemData} />
-            )
-          }
-        </ReferenceList>
+        <div className={classes.content}>
+          <Fit><ListSubheader component="div">aaaa</ListSubheader></Fit>
+          <ReferenceList
+            data={data.filter((row) => !this.state.paperType || row.ptype === this.state.paperType )}
+          >
+            {
+              (pageData) => pageData.map(
+                (itemData) => <ReferenceItem key={itemData.name.id} data={itemData} />
+              )
+            }
+          </ReferenceList>
+        </div>
       </div>
     );
   }
