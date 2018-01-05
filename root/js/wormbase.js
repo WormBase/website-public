@@ -344,7 +344,20 @@ var name2widget = {
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
 
-      if(location.hash.length > 0){
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      var widgetId = getParameterByName('widget');
+      if (widgetId) {
+        Layout.singleWidgetLayout(widgetId);
+      } else if(location.hash.length > 0){
         Layout.readHash();
       }else if(layout = widgetHolder.data("layout")){
         Layout.resetPageLayout(layout);
@@ -1167,6 +1180,10 @@ var Layout = (function(){
       }
     }
 
+  function singleWidgetLayout(widgetId) {
+    resetLayout([widgetId], [], 100, []);
+  }
+
 
     function newLayout(layout){
       updateLayout(layout, undefined, function() {
@@ -1318,6 +1335,7 @@ var Layout = (function(){
       setLayout: setLayout,
       resetPageLayout: resetPageLayout,
       readHash: readHash,
+      singleWidgetLayout: singleWidgetLayout,
       getLeftWidth: getLeftWidth,
       updateLayout: updateLayout,
       newLayout: newLayout
