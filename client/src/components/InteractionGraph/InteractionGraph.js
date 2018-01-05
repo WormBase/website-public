@@ -8,7 +8,7 @@ import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
 import Switch from '../Switch';
 import Checkbox from '../Checkbox';
-import { ListItem, ListItemText, CompactList } from '../List';
+import { ListItemByLevel as ListItem, ListItemText, CompactList } from '../List';
 import { buildUrl } from '../Link';
 import { FormControlLabel } from '../Form';
 import ThemeProvider from '../ThemeProvider';
