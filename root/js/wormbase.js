@@ -24,6 +24,10 @@
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
 
+var name2widget = {
+  'references': require('../../client/src/components/widgets/shared/references').default
+};
+
 +function(window, document, undefined){
   var location = window.location,
       $jq = jQuery.noConflict();
@@ -3161,6 +3165,11 @@ var Scrolling = (function(){
 
   })();
 
+    function renderWidget(data, elementId, widgetName) {
+      const WidgetComponent = name2widget[widgetName];
+      ReactDOM.render(<WidgetComponent data={data} />, document.getElementById(elementId));
+    }
+
     var initJbrowseView = function(elementSelector, url) {
       function reset() {
         $jq(elementSelector).find('iframe').attr('src', url);
@@ -3424,7 +3433,8 @@ var Scrolling = (function(){
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
       tooltipInit: tooltipInit,                     // initalize tooltip
-      initJbrowseView: initJbrowseView              // initialize jbrowse view iframe to specified src
+      initJbrowseView: initJbrowseView,             // initialize jbrowse view iframe to specified src
+      renderWidget: renderWidget,                   // render widget component
     };
   })();
 
