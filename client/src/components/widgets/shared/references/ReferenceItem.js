@@ -34,7 +34,7 @@ class ReferenceItem extends Component {
     return (
       <div className={classes.referenceItem}>
         <Link
-          id={data.name.id} label={data.title[0]} class={data.name.class}
+          id={data.name.id} label={data.title && data.title[0]} class={data.name.class}
           classes={{
             linkLabel: classes.title,
           }}
@@ -50,13 +50,13 @@ class ReferenceItem extends Component {
           }
         </div>
         <div>
-          [{data.ptype}] <em>{data.journal[0]}, {data.year}</em>
+          [{data.ptype}] <em>{data.journal && data.journal[0]}, {data.year}</em>
         </div>
         <div
           className={classNames(classes.abstract, classes.fade, {[classes.abstractExpanded]: this.state.expanded})}
           onClick={() => this.handleExpandToggle() }
         >
-          <p>{data.abstract[0]}</p>
+          {data.abstract && <p>{data.abstract[0]}</p>}
         </div>
       </div>
     );
@@ -72,7 +72,7 @@ const styles = (theme) => ({
     textDecoration: 'underline',
   },
   abstract: {
-    height: '3.8em',
+    maxHeight: '3.8em',
     overflow: 'hidden',
     cursor: 'pointer',
     borderBottom: '1px solid lightgray',
@@ -81,7 +81,7 @@ const styles = (theme) => ({
     },
   },
   abstractExpanded: {
-    height: "initial",
+    maxHeight: "initial",
   },
   fade: {
     position: 'relative',

@@ -94,7 +94,11 @@ class References extends Component {
           </List>
         </div>
         <div className={classes.content}>
-          <FittedListSubheader withOnly component="div"><strong>{data.length}</strong> reference(s) matching your filter out of {this.props.data.length} in total</FittedListSubheader>
+          <FittedListSubheader widthOnly component="div">
+            <div>
+              <strong>{data.length}</strong> reference(s) matching your filter out of {this.props.data.length} in total
+            </div>
+          </FittedListSubheader>
           <ReferenceList
             data={data}
           >
@@ -130,7 +134,7 @@ const styles = (theme) => {
       margin: `0 ${-2 * theme.spacing.unit}px`,
       [theme.breakpoints.up('md')]: {
         width: sidebarWidth,
-        height: 200,
+        minHeight: 200,
       },
     },
     selected: {

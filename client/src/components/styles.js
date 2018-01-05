@@ -10,7 +10,6 @@ const fitComponent = (WrappedComponent) => {
       children: PropTypes.element.isRequired,
       widthOnly: PropTypes.bool,
       heightOnly: PropTypes.bool,
-      classes: PropTypes.object.isRequired,
     };
 
     render() {
