@@ -625,8 +625,8 @@
 
  MRC_geneservice = {
 	description = 'Supplier of genomic products and contract research company'
-	base        = 'http://www.sourcebioscience.com/products/life-science-research/clones/rnai-resources/'
-	search      = 'http://www.sourcebioscience.com/search?search=%s'
+	base        = 'https://www.sourcebioscience.com/products/life-science-research/clones/rnai-resources/'
+        search      = 'https://www.sourcebioscience.com/search?search=%s'
 	email       = 'webmaster@geneservice.co.uk'
 	}
 

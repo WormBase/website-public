@@ -59,7 +59,11 @@ END;
 
 
 WRAPPER $field_block title="Available From" key="available_from";
-    tag2link(fields.available_from.data);
+    IF fields.available_from.data.label == 'GeneService';
+        external_link('MRC_geneservice', 'SourceBioScience', fields.name.data.id);
+    ELSE;
+        tag2link(fields.available_from.data);
+    END;
 END;
 
 WRAPPER $field_block title="Analysis" key="analysis";
