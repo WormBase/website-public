@@ -37,13 +37,13 @@
     "is_obj": "[% is_obj %]",
     "save": "[% save %]",
     "history": "[% c.user_session.history_on ? '1' : '0' %]"
-    [%  param_from_uri = c.request.param('from');
-        param_query = c.request.param('query');
+    [%  param_from_uri = c.request.param('from') FILTER html;
+        param_query = c.request.param('query') FILTER html;
         IF (param_query || param_from_uri );
             IF (param_from_uri.match('^(?i)http'));  # case insensitive match for 'http' at start of a uri
                 ', "notify": "redirected from external site"';
             ELSE;
-                ', "notify": "redirected from ' _ html(param_from_uri) _ ' ' _ html(param_query) _ '"';
+                ', "notify": "redirected from ' _ param_from_uri _ ' ' _ param_query _ '"';
             END;
         END;
     %]
