@@ -43,7 +43,7 @@
             IF (param_from_uri.match('^(?i)http'));  # case insensitive match for 'http' at start of a uri
                 ', "notify": "redirected from external site"';
             ELSE;
-                ', "notify": "redirected from ' _ param_from_uri _ ' ' _ param_query _ '"';
+                ', "notify": "redirected from ' _ html(param_from_uri) _ ' ' _ html(param_query) _ '"';
             END;
         END;
     %]
