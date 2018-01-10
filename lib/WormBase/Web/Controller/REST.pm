@@ -905,7 +905,7 @@ sub widget_GET {
             $c->stash->{served_from_cache} = $key;
         } else {
             my $url = "$rest_server$path";
-            my $resp = HTTP::Tiny->new->get($url);
+            my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
                 $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
                 $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
@@ -1822,7 +1822,7 @@ sub field_GET {
             $c->stash->{served_from_cache} = $key;
         } else {
             my $url = "$rest_server$path";
-            my $resp = HTTP::Tiny->new->get($url);
+            my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
                 $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
                 $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
