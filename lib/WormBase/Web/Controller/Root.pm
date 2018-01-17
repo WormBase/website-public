@@ -248,6 +248,13 @@ sub get :Local Args(0) {
     my $requested_class = $c->req->param('class') || ($doi && 'paper');
     my $name            = $c->req->param('name') || ($doi && (split '\/', $doi)[-1]);
 
+    my $carryover_params = {};
+    while (my ($key,$value) = each %{$c->req->params}) {
+        if ($key ne 'doi' && $key ne 'class' && $key ne 'name') {
+            $carryover_params->{$key} = $value;
+        }
+    }
+
     $name =~ s/^\s+|\s+$//g;
 
     my $api    = $c->model('WormBaseAPI');
@@ -288,7 +295,7 @@ sub get :Local Args(0) {
 
     my $normed_class = lc $class;
 
-    my $url = (exists $c->config->{sections}->{species}->{$normed_class}) ? $c->uri_for('/species', 'all', $normed_class, $name)->path : $c->uri_for('/resources', $normed_class, $name)->path;
+    my $url = (exists $c->config->{sections}->{species}->{$normed_class}) ? $c->uri_for('/species', 'all', $normed_class, $name, $carryover_params)->as_string : $c->uri_for('/resources', $normed_class, $name, $carryover_params)->as_string;
     $c->res->redirect($url);
 }
 
