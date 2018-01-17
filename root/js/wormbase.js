@@ -1181,7 +1181,28 @@ var Layout = (function(){
     }
 
   function singleWidgetLayout(widgetId) {
-    resetLayout([widgetId], [], 100, []);
+    var layout = wHolder.data("layout");
+    var h = layout.hash && layout.hash.split('-');
+
+    if (h) {
+      // insert widget at the top of existing layout
+
+      var l = h[0],
+          r = h[1],
+          m = h[3];
+
+      function others(widgets) {
+        return (widgets || '').split('').map(function(i) {
+          return getWidgetName(i);
+        }).filter(function(i) {
+          return i !== widgetId;
+        });
+      }
+
+      resetLayout([widgetId].concat(others(l)), others(r), 100, [], others(m));
+    } else {
+      resetLayout([widgetId], [], 100, []);
+    }
   }
 
 
@@ -1287,7 +1308,7 @@ var Layout = (function(){
     }
 
     function getLeftWidth(holder){
-      var leftWidth = sColumns ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/(parseFloat(holder.outerWidth())))*100;
+      var leftWidth = sColumns && location.hash ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/(parseFloat(holder.outerWidth())))*100;
       return Math.round((isNaN(leftWidth) ? 100 : leftWidth)/10) * 10; //if you don't round, the slightest change causes an update
     }
 
@@ -1321,9 +1342,9 @@ var Layout = (function(){
       if(sidebar){
         $jq("#nav-min").click();
       }
-      if(location.hash.length > 0){
-        updateLayout(undefined, hash);
-      }
+
+      updateLayout(undefined, hash);
+
     }
 
   return {
