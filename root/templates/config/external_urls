@@ -891,8 +891,8 @@
 
  SGD = {
 	description = 'SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
-	search      = 'http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=%s'
-	base        = 'http://www/yeasygenome.org'
+	search      = 'https://www.yeastgenome.org/search?q=%s&is_quick=true'
+	base        = 'https://www/yeastgenome.org'
 	}
 
  'SMID-DB' = {
