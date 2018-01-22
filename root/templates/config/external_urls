@@ -1045,7 +1045,15 @@
        'UniProtKB-SubCell' = 'https://www.uniprot.org/locations/%s'
     	protein     = 'https://www.uniprot.org/uniprot/%s'
 	}
-
+ 
+ UniProt_GCRP = {
+	description = 'UniProt Reference Proteomes| The Universal Protein Resource | EBI. The mission of UniProt is to provide the scientific community with a comprehensive, high-quality and freely accessible resource of protein sequence and functional information.'
+	maintainer  = ''
+	base        = 'https://www.uniprot.org/help/reference_proteome'
+	search      = 'https://www.ebi.uniprot.org/uniprot/%s'
+    	protein     = 'https://www.uniprot.org/uniprot/%s'
+	}
+ 
  WormAtlas = {
 	description = 'A C. elegans database of behavioral and structural anatomy'
 	base        = 'http://wormatlas.org/'
