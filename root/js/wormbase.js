@@ -1971,15 +1971,15 @@ var Scrolling = (function(){
 
       var drawCallback = function( settings ){
             var api = this.api();
-            var rows = api.rows().nodes();
+            var rows = api.rows({page: 'current'}).nodes();
             var last=null;
 
-            api.column(0).nodes().each( function ( cell, i ) {
+            api.column(0, {page: 'current'}).nodes().each( function ( cell, i ) {
                 $jq(cell).children().hide();
                 $jq(cell).text('');
             });
 
-            api.rows().data().each( function ( rowData, i ) {
+            api.rows({page: 'current'}).data().each( function ( rowData, i ) {
 
                 var groupID = rowData[0];
                 var group = rowData[group_by_col];
