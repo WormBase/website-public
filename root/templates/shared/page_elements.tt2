@@ -450,6 +450,13 @@ WB.getPlugin("dataTables", function(){
             return ((a < b) ? 1 : ((a > b) ? -1 : 0));
           }
         });
+        $jq.fn.dataTable.ext.type.order["html-pre"] = function ( data ) {
+          if ((typeof data) === "string") {
+            return data.replace(/^(<[^>]+>\s*)+/, '');
+          } else {
+            return data;
+          }
+        };
         WB.getPlugin("tabletools", function(){
           setTimeout(function(){
             if($jq.fn.dataTable.fnIsDataTable('#[% table_name %]')){
