@@ -53,7 +53,7 @@ class ReferenceItem extends Component {
           [{data.ptype}] <em>{data.journal && data.journal[0]}, {data.year}</em>
         </div>
         <div
-          className={classNames(classes.abstract, classes.fade, {[classes.abstractExpanded]: this.state.expanded})}
+          className={classNames(classes.abstract, classes.fade, {[classes.abstractCollapse]: !this.state.expanded})}
           onClick={() => this.handleExpandToggle() }
         >
           {data.abstract && <p>{data.abstract[0]}</p>}
@@ -72,7 +72,6 @@ const styles = (theme) => ({
     textDecoration: 'underline',
   },
   abstract: {
-    maxHeight: '3.8em',
     overflow: 'hidden',
     cursor: 'pointer',
     borderBottom: '1px solid lightgray',
@@ -80,8 +79,8 @@ const styles = (theme) => ({
       backgroundColor: '#E9EEF2',
     },
   },
-  abstractExpanded: {
-    maxHeight: "initial",
+  abstractCollapse: {
+    maxHeight: '3.8em',
   },
   fade: {
     position: 'relative',
