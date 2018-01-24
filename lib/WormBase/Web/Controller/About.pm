@@ -20,6 +20,13 @@ sub about :Path('/about') :Args(0)   {
     $self->_setup_page($c);
 }
 
+sub about_release_current :Path('/about/wormbase_release_current') :Args(0)   {
+    my ($self,$c) = @_;
+    $c->stash->{template} = 'about/report.tt2';
+    my $version = $c->model('WormBaseAPI')->version;
+    $c->response->redirect('/about/wormbase_release_' . $version, 307);
+}
+
 # Allow anything under /about to have an arbitrary number of path parts.
 # Helpful for organizing things like documentation.
 sub about_documentation :Path('/about') :Args   {
