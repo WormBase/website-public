@@ -85,5 +85,16 @@ WRAPPER $field_block title="Variations" key="affected_variations";
      );
 END;
 
+WRAPPER $field_block title="Gene expression affected by molecule" key="gene_expression_affected_by_molecule";
+    build_data_table(
+    order = ['gene','expression_cluster'],
+	columns = {
+            gene => 'Gene',
+            expression_cluster => 'expression_cluster',
+	},
+        key = "gene_expression_affected_by_molecule"
+    );
+END;
+
 
 %]
