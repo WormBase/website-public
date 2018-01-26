@@ -1733,7 +1733,7 @@ sub _print_protein {
 	$peptide =~ s/\n//g;
 	return {
             header=>"conceptual translation",
-            sequence=>$peptide,
+            sequence=>$peptide . '*',
             type => "aa",
             length => length $peptide,
         };
