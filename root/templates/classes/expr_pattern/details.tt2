@@ -44,6 +44,10 @@ END;
     END;
 #END;
 
+WRAPPER $field_block title=pluralize("Sequence feature", fields.sequence_feature.data.size) key='sequence_feature';
+    tags2link(fields.sequence_feature.data);
+END;
+
 WRAPPER $field_block title="Expressed In" key='';
 
    WRAPPER $field_block title="Anatomy term" key='anatomy_ontology';
