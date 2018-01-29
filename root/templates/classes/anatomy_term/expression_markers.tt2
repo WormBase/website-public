@@ -1,0 +1,15 @@
+[%
+
+    WRAPPER $field_block title="Markers for this cell/tissue" key="markers";
+        build_data_table(
+            order=['expression_pattern','gene','description', 'certainty'],
+            columns={
+                expression_pattern  => 'Expression Pattern',
+                gene                => 'Gene',
+                description         => 'Description',
+                certainty           => 'Certainty',
+            },
+            key='markers');
+    END;
+
+%]
