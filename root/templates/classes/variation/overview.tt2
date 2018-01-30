@@ -6,7 +6,7 @@ WRAPPER highlight_box;
    status;
 
   WRAPPER $field_block title="Gene" key="corresponding_gene";
-          cell_content(fields.corresponding_gene.data);
+      fields.corresponding_gene.data.size <= 20 ? cell_content(fields.corresponding_gene.data) : '<div class="download-corresponding-gene"></div>';
   END;
 
   other_names;
@@ -32,3 +32,17 @@ remarks(no_toggle=1 no_field=1);
   END;
 
 %]
+
+<script type="text/javascript">
+(function(){
+  var holder = $jq.find("#widget-variation .download-corresponding-gene");
+  console.log(holder);
+  if (holder.length) {
+    var data = [% json_encode(fields.corresponding_gene.data) %];
+    var text = data.map(function(d) {
+      return [d[0].id, d[0].label, d[1]].join("\t");
+    }).join("\n");
+    $jq(holder).html('<a href="data:text/html,' + text + '" download="coresponding_gene_for_[%- fields.name.data.id -%].txt" target="_blank">Download genes ([% fields.corresponding_gene.data.size %])</a>');
+  }
+})();
+</script>
