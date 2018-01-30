@@ -41,8 +41,16 @@ remarks(no_toggle=1 no_field=1);
     var data = [% json_encode(fields.corresponding_gene.data) %];
     var text = data.map(function(d) {
       return [d[0].id, d[0].label, d[1]].join("\t");
-    }).join("\n");
-    $jq(holder).html('<a href="data:text/html,' + text + '" download="coresponding_gene_for_[%- fields.name.data.id -%].txt" target="_blank">Download genes ([% fields.corresponding_gene.data.size %])</a>');
+    }).join("\r\n");
+    var filename = "coresponding_gene_for_[%- fields.name.data.id -%].txt";
+    $jq(holder).html('<a href="data:text/plain,' + encodeURIComponent(text) + '" download="' + filename + '">Download genes ([% fields.corresponding_gene.data.size %])</a>');
+    $jq(holder).find('a').click(function() {
+      // IE
+      if (window.navigator.msSaveBlob) {
+        var blobObject = new Blob([text]);
+        window.navigator.msSaveBlob(blobObject, filename);
+      }
+    });
   }
 })();
 </script>
