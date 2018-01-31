@@ -10,6 +10,7 @@ WRAPPER $field_block title="Anatomic expression pattern";
 END;
 
 WRAPPER $field_block title="Expression pattern images" key="expr_pattern_images";
+    '<p class="fade">We display only images for which we were granted permissions from the publisher.</p>';
     '<div id="expr-pattern-images">';
         images_cell({curated_images => fields.expr_pattern_images.data});
     '</div>';
@@ -18,9 +19,8 @@ END;
 
 WRAPPER $field_block title="Expressed in" key="expressed_in";
 
-    build_data_table(order=['ontology_term', 'details', 'images'],
+    build_data_table(order=['ontology_term', 'details'],
                      columns={
-                          images => 'Images',
                           ontology_term => 'Anatomy term',
                           details  => 'Supporting evidence',
                      },
@@ -30,9 +30,8 @@ END;
 
 WRAPPER $field_block title="Expressed during" key="expressed_during";
 
-    build_data_table(order=['ontology_term', 'details', 'images'],
+    build_data_table(order=['ontology_term', 'details'],
                      columns={
-                          images => 'Images',
                           ontology_term => 'Life stage',
                           details  => 'Supporting evidence',
                      },
@@ -42,9 +41,8 @@ END;
 
 WRAPPER $field_block title="Subcellular localization" key="subcellular_localization";
 
-    build_data_table(order=['ontology_term', 'details', 'images'],
+    build_data_table(order=['ontology_term', 'details'],
                      columns={
-                          images => 'Images',
                           ontology_term => 'Cellular component',
                           details  => 'Supporting evidence',
                      },
