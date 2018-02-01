@@ -347,7 +347,9 @@ class InteractionGraph extends Component {
       () => inferredTypes.has('genetic'),
       () => inferredTypes.has('regulatory'),
     ];
-    const colorIndex = tests.findIndex((test, index) => test());;
+    const colorIndex = tests.reduce((result, test, index) => (
+      result === -1 ? test() ? index : result : result
+    ), -1);
     return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
   }
 
@@ -535,8 +537,6 @@ const styles = (theme) => {
       fontStyle: 'normal',
     },
     graphSidebarCount: {
-      position: 'absolute',
-      right: 0,
       color: theme.palette.text.secondary,
       fontWeight: 'normal',
     },
