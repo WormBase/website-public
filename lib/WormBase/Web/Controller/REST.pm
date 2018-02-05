@@ -863,7 +863,8 @@ sub widget_GET {
 
     my $rest_server = $c->config->{'rest_server'};
     my $path_template = "/rest/widget/$class/{id}/$widget";
-    (my $path = $path_template) =~ s/\{id\}/$name/;
+    my $uri_encoded_name = URI::Escape::uri_escape($name);
+    (my $path = $path_template) =~ s/\{id\}/$uri_encoded_name/;
     my @datomic_endpoints = eval {
         get_rest_endpoints($c, "$rest_server/swagger.json");
     };
@@ -1781,7 +1782,8 @@ sub field_GET {
 
     my $rest_server = $c->config->{'rest_server'};
     my $path_template = "/rest/field/$class/{id}/$field";
-    (my $path = $path_template) =~ s/\{id\}/$name/;
+    my $uri_encoded_name = URI::Escape::uri_escape($name);
+    (my $path = $path_template) =~ s/\{id\}/$uri_encoded_name/;
     my @datomic_endpoints = eval {
         get_rest_endpoints($c, "$rest_server/swagger.json");
     };
