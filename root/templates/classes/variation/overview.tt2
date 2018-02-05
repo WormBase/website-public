@@ -38,7 +38,7 @@ remarks(no_toggle=1 no_field=1);
   var holder = $jq.find("#widget-variation .download-corresponding-gene");
   console.log(holder);
   if (holder.length) {
-    var data = [% json_encode(fields.corresponding_gene.data) %];
+    var data = [% json_encode(fields.corresponding_gene.data || []) %];
     var text = data.map(function(d) {
       return [d[0].id, d[0].label, d[1]].join("\t");
     }).join("\r\n");
