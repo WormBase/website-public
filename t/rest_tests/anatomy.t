@@ -81,10 +81,6 @@
 
         my $expect_link      = "http://wormweb.org/neuralnet#c=ADFL&m=0";
 
-        # make sure calling the expected url succeeds
-        my $expect_response  = get($expect_link); #get returns undef if failed
-        isnt($expect_response, undef, "Neuralnet url is working");
-
         # check the expected link is present in the widget rest response
         ok($response_rest =~ /\Q$expect_link\E/, "response contains neuralnet link for $anatomy_id");
 
