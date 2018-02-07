@@ -76,9 +76,11 @@ sub fetch {
 
 
     my $url = $self->_get_elasticsearch_url("/search-exact", $args);
+
     my $resp = HTTP::Tiny->new->get($url);
     if ($resp->{success} && $resp->{content}) {
-        return decode_json($resp->{content});
+        my $json = decode_json($resp->{content});
+        return $json if ($fill || $footer || $label) || scalar keys %$json;
     }
 }
 
