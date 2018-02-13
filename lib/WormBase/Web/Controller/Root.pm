@@ -154,7 +154,7 @@ sub me :Path("/me") Args(0) {
 # Otherwise returns transparent png
 sub elsevier :Path("/elsevier/wblogo.png") Args(0) {
     my ( $self, $c ) = @_;
-    my $doi = (split '\/', $c->req->param('doi'))[-1];
+    my $doi = $c->req->param('doi');
     my $path = "transparent";
 
     if($doi){
