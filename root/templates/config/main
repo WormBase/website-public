@@ -234,7 +234,7 @@
     END;
 
 
-    MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url) BLOCK;
+    MACRO jbrowse_url(taxonomy, position_string, bioproject, is_preview_url, tracks) BLOCK;
       IF taxonomy.match('(?i).+_(PRJ\w+)');
         full_taxonomy = taxonomy;
       ELSIF bioproject;
@@ -297,9 +297,9 @@
         queries.addFeatures = feature_part;
         queries.addTracks   = track_part;
         queries.loc         = position_string;
-        queries.tracks = 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
+        queries.tracks = tracks || 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
       ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
-        queries.tracks = 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
+        queries.tracks = tracks || 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
       END;
 
       IF c.config.installation_type.match('^dev');
@@ -318,7 +318,7 @@
       url;
     END;
 
-    MACRO jbrowselink(data, label, search) BLOCK;
+    MACRO jbrowselink(data, label, search, tracks) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
       species = c.config.sections.species_list.$taxonomy;
       label = label || data.label;
@@ -334,7 +334,7 @@
             END;
 
             IF pos_display_string;
-                url = jbrowse_url(taxonomy, pos_display_string, bp);
+                url = jbrowse_url(taxonomy, pos_display_string, bp, 0, tracks);
                 linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">Browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
             END;
         END;
@@ -364,7 +364,7 @@
     END;
 
 
-    MACRO jbrowse_view(data, label) BLOCK;
+    MACRO jbrowse_view(data, label, tracks) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
       species = c.config.sections.species_list.$taxonomy;
       label = label || data.label;
@@ -374,7 +374,7 @@
         FOREACH bp IN bioproject;
             true_coords = data.label; #don't use the data.pos_string which is padded for GBrowse
             padded_coords = pad_jbrowse_coordinates(true_coords);
-            view_url = jbrowse_url(taxonomy, padded_coords, bp, 1);
+            view_url = jbrowse_url(taxonomy, padded_coords, bp, 1, tracks);
             view_id = "jbrowse-view-$padded_coords-$bp";
             view_id = view_id.replace('\W+', '_');
 
