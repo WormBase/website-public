@@ -240,7 +240,7 @@ my %data = (
 
     evidence        => {
             evidence => $evidence,
-            text     => $desc
+            text     => "$desc"
         }
 );
 
