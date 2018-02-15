@@ -310,10 +310,10 @@
           queries.tracklist=0;
           queries.nav=0;
           queries.overview=0;
-          url = c.uri_for('/tools', 'genome', 'jbrowse-simple', 'full.html', queries).path_query();
+          url = c.uri_for('/tools', 'genome', 'jbrowse-simple', 'full.html', queries).path_query().replace('\+', '%20');
       ELSE;
           # the trailing / for jbrowse url part is important..
-          url = c.uri_for('/tools', 'genome', 'jbrowse-simple/', queries).path_query();
+          url = c.uri_for('/tools', 'genome', 'jbrowse-simple/', queries).path_query().replace('\+', '%20');
       END;
       url;
     END;
