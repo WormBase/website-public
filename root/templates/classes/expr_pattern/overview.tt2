@@ -36,13 +36,9 @@ PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_i
 
 '<br />';
 
-IF fields.ep_movies.data.size > 0;
-    WRAPPER toggle title="<b>View Movies</b>" ;
-
-        FOR movie IN fields.ep_movies.data;
-            movie_path = c.config.static_movie_base _ movie;
-            embed_video(movie_path);
-        END;
+WRAPPER $field_block title="Movies" key="ep_movies";
+    FOR movie IN fields.ep_movies.data;
+        embed_video(movie, 1);
     END;
 END;
 

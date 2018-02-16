@@ -1602,32 +1602,19 @@ END; %]
 
 
 
-[% MACRO embed_video(movie_path) BLOCK; %]
+[% MACRO embed_video(tag, open) BLOCK; %]
+  [% movie_path = tag.file %]
   [% IF movie_path.match(site.external_urls.RNAi.base); %]
       <div>
-      [% # These are in an iframe since they don't seem to work in an embedded object without reformatting %]
-      <iframe src="[% movie_path %]" width="650" height="450" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+          [% external_link(movie_path, tag.label) %]
       </div>
   [% ELSE %]
-  <div class="embeddedVideo">
-      <object classid='clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B'
-          width="600" height="400"
-          codebase='http://www.apple.com/qtactivex/qtplugin.cab'>
-          <param name='src' value="[% movie_path %]">
-          <param name='autoplay' value="false">
-          <param name='controller' value="true">
-          <param name='loop' value="false">
-
-          <embed src="[% movie_path %]" width="600" height="400"
-          scale="tofit" autoplay="false"
-          controller="true" loop="false" bgcolor="#000000"
-          pluginspage='http://www.apple.com/quicktime/download/'>
-          </embed>
-      </object>
-  </div>
+      [% WRAPPER toggle title=tag.label open=open; %]
+          <video width="320" height="240" controls>
+              <source src="[% movie_path %]" type="video/mp4">
+          </video>
+      [% END; %]
   [% END %]
-
-  [% external_link(movie_path, 'download movie') %]
 
 [% END %]
 
