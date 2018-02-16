@@ -3,11 +3,7 @@
 # Movies
 WRAPPER $field_block title="Movies" key="movies";
     FOREACH item IN fields.movies.data;
-
-    WRAPPER toggle title='<a href="http://www.rnai.org/movies/' _ item.file _ '">' _ item.label _ '</a>'  open=1;
-            embed_video(get_url(item.class, item.id));
-    END;
-
+        embed_video(item, 1);
     END;
 END;
 
