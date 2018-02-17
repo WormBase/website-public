@@ -1,9 +1,6 @@
 <h2>[% fields.name.data.label %] </h2>
 [% gene_image = fields.expression_image.data %]
-[% IF gene_image %]
-<a href="[% gene_image %]" target="_blank" >[% image(gene_image)  %]</a>
-[% END %]
-
+<div id="virtual-worm"></div>
 
 [%
 
@@ -47,3 +44,19 @@ WRAPPER $field_block title="Historical gene" key="historical_gene";
 END;
 
 %]
+
+<script type="text/javascript" >
+    (function() {
+        // note transcript will use the gene url
+        var imageUrl = "/img-static/virtualworm/Expr_Object_Renders/[% fields.name.data.id %].jpg";
+        var element = $jq('#virtual-worm');
+        $jq.ajax({
+            url: imageUrl,
+            success: function() {
+                element.html('<a href="' + imageUrl + '" target="_blank">' +
+                    '<img src="' + imageUrl + '" width="100%"/>' +
+                    '</a>');
+            }
+        });
+    })();
+</script>
