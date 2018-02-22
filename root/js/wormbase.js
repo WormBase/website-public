@@ -1114,7 +1114,7 @@ var Layout = (function(){
       }
       if ((body.hasClass('table-columns')) && title.size() > 0 &&
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) >
-        (title.outerWidth())))
+          (Math.ceil(wHolder.children(".left").parent().width()))))
         columns(100, 100, 1);
       if(ref && (ref.hasClass("widget-narrow") !== (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
