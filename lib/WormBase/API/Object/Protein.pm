@@ -162,7 +162,7 @@ sub corresponding_all {
         # note from Kevin - WormBase may be splitting to
         # WormBase_protein_coding, WormBase_ncRNA, etc in WS240
         # Also: WHY ARE THE NUMBERS DIFFERENT FROM GFF2 ??!?
-        map { $len_spliced += $_->length } $gff->get_SeqFeatures('CDS:WormBase');
+        map { $len_spliced += $_->length } map { if ($_->{'segments'}) {$_->get_SeqFeatures} else {$_} } $gff->get_SeqFeatures('CDS:WormBase');
 
         $len_spliced ||= '-';
 
