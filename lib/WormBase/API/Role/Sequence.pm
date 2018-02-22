@@ -1046,7 +1046,7 @@ sub print_sequence {
 
         push @data, _print_unspliced($markup,$seq_obj,$unspliced,\@features);
         push @data, _print_spliced($markup,@features);
-        push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
+        push @data, _print_protein(eval {$s->Corresponding_protein} || eval{$s->Corresponding_CDS->Corresponding_protein}) || _print_translation($markup,\@features) unless eval { $s->Coding_pseudogene };
 
         if ($s->{class} eq 'Transcript') {
             my ($flanked_seq,$flanked_seq_range, @flankings) = $self->_get_flanking_region(2000, 2000);
@@ -1702,7 +1702,7 @@ sub _print_spliced {
 
 }
 
-sub _print_protein {
+sub _print_translation {
     my ($markup,$features,$genetic_code) = @_;
 #   my @markup;
     my $trimmed = join('',map {$_->dna} grep {$_->primary_tag eq 'CDS'} @$features);
@@ -1723,6 +1723,23 @@ sub _print_protein {
         type => "aa",
         length => $plen,
     };
+}
+
+sub _print_protein {
+    my ($protein) = @_;
+    my $peptide = eval {$protein->asPeptide};
+    if ($peptide) {
+	$peptide =~ s/^>.*//;
+	$peptide =~ s/\n//g;
+	return {
+            header=>"conceptual translation",
+            sequence=>$peptide . '*',
+            type => "aa",
+            length => length $peptide,
+        };
+    } else {
+        return undef;
+    }
 }
 
 # print flanking regions plus the unspliced sequence

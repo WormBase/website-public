@@ -361,6 +361,17 @@ sub _build_tracks {
     };
 }
 
+has 'jbrowse_tracks' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        return {
+            description => 'tracks displayed in JBrowse',
+            data => 'Curated_Genes,YACs_Fosmids_Cosmids,Contig submissions,Links and Superlinks'
+        };
+    }
+);
+
 sub _build__segments {
     my ($self) = @_;
     # TH: I don't think it's correct to use the method "region" here.

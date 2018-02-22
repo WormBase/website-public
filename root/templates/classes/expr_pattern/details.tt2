@@ -24,6 +24,10 @@ WRAPPER $field_block title="Experiment" key="experimental_details";
 		pluralize("Strain", details.strain.size) _ ': ';
 			tags2link(details.strain) _ '<br>';
 	 END;
+	 IF details.variation;
+		'Genome editing: ';
+			tags2link(details.variation) _ '<br>';
+	 END;
 	 IF details.author;
 		pluralize("Author", details.author.size) _ ': ';
 			 tags2link(details.author) _ '<br>';
@@ -43,6 +47,10 @@ END;
         END;
     END;
 #END;
+
+WRAPPER $field_block title=pluralize("Sequence feature", fields.sequence_feature.data.size) key='sequence_feature';
+    tags2link(fields.sequence_feature.data);
+END;
 
 WRAPPER $field_block title="Expressed In" key='';
 

@@ -10,9 +10,10 @@ use Data::Dumper;
 
 require 't/catalyst_startup.pm';
 
+$ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = $ENV{'APP'};
+
 start_catalyst();
 
 wait_for_catalyst();
 
 1;
-

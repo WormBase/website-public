@@ -44,7 +44,7 @@ class InteractionGraph extends Component {
     const defaultInclude = ['physical'];
     const defaultExcludes = this.props.interactions.length < 100 ?
                             new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral', 'genetic:other']) :
-                            new Set(['predicted', 'regulatory', 'genetic']);
+                            new Set(['predicted', 'regulatory:does not regulate', 'genetic']);
     const availableTypes = new Set([...defaultInclude, ...this.props.interactions.map((interaction) => interaction.type)]);
     this.setState({
       interactionTypeSelected: [...availableTypes].filter(
@@ -286,6 +286,17 @@ class InteractionGraph extends Component {
     return this.state.interactionTypeSelected.indexOf(type) !== -1;
   }
 
+  countInteractionsOfType = (type) => {
+    const subtypes = new Set([type, ...this.getDescentTypes(type)]);
+    return this.props.interactions.reduce((result, interaction) => {
+      if (subtypes.has(interaction.type) &&
+          (this.state.includeNearbyInteraction || !parseInt(interaction.nearby, 10))) {
+        result++;
+      }
+      return result;
+    }, 0);
+  }
+
   handleInteractionTypeSelection = (type) => {
     this.setState((prevState) => {
       const inferredTypes = this.getInferredTypes(type);
@@ -336,7 +347,9 @@ class InteractionGraph extends Component {
       () => inferredTypes.has('genetic'),
       () => inferredTypes.has('regulatory'),
     ];
-    const colorIndex = tests.findIndex((test, index) => test());;
+    const colorIndex = tests.reduce((result, test, index) => (
+      result === -1 ? test() ? index : result : result
+    ), -1);
     return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
   }
 
@@ -368,6 +381,7 @@ class InteractionGraph extends Component {
             text: classNames([this.props.classes.graphSidebarText, this.props.classes[`graphSidebarTextLevel${level}`]])
           }}
         />
+        <span className={this.props.classes.graphSidebarCount}>{this.countInteractionsOfType(interactionType)}</span>
       </ListItem>
     );
   }
@@ -407,7 +421,7 @@ class InteractionGraph extends Component {
       <div className={classes.graphSidebar}>
         <CompactList>
           {this.renderInteractionTypeSelect('all', {
-             label: 'All interaction types'
+             label: 'All interaction types',
           })}
           <CompactList>
             {this.renderInteractionTypeSelect('predicted')}
@@ -521,6 +535,10 @@ const styles = (theme) => {
     },
     graphSidebarTextLevel2: {
       fontStyle: 'normal',
+    },
+    graphSidebarCount: {
+      color: theme.palette.text.secondary,
+      fontWeight: 'normal',
     },
   };
 };

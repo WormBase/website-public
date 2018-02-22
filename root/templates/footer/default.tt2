@@ -50,7 +50,7 @@
 
         <ul>
           <li><span>Friends</span></li>
-          <li>[% external_link("http://www.cbs.umn.edu/research/resources/cgc", 'CGC') %]</li>
+          <li>[% external_link("https://cgc.umn.edu/", 'CGC') %]</li>
           <li>[% external_link("http://www.wormatlas.org", 'WormAtlas') %]</li>
           <li>[% external_link("http://www.nematodes.org/", 'Nematodes.org') %]</li>
           <li>[% external_link("http://www.ipm.ucdavis.edu/NEMABASE/", 'NEMABASE') %]</li>

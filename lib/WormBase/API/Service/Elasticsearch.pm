@@ -45,6 +45,7 @@ sub autocomplete {
     if ($resp->{success}) {
         return (decode_json($resp->{content}));
     }
+    return undef;
 }
 
 
@@ -76,10 +77,16 @@ sub fetch {
 
 
     my $url = $self->_get_elasticsearch_url("/search-exact", $args);
+
     my $resp = HTTP::Tiny->new->get($url);
     if ($resp->{success} && $resp->{content}) {
-        return decode_json($resp->{content});
+        my $json = decode_json($resp->{content});
+        my $non_empty_json = scalar keys %$json;
+        if ($fill || $footer || $label || $non_empty_json) {
+            return $json;
+        }
     }
+    return undef;
 }
 
 
@@ -93,6 +100,7 @@ sub random {
     if ($resp->{success} && $resp->{content}) {
         return decode_json($resp->{content});
     }
+    return undef;
 }
 
 # Estimates the search results amount - accurate up to 500
@@ -113,6 +121,7 @@ sub count_estimate {
     if ($resp->{success}) {
         return decode_json($resp->{content})->{count};
     }
+    return undef;
 }
 
 # args may need to be fixed as client uses species param to send paper_type

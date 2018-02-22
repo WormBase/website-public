@@ -4,9 +4,9 @@
 [%
 
 WRAPPER highlight_box;
-
-
-
+    WRAPPER $field_block title="Evidence" key="evidence";
+        tag2link(fields.evidence.data);
+    END;
 END;
 
 

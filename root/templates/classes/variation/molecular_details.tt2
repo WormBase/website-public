@@ -52,8 +52,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
     WRAPPER $field_block title="Protein Change" key="amino_acid_change";
       FOREACH change IN fields.amino_acid_change.data;
-        #            tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
-        tag2link(change.transcript) _ ' (wildtype)<br/>';
+        tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
         #            tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
 
         # Display the conceptual translation.

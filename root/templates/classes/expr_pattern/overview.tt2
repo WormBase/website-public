@@ -1,9 +1,6 @@
 <h2>[% fields.name.data.label %] </h2>
 [% gene_image = fields.expression_image.data %]
-[% IF gene_image %]
-<a href="[% gene_image %]" target="_blank" >[% image(gene_image)  %]</a>
-[% END %]
-
+<div id="virtual-worm"></div>
 
 [%
 
@@ -36,13 +33,9 @@ PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_i
 
 '<br />';
 
-IF fields.ep_movies.data.size > 0;
-    WRAPPER toggle title="<b>View Movies</b>" ;
-
-        FOR movie IN fields.ep_movies.data;
-            movie_path = c.config.static_movie_base _ movie;
-            embed_video(movie_path);
-        END;
+WRAPPER $field_block title="Movies" key="ep_movies";
+    FOR movie IN fields.ep_movies.data;
+        embed_video(movie, 1);
     END;
 END;
 
@@ -51,3 +44,19 @@ WRAPPER $field_block title="Historical gene" key="historical_gene";
 END;
 
 %]
+
+<script type="text/javascript" >
+    (function() {
+        // note transcript will use the gene url
+        var imageUrl = "/img-static/virtualworm/Expr_Object_Renders/[% fields.name.data.id %].jpg";
+        var element = $jq('#virtual-worm');
+        $jq.ajax({
+            url: imageUrl,
+            success: function() {
+                element.html('<a href="' + imageUrl + '" target="_blank">' +
+                    '<img src="' + imageUrl + '" width="100%"/>' +
+                    '</a>');
+            }
+        });
+    })();
+</script>

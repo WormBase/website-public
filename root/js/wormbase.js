@@ -344,7 +344,20 @@ var name2widget = {
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
 
-      if(location.hash.length > 0){
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      var widgetId = getParameterByName('widget');
+      if (widgetId) {
+        Layout.singleWidgetLayout(widgetId);
+      } else if(location.hash.length > 0){
         Layout.readHash();
       }else if(layout = widgetHolder.data("layout")){
         Layout.resetPageLayout(layout);
@@ -1167,6 +1180,31 @@ var Layout = (function(){
       }
     }
 
+  function singleWidgetLayout(widgetId) {
+    var layout = wHolder.data("layout");
+    var h = layout.hash && layout.hash.split('-');
+
+    if (h) {
+      // insert widget at the top of existing layout
+
+      var l = h[0],
+          r = h[1],
+          m = h[3];
+
+      function others(widgets) {
+        return (widgets || '').split('').map(function(i) {
+          return getWidgetName(i);
+        }).filter(function(i) {
+          return i !== widgetId;
+        });
+      }
+
+      resetLayout([widgetId].concat(others(l)), others(r), 100, [], others(m));
+    } else {
+      resetLayout([widgetId], [], 100, []);
+    }
+  }
+
 
     function newLayout(layout){
       updateLayout(layout, undefined, function() {
@@ -1270,7 +1308,7 @@ var Layout = (function(){
     }
 
     function getLeftWidth(holder){
-      var leftWidth = sColumns ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/(parseFloat(holder.outerWidth())))*100;
+      var leftWidth = sColumns && location.hash ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/(parseFloat(holder.outerWidth())))*100;
       return Math.round((isNaN(leftWidth) ? 100 : leftWidth)/10) * 10; //if you don't round, the slightest change causes an update
     }
 
@@ -1304,9 +1342,9 @@ var Layout = (function(){
       if(sidebar){
         $jq("#nav-min").click();
       }
-      if(location.hash.length > 0){
-        updateLayout(undefined, hash);
-      }
+
+      updateLayout(undefined, hash);
+
     }
 
   return {
@@ -1318,6 +1356,7 @@ var Layout = (function(){
       setLayout: setLayout,
       resetPageLayout: resetPageLayout,
       readHash: readHash,
+      singleWidgetLayout: singleWidgetLayout,
       getLeftWidth: getLeftWidth,
       updateLayout: updateLayout,
       newLayout: newLayout
@@ -1932,15 +1971,15 @@ var Scrolling = (function(){
 
       var drawCallback = function( settings ){
             var api = this.api();
-            var rows = api.rows().nodes();
+            var rows = api.rows({page: 'current'}).nodes();
             var last=null;
 
-            api.column(0).nodes().each( function ( cell, i ) {
+            api.column(0, {page: 'current'}).nodes().each( function ( cell, i ) {
                 $jq(cell).children().hide();
                 $jq(cell).text('');
             });
 
-            api.rows().data().each( function ( rowData, i ) {
+            api.rows({page: 'current'}).data().each( function ( rowData, i ) {
 
                 var groupID = rowData[0];
                 var group = rowData[group_by_col];

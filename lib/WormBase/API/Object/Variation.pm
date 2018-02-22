@@ -270,7 +270,7 @@ sub linked_to {
     my @data = $self->_pack_list([$object->Linked_to]);
 
     return {
-        description => 'linked_to',
+        description => 'paired substitutions as part of the same allele',
         data => @data ? \@data : undef
     }
 }

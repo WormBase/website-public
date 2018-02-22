@@ -60,6 +60,17 @@ sub _build_tracks {
     };
 }
 
+has 'jbrowse_tracks' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        return {
+            description => 'tracks displayed in JBrowse',
+            data => 'Curated_Genes,Microarray oligo probes,PCR Assays,ORFeome PCR Products,YACs_Fosmids_Cosmids'
+        };
+    }
+);
+
 
 
 # satisfy Role::Position requirements

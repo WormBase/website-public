@@ -6,3 +6,5 @@ WRAPPER $field_block title="Microarray results" key="microarray_results";
 END;
 
 %]
+
+[% PROCESS shared/widgets/expression.tt2 %]

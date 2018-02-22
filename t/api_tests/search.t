@@ -26,7 +26,7 @@
 
         # Search for "neurodegenerative disease" in disease class
         # Issue #2971
-        my $match = $api->xapian->fetch({ query => "\"neurodegenerative disease\"", class => "disease"});
+        my $match = $api->elasticsearch->fetch({ query => "neurodegenerative disease", class => "disease"});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'DOID:1289', 'correct id returned - neurodegenerative disease search');
@@ -34,7 +34,7 @@
 
 
         # Search for unc-26 in gene class
-        $match = $api->xapian->fetch({ query => "unc-26", class => "gene"});
+        $match = $api->elasticsearch->fetch({ query => "unc-26", class => "gene"});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'WBGene00006763', 'correct id returned - unc-26 search');
@@ -42,7 +42,7 @@
 
 
         # Search for "bag of worms" in phenotype class
-        $match = $api->xapian->fetch({ query => "\"bag of worms\"", class => "phenotype"});
+        $match = $api->elasticsearch->fetch({ query => "bag of worms", class => "phenotype"});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'WBPhenotype:0000007', 'correct id returned - bag of worms');
@@ -50,29 +50,29 @@
 
 
         # Search for a CDS object - wasn't working after refactor
-        $match = $api->xapian->fetch({ query => "JC8.10a", class => "cds", label => 1});
+        $match = $api->elasticsearch->fetch({ query => "JC8.10a", class => "cds", label => 1});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'JC8.10a', 'correct id returned - jc810.a cds');
         is  ($match->{label}, 'JC8.10a', 'correct label returned - jc810.a cds');
 
         # Search for a person object - mult class search wasn't working (Author/Person)
-        $match = $api->xapian->fetch({ query => "WBPerson3249", class => "person", label => 1});
+        $match = $api->elasticsearch->fetch({ query => "WBPerson3249", class => "person", label => 1});
 
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'WBPerson3249', 'correct id returned - wbperson3249 person');
         is  ($match->{label}, 'Joshua N Bembenek', 'correct label returned - wbperson3249 person');
 
-        # search for paper by doi, the prefix (prior to "/" has to be removed first)
-        $match = $api->xapian->fetch({ query => "rstb.1976.0085", class => "paper"});
+        # search for paper by doi
+        $match = $api->elasticsearch->fetch({ query => "10.1098/rstb.1976.0085", class => "paper"});
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'WBPaper00000009', 'correct id returned - WBPaper00000009 paper');
-        is  ($match->{label}, 'Albertson DG et al. (1976)', 'correct label returned');
+        ok  ($match->{label} =~ /\QAlbertson DG et al. (1976)\E/, 'correct label returned');
 
 
         # This query (searching for rearrangement by gene name) should not find
         # exact match
-        $match = $api->xapian->fetch({ query => "dpy-17", class => "rearrangement"});
+        $match = $api->elasticsearch->fetch({ query => "dpy-17", class => "rearrangement"});
         is($match, undef, 'correctly return undef when not finding exact match');
 
     }
@@ -81,16 +81,16 @@
     sub test_filtered_search {
 
         # fetching a C.elegans gene
-        my $match = $api->xapian->fetch({ query => '(unc-22 OR unc_22)', class => 'gene', species => 'c_elegans'});
+        my $match = $api->elasticsearch->fetch({ query => 'unc-22', class => 'gene', species => 'c_elegans'});
         isnt($match, undef, 'data returned');
         is  ($match->{id}, 'WBGene00006759', 'correct C. elegans gene returned');
 
         # fetching gene by c. elegens gene name, but specifying another species
-        $match = $api->xapian->fetch({ query => '(unc-22 OR unc_22)', class => 'gene', species => 'c_briggsae'});
+        $match = $api->elasticsearch->fetch({ query => 'unc-22', class => 'gene', species => 'c_briggsae'});
         is($match, undef, "doesn't return a unc-22 of c. elegens when another species is specified");
 
         # searching gene by c. elegens gene name, with another species, should found some match
-        ($match, my $err) = $api->xapian->search({ query => '(unc-22 OR unc_22)', type => 'gene', species => 'c_briggsae'});
+        ($match, my $err) = $api->elasticsearch->search({ query => 'unc-22', type => 'gene', species => 'c_briggsae'});
         my @it  = @{$match->{matches}};
         $match = $it[0];
         isnt($match, undef, 'result returned');
@@ -99,12 +99,16 @@
     }
 
     sub test_autocompelte {
-        my $it = $api->xapian->autocomplete("neuro", "disease");
+        my $it = $api->elasticsearch->autocomplete("neuro", "disease");
 
         isnt($it, undef, 'data returned');
         my @matches = @{$it->{struct}};
         is  (scalar @matches, 10, 'correct amount of results returned');
-        is  ($matches[0]->{id}, 'DOID:169', 'correct result first');
+
+        my $match1 = grep {
+            $_->{label} eq 'neuroblastoma'
+        } @matches;
+        ok  ($match1, 'correct autocompletion result');
 
 
     }
