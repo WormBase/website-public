@@ -1087,6 +1087,7 @@ sub is_slow_endpoint {
         '/rest/widget/phenotype/{id}/rnai',
         '/rest/widget/phenotype/{id}/variation',
         '/rest/widget/transposon_family/{id}/var_motifs',
+        '/rest/widget/strain/{id}/contains',
         '/rest/field/gene/{id}/interaction_details',
         '/rest/field/gene/{id}/interactions'
     );
