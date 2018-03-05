@@ -71,11 +71,11 @@
 FOREACH edge IN fields.interactions.data.edges.sort;
     IF edge.effector.class == 'gene';
     name = edge.effector.label FILTER upper;
-    "$name|";
+    "$name%7C";
     END;
     IF edge.affected.class == 'gene';
     name = edge.affected.label FILTER upper;
-    "$name|";
+    "$name%7C";
     END;
 END; %]" target="_blank">View Interaction Network in GeneMANIA</a>
 [% END %]
