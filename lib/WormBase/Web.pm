@@ -676,11 +676,15 @@ sub secure_uri_for {
     return $u;
 }
 
-# override 'uri_for' => sub {
-#     my ($self, @args) = @_;
-#     my $u = super(@args);
-#     return $u->path;
-#   };
+override 'uri_for' => sub {
+    # to understand override method modifier: http://search.cpan.org/dist/Moose/lib/Moose/Manual/MethodModifiers.pod
+    my ($self, @args) = @_;
+    my $u = super();
+    if($self->config->{enable_ssl}){
+        $u->scheme('https');
+    }
+    return $u;
+};
 
 # overloaded from Per_User plugin to move saved items
 sub merge_session_to_user {

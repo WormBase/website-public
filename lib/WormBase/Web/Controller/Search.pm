@@ -332,6 +332,11 @@ sub _round_down {
 
 sub _get_url {
   my ($self, $c, $class, $id, $species, $start) = @_;
+
+  if (ref($species) eq 'HASH') {
+      $species = $species->{id};
+  }
+
   my $url;
   if($start){
     $url = $c->uri_for('/tools', 'genome', 'gbrowse', $species)->path . '?name=' . $class . ":" . $id;
