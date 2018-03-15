@@ -1,5 +1,4 @@
 <h1>WormBase Ontology Browser</h1>
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script>
   function togglePlusMinus(element) {
     document.getElementById(element).innerHTML = (document.getElementById(element).innerHTML == "&nbsp;+&nbsp;") ? "&nbsp;-&nbsp;" : "&nbsp;+&nbsp;";
@@ -22,7 +21,7 @@
       elementToRemove.parentNode.removeChild(elementToRemove);
         // going to create more nodes and have a new html element highestNodeCount from ajax, remove current from DOM to prevent duplicate with newer value
       var url = '/tools/ontology_browser/query_children?inline=1&termId=' + termId + '&highestNodeCount=' + highestNodeCount;
-      $(document.getElementById('children_' + nodeCount + '_' + termId)).load(url);	// load the children_<nodeCount>_<termId> UL with the list from the url
+      $jq(document.getElementById('children_' + nodeCount + '_' + termId)).load(url);	// load the children_<nodeCount>_<termId> UL with the list from the url
     }
     toggleShowHide('children_' + nodeCount + '_' + termId);			// always toggle to show or hide the UL children_<nodeCount>_<termId>
   }
