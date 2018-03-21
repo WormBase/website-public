@@ -404,17 +404,14 @@
 
                 var reset = (function(innerJBrowseContainer, url) {
                   return function(height) {
-                     console.log(innerJBrowseElement);
-                     var innerJBrowseElement = innerJBrowseContainer.find('object');
-                     innerJBrowseElement.on('load', function() {
-                       alert('aaa');
+                    var innerJBrowseElement = innerJBrowseContainer.find('object');
+                    innerJBrowseElement.on('load', function() {
+                      alert('aaa');
 
-                     });
-                     innerJBrowseContainer.addClass('jbrowse-view-iframe__loading');
-                     innerJBrowseElement.attr('data', url);
-                     innerJBrowseElement.height(height);
-                   //  innerJBrowseContainer.append('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
-                   //  innerJBrowseContainer.height(height);
+                    });
+                    innerJBrowseContainer.addClass('jbrowse-view-iframe__loading');
+                    innerJBrowseElement.attr('data', url);
+                    innerJBrowseElement.height(height);
 
                     setTimeout(function() {
                       if (!heightKnown) {
@@ -429,7 +426,6 @@
                         // }
                         h += 300;
                         innerJBrowseContainer.find('object').height(h);
-                        //innerJBrowseContainer.find('.loading').hide();
                         heightKnown = true;
                       }
 
