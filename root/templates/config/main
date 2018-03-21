@@ -306,7 +306,7 @@
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        'http://staging.wormbase.org';
+        'http://dev.wormbase.org:9020';
       END;
       IF is_preview_url;
           queries.tracklist=0;
@@ -399,32 +399,47 @@
                 var viewId = "#[% view_id %]";
                 var viewUrl = "[% view_url %]";
                 var innerJBrowseContainer = $jq(viewId + " .jbrowse-view-iframe");
+                var h = 100;
+                var heightKnown = false;
+
                 var reset = (function(innerJBrowseContainer, url) {
-                   return function(height) {
+                  return function(height) {
                      console.log(innerJBrowseElement);
                      var innerJBrowseElement = innerJBrowseContainer.find('object');
+                     innerJBrowseElement.on('load', function() {
+                       alert('aaa');
+
+                     });
+                     innerJBrowseContainer.addClass('jbrowse-view-iframe__loading');
                      innerJBrowseElement.attr('data', url);
-                     innerJBrowseElement.height(20000);
-                     innerJBrowseContainer.height(height);
-                   };
+                     innerJBrowseElement.height(height);
+                   //  innerJBrowseContainer.append('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
+                   //  innerJBrowseContainer.height(height);
+
+                    setTimeout(function() {
+                      if (!heightKnown) {
+                        // var window = document.getElementById('innerJBrowse').contentDocument || document.getElementById('innerJBrowse').contentWindow.document;
+                        // var tracks = window.getElementsByClassName('track');
+                        // for (var i=0; i < tracks.length; i++) {
+                        //   var id = tracks[i].id;
+                        //   if(id == 'gridtrack' || id == 'overviewtrack_overview_loc_track' || id == 'static_track') {
+                        //     continue;
+                        //   }
+                        //   h += tracks[i].offsetHeight;
+                        // }
+                        h += 300;
+                        innerJBrowseContainer.find('object').height(h);
+                        //innerJBrowseContainer.find('.loading').hide();
+                        heightKnown = true;
+                      }
+
+                      innerJBrowseContainer.removeClass('jbrowse-view-iframe__loading');
+                    }, 7000);
+
+                  };
                 })(innerJBrowseContainer, viewUrl);
 
-                var h = 100;
                 reset(h);
-
-                setTimeout(function() {
-                  // var window = document.getElementById('innerJBrowse').contentDocument || document.getElementById('innerJBrowse').contentWindow.document;
-                  // var tracks = window.getElementsByClassName('track');
-                  // for (var i=0; i < tracks.length; i++) {
-                  //   var id = tracks[i].id;
-                  //   if(id == 'gridtrack' || id == 'overviewtrack_overview_loc_track' || id == 'static_track') {
-                  //     continue;
-                  //   }
-                  //   h += tracks[i].offsetHeight;
-                  // }
-                  h += 300;
-                  innerJBrowseContainer.height(h);
-                }, 7000);
 
                 $jq(viewId + " .jbrowse-view-reset").click(function(){
                   reset(h);

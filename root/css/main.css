@@ -4021,6 +4021,21 @@ div.title {
 
 .jbrowse-view-iframe {
   cursor: pointer;
+  position: relative;
+  width: inherit;
+  border: 1px solid lightgray;
+}
+
+.jbrowse-view-iframe__loading {
+  background: url('/img/ajax-loader.gif') no-repeat center;
+}
+.jbrowse-view-iframe div.loading {
+  height: 3em;
+}
+
+.jbrowse-view-iframe__expanded div.loading {
+  position:absolute;
+  top:400px;
 }
 
 .jbrowse-view-iframe iframe {
