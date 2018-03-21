@@ -430,6 +430,10 @@
                   reset(h);
                 });
 
+                $jq(viewId + " .jbrowse-view-iframe").click(function(){
+                  window.location.href = "[% jbrowse_url(taxonomy, padded_coords, bp, 0, tracks); %]";
+                });
+
             })();
             </script>
 [%

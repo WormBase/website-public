@@ -4019,6 +4019,10 @@ div.title {
   float: none;
 }
 
+.jbrowse-view-iframe {
+  cursor: pointer;
+}
+
 .jbrowse-view-iframe iframe {
   /* width: 100%; */
   /* height: 400px; */
