@@ -4013,12 +4013,6 @@ div.title {
   color: #555;
 }
 
-.jbrowse-view-reset {
-  margin-bottom: 5px;
-  margin-left: 2px;
-  float: none;
-}
-
 .jbrowse-view-iframe {
   cursor: pointer;
   position: relative;
