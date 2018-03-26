@@ -131,7 +131,7 @@
                         "label" : "Trichinella patagoniensis"
                      },
                      {
-                        "url" : "/Trichinella_pseudospiralis_iss13prjna257433/Info/SpeciesLanding/",
+                        "url" : "/Trichinella_pseudospiralis_iss176prjna257433/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -258,7 +258,7 @@
                         "label" : "Trichuris muris"
                      },
                      {
-                        "url" : "/Trichuris_suis_prjna179528/Info/SpeciesLanding/",
+                        "url" : "/Trichuris_suis_prjna208416/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -363,7 +363,7 @@
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "University of Colorado School of Medicine genome project",
+                              "summary" : "University of Colorado Denver genome project",
                               "url" : "/Ascaris_suum_prjna62057/Info/Index",
                               "children" : null,
                               "label" : "PRJNA62057"
@@ -581,7 +581,7 @@
                         "label" : "Onchocerca flexuosa"
                      },
                      {
-                        "url" : "/Onchocerca_ochengi_prjeb1204/Info/SpeciesLanding/",
+                        "url" : "/Onchocerca_ochengi_prjeb1809/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -630,6 +630,19 @@
                            }
                         ],
                         "label" : "Parascaris equorum"
+                     },
+                     {
+                        "url" : "/Parascaris_univalens_prjna386823/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "University of Colorado Denver genome project",
+                              "url" : "/Parascaris_univalens_prjna386823/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA386823"
+                           }
+                        ],
+                        "label" : "Parascaris univalens"
                      }
                   ],
                   "label" : "Parascaris"
@@ -676,7 +689,7 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Toxocara_canis_prjeb533/Info/SpeciesLanding/",
+                        "url" : "/Toxocara_canis_prjna248777/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -701,7 +714,7 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Wuchereria_bancrofti_prjeb536/Info/SpeciesLanding/",
+                        "url" : "/Wuchereria_bancrofti_prjna275548/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -992,7 +1005,7 @@
                         "aliases" : [],
                         "children" : [
                            {
-                              "summary" : "Wellcome Trust Sanger Institute / WormBase genome project",
+                              "summary" : "Wellcome Trust Sanger Institute genome project",
                               "url" : "/Strongyloides_ratti_prjeb125/Info/Index",
                               "children" : null,
                               "label" : "PRJEB125"
@@ -1052,7 +1065,7 @@
                         "label" : "Ancylostoma caninum"
                      },
                      {
-                        "url" : "/Ancylostoma_ceylanicum_prjna231479/Info/SpeciesLanding/",
+                        "url" : "/Ancylostoma_ceylanicum_prjna72583/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -1187,6 +1200,19 @@
                         "label" : "Caenorhabditis japonica"
                      },
                      {
+                        "url" : "/Caenorhabditis_nigoni_prjna384657/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "Cornell University genome project",
+                              "url" : "/Caenorhabditis_nigoni_prjna384657/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA384657"
+                           }
+                        ],
+                        "label" : "Caenorhabditis nigoni"
+                     },
+                     {
                         "url" : "/Caenorhabditis_remanei_prjna53967/Info/Index/",
                         "aliases" : [],
                         "children" : [
@@ -1276,6 +1302,38 @@
                   "url" : "/",
                   "children" : [
                      {
+                        "url" : "/Diploscapter_coronatus_prjdb3143/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "National Institute of Genetics, Japan genome project",
+                              "url" : "/Diploscapter_coronatus_prjdb3143/Info/Index",
+                              "children" : null,
+                              "label" : "PRJDB3143"
+                           }
+                        ],
+                        "label" : "Diploscapter coronatus"
+                     },
+                     {
+                        "url" : "/Diploscapter_pachys_prjna280107/Info/Index/",
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "summary" : "New York University genome project",
+                              "url" : "/Diploscapter_pachys_prjna280107/Info/Index",
+                              "children" : null,
+                              "label" : "PRJNA280107"
+                           }
+                        ],
+                        "label" : "Diploscapter pachys"
+                     }
+                  ],
+                  "label" : "Diploscapter"
+               },
+               {
+                  "url" : "/",
+                  "children" : [
+                     {
                         "url" : "/Haemonchus_contortus_prjeb506/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
@@ -1314,7 +1372,7 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Heligmosomoides_polygyrus_prjeb1203/Info/SpeciesLanding/",
+                        "url" : "/Heligmosomoides_polygyrus_prjeb15396/Info/SpeciesLanding/",
                         "aliases" : [
                            "Heligmosomoides bakeri",
                            "Heligmosomoides bakeri"
@@ -1532,7 +1590,7 @@
                         "label" : "Echinococcus canadensis"
                      },
                      {
-                        "url" : "/Echinococcus_granulosus_prjeb121/Info/SpeciesLanding/",
+                        "url" : "/Echinococcus_granulosus_prjna182977/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
@@ -1693,7 +1751,7 @@
                   "url" : "/",
                   "children" : [
                      {
-                        "url" : "/Taenia_asiatica_prjeb532/Info/SpeciesLanding/",
+                        "url" : "/Taenia_asiatica_prjna299871/Info/SpeciesLanding/",
                         "aliases" : [],
                         "children" : [
                            {
