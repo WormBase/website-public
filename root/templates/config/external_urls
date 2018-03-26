@@ -156,7 +156,7 @@
 	search      = 'http://www.biomedcentral.com/%s'
 	}
 
-  BMCMolecularBiology = {
+ BMCMolecularBiology = {
 	description = 'BMC Molecular Biology'
 	base        = 'http://www.biomedcentral.com/bmcmolbiol'
 	search      = 'http://www.biomedcentral.com/%s'
@@ -341,7 +341,7 @@
 	description = 'FlyBase: a database for drosophila genetics and molecular biology'
 	maintainer  = ''
 	base        = 'http://www.flybase.org'
-	search      = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
+	search      = 'http://flybase.org/search/%s'
 	}
 
  ftp = {
