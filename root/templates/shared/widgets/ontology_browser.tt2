@@ -11,6 +11,6 @@
      WB.ajaxGet($jq("#o_browser"), "[% link %]");
    }
    else {
-     $('#o_browser').load('[% link %]');	// this makes a slow load from the widget, even if it does work from the download button, although the search doesn't work on the download button
+     $jq('#o_browser').load('[% link %]');	// this makes a slow load from the widget, even if it does work from the download button, although the search doesn't work on the download button
   }
 </script>
