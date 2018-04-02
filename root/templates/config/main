@@ -344,7 +344,7 @@
 
     MACRO pad_jbrowse_coordinates(coord_string) BLOCK;
       # compute padding for displaying coordinates
-      coord_parts = coord_string.match('(\w+):(\d+)\.{2}(\d+)');
+      coord_parts = coord_string.match('(.+):(\d+)\.{2}(\d+)');
       chromosome_id = coord_parts.0;
       IF coord_parts.1 < coord_parts.2;
         start_pos = coord_parts.1;
