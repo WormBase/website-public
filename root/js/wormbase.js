@@ -1064,9 +1064,10 @@ var name2widget = {
       if (container.offset().top < scrollPos - 25){
         var heightIncrease = container.height() - heightDefault;
 
-        $jq('html,body').stop(true,true).animate({
-          scrollTop: scrollPos + heightIncrease
-        }, 1);
+        /* $jq('html,body').stop(true,true).animate({
+         *   scrollTop: scrollPos + heightIncrease
+         * }, 1);*/
+        document.getElementsByTagName('html')[0].scrollTop = scrollPos + heightIncrease;
       }
     }
 
@@ -3447,6 +3448,7 @@ var Scrolling = (function(){
       ajaxGet: ajaxGet,                             // load data via ajax request
       setLoading: setLoading,                       // add the loading image to a certain div
       openField: openField,                         // load field with discreetLoad
+      discreetLoad: discreetLoad,                   // adjust content height
 
       loadRSS: loadRSS,                             // load RSS (homepage)
       loadFile: Plugin.loadFile,                    // load a file dynamically

@@ -394,8 +394,8 @@
                 var viewId = "#[% view_id %]";
                 var viewUrl = "[% view_url %]";
                 var innerJBrowseContainer = $jq(viewId + " .jbrowse-view-iframe");
-                var h = 100;
-                var heightKnown = false;
+                var heightDefault = 100;
+                var heightComputed = 0;
 
                 var reset = (function(innerJBrowseContainer, url) {
                   return function(height) {
@@ -409,7 +409,7 @@
                     innerJBrowseElement.height(height);
 
                     setTimeout(function() {
-                      if (!heightKnown) {
+                      if (!heightComputed) {
                         // var window = document.getElementById('innerJBrowse').contentDocument || document.getElementById('innerJBrowse').contentWindow.document;
                         // var tracks = window.getElementsByClassName('track');
                         // for (var i=0; i < tracks.length; i++) {
@@ -417,11 +417,11 @@
                         //   if(id == 'gridtrack' || id == 'overviewtrack_overview_loc_track' || id == 'static_track') {
                         //     continue;
                         //   }
-                        //   h += tracks[i].offsetHeight;
+                        //   heightComputed += tracks[i].offsetHeight;
                         // }
-                        h += 300;
-                        innerJBrowseContainer.find('object').height(h);
-                        heightKnown = true;
+                        heightComputed += 300;
+                        innerJBrowseContainer.find('object').height(Math.max(heightDefault, heightComputed));
+                        WB.discreetLoad(innerJBrowseContainer.find('object'), heightDefault);
                       }
 
                       innerJBrowseContainer.removeClass('jbrowse-view-iframe__loading');
@@ -430,7 +430,7 @@
                   };
                 })(innerJBrowseContainer, viewUrl);
 
-                reset(h);
+                reset(heightDefault);
 
                 $jq(viewId + " .jbrowse-view-iframe").click(function(){
                   window.location.href = "[% jbrowse_url(taxonomy, padded_coords, bp, 0, tracks); %]";
