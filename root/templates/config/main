@@ -268,6 +268,8 @@
         };
       END;
 
+      queries.tracks = tracks;
+
       IF position_string.match('add=.*;?');
         # for BLAST results
         coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\S+)$');
@@ -297,9 +299,9 @@
         queries.addFeatures = feature_part;
         queries.addTracks   = track_part;
         queries.loc         = position_string;
-        queries.tracks = tracks || 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
+        queries.tracks = queries.tracks || 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
       ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
-        queries.tracks = tracks || 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
+        queries.tracks = queries.tracks || 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
       END;
 
       IF c.config.installation_type.match('^dev');
