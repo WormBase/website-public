@@ -1026,7 +1026,7 @@ var name2widget = {
               WB.multiViewInit();
             }
             //console.log([content.offset().top - scrollPos]);
-            discreetLoad(content, heightDefault);
+            scrollToOffsetHeightDiff(content, heightDefault);
             Scrolling.sidebarMove();checkSearch(content);
             Layout.resize();
           });
@@ -1049,7 +1049,7 @@ var name2widget = {
           // to avoid miscalculating field height
           container.children().first().remove();  //remove placeholder
           container.children().show();
-          discreetLoad(container.children('.field'), heightDefault);
+          scrollToOffsetHeightDiff(container.children('.field'), heightDefault);
         },2000);
       };
 
@@ -1059,14 +1059,11 @@ var name2widget = {
 
     // when content is loaded asynchronously, its height may cause viewport to
     // shift position. So set page scroll position as needed
-    function discreetLoad(container, heightDefault){
+    function scrollToOffsetHeightDiff(container, heightDefault){
       var scrollPos = $jq(window).scrollTop();
       if (container.offset().top < scrollPos - 25){
         var heightIncrease = container.height() - heightDefault;
-
-        $jq('html,body').stop(true,true).animate({
-          scrollTop: scrollPos + heightIncrease
-        }, 1);
+        document.getElementsByTagName('html')[0].scrollTop = scrollPos + heightIncrease;
       }
     }
 
@@ -3446,7 +3443,8 @@ var Scrolling = (function(){
       // loading - ajax/plugins/files/RSS
       ajaxGet: ajaxGet,                             // load data via ajax request
       setLoading: setLoading,                       // add the loading image to a certain div
-      openField: openField,                         // load field with discreetLoad
+      openField: openField,                         // load field with scrollToOffsetHeightDiff
+      scrollToOffsetHeightDiff: scrollToOffsetHeightDiff,                   // adjust content height
 
       loadRSS: loadRSS,                             // load RSS (homepage)
       loadFile: Plugin.loadFile,                    // load a file dynamically
