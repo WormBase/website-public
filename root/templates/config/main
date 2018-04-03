@@ -391,7 +391,7 @@
                 var viewId = "#[% view_id %]";
                 var viewUrl = "[% view_url %]";
                 var innerJBrowseContainer = $jq(viewId + " .jbrowse-view-iframe");
-                var heightDefault = 100;
+                var heightDefault = 400;
                 var heightComputed = 0;
 
                 var reset = (function(innerJBrowseContainer, url) {
@@ -411,12 +411,13 @@
                             heightComputed += tracks[i].offsetHeight;
                           }
                         }
+                        console.log(heightComputed);
                         innerJBrowseContainer.find('object').height(Math.max(heightDefault, heightComputed));
                         WB.scrollToOffsetHeightDiff(innerJBrowseContainer.find('object'), heightDefault);
                       }
 
                       innerJBrowseContainer.removeClass('jbrowse-view-iframe__loading');
-                    }, 7000);
+                    }, 12000);
 
                   };
                 })(innerJBrowseContainer, viewUrl);
