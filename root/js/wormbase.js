@@ -3206,13 +3206,6 @@ var Scrolling = (function(){
       ReactDOM.render(<WidgetComponent data={data} />, document.getElementById(elementId));
     }
 
-    var initJbrowseView = function(elementSelector, url) {
-      function reset() {
-        $jq(elementSelector).find('iframe').attr('src', url);
-      }
-      return reset;
-    };
-
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3470,7 +3463,6 @@ var Scrolling = (function(){
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
       tooltipInit: tooltipInit,                     // initalize tooltip
-      initJbrowseView: initJbrowseView,             // initialize jbrowse view iframe to specified src
       renderWidget: renderWidget,                   // render widget component
     };
   })();
