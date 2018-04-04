@@ -196,7 +196,7 @@
       END;
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        'http://staging.wormbase.org';
+        'http://staging.wormbase.org'; # uncomment if you need the hack
       END;
       c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), full_taxonomy).path _ (id ? '?name=' _ id : '');
     END;
@@ -306,7 +306,7 @@
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        'http://dev.wormbase.org:9020';
+        # 'http://staging.wormbase.org'; # uncomment if you need the hack
       END;
       IF is_preview_url;
           queries.tracklist=0;
@@ -392,7 +392,6 @@
                 var viewUrl = "[% view_url %]";
                 var innerJBrowseContainer = $jq(viewId + " .jbrowse-view-iframe");
                 var heightDefault = 400;
-                var heightComputed = 0;
 
                 var reset = (function(innerJBrowseContainer, url) {
                   return function(height) {
@@ -401,8 +400,8 @@
                     innerJBrowseElement.attr('data', url);
                     innerJBrowseElement.height(height);
 
-                    setTimeout(function() {
-                      if (!heightComputed) {
+                    function updateHeight() {
+                        var heightComputed = 0;
                         var jbrowseDocument = document.getElementById('innerJBrowse').contentDocument || document.getElementById('innerJBrowse').contentWindow.document;
                         var tracks = jbrowseDocument.getElementsByClassName('track');
                         for (var i=0; i < tracks.length; i++) {
@@ -411,13 +410,43 @@
                             heightComputed += tracks[i].offsetHeight;
                           }
                         }
-                        console.log(heightComputed);
-                        innerJBrowseContainer.find('object').height(Math.max(heightDefault, heightComputed));
-                        WB.scrollToOffsetHeightDiff(innerJBrowseContainer.find('object'), heightDefault);
-                      }
+                        var previousHeight = innerJBrowseElement.height();
+                        innerJBrowseElement.height(Math.max(heightDefault, heightComputed));
+                        WB.scrollToOffsetHeightDiff(innerJBrowseElement, previousHeight);
+                        return heightComputed;
+                    }
 
-                      innerJBrowseContainer.removeClass('jbrowse-view-iframe__loading');
-                    }, 12000);
+                    function progressInit(max_num_retries, num_stablization_step) {
+                      var previousHeights = [0];
+                      return {
+                        isProgressComplete: function() {
+                          return previousHeights.length > max_num_retries || (
+                            previousHeights.length > num_stablization_step &&
+                            previousHeights[0] !== 0 &&
+                            previousHeights.slice(1, num_stablization_step).every(
+                              function(prevHeight) {
+                                return prevHeight === previousHeights[0];
+                              }
+                            )
+                          );
+                        },
+                        updateProgress: function(newHeight) {
+                          previousHeights.unshift(newHeight);
+                        },
+                      };
+                    }
+
+
+                    var progress = progressInit(30, 3);
+                    var interval = setInterval(function() {
+                      if (progress.isProgressComplete()) {
+                        innerJBrowseContainer.removeClass('jbrowse-view-iframe__loading');
+                        clearInterval(interval);
+                      } else {
+                        var newHeight = updateHeight();
+                        progress.updateProgress(newHeight);
+                      }
+                    }, 2000);
 
                   };
                 })(innerJBrowseContainer, viewUrl);
