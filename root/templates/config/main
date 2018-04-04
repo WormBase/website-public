@@ -410,8 +410,9 @@
                             heightComputed += tracks[i].offsetHeight;
                           }
                         }
-                        innerJBrowseContainer.find('object').height(Math.max(heightDefault, heightComputed));
-                        WB.scrollToOffsetHeightDiff(innerJBrowseContainer.find('object'), heightDefault);
+                        var previousHeight = innerJBrowseElement.height();
+                        innerJBrowseElement.height(Math.max(heightDefault, heightComputed));
+                        WB.scrollToOffsetHeightDiff(innerJBrowseElement, previousHeight);
                         return heightComputed;
                     }
 
