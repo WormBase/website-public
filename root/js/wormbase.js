@@ -1177,12 +1177,18 @@ var Layout = (function(){
       }
     }
 
+  function makeHash(leftWidgets, rightWidgets, leftWidth, minimizedWidgets) {
+    var hashLeft = (leftWidgets || []).join('');
+    var hashRight = (rightWidgets || []).join('');
+    var hashMinimized = (minimizedWidgets || []).join('');
+    var leftGridCount = Math.round(leftWidth / 10);
+    return `${hashLeft}-${hashRight}-${leftGridCount}-${hashMinimized}`;
+  }
+
   function singleWidgetLayout(widgetId) {
     var layout = wHolder.data("layout");
-    var h = layout.hash && layout.hash.split('-');
-
-    if (h) {
-      // insert widget at the top of existing layout
+      var h = layout.hash ? layout.hash.split('-') : [];
+      var leftWidth = 100;
 
       var l = h[0],
           r = h[1],
@@ -1196,10 +1202,12 @@ var Layout = (function(){
         });
       }
 
-      resetLayout([widgetId].concat(others(l)), others(r), 100, [], others(m));
-    } else {
-      resetLayout([widgetId], [], 100, []);
-    }
+      // insert widget at the top of existing layout
+      var leftWidgets = [widgetId].concat(others(l));
+      var rightWidgets = others(r);
+      var minimizedWidgets = others(m);
+      var hash = makeHash(leftWidgets, rightWidgets, leftWidth, minimizedWidgets)
+      resetLayout(leftWidgets, rightWidgets, leftWidth, hash, minimizedWidgets);
   }
 
 
