@@ -682,6 +682,8 @@ override 'uri_for' => sub {
     my $u = super();
     if($self->config->{enable_ssl}){
         $u->scheme('https');
+    } else {
+        $u->scheme('http');
     }
     return $u;
 };
