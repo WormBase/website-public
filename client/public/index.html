@@ -37,16 +37,8 @@
     </noscript>
     [% content %]
     <div id="root"></div>
-
-    <script
-      src="https://code.jquery.com/jquery-1.9.1.min.js"
-      integrity="sha256-wS9gmOZBqsqWxgIVgA8Y9WcQOa7PgSIX+rPA0VL2rbQ="
-      crossorigin="anonymous"></script>
-
-    <script
-      src="https://code.jquery.com/ui/1.10.1/jquery-ui.min.js"
-      integrity="sha256-Nnknf1LUP3GHdxjWQgga92LMdaU2+/gkzoIUO+gfy2M="
-      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" integrity="sha256-wS9gmOZBqsqWxgIVgA8Y9WcQOa7PgSIX+rPA0VL2rbQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js" integrity="sha256-Nnknf1LUP3GHdxjWQgga92LMdaU2+/gkzoIUO+gfy2M=" crossorigin="anonymous"></script>
 
     <% for (key in htmlWebpackPlugin.files.chunks) { %>
     <script src="%PUBLIC_URL%<%= htmlWebpackPlugin.files.chunks[key].entry %>" type="text/javascript"></script>
