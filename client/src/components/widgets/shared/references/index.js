@@ -9,6 +9,7 @@ import { IconButton } from '../../../Button';
 import { fitComponent } from '../../../styles';
 import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
+import DownloadReference from './DownloadReference';
 
 class References extends Component {
   static propTypes = {
@@ -108,6 +109,9 @@ class References extends Component {
               )
             }
           </ReferenceList>
+          <DownloadReference data={data}>
+            Download all references
+          </DownloadReference>
         </div>
       </div>
     );
