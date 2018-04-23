@@ -9,7 +9,7 @@
 <input name="download" value="1" hidden />
 [% FOREACH type IN c.config.api.content_type.keys.sort %]
 [% NEXT IF (type == 'text/csv' && !search) %]
+[% NEXT IF (type == 'text/html' && url.match('\/references(\?.*)?')) %]
 <input type="radio" name="content-type" value="[% type %]"/>[% c.config.api.content_type.$type %]
 [% END %]
 </form>
-
