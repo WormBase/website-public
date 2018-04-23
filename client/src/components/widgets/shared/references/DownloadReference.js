@@ -4,8 +4,40 @@ import DownloadButton from '../../../DownloadButton';
 
 class DownloadReference extends Component {
   contentFunc = () => {
-    import('json2csv').then((module) => {
-      return JSON.stringify(this.props.data);
+    return import('json2csv').then((module) => {
+      const json2csvParser = new module.Parser({
+        fields: [
+          {
+            label: 'WormBase paper Id',
+            value: 'name.id',
+          },
+          {
+            label: 'Year',
+            value: 'year',
+          },
+          {
+            label: 'Type',
+            value: 'ptype',
+          },
+          {
+            label: 'Citation',
+            value: 'name.label',
+          },
+          {
+            label: 'Title',
+            value: 'title.0',
+          },
+          {
+            label: 'Journal',
+            value: 'journal.0',
+          },
+          {
+            label: 'Abstract',
+            value: 'abstract.0',
+          },
+        ],
+      });
+      return json2csvParser.parse(this.props.data);
     });
   }
 
@@ -21,10 +53,14 @@ DownloadReference.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        "class": PropTypes.string.isRequired,
+        id: PropTypes.string,
+        label: PropTypes.string,
       }).isRequired,
-      author: PropTypes.array,
+      journal: PropTypes.any,
+      abstract: PropTypes.any,
+      title: PropTypes.any,
+      ptype: PropTypes.string,
+      year: PropTypes.string,
     })
   ).isRequired,
 };
