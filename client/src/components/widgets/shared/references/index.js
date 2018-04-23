@@ -9,6 +9,7 @@ import { IconButton } from '../../../Button';
 import { fitComponent } from '../../../styles';
 import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
+import DownloadReference from './DownloadReference';
 
 class References extends Component {
   static propTypes = {
@@ -50,6 +51,10 @@ class References extends Component {
       counts[ptype] = counts[ptype] ? counts[ptype] + 1 : 1;
       return counts;
     }, {});
+  }
+
+  pluralize = (word, count) => {
+    return count > 1 ? `${word}s` : word;
   }
 
   render() {
@@ -96,7 +101,11 @@ class References extends Component {
         <div className={classes.content}>
           <FittedListSubheader widthOnly component="div">
             <div>
-              <strong>{data.length}</strong> reference(s) matching your filter out of {this.props.data.length} in total
+              {
+                this.state.paperType ?
+                <span>{data.length} / {this.props.data.length} {this.pluralize('reference', data.length)} found matching your filter</span> :
+                <span>{data.length} {this.pluralize('reference', data.length)} found</span>
+              }
             </div>
           </FittedListSubheader>
           <ReferenceList
@@ -108,6 +117,9 @@ class References extends Component {
               )
             }
           </ReferenceList>
+          <DownloadReference data={data}>
+            Download all references
+          </DownloadReference>
         </div>
       </div>
     );
