@@ -53,6 +53,10 @@ class References extends Component {
     }, {});
   }
 
+  pluralize = (word, count) => {
+    return count > 1 ? `${word}s` : word;
+  }
+
   render() {
     const counts = this.countsByPaperTypes(this.props.data);
     const {classes} = this.props;
@@ -97,7 +101,11 @@ class References extends Component {
         <div className={classes.content}>
           <FittedListSubheader widthOnly component="div">
             <div>
-              <strong>{data.length}</strong> reference(s) matching your filter out of {this.props.data.length} in total
+              {
+                this.state.paperType ?
+                <span>{data.length} / {this.props.data.length} {this.pluralize('reference', data.length)} found matching your filter</span> :
+                <span>{data.length} {this.pluralize('reference', data.length)} found</span>
+              }
             </div>
           </FittedListSubheader>
           <ReferenceList
