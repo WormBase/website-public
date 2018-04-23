@@ -6,7 +6,13 @@
         FOREACH reftype IN fields.refers_to.data.keys.sort;
 
             name = pluralize(reftype.replace('_',' '),(fields.refers_to.data.$reftype.keys ? fields.refers_to.data.$reftype.size : fields.refers_to.data.$reftype));
-            WRAPPER $field_block title="$name";
+
+            IF fields.refers_to.data.$reftype;
+                fields.$reftype = {
+                    data => fields.refers_to.data.$reftype,
+                };
+            END;
+            WRAPPER $field_block title="$name" key="$reftype";
 
             IF fields.refers_to.data.$reftype;
                 cell_content(fields.refers_to.data.$reftype, '<br/>');
