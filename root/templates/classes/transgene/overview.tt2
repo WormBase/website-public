@@ -44,18 +44,6 @@ WRAPPER $field_block title=pluralize("Purification tag", fields.purification_tag
   tags2link(fields.purification_tag.data);
 END;
 
-WRAPPER $field_block title=pluralize("Integrated from", fields.integrated_from.data.size) key="integrated_from";
-  tags2link(fields.integrated_from.data);
-END;
-
-WRAPPER $field_block title=pluralize("Used for trasngene derivation", fields.transgene_derivation.data.size) key="transgene_derivation";
-  tags2link(fields.transgene_derivation.data);
-END;
-
-WRAPPER $field_block title="Construction details" key="construction_summary";
-  fields.construction_summary.data;
-END;
-
 WRAPPER $field_block title="Genetic information" key="genetic_info_tags";
   fields.genetic_info_tags.data;
 END;
