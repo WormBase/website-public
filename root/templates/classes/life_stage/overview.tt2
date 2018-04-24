@@ -10,7 +10,7 @@ END;
 '</div>';
 
 WRAPPER $field_block title="Other names" key="other_names";
-     fields.other_names.data.join(' ') FILTER lower;
+     fields.other_names.data.join(' ');
 END;
 
 
