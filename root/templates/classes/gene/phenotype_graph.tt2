@@ -17,7 +17,7 @@ $jq(function(){
 
   // get exported jsonp from cytoscape desktop via ajax
   var graphP = $jq.ajax({
-    url: 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJsonp&focusTermId=[% fields.phenotype_graph.data %]',
+    url: 'https://wobr.caltech.edu/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJsonp&focusTermId=[% fields.phenotype_graph.data %]',
     type: 'GET',
     jsonpCallback: 'jsonCallback',
     dataType: 'jsonp'
