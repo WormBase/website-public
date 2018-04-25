@@ -18,7 +18,7 @@
         build_data_table( order = ['start','end','name','gene', 'bio_type', 'comment'],
                           columns = { start => 'Start',
                                       end => 'End',
-                                      name   => 'Name',
+                                      name   => 'Transcript',
                                       gene => 'Gene',
                                       bio_type => 'Biotype',
                                       comment => 'Comment'},
