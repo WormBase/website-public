@@ -33,7 +33,7 @@
 
         # Please keep test names/descriptions all lower case.
         isnt($url->{'data'}, undef, 'data returned');
-        is ($url->{'data'}, '	https://omabrowser.org','there is the right data');
+        is ($url->{'data'}, 'https://omabrowser.org','there is the right data');
     }
 
 }
