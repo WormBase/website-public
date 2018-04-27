@@ -245,8 +245,8 @@ sub get :Local Args(0) {
     $c->stash->{template} = 'species/report.tt2';
 
     my $doi             = $c->req->param('doi');
-    my $requested_class = $c->req->param('class') || ($doi && 'paper');
-    my $name            = $c->req->param('name') || ($doi && (split '\/', $doi)[-1]);
+    my $requested_class = $c->req->param('class') || ($doi && 'paper') || 'all';
+    my $name            = $c->req->param('name') || $doi;
 
     my $carryover_params = {};
     while (my ($key,$value) = each %{$c->req->params}) {
@@ -291,12 +291,33 @@ sub get :Local Args(0) {
     # could be a problem in those kinds of input.
     my $class = $ACE2WB->{$requested_class}
              || $ACE2WB->{lc $requested_class} # canonical Ace class
+             || 'all'
              or $c->detach('/soft_404');
 
     my $normed_class = lc $class;
 
-    my $url = (exists $c->config->{sections}->{species}->{$normed_class}) ? $c->uri_for('/species', 'all', $normed_class, $name, $carryover_params)->as_string : $c->uri_for('/resources', $normed_class, $name, $carryover_params)->as_string;
-    $c->res->redirect($url);
+    my $search_engine = $api->get_search_engine();
+    my $match;
+    if ($normed_class && $normed_class ne 'all') {
+        $match = $search_engine->fetch({
+            query => $name,
+            class => $normed_class,
+        });
+    } else {
+        $match = $search_engine->fetch({
+            query => $name,
+        });
+    }
+
+    my $matched_class = $match->{class} if $match;
+    if ($match && ($matched_class eq $normed_class || $normed_class eq 'all')) {
+        my $url = (exists $c->config->{sections}->{species}->{$matched_class}) ?
+            $c->uri_for('/species', $match->{taxonomy}, $matched_class, $match->{id}, $carryover_params)->as_string :
+            $c->uri_for('/resources', $matched_class, $match->{id}, $carryover_params)->as_string;
+        $c->res->redirect($url);
+    } else {
+        $c->res->redirect("/search/all/$name");
+    }
 }
 
 # TODO: POD
