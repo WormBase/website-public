@@ -1061,7 +1061,7 @@ var name2widget = {
     // shift position. So set page scroll position as needed
     function scrollToOffsetHeightDiff(container, heightDefault){
       var scrollPos = $jq(window).scrollTop();
-      if (container.offset().top < scrollPos - 25){
+      if (container.offset() && container.offset().top < scrollPos - 25){
         var heightIncrease = container.height() - heightDefault;
         document.getElementsByTagName('html')[0].scrollTop = scrollPos + heightIncrease;
       }
