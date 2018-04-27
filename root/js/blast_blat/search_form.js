@@ -113,8 +113,10 @@ function updateDatabaseOptions() {
         database.options[0] = newOption;
     }
 
-    for (var i = 0; i < bioprojectElement.options.length; i++)
-        bioprojectElement.options[i].selected = true;
+    for (var i = 0; i < bioprojectElement.options.length; i++) {
+       var selected = i === 0 ? true : false;
+       bioprojectElement.options[i].selected = selected;
+    }
 
     return 1;
 }   
