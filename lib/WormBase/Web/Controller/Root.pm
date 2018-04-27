@@ -246,7 +246,7 @@ sub get :Local Args(0) {
 
     my $doi             = $c->req->param('doi');
     my $requested_class = $c->req->param('class') || ($doi && 'paper') || 'all';
-    my $name            = $c->req->param('name') || ($doi && (split '\/', $doi)[-1]);
+    my $name            = $c->req->param('name') || $doi;
 
     my $carryover_params = {};
     while (my ($key,$value) = each %{$c->req->params}) {
@@ -312,8 +312,8 @@ sub get :Local Args(0) {
     my $matched_class = $match->{class} if $match;
     if ($match && ($matched_class eq $normed_class || $normed_class eq 'all')) {
         my $url = (exists $c->config->{sections}->{species}->{$matched_class}) ?
-            $c->uri_for('/species', $match->{taxonomy}, $matched_class, $name, $carryover_params)->as_string :
-            $c->uri_for('/resources', $matched_class, $name, $carryover_params)->as_string;
+            $c->uri_for('/species', $match->{taxonomy}, $matched_class, $match->{id}, $carryover_params)->as_string :
+            $c->uri_for('/resources', $matched_class, $match->{id}, $carryover_params)->as_string;
         $c->res->redirect($url);
     } else {
         $c->res->redirect("/search/all/$name");
