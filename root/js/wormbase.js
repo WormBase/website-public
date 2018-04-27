@@ -3211,7 +3211,8 @@ var Scrolling = (function(){
 
     function renderWidget(data, elementId, widgetName) {
       const WidgetComponent = name2widget[widgetName];
-      ReactDOM.render(<WidgetComponent data={data} />, document.getElementById(elementId));
+      const pageInfo =$jq("#header").data("page");
+      ReactDOM.render(<WidgetComponent data={data} pageInfo={pageInfo} />, document.getElementById(elementId));
     }
 
     var Plugin = (function(){

@@ -18,6 +18,9 @@ class References extends Component {
         year: PropTypes.any,
       }),
     ).isRequired,
+    pageInfo: PropTypes.shape({
+      name: PropTypes.string,
+    }).isRequired,
     classes: PropTypes.object.isRequired,
   };
 
@@ -117,7 +120,7 @@ class References extends Component {
               )
             }
           </ReferenceList>
-          <DownloadReference data={data}>
+          <DownloadReference data={data} fileName={`${this.props.pageInfo.name}_references.csv`}>
             Download all references
           </DownloadReference>
         </div>
