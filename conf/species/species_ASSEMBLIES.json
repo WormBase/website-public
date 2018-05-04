@@ -122,6 +122,22 @@
       ],
       "full_name" : "Caenorhabditis japonica"
    },
+   "c_nigoni" : {
+      "assemblies" : [
+         {
+            "appeared_in" : "WS264",
+            "assembly_accession" : "GCA_002742825.1",
+            "assembly_name" : "C_nigoni-v1",
+            "bioproject" : "PRJNA384657",
+            "bioproject_description" : "Caenorhabditis nigoni strain JU1422, whole genome shotgun sequencing project",
+            "is_canonical" : true,
+            "laboratory" : [],
+            "strain" : "JU1422",
+            "ucsc_name" : null
+         }
+      ],
+      "full_name" : "Caenorhabditis nigoni"
+   },
    "c_remanei" : {
       "assemblies" : [
          {
@@ -261,5 +277,23 @@
          }
       ],
       "full_name" : "Strongyloides ratti"
+   },
+   "t_muris" : {
+      "assemblies" : [
+         {
+            "appeared_in" : "WS264",
+            "assembly_accession" : "GCA_000612645.2",
+            "assembly_name" : "T_muris-TMUE3.1",
+            "bioproject" : "PRJEB126",
+            "bioproject_description" : "Wellcome Trust Sanger Institute T. muris genome project",
+            "is_canonical" : true,
+            "laboratory" : [
+               "Wellcome Trust Sanger Institute, UK."
+            ],
+            "strain" : "Edinburgh",
+            "ucsc_name" : null
+         }
+      ],
+      "full_name" : "Trichuris muris"
    }
 }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import classNames from 'classnames';
 import Link from '../../../Link';
+import Chip from '../../../Chip';
 
 class ReferenceItem extends Component {
   static propTypes = {
@@ -49,8 +50,10 @@ class ReferenceItem extends Component {
             ))
           }
         </div>
-        <div>
-          [{data.ptype}] <em>{data.journal && data.journal[0]}, {data.year}</em>
+        <div className={classes.chipWrapper}>
+          <Chip label={data.ptype} />
+          <Chip label={<em>{data.journal && data.journal[0]}</em>} />
+          <Chip label={data.year} />
         </div>
         <div
           className={classNames(classes.abstract, classes.fade, {[classes.abstractCollapse]: !this.state.expanded})}
@@ -93,6 +96,14 @@ const styles = (theme) => ({
       width: '100%',
       height: '1.0em',
       background: 'linear-gradient(to bottom, transparent, rgba(255,255,255, 0.7))',
+    },
+  },
+  chipWrapper: {
+    display: 'flex',
+    marginLeft: -1 * theme.spacing.unit / 2,
+    '& > *': {
+      margin: theme.spacing.unit / 2,
+      height: theme.spacing.unit * 2.5,
     },
   },
 });

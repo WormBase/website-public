@@ -196,7 +196,7 @@
       END;
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        'http://staging.wormbase.org';
+        'http://staging.wormbase.org'; # uncomment if you need the hack
       END;
       c.uri_for('/tools', 'genome', (image ? 'gbrowse_img' : 'gbrowse'), full_taxonomy).path _ (id ? '?name=' _ id : '');
     END;
@@ -268,6 +268,8 @@
         };
       END;
 
+      queries.tracks = tracks;
+
       IF position_string.match('add=.*;?');
         # for BLAST results
         coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\S+)$');
@@ -297,14 +299,14 @@
         queries.addFeatures = feature_part;
         queries.addTracks   = track_part;
         queries.loc         = position_string;
-        queries.tracks = tracks || 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
+        queries.tracks = queries.tracks || 'Curated_Genes,Hits,Classical_alleles,Polymorphisms';
       ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
-        queries.tracks = tracks || 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
+        queries.tracks = queries.tracks || 'Curated_Genes,Classical_alleles,YACs_Fosmids_Cosmids';
       END;
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        'http://staging.wormbase.org';
+        # 'http://staging.wormbase.org'; # uncomment if you need the hack
       END;
       IF is_preview_url;
           queries.tracklist=0;
@@ -344,7 +346,7 @@
 
     MACRO pad_jbrowse_coordinates(coord_string) BLOCK;
       # compute padding for displaying coordinates
-      coord_parts = coord_string.match('(\w+):(\d+)\.{2}(\d+)');
+      coord_parts = coord_string.match('(.+):(\d+)\.{2}(\d+)');
       chromosome_id = coord_parts.0;
       IF coord_parts.1 < coord_parts.2;
         start_pos = coord_parts.1;
@@ -379,13 +381,8 @@
             view_id = view_id.replace('\W+', '_');
 
             '<div id="' _ view_id _ '" class="jbrowse-view-container">';
-            '<button class="jbrowse-view-reset button ui-corner-all">';
-            '<span class="ui-icon ui-icon-arrowrefresh-1-s">';
-            '</span>';
-            'Reset';
-            '</button>';
-            '<div class="jbrowse-view-iframe">';
-            '<iframe></iframe>';
+            '<div class="jbrowse-view-iframe" style="overflow: hidden;">';
+            '<object id="innerJBrowse" type="text/html" style="pointer-events:none;position:relative;top:-1px;left:0;width:100%;height:14px;overflow: hidden;"></object>';
             '</div>';
             '</div>';
 %]
@@ -393,9 +390,73 @@
             (function() {
                 var viewId = "#[% view_id %]";
                 var viewUrl = "[% view_url %]";
-                var reset = WB.initJbrowseView(viewId + " .jbrowse-view-iframe", viewUrl);
-                reset();
-                $jq(viewId + " .jbrowse-view-reset").click(reset);
+                var innerJBrowseContainer = $jq(viewId + " .jbrowse-view-iframe");
+                var heightDefault = 400;
+
+                var reset = (function(innerJBrowseContainer, url) {
+                  return function(height) {
+                    var innerJBrowseElement = innerJBrowseContainer.find('object');
+                    innerJBrowseContainer.addClass('jbrowse-view-iframe__loading');
+                    innerJBrowseElement.attr('data', url);
+                    innerJBrowseElement.height(height);
+
+                    function updateHeight() {
+                        var heightComputed = 0;
+                        var jbrowseDocument = document.getElementById('innerJBrowse').contentDocument || document.getElementById('innerJBrowse').contentWindow.document;
+                        var tracks = jbrowseDocument.getElementsByClassName('track');
+                        for (var i=0; i < tracks.length; i++) {
+                          var id = tracks[i].id;
+                          if (id !== 'gridtrack' && id !== 'overviewtrack_overview_loc_track' && id !== 'static_track') {
+                            heightComputed += tracks[i].offsetHeight;
+                          }
+                        }
+                        var previousHeight = innerJBrowseElement.height();
+                        innerJBrowseElement.height(Math.max(heightDefault, heightComputed));
+                        WB.scrollToOffsetHeightDiff(innerJBrowseElement, previousHeight);
+                        return heightComputed;
+                    }
+
+                    function progressInit(max_num_retries, num_stablization_step) {
+                      var previousHeights = [0];
+                      return {
+                        isProgressComplete: function() {
+                          return previousHeights.length > max_num_retries || (
+                            previousHeights.length > num_stablization_step &&
+                            previousHeights[0] !== 0 &&
+                            previousHeights.slice(1, num_stablization_step).every(
+                              function(prevHeight) {
+                                return prevHeight === previousHeights[0];
+                              }
+                            )
+                          );
+                        },
+                        updateProgress: function(newHeight) {
+                          previousHeights.unshift(newHeight);
+                        },
+                      };
+                    }
+
+
+                    var progress = progressInit(30, 3);
+                    var interval = setInterval(function() {
+                      if (progress.isProgressComplete()) {
+                        innerJBrowseContainer.removeClass('jbrowse-view-iframe__loading');
+                        clearInterval(interval);
+                      } else {
+                        var newHeight = updateHeight();
+                        progress.updateProgress(newHeight);
+                      }
+                    }, 2000);
+
+                  };
+                })(innerJBrowseContainer, viewUrl);
+
+                reset(heightDefault);
+
+                $jq(viewId + " .jbrowse-view-iframe").click(function(){
+                  window.location.href = "[% jbrowse_url(taxonomy, padded_coords, bp, 0, tracks); %]";
+                });
+
             })();
             </script>
 [%

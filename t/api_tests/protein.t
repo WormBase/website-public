@@ -86,7 +86,7 @@
     # Test class in hits - best_blastp_matches
     # issue #2950
     sub test_best_blastp_matches {
-        my $protein = $api->fetch({ class => 'Protein', name => 'BM:BM38825' });
+        my $protein = $api->fetch({ class => 'Protein', name => 'BM:BM42188' });
 
         can_ok('WormBase::API::Object::Protein', ('best_blastp_matches'));
 

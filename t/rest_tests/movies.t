@@ -29,7 +29,7 @@
             or die "Cannot login ", $ftp->message;
         $ftp->cwd('/pub/OICR/Movies/WBPaper00004811')
             or die "Cannot change working directory ", $ftp->message;
-        my $size = $ftp->size('001.A06.15c.term.mov')
+        my $size = $ftp->size('001.A06.15c.term.mp4')
             or die "size failed ", $ftp->message;
         $ftp->quit;
 
@@ -39,4 +39,3 @@
 }
 
 1;
-

@@ -1,6 +1,6 @@
 
 [%
-link_base 	= 'http://www.wikipathways.org/index.php/Pathway:';
+link_base 	= 'https://www.wikipathways.org/index.php/Pathway:';
 img_path	= '/img-static/wikipathways/';
 %]
 
@@ -20,10 +20,10 @@ WRAPPER $field_block title="Wikipathways" key="pathway";
 			'<br/>';
 
 			IF (revision);
-			'<iframe src="http://www.wikipathways.org/wpi/PathwayWidget.php?id='_ wp_id _'&rev='_ revision _'" width="800px" height="664px" style="overflow:hidden;"></iframe>';
+			'<iframe src="https://www.wikipathways.org/wpi/PathwayWidget.php?id='_ wp_id _'&rev='_ revision _'" width="800px" height="664px" style="overflow:hidden;"></iframe>';
 
 			ELSE;
-			'<iframe src="http://www.wikipathways.org/wpi/PathwayWidget.php?id='_ wp_id _'" width="800px" height="664px" style="overflow:hidden;"></iframe>';
+			'<iframe src="https://www.wikipathways.org/wpi/PathwayWidget.php?id='_ wp_id _'" width="800px" height="664px" style="overflow:hidden;"></iframe>';
 			END;
 
 		END;

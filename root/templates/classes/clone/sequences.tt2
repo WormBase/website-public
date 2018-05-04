@@ -14,20 +14,16 @@
     '(' _ c.stash.fields.strand.data _ ')';
   END;
 
-  WRAPPER $field_block title="Predicted Genes & Transcriptional Units" key="predicted_units";
-        build_data_table( order = ['start','end','name','gene', 'predicted_type', 'comment'],
+  WRAPPER $field_block title="Transcripts" key="predicted_units";
+        build_data_table( order = ['start','end','name','gene', 'bio_type', 'comment'],
                           columns = { start => 'Start',
                                       end => 'End',
-                                      name   => 'Name',
+                                      name   => 'Transcript',
                                       gene => 'Gene',
-                                      predicted_type => 'Predicted type',
+                                      bio_type => 'Biotype',
                                       comment => 'Comment'},
                           passed_data = fields.predicted_units.data,
                           key = 'predicted_units');
-  END;
-
-  WRAPPER $field_block title="Transcripts in this region" key="transcripts";
-    tags2link(c.stash.fields.transcripts.data, '<br />', 'Results');
   END;
 
 %]

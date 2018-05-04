@@ -7,11 +7,6 @@ WRAPPER highlight_box;
 
 END;
 
-
-WRAPPER $field_block title="Title" key="title";
-     fields.title.data;
-END;
-
 WRAPPER $field_block title="Description" key="description";
      fields.description.data;
 END;

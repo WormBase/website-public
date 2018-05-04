@@ -81,7 +81,7 @@
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data);
                  END;
                  '<br><br>';
-                 WRAPPER $field_block title="GBrowse image";
+                 WRAPPER toggle title="GBrowse image";
                     '<div class="gbrowse-image-container">';
                     tag2link(genomic_image, image(img_url));
                     '</div>';

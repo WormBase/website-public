@@ -1026,7 +1026,7 @@ var name2widget = {
               WB.multiViewInit();
             }
             //console.log([content.offset().top - scrollPos]);
-            discreetLoad(content, heightDefault);
+            scrollToOffsetHeightDiff(content, heightDefault);
             Scrolling.sidebarMove();checkSearch(content);
             Layout.resize();
           });
@@ -1049,7 +1049,7 @@ var name2widget = {
           // to avoid miscalculating field height
           container.children().first().remove();  //remove placeholder
           container.children().show();
-          discreetLoad(container.children('.field'), heightDefault);
+          scrollToOffsetHeightDiff(container.children('.field'), heightDefault);
         },2000);
       };
 
@@ -1059,14 +1059,11 @@ var name2widget = {
 
     // when content is loaded asynchronously, its height may cause viewport to
     // shift position. So set page scroll position as needed
-    function discreetLoad(container, heightDefault){
+    function scrollToOffsetHeightDiff(container, heightDefault){
       var scrollPos = $jq(window).scrollTop();
-      if (container.offset().top < scrollPos - 25){
+      if (container.offset() && container.offset().top < scrollPos - 25){
         var heightIncrease = container.height() - heightDefault;
-
-        $jq('html,body').stop(true,true).animate({
-          scrollTop: scrollPos + heightIncrease
-        }, 1);
+        document.getElementsByTagName('html')[0].scrollTop = scrollPos + heightIncrease;
       }
     }
 
@@ -1180,12 +1177,18 @@ var Layout = (function(){
       }
     }
 
+  function makeHash(leftWidgets, rightWidgets, leftWidth, minimizedWidgets) {
+    var hashLeft = (leftWidgets || []).join('');
+    var hashRight = (rightWidgets || []).join('');
+    var hashMinimized = (minimizedWidgets || []).join('');
+    var leftGridCount = Math.round(leftWidth / 10);
+    return `${hashLeft}-${hashRight}-${leftGridCount}-${hashMinimized}`;
+  }
+
   function singleWidgetLayout(widgetId) {
     var layout = wHolder.data("layout");
-    var h = layout.hash && layout.hash.split('-');
-
-    if (h) {
-      // insert widget at the top of existing layout
+      var h = layout.hash ? layout.hash.split('-') : [];
+      var leftWidth = 100;
 
       var l = h[0],
           r = h[1],
@@ -1199,10 +1202,12 @@ var Layout = (function(){
         });
       }
 
-      resetLayout([widgetId].concat(others(l)), others(r), 100, [], others(m));
-    } else {
-      resetLayout([widgetId], [], 100, []);
-    }
+      // insert widget at the top of existing layout
+      var leftWidgets = [widgetId].concat(others(l));
+      var rightWidgets = others(r);
+      var minimizedWidgets = others(m);
+      var hash = makeHash(leftWidgets, rightWidgets, leftWidth, minimizedWidgets)
+      resetLayout(leftWidgets, rightWidgets, leftWidth, hash, minimizedWidgets);
   }
 
 
@@ -3206,15 +3211,9 @@ var Scrolling = (function(){
 
     function renderWidget(data, elementId, widgetName) {
       const WidgetComponent = name2widget[widgetName];
-      ReactDOM.render(<WidgetComponent data={data} />, document.getElementById(elementId));
+      const pageInfo =$jq("#header").data("page");
+      ReactDOM.render(<WidgetComponent data={data} pageInfo={pageInfo} />, document.getElementById(elementId));
     }
-
-    var initJbrowseView = function(elementSelector, url) {
-      function reset() {
-        $jq(elementSelector).find('iframe').attr('src', url);
-      }
-      return reset;
-    };
 
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
@@ -3446,7 +3445,8 @@ var Scrolling = (function(){
       // loading - ajax/plugins/files/RSS
       ajaxGet: ajaxGet,                             // load data via ajax request
       setLoading: setLoading,                       // add the loading image to a certain div
-      openField: openField,                         // load field with discreetLoad
+      openField: openField,                         // load field with scrollToOffsetHeightDiff
+      scrollToOffsetHeightDiff: scrollToOffsetHeightDiff,                   // adjust content height
 
       loadRSS: loadRSS,                             // load RSS (homepage)
       loadFile: Plugin.loadFile,                    // load a file dynamically
@@ -3472,7 +3472,6 @@ var Scrolling = (function(){
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
       tooltipInit: tooltipInit,                     // initalize tooltip
-      initJbrowseView: initJbrowseView,             // initialize jbrowse view iframe to specified src
       renderWidget: renderWidget,                   // render widget component
     };
   })();

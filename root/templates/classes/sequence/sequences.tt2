@@ -9,7 +9,7 @@
         build_data_table( order = ['start','end','name','gene', 'predicted_type', 'comment'],
                           columns = { start => 'Start',
                                       end => 'End',
-                                      name   => 'Name',
+                                      name   => 'Transcript',
                                       gene => 'Gene',
                                       predicted_type => 'Predicted type',
                                       comment => 'Comment'},

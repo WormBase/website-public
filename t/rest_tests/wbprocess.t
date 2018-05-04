@@ -23,10 +23,10 @@
         my $url = "http://$host:$port/rest/widget/wbprocess/WBbiopr:00000039/pathways?download=1&content-type=text%2Fhtml";
         my $response_html = get($url);
 
-        ok($response_html =~ /<a href="http:\/\/www.wikipathways.org\/index.php\/Pathway:WP2233">http:\/\/www.wikipathways.org\/index.php\/Pathway:WP2233<\/a>/,
+        ok($response_html =~ /<a href="https:\/\/www.wikipathways.org\/index.php\/Pathway:WP2233">https:\/\/www.wikipathways.org\/index.php\/Pathway:WP2233<\/a>/,
         'contains a link to the first Wikipathway');
 
-        ok($response_html =~ /<a href="http:\/\/www.wikipathways.org\/index.php\/Pathway:WP2234">http:\/\/www.wikipathways.org\/index.php\/Pathway:WP2234<\/a>/,
+        ok($response_html =~ /<a href="https:\/\/www.wikipathways.org\/index.php\/Pathway:WP2234">https:\/\/www.wikipathways.org\/index.php\/Pathway:WP2234<\/a>/,
         'contains a link to the second Wikipathway');
 
     }

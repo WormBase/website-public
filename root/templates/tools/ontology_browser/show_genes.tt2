@@ -1,5 +1,156 @@
-[% IF geneLists %]
-   [% FOREACH geneList IN geneLists %]
-      <div>[% geneList %]</div><br/>
+[% IF geneData %]
+   [% IF geneData.infDir %]
+     <table border="1">
+        <tr><td>Directly annotated</td><td>Directly annotated + Inferred</td></tr>
+        <tr><td><div id="download-direct">[% geneData.direct.size || 'None' %]</div></td><td><div id="download-infDir">[% geneData.infDir.size || 'None' %]</div></td></tr>
+     </table><br/>
    [% END %]
+
+   [% IF geneData.infDir_cele or geneData.infDir_noncele %]
+     <table border="1">
+        <tr><td></td><td>Directly annotated</td><td>Directly annotated + Inferred</td></tr>
+        <tr><td><i>C. elegans</i> genes</td><td><div id="download-direct_cele">[% geneData.direct_cele.size || 'None' %]</div></td><td><div id="download-infDir_cele">[% geneData.infDir_cele.size || 'None' %]</div></td></tr>
+        <tr><td>non <i>C. elegans</i> genes</td><td><div id="download-direct_noncele">[% geneData.direct_noncele.size || 'None' %]</div></td><td><div id="download-infDir_noncele">[% geneData.infDir_noncele.size || 'None' %]</div></td></tr>
+        <tr><td>Total (any species)</td><td><div id="download-direct_allspecies"></div></td><td><div id="download-infDir_allspecies"></div></td></tr>
+     </table><br/>
+   [% END %]
+
+   [% IF geneData.infDir_rnai or geneData.infDir_variation %]
+     <table border="1">
+        <tr><td></td><td>Directly annotated</td><td>Directly annotated + Inferred</td></tr>
+        <tr><td>via RNAi</td><td><div id="download-direct_rnai">[% geneData.direct_rnai.size || 'None' %]</div></td><td><div id="download-infDir_rnai">[% geneData.infDir_rnai.size || 'None' %]</div></td></tr>
+        <tr><td>via Variation</td><td><div id="download-direct_variation">[% geneData.direct_variation.size || 'None' %]</div></td><td><div id="download-infDir_variation">[% geneData.infDir_variation.size || 'None' %]</div></td></tr>
+        <tr><td>Total (RNAi or Variation)</td><td><div id="download-direct_rnaivariation"></div></td><td><div id="download-infDir_rnaivariation"></div></td></tr>
+     </table><br/>
+   [% END %]
+[% END %]
+
+[% FOREACH datatype IN sortPriority %]
+  [% IF sentenceData.$datatype %]
+      <div>[% sentenceData.$datatype %]</div>
+  [% END %]
+  [% IF geneData.$datatype %]
+      <table border="1">
+      [% FOREACH id IN geneData.$datatype.keys.sort %]
+      <tr><td align="center"><a href="/species/c_elegans/gene/[% id %]">[% id %]</a></td>
+          <td align="center"><a href="/species/c_elegans/gene/[% id %]">[% geneData.$datatype.$id.name %]</a></td>
+          <td align="center">[% geneData.$datatype.$id.species %]</td></tr>
+      [% END %]
+      </table><br />
+   [% END %]
+[% END %]
+
+
+[% FOREACH datatype IN sortPriority %]
+  <script type="text/javascript">
+  (function(){
+    var holder = document.getElementById("download-[% datatype %]");
+//     my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation infDir_rnai infDir_variation );
+    var filename = "[% filenameData.$datatype %].txt";
+    if (holder) {
+      if (holder.innerHTML !== 'None') {
+        var data = [% json_encode(geneData.$datatype || []) %];
+        var text = Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        holder.innerHTML = '<a href="data:text/plain,' + encodeURIComponent(text) + '" download="' + filename + '">Download genes ([% geneData.$datatype.size %])</a>';
+    } }
+  })();
+  </script>
+[% END %]
+
+[% IF geneData.infDir_rnai or geneData.infDir_variation %]
+  <script type="text/javascript">
+  (function(){
+    var holder = document.getElementById("download-infDir_rnaivariation");
+    var filename = "genes_rnai_variation_direct_and_inferred_for_[%- focusTermId -%].txt";
+    if (holder) {
+        var countRnai = 0; var countVariation = 0;
+        if ("[% geneData.infDir_rnai.size %]"      !== "") { countRnai      = parseInt([% geneData.infDir_rnai.size %]);      }
+        if ("[% geneData.infDir_variation.size %]" !== "") { countVariation = parseInt([% geneData.infDir_variation.size %]); }
+        var count = countRnai + countVariation;
+        var data = [% json_encode(geneData.infDir_rnai || []) %];
+        var text = Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        data = [% json_encode(geneData.infDir_variation || []) %];
+        text += "\r\n" + Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        holder.innerHTML = '<a href="data:text/plain,' + encodeURIComponent(text) + '" download="' + filename + '">Download genes (' + count + ')</a>';
+    } 
+  })();
+  </script>
+[% END %]
+
+[% IF geneData.direct_rnai or geneData.direct_variation %]
+  <script type="text/javascript">
+  (function(){
+    var holder = document.getElementById("download-direct_rnaivariation");
+    var filename = "genes_rnai_variation_direct_for_[%- focusTermId -%].txt";
+    if (holder) {
+        var countRnai = 0; var countVariation = 0;
+        if ("[% geneData.direct_rnai.size %]"      !== "") { countRnai      = parseInt([% geneData.direct_rnai.size %]);      }
+        if ("[% geneData.direct_variation.size %]" !== "") { countVariation = parseInt([% geneData.direct_variation.size %]); }
+        var count = countRnai + countVariation;
+        var data = [% json_encode(geneData.direct_rnai || []) %];
+        var text = Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        data = [% json_encode(geneData.direct_variation || []) %];
+        text += "\r\n" + Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        holder.innerHTML = '<a href="data:text/plain,' + encodeURIComponent(text) + '" download="' + filename + '">Download genes (' + count + ')</a>';
+    } 
+  })();
+  </script>
+[% END %]
+
+[% IF geneData.infDir_cele or geneData.infDir_noncele %]
+  <script type="text/javascript">
+  (function(){
+    var holder = document.getElementById("download-infDir_allspecies");
+    var filename = "all_species_genes_direct_and_inferred_for_[%- focusTermId -%].txt";
+    if (holder) {
+        var countCele = 0; var countNoncele = 0;
+        if ("[% geneData.infDir_cele.size %]"    !== "") { countCele    = parseInt([% geneData.infDir_cele.size %]);    }
+        if ("[% geneData.infDir_noncele.size %]" !== "") { countNoncele = parseInt([% geneData.infDir_noncele.size %]); }
+        var count = countCele + countNoncele;
+        var data = [% json_encode(geneData.infDir_cele || []) %];
+        var text = Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        data = [% json_encode(geneData.infDir_noncele || []) %];
+        text += "\r\n" + Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        holder.innerHTML = '<a href="data:text/plain,' + encodeURIComponent(text) + '" download="' + filename + '">Download genes (' + count + ')</a>';
+    } 
+  })();
+  </script>
+[% END %]
+
+[% IF geneData.direct_cele.defined || geneData.direct_noncele.defined %]
+  <script type="text/javascript">
+  (function(){
+    var holder = document.getElementById("download-direct_allspecies");
+    var filename = "all_species_genes_direct_for_[%- focusTermId -%].txt";
+    if (holder) {
+        var countCele = 0; var countNoncele = 0;
+        if ("[% geneData.direct_cele.size %]"    !== "") { countCele    = parseInt([% geneData.direct_cele.size %]);    }
+        if ("[% geneData.direct_noncele.size %]" !== "") { countNoncele = parseInt([% geneData.direct_noncele.size %]); }
+        var count = countCele + countNoncele;
+        var data = [% json_encode(geneData.direct_cele || []) %];
+        var text = Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        data = [% json_encode(geneData.direct_noncele || []) %];
+        text += "\r\n" + Object.keys(data).map(function(key) {
+          return [key, data[key].name, data[key].species].join("\t");
+        }).join("\r\n");
+        holder.innerHTML = '<a href="data:text/plain,' + encodeURIComponent(text) + '" download="' + filename + '">Download genes (' + count + ')</a>';
+    } 
+  })();
+  </script>
 [% END %]
