@@ -312,7 +312,7 @@ sub get :Local Args(0) {
     my $matched_class = $match->{class} if $match;
     if ($match && ($matched_class eq $normed_class || $normed_class eq 'all')) {
         my $url = (exists $c->config->{sections}->{species}->{$matched_class}) ?
-            $c->uri_for('/species', $match->{taxonomy}, $matched_class, $match->{id}, $carryover_params)->as_string :
+            $c->uri_for('/species', $match->{taxonomy} || 'all', $matched_class, $match->{id}, $carryover_params)->as_string :
             $c->uri_for('/resources', $matched_class, $match->{id}, $carryover_params)->as_string;
         $c->res->redirect($url);
     } else {
