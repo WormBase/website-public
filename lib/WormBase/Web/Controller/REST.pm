@@ -879,6 +879,7 @@ sub widget_GET {
 
     if (!@datomic_endpoints) {
         # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
+        $c->log->error("Cannot retrieve available Datomic endpoints");
         if ($cached_data && !$c->config->{fatal_non_compliance}) {
             $c->stash->{fields} = $cached_data;
             $c->stash->{served_from_cache} = $key;
@@ -900,11 +901,13 @@ sub widget_GET {
         }
 
         if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
+            $c->log->info("Valid cache found for D2C-backed widget " . $c->req->path);
             $c->stash->{fields} = $cached_data;
             # Served from cache? Let's include a link to it in the cache.
             # Primarily a debugging element.
             $c->stash->{served_from_cache} = $key;
         } else {
+            $c->log->info("No valid cache found for D2C-backed widget " . $c->req->path);
             my $url = "$rest_server$path";
             my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
@@ -926,6 +929,7 @@ sub widget_GET {
         # ACeDB workflow
 
         if($cached_data && (ref $cached_data eq 'HASH')){
+            $c->log->info("Valid cache found for ACeDB-backed widget" . $c->req->path);
             $c->stash->{fields} = $cached_data;
 
             # Served from cache? Let's include a link to it in the cache.
@@ -937,6 +941,7 @@ sub widget_GET {
             $c->detach();
             return;
         } else {
+            $c->log->info("No valid cache found for ACeDB-backed widget " . $c->req->path);
             my $api = $c->model('WormBaseAPI');
             my $object = ($name eq '*' || $name eq 'all'
                        ? $api->instantiate_empty(ucfirst $class)
@@ -1800,6 +1805,7 @@ sub field_GET {
 
     if (!@datomic_endpoints) {
         # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
+        $c->log->error("Cannot retrieve available Datomic endpoints");
         if ($cached_data && !$c->config->{fatal_non_compliance}) {
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
@@ -1821,9 +1827,11 @@ sub field_GET {
         }
 
         if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
+            $c->log->info("Valid cache found for D2C-backed field " . $c->req->path);
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
+            $c->log->info("No valid cache found for D2C-backed field " . $c->req->path);
             my $url = "$rest_server$path";
             my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
@@ -1843,9 +1851,11 @@ sub field_GET {
     } else {
         # ACeDB workflow
         if ($cached_data && (ref $cached_data eq 'HASH')){
+            $c->log->info("Valid cache found for ACeDB-backed field " . $c->req->path);
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
+            $c->log->info("No valid cache found for ACeDB-backed field " . $c->req->path);
             my $api = $c->model('WormBaseAPI');
             my $object = $name eq '*' || $name eq 'all'
                 ? $api->instantiate_empty(ucfirst $class)
