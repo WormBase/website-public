@@ -333,9 +333,16 @@ var name2widget = {
 
     function initializeSingleWidgetPage() {
       const singleWidgetHolder = $jq('#single-widget-holder');
-      const widgetUrl = singleWidgetHolder && singleWidgetHolder.data('rest-url');
-      if (widgetUrl) {
-        ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} />, document.getElementById("single-widget-holder"));
+      if (singleWidgetHolder) {
+        const widgetUrl = singleWidgetHolder.data('rest-url');
+        const classConf = JSON.parse(singleWidgetHolder.data('class-conf'));
+        const widgetConf = JSON.parse(singleWidgetHolder.data('widget-conf'));
+        const object = JSON.parse(singleWidgetHolder.data('object'));
+        console.log(classConf, widgetConf, object);
+        if (widgetUrl) {
+          ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} object={object} classConf={classConf} widgetConf={widgetConf} />,
+                          document.getElementById("single-widget-holder"));
+        }
       }
     }
 

@@ -2690,7 +2690,7 @@ li.visible div.widget-container {
   height:150px;
 }
 
-.widget-container .content > .data-source-wrapper {
+.content > .data-source-wrapper {
   position: absolute;
   top: 0px;
   right: 30px;

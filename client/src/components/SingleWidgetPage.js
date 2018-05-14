@@ -38,13 +38,21 @@ class SingleWidgetPage extends React.Component {
 
   render() {
     return (
-      <div dangerouslySetInnerHTML={{__html: this.state.html}} />
+      <div id={`${this.props.widgetConf.name}-content`} className="content" style={{position: "relative", paddingTop: '2em',}} dangerouslySetInnerHTML={{__html: this.state.html}} />
     );
   }
 }
 
 SingleWidgetPage.propTypes = {
   widgetUrl: PropTypes.string.isRequired,
+  classConf: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+  }),
+  widgetConf: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+  }),
+  object: PropTypes.any,
 };
 
 export default SingleWidgetPage;
