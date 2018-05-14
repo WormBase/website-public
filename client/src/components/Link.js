@@ -19,11 +19,7 @@ const resourcePages = new Set([
 
 function buildUrl(tag) {
   const {id} = tag;
-  if (resourcePages.has(tag.class)) {
-    return `/search/${tag.class}/${id}`;
-  } else {
-    return `/species/all/${tag.class}/${id}`;
-  }
+  return `/get?class=${tag.class}&name=${id}`;
 }
 
 class Link extends Component {
