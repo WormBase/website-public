@@ -1,4 +1,7 @@
 [% widget = c.stash.widget %]
 <div id="single-widget-holder"
      data-rest-url="[%- c.stash.rest_url -%]"
+     data-class-conf='[%- json_encode(c.config.sections.resources.person) -%]'
+     data-widget-conf='[%- json_encode(c.config.sections.resources.person.widgets.$widget) -%]'
+     data-object='[%- json_encode(object.name.data) -%]'
 ></div>
