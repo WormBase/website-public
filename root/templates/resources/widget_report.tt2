@@ -3,4 +3,5 @@
      data-class-conf='[%- json_encode(c.config.sections.resources.$class) -%]'
      data-widget-conf='[%- json_encode(c.config.sections.resources.$class.widgets.$widget) -%]'
      data-object='[%- json_encode(object.name.data) -%]'
+     data-section='resources'
 ></div>
