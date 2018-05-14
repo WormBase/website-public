@@ -1,0 +1,4 @@
+[% widget = c.stash.widget %]
+<div id="single-widget-holder"
+     data-rest-url="[%- c.stash.rest_url -%]"
+></div>

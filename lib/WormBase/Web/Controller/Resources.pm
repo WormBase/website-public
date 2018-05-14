@@ -91,6 +91,15 @@ sub resources_report :Path("/resources") Args(2) {
 #    $c->stash->{template} = "resources/documentation/$category.tt2";
 #}
 
+
+# eg /resources/{class}/{object}/widget/{widgetId}
+sub resources_widget_report :Path("/resources") Args(4) {
+    my ($self,$c,$class,$name,$widgetOrField,$widget) = @_;
+    $c->stash->{section}  = 'resources';
+    $c->stash->{template} = 'resources/widget_report.tt2';
+    $c->stash->{rest_url} = $c->uri_for("/rest/widget/$class/$name/$widget");
+}
+
 # Not in use, but retain. Could be useful.
 sub downloads :Path('/resources/downloads') Args(0) {
     my ($self,$c) = @_;

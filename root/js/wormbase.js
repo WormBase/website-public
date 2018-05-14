@@ -24,6 +24,8 @@
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
 
+var SingleWidgetPage = require('../../client/src/components/SingleWidgetPage').default;
+
 var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
 };
@@ -84,6 +86,8 @@ var name2widget = {
           $jq(".lightbox").colorbox();
         });
       }
+
+      initializeSingleWidgetPage();
 
     }
 
@@ -327,8 +331,13 @@ var name2widget = {
       }
     }
 
-
-
+    function initializeSingleWidgetPage() {
+      const singleWidgetHolder = $jq('#single-widget-holder');
+      const widgetUrl = singleWidgetHolder && singleWidgetHolder.data('rest-url');
+      if (widgetUrl) {
+        ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} />, document.getElementById("single-widget-holder"));
+      }
+    }
 
     function widgetInit(){
       var widgetHolder = $jq("#widget-holder"),
