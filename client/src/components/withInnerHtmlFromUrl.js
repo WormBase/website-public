@@ -1,4 +1,6 @@
 import React from 'react';
+import { CircularProgress } from './Progress';
+
 
 export default function withInnerHtmlFromUrl(WrappedComponent, url) {
   class WithInnerHtml extends React.Component {
@@ -38,9 +40,11 @@ export default function withInnerHtmlFromUrl(WrappedComponent, url) {
 
     render() {
       return (
+        this.state.html ?
         <WrappedComponent
           dangerouslySetInnerHTML={{__html: this.state.html}}
-          {...this.props} />
+          {...this.props} /> :
+        <CircularProgress color="inherit" />
       );
     }
   }
