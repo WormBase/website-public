@@ -8,7 +8,7 @@ class SingleWidgetPage extends React.Component {
   render() {
     const Widget = withInnerHtmlFromUrl('div', this.props.widgetUrl);
     return (
-      <div>
+      <div className={this.props.classes.page}>
         <div className={this.props.classes.pageTitleWrapper}>
           <div className={this.props.classes.breadcrumbs}>
             {
@@ -38,7 +38,7 @@ class SingleWidgetPage extends React.Component {
           </div>
         </div>
         <div className={this.props.classes.pageMain}>
-          <Widget id={`${this.props.widgetConf.name}-content`} className="content" style={{position: "relative", paddingTop: '2em', flex: '1 0 auto',}} />
+          <Widget id={`${this.props.widgetConf.name}-content`} className="content" style={{paddingTop: '2em', flex: '1 0 auto',}} />
         </div>
       </div>
     );
@@ -66,6 +66,9 @@ SingleWidgetPage.propTypes = {
 };
 
 const styles = (theme) => ({
+  page: {
+    position: 'relative',
+  },
   pageTitleWrapper: {
     margin: '-1em -2em 0',
     padding: `0.5em 2em`,

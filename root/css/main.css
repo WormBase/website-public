@@ -2696,6 +2696,11 @@ li.visible div.widget-container {
   top: 0px;
   right: 30px;
 }
+
+#single-widget-holder .content > .data-source-wrapper {
+  top: 13px;
+}
+
 .data-source-label {
   border-radius: 5px;
   border: 1px solid grey;
