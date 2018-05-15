@@ -3,5 +3,6 @@
      data-class-conf='[%- json_encode(c.config.sections.species.$class) -%]'
      data-widget-conf='[%- json_encode(c.config.sections.species.$class.widgets.$widget) -%]'
      data-object='[%- json_encode(object.name.data) -%]'
+     data-species='[%- json_encode(c.config.sections.species_list.$species) -%]'
      data-section='species'
 ></div>

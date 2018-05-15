@@ -17,9 +17,11 @@ const resourcePages = new Set([
   'wbprocess',
 ]);
 
-function buildUrl(tag) {
-  const {id} = tag;
-  return `/get?class=${tag.class}&name=${id}`;
+function buildUrl(tag, fuzzy) {
+  const {id, label} = tag;
+  if ((id && tag.class) || fuzzy) {
+    return `/get?class=${tag.class}&name=${id || label}`;
+  }
 }
 
 class Link extends Component {

@@ -335,12 +335,14 @@ var name2widget = {
       const singleWidgetHolder = $jq('#single-widget-holder');
       if (singleWidgetHolder) {
         const widgetUrl = singleWidgetHolder.data('rest-url');
-        const classConf = JSON.parse(singleWidgetHolder.data('class-conf'));
-        const widgetConf = JSON.parse(singleWidgetHolder.data('widget-conf'));
-        const object = JSON.parse(singleWidgetHolder.data('object'));
+        const section = singleWidgetHolder.data('section');
+        const classConf = JSON.parse(singleWidgetHolder.data('class-conf') || '{}');
+        const widgetConf = JSON.parse(singleWidgetHolder.data('widget-conf') || '{}');
+        const object = JSON.parse(singleWidgetHolder.data('object')|| '{}');
+        const species = JSON.parse(singleWidgetHolder.data('species') || '{}');
         console.log(classConf, widgetConf, object);
         if (widgetUrl) {
-          ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} object={object} classConf={classConf} widgetConf={widgetConf} />,
+          ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} section={section} object={object} species={species} classConf={classConf} widgetConf={widgetConf} />,
                           document.getElementById("single-widget-holder"));
         }
       }
