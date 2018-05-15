@@ -9,8 +9,8 @@ class SingleWidgetPage extends React.Component {
     const Widget = withInnerHtmlFromUrl('div', this.props.widgetUrl);
     return (
       <div>
-        <div id="page-title-wrapper" className={`${this.props.section}-bg`}>
-          <div id="page-title">
+        <div className={this.props.classes.pageTitleWrapper}>
+          <div className={this.props.classes.breadcrumbs}>
             {
               this.props.section === 'species' ?
               <Breadcrumb trail={[
@@ -25,23 +25,26 @@ class SingleWidgetPage extends React.Component {
               ]} /> :
               null
             }
-                <h2>
-                  {
-                    <Breadcrumb trail={[
-                      this.props.object,
-                      {label: this.props.widgetConf.title},
-                    ]} />
-                  }
-                </h2>
           </div>
-      </div>
-      <Widget id={`${this.props.widgetConf.name}-content`} className="content" style={{position: "relative", paddingTop: '2em',}} />
+          <div className={this.props.classes.pageTitle}>
+            <h2>
+              {
+                <Breadcrumb trail={[
+                  this.props.object,
+                  {label: this.props.widgetConf.title},
+                ]} />
+              }
+            </h2>
+          </div>
+        </div>
+        <Widget id={`${this.props.widgetConf.name}-content`} className="content" style={{position: "relative", paddingTop: '2em',}} />
       </div>
     );
   }
 }
 
 SingleWidgetPage.propTypes = {
+  classes: PropTypes.object.isRequired,
   widgetUrl: PropTypes.string.isRequired,
   section: PropTypes.string,
   classConf: PropTypes.shape({
@@ -62,10 +65,15 @@ SingleWidgetPage.propTypes = {
 
 const styles = (theme) => ({
   pageTitleWrapper: {
-
+    margin: '-1em -2em 0',
+    padding: `0.5em 2em`,
+    backgroundColor: '#C2D1DF',
+  },
+  breadcrumbs: {
+    fontSize: `0.9em`,
   },
   pageTitle: {
   },
 });
 
-export default SingleWidgetPage;
+export default withStyles(styles)(SingleWidgetPage);
