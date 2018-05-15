@@ -38,7 +38,7 @@ class SingleWidgetPage extends React.Component {
           </div>
         </div>
         <div className={this.props.classes.pageMain}>
-          <Widget id={`${this.props.widgetConf.name}-content`} className="content" style={{paddingTop: '2em', flex: '1 0 auto',}} />
+          <Widget id={`${this.props.widgetConf.name}-content`} className="content" style={{paddingTop: '2em',}} />
         </div>
       </div>
     );
@@ -81,6 +81,11 @@ const styles = (theme) => ({
   },
   pageMain: {
     width: '100%',
+    [theme.breakpoints.up('lg')]: {
+      width: '80%',
+      marginLeft: '10%',
+    },
+    minHeight: 300,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
