@@ -1296,6 +1296,7 @@ div#header p a  {
 /* Status bar */
 div#header .status-bar {
     margin: 6px 15px 3px;
+    height: 22px;
     float:right;
 }
 
