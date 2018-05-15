@@ -1,12 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import { CircularProgress } from './Progress';
 import withInnerHtmlFromUrl from './withInnerHtmlFromUrl';
 import Breadcrumb from './Breadcrumb';
 
 class SingleWidgetPage extends React.Component {
+  renderProgress = () => {
+    return (
+      <div className={this.props.classes.spinner}>
+        <CircularProgress color="inherit" />
+      </div>
+    );
+  }
+
   render() {
-    const Widget = withInnerHtmlFromUrl('div', this.props.widgetUrl);
+    const Widget = withInnerHtmlFromUrl('div', this.props.widgetUrl, this.renderProgress());
     return (
       <div className={this.props.classes.page}>
         <div className={this.props.classes.pageTitleWrapper}>
@@ -85,10 +94,12 @@ const styles = (theme) => ({
       width: '80%',
       marginLeft: '10%',
     },
-    minHeight: 300,
+  },
+  spinner: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    minHeight: 300,
   },
 });
 

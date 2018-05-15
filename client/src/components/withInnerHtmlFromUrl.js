@@ -2,7 +2,7 @@ import React from 'react';
 import { CircularProgress } from './Progress';
 
 
-export default function withInnerHtmlFromUrl(WrappedComponent, url) {
+export default function withInnerHtmlFromUrl(WrappedComponent, url, spinnerElement) {
   class WithInnerHtml extends React.Component {
     constructor(props) {
       super(props);
@@ -44,7 +44,7 @@ export default function withInnerHtmlFromUrl(WrappedComponent, url) {
         <WrappedComponent
           dangerouslySetInnerHTML={{__html: this.state.html}}
           {...this.props} /> :
-        <CircularProgress color="inherit" />
+        spinnerElement
       );
     }
   }
