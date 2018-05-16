@@ -745,7 +745,11 @@ END %]
     END;
 
     '</div>';
-
+%]
+<script type="text/javascript">
+  WB.multiViewInit();
+</script>
+[%
 END; %]
 
 

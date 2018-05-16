@@ -1040,9 +1040,6 @@ var name2widget = {
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){
-            if ($jq('.multi-view-container').length){
-              WB.multiViewInit();
-            }
             //console.log([content.offset().top - scrollPos]);
             scrollToOffsetHeightDiff(content, heightDefault);
             Scrolling.sidebarMove();checkSearch(content);
