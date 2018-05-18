@@ -2,7 +2,7 @@
    "b_malayi" : {
       "assemblies" : [
          {
-            "appeared_in" : "WS251",
+            "appeared_in" : "WS252",
             "assembly_accession" : null,
             "assembly_name" : "B_malayi-4.0",
             "bioproject" : "PRJNA10729",
@@ -270,7 +270,7 @@
             "bioproject_description" : "Wellcome Trust Sanger Institute S. ratti genome project",
             "is_canonical" : true,
             "laboratory" : [
-               "Wellcome Trust Sanger Institute, Cambridge UK"
+               "Wellcome Trust Sanger Institute, Cambridge, UK"
             ],
             "strain" : "ED321",
             "ucsc_name" : null
@@ -288,7 +288,7 @@
             "bioproject_description" : "Wellcome Trust Sanger Institute T. muris genome project",
             "is_canonical" : true,
             "laboratory" : [
-               "Wellcome Trust Sanger Institute, UK."
+               "Wellcome Trust Sanger Institute, Cambridge, UK"
             ],
             "strain" : "Edinburgh",
             "ucsc_name" : null
