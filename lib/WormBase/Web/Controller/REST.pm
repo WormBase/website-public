@@ -896,7 +896,7 @@ sub widget_GET {
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
-            my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
+            my $since_cached = DateTime->now()->delta_ms(DateTime->from_epoch( epoch => $time_cached));
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
@@ -1065,9 +1065,9 @@ our %endpoints = (
 
 sub time_since {
     my ($epoch_timestamp) = @_;
-    return DateTime->now() - DateTime->from_epoch(
+    return DateTime->now()->delta_ms(DateTime->from_epoch(
         epoch => $epoch_timestamp
-    );
+    ));
 }
 
 
@@ -1822,7 +1822,7 @@ sub field_GET {
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
-            my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
+            my $since_cached = DateTime->now()->delta_ms(DateTime->from_epoch( epoch => $time_cached));
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
