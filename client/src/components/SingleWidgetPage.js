@@ -87,6 +87,7 @@ const styles = (theme) => ({
     fontSize: `0.9em`,
   },
   pageTitle: {
+    width: '60%',
   },
   pageMain: {
     width: '100%',
