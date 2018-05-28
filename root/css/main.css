@@ -1222,6 +1222,7 @@ input, select, th, td { font-size:1em; }
   background:white;
   padding:0 1em;
   margin:0;
+  min-height: calc(100vh - 400px);
 }
 
 /* Global Links */
@@ -2690,11 +2691,16 @@ li.visible div.widget-container {
   height:150px;
 }
 
-.widget-container .content > .data-source-wrapper {
+.content > .data-source-wrapper {
   position: absolute;
   top: 0px;
   right: 30px;
 }
+
+#single-widget-holder .content > .data-source-wrapper {
+  top: 13px;
+}
+
 .data-source-label {
   border-radius: 5px;
   border: 1px solid grey;

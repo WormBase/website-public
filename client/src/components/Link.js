@@ -17,12 +17,10 @@ const resourcePages = new Set([
   'wbprocess',
 ]);
 
-function buildUrl(tag) {
-  const {id} = tag;
-  if (resourcePages.has(tag.class)) {
-    return `/search/${tag.class}/${id}`;
-  } else {
-    return `/species/all/${tag.class}/${id}`;
+function buildUrl(tag, fuzzy) {
+  const {id, label} = tag;
+  if ((id && tag.class) || fuzzy) {
+    return `/get?class=${tag.class}&name=${id || label}`;
   }
 }
 
