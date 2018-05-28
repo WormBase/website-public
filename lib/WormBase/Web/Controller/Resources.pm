@@ -104,8 +104,6 @@ sub resources_widget_report :Path("/resources") Args(4) {
     $c->stash->{widget}  = $widget;
     $c->stash->{template} = 'resources/widget_report.tt2';
     $c->stash->{rest_url} = $c->uri_for("/rest/widget/$class/$name/$widget")->as_string;
-    # use Data::Dumper;
-    # print Dumper $c->stash;
 }
 
 # Not in use, but retain. Could be useful.

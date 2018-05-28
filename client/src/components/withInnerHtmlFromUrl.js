@@ -17,21 +17,18 @@ export default function withInnerHtmlFromUrl(WrappedComponent, url, spinnerEleme
       }).then((htmlRaw) => {
         const re = /<script.*?>((.|\n|\r)+?)<\/script>/gi;
         const scripts = [];
-        const html = htmlRaw || `<script> console.log('zzzz'); </script>`;
+        const html = htmlRaw;
         var match = re.exec(html);
-        //console.log(html);
+
         while (match) {
-          console.log(match);
           scripts.push(match[1]);
           match = re.exec(html);
         }
-        //console.log(scripts);
 
         this.setState({
           html: html,
         }, () => {
           scripts.forEach((script) => {
-            console.log(script);
             window.eval(script);
           });
         });

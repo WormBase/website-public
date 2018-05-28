@@ -340,7 +340,6 @@ var name2widget = {
         const widgetConf = JSON.parse(singleWidgetHolder.data('widget-conf') || '{}');
         const object = JSON.parse(singleWidgetHolder.data('object')|| '{}');
         const species = JSON.parse(singleWidgetHolder.data('species') || '{}');
-        console.log(classConf, widgetConf, object);
         if (widgetUrl) {
           ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} section={section} object={object} species={species} classConf={classConf} widgetConf={widgetConf} />,
                           document.getElementById("single-widget-holder"));
