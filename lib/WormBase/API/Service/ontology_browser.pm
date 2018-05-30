@@ -260,8 +260,10 @@ sub show_genes {
       elsif ($class eq 'phenotype') {			# phenotype gets direct rnai, direct variation, direct + inferred rnai, direct + inferred variation
         $url{"direct_rnai"}      = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=evidence_type:RNAi&fq=annotation_class:%22' . $focusTermId . '%22';
         $url{"direct_variation"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=evidence_type:Variation&fq=annotation_class:%22' . $focusTermId . '%22';
+        $url{"direct_rnaivariation"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
         $url{"infDir_rnai"}      = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=evidence_type:RNAi&fq=regulates_closure:%22' . $focusTermId . '%22';
         $url{"infDir_variation"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=evidence_type:Variation&fq=regulates_closure:%22' . $focusTermId . '%22';
+        $url{"infDir_rnaivariation"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
       }
       else {						# all other classes get direct, inferred + direct
         $url{"direct"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
@@ -305,7 +307,7 @@ sub show_genes {
       $filenameData{$type} .= qq(for_$focusTermId); 
     } # foreach my $type (sort keys %url)
 
-    my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation infDir_rnai infDir_variation );
+    my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation direct_rnaivariation infDir_rnai infDir_variation infDir_rnaivariation );
 							# lists are sorted by this priority
     return { 
              sortPriority  => \@sortPriority,		# pass the sortPriority through catalyst for view
