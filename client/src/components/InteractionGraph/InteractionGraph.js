@@ -37,6 +37,7 @@ class InteractionGraph extends Component {
         "class": PropTypes.string,
       })
     ),
+    focusNodeId: PropTypes.string,
     classes: PropTypes.object.isRequired,
   };
 
@@ -144,7 +145,7 @@ class InteractionGraph extends Component {
             id: interactorId,
             label: label,
             color: 'gray',
-            main: rest.main,
+            main: interactorId === this.props.focusNodeId,
             shape: getShape(rest.class),
             visibility: 'hidden',
           }

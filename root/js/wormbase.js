@@ -2033,14 +2033,7 @@ var Scrolling = (function(){
       });
     }
 
-
-    function loadCytoscapeForInteraction(data, types, clazz) {
-      Plugin.getPlugin('cytoscape_js_arbor', function() {
-        setupCyInteractionViewer(data, types, clazz)
-      });
-    }
-
-    function setupCytoscapeInteraction(data, types, clazz){
+    function setupCytoscapeInteraction(data, focusNodeId){
       import('../../client/src/components/InteractionGraph').then(
         (module) => {
           const InteractionGraph = module.default;
@@ -2048,17 +2041,14 @@ var Scrolling = (function(){
           const InteractionGraphWithData = () => {
             return (
               <InteractionGraphDataProvider data={data}>
-                {(providedProps) => <InteractionGraph {...providedProps} />}
+                {(providedProps) => <InteractionGraph {...providedProps} focusNodeId={focusNodeId} />}
               </InteractionGraphDataProvider>
             );
           };
+          console.log(focusNodeId);
           ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
         }
       );
-      /* Plugin.getPlugin('cytoscape_js',function(){
-       *   loadCytoscapeForInteraction(data, types, clazz)
-       *   return;
-       * });*/
     }
 
 

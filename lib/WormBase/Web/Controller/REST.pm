@@ -1011,6 +1011,7 @@ sub widget_GET {
         $c->stash->{object}->{name} = $c->stash->{fields}->{name};
 
         # Save the name and class of the widget.
+        $c->stash->{wbid} = "$name";
         $c->stash->{class}  = $class;
         $c->stash->{widget} = $widget;
 
@@ -1880,6 +1881,10 @@ sub field_GET {
     if ( $content_type eq 'text/html' ) {
    # Set the template
         $c->stash->{template} = 'shared/generic/rest_field.tt2';
+        $c->stash->{wbid} = "$name";
+        $c->stash->{class}  = $class;
+        $c->stash->{field} = $field;
+
         $c->stash->{child_template} = $self->_select_template('field', $class, $field );
         $c->forward('WormBase::Web::View::TT');
     }elsif($content_type =~ m/image/i) {
