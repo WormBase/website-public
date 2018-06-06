@@ -920,7 +920,7 @@
  spell_wormbase = {
 	description = 'WormBase Spell instance',
 	maintainer  = 'WormBase',
-	base        = 'http://50.18.180.228:3000',
+	base        = 'http://spell.caltech.edu:3000',
 	search      = 'http://spell.caltech.edu:3000/search/show_listing?search_string=%s'
 	}
 
