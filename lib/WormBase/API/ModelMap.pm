@@ -40,6 +40,7 @@ BEGIN {
             Disease   => 'DO_term',
             Go_term   => 'GO_term',
             Go_annotation => 'GO_annotation',
+            Disease_model_annotation => 'Disease_model_annotation',
             Wbprocess => 'WBProcess',
             Model     => 'Model', #for schema display to work,
             PATO_term => 'PATO_term', #for schema display to work,
