@@ -756,6 +756,13 @@
         search      = 'http://orcid.org/%s'
         }
 
+ ORFeome = {
+        description = 'The C. elegans ORFeome cloning project'
+        base        = 'http://worfdb.dfci.harvard.edu/'
+        search      = 'http://worfdb.dfci.harvard.edu/searchallwormorfs.pl?by=name&sid=%s'
+        }
+
+
  Panther = {
     description = 'PanTree i a framework for integrating biological knowledge in an evolutionary context.'
     PanTree_node = 'http://pantree.org/node/annotationNode.jsp?id=%s'
