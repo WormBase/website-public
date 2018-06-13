@@ -122,6 +122,8 @@ __PACKAGE__->config->{authentication} = {
     }
 };
 
+__PACKAGE__->config->{encoding} = undef;  # Disable due to legacy http://search.cpan.org/dist/Catalyst-Runtime/lib/Catalyst/UTF8.pod#Disabling_default_UTF8_encoding
+
 after setup_finalize => sub {
     my $c = shift;
 
