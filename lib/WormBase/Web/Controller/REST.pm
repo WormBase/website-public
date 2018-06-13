@@ -8,7 +8,7 @@ use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
 use List::Util qw(shuffle);
-use Badge::GoogleTalk;
+#use Badge::GoogleTalk;
 use WormBase::API::ModelMap;
 use LWP;
 use JSON;
@@ -1061,7 +1061,7 @@ sub _fetch_rest_endpoints {
 
 our %endpoints = (
     last_updated => undef,
-    values => ()
+    values => [],
 );
 
 sub time_since {

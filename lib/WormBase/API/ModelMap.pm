@@ -3,13 +3,14 @@ package WormBase::API::ModelMap;
 use strict;
 use warnings;
 use Module::Pluggable::Object;
-use Class::MOP;
+#use Class::MOP;
+use Class::Load;
 
 use constant OBJ_BASE => 'WormBase::API::Object';
 
 BEGIN {
     # load all the object classes
-    Class::MOP::load_class($_)
+    Class::Load::load_class($_)
       foreach Module::Pluggable::Object->new(search_path => [OBJ_BASE])->plugins;
 }
 
