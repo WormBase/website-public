@@ -149,7 +149,7 @@ sub run {
     my $bioprojects = $param->{'bioproject'};
     $bioprojects = [ $bioprojects ] unless ref($bioprojects) eq 'ARRAY';
 
-    if (length(@{$bioprojects}) == 1 && @{$bioprojects}[0] == undef) {
+    if (scalar(@{$bioprojects}) == 1 && @{$bioprojects}[0] == undef) {
         error("A BioProject must be selected!");
     }
 

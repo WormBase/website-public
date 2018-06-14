@@ -73,15 +73,19 @@ requires 'Devel::StackTrace';                                    #
 requires 'HTML::Parser';                                         #
 requires 'HTML::Entities';                                       #
 requires 'Facebook::Graph';                                      #
+requires 'File::Spec::Functions';
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
+requires 'GraphViz';
 requires 'Hash::Merge';
 #requires 'GO::Parser';                                          #
 #requires 'GO::Utils';                                           #
 #requires 'go-db-perl';                                          #
+requires 'IO::Socket::PortState';
 requires 'Statistics::R::IO';                                    # executing r codes
 requires 'JSON';                                                 #
 requires 'JSON::Any';
+requires 'JSON::Parse';
 requires 'JSON::WebToken';
 requires 'JSON::XS';
 requires 'List::MoreUtils';                                      #
