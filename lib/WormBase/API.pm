@@ -3,11 +3,12 @@ package WormBase::API;
 use Moose;                       # Moosey goodness
 
 use WormBase::API::ModelMap;
-use WormBase::API::Service::Xapian;
+#use WormBase::API::Service::Xapian;
 use WormBase::API::Service::Elasticsearch;
-use Search::Xapian;
+#use Search::Xapian;
 use Config::General;
-use Class::MOP;
+#use Class::MOP;
+use Class::Load;
 use File::Spec;
 use namespace::autoclean -except => 'meta';
 
@@ -100,37 +101,37 @@ has tool => (
 sub _build_xapian {
   my $self = shift;
   return $self->_build_elasticsearch();
-  my $service_instance = $self->_services->{$self->default_datasource};
+  # my $service_instance = $self->_services->{$self->default_datasource};
 
-  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->config->{wormbase_release}, 'search');
-  my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
-  my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
-  my $qp = Search::Xapian::QueryParser->new($db);
-  my $auto_qp = Search::Xapian::QueryParser->new($db);
-  my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
+  # my $path = File::Spec->catdir($self->pre_compile->{base}, $self->config->{wormbase_release}, 'search');
+  # my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
+  # my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
+  # my $qp = Search::Xapian::QueryParser->new($db);
+  # my $auto_qp = Search::Xapian::QueryParser->new($db);
+  # my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
 
-  my $ptype_svrp = Search::Xapian::NumberValueRangeProcessor->new(8, "ptype:");
-  my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
-  my $species_svrp = Search::Xapian::StringValueRangeProcessor->new(12, "species:");
-  $qp->add_valuerangeprocessor($ptype_svrp);
-  $qp->add_valuerangeprocessor($species_svrp);
-  $qp->add_valuerangeprocessor($type_svrp);
-
-
-  $syn_qp->add_valuerangeprocessor($ptype_svrp);
-  $syn_qp->add_valuerangeprocessor($species_svrp);
-  $syn_qp->add_valuerangeprocessor($type_svrp);
+  # my $ptype_svrp = Search::Xapian::NumberValueRangeProcessor->new(8, "ptype:");
+  # my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
+  # my $species_svrp = Search::Xapian::StringValueRangeProcessor->new(12, "species:");
+  # $qp->add_valuerangeprocessor($ptype_svrp);
+  # $qp->add_valuerangeprocessor($species_svrp);
+  # $qp->add_valuerangeprocessor($type_svrp);
 
 
-  my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
-  $syn_qp->add_valuerangeprocessor($svrp);
+  # $syn_qp->add_valuerangeprocessor($ptype_svrp);
+  # $syn_qp->add_valuerangeprocessor($species_svrp);
+  # $syn_qp->add_valuerangeprocessor($type_svrp);
 
-  my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp, _api => $self});
 
-  $xapian->search({ query => "*", page => 1, type => "gene"});
-  $xapian->autocomplete("*", "gene");
+  # my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
+  # $syn_qp->add_valuerangeprocessor($svrp);
 
-  return $xapian;
+  # my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp, _api => $self});
+
+  # $xapian->search({ query => "*", page => 1, type => "gene"});
+  # $xapian->autocomplete("*", "gene");
+
+  # return $xapian;
 }
 
 sub _build_elasticsearch {
@@ -178,7 +179,7 @@ sub _build__services {
     foreach my $db_type (sort keys %$db_confs) {
         next if $db_type eq 'tmp';
         my $service_class = __PACKAGE__ . "::Service::$db_type";
-        Class::MOP::load_class($service_class);
+        Class::Load::load_class($service_class);
 
         my $conf = $db_confs->{$db_type};
         my @sources = sort keys %{$conf->{data_sources}}; # usually species
@@ -214,7 +215,7 @@ sub _build__tools {
     my %tools;
     for my $tool (sort keys %{$self->tool}) {
         my $class = __PACKAGE__ . "::Service::$tool";
-        Class::MOP::load_class($class);
+        Class::Load::load_class($class);
 
         # Instantiate the service providing it with
         # access to some of our configuration variables

@@ -122,6 +122,8 @@ __PACKAGE__->config->{authentication} = {
     }
 };
 
+__PACKAGE__->config->{encoding} = undef;  # Disable due to legacy http://search.cpan.org/dist/Catalyst-Runtime/lib/Catalyst/UTF8.pod#Disabling_default_UTF8_encoding
+
 after setup_finalize => sub {
     my $c = shift;
 
@@ -521,7 +523,7 @@ sub get_cache_backend { # overriding Plugin::Cache
 # In production, these directories are served by proxy.
 sub _setup_static {
     my $c = shift;
-    $c->config(static => {
+    $c->config('Plugin::Static::Simple' => {
         dirs         => [qw/ css js img media tmp /],
         include_path => [
             'client/build',  # serve favicon and asset-manifest.json
@@ -817,7 +819,7 @@ sub api_tests {
     my @tests = <t/api_tests/*.t>;
     foreach my $test (@tests) {
         next if $API_TESTS ne '1' && $API_TESTS ne basename($test, '.t'); # Only skip if a test set was specified by API_TEST and it is not the current one.
-        next if (defined @API_TESTS_BLACKLIST && ( grep {$_ eq basename($test, '.t')} @API_TESTS_BLACKLIST)); # skip if current test file is in blacklist
+        next if (( grep {$_ eq basename($test, '.t')} @API_TESTS_BLACKLIST)); # skip if current test file is in blacklist
         require_ok($test);
         my $pkg = basename($test, '.t') . '::';
         &{$pkg->{'config'}}($api);

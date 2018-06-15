@@ -21,6 +21,7 @@ requires 'Catalyst::Authentication::Credential::OpenID';   # will need to instal
 requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::Controller::CGIBin';
+requires 'Catalyst::DispatchType::Regex';
 requires 'Catalyst::Model::Adaptor';
 requires 'Catalyst::Model::Xapian::Result';
 #requires 'Catalyst::Log::Log4perl';
@@ -49,6 +50,7 @@ requires 'Ace'                                    => '1.92';     # Good 'ole Ace
 requires 'Badge::GoogleTalk';                                    #
 requires 'Bio::Perl'                              => '1.006001'; #
 requires 'Bio::Graphics';                                        #
+requires 'Bio::Graphics::Browser2::Markup';
 requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
 requires 'CGI::Simple::Cookie';                                  #
@@ -58,7 +60,8 @@ requires 'Crypt::SSLeay'; 			                 # For openid support
 requires 'CHI';                                                  # Cache
 requires 'CHI::Driver::Memcached::libmemcached';                 # Cache (in memory)
 requires 'CHI::Driver::File';                                    # Cache (on disk)
-requires 'Class::MOP';                                           # => '1.12';
+#requires 'Class::MOP';                                           # => '1.12';
+requires 'Class::Load';
 requires 'Data::Dump';                                           #
 requires 'Data::GUID';											 #
 requires 'Data::OptList';                                        #
@@ -70,14 +73,21 @@ requires 'Devel::StackTrace';                                    #
 requires 'HTML::Parser';                                         #
 requires 'HTML::Entities';                                       #
 requires 'Facebook::Graph';                                      #
+requires 'File::Spec::Functions';
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
+requires 'GraphViz';
 requires 'Hash::Merge';
 #requires 'GO::Parser';                                          #
 #requires 'GO::Utils';                                           #
 #requires 'go-db-perl';                                          #
+requires 'IO::Socket::PortState';
 requires 'Statistics::R::IO';                                    # executing r codes
 requires 'JSON';                                                 #
+requires 'JSON::Any';
+requires 'JSON::Parse';
+requires 'JSON::WebToken';
+requires 'JSON::XS';
 requires 'List::MoreUtils';                                      #
 requires 'Log::Log4perl';                                        #
 requires 'Log::Log4perl::Catalyst';                              #
@@ -107,6 +117,7 @@ requires 'Sub::Exporter';                                        #
 requires 'Sub::Install';                                         #
 requires 'Sub::Identify';                                        #
 requires 'SVG';                                                  #
+requires 'Switch';
 requires 'Task::Weaken';                                         #
 requires 'Template::Plugin::Time::Duration';                     #
 requires 'Test::YAML::Valid';                                    #
