@@ -12,6 +12,8 @@ use Test::More;
 require 't/command_line_options.pm';
 require 't/catalyst_startup.pm';
 
+$ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = $ENV{'APP'};
+
 my $options = command_line_options();
 
 my $configuration;
@@ -38,4 +40,3 @@ done_testing();
 stop_catalyst();
 
 1;
-
