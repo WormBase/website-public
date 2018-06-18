@@ -25,7 +25,7 @@ sub search {
     my $resp = HTTP::Tiny->new->get($url);
 
     if ($resp->{success}) {
-        return (decode_json($resp->{content}));
+        return (JSON->new->allow_nonref->utf8->decode($resp->{content}));
     } else {
         my $resp_code = $resp->{status};
         return (undef, "$url failed with $resp_code");
@@ -43,7 +43,7 @@ sub autocomplete {
     my $resp = HTTP::Tiny->new->get($url);
 
     if ($resp->{success}) {
-        return (decode_json($resp->{content}));
+        return (JSON->new->allow_nonref->utf8->decode($resp->{content}));
     }
     return undef;
 }
@@ -80,7 +80,7 @@ sub fetch {
 
     my $resp = HTTP::Tiny->new->get($url);
     if ($resp->{success} && $resp->{content}) {
-        my $json = decode_json($resp->{content});
+        my $json = JSON->new->allow_nonref->utf8->decode($resp->{content});
         my $non_empty_json = scalar keys %$json;
         if ($fill || $footer || $label || $non_empty_json) {
             return $json;
@@ -98,7 +98,7 @@ sub random {
     my $url = $self->_get_elasticsearch_url("/random");
     my $resp = HTTP::Tiny->new->get($url);
     if ($resp->{success} && $resp->{content}) {
-        return decode_json($resp->{content});
+        return JSON->new->allow_nonref->utf8->decode($resp->{content});
     }
     return undef;
 }
@@ -119,7 +119,7 @@ sub count_estimate {
     my $resp = HTTP::Tiny->new->get($url);
 
     if ($resp->{success}) {
-        return decode_json($resp->{content})->{count};
+        return JSON->new->allow_nonref->utf8->decode($resp->{content})->{count};
     }
     return undef;
 }
