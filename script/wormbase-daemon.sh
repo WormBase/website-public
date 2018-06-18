@@ -14,6 +14,9 @@
 # so it doesn't have to be maintained across branches.
 source /usr/local/wormbase/wormbase.env
 
+# Fetch functions
+. /etc/rc.d/init.d/functions 
+
 # $ENV{APP} needs to be set during build.
 # It's used here to dynamically configure
 # starman options.
@@ -92,7 +95,6 @@ export PATH="/usr/local/wormbase/extlib/bin:$PATH"
 
 
 PIDFILE="$APP_HOME/logs/wormbase.pid"
-
 # Starman access/error logs. Log4perl sets up the app-
 # specific logs.
 ERROR_LOG="$APP_HOME/logs/wormbase-starman-error.log"
@@ -126,11 +128,14 @@ STARMAN_OPTS="-I$APP_HOME/lib --access-log $ACCESS_LOG --error-log $ERROR_LOG --
 #STARMAN_OPTS="-I$APP_HOME/lib --workers $WORKERS --max-requests $MAX_REQUESTS --port $PORT $APP_HOME/wormbase.psgi"
 
 # start_server configuration
+# /usr/local/wormbase/extlib/bin/start_server
 START_SERVER_DAEMON=`which start_server`
 START_SERVER_DAEMON_OPTS="--pid-file=$PIDFILE --status-file=$STATUS --port $PORT -- $STARMAN $STARMAN_OPTS"
 
-# Why?
-#. $HOME/perl5/perlbrew/etc/bashrc
+#echo $STARMAN
+#echo $STARMAN_OPTS
+echo $START_SERVER_DAEMON
+echo $START_SERVER_DAEMON_OPTS
 
 cd $APP_HOME
 
@@ -142,16 +147,26 @@ cd $APP_HOME
 # Or checking out our wormbase_local.conf file.
 
 $START_SERVER_DAEMON --restart $START_SERVER_DAEMON_OPTS
+#$START_SERVER_DAEMON  $START_SERVER_DAEMON_OPTS
+#exit
 
 # If the restart failed (2 or 3) then try again. We could put in a kill.
 if [ $? -gt 0 ]; then
     echo "Restart failed, application likely not running. Starting..."
     # Rely on start-stop-daemon to run start_server in the background
     # The PID will be written by start_server
-    /sbin/start-stop-daemon --start --background  \
-                --chdir $APP_HOME --exec $START_SERVER_DAEMON -- $START_SERVER_DAEMON_OPTS
 
-#    /sbin/start-stop-daemon --start   \
+# Debian
+#    /sbin/start-stop-daemon --start --background  \
 #                --chdir $APP_HOME --exec $START_SERVER_DAEMON -- $START_SERVER_DAEMON_OPTS
+
+
+# Amazon Linux
+     cd $APP_HOME
+     echo "yo!"
+#     daemon --user jenkins --pidfile $PIDFILE $START_SERVER_DAEMON $START_SERVER_DAEMON_OPTS >/dev/null 2>&1 & 
+     daemon --pidfile $PIDFILE $START_SERVER_DAEMON $START_SERVER_DAEMON_OPTS  >/dev/null 2>&1 &
+
+
 fi
 
