@@ -94,6 +94,7 @@ requires 'Log::Log4perl::Catalyst';                              #
 requires 'Math::BigInt::GMP';   # will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
 requires 'Memcached::libmemcached';                              #
 requires 'Module::Install';                                      #
+requires 'Module::Versions';
 requires 'Moose'                                 => '1.21';      #
 requires 'MooseX::NonMoose';                                     # => '0.17';
 requires 'MooseX::MethodAttributes::Inheritable';                # => '0.24';
