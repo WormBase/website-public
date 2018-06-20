@@ -1,0 +1,1 @@
+docker run -it -d -v ${PWD}:/website -v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html -w=/website --network=wb-network -p 9003:8000 wormbase/website-env /bin/bash
