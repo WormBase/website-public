@@ -1076,7 +1076,7 @@ sub get_rest_endpoints {
     my ($c, $url) = @_;
     my $expires_in = 0 + $c->config->{'cached_rest_endpoints_expires_in'};  # cast to number
 
-    if (!$endpoints{last_updated} || time_since($endpoints{last_updated})->in_units('minutes') > $expires_in) {
+    if (!$endpoints{last_updated} || time_since($endpoints{last_updated})->in_units('minutes') >= $expires_in) {
         my @paths = _fetch_rest_endpoints($url);
         $endpoints{values} = \@paths;
         $endpoints{last_updated} = DateTime->now()->epoch();
