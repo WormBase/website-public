@@ -1,12 +1,12 @@
 FROM wormbase/website-env
 
-RUN mkdir /website
+RUN mkdir /usr/local/wormbase/website
 
-COPY . /website/
+COPY . /usr/local/wormbase/website/
 
-WORKDIR /website
+WORKDIR /usr/local/wormbase/website
 
-CMD chmod u+x /website/
+CMD chmod u+x /usr/local/wormbase/website
 
 # Define default command.
-CMD ["perl script/wormbase_server.pl -p 8000 -r -d"]
+CMD ["/bin/bash", "-c", "perl script/wormbase_server.pl -p 8000 -r -d"]
