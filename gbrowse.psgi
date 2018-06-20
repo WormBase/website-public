@@ -25,7 +25,7 @@ use Plack::Builder;
 # The symbolic name of our application.
 my $app      = 'production';
 my $app_root = '/usr/local/wormbase/website';
-
+$app_root = '.';
 $ENV{GBROWSE_CONF}   = "$app_root/$app/conf/gbrowse";
 $ENV{GBROWSE_HTDOCS} = "$app_root/$app/root/gbrowse";
 
