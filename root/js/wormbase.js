@@ -77,7 +77,7 @@ var name2widget = {
         widgetInit();
       }
       effects();
-      Plugin.getPlugin("placeholder", function(){
+      WB.getPlugin("placeholder", function(){
         $jq('input, textarea').placeholder();
       });
 
