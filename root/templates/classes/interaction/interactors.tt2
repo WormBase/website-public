@@ -1,5 +1,6 @@
-[% NO_NEARBY = fields.interactions.data.edges.size > 450 %]
-[% IF fields.interactions.data.showall || NO_NEARBY %]
+[%# NO_NEARBY = fields.interactions.data.edges.size > 450 %]
+[%# IF fields.interactions.data.showall || NO_NEARBY %]
+[% IF fields.interactions.data.include_details %]
   [% TYPES = fields.interactions.data.types %]
   [% NODES = fields.interactions.data.nodes %]
   [% EDGES = fields.interactions.data.edges %]
