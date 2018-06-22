@@ -91,3 +91,13 @@ cache_content = false
 #
 ########################################################
 
+
+# Datomic to catalyst URL
+# rest_server =
+cached_rest_endpoints_expires_in = 0 # minutes, for staging
+
+# new search API URL
+# search_server =
+
+# webpack_dev_server URL
+# webpack_dev_server =
