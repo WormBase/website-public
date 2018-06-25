@@ -27,6 +27,7 @@
          WormBase : [% c.config.site_byline %]
 
     </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.1/css/smoothness/jquery-ui.css" integrity="sha256-W2yd1rHy3rUNamLhxLxKNiAEUCZj8dbh4ninbpr3moU=" crossorigin="anonymous" />
     <% for (key in htmlWebpackPlugin.files.css) { %>
     <link href="%PUBLIC_URL%<%= htmlWebpackPlugin.files.css[key] %>" rel="stylesheet">
     <% } %>

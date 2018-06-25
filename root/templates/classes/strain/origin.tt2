@@ -74,6 +74,7 @@ IF fields.sampled_by.data || fields.isolated_by.data ||
 END;
 END;
 %]
+<script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
 <script type="text/javascript">
 
                 function mapsLoaded() {
@@ -100,11 +101,5 @@ END;
                                                [% fields.gps_coordinates.data.longitude %]);
                        addMarker(point,"[% fields.place.data ? fields.place.data : 'place name unknown' %]");
                     }
-                WB.loadFile("https://www.google.com/jsapi?key=[% c.config.google_api_key %]", true, function(){
-                  google.load("maps", "2", {"callback" : mapsLoaded});
-                });
+                google.load("maps", "2", {"callback" : mapsLoaded});
            </script>
-
-
-
-

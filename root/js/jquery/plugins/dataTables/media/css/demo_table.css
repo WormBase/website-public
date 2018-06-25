@@ -104,19 +104,19 @@
 }
 
 .paginate_disabled_previous {
-    background-image: url('../images/back_disabled.jpg');
+    background-image: url('../images/back_disabled.png');
 }
 
 .paginate_enabled_previous {
-    background-image: url('../images/back_enabled.jpg');
+    background-image: url('../images/back_enabled.png');
 }
 
 .paginate_disabled_next {
-    background-image: url('../images/forward_disabled.jpg');
+    background-image: url('../images/forward_disabled.png');
 }
 
 .paginate_enabled_next {
-    background-image: url('../images/forward_enabled.jpg');
+    background-image: url('../images/forward_enabled.png');
 }
 
 
@@ -349,7 +349,7 @@ table.display tr.odd.row_selected td {
     overflow: hidden;
     background-repeat: no-repeat;
     width: 16px;
-    background-image: url(/css/images/ui-icons_222222_256x240.png);
+    background-image: url(../../../../smoothness/css/theme/images/ui-icons_222222_256x240.png);
     padding: 0;
     background-position: -80px -158px;
     margin: 0 5px;
