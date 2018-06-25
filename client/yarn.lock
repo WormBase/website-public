@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@wormbase/react-scripts-for-catalyst@1.0.9-7":
-  version "1.0.9-7"
-  resolved "https://registry.yarnpkg.com/@wormbase/react-scripts-for-catalyst/-/react-scripts-for-catalyst-1.0.9-7.tgz#2d0944ff405c7e5724f0723f3f3e9afb8048b2ed"
+"@wormbase/react-scripts-for-catalyst@1.0.9-8":
+  version "1.0.9-8"
+  resolved "https://registry.yarnpkg.com/@wormbase/react-scripts-for-catalyst/-/react-scripts-for-catalyst-1.0.9-8.tgz#1b2965777317e359d1a35263a91955da0d6e1c03"
   dependencies:
     autoprefixer "7.1.1"
     babel-core "6.25.0"
