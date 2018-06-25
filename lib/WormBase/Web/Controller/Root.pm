@@ -325,8 +325,10 @@ sub get :Local Args(0) {
                 $url = $c->uri_for('/resources', $matched_class, $match->{id}, $carryover_params)->as_string;
             }
         }
+        $c->log->debug("Redirect /get? to $url");
         $c->res->redirect($url);
     } else {
+        $c->log->debug("Redirect /get? to general search");
         $c->res->redirect("/search/all/$name");
     }
 }
