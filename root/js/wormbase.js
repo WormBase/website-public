@@ -18,11 +18,9 @@
  *         abigail.cabunoc@oicr.on.ca
  */
 
-
 /* This module stays in ES5 to avoid strict mode being enabled */
 /* https://github.com/facebookincubator/create-react-app/issues/3318 */
 
-var Plugin = require('../../client/src/utils').LegacyPlugin;
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
 
@@ -3212,7 +3210,8 @@ var Scrolling = (function(){
       makeFpkmBoxPlot: makeFpkmBoxPlot,
       makeFpkmSummaryPlot: makeFpkmSummaryPlot
     };
-    })();
+
+  })();
 
     function renderWidget(data, elementId, widgetName) {
       const WidgetComponent = name2widget[widgetName];
@@ -3220,6 +3219,202 @@ var Scrolling = (function(){
       ReactDOM.render(<WidgetComponent data={data} pageInfo={pageInfo} />, document.getElementById(elementId));
     }
 
+    var Plugin = (function(){
+      var pluginsLoaded = new Array(),
+          pluginsLoading = new Array(),
+          callLater = new Array(),
+          css = new Array(),
+          loading = false,
+          pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
+                        dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
+                        colorbox: "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js",
+                        generateFile: "/js/jquery/plugins/generateFile.js",
+                        pfam: "/js/pfam/domain_graphics.min.js",
+                        markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
+                        "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
+                        tabletools: "/js/jquery/plugins/tabletools/media/js/TableTools.min.js",
+                        placeholder: "/js/jquery/plugins/jquery.placeholder.min.js",
+                        cytoscape_js: "/js/jquery/plugins/cytoscapejs/cytoscape_min/2.5.0/cytoscape.min.js",
+                        cytoscape_js_arbor: "/js/jquery/plugins/cytoscapejs/cytoscape_arbor/1.1.2/cytoscape-arbor.js",
+                        cytoscape_js_dagre: "/js/jquery/plugins/cytoscapejs/cytoscape_dagre/1.1.2/cytoscape-dagre.js",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.js",
+                        cytoscape_js_qtip: "/js/jquery/plugins/cytoscapejs/cytoscape_js_qtip/2.2.5/cytoscape-qtip.js",
+                        highcharts: "/js/highcharts/4.1.9/highcharts.js",
+                        highcharts_more: "/js/highcharts/4.1.9/highcharts-more.js",
+                        //jstat: "/js/jstat/1.5.0/jstat.min.js",  // statistics library in JS, not in use
+                        simple_statistics: "/js/simple-statistics/1.0.1/simple_statistics.min.js",  // statistics library in JS
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
+          },
+          pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
+                        colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
+                        markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
+                        "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
+                        tabletools: "/js/jquery/plugins/tabletools/media/css/TableTools.css",
+                        qtip: "/js/jquery/plugins/qtip2/2.2.0/jquery.qtip.min.css",
+                        icheck: "/js/jquery/plugins/icheck-1.0.2/skins/square/aero.css"
+          };
+
+
+      function addToCallLater(name, toCallFunction) {
+        if (typeof callLater[name] === 'undefined') { callLater[name] = new Array(); }
+        // append functions to the queue
+        callLater[name].push(toCallFunction);
+      }
+      function triggerCallLater(name) {
+        // take functions off the queue until the queue is empty
+        while(callLater[name] && callLater[name].length > 0){
+          var toCallFunction = callLater[name].shift();
+          if (toCallFunction){
+              toCallFunction();
+          }
+        }
+      }
+
+      function getScript(name, url, stylesheet, callback) {
+
+        function LoadJs(){
+           css[name] = true;
+
+           loadFile(url, true, name, function(){
+              callback();
+              pluginsLoaded[name] = true;
+              pluginsLoading[name] = false;
+              if (callLater[name]) { triggerCallLater(name); }
+           });
+        }
+
+        pluginsLoading[name] = true;
+        if(stylesheet){
+         loadFile(stylesheet, false, name, LoadJs());
+        }else{
+           LoadJs();
+        }
+      }
+
+
+      function loadFile(url, js, name, callback) {
+        var head = document.documentElement,
+            script = document.createElement( js ? "script" : "link"),
+            done = false;
+
+        if(js){
+          script.src = url;
+        }else{
+          script.href = url;
+          script.rel="stylesheet";
+          script.type = "text/css";
+        }
+
+        function doneLoad(){
+            done = true;
+            if(callback)
+              callback();
+        }
+
+        if(js){
+          script.onload = script.onreadystatechange = function() {
+          if(!done && (!this.readyState ||
+            this.readyState === "loaded" || this.readyState === "complete")){
+            doneLoad();
+
+              script.onload = script.onreadystatechange = null;
+              if( head && script.parentNode){
+                head.removeChild( script );
+              }
+            }
+          };
+
+
+        }else{
+          script.onload = function () {
+            doneLoad();
+          }
+          // #2
+          if (script.addEventListener) {
+            script.addEventListener('load', function() {
+            doneLoad();
+            }, false);
+          }
+          // #3
+          script.onreadystatechange = function() {
+            var state = script.readyState;
+            if (state === 'loaded' || state === 'complete') {
+              script.onreadystatechange = null;
+            doneLoad();
+            }
+          };
+
+          // #4
+          var cssnum = document.styleSheets.length;
+          var ti = setInterval(function() {
+            if (document.styleSheets.length > cssnum) {
+              // needs more work when you load a bunch of CSS files quickly
+              // e.g. loop from cssnum to the new length, looking
+              // for the document.styleSheets[n].href === url
+              // ...
+
+              // FF changes the length prematurely
+            doneLoad();
+              clearInterval(ti);
+
+            }
+          }, 10);
+        }
+
+        head.insertBefore( script, head.firstChild);
+        return undefined;
+      }
+
+
+
+      function checkPluginsLoaded(name) {
+        if (pluginsLoaded[name]) { return true; }
+          else { return false; }
+      }
+      function checkPluginsLoading(name) {
+        if (pluginsLoading[name]) { return true; }
+          else { return false; }
+      }
+
+      function isLoading(){
+        var loadingPlugins = Object.keys(pluginsLoading).filter(function(name){
+            return pluginsLoading[name];
+        });
+        return loadingPlugins.length > 0;
+      }
+
+      function getPlugin(name, callback){
+        var script = pScripts[name],
+            css = pStyle[name];
+        loadPlugin(name, script, css, callback);
+        return;
+      }
+
+      function loadPlugin(name, url, stylesheet, callback){
+
+          if (pluginsLoaded[name]){
+              callback();
+          }else if (pluginsLoading[name]){
+              addToCallLater(name, callback);
+          }else if (isLoading()) {
+              // if anything else is loading, wait for a bit before loading the new plugin
+              setTimeout(function(){
+                loadPlugin(name, url, stylesheet, callback);  // call loadPlugin instead of getScript to re-evaluate the conditionals
+              },10);
+          }else{
+              getScript(name, url, !css[name] ? stylesheet : undefined, callback);
+          }
+        return;
+      }
+
+      return {
+        getPlugin: getPlugin,
+        checkPluginsLoaded: checkPluginsLoaded,
+        checkPluginsLoading: checkPluginsLoading,
+        addToCallLater: addToCallLater,
+        loadFile: loadFile
+      };
+    })();
 
     return{
       // initiate page
@@ -3258,6 +3453,7 @@ var Scrolling = (function(){
       scrollToOffsetHeightDiff: scrollToOffsetHeightDiff,                   // adjust content height
 
       loadRSS: loadRSS,                             // load RSS (homepage)
+      loadFile: Plugin.loadFile,                    // load a file dynamically
       getPlugin: Plugin.getPlugin,                  // load plugin
 
       // notifications
