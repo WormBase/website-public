@@ -37,7 +37,8 @@
     END;
 %]
 
-          <script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
+           <script type="text/javascript">
+          </script>
 
 
            <script type="text/javascript">
@@ -69,6 +70,8 @@
                               addMarker(point,"[% strain.strain.label _ (strain.place ? ' (' _ strain.place _ ')' : 'place name unknown') %]");
                       [% END %]
                   }
+                WB.loadFile("https://www.google.com/jsapi?key=[% c.config.google_api_key %]", true, function(){
                   google.load("maps", "2", {"callback" : mapsLoaded});
+                });
             })();
            </script>
