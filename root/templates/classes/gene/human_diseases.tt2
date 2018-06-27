@@ -1,19 +1,18 @@
 
 
-    [% IF fields.human_diseases.data.experimental_model; %]
-    <p><h3>Curated Experimental Model</h3></p>
+[% IF fields.human_diseases.data.experimental_model || fields.detailed_disease_model.data %]
+  [% WRAPPER $field_block title=pluralize("Disease association", fields.human_diseases.data.experimental_model) %]
       [% FOREACH item IN fields.human_diseases.data.experimental_model;
           text = object.name.data.label _ ' is an experimental model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
           '<div class="description">';
             evidence(item.ev, 0 , text);
           '</div>';
         END;%]
-    [% END %]
 
 [%
 
-WRAPPER $field_block title="" key="detailed_disease_model";
-    '<p><h3>Detailed Disease Model</h3></p>';
+WRAPPER toggle open=1 title=pluralize("Annotation detail", fields.detailed_disease_model.data) id="detailed_disease_model";
+#WRAPPER $field_block title="Annotation details" key="detailed_disease_model";
     build_data_table(order=['disease_term','genetic_entity','evidence_code','experimental_condition','modifier','modifier_association_type','reference'],
                      columns={disease_term => 'Disease',
 		              genetic_entity  => 'Genetic entity',
@@ -33,23 +32,25 @@ END;
 
 %]
 
+  [% END %]
+[% END %]
+
+
 [%
 
-IF (fields.human_disease_relevance.data.defined);
-'<p><h3>Curated Human Disease Relevance</h3></p><p>';
+WRAPPER $field_block title="Curated disease description" key="human_disease_relevance";
     FOREACH obj IN fields.human_disease_relevance.data;
         '<div class="description">';
             evidence(obj.evidence,sd, obj.text);
         '</div>';
     END;
-'</p>';
 END;
 %]
 
+[% IF fields.human_diseases.data.defined || fields.human_diseases.data.gene || fields.human_diseases.data.disease; %]
+[% WRAPPER $field_block title="Automatic disease associations" %]
 [% IF fields.human_diseases.data.defined; %]
-  <p>
-    <h3>Automatically inferred from human protein orthology</h3>
-  </p>
+  <p class="fade">Automatically inferred from human protein orthology</p>
   <div class="description">
     [% IF fields.human_diseases.data.potential_model; %]
       [% FOREACH item IN fields.human_diseases.data.potential_model;
@@ -69,4 +70,6 @@ END;
     <br />
   [% END %]
   </div>
+[% END %]
+[% END %]
 [% END %]
