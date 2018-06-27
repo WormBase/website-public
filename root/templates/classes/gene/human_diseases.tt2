@@ -14,7 +14,7 @@
 
 WRAPPER $field_block title="" key="detailed_disease_model";
     '<p><h3>Detailed Disease Model</h3></p>';
-    build_data_table(order=['disease_term','genetic_entity','association_type','evidence_code','experimental_condition','modifier','reference'],
+    build_data_table(order=['disease_term','genetic_entity','evidence_code','experimental_condition','modifier','reference'],
                      columns={disease_term => 'Disease',
 		              genetic_entity  => 'Genetic entity',
 		              association_type  => 'Association type',
