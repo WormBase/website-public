@@ -23,6 +23,10 @@ WRAPPER $field_block title="" key="detailed_disease_model";
                               modifier => 'Modifier',
                               reference => 'Reference',
                              },
+                     style='
+"columnDefs": [{"targets": 0, "orderData": [0, 1, 4] },
+               {"targets": 1, "orderData": [1, 0, 4] }]
+'
 	             key='detailed_disease_model');
 END;
 
