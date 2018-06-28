@@ -2783,6 +2783,10 @@ div.field-title {
   font-weight: bold;
 }
 
+div.field-title .has-tooltip {
+  border-bottom: 1px dashed gray;
+}
+
 div.field-content {
   width: 100%;
   /* display:inline-table; */

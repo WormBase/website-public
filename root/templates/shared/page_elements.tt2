@@ -290,7 +290,7 @@ END;
         ">
       [% IF title; %]
          <div class="field-title">
-                  <span title="[% tooltip ? tooltip : fields.$key.description %]">
+                  <span title="[% tooltip ? tooltip : fields.$key.description %]" class="[%- (tooltip || fields.$key.description) && 'has-tooltip' -%]">
                      [% title.replace('_+', ' ') _ ': ' %]
                    </span>
           </div>
