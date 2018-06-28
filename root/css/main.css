@@ -3546,6 +3546,10 @@ div.description div.result{
   display:inline;
 }
 
+div.field-content div.description {
+  padding: 0;
+}
+
 #overview .content h2:first-child{
   float:left;
 }
