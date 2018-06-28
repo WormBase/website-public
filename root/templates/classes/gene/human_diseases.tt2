@@ -50,13 +50,14 @@ END;
 [% IF fields.human_diseases.data.defined || fields.human_diseases.data.gene || fields.human_diseases.data.disease; %]
 [% WRAPPER $field_block title="Automatic disease associations" %]
 [% IF fields.human_diseases.data.defined; %]
-  <p class="fade">Automatically inferred from human protein orthology</p>
-  <div class="description">
     [% IF fields.human_diseases.data.potential_model; %]
+      <p class="fade">Automatically inferred from human protein orthology</p>
       [% FOREACH item IN fields.human_diseases.data.potential_model;
           text = object.name.data.label _ ' is a potential model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
+          '<div class="description">';
           evidence(item.ev, 0 , text);
-          '<br />';
+          '</div>';
+          '<br />' UNLESS loop.last;
         END;%]
     [% END %]
 
@@ -66,10 +67,9 @@ END;
       [% FOREACH item IN fields.human_diseases.data.$type;
        external_link('OMIM',"OMIM:" _ item,item) _ '<br />';
         END;%]
+      [% '<br />' UNLESS loop.last; %]
     [% END %]
-    <br />
   [% END %]
-  </div>
 [% END %]
 [% END %]
 [% END %]
