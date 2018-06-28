@@ -3596,12 +3596,12 @@ div.detail-box .ev-more-text span{
 .disabled {
 /*  No box, just text only */
 /*  background:#EEE; */
-  color:#AAA;
-  display:none;
+  color:#AAA !important;
+  display:none !important;
 }
 
 .show-empty .disabled {
-  display:block;
+  display:block !important;
 }
 
 [tip]{
