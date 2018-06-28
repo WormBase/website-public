@@ -23,6 +23,7 @@
 
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
+require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var SingleWidgetPage = require('../../client/src/components/SingleWidgetPage').default;
 
@@ -3245,7 +3246,7 @@ var Scrolling = (function(){
                         simple_statistics: "/js/simple-statistics/1.0.1/simple_statistics.min.js",  // statistics library in JS
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
-          pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
+          pStyle = {    //dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",  // loading with require;
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
