@@ -2763,11 +2763,12 @@ li.visible div.widget-container {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
+  display: flex;
+  flex-direction: column;
   clear:both;
   /* float:left; breaks toggle for Phenotype_not_observed field */
   line-height:1.2em;
   padding: 7px 0.2em;
-  width:100%;
   position:relative;
 }
 div.detail-box div.field {
@@ -2775,27 +2776,36 @@ div.detail-box div.field {
 }
 
 div.field-title {
-  display:inline-table;
-  float: left;
-  text-align: right;
+  flex: 0 0 auto;
   font-size: 1em;
   padding:0 0.5em 0 0;
-  width: 10em;
+  width: 100%;
   font-weight: bold;
 }
 
 div.field-content {
+  width: 100%;
   /* display:inline-table; */
-  display: inline-block;
-  float:none;
-  width: calc(100% - 11em);
 }
 
 .one-column div.field-title {
   float:none;
   position:static;
   vertical-align:top;
-  table-layout:fixed;
+}
+
+@media (min-width: 1280px) {
+  .one-column div.field {
+    flex-direction: row;
+  }
+  .one-column div.field-title {
+    width: 12em;
+    text-align: right;
+  }
+
+  .one-column div.field-content {
+    width: calc(100% - 12em);
+  }
 }
 
 /* used in field-title tooltip */
@@ -3545,6 +3555,10 @@ div.search-summary {
 
 div#all-search-results {
   float:left;
+}
+
+div.detail-box div.field {
+  flex-direction: row;
 }
 
 div.detail-box div.field div.field-title {
