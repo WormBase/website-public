@@ -3203,6 +3203,8 @@ table#table_fpkm_controls_by td:nth-child(3) {
 
 .fpkm-plot-content-container > * {
   padding: 5px  20px;
+  overflow: scroll;
+  box-sizing: border-box;
 }
 
 .change-summary-field {
