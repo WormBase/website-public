@@ -290,7 +290,7 @@ END;
         ">
       [% IF title; %]
          <div class="field-title">
-                  <span title="[% tooltip ? tooltip : fields.$key.description %]">
+                  <span title="[% tooltip ? tooltip : fields.$key.description %]" class="[%- (tooltip || fields.$key.description) && 'has-tooltip' -%]">
                      [% title.replace('_+', ' ') _ ': ' %]
                    </span>
           </div>
@@ -400,7 +400,7 @@ END;
      UNLESS table_build;
 
    %]
-
+   <div style="overflow:scroll;width:100%">
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
     <thead>
         <tr>
@@ -436,6 +436,7 @@ END;
              %]
     </tbody>
   </table>
+ </div>
     [% END %]
     <script type="text/javascript" >
 WB.getPlugin("dataTables", function(){

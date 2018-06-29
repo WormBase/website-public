@@ -2763,11 +2763,12 @@ li.visible div.widget-container {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
+  display: flex;
+  flex-direction: column;
   clear:both;
   /* float:left; breaks toggle for Phenotype_not_observed field */
   line-height:1.2em;
   padding: 7px 0.2em;
-  width:100%;
   position:relative;
 }
 div.detail-box div.field {
@@ -2775,27 +2776,42 @@ div.detail-box div.field {
 }
 
 div.field-title {
-  display:inline-table;
-  float: left;
-  text-align: right;
+  flex: 0 0 auto;
   font-size: 1em;
   padding:0 0.5em 0 0;
-  width: 10em;
+  width: 100%;
   font-weight: bold;
+  margin-bottom: 8px;
+}
+
+div.field-title .has-tooltip {
+  border-bottom: 1px dashed gray;
 }
 
 div.field-content {
+  width: 100%;
+  overflow: scroll;
   /* display:inline-table; */
-  display: inline-block;
-  float:none;
-  width: calc(100% - 11em);
 }
 
 .one-column div.field-title {
   float:none;
   position:static;
   vertical-align:top;
-  table-layout:fixed;
+}
+
+@media (min-width: 1280px) {
+  .one-column div.field {
+    flex-direction: row;
+  }
+  .one-column div.field-title {
+    width: 12em;
+    text-align: right;
+  }
+
+  .one-column div.field-content {
+    width: calc(100% - 12em);
+  }
 }
 
 /* used in field-title tooltip */
@@ -3187,6 +3203,8 @@ table#table_fpkm_controls_by td:nth-child(3) {
 
 .fpkm-plot-content-container > * {
   padding: 5px  20px;
+  overflow: scroll;
+  box-sizing: border-box;
 }
 
 .change-summary-field {
@@ -3530,6 +3548,14 @@ div.description div.result{
   display:inline;
 }
 
+div.field-content div.description div.result{
+  display:block;
+}
+
+div.field-content div.description {
+  padding: 0;
+}
+
 #overview .content h2:first-child{
   float:left;
 }
@@ -3547,10 +3573,15 @@ div#all-search-results {
   float:left;
 }
 
+div.detail-box div.field {
+  flex-direction: row;
+}
+
 div.detail-box div.field div.field-title {
   width: 100px;
   min-width: 100px;
   padding-right: 0.5em;
+  margin-bottom: 0;
 }
 
 div.detail-box div.field div.field-content{
@@ -3578,12 +3609,12 @@ div.detail-box .ev-more-text span{
 .disabled {
 /*  No box, just text only */
 /*  background:#EEE; */
-  color:#AAA;
-  display:none;
+  color:#AAA !important;
+  display:none !important;
 }
 
 .show-empty .disabled {
-  display:block;
+  display:block !important;
 }
 
 [tip]{
