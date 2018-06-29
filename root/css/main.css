@@ -3546,6 +3546,10 @@ div.description div.result{
   display:inline;
 }
 
+div.field-content div.description div.result{
+  display:block;
+}
+
 div.field-content div.description {
   padding: 0;
 }
