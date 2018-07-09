@@ -1,0 +1,15 @@
+.ontology-ribbon__block:hover {
+  /*font-weight: bold;*/
+  color: black;
+  text-decoration: underline;
+}
+
+.ontology-ribbon__block-tile:hover {
+  border: 1px solid black;
+}
+
+.ontology-ribbon__strip-label {
+  color: grey;
+  font-weight: bold;
+  font-style: normal;
+}

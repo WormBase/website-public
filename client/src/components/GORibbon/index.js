@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { tagType } from '../customPropTypes';
 import { RibbonBase } from '@geneontology/ribbon';
 import '../../../node_modules/@geneontology/ribbon/lib/index.css';
+import './style.css';
 
 export default class GORibbon extends Component {
   render() {
