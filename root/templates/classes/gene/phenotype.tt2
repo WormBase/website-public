@@ -46,7 +46,7 @@
 
 
 [% WRAPPER $field_block title="Overexpression" key="drives_overexpression";
-   WRAPPER toggle title="<i>Overexpression from the " _  object.name.data.label _ " promoter results in the following phenotypes.</i>";
+   WRAPPER toggle title="<i>Overexpression of the " _  object.name.data.label _ " gene results in the following phenotypes.</i>";
      build_phenotype_table(key='drives_overexpression');
   END;
 END %]
