@@ -1,3 +1,8 @@
+.ontology-ribbon {
+  margin-top: 50px;
+  flex-wrap: nowrap;
+}
+
 .ontology-ribbon__block:hover {
   /*font-weight: bold;*/
   color: black;
