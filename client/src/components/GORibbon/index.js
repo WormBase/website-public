@@ -39,8 +39,11 @@ export default class GORibbon extends Component {
           },
         ]}
         onSlimSelect={() => null}
+        onSlimEnter={() => null}
+        onSlimLeave={() => null}
         onDomainEnter={() => null}
         onDomainLeave={() => null}
+        onSlimLeave={() => null}
       />
     );
   }
