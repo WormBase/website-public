@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { tagType } from '../customPropTypes';
+import { scaleSequential } from 'd3-scale';
+import { interpolateBlues } from 'd3-scale-chromatic';
 import { RibbonBase } from '@geneontology/ribbon';
 import '../../../node_modules/@geneontology/ribbon/lib/index.css';
 import './style.css';
 
 export default class GORibbon extends Component {
   render() {
+    const colorScale = scaleSequential(interpolateBlues).domain([0, 9]);
 
     const slimDataSimple = this.props.data.map((slimData) => {
       const slimCount = slimData.terms.reduce(
@@ -18,7 +21,7 @@ export default class GORibbon extends Component {
         label: slimData.slim.label,
         aspect: slimData.aspect,
         count: slimCount,
-        color: slimCount ? 'grey' : 'white',
+        color: colorScale(slimCount),
       }
     });
 
