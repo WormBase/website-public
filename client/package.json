@@ -6,6 +6,7 @@
     "@wormbase/react-scripts-for-catalyst": "1.0.9-9"
   },
   "dependencies": {
+    "@geneontology/ribbon": "1.4.1",
     "classnames": "^2.2.5",
     "cytoscape": "^3.2.6",
     "cytoscape-cola": "^2.0.1",

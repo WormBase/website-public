@@ -3220,6 +3220,15 @@ var Scrolling = (function(){
       ReactDOM.render(<WidgetComponent data={data} pageInfo={pageInfo} />, document.getElementById(elementId));
     }
 
+    function renderGORibbon(data, elementId) {
+      import('../../client/src/components/GORibbon').then(
+        (module) => {
+          const GORibbon = module.default;
+          ReactDOM.render(<GORibbon data={data} />, document.getElementById(elementId));
+        }
+      );
+    }
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3478,6 +3487,7 @@ var Scrolling = (function(){
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
       tooltipInit: tooltipInit,                     // initalize tooltip
       renderWidget: renderWidget,                   // render widget component
+      renderGORibbon: renderGORibbon,             // render GO ribbon
     };
   })();
 
