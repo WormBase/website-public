@@ -413,9 +413,8 @@
                         var previousHeight = innerJBrowseElement.height();
                         var nextHeight = Math.max(heightDefault, heightComputed);
                         var jbrowseContentElement = jbrowseDocument.getElementById('dijit_layout_ContentPane_1'); // HACK into the inner document of JBrowse
-                        if (jbrowseContentElement) {
-                          jbrowseContentElement.style.height = '' + nextHeight + 'px';
-                        }
+                        jbrowseContentElement.setAttribute('style','width:' + nextHeight + 'px');
+                        jbrowseContentElement.style.width = '' + nextHeight + 'px';
                         innerJBrowseElement.height(nextHeight);
                         WB.scrollToOffsetHeightDiff(innerJBrowseElement, previousHeight);
                         return heightComputed;
