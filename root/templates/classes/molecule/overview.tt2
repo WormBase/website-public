@@ -29,7 +29,7 @@ END;
 '<div class="description">';
 
 WRAPPER $field_block title="" key="chebi_id";
-    chebi_base_url = 'http://www.ebi.ac.uk/chebi/';
+    chebi_base_url = 'https://www.ebi.ac.uk/chebi/';
 
     MACRO format_url(url_base, params) BLOCK;
       paramStrings = [];
