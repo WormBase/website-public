@@ -40,7 +40,7 @@
     sub test_motif_details_external_link {
         my $host = $configuration->{'host'};
         my $port = $configuration->{'port'};
-        my $url_html = "http://$host:$port/rest/widget/protein/WP:CE03840/motif_details?download=1&content-type=text%2Fhtml";
+        my $url_html = "http://$host:$port/rest/widget/protein/CE03840/motif_details?download=1&content-type=text%2Fhtml";
         my $response_html = get($url_html);
 
         ok($response_html =~ /PFAM\:PF01030/, 'contains PFAM:PF01030 motif');

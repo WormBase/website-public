@@ -21,9 +21,9 @@
     }
 
     # Tests whether the __build_genetic_position returns multiple genetic
-    # positions for the protein WP:CE00285.
+    # positions for the protein CE00285.
     sub test__genetic_positions {
-        my $protein = $api->fetch({ class => 'Protein', name => 'WP:CE00285' });
+        my $protein = $api->fetch({ class => 'Protein', name => 'CE00285' });
 
         can_ok('WormBase::API::Object::Protein', ('_build_genetic_position'));
 
@@ -36,9 +36,9 @@
     }
 
     # Tests whether the __build_genomic_position returns multiple genomic
-    # positions for the protein WP:CE00285.
+    # positions for the protein CE00285.
     sub test__genomic_positions {
-        my $protein = $api->fetch({ class => 'Protein', name => 'WP:CE00285' });
+        my $protein = $api->fetch({ class => 'Protein', name => 'CE00285' });
 
         can_ok('WormBase::API::Object::Protein', ('_build_genomic_position'));
 
@@ -51,7 +51,7 @@
     }
 
     sub test__motif_details {
-        my $protein = $api->fetch({ class => 'Protein', name => 'WP:CE03840' });
+        my $protein = $api->fetch({ class => 'Protein', name => 'CE03840' });
         can_ok('WormBase::API::Object::Protein', ('motif_details'));
 
         my $motif_data = $protein->motif_details;
@@ -86,7 +86,7 @@
     # Test class in hits - best_blastp_matches
     # issue #2950
     sub test_best_blastp_matches {
-        my $protein = $api->fetch({ class => 'Protein', name => 'BM:BM42188' });
+        my $protein = $api->fetch({ class => 'Protein', name => 'BM42188' });
 
         can_ok('WormBase::API::Object::Protein', ('best_blastp_matches'));
 
