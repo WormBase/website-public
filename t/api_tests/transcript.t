@@ -78,7 +78,7 @@
         }
 
         # +ve strand test
-        $transcript = $api->fetch({ class => 'Transcript', name => 'AC3.1a' });
+        $transcript = $api->fetch({ class => 'Transcript', name => 'AC3.1a.1' });
 
         $sequence = $transcript->print_sequence();
         isnt($sequence->{'data'}, undef, 'data returned');
@@ -144,7 +144,7 @@
 
     sub test_flanking_region_pos_strand {
         #  +ve strand test
-        my $transcript = $api->fetch({ class => 'Transcript', name => 'AC3.1a' });
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'AC3.1a.1' });
         my ($len_us, $len_ds) = (60, 50);  #upstream and downstream length to fetch
         my ($flanked_seq, $flanked_seq_range, $up_range, $down_range) =
             $transcript->_get_flanking_region($len_us, $len_ds);
@@ -163,7 +163,7 @@
 
     sub test_flanking_more {
         # relates to #4324 finding wrong flanking region due to duplicate name
-        my $transcript = $api->fetch({ class => 'Transcript', name => 'C47D2.2' });
+        my $transcript = $api->fetch({ class => 'Transcript', name => 'C47D2.2.1' });
         my ($len_us, $len_ds) = (20, 20);  #upstream and downstream length to fetch
         my ($flanked_seq, $flanked_seq_range, $up_range, $down_range) =
             $transcript->_get_flanking_region($len_us, $len_ds);
