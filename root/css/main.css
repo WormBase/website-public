@@ -2790,7 +2790,6 @@ div.field-title .has-tooltip {
 
 div.field-content {
   width: 100%;
-  overflow: scroll;
   /* display:inline-table; */
 }
 
