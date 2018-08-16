@@ -14,6 +14,10 @@
   text-decoration: underline;
 }
 
+.ontology-ribbon__block-tile {
+  margin: 0 1px;
+}
+
 .ontology-ribbon__block-tile:hover {
   border: 1px solid black;
 }
