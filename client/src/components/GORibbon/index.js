@@ -59,8 +59,6 @@ export default class GORibbon extends Component {
     const [hoverSlimItem] = dataWithCounts.filter((item) => {
       return item.slim.id === this.state.selectedSlimId;
     });
-    console.log(this.state.selectedSlimId);
-    console.log(hoverSlimItem);
 
     return (
       <div style={{position: 'relative'}}>
