@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Grow from 'material-ui/transitions/Grow';
-import Fade from 'material-ui/transitions/Fade';
 import Card, { CardContent } from 'material-ui/Card';
 import { tagType } from '../customPropTypes';
 import { pluralize } from '../../utils';
