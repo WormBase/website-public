@@ -4,6 +4,7 @@ import Grow from 'material-ui/transitions/Grow';
 import Fade from 'material-ui/transitions/Fade';
 import Card, { CardContent } from 'material-ui/Card';
 import { tagType } from '../customPropTypes';
+import { pluralize } from '../../utils';
 import { scaleSequential } from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { RibbonBase } from '@geneontology/ribbon';
@@ -88,7 +89,7 @@ export default class GORibbon extends Component {
             {
               hoverSlimItem ?  (
                 <CardContent>
-                  <strong><p>{hoverSlimItem.count} associations to <em>"{hoverSlimItem.slim.label}"</em></p></strong>
+                  <strong><p>{hoverSlimItem.count} {pluralize('association', hoverSlimItem.count)} to <em>"{hoverSlimItem.slim.label}"</em></p></strong>
                   <p><strong>Term definition:</strong> {hoverSlimItem.slim.definition}</p>
                 </CardContent>
               ) : null
