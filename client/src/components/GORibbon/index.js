@@ -83,7 +83,7 @@ export default class GORibbon extends Component {
           onDomainEnter={() => null}
           onDomainLeave={() => null}
         />
-        <Grow in={hoverSlimItem}>
+        <Grow in={hoverSlimItem} timeout={600} >
           <Card style={{position: 'absolute', top: 0, width: '100%'}}>
             {
               hoverSlimItem ?  (
