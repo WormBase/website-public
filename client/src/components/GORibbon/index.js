@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Grow from 'material-ui/transitions/Grow';
+import Fade from 'material-ui/transitions/Fade';
 import Card, { CardContent } from 'material-ui/Card';
 import { tagType } from '../customPropTypes';
 import { scaleSequential } from 'd3-scale';
@@ -83,16 +85,18 @@ export default class GORibbon extends Component {
           onDomainEnter={() => null}
           onDomainLeave={() => null}
         />
-        {
-          hoverSlimItem ?  (
-            <Card style={{position: 'absolute', top: 0, width: '100%'}}>
-              <CardContent>
-                <strong><p>{hoverSlimItem.count} associations to <em>"{hoverSlimItem.slim.label}"</em></p></strong>
-                <p><strong>Term definition:</strong> {hoverSlimItem.slim.definition}</p>
-              </CardContent>
-            </Card>
-          ) : null
-  }
+        <Grow in={hoverSlimItem}>
+          <Card style={{position: 'absolute', top: 0, width: '100%'}}>
+            {
+              hoverSlimItem ?  (
+                <CardContent>
+                  <strong><p>{hoverSlimItem.count} associations to <em>"{hoverSlimItem.slim.label}"</em></p></strong>
+                  <p><strong>Term definition:</strong> {hoverSlimItem.slim.definition}</p>
+                </CardContent>
+              ) : null
+            }
+          </Card>
+        </Grow>
       </div>
     );
   }
