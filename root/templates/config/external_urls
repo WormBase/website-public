@@ -756,6 +756,13 @@
         search      = 'http://orcid.org/%s'
         }
 
+ ORFeome = {
+        description = 'The C. elegans ORFeome cloning project'
+        base        = 'http://worfdb.dfci.harvard.edu/'
+        search      = 'http://worfdb.dfci.harvard.edu/searchallwormorfs.pl?by=name&sid=%s'
+        }
+
+
  Panther = {
     description = 'PanTree i a framework for integrating biological knowledge in an evolutionary context.'
     PanTree_node = 'http://pantree.org/node/annotationNode.jsp?id=%s'
@@ -920,7 +927,7 @@
  spell_wormbase = {
 	description = 'WormBase Spell instance',
 	maintainer  = 'WormBase',
-	base        = 'http://50.18.180.228:3000',
+	base        = 'http://spell.caltech.edu:3000',
 	search      = 'http://spell.caltech.edu:3000/search/show_listing?search_string=%s'
 	}
 

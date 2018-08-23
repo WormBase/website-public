@@ -98,8 +98,8 @@ sub _build__alleles_count {
         description => 'Counts for variations (used internally)',
         data => {
             #     alleles        => length(@alleles),
-            polymorphisms  => length(@polymorphisms) || undef,
-            alleles_other  => length(@alleles_other) || undef
+            polymorphisms  => scalar(@polymorphisms) || undef,
+            alleles_other  => scalar(@alleles_other) || undef
         }
     };
 

@@ -6,7 +6,7 @@ class = fields.name.data.class;
 
 WRAPPER highlight_box;
     WRAPPER $field_block title='ORFeome Project' key='on_orfeome_project';
-	'<a href="..' _  fields.on_orfeome_project.data _ '">' _ fields.on_orfeome_project.data _ '</a>';
+        external_link('ORFeome', fields.on_orfeome_project.data, fields.on_orfeome_project.data);
     END;
 END;
 

@@ -35,12 +35,13 @@
     position: relative;
 /*	min-height: 302px; */
     border: 1px solid #AAA;
-    margin: 0 0 0.5em 0;
+    margin: 0;
+    box-sizing: border-box;
     background: #E9EEF2;
     clear: both;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
-    padding: 0;
+    /* padding: 0; */
     zoom: 1;
  /* Feeling sorry for IE */
     min-width: 34em;
@@ -104,19 +105,19 @@
 }
 
 .paginate_disabled_previous {
-    background-image: url('../images/back_disabled.jpg');
+    background-image: url('../images/back_disabled.png');
 }
 
 .paginate_enabled_previous {
-    background-image: url('../images/back_enabled.jpg');
+    background-image: url('../images/back_enabled.png');
 }
 
 .paginate_disabled_next {
-    background-image: url('../images/forward_disabled.jpg');
+    background-image: url('../images/forward_disabled.png');
 }
 
 .paginate_enabled_next {
-    background-image: url('../images/forward_enabled.jpg');
+    background-image: url('../images/forward_enabled.png');
 }
 
 
@@ -349,7 +350,7 @@ table.display tr.odd.row_selected td {
     overflow: hidden;
     background-repeat: no-repeat;
     width: 16px;
-    background-image: url(/css/images/ui-icons_222222_256x240.png);
+    /* background-image: url(/css/images/ui-icons_222222_256x240.png); */
     padding: 0;
     background-position: -80px -158px;
     margin: 0 5px;

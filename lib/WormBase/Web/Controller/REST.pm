@@ -8,7 +8,7 @@ use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
 use List::Util qw(shuffle);
-use Badge::GoogleTalk;
+#use Badge::GoogleTalk;
 use WormBase::API::ModelMap;
 use LWP;
 use JSON;
@@ -896,7 +896,7 @@ sub widget_GET {
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
-            my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
+            my $since_cached = DateTime->now()->delta_ms(DateTime->from_epoch( epoch => $time_cached));
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
@@ -1011,6 +1011,7 @@ sub widget_GET {
         $c->stash->{object}->{name} = $c->stash->{fields}->{name};
 
         # Save the name and class of the widget.
+        $c->stash->{wbid} = "$name";
         $c->stash->{class}  = $class;
         $c->stash->{widget} = $widget;
 
@@ -1060,14 +1061,14 @@ sub _fetch_rest_endpoints {
 
 our %endpoints = (
     last_updated => undef,
-    values => ()
+    values => [],
 );
 
 sub time_since {
     my ($epoch_timestamp) = @_;
-    return DateTime->now() - DateTime->from_epoch(
+    return DateTime->now()->delta_ms(DateTime->from_epoch(
         epoch => $epoch_timestamp
-    );
+    ));
 }
 
 
@@ -1075,7 +1076,7 @@ sub get_rest_endpoints {
     my ($c, $url) = @_;
     my $expires_in = 0 + $c->config->{'cached_rest_endpoints_expires_in'};  # cast to number
 
-    if (!$endpoints{last_updated} || time_since($endpoints{last_updated})->in_units('minutes') > $expires_in) {
+    if (!$endpoints{last_updated} || time_since($endpoints{last_updated})->in_units('minutes') >= $expires_in) {
         my @paths = _fetch_rest_endpoints($url);
         $endpoints{values} = \@paths;
         $endpoints{last_updated} = DateTime->now()->epoch();
@@ -1089,12 +1090,18 @@ sub is_slow_endpoint {
     my ($endpoint_template) = @_;
     return grep { $endpoint_template eq $_; } (
         '/rest/widget/gene/{id}/interactions',
+        '/rest/widget/wbprocess/{id}/interactions',
+        '/rest/widget/interaction/{id}/interactions',
         '/rest/widget/phenotype/{id}/rnai',
         '/rest/widget/phenotype/{id}/variation',
         '/rest/widget/transposon_family/{id}/var_motifs',
         '/rest/widget/strain/{id}/contains',
         '/rest/field/gene/{id}/interaction_details',
-        '/rest/field/gene/{id}/interactions'
+        '/rest/field/gene/{id}/interactions',
+        '/rest/field/wbprocess/{id}/interaction_details',
+        '/rest/field/wbprocess/{id}/interactions',
+        '/rest/field/interaction/{id}/interaction_details',
+        '/rest/field/interaction/{id}/interactions',
     );
 }
 
@@ -1822,7 +1829,7 @@ sub field_GET {
 
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
-            my $since_cached = DateTime->now() - DateTime->from_epoch( epoch => $time_cached);
+            my $since_cached = DateTime->now()->delta_ms(DateTime->from_epoch( epoch => $time_cached));
             $is_cache_recent = $since_cached->in_units('hours') < 24;
         }
 
@@ -1880,6 +1887,10 @@ sub field_GET {
     if ( $content_type eq 'text/html' ) {
    # Set the template
         $c->stash->{template} = 'shared/generic/rest_field.tt2';
+        $c->stash->{wbid} = "$name";
+        $c->stash->{class}  = $class;
+        $c->stash->{field} = $field;
+
         $c->stash->{child_template} = $self->_select_template('field', $class, $field );
         $c->forward('WormBase::Web::View::TT');
     }elsif($content_type =~ m/image/i) {

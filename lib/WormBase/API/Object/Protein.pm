@@ -613,7 +613,8 @@ sub motif_details {
         foreach my $motif_homol (@motif_homol) {
 
             my $source_db = $motif_homol->right;
-            my ($source_id) = "$motif_homol" =~ m/[^\:]*\:(.+)/ or ("$motif_homol");
+            my ($source_id) = "$motif_homol" =~ m/[^\:]*\:(.+)/;
+            $source_id ||= "$motif_homol";
             my $source = {
                 id => $source_id,
                 db => "$source_db",

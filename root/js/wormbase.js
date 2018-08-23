@@ -23,6 +23,9 @@
 
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
+require("./jquery/plugins/dataTables/media/css/demo_table.css");
+
+var SingleWidgetPage = require('../../client/src/components/SingleWidgetPage').default;
 
 var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
@@ -75,7 +78,7 @@ var name2widget = {
         widgetInit();
       }
       effects();
-      Plugin.getPlugin("placeholder", function(){
+      WB.getPlugin("placeholder", function(){
         $jq('input, textarea').placeholder();
       });
 
@@ -84,6 +87,8 @@ var name2widget = {
           $jq(".lightbox").colorbox();
         });
       }
+
+      initializeSingleWidgetPage();
 
     }
 
@@ -327,8 +332,21 @@ var name2widget = {
       }
     }
 
-
-
+    function initializeSingleWidgetPage() {
+      const singleWidgetHolder = $jq('#single-widget-holder');
+      if (singleWidgetHolder) {
+        const widgetUrl = singleWidgetHolder.data('rest-url');
+        const section = singleWidgetHolder.data('section');
+        const classConf = JSON.parse(singleWidgetHolder.data('class-conf') || '{}');
+        const widgetConf = JSON.parse(singleWidgetHolder.data('widget-conf') || '{}');
+        const object = JSON.parse(singleWidgetHolder.data('object')|| '{}');
+        const species = JSON.parse(singleWidgetHolder.data('species') || '{}');
+        if (widgetUrl) {
+          ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} section={section} object={object} species={species} classConf={classConf} widgetConf={widgetConf} />,
+                          document.getElementById("single-widget-holder"));
+        }
+      }
+    }
 
     function widgetInit(){
       var widgetHolder = $jq("#widget-holder"),
@@ -1022,9 +1040,6 @@ var name2widget = {
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){
-            if ($jq('.multi-view-container').length){
-              WB.multiViewInit();
-            }
             //console.log([content.offset().top - scrollPos]);
             scrollToOffsetHeightDiff(content, heightDefault);
             Scrolling.sidebarMove();checkSearch(content);
@@ -2019,14 +2034,7 @@ var Scrolling = (function(){
       });
     }
 
-
-    function loadCytoscapeForInteraction(data, types, clazz) {
-      Plugin.getPlugin('cytoscape_js_arbor', function() {
-        setupCyInteractionViewer(data, types, clazz)
-      });
-    }
-
-    function setupCytoscapeInteraction(data, types, clazz){
+    function setupCytoscapeInteraction(data, focusNodeId){
       import('../../client/src/components/InteractionGraph').then(
         (module) => {
           const InteractionGraph = module.default;
@@ -2034,17 +2042,14 @@ var Scrolling = (function(){
           const InteractionGraphWithData = () => {
             return (
               <InteractionGraphDataProvider data={data}>
-                {(providedProps) => <InteractionGraph {...providedProps} />}
+                {(providedProps) => <InteractionGraph {...providedProps} focusNodeId={focusNodeId} />}
               </InteractionGraphDataProvider>
             );
           };
+          console.log(focusNodeId);
           ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
         }
       );
-      /* Plugin.getPlugin('cytoscape_js',function(){
-       *   loadCytoscapeForInteraction(data, types, clazz)
-       *   return;
-       * });*/
     }
 
 
@@ -3215,6 +3220,15 @@ var Scrolling = (function(){
       ReactDOM.render(<WidgetComponent data={data} pageInfo={pageInfo} />, document.getElementById(elementId));
     }
 
+    function renderGORibbon(data, elementId) {
+      import('../../client/src/components/GORibbon').then(
+        (module) => {
+          const GORibbon = module.default;
+          ReactDOM.render(<GORibbon data={data} />, document.getElementById(elementId));
+        }
+      );
+    }
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3241,7 +3255,7 @@ var Scrolling = (function(){
                         simple_statistics: "/js/simple-statistics/1.0.1/simple_statistics.min.js",  // statistics library in JS
                         icheck: "/js/jquery/plugins/icheck-1.0.2/icheck.min.js"
           },
-          pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
+          pStyle = {    //dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",  // loading with require;
                         colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
                         markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
@@ -3473,6 +3487,7 @@ var Scrolling = (function(){
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
       tooltipInit: tooltipInit,                     // initalize tooltip
       renderWidget: renderWidget,                   // render widget component
+      renderGORibbon: renderGORibbon,             // render GO ribbon
     };
   })();
 

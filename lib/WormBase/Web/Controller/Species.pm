@@ -103,6 +103,22 @@ sub class_index :Path("/species") Args(2) {
 
 sub object_report :Path("/species") Args(3) {
     my ($self,$c,$species,$class,$name) = @_;
+    $self->_get_report($c,$species,$class,$name);
+    $self->_setup_page($c);
+}
+
+sub object_widget_report :Path("/species") Args(5) {
+    my ($self,$c,$species,$class,$name,$widgetOrField, $widget) = @_;
+    $self->_get_report($c,$species,$class,$name);
+    $c->stash->{section}  = 'species';
+    $c->stash->{widget}  = $widget;
+    $c->stash->{template} = 'species/widget_report.tt2';
+    $c->stash->{rest_url} = $c->uri_for("/rest/widget/$class/$name/$widget")->as_string;
+    $self->_setup_page($c);
+}
+
+sub _get_report {
+    my ($self,$c,$species,$class,$name) = @_;
     $c->stash->{section}  = 'species';
     $c->stash->{species}  = $species,
     $c->stash->{class}    = $class;
@@ -157,8 +173,6 @@ sub object_report :Path("/species") Args(3) {
             leftWidth=>$c->req->param('leftwidth'),
         };
     }
-
-    $self->_setup_page($c);
 }
 
 

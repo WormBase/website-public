@@ -22,6 +22,9 @@ my $catalyst_thread;
 push(@ARGV, '-p');
 push(@ARGV, $WEBSITE_PORT);
 
+push(@ARGV, '-d');
+push(@ARGV, 1);
+
 sub catalyst {
     Catalyst::ScriptRunner->run('WormBase::Web', 'Server');
 }
@@ -75,4 +78,3 @@ sub wait_for_catalyst {
 }
 
 1;
-

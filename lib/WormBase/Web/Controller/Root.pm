@@ -311,11 +311,24 @@ sub get :Local Args(0) {
 
     my $matched_class = $match->{class} if $match;
     if ($match && ($matched_class eq $normed_class || $normed_class eq 'all')) {
-        my $url = (exists $c->config->{sections}->{species}->{$matched_class}) ?
-            $c->uri_for('/species', $match->{taxonomy} || 'all', $matched_class, $match->{id}, $carryover_params)->as_string :
-            $c->uri_for('/resources', $matched_class, $match->{id}, $carryover_params)->as_string;
+        my $url;
+        if (exists $c->config->{sections}->{species}->{$matched_class}) {
+            if ($c->req->params->{widget}) {
+                $url = $c->uri_for('/species', $match->{taxonomy} || 'all', $matched_class, $match->{id}, 'widget', $c->req->params->{widget})->as_string;
+            } else {
+                $url = $c->uri_for('/species', $match->{taxonomy} || 'all', $matched_class, $match->{id}, $carryover_params)->as_string;
+            }
+        } else {
+            if ($c->req->params->{widget}) {
+                $url = $c->uri_for('/resources', $matched_class, $match->{id}, 'widget', $c->req->params->{widget})->as_string;
+            } else {
+                $url = $c->uri_for('/resources', $matched_class, $match->{id}, $carryover_params)->as_string;
+            }
+        }
+        $c->log->debug("Redirect /get? to $url");
         $c->res->redirect($url);
     } else {
+        $c->log->debug("Redirect /get? to general search");
         $c->res->redirect("/search/all/$name");
     }
 }

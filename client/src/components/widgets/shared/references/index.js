@@ -7,6 +7,7 @@ import CancelIcon from 'material-ui-icons/Cancel';
 import List, { ListItem, ListItemText, ListItemSecondaryAction, ListSubheader } from '../../../List';
 import { IconButton } from '../../../Button';
 import { fitComponent } from '../../../styles';
+import { pluralize } from '../../../../utils';
 import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
 import DownloadReference from './DownloadReference';
@@ -56,10 +57,6 @@ class References extends Component {
     }, {});
   }
 
-  pluralize = (word, count) => {
-    return count > 1 ? `${word}s` : word;
-  }
-
   render() {
     const counts = this.countsByPaperTypes(this.props.data);
     const {classes} = this.props;
@@ -106,8 +103,8 @@ class References extends Component {
             <div>
               {
                 this.state.paperType ?
-                <span>{data.length} / {this.props.data.length} {this.pluralize('reference', data.length)} found matching your filter</span> :
-                <span>{data.length} {this.pluralize('reference', data.length)} found</span>
+                <span>{data.length} / {this.props.data.length} {pluralize('reference', data.length)} found matching your filter</span> :
+                <span>{data.length} {pluralize('reference', data.length)} found</span>
               }
             </div>
           </FittedListSubheader>

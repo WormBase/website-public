@@ -57,7 +57,7 @@
         my $response_html = get($url_html);
 
         # I'm trying to make sure the WormBase ID field does not have the 'disabled' class.
-        isnt($response_html =~ /<div class\=\"field\s+\"\>  \<div class\=\"field-title\"\>\s+\<span title\=\"\"\> WormBase ID/, '', 'WormBase ID field displayed');
+        isnt($response_html =~ /<div class\=\"field\s+\"\>  \<div class\=\"field-title\"\>\s+\<span title\=\"\"\ .+?> WormBase ID/, '', 'WormBase ID field displayed');
     }
 
     # Test if links treat gene names lin-15 and lin-15A differently

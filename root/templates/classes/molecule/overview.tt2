@@ -28,8 +28,8 @@ END;
 
 '<div class="description">';
 
-WRAPPER $field_block title="" key="chebi_id";
-    chebi_base_url = 'http://www.ebi.ac.uk/chebi/';
+IF fields.chebi_id.data;
+    chebi_base_url = 'https://www.ebi.ac.uk/chebi/';
 
     MACRO format_url(url_base, params) BLOCK;
       paramStrings = [];
@@ -59,16 +59,12 @@ WRAPPER $field_block title="" key="chebi_id";
             height:210px;
             position:relative;
             display:none;
-            margin:0 auto;
          }
         .molecule--chebi-image {
-            position: absolute;
             background-color: white;
         }
         .molecule--chebi-image-caption {
             text-align:center;
-            position:absolute;
-            top:180px;
         }
     </style>';
 

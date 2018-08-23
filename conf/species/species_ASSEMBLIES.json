@@ -2,7 +2,7 @@
    "b_malayi" : {
       "assemblies" : [
          {
-            "appeared_in" : "WS251",
+            "appeared_in" : "WS252",
             "assembly_accession" : null,
             "assembly_name" : "B_malayi-4.0",
             "bioproject" : "PRJNA10729",
@@ -96,7 +96,7 @@
             "bioproject_description" : "University of Washington C. elegans CB4856 genome project",
             "is_canonical" : false,
             "laboratory" : [
-               "University of Washington, Seattle, WA"
+               "University of Washington, Seattle WA"
             ],
             "strain" : "CB4856",
             "ucsc_name" : null
@@ -131,7 +131,9 @@
             "bioproject" : "PRJNA384657",
             "bioproject_description" : "Caenorhabditis nigoni strain JU1422, whole genome shotgun sequencing project",
             "is_canonical" : true,
-            "laboratory" : [],
+            "laboratory" : [
+               "Cornell University, Ithaca NY"
+            ],
             "strain" : "JU1422",
             "ucsc_name" : null
          }
@@ -270,7 +272,7 @@
             "bioproject_description" : "Wellcome Trust Sanger Institute S. ratti genome project",
             "is_canonical" : true,
             "laboratory" : [
-               "Wellcome Trust Sanger Institute, Cambridge UK"
+               "Wellcome Trust Sanger Institute, Cambridge, UK"
             ],
             "strain" : "ED321",
             "ucsc_name" : null
@@ -288,7 +290,7 @@
             "bioproject_description" : "Wellcome Trust Sanger Institute T. muris genome project",
             "is_canonical" : true,
             "laboratory" : [
-               "Wellcome Trust Sanger Institute, UK."
+               "Wellcome Trust Sanger Institute, Cambridge, UK"
             ],
             "strain" : "Edinburgh",
             "ucsc_name" : null

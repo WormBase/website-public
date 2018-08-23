@@ -1222,6 +1222,7 @@ input, select, th, td { font-size:1em; }
   background:white;
   padding:0 1em;
   margin:0;
+  min-height: calc(100vh - 400px);
 }
 
 /* Global Links */
@@ -1296,6 +1297,7 @@ div#header p a  {
 /* Status bar */
 div#header .status-bar {
     margin: 6px 15px 3px;
+    height: 22px;
     float:right;
 }
 
@@ -2689,11 +2691,16 @@ li.visible div.widget-container {
   height:150px;
 }
 
-.widget-container .content > .data-source-wrapper {
+.content > .data-source-wrapper {
   position: absolute;
   top: 0px;
   right: 30px;
 }
+
+#single-widget-holder .content > .data-source-wrapper {
+  top: 13px;
+}
+
 .data-source-label {
   border-radius: 5px;
   border: 1px solid grey;
@@ -2756,11 +2763,12 @@ li.visible div.widget-container {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
+  display: flex;
+  flex-direction: column;
   clear:both;
   /* float:left; breaks toggle for Phenotype_not_observed field */
   line-height:1.2em;
   padding: 7px 0.2em;
-  width:100%;
   position:relative;
 }
 div.detail-box div.field {
@@ -2768,27 +2776,41 @@ div.detail-box div.field {
 }
 
 div.field-title {
-  display:inline-table;
-  float: left;
-  text-align: right;
+  flex: 0 0 auto;
   font-size: 1em;
   padding:0 0.5em 0 0;
-  width: 10em;
+  width: 100%;
   font-weight: bold;
+  margin-bottom: 8px;
+}
+
+div.field-title .has-tooltip {
+  border-bottom: 1px dashed gray;
 }
 
 div.field-content {
+  width: 100%;
   /* display:inline-table; */
-  display: inline-block;
-  float:none;
-  width: calc(100% - 11em);
 }
 
 .one-column div.field-title {
   float:none;
   position:static;
   vertical-align:top;
-  table-layout:fixed;
+}
+
+@media (min-width: 1280px) {
+  .one-column div.field {
+    flex-direction: row;
+  }
+  .one-column div.field-title {
+    width: 12em;
+    text-align: right;
+  }
+
+  .one-column div.field-content {
+    width: calc(100% - 12em);
+  }
 }
 
 /* used in field-title tooltip */
@@ -2958,6 +2980,11 @@ div#google-map {
 #go_summary_Cellular_component table tbody td:nth-child(1),
 #go_summary_Biological_process table tbody td:nth-child(1) {
   width: 60px;
+}
+
+/* GO ribbon */
+.go-ribbon-container {
+  height: 243px; /* hard code height to avoid content loaded causes scroll position to shift. */
 }
 
 /* gene phenotype table and phenotypes table on other pages */
@@ -3142,8 +3169,7 @@ table#table_fpkm_controls_by td:nth-child(3) {
 /* fpkm plots */
 
 .fpkm-selected-container {
-  display: flex;
-  min-width: 900px;
+  overflow: scroll;
 }
 
 
@@ -3180,6 +3206,8 @@ table#table_fpkm_controls_by td:nth-child(3) {
 
 .fpkm-plot-content-container > * {
   padding: 5px  20px;
+  overflow: scroll;
+  box-sizing: border-box;
 }
 
 .change-summary-field {
@@ -3523,6 +3551,14 @@ div.description div.result{
   display:inline;
 }
 
+div.field-content div.description div.result{
+  display:block;
+}
+
+div.field-content div.description {
+  padding: 0;
+}
+
 #overview .content h2:first-child{
   float:left;
 }
@@ -3540,10 +3576,16 @@ div#all-search-results {
   float:left;
 }
 
+div.detail-box div.field {
+  flex-direction: row;
+}
+
 div.detail-box div.field div.field-title {
   width: 100px;
   min-width: 100px;
   padding-right: 0.5em;
+  margin-bottom: 0;
+  text-align: right;
 }
 
 div.detail-box div.field div.field-content{
@@ -3571,12 +3613,12 @@ div.detail-box .ev-more-text span{
 .disabled {
 /*  No box, just text only */
 /*  background:#EEE; */
-  color:#AAA;
-  display:none;
+  color:#AAA !important;
+  display:none !important;
 }
 
 .show-empty .disabled {
-  display:block;
+  display:block !important;
 }
 
 [tip]{

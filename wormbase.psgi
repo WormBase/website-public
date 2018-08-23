@@ -95,10 +95,10 @@ builder {
         scoreboard => "$app_path/server-status";
 
     # Add debug panels if we are a development environment.
-    if ($ENV{PSGI_DEBUG_PANELS}) {
-        enable 'Debug', panels => [ qw(DBITrace PerlConfig CatalystLog Timer
-                                       ModuleVersions Memory Environment) ];
-    }
+    # if ($ENV{PSGI_DEBUG_PANELS}) {
+    #     enable 'Debug', panels => [ qw(DBITrace PerlConfig CatalystLog Timer
+    #                                    ModuleVersions Memory Environment) ];
+    # }
 
     # GB
     mount '/tools/genome'   => $gbrowse;

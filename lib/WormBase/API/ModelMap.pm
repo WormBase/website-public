@@ -3,13 +3,14 @@ package WormBase::API::ModelMap;
 use strict;
 use warnings;
 use Module::Pluggable::Object;
-use Class::MOP;
+#use Class::MOP;
+use Class::Load;
 
 use constant OBJ_BASE => 'WormBase::API::Object';
 
 BEGIN {
     # load all the object classes
-    Class::MOP::load_class($_)
+    Class::Load::load_class($_)
       foreach Module::Pluggable::Object->new(search_path => [OBJ_BASE])->plugins;
 }
 
@@ -40,6 +41,7 @@ BEGIN {
             Disease   => 'DO_term',
             Go_term   => 'GO_term',
             Go_annotation => 'GO_annotation',
+            Disease_model_annotation => 'Disease_model_annotation',
             Wbprocess => 'WBProcess',
             Model     => 'Model', #for schema display to work,
             PATO_term => 'PATO_term', #for schema display to work,

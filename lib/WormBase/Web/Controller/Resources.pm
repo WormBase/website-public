@@ -78,6 +78,10 @@ sub resources_class_index :Path('/resources') :Args(1)  {
 sub resources_report :Path("/resources") Args(2) {
     my ($self,$c,$class,$name) = @_;
     $self->_get_report($c, $class, $name);
+
+    # get static widgets/layout info for this page
+    $self->_setup_page($c);
+
 }
 
 # TH 2011.09.05: I think this is deprecated.
@@ -90,6 +94,17 @@ sub resources_report :Path("/resources") Args(2) {
 #    $c->stash->{section}  = 'resources';
 #    $c->stash->{template} = "resources/documentation/$category.tt2";
 #}
+
+
+# eg /resources/{class}/{object}/widget/{widgetId}
+sub resources_widget_report :Path("/resources") Args(4) {
+    my ($self,$c,$class,$name,$widgetOrField,$widget) = @_;
+    $self->_get_report($c, $class, $name);
+    $c->stash->{section}  = 'resources';
+    $c->stash->{widget}  = $widget;
+    $c->stash->{template} = 'resources/widget_report.tt2';
+    $c->stash->{rest_url} = $c->uri_for("/rest/widget/$class/$name/$widget")->as_string;
+}
 
 # Not in use, but retain. Could be useful.
 sub downloads :Path('/resources/downloads') Args(0) {
@@ -149,9 +164,6 @@ sub _get_report {
     } else {
       $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
     }
-
-    # get static widgets/layout info for this page
-    $self->_setup_page($c);
 }
 
 

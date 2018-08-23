@@ -1,0 +1,34 @@
+.ontology-ribbon {
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  overflow-y: visible;
+}
+
+.ontology-ribbon__block {
+  height: 18em;
+}
+
+.ontology-ribbon__block:hover {
+  /*font-weight: bold;*/
+  color: black;
+  text-decoration: underline;
+}
+
+.ontology-ribbon__block-tile {
+  margin: 0 1px;
+}
+
+.ontology-ribbon__block-tile:hover {
+  border: 1px solid black;
+}
+
+.ontology-ribbon__block-title {
+  font-size: 1em;
+  text-transform: capitalize;
+}
+
+.ontology-ribbon__strip-label {
+  color: grey;
+  font-weight: bold;
+  font-style: normal;
+}
