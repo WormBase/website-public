@@ -77,7 +77,7 @@ sub connect {
         @options{'-program', '-path'} = ($prog, $path);
     }
     else {
-        @options{'-host', '-port'} = ($self->host, $self->port);
+        @options{'-host', '-port'} = ($ENV{'ACEDB_HOST'} || $self->host, $self->port);
     }
 
     if ($conf->{cache_root}) { # cache root indicates need file cache
