@@ -663,10 +663,7 @@ sub create_jwt :Private {
 
 sub get_jwt_secret {
     my ($self) = @_;
-    my $app_root = WormBase::Web->path_to('/');
-    my $path = join('/', ("$app_root", 'credentials', 'jwt_secret.txt'));
-
-    my $secret = `cat $path`;
+    my $secret = $ENV{JWT_SECRET};
     chomp $secret;
     return $secret;
 }
