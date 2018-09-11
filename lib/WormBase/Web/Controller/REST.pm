@@ -1525,7 +1525,7 @@ sub _post_to_github {
     # Post a new issue
     # Surely an easier way to do this.
     my $path = WormBase::Web->path_to('/') . '/credentials';
-    my $token = `cat $path/github_token.txt`;
+    my $token = $ENV{GITHUB_TOKEN};
     chomp $token;
     return unless $token;
 
