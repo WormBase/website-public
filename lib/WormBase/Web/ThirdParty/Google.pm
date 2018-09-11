@@ -163,9 +163,9 @@ sub _build_credentials {
     my ($self) = @_;
     my $path = WormBase::Web->path_to('/') . '/credentials/' . $self->provider_name ;
 
-    my $client_id = `cat $path/client_id.txt`;
+    my $client_id = $ENV{GOOGLE_CLIENT_ID};
     chomp $client_id;
-    my $client_secret = `cat $path/client_secret.txt`;
+    my $client_secret = $ENV{GOOGLE_CLIENT_SECRET};
     chomp $client_secret;
 
     die 'Missing credentials' unless $client_id && $client_secret;
