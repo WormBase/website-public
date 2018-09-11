@@ -1,8 +1,17 @@
 CATALYST_PORT ?= 9013
-GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
-GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
-GITHUB_TOKEN=$(shell cat credentials/github_token.txt)
-JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
+
+export GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
+export GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
+export GITHUB_TOKEN=$(shell cat credentials/github_token.txt)
+export JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
+
+.PHONY: bare-dev-start
+bare-dev-start:
+	./script/wormbase_server.pl -p $(CATALYST_PORT) -d -r
+
+.PHONY: bare-starman-start
+bare-starman-start:
+	./script/wormbase-daemon.sh
 
 .PHONY: build-env
 build-env:
