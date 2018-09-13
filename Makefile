@@ -1,3 +1,5 @@
+include *.mk
+
 CATALYST_PORT ?= 9013
 
 export GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
