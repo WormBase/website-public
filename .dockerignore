@@ -1,4 +1,5 @@
 credentials
+wormbase_local.conf
 **/logs
 **/node_modules
 **/extlib
