@@ -1,5 +1,10 @@
 credentials
 wormbase_local.conf
+
+#emacs
+\#*\#
+*~
+
 **/logs
 **/node_modules
 **/extlib
