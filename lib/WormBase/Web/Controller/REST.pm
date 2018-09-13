@@ -446,6 +446,45 @@ sub rest_register_POST {
 
 }
 
+sub send_email :Private {
+    my ($self, $c) = @_;
+
+    my $subject = $c->stash->{email}->{subject};
+    my ($from_address) = split(/,/, $c->stash->{email}->{from});  # please ensure from addresses is verified with AWS SES
+    my @to_address = split(/,/, $c->stash->{email}->{to});
+    my @cc_address = split(/,/, $c->stash->{email}->{cc});
+    my @replyto_address = split(/,/, $c->stash->{email}->{"Reply-To"});
+
+    my $email_html = $c->view('TT')->render($c, $c->stash->{email}->{template});
+
+    my $json         = new JSON;
+    my $data = {
+        "Source" => 'arn:aws:ses:us-east-1:357210185381:identity/' . $from_address,
+        "Destination" => {
+            "ToAddresses" => \@to_address,
+            "CcAddresses" => \@cc_address
+        },
+        "ReplyToAddresses" => \@replyto_address,
+        "Message" => {
+            "Subject" => {
+                "Data" => $subject,
+                "Charset" => "UTF-8"
+            },
+            "Body" => {
+                "Html" => {
+                    "Data" => $email_html,
+                    "Charset" => "UTF-8"
+                }
+            }
+        }
+    };
+    my $send_email_cli_input_json = $json->utf8(1)->encode($data);
+
+    system('aws --region us-east-1 ses send-email --from ' . $from_address .
+           ' --cli-input-json \'' . $send_email_cli_input_json . '\'');
+
+}
+
 
 sub rest_register_email {
   my ($self,$c,$email,$username,$user_id, $wbid) = @_;
@@ -483,7 +522,7 @@ sub rest_register_email {
       template => "auth/register_email.tt2",
   };
 
-  $c->forward( $c->view('Email::Template') );
+  $c->forward('send_email');
 }
 
 
@@ -1620,39 +1659,15 @@ sub _issue_email{
     $c->stash->{noboiler} = 1;
     $c->stash->{timestamp} = time();
     $c->log->debug(" send out email to $bcc");
-    $c->stash->{template} => "feed/issue_email.tt2";
-
-    my $email_html = $c->view('TT')->render( $c, 'feed/issue_email.tt2' );
-    my $from_email = $c->config->{no_reply};
-
-    my $json         = new JSON;
-    my $data = {
-        "Source" => 'arn:aws:ses:us-east-1:357210185381:identity/' . $from_email,
-        "Destination" => {
-            "ToAddresses" => [
-                $c->config->{issue_email}
-            ],
-            "CcAddresses" => [
-                $bcc
-            ]
-        },
-        "Message" => {
-            "Subject" => {
-                "Data" => $subject,
-                "Charset" => "UTF-8"
-            },
-            "Body" => {
-                "Html" => {
-                    "Data" => $email_html,
-                    "Charset" => "UTF-8"
-                }
-            }
-        }
+    $c->stash->{email} = {
+        to => $c->config->{issue_email},
+        cc => $bcc,
+        "Reply-To" => "$bcc," . $c->config->{issue_email},
+        from    => $c->config->{no_reply},
+        subject => $subject,
+        template => "feed/issue_email.tt2"
     };
-    my $send_email_cli_input_json = $json->utf8(1)->encode($data);
-
-    system('aws --region us-east-1 ses send-email --from ' . $from_email .
-           ' --cli-input-json \'' . $send_email_cli_input_json . '\'');
+    $c->forward('send_email');
 }
 
 
