@@ -15,7 +15,7 @@ Execute the following commands in a BASH terminal:
     git submodule init
     git submodule update
     export approot=`pwd`
-    perl Makefile.PL
+    perl Makefile.PL FIRST_MAKEFILE=MakefilePL.mk
     make installdeps
 
 Then, setup githook to automatically re-build the static assets _after checking out a branch_
