@@ -1500,7 +1500,7 @@ sub _post_to_github {
     my $content          = $params->{content};
     my $content_prelude  = $params->{content_prelude};
     my $visitor_email    = $params->{visitor_email};
-    my $visitor_name     = $params->{visitor_name};
+    my $visitor_name     = $params->{visitor_name} || 'Anonymous';
     my $feedback_type    = $params->{feedback_type};  # will become a label in GitHub
     my $page_object      = $params->{page_object};
     my $browser          = $params->{browser};
@@ -1620,18 +1620,39 @@ sub _issue_email{
     $c->stash->{noboiler} = 1;
     $c->stash->{timestamp} = time();
     $c->log->debug(" send out email to $bcc");
-    $c->stash->{email} = {
-        header => [
-	    to => $c->config->{issue_email},
-	    cc => $bcc,
-	    "Reply-To" => "$bcc," . $c->config->{issue_email},
-	    from    => $c->config->{no_reply},
-	    subject => $subject,
-	    ],
-	    template => "feed/issue_email.tt2",
-    };
+    $c->stash->{template} => "feed/issue_email.tt2";
 
-    $c->forward( $c->view('Email::Template') );
+    my $email_html = $c->view('TT')->render( $c, 'feed/issue_email.tt2' );
+    my $from_email = $c->config->{no_reply};
+
+    my $json         = new JSON;
+    my $data = {
+        "Source" => 'arn:aws:ses:us-east-1:357210185381:identity/' . $from_email,
+        "Destination" => {
+            "ToAddresses" => [
+                $c->config->{issue_email}
+            ],
+            "CcAddresses" => [
+                $bcc
+            ]
+        },
+        "Message" => {
+            "Subject" => {
+                "Data" => $subject,
+                "Charset" => "UTF-8"
+            },
+            "Body" => {
+                "Html" => {
+                    "Data" => $email_html,
+                    "Charset" => "UTF-8"
+                }
+            }
+        }
+    };
+    my $send_email_cli_input_json = $json->utf8(1)->encode($data);
+
+    system('aws --region us-east-1 ses send-email --from ' . $from_email .
+           ' --cli-input-json \'' . $send_email_cli_input_json . '\'');
 }
 
 

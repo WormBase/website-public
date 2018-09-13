@@ -1,7 +1,7 @@
 package WormBase::Web::View::Email::Template;
 
 use strict;
-use base 'Catalyst::View::Email::Template';
+use base 'Catalyst::View::TT';
 
 __PACKAGE__->config(
     stash_key       => 'email',
