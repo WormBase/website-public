@@ -1,6 +1,8 @@
 credentials
 wormbase_local.conf
 
+.git
+
 #emacs
 \#*\#
 *~
