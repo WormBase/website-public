@@ -203,7 +203,7 @@ sub search_git :Path('/search/issue') :Args(2) {
     my $url     = "https://api.github.com/" . ($query ? "legacy/issues/search/" . $c->config->{github_repo} . "/" . ($state || 'open') . "/$query" : "repos/" . $c->config->{github_repo} . "/issues");
     $url .= "?page=" . ($page_count) . ($state && !$query ? '&state=' . $state : '');
     my $path = WormBase::Web->path_to('/') . '/credentials';
-    my $token = `cat $path/github_token.txt`;
+    my $token = $ENV{GITHUB_TOKEN};
     chomp $token;
     return unless $token;
     my $json         = new JSON;
