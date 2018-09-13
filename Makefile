@@ -19,9 +19,9 @@ bare-starman-start:
 build-env:
 	docker build -t wormbase/website-env -f docker/Dockerfile.env .
 
-.PHONY: build-app
-build-app:
-	docker build -t wormbase/website-app -f docker/Dockerfile.app .
+.PHONY: build
+build:
+	docker build -t wormbase/website -f docker/Dockerfile .
 
 .PHONY: dev-start
 dev-start:
@@ -55,8 +55,8 @@ bash-start:
 		-e JWT_SECRET=$(JWT_SECRET) \
 		wormbase/website-env /bin/bash
 
-.PHONY: app-start
-app-start:
+.PHONY: start
+start:
 	docker run -it \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
@@ -69,4 +69,4 @@ app-start:
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
 		-e JWT_SECRET=$(JWT_SECRET) \
-		wormbase/website-app
+		wormbase/website
