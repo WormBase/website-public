@@ -26,7 +26,6 @@ dev-start:
 	docker run -it \
 		-v ${PWD}:/usr/local/wormbase/website \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
-		-w=/usr/local/wormbase/website \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
@@ -43,7 +42,6 @@ bash-start:
 	docker run -it \
 		-v ${PWD}:/usr/local/wormbase/website \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
-		-w=/usr/local/wormbase/website \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
