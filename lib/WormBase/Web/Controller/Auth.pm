@@ -83,7 +83,7 @@ sub password_email : Chained('password') PathPart('email')  Args(0){
           subject  => "WormBase Password",
           template => "auth/password_email.tt2",
       };
-      $c->forward( $c->view('Email::Template') );
+      $c->forward(qw/WormBase::Web::Controller::REST send_email/);
       $c->stash->{message} = "You should be receiving an email shortly describing how to reset your password.";
     }
     $c->stash->{message} ||= "no WormBase account is associated with this email";
