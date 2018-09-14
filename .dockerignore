@@ -17,3 +17,7 @@ MYMETA.json
 MYMETA.yml
 MakefilePL.mk
 inc/
+
+# client
+client/
+!client/build
