@@ -1,5 +1,7 @@
 credentials
 wormbase_local.conf
+conf/gbrowse
+util/omim
 
 .git
 
