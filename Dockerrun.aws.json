@@ -32,6 +32,12 @@
         }
       ],
       "links": ["acedb"],
+      "environment": [
+	{
+	  "name": "ACEDB_HOST",
+	  "value": "acedb"
+	}
+      ],
       "mountPoints": [
         {
           "sourceVolume": "awseb-logs-website",
