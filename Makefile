@@ -1,5 +1,7 @@
 include *.mk
 
+WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
+LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
 CATALYST_PORT ?= 9013
 
 export GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
@@ -94,3 +96,13 @@ build-bash:
 eb-local-run:
 	@eb local run \
 		--envvars AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+
+.PHONY: eb-setenv
+eb-setenv:
+	@eb setenv \
+		AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+		AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+		GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
+		GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
+		GITHUB_TOKEN=${GITHUB_TOKEN} \
+		JWT_SECRET='${JWT_SECRET}'
