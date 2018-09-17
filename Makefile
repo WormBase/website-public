@@ -15,13 +15,9 @@ bare-dev-start:
 bare-starman-start:
 	./script/wormbase-daemon.sh
 
-.PHONY: build-env
-build-env:
+.PHONY: env
+env:
 	docker build -t wormbase/website-env -f docker/Dockerfile.env .
-
-.PHONY: build
-build:
-	docker build -t wormbase/website -f docker/Dockerfile .
 
 .PHONY: dev-start
 dev-start:
@@ -39,9 +35,10 @@ dev-start:
 		-e JWT_SECRET=$(JWT_SECRET) \
 		wormbase/website-env
 
-.PHONY: bash-start
-bash-start:
+.PHONY: env-bash
+env-bash:
 	docker run -it \
+		--entrypoint /bin/bash \
 		-v ${PWD}:/usr/local/wormbase/website \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
 		--network=wb-network \
@@ -53,11 +50,33 @@ bash-start:
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
 		-e JWT_SECRET=$(JWT_SECRET) \
-		wormbase/website-env /bin/bash
+		wormbase/website-env
 
-.PHONY: start
-start:
+.PHONY: build
+build:
+	(cd client/ && yarn install --frozen-lockfile && yarn run build)  # build JS and CSS
+	docker build -t wormbase/website -f docker/Dockerfile .
+
+.PHONY: build-start
+build-start:
 	docker run -it \
+		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
+		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
+		--network=wb-network \
+		-p ${CATALYST_PORT}:5000 \
+		-e ACEDB_HOST=acedb \
+		-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+		-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
+		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
+		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
+		-e JWT_SECRET=$(JWT_SECRET) \
+		wormbase/website
+
+.PHONY: build-bash
+build-bash:
+	docker run -it \
+		--entrypoint /bin/bash \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
@@ -74,4 +93,4 @@ start:
 .PHONY: eb-local-run
 eb-local-run:
 	@eb local run \
-		--envvars AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET=${JWT_SECRET}
+		--envvars AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
