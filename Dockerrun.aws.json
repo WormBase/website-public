@@ -49,7 +49,7 @@
     {
       "name": "acedb",
       "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/acedb:latest",
-      "essential": true,
+      "essential": false,
       "portMappings": [
 	{
 	  "hostPort": 2005,
