@@ -37,10 +37,29 @@
 	  "value": "acedb"
 	}
       ],
+      "links": ["acedb"],
       "mountPoints": [
         {
           "sourceVolume": "awseb-logs-website",
           "containerPath": "/usr/local/wormbase/website/logs"
+        }
+      ],
+      "memory": 512
+    },
+    {
+      "name": "acedb",
+      "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/acedb:latest",
+      "essential": true,
+      "portMappings": [
+	{
+	  "hostPort": 2005,
+	  "containerPort": 2005
+	}
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "acedb-wormbase-files",
+          "containerPath": "/root/acedb/wormbase"
         }
       ],
       "memory": 512
