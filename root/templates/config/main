@@ -681,10 +681,10 @@ END;
     MACRO markup(text, omim, locus, var, no_link) BLOCK;
       # text = text FILTER html;
       # custom html function to avoid double encoding html entities
-      text.replace('<', '&lt;');
-      text.replace('>', '&gt;');
-      text.replace('"', '&quot;');
-      text.replace('&\s', '&amp; ');
+      text = text.replace('<', '&lt;');
+      text = text.replace('>', '&gt;');
+      text = text.replace('"', '&quot;');
+      text = text.replace('&\s', '&amp; ');
       text = markup_linkouts(text);
       UNLESS (locus == 0); text = markup_locus(text, (no_link || 0)); END;
       UNLESS (var == 0); text = markup_var(text, (no_link || 0)); END;
