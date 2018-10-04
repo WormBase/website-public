@@ -2985,6 +2985,7 @@ div#google-map {
 /* GO ribbon */
 .go-ribbon-container {
   height: 270px; /* hard code height to avoid content loaded causes scroll position to shift. */
+  padding-bottom: 0.5em;
 }
 
 /* gene phenotype table and phenotypes table on other pages */
