@@ -34,8 +34,8 @@
         my $genes_by_biology = $genes_biology->{data};
         is( ref $genes_by_biology, 'ARRAY', "data contains array reference");
 
-        # This object should have 7 genes by biology
-        is(scalar @$genes_by_biology, 7, 'correct number of genes by biology');
+        # This object should have 15 genes by biology
+        is(scalar @$genes_by_biology, 15, 'correct number of genes by biology');
     }
 
 
