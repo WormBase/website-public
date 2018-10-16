@@ -124,7 +124,7 @@ fi
 # Starman configuration
 # is the --daemonize flag necessary in this setting?
 STARMAN=`which starman`
-STARMAN_OPTS="-I$APP_HOME/lib --access-log $ACCESS_LOG --error-log $ERROR_LOG --workers $WORKERS --max-requests $MAX_REQUESTS --port $PORT $APP_HOME/wormbase-for-docker.psgi"
+STARMAN_OPTS="-I$APP_HOME/lib --access-log $ACCESS_LOG --error-log $ERROR_LOG --workers 1 --max-requests $MAX_REQUESTS --port $PORT $APP_HOME/wormbase-for-docker.psgi"
 #STARMAN_OPTS="-I$APP_HOME/lib --workers $WORKERS --max-requests $MAX_REQUESTS --port $PORT $APP_HOME/wormbase.psgi"
 
 # start_server configuration
