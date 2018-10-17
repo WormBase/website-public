@@ -34,7 +34,21 @@
       [% FOREACH id IN geneData.$datatype.keys.sort %]
       <tr><td align="center"><a href="/species/c_elegans/gene/[% id %]">[% id %]</a></td>
           <td align="center"><a href="/species/c_elegans/gene/[% id %]">[% geneData.$datatype.$id.name %]</a></td>
-          <td align="center">[% geneData.$datatype.$id.species %]</td></tr>
+          <td align="center">[% geneData.$datatype.$id.species %]</td>
+          [% IF class == 'anatomy_term' %]
+             <td align="center">
+               [% FOREACH evw IN geneData.$datatype.$id.evidence_with %]
+                 [% IF (matches = evw.match('WB:(Expr.*)')) %]
+                    <a href="/db/get?name=[% matches.0 %];class=Expr_pattern" target="_blank">[% matches.0 %]</a> 
+                 [% ELSIF (matches = evw.match('WB:(WBPaper.*)')) %]
+                    <a href="/db/get?name=[% matches.0 %];class=Expr_cluster" target="_blank">[% matches.0 %]</a> 
+                 [% ELSE %]
+                    [% evw %]
+                 [% END %]
+               [% END %]
+             </td>
+          [% END %]
+        </tr>
       [% END %]
       </table><br />
    [% END %]
