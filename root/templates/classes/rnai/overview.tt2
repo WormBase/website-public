@@ -10,8 +10,6 @@ WRAPPER highlight_box;
 
 END;
 
-'<div class="description">';
-
 laboratory;
 
 
@@ -24,7 +22,7 @@ WRAPPER $field_block title="Gene targets" key="targets";
                          key='targets');
 END;
 
-
+'<div class="description">';
 remarks;
 
 '</div>'

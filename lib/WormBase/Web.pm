@@ -348,7 +348,7 @@ sub _with_ftp {
         1;  # expression returns a truety value at the end
     } or do {
         $error = $@;
-        warn "!!!FAILED!!! to retrieve species configuration from FTP site:\n$error";
+        warn "!!!FAILED!!! to retrieve species configuration from $url:\n$error";
     };
 
     $on_error->($error) if $error;

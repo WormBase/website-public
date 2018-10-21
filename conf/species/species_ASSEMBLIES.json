@@ -83,7 +83,7 @@
             "is_canonical" : true,
             "laboratory" : [
                "Washington University, St. Louis MO",
-               "Wellcome Trust Sanger Institute, Cambridge UK"
+               "European Bioinformatics Institute; Hinxton, United Kingdom"
             ],
             "strain" : "N2",
             "ucsc_name" : "ce11"
