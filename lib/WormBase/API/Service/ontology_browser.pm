@@ -296,7 +296,7 @@ sub show_genes {
         $geneData{$type}{$id}{species}        = $species;
       }
 
-      $sentenceData{$type} .= qq(List of $ngroups);
+      $sentenceData{$type} .= qq(<b>List of $ngroups);
       if ( $type =~ m/_cele$/ ) {          $sentenceData{$type} .= qq( C. elegans); }
         elsif ($type =~ m/_noncele$/)  {   $sentenceData{$type} .= qq( non C. elegans); }
       $sentenceData{$type} .= qq( genes that were annotated with $focusTermId $focusTermName); 
@@ -312,6 +312,7 @@ sub show_genes {
       if ($type =~ m/^infDir/) {           $filenameData{$type} .= qq(direct_and_inferred_); }
         elsif ($type =~ m/^direct/) {      $filenameData{$type} .= qq(direct_); }
       $filenameData{$type} .= qq(for_$focusTermId); 
+      $sentenceData{$type} .= qq(</b>);
     } # foreach my $type (sort keys %url)
 
     my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation direct_rnaivariation infDir_rnai infDir_variation infDir_rnaivariation direct_anatomy infDir_anatomy );
