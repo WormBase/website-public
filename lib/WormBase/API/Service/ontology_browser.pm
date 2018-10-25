@@ -288,20 +288,10 @@ sub show_genes {
         if ($id =~ m/^WB:/) { $id =~ s/^WB://; }	# strip out the extra leading WB: from the gene ID
         my $taxon              = $$hashRef{'taxon'};		# get the taxon ID
         my $species            = $$hashRef{'taxon_label'} || $taxon;	# get the species name or default to taxon ID
-#         my @evidence_with = [];
-#         my $evidence_withRef   = $$hashRef{'evidence_with'} || '';		# get the evidence_with
-#         if ($evidence_withRef) {
-#           @evidence_with = @$evidence_withRef; }
-#         my $evidence_with = join" -- ", @evidence_with;
-#         $geneData{$type}{$id}{name}           = $name;
-#         $geneData{$type}{$id}{species}        = $species;
-#         $geneData{$type}{$id}{evidence_with}  = \@evidence_with;
-#         my %evidence_with;
         my $evidence_withRef   = $$hashRef{'evidence_with'} || '';		# get the evidence_with
         if ($evidence_withRef) {
           foreach my $evi (@$evidence_withRef) {
             $geneData{$type}{$id}{evidence_with}{$evi}++; } }
-#         my $evidence_with = join" -- ", @evidence_with;
         $geneData{$type}{$id}{name}           = $name;
         $geneData{$type}{$id}{species}        = $species;
       }
