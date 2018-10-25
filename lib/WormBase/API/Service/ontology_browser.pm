@@ -266,8 +266,8 @@ sub show_genes {
         $url{"infDir_rnaivariation"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
       }
       elsif ($class eq 'anatomy_term') {			# anatomy_term gets direct, inferred, and evidence_with
-        $url{"direct_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
-        $url{"infDir_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
+        $url{"direct_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&group.limit=1000&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
+        $url{"infDir_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&group.limit=1000&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
       }
       else {						# all other classes get direct, inferred + direct
         $url{"direct"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
@@ -288,15 +288,22 @@ sub show_genes {
         if ($id =~ m/^WB:/) { $id =~ s/^WB://; }	# strip out the extra leading WB: from the gene ID
         my $taxon              = $$hashRef{'taxon'};		# get the taxon ID
         my $species            = $$hashRef{'taxon_label'} || $taxon;	# get the species name or default to taxon ID
-        my @evidence_with = [];
+#         my @evidence_with = [];
+#         my $evidence_withRef   = $$hashRef{'evidence_with'} || '';		# get the evidence_with
+#         if ($evidence_withRef) {
+#           @evidence_with = @$evidence_withRef; }
+#         my $evidence_with = join" -- ", @evidence_with;
+#         $geneData{$type}{$id}{name}           = $name;
+#         $geneData{$type}{$id}{species}        = $species;
+#         $geneData{$type}{$id}{evidence_with}  = \@evidence_with;
+#         my %evidence_with;
         my $evidence_withRef   = $$hashRef{'evidence_with'} || '';		# get the evidence_with
         if ($evidence_withRef) {
-          @evidence_with = @$evidence_withRef; }
-        my $evidence_with = join" -- ", @evidence_with;
+          foreach my $evi (@$evidence_withRef) {
+            $geneData{$type}{$id}{evidence_with}{$evi}++; } }
+#         my $evidence_with = join" -- ", @evidence_with;
         $geneData{$type}{$id}{name}           = $name;
         $geneData{$type}{$id}{species}        = $species;
-        $geneData{$type}{$id}{evidence_with}  = \@evidence_with;
-
       }
 
       $sentenceData{$type} .= qq(List of $ngroups);
