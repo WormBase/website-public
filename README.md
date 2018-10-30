@@ -163,4 +163,8 @@ Our development workflow can be found here:
 Todd Harris (todd@wormbase.org)
 
 Acknowledgements
-[![BrowserStack](https://bstacksupport.zendesk.com/attachments/token/rG0lhAnob4fiEvRSGX1Jq7ZHf/?name=browserstack-logo-600x315.png)](https://www.browserstack.com/) We use BrowserStack (Live) for interactive cross browser and cross OS testing.
+----------------
+
+<a href="https://www.browserstack.com/"><img src="https://www.browserstack.com/images/mail/browserstack-logo-footer.png" alt="BrowserStack" width="120px" /></a>
+
+Thanks to BrowserStack for allowing us to perform interactive cross browser and cross OS testing.
