@@ -3601,6 +3601,7 @@ div.detail-box div.field div.field-title, div.detail-box div.field div.field-con
   position:static;
   vertical-align:top;
   table-layout:fixed;
+  overflow-wrap: normal;
 }
 
 div.detail-box .ev-more-text span{
