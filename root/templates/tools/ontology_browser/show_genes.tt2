@@ -15,6 +15,13 @@
      </table><br/>
    [% END %]
 
+   [% IF geneData.infDir_anatomy %]
+     <table border="1">
+        <tr><td>Directly annotated</td><td>Directly annotated + Inferred</td></tr>
+        <tr><td><div id="download-direct_anatomy">[% geneData.direct_anatomy.size || 'None' %]</div></td><td><div id="download-infDir_anatomy">[% geneData.infDir_anatomy.size || 'None' %]</div></td></tr>
+     </table><br/>
+   [% END %]
+
    [% IF geneData.infDir_rnai or geneData.infDir_variation %]
      <table border="1">
         <tr><td></td><td>Directly annotated</td><td>Directly annotated + Inferred</td></tr>
@@ -36,14 +43,14 @@
           <td align="center"><a href="/species/c_elegans/gene/[% id %]">[% geneData.$datatype.$id.name %]</a></td>
           <td align="center">[% geneData.$datatype.$id.species %]</td>
           [% IF class == 'anatomy_term' %]
-             <td align="center">
-               [% FOREACH evw IN geneData.$datatype.$id.evidence_with %]
+             <td align="left">
+               [% FOREACH evw IN geneData.$datatype.$id.evidence_with.keys.sort %]
                  [% IF (matches = evw.match('WB:(Expr.*)')) %]
-                    <a href="/db/get?name=[% matches.0 %];class=Expr_pattern" target="_blank">[% matches.0 %]</a> 
+                    <a href="/db/get?name=[% matches.0 %];class=Expr_pattern" target="_blank">[% matches.0 %]</a>&nbsp;&nbsp;
                  [% ELSIF (matches = evw.match('WB:(WBPaper.*)')) %]
-                    <a href="/db/get?name=[% matches.0 %];class=Expr_cluster" target="_blank">[% matches.0 %]</a> 
+                    <a href="/db/get?name=[% matches.0 %];class=Expr_cluster" target="_blank">[% matches.0 %]</a>&nbsp;&nbsp;
                  [% ELSE %]
-                    [% evw %]
+                    [% evw %]&nbsp;&nbsp;
                  [% END %]
                [% END %]
              </td>
