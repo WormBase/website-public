@@ -124,6 +124,8 @@ __PACKAGE__->config->{authentication} = {
 
 __PACKAGE__->config->{encoding} = undef;  # Disable due to legacy http://search.cpan.org/dist/Catalyst-Runtime/lib/Catalyst/UTF8.pod#Disabling_default_UTF8_encoding
 
+__PACKAGE__->config(using_frontend_proxy => 1);
+
 after setup_finalize => sub {
     my $c = shift;
 
@@ -552,9 +554,9 @@ sub _setup_static {
 # URIs generated with c.uri_for.
 after prepare_path => sub {
     my $c = shift;
-    if ($c->config->{base}) {
-        $c->req->base(URI->new($c->config->{base}));
-    }
+    # if ($c->config->{base}) {
+    #     $c->req->base(URI->new($c->config->{base}));
+    # }
 };
 
 sub finalize_error {
@@ -682,11 +684,11 @@ override 'uri_for' => sub {
     # to understand override method modifier: http://search.cpan.org/dist/Moose/lib/Moose/Manual/MethodModifiers.pod
     my ($self, @args) = @_;
     my $u = super();
-    if($self->config->{enable_ssl}){
-        $u->scheme('https');
-    } else {
-        $u->scheme('http');
-    }
+    # if($self->config->{enable_ssl}){
+    #     $u->scheme('https');
+    # } else {
+    #     $u->scheme('http');
+    # }
     return $u;
 };
 

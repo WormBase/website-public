@@ -287,7 +287,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
     } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i && $param->{oauth2} eq '1') {
 
         my $callback_url = $c->uri_for('auth/code/google');
-        $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
+#        $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
         my $url = WormBase::Web::ThirdParty::Google->new()->get_authorization_url(
             redirect_uri => $callback_url->as_string,
             state => $c->sessionid,
@@ -436,7 +436,7 @@ sub auth_code_callback : Chained('auth') PathPart('code')  Args(1){
     if ($session) {
       unless ($error){
         my $redirect_uri = $c->uri_for($c->req->path);
-        $redirect_uri->scheme('https') if $c->config->{installation_type} eq 'production';
+        #$redirect_uri->scheme('https') if $c->config->{installation_type} eq 'production';
         # seems any registered(!!) callback uri would work.
 
         # currently google specific, will change
