@@ -42,6 +42,10 @@
         {
           "sourceVolume": "awseb-logs-website",
           "containerPath": "/usr/local/wormbase/website/logs"
+        },
+        {
+          "sourceVolume": "website-shared-files",
+          "containerPath": "/usr/local/wormbase/website-shared-files"
         }
       ],
       "memory": 512
