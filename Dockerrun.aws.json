@@ -8,6 +8,18 @@
       }
     },
     {
+      "name": "website-databases-dir",
+      "host": {
+	"sourcePath": "/usr/local/wormbase/databases"
+      }
+    },
+    {
+      "name": "website-services-dir",
+      "host": {
+	"sourcePath": "/usr/local/wormbase/services"
+      }
+    },
+    {
       "name": "acedb-wormbase-files",
       "host": {
         "sourcePath": "/usr/local/wormbase/acedb/wormbase"
@@ -46,6 +58,14 @@
         {
           "sourceVolume": "website-shared-files",
           "containerPath": "/usr/local/wormbase/website-shared-files"
+        },
+        {
+          "sourceVolume": "website-databases-dir",
+          "containerPath": "/usr/local/wormbase/databases"
+        },
+        {
+          "sourceVolume": "website-services-dir",
+          "containerPath": "/usr/local/wormbase/services"
         }
       ],
       "memory": 512
