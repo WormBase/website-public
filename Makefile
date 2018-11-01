@@ -26,6 +26,8 @@ dev-start:
 	docker run -it \
 		-v ${PWD}:/usr/local/wormbase/website \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
+		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
+		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
@@ -43,6 +45,8 @@ env-bash:
 		--entrypoint /bin/bash \
 		-v ${PWD}:/usr/local/wormbase/website \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
+		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
+		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
@@ -63,6 +67,8 @@ build:
 build-start:
 	docker run -it \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
+		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
+		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
@@ -80,6 +86,8 @@ build-bash:
 	docker run -it \
 		--entrypoint /bin/bash \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
+		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
+		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
