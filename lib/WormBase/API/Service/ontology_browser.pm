@@ -265,6 +265,10 @@ sub show_genes {
         $url{"infDir_variation"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=evidence_type:Variation&fq=regulates_closure:%22' . $focusTermId . '%22';
         $url{"infDir_rnaivariation"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
       }
+      elsif ($class eq 'anatomy_term') {			# anatomy_term gets direct, inferred, and evidence_with
+        $url{"direct_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&group.limit=1000&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
+        $url{"infDir_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&group.limit=1000&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
+      }
       else {						# all other classes get direct, inferred + direct
         $url{"direct"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
         $url{"infDir"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
@@ -282,14 +286,17 @@ sub show_genes {
         my $id   = $$hashRef{'bioentity'};		# get the gene ID
         my $name = $$hashRef{'bioentity_label'};	# get the gene name
         if ($id =~ m/^WB:/) { $id =~ s/^WB://; }	# strip out the extra leading WB: from the gene ID
-        my $taxon   = $$hashRef{'taxon'};		# get the taxon ID
-        my $species = $$hashRef{'taxon_label'} || $taxon;	# get the species name or default to taxon ID
-        $geneData{$type}{$id}{name}    = $name;
-        $geneData{$type}{$id}{species} = $species;
-
+        my $taxon              = $$hashRef{'taxon'};		# get the taxon ID
+        my $species            = $$hashRef{'taxon_label'} || $taxon;	# get the species name or default to taxon ID
+        my $evidence_withRef   = $$hashRef{'evidence_with'} || '';		# get the evidence_with
+        if ($evidence_withRef) {
+          foreach my $evi (@$evidence_withRef) {
+            $geneData{$type}{$id}{evidence_with}{$evi}++; } }
+        $geneData{$type}{$id}{name}           = $name;
+        $geneData{$type}{$id}{species}        = $species;
       }
 
-      $sentenceData{$type} .= qq(List of $ngroups);
+      $sentenceData{$type} .= qq(<b>List of $ngroups);
       if ( $type =~ m/_cele$/ ) {          $sentenceData{$type} .= qq( C. elegans); }
         elsif ($type =~ m/_noncele$/)  {   $sentenceData{$type} .= qq( non C. elegans); }
       $sentenceData{$type} .= qq( genes that were annotated with $focusTermId $focusTermName); 
@@ -305,11 +312,13 @@ sub show_genes {
       if ($type =~ m/^infDir/) {           $filenameData{$type} .= qq(direct_and_inferred_); }
         elsif ($type =~ m/^direct/) {      $filenameData{$type} .= qq(direct_); }
       $filenameData{$type} .= qq(for_$focusTermId); 
+      $sentenceData{$type} .= qq(</b>);
     } # foreach my $type (sort keys %url)
 
-    my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation direct_rnaivariation infDir_rnai infDir_variation infDir_rnaivariation );
+    my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation direct_rnaivariation infDir_rnai infDir_variation infDir_rnaivariation direct_anatomy infDir_anatomy );
 							# lists are sorted by this priority
     return { 
+             class         => $class,			# pass the class to only who an extra column for anatomy_term
              sortPriority  => \@sortPriority,		# pass the sortPriority through catalyst for view
              geneData      => \%geneData,		# pass the geneData through catalyst for view
              sentenceData  => \%sentenceData,		# pass the sentenceData through catalyst for view
