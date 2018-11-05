@@ -39,14 +39,22 @@
       "essential": true,
       "portMappings": [
         {
-          "hostPort": 5000,
+          "hostPort": 5001,
           "containerPort": 5000
+        },
+        {
+          "hostPort": 9001,
+          "containerPort": 9001
         }
       ],
       "environment": [
 	{
 	  "name": "ACEDB_HOST",
 	  "value": "acedb"
+	},
+        {
+	  "name": "ACEDB_PORT",
+	  "value": "2005"
 	}
       ],
       "links": ["acedb"],
