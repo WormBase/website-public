@@ -76,12 +76,12 @@
           "containerPath": "/usr/local/wormbase/services"
         }
       ],
-      "memory": 512
+      "memoryReservation": 4000
     },
     {
       "name": "acedb",
       "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/acedb:latest",
-      "essential": false,
+      "essential": true,
       "portMappings": [
 	{
 	  "hostPort": 2005,
@@ -94,7 +94,7 @@
           "containerPath": "/root/acedb/wormbase"
         }
       ],
-      "memory": 8000
+      "memoryReservation": 8000
     },
     {
       "name": "nginx-proxy",
@@ -120,7 +120,7 @@
           "readOnly": true
         }
       ],
-      "memory": 128
+      "memoryReservation": 128
     }
   ]
 }
