@@ -56,7 +56,7 @@ has 'blast_databases' => (
         my $bioproject_metadata = {};
                 $bioproject_metadata->{"sdfsdfsdf"} = "";
 
-        foreach my $species (keys $assemblies) {
+        foreach my $species (keys %$assemblies) {
             foreach my $bioprojects ($assemblies->{$species}->{assemblies}) {
                 foreach my $bioproject (@$bioprojects) {
                     $bioproject_metadata->{$bioproject->{bioproject}} = $bioproject;
