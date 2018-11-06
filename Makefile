@@ -1,4 +1,4 @@
-include *.mk
+-include *.mk
 
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
