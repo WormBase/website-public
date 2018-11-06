@@ -8,6 +8,8 @@ use Test::More;
 
 use Data::Dumper;
 
+use lib qw(./);
+
 require 't/catalyst_startup.pm';
 
 $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = $ENV{'APP'};
