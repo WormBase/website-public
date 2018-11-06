@@ -102,7 +102,8 @@ build-bash:
 
 .PHONY: build-run-test
 build-run-test:
-	docker run \
+	docker run -i \
+		-a stdout \
 		--entrypoint "" \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
 		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
