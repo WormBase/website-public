@@ -100,6 +100,26 @@ build-bash:
 		-e JWT_SECRET=$(JWT_SECRET) \
 		wormbase/website
 
+.PHONY: build-run-test
+build-run-test:
+	docker run -it \
+		--entrypoint "" \
+		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
+		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
+		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
+		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
+		--network=wb-network \
+		-p ${CATALYST_PORT}:5000 \
+		-e ACEDB_HOST=acedb \
+		-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+		-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
+		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
+		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
+		-e JWT_SECRET=$(JWT_SECRET) \
+		wormbase/website \
+		/bin/bash -c "API_TESTS=1 perl t/api.t; perl t/rest.t"
+
 .PHONY: eb-local-run
 eb-local-run:
 	@eb local run \
