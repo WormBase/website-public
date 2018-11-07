@@ -161,3 +161,10 @@ Our development workflow can be found here:
 [http://wiki.wormbase.org/index.php/Development_workflow_-_webdev](http://wiki.wormbase.org/index.php/Development_workflow_-_webdev)
 
 Todd Harris (todd@wormbase.org)
+
+Acknowledgements
+----------------
+
+<a href="https://www.browserstack.com/"><img src="https://www.browserstack.com/images/mail/browserstack-logo-footer.png" alt="BrowserStack" width="120px" /></a>
+
+Thanks to BrowserStack for allowing us to perform interactive cross browser and cross OS testing.
