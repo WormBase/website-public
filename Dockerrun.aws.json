@@ -84,7 +84,7 @@
       "essential": true,
       "portMappings": [
 	{
-	  "hostPort": 2005,
+	  "hostPort": 2006,
 	  "containerPort": 2005
 	}
       ],
