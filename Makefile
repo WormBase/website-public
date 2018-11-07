@@ -143,4 +143,4 @@ eb-setenv:
 staging-deploy:
 	eb use wormbase-website-staging
 	CATALYST_APP=staging $(MAKE) eb-setenv
-	eb deploy
+	eb deploy --region us-east-1
