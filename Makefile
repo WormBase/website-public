@@ -122,13 +122,15 @@ build-run-test:
 		/bin/bash -c "API_TESTS=1 perl t/api.t; perl t/rest.t"
 
 .PHONY: eb-local-run
+eb-local-run: CATALYST_APP ?= staging # target-specific variable
 eb-local-run:
-	@eb local run \
-		--envvars AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+	 @eb local run \
+		--envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
 
 .PHONY: eb-setenv
 eb-setenv:
 	@eb setenv \
+		APP=${CATALYST_APP} \
 		AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
 		AWS_SECRET_KEY=${AWS_SECRET_ACCESS_KEY} \
 		AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
@@ -136,3 +138,9 @@ eb-setenv:
 		GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
 		GITHUB_TOKEN=${GITHUB_TOKEN} \
 		JWT_SECRET='${JWT_SECRET}'
+
+.PHONY: staging-deploy
+staging-deploy:
+	eb use wormbase-website-staging
+	CATALYST_APP=staging $(MAKE) eb-setenv
+	eb deploy
