@@ -37,6 +37,4 @@ $(aws ecr get-login --no-include-email --region us-east-1)
 docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:latest
 
 # deploy container
-eb use wormbase-website-staging
-make eb-setenv
-eb deploy --region us-east-1
+make staging-deploy
