@@ -144,3 +144,14 @@ staging-deploy:
 	eb use wormbase-website-staging
 	CATALYST_APP=staging $(MAKE) eb-setenv
 	eb deploy --region us-east-1
+
+.PHONY: release
+release: VERSION ?= ${WS_VERSION}
+release:
+	VERSION=${VERSION} ./release.sh
+
+.PHONY: production-deploy
+production-deploy:
+	eb use wormbase-website-production  # assuming rolling update
+	CATALYST_APP=production $(MAKE) eb-setenv
+	eb deploy --region us-east-1
