@@ -14,6 +14,8 @@ sub run :Path('run') :Args(0) {
     my $params = $c->req->params;
     my $stash  = $c->stash;
 
+    $params->{'ql-query'} =~ s/\n\s+/ /g;
+
     $stash->{result_type} = $params->{'result-type'};
     $stash->{query_type}  = $params->{'query-type'} || 'AQL';
     $stash->{query}       = $params->{'ql-query'};
