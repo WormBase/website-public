@@ -223,7 +223,7 @@
               query = matched ? matched.0 : item.name.id;
 
               url = gbrowse_url(species, item.name.class _ ":" _ query, bp);
-              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">GBrowse</a>]</span>");
+              linkouts.push(label ? "<a href=\"$url\">$label (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">Legacy GBrowse</a>]</span>");
           ELSIF(!search);
               url = gbrowse_url(species, '', bp);
               linkouts.push(data.label ? "<a href=\"$url\">" _ data.label _ " (BioProject $bp)</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse (BioProject $bp)</a>]</span>");
