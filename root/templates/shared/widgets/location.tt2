@@ -59,8 +59,8 @@
 
                  WRAPPER $field_block title="Genomic position" key="genomic_position";
 
-                   tag2link(position);
-                   '<span class="jbrowse_link">(Try the new Genome Browser: ' _ jbrowselink(position, undef, undef, fields.jbrowse_tracks.data) _ ' <sup class="new">New</sup>)</span>';
+                   jbrowselink(position, undef, undef, fields.jbrowse_tracks.data);
+                   '<span class="jbrowse_link">(<span class="deprecated">Legacy Genome Browser:</span> ' _ tag2link(position) _ ')</span>';
                    UNLESS loop.last;
      	                 ',&nbsp;';
                    END;
@@ -77,11 +77,11 @@
                  IF fields.tracks.data;
                    img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
                  END;
-                 WRAPPER $field_block title="<sup class=\"new\">New</sup> New Genome Browser Preview";
+                 WRAPPER $field_block title="Genome Browser Preview";
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data);
                  END;
                  '<br><br>';
-                 WRAPPER toggle title="GBrowse image";
+                 WRAPPER toggle title="Legacy GBrowse image";
                     '<div class="gbrowse-image-container">';
                     tag2link(genomic_image, image(img_url));
                     '</div>';
