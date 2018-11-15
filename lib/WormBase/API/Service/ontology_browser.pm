@@ -421,7 +421,7 @@ sub run {
       $label{$id} = $lbl;						# map id to label
       if ($children{$id}) { next; }					# don't add node for the children
       my $url = "/species/all/$class/$id";				# URL to link to wormbase page for object
-      if ($class eq 'disease') { $url = "/resources/$class/$id"; }	# URL to link to wormbase page for disease class
+      if ($class eq 'do_term') { $url = "/resources/disease/$id"; }	# URL to link to wormbase page for disease class
       $lbl =~ s/ /\\n/g;						# replace spaces with linebreaks in graph for more-square boxes
       my $label = "$id\n$lbl";						# node label should have full id, not stripped of :, which is required for edge title text
       $id =~ s/:/_placeholderColon_/g;					# edges won't have proper title text if ids have : in them
@@ -752,7 +752,7 @@ sub makeGenesLink {							# give a focusTermId, focusTermName, number of inferre
 sub makeUrl {								# generate URL to WormBase object given a class and focus term id
   my ($class, $focusTermId) = @_;
   my $url = "/species/all/$class/$focusTermId";				# standard URL
-  if ($class eq 'disease') { $url = "/resources/$class/$focusTermId"; }	# disease class has a special URL
+  if ($class eq 'do_term') { $url = "/resources/disease/$focusTermId"; }	# disease class has a special URL
   return $url;
 } # sub makeUrl
 
