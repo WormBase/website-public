@@ -142,7 +142,7 @@ END;
 WRAPPER $field_block title='Nonspecies source' key="nonspecies_source";
     fields.nonspecies_source.data;
 END;
-
+'</div>';
 
 WRAPPER $field_block title='' key="biological_role";
     build_data_table(order = ['biofunction_role', 'status', 'detection_method', 'extraction_method', 'paper_evidence'],
@@ -156,6 +156,8 @@ WRAPPER $field_block title='' key="biological_role";
         key = 'biological_role');
 END;
 
+'<div class="description">';
 remarks(no_toggle=1);
 '</div>';
+
 %]
