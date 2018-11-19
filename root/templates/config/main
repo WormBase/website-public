@@ -596,7 +596,7 @@ END;
           END;
           ext_url = (ext_url || site.external_urls.$link.base);
         END;
-        ext_url || (link.match('^http(s?)') ? link : 'http://' _ link);
+        ext_url || (link.match('^http(s?)|ftps?') ? link : 'http://' _ link);
     END;
 
 # lookup external sites by case insensitive match of its name
