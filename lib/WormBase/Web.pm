@@ -276,7 +276,7 @@ sub _get_latest_release {
 
     sub get_release_number {
         my ($release_name) = @_;
-        my ($num) = $release_name =~ /.+(\d+)$/;
+        my ($num) = $release_name =~ /.+?(\d+)$/;
         return $num;
     }
 
