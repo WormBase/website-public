@@ -254,7 +254,17 @@ sub _get_json {
 
     sub _json_to_string {
         my ($obj) = @_;
-        return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($obj);  # with keys sorted
+        my $species_nested = _sort_descendants($obj); # keep items in an array sorted by label
+        return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($species_nested);  # canonical flag to keep keys sorted
+    }
+
+    sub _sort_descendants {
+        my ($children) = @_;
+        foreach my $child (@$children){
+            $child->{children} = _sort_descendants($child->{children}) if $child->{children};
+        }
+        my @sorted_children = sort { $a->{label} cmp $b->{label} } @$children;
+        return \@sorted_children;
     }
 
     # consider remote copy only on a development instance
