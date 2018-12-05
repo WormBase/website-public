@@ -232,7 +232,7 @@ sub _get_json {
         # update local copy
         my $fh;
         open($fh, '>', $local_copy_path);
-        print $fh $json_string;
+        print $fh _json_to_string($json);
         close $fh;
 
     };
@@ -243,13 +243,18 @@ sub _get_json {
         # update local copy
         my $fh;
         open($fh, '>', $local_copy_path);
-        print $fh $content;
+        print $fh _json_to_string($json);
         close $fh;
     };
 
     sub _parse_json {
         my ($my_json_string) = @_;
         return (new JSON)->allow_nonref->utf8->relaxed->decode($my_json_string);
+    }
+
+    sub _json_to_string {
+        my ($obj) = @_;
+        return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($obj);  # with keys sorted
     }
 
     # consider remote copy only on a development instance
