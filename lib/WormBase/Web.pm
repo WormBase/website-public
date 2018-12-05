@@ -232,7 +232,7 @@ sub _get_json {
         # update local copy
         my $fh;
         open($fh, '>', $local_copy_path);
-        print $fh $json_string;
+        print $fh _json_to_string($json);
         close $fh;
 
     };
@@ -243,13 +243,28 @@ sub _get_json {
         # update local copy
         my $fh;
         open($fh, '>', $local_copy_path);
-        print $fh $content;
+        print $fh _json_to_string($json);
         close $fh;
     };
 
     sub _parse_json {
         my ($my_json_string) = @_;
         return (new JSON)->allow_nonref->utf8->relaxed->decode($my_json_string);
+    }
+
+    sub _json_to_string {
+        my ($obj) = @_;
+        my $species_nested = _sort_descendants($obj); # keep items in an array sorted by label
+        return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($species_nested);  # canonical flag to keep keys sorted
+    }
+
+    sub _sort_descendants {
+        my ($children) = @_;
+        foreach my $child (@$children){
+            $child->{children} = _sort_descendants($child->{children}) if $child->{children};
+        }
+        my @sorted_children = sort { $a->{label} cmp $b->{label} } @$children;
+        return \@sorted_children;
     }
 
     # consider remote copy only on a development instance
@@ -276,7 +291,7 @@ sub _get_latest_release {
 
     sub get_release_number {
         my ($release_name) = @_;
-        my ($num) = $release_name =~ /.+(\d+)$/;
+        my ($num) = $release_name =~ /.+?(\d+)$/;
         return $num;
     }
 
