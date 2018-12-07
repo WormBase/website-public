@@ -1665,7 +1665,7 @@ sub _issue_email{
     }
     $c->stash->{noboiler} = 1;
     $c->stash->{timestamp} = time();
-    $c->log->debug(" send out helpdesk email to $bcc");
+    $c->log->debug(" send out helpdesk email to $bcc for issue #" . $params->{issue_number});
     $c->stash->{email} = {
         to => $c->config->{issue_email},
         cc => $bcc,
