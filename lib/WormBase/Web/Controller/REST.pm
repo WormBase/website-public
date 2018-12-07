@@ -521,7 +521,7 @@ sub rest_register_email {
 
   $c->stash->{digest}=$url;
 
-  $c->log->debug(" send out email to $email");
+  $c->log->debug(" send out account register email to $email");
   $c->stash->{email} = {
       to       => $email,
       from     => $c->config->{register_email},
@@ -1665,7 +1665,7 @@ sub _issue_email{
     }
     $c->stash->{noboiler} = 1;
     $c->stash->{timestamp} = time();
-    $c->log->debug(" send out email to $bcc");
+    $c->log->debug(" send out helpdesk email to $bcc");
     $c->stash->{email} = {
         to => $c->config->{issue_email},
         cc => $bcc,
