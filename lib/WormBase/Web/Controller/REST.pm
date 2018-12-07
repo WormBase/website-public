@@ -457,6 +457,10 @@ sub send_email :Private {
 
     my $email_html = $c->view('TT')->render($c, $c->stash->{email}->{template});
 
+    # fix single quote causing problem in cli
+    $subject =~ s/'//g;
+    $email_html =~ s/'/&apos;/g;
+
     my $json         = new JSON;
     my $data = {
         "Source" => 'arn:aws:ses:us-east-1:357210185381:identity/' . $from_address,
@@ -467,21 +471,24 @@ sub send_email :Private {
         "ReplyToAddresses" => \@replyto_address,
         "Message" => {
             "Subject" => {
-                "Data" => $subject,
+                "Data" => "$subject",
                 "Charset" => "UTF-8"
             },
             "Body" => {
                 "Html" => {
-                    "Data" => $email_html,
+                    "Data" => "$email_html",
                     "Charset" => "UTF-8"
                 }
             }
         }
     };
-    my $send_email_cli_input_json = $json->utf8(1)->encode($data);
+    my $send_email_cli_input_json = $json->allow_nonref->utf8->relaxed->encode($data);
 
-    system('aws --region us-east-1 ses send-email --from ' . $from_address .
-           ' --cli-input-json \'' . $send_email_cli_input_json . '\'');
+    $c->log->debug(" AWS SES input $send_email_cli_input_json");
+
+    my $out = `aws --region us-east-1 ses send-email --from $from_address --cli-input-json '$send_email_cli_input_json'`;
+
+    $c->log->debug(" AWS SES response $out");
 
 }
 
