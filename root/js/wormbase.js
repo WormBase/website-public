@@ -3229,6 +3229,25 @@ var Scrolling = (function(){
       );
     }
 
+    function renderVariationSequence(data, elementId) {
+      import('../../client/src/components/Sequence').then(
+        (module) => {
+          const StrandSelect = module.StrandSelect;
+          const Sequence = module.default;
+          ReactDOM.render(
+            <StrandSelect>
+              {
+                ({strand}) => {
+                  return <div>Strand {strand}. <Sequence /></div>
+                }
+              }
+            </StrandSelect>,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3488,9 +3507,9 @@ var Scrolling = (function(){
       tooltipInit: tooltipInit,                     // initalize tooltip
       renderWidget: renderWidget,                   // render widget component
       renderGORibbon: renderGORibbon,             // render GO ribbon
+      renderVariationSequence: renderVariationSequence, // render the sequence (context) in molecular details widget on a variation page
     };
   })();
-
 
 
 
