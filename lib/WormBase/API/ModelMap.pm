@@ -46,6 +46,7 @@ BEGIN {
             Model     => 'Model', #for schema display to work,
             PATO_term => 'PATO_term', #for schema display to work,
             Sequence_collection => 'Sequence_collection',
+            'Movie' => 'Movie',
         },
         # the following are the tags for extracting a "common" or "public" name
         # for objects automatically. when adding a new one, please consider

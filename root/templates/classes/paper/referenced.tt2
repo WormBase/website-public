@@ -15,7 +15,13 @@
             WRAPPER $field_block title="$name" key="$reftype";
 
             IF fields.refers_to.data.$reftype;
-                cell_content(fields.refers_to.data.$reftype, '<br/>');
+                IF "$reftype" == 'Movie';
+                    FOR movie IN fields.refers_to.data.$reftype;
+                        embed_video(movie, 0);
+                    END;
+                ELSE;
+                    cell_content(fields.refers_to.data.$reftype, '<br/>');
+                END;
             ELSE;
                 fields.refers_to.data.$reftype _ " $name referenced";
             END;
