@@ -902,6 +902,12 @@
 	base        = 'https://www/yeastgenome.org'
 	}
 
+ smart = {
+	description = 'SMART (a Simple Modular Architecture Research Tool) allows the identification and annotation of genetically mobile domains and the analysis of domain architectures.'
+	search      = 'http://smart.embl-heidelberg.de/smart/do_annotation.pl?BLAST=DUMMY&DOMAIN=%s'
+	base        = 'http://smart.embl-heidelberg.de'
+	}
+
  'SMID-DB' = {
 	description = 'This database assigns unique Small Molecule IDentifiers to small molecules that are newly identified from an organism or a biological environment. These IDs refer to the general structural class of the compound, which permit database searching for small molecule metabolites in the same manner as for genes.'
 	base        = 'http://smid-db.org'
