@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import { fade } from 'material-ui/styles/colorManipulator';
+import { withStyles } from '@material-ui/core/styles';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import classNames from 'classnames';
-import CancelIcon from 'material-ui-icons/Cancel';
+import CancelIcon from '@material-ui/icons/Cancel';
 import List, { ListItem, ListItemText, ListItemSecondaryAction, ListSubheader } from '../../../List';
 import { IconButton } from '../../../Button';
 import { fitComponent } from '../../../styles';

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cytoscape from 'cytoscape';
 import cytoscapecola from 'cytoscape-cola';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
@@ -372,14 +372,14 @@ class InteractionGraph extends Component {
           style={{color: this.getEdgeColor(interactionType)}}
           disableRipple
           classes={{
-            default: this.props.classes.graphSidebarCheckbox,
+            root: this.props.classes.graphSidebarCheckbox,
           }}
           checked={this.isInteractionTypeSelected(interactionType)}
         />
         <ListItemText
           primary={label || this.getInteractionTypeName(interactionType)}
           classes={{
-            text: classNames([this.props.classes.graphSidebarText, this.props.classes[`graphSidebarTextLevel${level}`]])
+            primary: classNames([this.props.classes.graphSidebarText, this.props.classes[`graphSidebarTextLevel${level}`]])
           }}
         />
         <span className={this.props.classes.graphSidebarCount}>{this.countInteractionsOfType(interactionType)}</span>
@@ -401,16 +401,16 @@ class InteractionGraph extends Component {
       <div className={classes.buttonWrapper}>
         <Button
           className={classes.button}
-          raised
-          dense
+          variant="contained"
+          size="small"
           onClick={() => this.subsetRedraw() }
         >
           Redraw
         </Button>
         <Button
           className={classNames([classes.button, classes.sidebarToggleButton])}
-          raised
-          dense
+          variant="contained"
+          size="small"
           onClick={() => this._drawerComponent.handleDrawerToggle()}
         >
           Legends
@@ -465,7 +465,7 @@ class InteractionGraph extends Component {
             label: classNames([this.props.classes.graphSidebarText, this.props.classes.graphSidebarTextLevel0])
           }}
           control={
-            <Switch checked={this.state.includeNearbyInteraction} onChange={(event, checked) => this.setState({includeNearbyInteraction: checked})} />
+            <Switch color="primary" checked={this.state.includeNearbyInteraction} onChange={(event, checked) => this.setState({includeNearbyInteraction: checked})} />
           }
           label="Nearby interaction"
         />
@@ -516,8 +516,7 @@ const styles = (theme) => {
       padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit}px`,
     },
     graphSidebarCheckbox: {
-      width: 24,
-      height: 30,
+      padding: `${theme.spacing.unit / 4 }px 0`,
     },
     graphSidebarText: {
       fontStyle: 'italic',
