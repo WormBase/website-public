@@ -100,9 +100,40 @@
             ],
             "strain" : "CB4856",
             "ucsc_name" : null
+         },
+         {
+            "appeared_in" : "WS268",
+            "assembly_accession" : "GCA_900538205.1",
+            "assembly_name" : "C_elegans_vc2010-v1",
+            "bioproject" : "PRJEB28388",
+            "bioproject_description" : "Caenorhabditis elegans strain VC2010 genome sequencing project",
+            "is_canonical" : false,
+            "laboratory" : [
+               "Cornell University, Ithaca NY"
+            ],
+            "strain" : "VC2010",
+            "ucsc_name" : null
          }
       ],
       "full_name" : "Caenorhabditis elegans"
+   },
+   "c_inopinata" : {
+      "assemblies" : [
+         {
+            "appeared_in" : "WS268",
+            "assembly_accession" : "GCA_003052745.1",
+            "assembly_name" : "Sp34_v7",
+            "bioproject" : "PRJDB5687",
+            "bioproject_description" : "University of Miyazaki",
+            "is_canonical" : true,
+            "laboratory" : [
+               "Forestry and Forest Products Research Institute, Ibaraki, Japan"
+            ],
+            "strain" : "Unknown strain",
+            "ucsc_name" : null
+         }
+      ],
+      "full_name" : "Caenorhabditis inopinata"
    },
    "c_japonica" : {
       "assemblies" : [
@@ -121,6 +152,24 @@
          }
       ],
       "full_name" : "Caenorhabditis japonica"
+   },
+   "c_latens" : {
+      "assemblies" : [
+         {
+            "appeared_in" : "WS268",
+            "assembly_accession" : "GCA_002259235.1",
+            "assembly_name" : "CaeLat1.0",
+            "bioproject" : "PRJNA248912",
+            "bioproject_description" : "University of Oregon",
+            "is_canonical" : true,
+            "laboratory" : [
+               "University of Texas, Arlington TX"
+            ],
+            "strain" : "Unknown strain",
+            "ucsc_name" : null
+         }
+      ],
+      "full_name" : "Caenorhabditis latens"
    },
    "c_nigoni" : {
       "assemblies" : [
@@ -167,6 +216,32 @@
             ],
             "strain" : "PX356",
             "ucsc_name" : null
+         },
+         {
+            "appeared_in" : "WS268",
+            "assembly_accession" : "GCA_001643735.2",
+            "assembly_name" : "ASM164373v2",
+            "bioproject" : "PRJNA248909",
+            "bioproject_description" : "University of Oregon University C. remanei PX356 genome project",
+            "is_canonical" : false,
+            "laboratory" : [
+               "University of Texas, Arlington TX"
+            ],
+            "strain" : "PX356",
+            "ucsc_name" : null
+         },
+         {
+            "appeared_in" : "WS268",
+            "assembly_accession" : "GCA_002259225.1",
+            "assembly_name" : "CaeRem1.0",
+            "bioproject" : "PRJNA248911",
+            "bioproject_description" : "University of Oregon University C. remanei PX439 genome project",
+            "is_canonical" : false,
+            "laboratory" : [
+               "University of Texas, Arlington TX"
+            ],
+            "strain" : "PX439",
+            "ucsc_name" : null
          }
       ],
       "full_name" : "Caenorhabditis remanei"
@@ -206,6 +281,24 @@
          }
       ],
       "full_name" : "Caenorhabditis tropicalis"
+   },
+   "o_tipulae" : {
+      "assemblies" : [
+         {
+            "appeared_in" : "WS268",
+            "assembly_accession" : "GCA_900184235.1",
+            "assembly_name" : "Oscheius_tipulae_assembly_v2",
+            "bioproject" : "PRJEB15512",
+            "bioproject_description" : "The genome of Oscheius tipulae",
+            "is_canonical" : true,
+            "laboratory" : [
+               "Institute of Evolutionary Biology, University of Edinburgh, Edinburgh, UK"
+            ],
+            "strain" : "Unknown strain",
+            "ucsc_name" : null
+         }
+      ],
+      "full_name" : "Oscheius tipulae"
    },
    "o_volvulus" : {
       "assemblies" : [
