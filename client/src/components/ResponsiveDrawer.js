@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withStyles } from 'material-ui/styles';
-import Drawer from 'material-ui/Drawer';
-import Hidden from 'material-ui/Hidden';
+import { withStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
 
 const drawerWidth = 240;
 
@@ -90,7 +90,7 @@ class ResponsiveDrawer extends Component {
     );
 
     const permanentDrawer = (
-      <Hidden mdDown implementation="css">
+      <Hidden smDown implementation="css">
         {drawer}
       </Hidden>
     );
@@ -106,7 +106,7 @@ class ResponsiveDrawer extends Component {
               classes={{
                 paper: classes.drawerPaper,
               }}
-              onRequestClose={this.handleDrawerToggle}
+              onClose={this.handleDrawerToggle}
               ModalProps={{
                 keepMounted: true, // Better open performance on mobile.
               }}

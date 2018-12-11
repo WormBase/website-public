@@ -33,7 +33,7 @@ class DownloadButton extends Component {
   }
 
   defaultRenderer = (props) => (
-    <Button raised {...props}>
+    <Button variant="contained" {...props}>
       {props.children || 'Download'}
       {this.state.status === 'PENDING' ? <CircularProgress /> : null}
     </Button>

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Grow from 'material-ui/transitions/Grow';
-import Card, { CardContent } from 'material-ui/Card';
+import Grow from '@material-ui/core/Grow';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import { tagType } from '../customPropTypes';
 import { pluralize } from '../../utils';
 import { scaleSequential } from 'd3-scale';
@@ -83,7 +84,7 @@ export default class GORibbon extends Component {
           onDomainEnter={() => null}
           onDomainLeave={() => null}
         />
-        <Grow in={hoverSlimItem} timeout={600} >
+        <Grow in={Boolean(hoverSlimItem)} timeout={600} >
           <Card style={{position: 'absolute', top: 0, width: '100%'}}>
             {
               hoverSlimItem ?  (

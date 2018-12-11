@@ -1,7 +1,7 @@
 import React from 'react';
-import MuiButton from 'material-ui/Button';
-import MuiIconButton from 'material-ui/IconButton';
-import { withStyles } from 'material-ui/styles';
+import MuiButton from '@material-ui/core/Button';
+import MuiIconButton from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';
 
 const Button = (props) => (
   <MuiButton disableRipple {...props} />
