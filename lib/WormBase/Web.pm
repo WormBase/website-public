@@ -203,9 +203,26 @@ sub _setup_parasite_species {
     my $species_file_remote_path = "http://parasite.wormbase.org/Multi/Ajax/species_tree";
     my $species_file_local_path = $c->path_to('/conf/species/', 'parasite_species_tree.json');
 
+    sub _json_to_string {
+        my ($obj) = @_;
+        my $species_nested = _sort_descendants($obj); # keep items in an array sorted by label
+        return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($species_nested);  # canonical flag to keep keys sorted
+    }
+
+    sub _sort_descendants {
+        my ($children) = @_;
+        foreach my $child (@$children){
+            $child->{children} = _sort_descendants($child->{children}) if $child->{children};
+        }
+        my @sorted_children = sort { $a->{label} cmp $b->{label} } @$children;
+        return \@sorted_children;
+    }
+
+
     my $parasite_species_trees = _get_json($c,
                                            $species_file_remote_path,
-                                           $species_file_local_path);
+                                           $species_file_local_path,
+                                           \&_json_to_string);
 
     my @parasite_species = _parse_parasite_species({ children => $parasite_species_trees }, '');
     $c->config->{sections}->{parasite_species_list} = \@parasite_species;
@@ -215,7 +232,7 @@ sub _setup_parasite_species {
 # helper function to get and parse species info located in JSON file on FTP site
 # if the ftp site fails, fallback to a local copy
 sub _get_json {
-    my ($c, $remote_path, $local_copy_path) = @_;
+    my ($c, $remote_path, $local_copy_path, $json_to_string) = @_;
     my $json;
 
     local *_process_local_copy = sub {
@@ -253,20 +270,14 @@ sub _get_json {
         return (new JSON)->allow_nonref->utf8->relaxed->decode($my_json_string);
     }
 
-    sub _json_to_string {
+    local *_json_to_string = sub {
         my ($obj) = @_;
-        my $species_nested = _sort_descendants($obj); # keep items in an array sorted by label
-        return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($species_nested);  # canonical flag to keep keys sorted
-    }
-
-    sub _sort_descendants {
-        my ($children) = @_;
-        foreach my $child (@$children){
-            $child->{children} = _sort_descendants($child->{children}) if $child->{children};
+        if ($json_to_string) {
+            return $json_to_string->($obj);
+        } else {
+            return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($obj);
         }
-        my @sorted_children = sort { $a->{label} cmp $b->{label} } @$children;
-        return \@sorted_children;
-    }
+    };
 
     # consider remote copy only on a development instance
     if ($c->config->{installation_type} eq 'development'){
