@@ -67,7 +67,7 @@ END; %]
         [% FOREACH bioproject IN species_conf.$option.bioprojects.keys; %]
       <tr>
         [% IF (species == 'all') %]
-           <td><a href="/species/[% option %]" class="species">[% species_conf.$option.genus %] [% species_conf.$option.species %]</a></td>
+           <td><a href="/species/[% option %]" class="species">[% species_conf.$option.genus %] [% species_conf.$option.species %] [% species_conf.$option.strain %]</a></td>
        [% END %]
        <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% bioproject %]" target="_blank">[% bioproject %]</a>
        </td>
