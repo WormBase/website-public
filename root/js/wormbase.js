@@ -3238,7 +3238,18 @@ var Scrolling = (function(){
             <StrandSelect>
               {
                 ({strand}) => {
-                  return <div>Strand {strand}. <Sequence /></div>
+                  return (
+                    <div>
+                      {
+                        ['mutant', 'wildtype'].map((type) => {
+                          const {sequence, feature} = strand === '+' ? data[type]['positive-strand'] : data[type]['negative-strand'];
+                          return (
+                            <Sequence title={type} sequence={sequence} feature={feature} strand={strand} />
+                          );
+                        })
+                      }
+                    </div>
+                  );
                 }
               }
             </StrandSelect>,
