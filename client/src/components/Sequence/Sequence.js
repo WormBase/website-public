@@ -25,7 +25,7 @@ class Sequence extends React.Component {
       <Card elevation="0">
         <CardContent>
           <div>{title} | {strand}</div>
-          <Grid container spacing={24}>
+          <Grid container spacing={0}>
             {
               showLegend ? <Grid item xs={12} md={3} className={classes.legendArea}>
                 {
@@ -41,11 +41,17 @@ class Sequence extends React.Component {
                 }
               </Grid> : null
             }
-            <Grid item xs={1}>
-              <div><span>101</span></div>
+            <Grid item xs={1} className={classes.lineNumberArea}>
+              <p className={classes.lineNumbers + ' ' + classes.fastaText}>
+                {
+                  sequence.match(/.{1,20}/g).map((_, index) => (
+                    <span>{index * 20 + 1}<br /></span>
+                  ))
+                }
+              </p>
             </Grid>
-            <Grid item className={classes.fastaText}>
-              > {title}
+            <Grid item className={classes.fastaText + ' ' + classes.fastaTextArea}>
+              <span className={classes.fastaHeaderText}>> {title}</span>
               <p className={classes.sequenceText}>
                 {
                   sequence.split('').map((letter, index) => {
@@ -85,6 +91,8 @@ const styles = (theme) => ({
     fontFamily: 'monospace',
     fontSize: '10pt',
   },
+  fastaHeaderText: {
+  },
   sequenceText: {
     textTransform: 'lowercase',
     '& span:nth-child(10n)': {
@@ -121,6 +129,17 @@ const styles = (theme) => ({
     [theme.breakpoints.up('md')]: {
       order: 4,
     },
+  },
+  fastaTextArea: {
+    flex: '1 1 0',
+  },
+  lineNumberArea: {
+    position: 'relative',
+  },
+  lineNumbers: {
+    position: 'absolute',
+    bottom: 0,
+    textAlign: 'end',
   },
 });
 
