@@ -177,9 +177,9 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
     END;
    END;
 
-  WRAPPER $field_block title="Sequence" key="context";
+  WRAPPER $field_block title="Sequence" key="sequence_context";
       '<div id="variation-sequence-context"></div>';
-      '<script>WB.renderVariationSequence(' _ json_encode(fields.context.data || {}) _ ', "variation-sequence-context")</script>';
+      '<script>WB.renderVariationSequence(' _ json_encode(fields.sequence_context.data || {}) _ ', "variation-sequence-context")</script>';
   END;
 
   WRAPPER $field_block title="CGH Flanking Probes" key="cgh_flanking_probes";
