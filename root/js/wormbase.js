@@ -3242,10 +3242,10 @@ var Scrolling = (function(){
                     <div>
                       {
                         ['mutant', 'wildtype'].map((type) => {
-                          const {sequence, features} = (strand === '+' ? data[type]['positive-strand'] : data[type]['negative-strand']);
+                          const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
                           return (
                             <Sequence
-                              title={`${type} ${data['public-name']}, with 250 bp flanks`}
+                              title={`${type} ${data['public_name']}, with 250 bp flanks`}
                               sequence={sequence}
                               features={features}
                               featureLabelMap={{
