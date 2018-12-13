@@ -5,6 +5,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import Grid from '@material-ui/core/Grid';
 
 class Sequence extends React.Component {
 
@@ -24,36 +25,41 @@ class Sequence extends React.Component {
       <Card elevation="0">
         <CardContent>
           <div>{title} | {strand}</div>
-          {
-            showLegend ? <div>
-              {
-                [...new Set(features.map(({type: featureType}) => (featureType)))].map(
-                  (featureType) => {
-                    return (
-                      <span className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
-                        {featureLabelMap[featureType] || featureType} <br />
-                      </span>
-                    )
-                  }
-                )
-              }
-            </div> : null
-          }
-          <div className={classes.fastaText}>
-            > {title}
-            <p className={classes.sequenceText}>
-              {
-                sequence.split('').map((letter, index) => {
-                  const featureClasses = features.filter((feature) => {
-                    return feature.start <= (index + 1) && feature.stop >= (index + 1);
-                  }).map(
-                    ({type: featureType}) => classes[this.featureClassName(featureType)]
-                  );
-                  return (<span className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
-                })
-              }
-            </p>
-          </div>
+          <Grid container spacing={24}>
+            {
+              showLegend ? <Grid item xs={12} md={3} className={classes.legendArea}>
+                {
+                  [...new Set(features.map(({type: featureType}) => (featureType)))].map(
+                    (featureType) => {
+                      return (
+                        <span className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
+                          {featureLabelMap[featureType] || featureType} <br />
+                        </span>
+                      )
+                    }
+                  )
+                }
+              </Grid> : null
+            }
+            <Grid item xs={1}>
+              <div><span>101</span></div>
+            </Grid>
+            <Grid item className={classes.fastaText}>
+              > {title}
+              <p className={classes.sequenceText}>
+                {
+                  sequence.split('').map((letter, index) => {
+                    const featureClasses = features.filter((feature) => {
+                      return feature.start <= (index + 1) && feature.stop >= (index + 1);
+                    }).map(
+                      ({type: featureType}) => classes[this.featureClassName(featureType)]
+                    );
+                    return (<span className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
+                  })
+                }
+              </p>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
     )
@@ -110,6 +116,11 @@ const styles = (theme) => ({
   },
   featureLegendItem: {
     textTransform: 'unset',
+  },
+  legendArea: {
+    [theme.breakpoints.up('md')]: {
+      order: 4,
+    },
   },
 });
 
