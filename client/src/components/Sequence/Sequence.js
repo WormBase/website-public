@@ -45,13 +45,22 @@ const styles = (theme) => ({
     '& span:nth-child(10n)': {
       marginRight: '1em',
     },
-    '& span:nth-child(50n+1)': {
-      '&:before': {
-        content: '""',
-        display: 'block',
+    [theme.breakpoints.down('sm')]: {
+      '& span:nth-child(20n+1)': {
+        '&:before': {
+          content: '""',
+          display: 'block',
+        },
       },
     },
-
+    [theme.breakpoints.up('md')]: {
+      '& span:nth-child(50n+1)': {
+        '&:before': {
+          content: '""',
+          display: 'block',
+        },
+      },
+    },
   },
 });
 
