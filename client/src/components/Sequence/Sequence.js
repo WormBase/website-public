@@ -12,19 +12,22 @@ class Sequence extends React.Component {
     return (
       <Card elevation="0">
         <CardContent>
-          {title} | {strand}
-          <p className={classes.sequenceText}>
-            {
-              sequence.split('').map((letter, index) => {
-                const featureClasses = features.filter((feature) => {
-                  return feature.start <= (index + 1) && feature.stop >= (index + 1);
-                }).map(
-                  (feature) => classes[`${feature.type}Feature`]
-                );
-                return (<span className={featureClasses.join(' ')} key={index}>{letter}</span>);
-              })
-            }
-          </p>
+          <div>{title} | {strand}</div>
+          <div className={classes.fastaText}>
+            > {title}
+            <p className={classes.sequenceText}>
+              {
+                sequence.split('').map((letter, index) => {
+                  const featureClasses = features.filter((feature) => {
+                    return feature.start <= (index + 1) && feature.stop >= (index + 1);
+                  }).map(
+                    (feature) => classes[`${feature.type}Feature`]
+                  );
+                  return (<span className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
+                })
+              }
+            </p>
+          </div>
         </CardContent>
       </Card>
     )
@@ -46,9 +49,11 @@ Sequence.propTypes = {
 };
 
 const styles = (theme) => ({
-  sequenceText: {
+  fastaText: {
     fontFamily: 'monospace',
     fontSize: '10pt',
+  },
+  sequenceText: {
     textTransform: 'lowercase',
     '& span:nth-child(10n)': {
       marginRight: '1em',
