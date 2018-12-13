@@ -7,12 +7,38 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 
 class Sequence extends React.Component {
+
+  featureClassName = (featureType) => (`${featureType}Feature`);
+
   render() {
-    const {classes, title, strand, sequence, features} = this.props;
+    const {
+      classes,
+      title,
+      strand,
+      sequence,
+      features,
+      featureLabelMap = {},
+      showLegend = true,
+    } = this.props;
     return (
       <Card elevation="0">
         <CardContent>
           <div>{title} | {strand}</div>
+          {
+            showLegend ? <div>
+              {
+                [...new Set(features.map(({type: featureType}) => (featureType)))].map(
+                  (featureType) => {
+                    return (
+                      <span className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
+                        {featureLabelMap[featureType] || featureType} <br />
+                      </span>
+                    )
+                  }
+                )
+              }
+            </div> : null
+          }
           <div className={classes.fastaText}>
             > {title}
             <p className={classes.sequenceText}>
@@ -21,7 +47,7 @@ class Sequence extends React.Component {
                   const featureClasses = features.filter((feature) => {
                     return feature.start <= (index + 1) && feature.stop >= (index + 1);
                   }).map(
-                    (feature) => classes[`${feature.type}Feature`]
+                    ({type: featureType}) => classes[this.featureClassName(featureType)]
                   );
                   return (<span className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
                 })
@@ -79,8 +105,11 @@ const styles = (theme) => ({
     backgroundColor: 'yellow',
   },
   variationFeature: {
-    backgroundColor: 'red',
+    backgroundColor: '#FF8080',
     textTransform: 'uppercase',
+  },
+  featureLegendItem: {
+    textTransform: 'unset',
   },
 });
 
