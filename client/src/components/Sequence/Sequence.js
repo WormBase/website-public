@@ -6,10 +6,24 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
 
 class Sequence extends React.Component {
 
   featureClassName = (featureType) => (`${featureType}Feature`);
+
+  renderLineNumbers = (numberLettersPerLine) => {
+    const {classes, sequence} = this.props;
+    return (
+      <p className={classes.lineNumbers + ' ' + classes.fastaText}>
+        {
+          sequence.match(new RegExp(`.{1,${numberLettersPerLine}}`, 'g')).map((_, index) => (
+            <span>{index * numberLettersPerLine + 1}<br /></span>
+          ))
+        }
+      </p>
+    );
+  }
 
   render() {
     const {
@@ -27,7 +41,7 @@ class Sequence extends React.Component {
           <div>{title} | {strand}</div>
           <Grid container spacing={0}>
             {
-              showLegend ? <Grid item xs={12} md={3} className={classes.legendArea}>
+              showLegend ? <Grid item xs={12} md={2} className={classes.legendArea}>
                 {
                   [...new Set(features.map(({type: featureType}) => (featureType)))].map(
                     (featureType) => {
@@ -41,15 +55,16 @@ class Sequence extends React.Component {
                 }
               </Grid> : null
             }
-            <Grid item xs={1} className={classes.lineNumberArea}>
-              <p className={classes.lineNumbers + ' ' + classes.fastaText}>
-                {
-                  sequence.match(/.{1,20}/g).map((_, index) => (
-                    <span>{index * 20 + 1}<br /></span>
-                  ))
-                }
-              </p>
-            </Grid>
+            <Hidden mdUp>
+              <Grid item xs={1} className={classes.lineNumberArea}>
+                {this.renderLineNumbers(20)}
+              </Grid>
+            </Hidden>
+            <Hidden smDown>
+              <Grid item md={1} className={classes.lineNumberArea}>
+                {this.renderLineNumbers(50)}
+              </Grid>
+            </Hidden>
             <Grid item className={classes.fastaText + ' ' + classes.fastaTextArea}>
               <span className={classes.fastaHeaderText}>> {title}</span>
               <p className={classes.sequenceText}>
@@ -131,7 +146,7 @@ const styles = (theme) => ({
     },
   },
   fastaTextArea: {
-    flex: '1 1 0',
+    flex: '0 1 0',
   },
   lineNumberArea: {
     position: 'relative',
@@ -139,6 +154,8 @@ const styles = (theme) => ({
   lineNumbers: {
     position: 'absolute',
     bottom: 0,
+    right: 0,
+    paddingRight: theme.spacing.unit * 2,
     textAlign: 'end',
   },
 });
