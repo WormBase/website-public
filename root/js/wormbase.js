@@ -3245,6 +3245,7 @@ var Scrolling = (function(){
                           const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
                           return (
                             <SequenceCard
+                              key={type}
                               title={`${type} ${data['public_name']}, with 250 bp flanks, shown on (${strand}) strand`}
                               sequence={sequence}
                               features={features}

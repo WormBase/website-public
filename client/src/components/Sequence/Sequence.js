@@ -14,7 +14,7 @@ class Sequence extends React.Component {
       <p className={classes.lineNumbers + ' ' + classes.fastaText}>
         {
           sequence.match(new RegExp(`.{1,${numberLettersPerLine}}`, 'g')).map((_, index) => (
-            <span>{index * numberLettersPerLine + 1}<br /></span>
+            <span key={index}>{index * numberLettersPerLine + 1}<br /></span>
           ))
         }
       </p>
@@ -38,7 +38,7 @@ class Sequence extends React.Component {
               [...new Set(features.map(({type: featureType}) => (featureType)))].map(
                 (featureType) => {
                   return (
-                    <span className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
+                    <span key={featureType} className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
                       {featureLabelMap[featureType] || featureType} <br />
                     </span>
                   )
@@ -67,7 +67,7 @@ class Sequence extends React.Component {
                 }).map(
                   ({type: featureType}) => classes[this.featureClassName(featureType)]
                 );
-                return (<span className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
+                return (<span key={index} className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
               })
             }
           </p>
