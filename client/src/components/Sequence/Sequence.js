@@ -25,7 +25,6 @@ class Sequence extends React.Component {
     const {
       classes,
       title,
-      strand,
       sequence,
       features,
       featureLabelMap = {},
@@ -89,7 +88,6 @@ Sequence.propTypes = {
       stop: PropTypes.number,
     }),
   ),
-  strand: PropTypes.oneOf(['+', '-']),
 };
 
 const styles = (theme) => ({

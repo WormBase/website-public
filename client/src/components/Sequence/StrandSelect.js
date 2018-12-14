@@ -38,7 +38,7 @@ class StrandSelect extends React.Component {
 
   render() {
     const {strand} = this.state;
-    const classes = this.props;
+//    const classes = this.props;
     return (
       <Paper>
         <MuiThemeProvider theme={theme}>
@@ -73,12 +73,6 @@ StrandSelect.propTypes = {
 };
 
 const styles = (theme) => ({
-  positiveStrand: {
-    backgroundColor: 'red',
-  },
-  negativeStrand: {
-    backgroundColor: 'green',
-  },
 });
 
 export default withStyles(styles)(StrandSelect);
