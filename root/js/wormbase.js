@@ -3247,6 +3247,7 @@ var Scrolling = (function(){
                             <SequenceCard
                               key={type}
                               title={`${type} ${data['public_name']}, with 250 bp flanks, shown on (${strand}) strand`}
+                              downloadFileName={`${data['public_name']}__${type}__${strand === '+' ? 'positive' : 'negative'}_strand__with_250_bp_flanks.fasta`}
                               sequence={sequence}
                               features={features}
                               featureLabelMap={{

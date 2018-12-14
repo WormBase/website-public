@@ -6,10 +6,11 @@ import CardActions from '@material-ui/core/CardActions';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import Tooltip from '@material-ui/core/Tooltip';
 import SaveIcon from '@material-ui/icons/Save';
-import CopyIcon from '@material-ui/icons/FileCopy';
+//import CopyIcon from '@material-ui/icons/FileCopy';
 import ExpandMoreIcon from '@material-ui/icons/ArrowRight';
 import ExpandLessIcon from '@material-ui/icons/ArrowDropDown';
 import Sequence from './Sequence';
+import DownloadButton from '../DownloadButton';
 import { IconButton } from '../Button';
 
 
@@ -30,7 +31,9 @@ class SequenceCard extends React.Component {
   render() {
     const {
       classes,
+      sequence = '',
       title = 'Sequence',
+      downloadFileName = 'sequence.fasta',
       ...sequenceProps,
     } = this.props;
     const {expand} = this.state;
@@ -48,18 +51,24 @@ class SequenceCard extends React.Component {
             </CardActionArea>
           </Tooltip>
           <Tooltip title="Save to file">
-            <IconButton>
-              <SaveIcon />
-            </IconButton>
+            <DownloadButton
+              fileName={downloadFileName}
+              renderer={(props) => (
+                <IconButton {...props}>
+                  <SaveIcon />
+                </IconButton>
+              )}
+              contentFunc={() => `> ${title}\r\n${sequence}` }
+            />
           </Tooltip>
-          <Tooltip title="Copy to clipboard">
-            <IconButton >
+          {/* <Tooltip title="Copy to clipboard">
+              <IconButton >
               <CopyIcon />
-            </IconButton>
-          </Tooltip>
+              </IconButton>
+              </Tooltip> */}
         </CardActions>
         {
-          expand ? <Sequence title={title} {...sequenceProps} /> : null
+          expand ? <Sequence title={title} sequence={sequence} {...sequenceProps} /> : null
         }
       </Card>
     );
@@ -69,6 +78,7 @@ class SequenceCard extends React.Component {
 SequenceCard.propTypes = {
   classes: PropTypes.object.isRequired,
   title: PropTypes.string,
+  downloadFileName: PropTypes.string,
 };
 
 const styles = (theme) => ({
