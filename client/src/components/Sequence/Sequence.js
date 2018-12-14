@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 
@@ -36,53 +32,48 @@ class Sequence extends React.Component {
       showLegend = true,
     } = this.props;
     return (
-      <Card elevation="0">
-        <CardContent>
-          <div>{title} | {strand}</div>
-          <Grid container spacing={0}>
+      <Grid container spacing={0}>
+        {
+          showLegend ? <Grid item xs={12} md={2} className={classes.legendArea}>
             {
-              showLegend ? <Grid item xs={12} md={2} className={classes.legendArea}>
-                {
-                  [...new Set(features.map(({type: featureType}) => (featureType)))].map(
-                    (featureType) => {
-                      return (
-                        <span className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
-                          {featureLabelMap[featureType] || featureType} <br />
-                        </span>
-                      )
-                    }
+              [...new Set(features.map(({type: featureType}) => (featureType)))].map(
+                (featureType) => {
+                  return (
+                    <span className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
+                      {featureLabelMap[featureType] || featureType} <br />
+                    </span>
                   )
                 }
-              </Grid> : null
+              )
             }
-            <Hidden mdUp>
-              <Grid item xs={1} className={classes.lineNumberArea}>
-                {this.renderLineNumbers(20)}
-              </Grid>
-            </Hidden>
-            <Hidden smDown>
-              <Grid item md={1} className={classes.lineNumberArea}>
-                {this.renderLineNumbers(50)}
-              </Grid>
-            </Hidden>
-            <Grid item className={classes.fastaText + ' ' + classes.fastaTextArea}>
-              <span className={classes.fastaHeaderText}>> {title}</span>
-              <p className={classes.sequenceText}>
-                {
-                  sequence.split('').map((letter, index) => {
-                    const featureClasses = features.filter((feature) => {
-                      return feature.start <= (index + 1) && feature.stop >= (index + 1);
-                    }).map(
-                      ({type: featureType}) => classes[this.featureClassName(featureType)]
-                    );
-                    return (<span className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
-                  })
-                }
-              </p>
-            </Grid>
+          </Grid> : null
+        }
+        <Hidden mdUp>
+          <Grid item xs={1} className={classes.lineNumberArea}>
+            {this.renderLineNumbers(20)}
           </Grid>
-        </CardContent>
-      </Card>
+        </Hidden>
+        <Hidden smDown>
+          <Grid item md={1} className={classes.lineNumberArea}>
+            {this.renderLineNumbers(50)}
+          </Grid>
+        </Hidden>
+        <Grid item className={classes.fastaText + ' ' + classes.fastaTextArea}>
+          <span className={classes.fastaHeaderText}>> {title}</span>
+          <p className={classes.sequenceText}>
+            {
+              sequence.split('').map((letter, index) => {
+                const featureClasses = features.filter((feature) => {
+                  return feature.start <= (index + 1) && feature.stop >= (index + 1);
+                }).map(
+                  ({type: featureType}) => classes[this.featureClassName(featureType)]
+                );
+                return (<span className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
+              })
+            }
+          </p>
+        </Grid>
+      </Grid>
     )
   }
 }

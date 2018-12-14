@@ -3233,7 +3233,7 @@ var Scrolling = (function(){
       import('../../client/src/components/Sequence').then(
         (module) => {
           const StrandSelect = module.StrandSelect;
-          const Sequence = module.default;
+          const SequenceCard = module.SequenceCard;
           ReactDOM.render(
             <StrandSelect>
               {
@@ -3244,7 +3244,7 @@ var Scrolling = (function(){
                         ['mutant', 'wildtype'].map((type) => {
                           const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
                           return (
-                            <Sequence
+                            <SequenceCard
                               title={`${type} ${data['public_name']}, with 250 bp flanks, shown on (${strand}) strand`}
                               sequence={sequence}
                               features={features}
