@@ -3243,11 +3243,12 @@ var Scrolling = (function(){
                       {
                         ['mutant', 'wildtype'].map((type) => {
                           const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
+                          const flankLength = 500;
                           return (
                             <SequenceCard
                               key={type}
-                              title={`${type} ${data['public_name']}, with 250 bp flanks, shown on (${strand}) strand`}
-                              downloadFileName={`${data['public_name']}__${type}__${strand === '+' ? 'positive' : 'negative'}_strand__with_250_bp_flanks.fasta`}
+                              title={`${type} ${data['public_name']}, with ${flankLength}bp flanks, shown on (${strand}) strand`}
+                              downloadFileName={`${data['public_name']}__${type}__${strand === '+' ? 'positive' : 'negative'}_strand__with_${flankLength}bp_flanks.fasta`}
                               sequence={sequence}
                               features={features}
                               featureLabelMap={{
