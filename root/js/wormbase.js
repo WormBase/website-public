@@ -3296,8 +3296,8 @@ var Scrolling = (function(){
                   return (
                     <SequenceCard
                       key={type}
-                      title={`${type}, ${data.id}` + (type === 'mutant' ? ` (${wbId}: ${effects})` : '')}
-                      downloadFileName={`${type}`}
+                      title={`${type} ${data.id}` + (type === 'mutant' ? ` (${wbId}: ${effects})` : '')}
+                      downloadFileName={`${type}__${data.id}` + (type === 'mutant' ? `__${wbId}` : '') + '.fasta'}
                       sequence={data[`${type}_conceptual_translation`]}
                       features={features}
                       featureLabelMap={{
