@@ -13,8 +13,21 @@ export default withStyles({
   },
 })(Button);
 
-const IconButton = (props) => <MuiIconButton disableRipple {...props} />;
+const IconButton = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing.unit / 2,
+    borderRadius: '10%',
+  },
+}))(({classes, ...props}) => (
+  <MuiIconButton
+    classes={{
+      root: classes.root
+    }}
+    disableRipple
+    {...props}
+  />
+));
 
 export {
-  IconButton
+  IconButton,
 };

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { createMuiTheme, MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import pink from '@material-ui/core/colors/pink';
 import teal from '@material-ui/core/colors/blue';
-import Paper from '../Paper';
 import Tab from '../Tab';
 import Tabs from '../Tabs';
 
