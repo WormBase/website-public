@@ -833,6 +833,11 @@ sup.new {
   color: brown;
 }
 
+.deprecated {
+  color: #999999;
+  font-style: italic;
+}
+
 a#fade:hover, a.fade:hover {
   text-decoration:underline;
 }
