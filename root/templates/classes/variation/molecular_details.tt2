@@ -175,9 +175,9 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
       mutant_length = (mutant_length > 4000) ? 0 : 1;
 
 
-      wildtype.header = "wild type, with 250 bp flanks";
+      wildtype.header = "wild type, with 500 bp flanks";
       sequence(wildtype, '', wildtype_length);
-      mutant.header =  markup_var(object.name.data.label, 1) _" with 250 bp flanks";
+      mutant.header =  markup_var(object.name.data.label, 1) _" with 500 bp flanks";
       sequence(mutant, '', mutant_length);
     END;
    END;
