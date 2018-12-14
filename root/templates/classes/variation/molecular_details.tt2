@@ -74,7 +74,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                   '</div>';
                 END; # of feature loop
               ELSE;
-                '<div id="variation-conceptual-translation"></div>';
+                '<div id="variation-conceptual-translation"><div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div></div>';
                 '<script>WB.renderVariationConceptualTranslation(' _ json_encode(feature || {}) _ ', "variation-conceptual-translation", "' _ fields.name.data.id _ '")</script>';
               END;
             END;
@@ -183,7 +183,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
    END;
 
   WRAPPER $field_block title="Sequence" key="sequence_context";
-      '<div id="variation-sequence-context"></div>';
+      '<div id="variation-sequence-context"><div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div></div>';
       '<script>WB.renderVariationSequence(' _ json_encode(fields.sequence_context.data || {}) _ ', "variation-sequence-context")</script>';
   END;
 
