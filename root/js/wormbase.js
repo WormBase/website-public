@@ -3229,6 +3229,92 @@ var Scrolling = (function(){
       );
     }
 
+    function renderVariationSequence(data, elementId) {
+      import('../../client/src/components/Sequence').then(
+        (module) => {
+          const StrandSelect = module.StrandSelect;
+          const SequenceCard = module.SequenceCard;
+          ReactDOM.render(
+            <StrandSelect>
+              {
+                ({strand}) => {
+                  return (
+                    <div>
+                      {
+                        ['mutant', 'wildtype'].map((type) => {
+                          const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
+                          const flankLength = 500;
+                          return (
+                            <SequenceCard
+                              key={type}
+                              title={`${type} ${data['public_name']}, with ${flankLength}bp flanks, shown on (${strand}) strand`}
+                              downloadFileName={`${data['public_name']}__${type}__${strand === '+' ? 'positive' : 'negative'}_strand__with_${flankLength}bp_flanks.fasta`}
+                              sequence={sequence}
+                              features={features}
+                              featureLabelMap={{
+                                flank: 'Flanking sequence',
+                                variation: 'Mutation',
+                                'cgh_deleted_probe': 'CGH deleted probe',
+                                'cgh_flanking_probe': 'CGH flanking probe',
+                              }}
+                              strand={strand}
+                            />
+                          );
+                        })
+                      }
+                    </div>
+                  );
+                }
+              }
+            </StrandSelect>,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
+    function renderVariationConceptualTranslation(data, elementId, wbId) {
+      import('../../client/src/components/Sequence').then(
+        (module) => {
+          const SequenceCard = module.SequenceCard;
+          ReactDOM.render(
+            <div>
+              {
+                ['mutant', 'wildtype'].map((type) => {
+                  const {sequence} = data[`${type}_conceptual_translation`];
+                  const features = Object.keys(data['protein_effects'] || {}).map(
+                    (k) => data['protein_effects'][k]
+                  ).map(
+                    ({position, description}) => ({
+                      start: parseInt(position),
+                      stop: parseInt(position),
+                      type: 'variation',
+                      effect: description,
+                    })
+                  ).filter(({start, stop}) => !isNaN(start) && !isNaN(stop));
+                  const effects = features.map(({effect}) => effect).join(', ');
+                  return (
+                    <SequenceCard
+                      key={type}
+                      title={`${type} ${data.id}` + (type === 'mutant' ? ` (${wbId}: ${effects})` : '')}
+                      downloadFileName={`${type}__${data.id}` + (type === 'mutant' ? `__${wbId}` : '') + '.fasta'}
+                      sequence={data[`${type}_conceptual_translation`]}
+                      features={features}
+                      featureLabelMap={{
+                        variation: 'Mutation',
+                      }}
+                      showLegend={type === 'mutant' }
+                    />
+                  );
+                })
+              }
+            </div>,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3488,9 +3574,10 @@ var Scrolling = (function(){
       tooltipInit: tooltipInit,                     // initalize tooltip
       renderWidget: renderWidget,                   // render widget component
       renderGORibbon: renderGORibbon,             // render GO ribbon
+      renderVariationSequence: renderVariationSequence, // render the sequence (context) in molecular details widget on a variation page
+      renderVariationConceptualTranslation: renderVariationConceptualTranslation, // render conceptual translation on variation page
     };
   })();
-
 
 
 

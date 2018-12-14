@@ -1,5 +1,4 @@
 import React from 'react';
-import { CircularProgress } from './Progress';
 
 
 export default function withInnerHtmlFromUrl(WrappedComponent, url, spinnerElement) {
@@ -29,6 +28,7 @@ export default function withInnerHtmlFromUrl(WrappedComponent, url, spinnerEleme
           html: html,
         }, () => {
           scripts.forEach((script) => {
+            // eslint-disable-next-line
             window.eval(script);
           });
         });

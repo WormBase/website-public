@@ -2,21 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-const resourcePages = new Set([
-  'analysis',
-  'author',
-  'gene_class',
-  'laboratory',
-  'molecule',
-  'motif',
-  'paper',
-  'person',
-  'reagents',
-  'disease',
-  'transposon_family',
-  'wbprocess',
-]);
-
 function buildUrl(tag, fuzzy) {
   const {id, label} = tag;
   if ((id && tag.class) || fuzzy) {
