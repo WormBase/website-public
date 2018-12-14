@@ -37,7 +37,7 @@ class SequenceCard extends React.Component {
       ...sequenceProps,
     } = this.props;
     const {expand} = this.state;
-    return (
+    return sequence ? (
       <Card elevation={0}>
         <CardActions className={classes.actions}>
           <Tooltip title={expand ? 'Collapse' : 'Expand'}>
@@ -71,7 +71,7 @@ class SequenceCard extends React.Component {
           expand ? <Sequence title={title} sequence={sequence} {...sequenceProps} /> : null
         }
       </Card>
-    );
+    ) : null;
   }
 }
 

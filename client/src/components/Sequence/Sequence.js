@@ -30,7 +30,7 @@ class Sequence extends React.Component {
       featureLabelMap = {},
       showLegend = true,
     } = this.props;
-    return (
+    return sequence ? (
       <Grid container spacing={0} className={classes.root}>
         {
           showLegend ? <Grid item xs={12} md={2} className={classes.legendArea}>
@@ -75,7 +75,7 @@ class Sequence extends React.Component {
           </p>
         </Grid>
       </Grid>
-    )
+    ) : null;
   }
 }
 
