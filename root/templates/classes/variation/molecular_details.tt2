@@ -64,14 +64,19 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
             IF feature.wildtype_conceptual_translation;
               # This won't actually result in download option for the conceptual translation.
               # tag2link(feature.item) _ ' (mutant' _ change.amino_acid_change _ ')<br/>';
-              WRAPPER toggle title=change.transcript.id _ ' conceptual translation';
-                '<div>';
-                '<div class="sequence-container">';
-                '<pre>> wildtype<br />' _ feature.wildtype_conceptual_translation _ '</pre>';
-                '<pre>> wildtype<br />' _ feature.mutant_conceptual_translation _ '</pre>';
-                '</div>';
-                '</div>';
-              END; # of feature loop
+              IF feature.wildtype_conceptual_translation.search('>');
+                WRAPPER toggle title=change.transcript.id _ ' conceptual translation';
+                  '<div>';
+                  '<div class="sequence-container">';
+                  '<pre>' _ feature.wildtype_conceptual_translation _ '</pre>';
+                  '<pre>' _ feature.mutant_conceptual_translation _ '</pre>';
+                  '</div>';
+                  '</div>';
+                END; # of feature loop
+              ELSE;
+                '<div id="variation-conceptual-translation"></div>';
+                '<script>WB.renderVariationConceptualTranslation(' _ json_encode(feature || {}) _ ', "variation-conceptual-translation", "' _ fields.name.data.id _ '")</script>';
+              END;
             END;
           END;
         END;

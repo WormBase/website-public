@@ -3272,6 +3272,48 @@ var Scrolling = (function(){
       );
     }
 
+    function renderVariationConceptualTranslation(data, elementId, wbId) {
+      import('../../client/src/components/Sequence').then(
+        (module) => {
+          const SequenceCard = module.SequenceCard;
+          ReactDOM.render(
+            <div>
+              {
+                ['mutant', 'wildtype'].map((type) => {
+                  const {sequence} = data[`${type}_conceptual_translation`];
+                  const features = Object.keys(data['protein_effects'] || {}).map(
+                    (k) => data['protein_effects'][k]
+                  ).map(
+                    ({position, description}) => ({
+                      start: parseInt(position),
+                      stop: parseInt(position),
+                      type: 'variation',
+                      effect: description,
+                    })
+                  ).filter(({start, stop}) => !isNaN(start) && !isNaN(stop));
+                  const effects = features.map(({effect}) => effect).join(', ');
+                  return (
+                    <SequenceCard
+                      key={type}
+                      title={`${type}, ${data.id}` + (type === 'mutant' ? ` (${wbId}: ${effects})` : '')}
+                      downloadFileName={`${type}`}
+                      sequence={data[`${type}_conceptual_translation`]}
+                      features={features}
+                      featureLabelMap={{
+                        variation: 'Mutation',
+                      }}
+                      showLegend={type === 'mutant' }
+                    />
+                  );
+                })
+              }
+            </div>,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3532,6 +3574,7 @@ var Scrolling = (function(){
       renderWidget: renderWidget,                   // render widget component
       renderGORibbon: renderGORibbon,             // render GO ribbon
       renderVariationSequence: renderVariationSequence, // render the sequence (context) in molecular details widget on a variation page
+      renderVariationConceptualTranslation: renderVariationConceptualTranslation, // render conceptual translation on variation page
     };
   })();
 

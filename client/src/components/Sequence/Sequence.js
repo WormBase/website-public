@@ -38,9 +38,8 @@ class Sequence extends React.Component {
               [...new Set(features.map(({type: featureType}) => (featureType)))].map(
                 (featureType) => {
                   return (
-                    <p>
+                    <p key={featureType}>
                       <span
-                        key={featureType}
                         className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}
                       >&nbsp;&nbsp;&nbsp;&nbsp;</span> {featureLabelMap[featureType] || featureType}
                     </p>
@@ -106,7 +105,6 @@ const styles = (theme) => ({
   fastaHeaderText: {
   },
   sequenceText: {
-    textTransform: 'lowercase',
     '& span:nth-child(10n)': {
       marginRight: '0.5em',
     },
