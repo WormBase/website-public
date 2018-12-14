@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import Tooltip from '@material-ui/core/Tooltip';
 import SaveIcon from '@material-ui/icons/Save';
 import CopyIcon from '@material-ui/icons/FileCopy';
@@ -35,17 +36,19 @@ class SequenceCard extends React.Component {
     const {expand} = this.state;
     return (
       <Card elevation={0}>
-        <CardActions>
+        <CardActions className={classes.actions}>
           <Tooltip title={expand ? 'Collapse' : 'Expand'}>
-            <IconButton onClick={this.handleExpandToggle}>
+            <CardActionArea className={classes.expandToggleAction} onClick={this.handleExpandToggle}>
+
               {
                 expand ? <ExpandLessIcon /> : <ExpandMoreIcon />
               }
-            </IconButton>
+
+              <h5 className={classes.title}>{title}</h5>
+            </CardActionArea>
           </Tooltip>
-          <h5 className={classes.title}>{title}</h5>
           <Tooltip title="Save to file">
-            <IconButton size="small" variant="contained">
+            <IconButton>
               <SaveIcon />
             </IconButton>
           </Tooltip>
@@ -69,6 +72,14 @@ SequenceCard.propTypes = {
 };
 
 const styles = (theme) => ({
+  actions: {
+    alignItems: 'stretch',
+  },
+  expandToggleAction: {
+    display: 'flex',
+    width: 'initial',
+    paddingRight: theme.spacing.unit,
+  },
   title: {
   },
 });
