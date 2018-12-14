@@ -31,16 +31,19 @@ class Sequence extends React.Component {
       showLegend = true,
     } = this.props;
     return (
-      <Grid container spacing={0}>
+      <Grid container spacing={0} className={classes.root}>
         {
           showLegend ? <Grid item xs={12} md={2} className={classes.legendArea}>
             {
               [...new Set(features.map(({type: featureType}) => (featureType)))].map(
                 (featureType) => {
                   return (
-                    <span key={featureType} className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}>
-                      {featureLabelMap[featureType] || featureType} <br />
-                    </span>
+                    <p>
+                      <span
+                        key={featureType}
+                        className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}
+                      >&nbsp;&nbsp;&nbsp;&nbsp;</span> {featureLabelMap[featureType] || featureType}
+                    </p>
                   )
                 }
               )
@@ -91,6 +94,11 @@ Sequence.propTypes = {
 };
 
 const styles = (theme) => ({
+  root: {
+    '& div': {
+      paddingLeft: theme.spacing.unit * 1.5,
+    },
+  },
   fastaText: {
     fontFamily: 'monospace',
     fontSize: '10pt',
@@ -100,7 +108,7 @@ const styles = (theme) => ({
   sequenceText: {
     textTransform: 'lowercase',
     '& span:nth-child(10n)': {
-      marginRight: '1em',
+      marginRight: '0.5em',
     },
     [theme.breakpoints.down('sm')]: {
       '& span:nth-child(20n+1)': {
@@ -130,6 +138,7 @@ const styles = (theme) => ({
     textTransform: 'unset',
   },
   legendArea: {
+    color: theme.palette.text.hint,
     [theme.breakpoints.up('md')]: {
       order: 4,
     },
@@ -144,8 +153,8 @@ const styles = (theme) => ({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    paddingRight: theme.spacing.unit * 2,
     textAlign: 'end',
+    color: theme.palette.text.hint,
   },
 });
 
