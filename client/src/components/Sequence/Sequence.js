@@ -70,7 +70,7 @@ class Sequence extends React.Component {
                 }).map(
                   ({type: featureType}) => classes[this.featureClassName(featureType)]
                 );
-                return (<span key={index} className={classes.sequenceChar + ' ' + featureClasses.join(' ')} key={index}>{letter}</span>);
+                return (<span key={index} className={classes.sequenceChar + ' ' + featureClasses.join(' ')}>{letter}</span>);
               })
             }
           </p>
@@ -132,6 +132,13 @@ const styles = (theme) => ({
   },
   variationFeature: {
     backgroundColor: '#FF8080',
+    textTransform: 'uppercase',
+  },
+  'cgh_flanking_probeFeature': {
+    backgroundColor: '#80FFFF',
+  },
+  'cgh_deleted_probeFeature': {
+    backgroundColor: '#FFAA54',
     textTransform: 'uppercase',
   },
   featureLegendItem: {

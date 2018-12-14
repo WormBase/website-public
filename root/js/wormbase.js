@@ -3253,8 +3253,8 @@ var Scrolling = (function(){
                               featureLabelMap={{
                                 flank: 'Flanking sequence',
                                 variation: 'Mutation',
-                                x: 'CGH deleted probe',
-                                y: 'CGH flanking probe (if within the window of displayed sequence)',
+                                'cgh_deleted_probe': 'CGH deleted probe',
+                                'cgh_flanking_probe': 'CGH flanking probe',
                               }}
                               strand={strand}
                             />
