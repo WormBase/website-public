@@ -7,7 +7,7 @@ import Paper from '../Paper';
 import Tab from '../Tab';
 import Tabs from '../Tabs';
 
-const theme = createMuiTheme({
+const strandTheme = createMuiTheme({
   palette: {
     primary: teal,
     secondary: pink,
@@ -38,10 +38,10 @@ class StrandSelect extends React.Component {
 
   render() {
     const {strand} = this.state;
-//    const classes = this.props;
+    const {classes} = this.props;
     return (
-      <Paper>
-        <MuiThemeProvider theme={theme}>
+      <div>
+        <MuiThemeProvider theme={strandTheme}>
           <Tabs
             value={this.strandToValue(strand)}
             indicatorColor={strand === '+' ? "secondary" : "primary"}
@@ -52,12 +52,14 @@ class StrandSelect extends React.Component {
             <Tab label="(-) strand" />
           </Tabs>
         </MuiThemeProvider>
-        {
-          this.props.children({
-            strand: strand,
-          })
-        }
-      </Paper>
+        <div className={classes[strand === '+' ? 'positiveStrand' : 'negativeStrand']}>
+          {
+            this.props.children({
+              strand: strand,
+            })
+          }
+        </div>
+      </div>
     );
   }
 }
@@ -73,6 +75,12 @@ StrandSelect.propTypes = {
 };
 
 const styles = (theme) => ({
+  'positiveStrand': {
+    borderLeft: `solid ${strandTheme.palette.secondary.light} ${1}px`,
+  },
+  'negativeStrand': {
+    borderLeft: `solid ${strandTheme.palette.primary.light} ${1}px`,
+  },
 });
 
 export default withStyles(styles)(StrandSelect);
