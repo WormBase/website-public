@@ -96,6 +96,7 @@ const styles = (theme) => ({
   root: {
     '& div': {
       paddingLeft: theme.spacing.unit * 1.5,
+      maxHeight: 1000000,  /* prevent font boosting that sets line number and sequence to different computed font-size*/
     },
   },
   fastaText: {
