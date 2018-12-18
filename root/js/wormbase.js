@@ -3241,7 +3241,7 @@ var Scrolling = (function(){
                   return (
                     <div>
                       {
-                        ['mutant', 'wildtype'].map((type) => {
+                        ['wildtype', 'mutant'].map((type) => {
                           const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
                           const flankLength = 500;
                           return (
@@ -3280,7 +3280,7 @@ var Scrolling = (function(){
           ReactDOM.render(
             <div>
               {
-                ['mutant', 'wildtype'].map((type) => {
+                ['wildtype', 'mutant'].map((type) => {
                   const {sequence} = data[`${type}_conceptual_translation`];
                   const features = Object.keys(data['protein_effects'] || {}).map(
                     (k) => data['protein_effects'][k]
@@ -3303,7 +3303,6 @@ var Scrolling = (function(){
                       featureLabelMap={{
                         variation: 'Mutation',
                       }}
-                      showLegend={type === 'mutant' }
                     />
                   );
                 })
