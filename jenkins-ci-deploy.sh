@@ -37,4 +37,6 @@ $(aws ecr get-login --no-include-email --region us-east-1)
 docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:latest
 
 # deploy container
+make dockerrun-latest
 make staging-deploy
+git checkout Dockerrun.aws.json  # HACK to undo changes make in `make dockerrun-latest`

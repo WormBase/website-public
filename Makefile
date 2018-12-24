@@ -140,9 +140,13 @@ eb-setenv:
 		JWT_SECRET='${JWT_SECRET}'
 
 .PHONY: eb-create
-eb-create: CATALYST_APP ?= production # target-specific variable
+eb-create: CATALYST_APP ?= production
 eb-create:
 	@eb create wormbase-website-${LOWER_WS_VERSION} --cfg v1 --cname wormbase-website-${LOWER_WS_VERSION} --envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+
+.PHONY: dockerrun-latest
+dockerrun-latest:
+	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
 
 
 .PHONY: staging-deploy
