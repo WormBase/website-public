@@ -38,5 +38,6 @@ docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:latest
 
 # deploy container
 make dockerrun-latest
+cat Dockerrun.aws.json
 make staging-deploy
 git checkout Dockerrun.aws.json  # HACK to undo changes make in `make dockerrun-latest`
