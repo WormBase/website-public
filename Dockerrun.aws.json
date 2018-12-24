@@ -94,8 +94,7 @@
           "containerPath": "/root/acedb/wormbase"
         }
       ],
-      "memoryReservation": 4000,
-      "memory": 7000
+      "memoryReservation": 4000
     },
     {
       "name": "nginx-proxy",
