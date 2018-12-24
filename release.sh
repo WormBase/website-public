@@ -42,10 +42,10 @@ docker tag wormbase/website:latest 357210185381.dkr.ecr.us-east-1.amazonaws.com/
 $(aws ecr get-login --no-include-email --region us-east-1)
 docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:$VERSION
 
-# post-release clean up
-sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
-git add Dockerrun.aws.json
-git commit -m "post-release cleanup"
+# # post-release clean up
+# sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
+# git add Dockerrun.aws.json
+# git commit -m "post-release cleanup"
 
 set -x #echo off
 
