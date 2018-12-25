@@ -27,24 +27,7 @@
 # config files, too. They could be checked out by CI)
 
 
-# If the APP environment variable isn't set,
-# assume we are running in production.
-if [ ! $APP ]; then
-    echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
-    export APP=production
-
-    # Application defaults
-    export DAEMONIZE=true
-    export PORT=5000
-    export WORKERS=10
-    export MAX_REQUESTS=500
-
-    # The suffix for the configuration file to use.
-    # This will take precedence over wormbase_local.conf
-    # Primarily used to override the location of the user database.
-    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
-
-elif [ $APP == 'staging' ]; then
+if [ $APP == 'staging' ]; then
     echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"
 
     # reduce the number of workers.
@@ -74,13 +57,22 @@ elif [ $APP == 'qaqc' ]; then
     export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 else
-    echo "   ---> APP is set to ${APP}: using wormbase_local.conf"
+    # for APP being anything else
+    # assume we are running in production.
 
-    # Assume these to all be set in the local environment
-    export PORT=9001
-    export WORKERS=3
-    export CATALYST_CONFIG_LOCAL_SUFFIX=local
-    export STARMAN_DEBUG=1
+    echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
+    export APP=production
+
+    # Application defaults
+    export DAEMONIZE=true
+    export PORT=5000
+    export WORKERS=10
+    export MAX_REQUESTS=500
+
+    # The suffix for the configuration file to use.
+    # This will take precedence over wormbase_local.conf
+    # Primarily used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX=$APP
 
 fi
 
