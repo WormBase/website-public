@@ -123,6 +123,7 @@ build-run-test:
 
 .PHONY: eb-local-run
 eb-local-run: CATALYST_APP ?= staging # target-specific variable
+
 eb-local-run:
 	 @eb local run \
 		--envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
@@ -141,8 +142,9 @@ eb-setenv:
 
 .PHONY: eb-create
 eb-create: CATALYST_APP ?= production
+eb-create: CNAME ?= wormbase-website-preproduction
 eb-create:
-	@eb create wormbase-website-${LOWER_WS_VERSION} --cfg v1 --cname wormbase-website-${LOWER_WS_VERSION} --envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+	@eb create wormbase-website-${LOWER_WS_VERSION} --cfg v1 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
 
 .PHONY: dockerrun-latest
 dockerrun-latest:
@@ -163,7 +165,7 @@ release:
 
 .PHONY: production-deploy
 production-deploy:
-	eb use wormbase-website-production  # assuming rolling update
+	eb use wormbase-website-${LOWER_WS_VERSION}  # assuming rolling update
 	CATALYST_APP=production $(MAKE) eb-setenv
 	eb deploy --region us-east-1
 	eb tags --update Purpose=production
