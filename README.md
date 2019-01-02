@@ -153,6 +153,57 @@ Creating a reference image set that is used for the comparative tests:
 
 A summary log and a full disclosure of broken URLs is written to the logfile `logs/gbrowse_test.log`.
 
+Staging Deployment on AWS ElasticBeanstalk
+---------------------------------------------
+
+Continuous deploying of the staging site to AWS EB is handled by Jenkins. It's triggered by commits to the staging branch on Github.
+
+Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script to deploy changes.
+
+For detailed setup, please visit the Jenkins web console.
+
+Production Deployment on AWS ElasticBeanstalk
+---------------------------------------------
+
+Deploying to production involves the following steps:
+
+- Make a release
+  ```
+  # at the appropriate git branch for production
+  make release
+  ```
+
+- Deploy to the pre-production environment
+
+  ```console
+  # at the appropriate git branch for production
+  make eb-create
+
+  # If ACeDB TreeView isn't working, which seems to be caused by a race condition
+  # between setting up the file system and starting ACeDB container,
+  # can generally be fixed by re-do the deployment step
+  make production-deploy
+  ```
+
+- Swap the URL between the pre-production environment and the exiting production environment
+	- This can be done through the web console of AWS ElasticBeanstalk.
+
+- After making sure the new production environment is working, shut down the previous production environment
+	- This can be done through the web console of AWS ElasticBeanstalk.
+
+
+Applying Hotfix on AWS ElasticBeanstalk
+-----------------------------------------
+
+- Prior to applying the hotfix, ensure you are at the appropriate git branch for production.
+
+- Then run the following commands,
+
+	```
+	make release
+	make production-deploy
+	```
+
 Contributing
 ------------
 
