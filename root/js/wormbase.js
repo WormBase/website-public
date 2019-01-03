@@ -678,7 +678,7 @@ var name2widget = {
 
       WB.getPlugin("qtip", function(){
         if (!$jq('[title]').qtip) return; // for compatibility with jbrowse
-        $jq('[title]').qtip({ // Grab some elements to apply the tooltip to
+        $jq('[title]').not('.wb-qtip-ignore').qtip({ // Grab some elements to apply the tooltip to
           content: {
             attr: 'title'
           },
