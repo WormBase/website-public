@@ -46,9 +46,19 @@ class StrandSelect extends React.Component {
             indicatorColor={strand === '+' ? "secondary" : "primary"}
             textColor={strand === '+' ? "secondary" : "primary"}
             onChange={this.handleChange}
-          >
-            <Tab label="(+) strand" />
-            <Tab label="(-) strand" />
+            >
+	    <Tab
+	      classes={{
+                label: classes.positiveStrandLabel,
+	      }}
+	      label="(+) strand"
+	      />
+	    <Tab
+	      classes={{
+                label: classes.negativeStrandLabel,
+	      }}
+	      label="(-) strand"
+	      />
           </Tabs>
         </MuiThemeProvider>
         <div className={classes[strand === '+' ? 'positiveStrand' : 'negativeStrand']}>
@@ -79,6 +89,12 @@ const styles = (theme) => ({
   },
   'negativeStrand': {
     borderLeft: `solid ${strandTheme.palette.primary.light} ${1}px`,
+  },
+  positiveStrandLabel: {
+    color: strandTheme.palette.secondary.light,
+  },
+  negativeStrandLabel: {
+    color: strandTheme.palette.primary.light,
   },
 });
 
