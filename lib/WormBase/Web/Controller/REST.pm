@@ -459,6 +459,7 @@ sub send_email :Private {
 
     # fix single quote causing problem in cli
     $subject =~ s/'//g;
+    $subject =~ s/\n+/ /g;
     $email_html =~ s/'/&apos;/g;
 
     my $json         = new JSON;
@@ -486,7 +487,7 @@ sub send_email :Private {
 
     $c->log->debug(" AWS SES input $send_email_cli_input_json");
 
-    my $out = `aws --region us-east-1 ses send-email --from $from_address --cli-input-json '$send_email_cli_input_json'`;
+    my $out = `aws --region us-east-1 ses send-email --from $from_address --cli-input-json '$send_email_cli_input_json' 2>&1`;
 
     $c->log->debug(" AWS SES response $out");
 
