@@ -459,6 +459,7 @@ sub send_email :Private {
 
     # fix single quote causing problem in cli
     $subject =~ s/'//g;
+    $subject =~ s/\n+/ /g;
     $email_html =~ s/'/&apos;/g;
 
     my $json         = new JSON;
