@@ -45,15 +45,13 @@ use Data::Dumper;
 
 sub get_user {
     my ($self, %args) = @_;
-    my $resp = $self->call_api("/plus/v1/people/me", undef, %args);
+    my $resp = $self->call_api("/oauth2/v3/userinfo", undef, %args);
 
-    my $name = $resp->{name};
-    my $email = $resp->{emails}->[0];
     my $profile = {
-        first_name  => $name && $name->{givenName},
-        last_name   => $name && $name->{familyName},
-        email => $email && $email->{value},
-        id => $resp->{id}   # google's People id
+        first_name  => $resp->{given_name},
+        last_name   => $resp->{family_name},
+        email => $resp->{email},
+        id => $resp->{sub}   # google's People id
     };
 
     return $profile;

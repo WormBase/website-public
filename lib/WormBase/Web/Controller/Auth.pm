@@ -291,7 +291,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
         my $url = WormBase::Web::ThirdParty::Google->new()->get_authorization_url(
             redirect_uri => $callback_url->as_string,
             state => $c->sessionid,
-            scope => 'email'
+            scope => 'email profile'
         );
         $c->response->redirect($url);
     } else {
