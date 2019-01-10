@@ -76,9 +76,12 @@ END;
 '<div class="description">';
     evidence(fields.concise_description.data.evidence, 'Provisional_description', fields.concise_description.data.text);
 
-    expand_legacy_description = fields.legacy_manual_description.data && !fields.concise_description.data.text;
-    WRAPPER toggle title="Legacy manual gene description" open=expand_legacy_description;
-        evidence(fields.legacy_manual_description.data.evidence, 'Legacy_manual_description', fields.legacy_manual_description.data.text);
+    IF fields.legacy_manual_description.data.text;
+        expand_legacy_description = !fields.concise_description.data.text;
+
+        WRAPPER toggle title="Legacy manual gene description" open=expand_legacy_description;
+            evidence(fields.legacy_manual_description.data.evidence, 'Legacy_manual_description', fields.legacy_manual_description.data.text);
+        END;
     END;
 
 '</div>';
