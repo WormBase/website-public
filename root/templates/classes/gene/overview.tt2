@@ -115,20 +115,20 @@ IF (fields.human_disease_relevance.data.defined);
 END;
 
 # Structured descriptions
-IF (fields.structured_description.data.defined);
-   WRAPPER toggle title="Details";
-    FOREACH sd IN fields.structured_description.data.keys;
-      USE String(sd.replace('_', ' '));
-      WRAPPER $field_block title=String.capital;
-          FOREACH obj IN fields.structured_description.data.$sd;
-              '<div class="text-width">';
-                  evidence(obj.evidence,sd, obj.text);
-              '</div>';
-          END;
-      END;
-    END;
-   END;
-END;
+# IF (fields.structured_description.data.defined);
+#    WRAPPER toggle title="Details";
+#     FOREACH sd IN fields.structured_description.data.keys;
+#       USE String(sd.replace('_', ' '));
+#       WRAPPER $field_block title=String.capital;
+#           FOREACH obj IN fields.structured_description.data.$sd;
+#               '<div class="text-width">';
+#                   evidence(obj.evidence,sd, obj.text);
+#               '</div>';
+#           END;
+#       END;
+#     END;
+#    END;
+# END;
 
 
 # Legacy Information
