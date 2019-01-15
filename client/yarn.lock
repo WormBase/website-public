@@ -110,10 +110,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@wormbase/react-scripts-for-catalyst@1.0.9-9":
-  version "1.0.9-9"
-  resolved "https://registry.yarnpkg.com/@wormbase/react-scripts-for-catalyst/-/react-scripts-for-catalyst-1.0.9-9.tgz#c3b74747366d8c0e83d0e59950abe9ef00872845"
-  integrity sha1-w7dHRzZtjA6D0OWZUKvp7wCHKEU=
+"@wormbase/react-scripts-for-catalyst@1.0.9-12":
+  version "1.0.9-12"
+  resolved "https://registry.yarnpkg.com/@wormbase/react-scripts-for-catalyst/-/react-scripts-for-catalyst-1.0.9-12.tgz#e96c0a3f2ba24b025915baf0a75f1d9dc1186518"
+  integrity sha512-8Qn3q/gx9MhpDcCiUP4a20H9uMekdxR8PnH+nnlYwTWzDqCssPZfvHJGdVfnEvHCDkrjuI7cVGZjPyZxSA1TAw==
   dependencies:
     autoprefixer "7.1.1"
     babel-core "6.25.0"
