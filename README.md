@@ -200,7 +200,7 @@ Applying Hotfix on AWS ElasticBeanstalk
 - Then run the following commands,
 
 	```
-	make release
+	VERSION=[GIT_TAG_TO_BE_CREATED] make release
 	make production-deploy
 	```
 
