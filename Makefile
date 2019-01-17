@@ -155,7 +155,7 @@ dockerrun-latest:
 staging-deploy:
 	eb use wormbase-website-staging
 	CATALYST_APP=staging $(MAKE) eb-setenv
-	eb deploy --region us-east-1
+	eb deploy --region us-east-1 --timeout 10
 	eb tags --delete Purpose
 	eb tags --add Purpose=staging
 
@@ -168,6 +168,6 @@ release:
 production-deploy:
 	eb use wormbase-website-${LOWER_WS_VERSION}  # assuming rolling update
 	CATALYST_APP=production $(MAKE) eb-setenv
-	eb deploy --region us-east-1
+	eb deploy --region us-east-1 --timeout 10
 	eb tags --delete Purpose
 	eb tags --add Purpose=production
