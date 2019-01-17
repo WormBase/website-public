@@ -39,5 +39,6 @@ docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:latest
 # deploy container
 make dockerrun-latest
 cat Dockerrun.aws.json
+git add Dockerrun.aws.json
+git commit -m "use latest wormbase/website container"  # only needed locally and subsequent build will discard this commit
 make staging-deploy
-git checkout Dockerrun.aws.json  # HACK to undo changes make in `make dockerrun-latest`
