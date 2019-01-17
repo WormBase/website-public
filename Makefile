@@ -144,7 +144,7 @@ eb-setenv:
 eb-create: CATALYST_APP ?= production
 eb-create: CNAME ?= wormbase-website-preproduction
 eb-create:
-	@eb create wormbase-website-${LOWER_WS_VERSION} --cfg v1.2 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+	@eb create wormbase-website-${LOWER_WS_VERSION} --cfg v1.3 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
 
 .PHONY: dockerrun-latest
 dockerrun-latest:
