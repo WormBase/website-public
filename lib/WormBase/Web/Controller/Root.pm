@@ -149,6 +149,21 @@ sub me :Path("/me") Args(0) {
     $c->response->headers->expires(time);
 }
 
+sub health :Path("/health")  Args(0) {
+    my ( $self, $c ) = @_;
+    my $api = $c->model('WormBaseAPI');
+    my $object = $api->fetch({ class => 'Gene', name  => 'WBGene00015146', nowrap => 1 });
+
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = 'health/index.tt2';
+
+    $c->response->header('Cache-Control' => 'no-cache');
+
+    unless ($object) {
+        die "Cannot fetch gene from ACeDB";
+    }
+}
+
 # Action added for Elsevier linking - issue #2086
 # Returns WormBase logo if paper with corresponding doi is located
 # Otherwise returns transparent png
