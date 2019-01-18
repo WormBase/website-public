@@ -29,15 +29,6 @@
 	   [% END %]
 	[% END %]
 
-	[% WRAPPER $field_block title="CiteULike"-%]
-	   [% external_link('http://www.citeulike.org/posturl?url=' _ url,
-	   	  				'<img src="/img/buttons/cul.gif" alt="CiteULike"> Bookmark') %]
-
-	[% END %]
-	[% WRAPPER $field_block title="De.licio.us"-%]
-	   [% external_link('http://www.delicious.com/save?v=5&url=' _ url _ '&title=' _ title,
-	   	  				'<img src="/img/buttons/delicious.gif" alt="De.licio.us"> Bookmark') %]
-	[% END %]
     [% WRAPPER $field_block title="Status" key="status" -%]
       [% fields.status.data %]
     [% END %]
