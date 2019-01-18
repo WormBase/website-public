@@ -3285,9 +3285,9 @@ var Scrolling = (function(){
                   const features = Object.keys(data['protein_effects'] || {}).map(
                     (k) => data['protein_effects'][k]
                   ).map(
-                    ({position, description}) => ({
-                      start: parseInt(position),
-                      stop: parseInt(position),
+                    ({position, description, ...proteinEffect}) => ({
+                      start: parseInt(proteinEffect[`${type}_start`]) || parseInt(position),
+                      stop: parseInt(proteinEffect[`${type}_stop`]) || parseInt(position),
                       type: 'variation',
                       effect: description,
                     })
