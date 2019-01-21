@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
 
 function buildUrl(tag, fuzzy) {
   const {id, label} = tag;
@@ -20,7 +21,7 @@ class Link extends Component {
   render() {
     return (
       <a href={buildUrl(this.props)}>
-        <span className={this.props.classes.linkLabel}>{this.props.label}</span>
+        <span className={classNames(this.props.classes.linkLabel, `${this.props.class}-link`)}>{this.props.label}</span>
       </a>
     );
   }
