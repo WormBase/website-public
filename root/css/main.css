@@ -2938,6 +2938,13 @@ div#google-map {
   margin-top: 5px;
 }
 
+/* author link */
+.author-link::after {
+  content: '?';
+  vertical-align: super;
+  font-size: smaller;
+}
+
 /* cytoscape legend */
 #cyto-wrapper {
   display: flex;

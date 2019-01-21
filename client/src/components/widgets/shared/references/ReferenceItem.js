@@ -45,7 +45,7 @@ class ReferenceItem extends Component {
             (data.author || []).map((tag, index) => (
               <span key={tag.id}>
                 {index !== 0 ? <span>, </span> : null}
-                <Link {...tag} class="person" key={tag.id} />
+                <Link {...tag} key={tag.id} />
               </span>
             ))
           }
