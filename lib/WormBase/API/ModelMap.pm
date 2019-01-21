@@ -35,7 +35,7 @@ BEGIN {
     my %WB2ACE_MAP = ( # WB models -> Ace models (values are Ace tags/values)
         class => {     # HAS DEFAULT
             Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
-            Person    => [qw(Person Author)],
+            Person    => [qw(Person)],
             Cds       => 'CDS',
             Rnai      => 'RNAi',
             Disease   => 'DO_term',
