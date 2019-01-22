@@ -167,6 +167,7 @@ Production Deployment on AWS ElasticBeanstalk
 
 Deploying to production involves the following steps:
 
+- change the release number in wormbase.conf
 - Make a release
   ```
   # at the appropriate git branch for production
@@ -199,8 +200,9 @@ Applying Hotfix on AWS ElasticBeanstalk
 
 - Then run the following commands,
 
+
 	```
-	VERSION=[GIT_TAG_TO_BE_CREATED] make release
+	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS268.12
 	make production-deploy
 	```
 
