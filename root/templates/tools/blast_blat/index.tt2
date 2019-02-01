@@ -161,6 +161,10 @@
 	specieskeys = c.stash.blast_databases.$version.$database_type.keys.sort;
 	FOREACH specieskey IN specieskeys;
           bioprojectkeys = c.stash.blast_databases.$version.$database_type.$specieskey.keys.sort;
+          IF c.stash.blast_databases.$version.$database_type.$specieskey.PRJNA13758.defined;
+              bioprojectkeys.unshift('PRJNA13758');
+              bioprojectkeys = bioprojectkeys.unique;
+          END;
           FOREACH bioprojectkey IN bioprojectkeys;
             IF bioprojectkey == "name" || bioprojectkey == "symbolic";
             ELSE;
@@ -212,6 +216,3 @@ Documentation
 
 
 <script src="/js/blast_blat/search_form.js"></script>
-
-
-
