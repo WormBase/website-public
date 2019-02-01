@@ -37,14 +37,14 @@ END;
 
 
 [%
-
-WRAPPER $field_block title="Curated disease description" key="human_disease_relevance";
-    FOREACH obj IN fields.human_disease_relevance.data;
-        '<div class="description">';
-            evidence(obj.evidence,sd, obj.text);
-        '</div>';
-    END;
-END;
+# Ranjana will clean up at data level before we want to show this again.
+# WRAPPER $field_block title="Curated disease description" key="human_disease_relevance";
+#     FOREACH obj IN fields.human_disease_relevance.data;
+#         '<div class="description">';
+#             evidence(obj.evidence,sd, obj.text);
+#         '</div>';
+#     END;
+# END;
 %]
 
 [% IF fields.human_diseases.data.defined || fields.human_diseases.data.gene || fields.human_diseases.data.disease; %]
