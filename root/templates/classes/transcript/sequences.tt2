@@ -31,8 +31,8 @@
                           key = 'predicted_units');
   END;
 
-  WRAPPER $field_block title="Transcripts in this region" key="transcripts";
-	tags2link(c.stash.fields.transcripts.data, '<br />', 'Results');
-  END;
+  # WRAPPER $field_block title="Transcripts in this region" key="transcripts";
+  #       tags2link(c.stash.fields.transcripts.data, '<br />', 'Results');
+  # END;
 
 %]
