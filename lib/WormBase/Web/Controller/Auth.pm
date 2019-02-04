@@ -286,6 +286,8 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      # OpenID
     } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i && $param->{oauth2} eq '1') {
 
+        $c->log->debug("Referer: " . $c->request->headers->header('Referer'));
+        $c->log->debug("X-Forwarded-Port: " . $c->request->headers->header('X-Forwarded-Port'));
         my $callback_url = $c->uri_for('auth/code/google');
 #        $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
         my $url = WormBase::Web::ThirdParty::Google->new()->get_authorization_url(
