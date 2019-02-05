@@ -122,7 +122,7 @@ build-run-test:
 		/bin/bash -c "API_TESTS=1 perl t/api.t; perl t/rest.t"
 
 .PHONY: eb-local-run
-eb-local-run: CATALYST_APP ?= staging # target-specific variable
+eb-local-run: CATALYST_APP ?= staging
 
 eb-local-run:
 	 @eb local run \
@@ -143,8 +143,13 @@ eb-setenv:
 .PHONY: eb-create
 eb-create: CATALYST_APP ?= production
 eb-create: CNAME ?= wormbase-website-preproduction
+eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
 eb-create:
-	@eb create wormbase-website-${LOWER_WS_VERSION} --cfg v1.3 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+	@eb create ${EB_ENV_NAME} --cfg v1.3 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID},AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+
+.PHONY: eb-create-staging
+eb-create-staging:
+	CATALYST_APP=staging EB_ENV_NAME=wormbase-website-staging CNAME=wormbase-website-staging $(MAKE) eb-create
 
 .PHONY: dockerrun-latest
 dockerrun-latest:
