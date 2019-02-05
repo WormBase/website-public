@@ -13,9 +13,10 @@
 
 WRAPPER toggle open=1 title=pluralize("Annotation detail", fields.detailed_disease_model.data) id="detailed_disease_model";
 #WRAPPER $field_block title="Annotation details" key="detailed_disease_model";
-    build_data_table(order=['disease_term','genetic_entity','evidence_code','experimental_condition','modifier','modifier_association_type','reference'],
+    build_data_table(order=['disease_term','genotype','genetic_entity','evidence_code','experimental_condition','modifier','modifier_association_type','reference'],
                      columns={disease_term => 'Disease',
 		              genetic_entity  => 'Genetic entity',
+		              genotype  => 'Genotype',
 		              association_type  => 'Association type',
                               evidence_code => 'Evidence code',
                               experimental_condition => 'Experimental condition',
@@ -37,14 +38,14 @@ END;
 
 
 [%
-
-WRAPPER $field_block title="Curated disease description" key="human_disease_relevance";
-    FOREACH obj IN fields.human_disease_relevance.data;
-        '<div class="description">';
-            evidence(obj.evidence,sd, obj.text);
-        '</div>';
-    END;
-END;
+# Ranjana will clean up at data level before we want to show this again.
+# WRAPPER $field_block title="Curated disease description" key="human_disease_relevance";
+#     FOREACH obj IN fields.human_disease_relevance.data;
+#         '<div class="description">';
+#             evidence(obj.evidence,sd, obj.text);
+#         '</div>';
+#     END;
+# END;
 %]
 
 [% IF fields.human_diseases.data.defined || fields.human_diseases.data.gene || fields.human_diseases.data.disease; %]
