@@ -701,9 +701,10 @@ sub secure_uri_for {
     my ($self, @args) = @_;
 
     my $u = $self->uri_for(@args);
-    if($self->config->{enable_ssl}){
-      $u->scheme('https');
-    }
+    # determine whether to treat a url as secure base on upstream server
+    # if($self->config->{enable_ssl}){
+    #   $u->scheme('https');
+    # }
     return $u;
 }
 
