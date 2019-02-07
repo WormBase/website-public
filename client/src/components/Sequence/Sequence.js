@@ -26,7 +26,7 @@ class Sequence extends React.Component {
       classes,
       title,
       sequence,
-      features,
+      features = [],
       featureLabelMap = {},
       showLegend = true,
     } = this.props;
@@ -127,6 +127,9 @@ const styles = (theme) => ({
     },
   },
   flankFeature: {
+    backgroundColor: 'yellow',
+  },
+  featureFeature: {
     backgroundColor: 'yellow',
   },
   variationFeature: {

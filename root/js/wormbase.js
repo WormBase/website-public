@@ -3314,6 +3314,37 @@ var Scrolling = (function(){
       );
     }
 
+    function renderFeatureSequences(data = {}, elementId, wbId) {
+      import('../../client/src/components/Sequence').then(
+        (module) => {
+          const {positive_strand, negative_strand} = data.sequences || {};
+
+          const SequenceCard = module.SequenceCard;
+          const StrandSelect = module.StrandSelect;
+
+          console.log(data);
+          ReactDOM.render(
+            <StrandSelect initialStrand={data.reported_on_strand}>
+              {
+                ({strand}) => {
+                  const {sequence, features} = (strand === '-' ? negative_strand : positive_strand);
+                  return (
+                    <SequenceCard key={sequence}
+                      title={`Sequence feature ${wbId} with flanking regions on (${strand}) strand`}
+                      downloadFileName={`${wbId}__${comment}.fasta`}
+                      sequence={sequence}
+                      features={features}
+                    />
+                  )
+                }
+              }
+            </StrandSelect>,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3575,6 +3606,7 @@ var Scrolling = (function(){
       renderGORibbon: renderGORibbon,             // render GO ribbon
       renderVariationSequence: renderVariationSequence, // render the sequence (context) in molecular details widget on a variation page
       renderVariationConceptualTranslation: renderVariationConceptualTranslation, // render conceptual translation on variation page
+      renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
     };
   })();
 
