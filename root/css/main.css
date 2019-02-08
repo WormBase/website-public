@@ -2798,6 +2798,10 @@ div.field-content {
   /* display:inline-table; */
 }
 
+.description .field {
+  clear: left;
+}
+
 .one-column div.field-title {
   float:none;
   position:static;

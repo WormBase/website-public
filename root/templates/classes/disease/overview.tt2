@@ -25,15 +25,6 @@
         END;
       END;
 
-      WRAPPER $field_block title="Parent" key="parent";
-        tags2link(fields.parent.data);
-      END;
-
-      WRAPPER $field_block title="Child" key="child";
-        tags2link(fields.child.data);
-      END;
-
-
       WRAPPER $field_block title="Comparative Info";
         'Learn more about this disease from studies in other model systems at the ';
         agr_logo_link(object.name.data.id, 'disease');
@@ -45,9 +36,18 @@ fields.omim_external;
 
   '<div class="description">';
     markup(fields.definition.data);
+
+    WRAPPER $field_block title="Parent" key="parent";
+      tags2link(fields.parent.data);
+    END;
+
+    WRAPPER $field_block title="Child" key="child";
+      tags2link(fields.child.data, '<br />', 'child terms', 5);
+    END;
+
   '</div>';
 
-  WRAPPER $field_block title="Genes used as experimental models" key="genes_biology";
+  WRAPPER $field_block title="Associated genes based on experimental data" key="genes_biology";
 
     genes_biology_data = fields.genes_biology.data;
 
@@ -70,7 +70,7 @@ fields.omim_external;
         passed_data=genes_biology_data);
   END;
 
-  WRAPPER $field_block title="Genes identified as potential models<sup>1</sup>" key="genes_orthology";
+  WRAPPER $field_block title="Associated genes based on orthology" key="genes_orthology";
     genes_orthology_data = fields.genes_orthology.data;
 
     FOREACH gene_obj IN genes_orthology_data;
