@@ -13,22 +13,7 @@
 
 WRAPPER toggle open=1 title=pluralize("Annotation detail", fields.detailed_disease_model.data) id="detailed_disease_model";
 #WRAPPER $field_block title="Annotation details" key="detailed_disease_model";
-    build_data_table(order=['disease_term','genotype','genetic_entity','evidence_code','experimental_condition','modifier','modifier_association_type','reference'],
-                     columns={disease_term => 'Disease',
-		              genetic_entity  => 'Genetic entity',
-		              genotype  => 'Genotype',
-		              association_type  => 'Association type',
-                              evidence_code => 'Evidence code',
-                              experimental_condition => 'Experimental condition',
-                              modifier => 'Modifier',
-                              modifier_association_type => 'Modifier association type',
-                              reference => 'Reference',
-                             },
-                     style='
-"columnDefs": [{"targets": 0, "orderData": [0, 1, 4] },
-               {"targets": 1, "orderData": [1, 0, 4] }]
-'
-	             key='detailed_disease_model');
+    build_human_diseases_table();
 END;
 
 %]

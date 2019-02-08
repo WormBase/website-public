@@ -100,20 +100,14 @@ fields.omim_external;
   END;
 
   WRAPPER $field_block title=pluralize("Disease model annotations", fields.detailed_disease_model.data) key="detailed_disease_model";
-    build_data_table(order=['genotype','genetic_entity','evidence_code','experimental_condition','modifier','modifier_association_type','reference'],
-                     columns={disease_term => 'Disease',
-		              genetic_entity  => 'Genetic entity',
-		              genotype  => 'Genotype',
-		              association_type  => 'Association type',
-                              evidence_code => 'Evidence code',
-                              experimental_condition => 'Experimental condition',
-                              modifier => 'Modifier',
-                              modifier_association_type => 'Modifier association type',
-                              reference => 'Reference',
-                             },
-                     style='
+    build_human_diseases_table(style='
+"columnDefs": [{"targets": 0, "orderData": [0, 1, 2, 5], "visible": false, "searchable": false },
+               {"targets": 1, "orderData": [1, 0, 2, 5] },
+               {"targets": 2, "orderData": [2, 1, 0, 5] },
+],
+"order": [[ 1, "asc" ]]
 '
-	             key='detailed_disease_model');
+         );
   END;
 
 %]
