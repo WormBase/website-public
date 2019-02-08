@@ -1,0 +1,18 @@
+[%
+  WRAPPER $field_block title=pluralize("Associated disease", fields.detailed_disease_model.data) key="detailed_disease_model";
+    build_data_table(order=['disease_term','genotype','genetic_entity','evidence_code','experimental_condition','modifier','modifier_association_type','reference'],
+                     columns={disease_term => 'Disease',
+		              genetic_entity  => 'Genetic entity',
+		              genotype  => 'Genotype',
+		              association_type  => 'Association type',
+                              evidence_code => 'Evidence code',
+                              experimental_condition => 'Experimental condition',
+                              modifier => 'Modifier',
+                              modifier_association_type => 'Modifier association type',
+                              reference => 'Reference',
+                             },
+                     style='
+'
+	             key='detailed_disease_model');
+  END;
+%]
