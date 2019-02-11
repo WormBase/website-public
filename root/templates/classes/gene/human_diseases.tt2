@@ -1,7 +1,7 @@
 
 
 [% IF fields.human_diseases.data.experimental_model || fields.detailed_disease_model.data %]
-  [% WRAPPER $field_block title=pluralize("Disease association", fields.human_diseases.data.experimental_model) tooltip="Curated disease associations" %]
+  [% WRAPPER $field_block title=pluralize("Disease association", fields.human_diseases.data.experimental_model) tooltip="Curated disease associations based on experimental data" %]
       [% FOREACH item IN fields.human_diseases.data.experimental_model;
           text = object.name.data.label _ ' is an experimental model for ' _ tag2link(item, item.label _ ' (' _ item.id _ ')');
           '<div class="description">';
@@ -11,7 +11,7 @@
 
 [%
 
-WRAPPER toggle open=1 title=pluralize("Annotation detail", fields.detailed_disease_model.data) id="detailed_disease_model";
+WRAPPER toggle open=1 title=pluralize("Details", fields.detailed_disease_model.data) id="detailed_disease_model";
 #WRAPPER $field_block title="Annotation details" key="detailed_disease_model";
     build_human_diseases_table();
 END;
@@ -34,7 +34,7 @@ END;
 %]
 
 [% IF fields.human_diseases.data.defined || fields.human_diseases.data.gene || fields.human_diseases.data.disease; %]
-[% WRAPPER $field_block title="Automatic disease associations" tooltip="Automatically inferred from human protein orthology" %]
+[% WRAPPER $field_block title="Automatic disease associations" tooltip="Automatically inferred disease associations from human protein orthology" %]
 [% IF fields.human_diseases.data.defined; %]
     [% IF fields.human_diseases.data.potential_model; %]
       [% FOREACH item IN fields.human_diseases.data.potential_model;

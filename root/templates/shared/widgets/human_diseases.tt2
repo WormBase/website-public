@@ -1,5 +1,5 @@
 [%
-  WRAPPER $field_block title=pluralize("Associated disease", fields.detailed_disease_model.data) key="detailed_disease_model";
+  WRAPPER $field_block title=pluralize("Disease associations", fields.detailed_disease_model.data) key="detailed_disease_model";
     build_human_diseases_table;
   END;
 %]
