@@ -1151,7 +1151,7 @@ END;
 %]
 
 [% MACRO build_human_diseases_table BLOCK;
-    order = order || ['disease_term','genetic_entity','genotype','evidence_code','experimental_condition','modifier','modifier_association_type','reference'];
+    order = order || ['disease_term','genetic_entity','genotype','evidence_code','experimental_condition','modifier','reference'];
     columns = columns || {disease_term => 'Disease',
 		              genetic_entity  => 'Genetic entity',
 		              genotype  => 'Genotype',
