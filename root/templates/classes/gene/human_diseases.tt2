@@ -9,11 +9,13 @@
           '</div>';
         END;%]
 
-[%
+[% IF fields.detailed_disease_model.data;
 
 WRAPPER toggle open=1 title=pluralize("Details", fields.detailed_disease_model.data) id="detailed_disease_model";
 #WRAPPER $field_block title="Annotation details" key="detailed_disease_model";
     build_human_diseases_table();
+END;
+
 END;
 
 %]
