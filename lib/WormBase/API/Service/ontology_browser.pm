@@ -625,7 +625,7 @@ Children terms are not included here.
       foreach my $line (@lines) {
         my ($wbbt, $anatname, $count, $genes, @junk) = split/\t/, $line;
         if ($wbbt eq $focusTermId) {
-          my $exclusively_message = "There are " . $count . " genes that may be specifically expressed. ";
+          my $exclusively_message = "There are " . $count . " genes predominantly expressed (includes gene expression pattern data and only the 'enriched' type of expression cluster data)";
 #           $exclusively_message .= qq(<span id="toShowEAGTable" style="color: blue; text-decoration: underline;" onclick="document.getElementById('divExclusivelyGenes').style.display = ''; document.getElementById('toHideEAGTable').style.display = ''; document.getElementById('toShowEAGTable').style.display = 'none';">show</span> );	# to have show/hide controls
 #           $exclusively_message .= qq(<span id="toHideEAGTable" style="color: blue; text-decoration: underline; display: none;" onclick="document.getElementById('divExclusivelyGenes').style.display = 'none'; document.getElementById('toHideEAGTable').style.display = 'none'; document.getElementById('toShowEAGTable').style.display = '';">hide</span>);	# to have show/hide controls
           $exclusively_message .= qq(<br/>\n);
