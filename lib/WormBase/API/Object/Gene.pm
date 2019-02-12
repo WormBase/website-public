@@ -359,7 +359,7 @@ sub clone {
 }
 
 
-# concise_desciption { }
+# concise_description { }
 # This method will return a data structure containing
 # the prose concise description of the gene, if one exists.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/concise_description
