@@ -31,16 +31,18 @@
         ok(@{$result->{tree}}, 'tree returned for Ace class object');
     }
 
-    # Testing tree display for Multiple ACe classes mapping to same WB class
-    sub test_tree_display_multiple_aceclass {
-        my $result = $api->_tools->{tree}->run({
-            'name' => 'Argon Y',
-            'class' => 'Person'
-        });
-        ok(@{$result->{tree}}, 'tree returned for Author object when requesting WB class Person');
-        is($result->{object}->{class}, 'Author', 'tree for an Author');
+    # No longer appliable: we consider Author and Person different now - SG, Feb 2019
+    #
+    # # Testing tree display for Multiple ACe classes mapping to same WB class
+    # sub test_tree_display_multiple_aceclass {
+    #     my $result = $api->_tools->{tree}->run({
+    #         'name' => 'Argon Y',
+    #         'class' => 'Person'
+    #     });
+    #     ok(@{$result->{tree}}, 'tree returned for Author object when requesting WB class Person');
+    #     is($result->{object}->{class}, 'Author', 'tree for an Author');
 
-    }
+    # }
 }
 
 1;
