@@ -924,7 +924,7 @@ sub widget_GET {
     my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
 
-    if (!@datomic_endpoints) {
+    if (!$c->config->{skip_datomic} && !@datomic_endpoints) {
         # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
         $c->log->error("Cannot retrieve available Datomic endpoints");
         if ($cached_data && !$c->config->{fatal_non_compliance}) {
@@ -933,7 +933,7 @@ sub widget_GET {
         } else {
             die "failed to retrieve available REST API endpoints from $rest_server/swagger.json";
         }
-    } elsif ($isDatomicEndpoint) {
+    } elsif (!$c->config->{skip_datomic} && $isDatomicEndpoint) {
         # Datomic workflow
 
         if ($c->config->{precache_mode} && !is_slow_endpoint($path_template)) {
@@ -1857,7 +1857,7 @@ sub field_GET {
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
 
 
-    if (!@datomic_endpoints) {
+    if (!$c->config->{skip_datomic} && !@datomic_endpoints) {
         # when Datomic-to-catalyst or swagger.json on datomic-to-catalyst server isn't available
         $c->log->error("Cannot retrieve available Datomic endpoints");
         if ($cached_data && !$c->config->{fatal_non_compliance}) {
@@ -1866,7 +1866,7 @@ sub field_GET {
         } else {
             die "failed to retrieve available REST API endpoints from $rest_server/swagger.json";
         }
-    } elsif ($isDatomicEndpoint) {
+    } elsif (!$c->config->{skip_datomic} && $isDatomicEndpoint) {
         # Datomic workflow
 
         if ($c->config->{precache_mode} && !is_slow_endpoint($path_template)) {
