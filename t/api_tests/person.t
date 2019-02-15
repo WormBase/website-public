@@ -61,12 +61,14 @@
         } @{$previous_addresses->{data}};
         ok($address1, 'correct previous address');
 
-        # test previous address for person with no previous address
-        $person = $api->fetch({ class => 'Person', name => 'Kim do H' });
-        $previous_addresses = $person->previous_addresses();
+        # No longer appliable: we consider Author and Person different now - SG, Feb 2019
+        #
+        # # test previous address for person with no previous address
+        # $person = $api->fetch({ class => 'Person', name => 'Kim do H' });
+        # $previous_addresses = $person->previous_addresses();
 
-        isnt($previous_addresses, undef, 'data structure returned');
-          is($previous_addresses->{'data'}, undef, 'does not break with no old_address');
+        # isnt($previous_addresses, undef, 'data structure returned');
+        #   is($previous_addresses->{'data'}, undef, 'does not break with no old_address');
 
 
     }
