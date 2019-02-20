@@ -234,7 +234,7 @@ sub dna_text {
 
     return {
         description => 'DNA text of the sequence feature',
-        data => "$dna"
+        data => $dna ? "$dna" : undef,
     };
 }
 
