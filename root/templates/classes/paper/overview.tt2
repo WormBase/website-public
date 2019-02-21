@@ -120,6 +120,8 @@
 	   <b>Keywords:</b> [% keywords.join(', ') %]
 	[% END %]
 
+<div><strong>Tip:</strong> Seeing a <span class="author-link" /> by your name? Please help us <a href="https://wormbase.org/submissions/person.cgi">identify you</a>.</div>
+
 
 [% IF fields.merged_into.data %]
    <p><b>Note:</b> This paper has been merged into [% tag2link(fields.merged_into.data) %]</p>

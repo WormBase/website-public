@@ -2943,10 +2943,24 @@ div#google-map {
 }
 
 /* author link */
+/* .author-link:link { */
+/*   color: black; */
+/* } */
+
 .author-link::after {
-  content: '?';
+  /* content: ' \1F50D'; */
+  /* /\* vertical-align: super; *\/ */
+  /* font-size: smaller; */
+}
+
+.person-link:after {
+  /* content: '\1F464\00a0'; */
+  content: '\00a0WB';
+  font-size: x-small;
   vertical-align: super;
-  font-size: smaller;
+  color: transparent;
+  /* text-shadow: 0 0 0 #d4dce2; */
+  text-shadow: 0 0 0 #a5b6c3;
 }
 
 /* cytoscape legend */
