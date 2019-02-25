@@ -236,8 +236,9 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                   FOREACH effect_type IN protein_effects.sort;
                     effect = protein_effects.$effect_type;
                     s = s _ 'Effect on protein: ' _ effect_type.replace('_', ' ') _ '<br />';
-                    s = s _ (effect.subtype || effect.position || '') _ '<br />';
-                    s = s _ effect.description _ '<br />';
+                    # s = s _ (effect.subtype || effect.position || '') _ '<br />';
+                    # s = s _ effect.description _ '<br />';
+                    s = s _ (effect_type == 'Missense' && effect.aa_change ? "${effect.aa_change} (${effect.position})" : effect.description) _ '<br />';
                   END;
                 END;
 
