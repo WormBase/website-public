@@ -1258,6 +1258,12 @@ p  {
     margin:1em 0;
 }
 
+.tip {
+  border-left: 5px solid #ccc;
+  padding-left: 0.5em;
+  line-height: 2em;
+}
+
 
 /*********************************
 
@@ -2943,10 +2949,24 @@ div#google-map {
 }
 
 /* author link */
+.author-link, .author-link:link {
+  color: #500000;
+}
+
 .author-link::after {
-  content: '?';
-  vertical-align: super;
-  font-size: smaller;
+  /* content: ' \1F50D'; */
+  /* /\* vertical-align: super; *\/ */
+  /* font-size: smaller; */
+}
+
+.person-link:after {
+  /* content: '\1F464\00a0'; */
+  /* content: '\00a0WB'; */
+  /* font-size: x-small; */
+  /* vertical-align: super; */
+  /* color: transparent; */
+  /* text-shadow: 0 0 0 #d4dce2; */
+  /* text-shadow: 0 0 0 #a5b6c3; */
 }
 
 /* cytoscape legend */
