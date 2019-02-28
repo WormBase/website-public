@@ -129,7 +129,7 @@
         </div>
         <div class="credit-text-container">
         <span>
-          WormBase is supported by grant #U41 HG002223 from the
+          WormBase is supported by grant #U24 HG002223 from the
           [% external_link("http://www.genome.gov/", "National Human Genome Research Institute") %]
         </span><br />
         <span>at the [% external_link("http://www.nih.gov/", "US National Institutes of Health") %],
