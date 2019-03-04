@@ -717,6 +717,14 @@ override 'uri_for' => sub {
     # } else {
     #     $u->scheme('http');
     # }
+
+    # Hack! AWS ELB removes certain header set at the wormbase proxy,
+    # that uri_for cannot identify request coming through HTTPS
+    if ($self->config->{installation_type} ne 'development'
+                && $u->host !~ /.*elasticbeanstalk.com/
+            ) {
+        $u->scheme('https');
+    }
     return $u;
 };
 
