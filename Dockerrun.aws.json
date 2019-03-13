@@ -57,7 +57,7 @@
       "essential": true,
       "portMappings": [
         {
-          "hostPort": 80,
+          "hostPort": 5001,
           "containerPort": 5000
         },
         {
@@ -102,7 +102,7 @@
       "essential": true,
       "portMappings": [
         {
-          "hostPort": 81,
+          "hostPort": 80,
           "containerPort": 80
         }
       ],
