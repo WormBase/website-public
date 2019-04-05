@@ -1,4 +1,4 @@
-FROM wormbase/website-env
+FROM 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website-env:1.0.0
 
 COPY . /usr/local/wormbase/website/
 
