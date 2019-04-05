@@ -58,8 +58,12 @@ env-bash:
 		-e JWT_SECRET=$(JWT_SECRET) \
 		wormbase/website-env
 
+.PHONY: aws-ecr-login
+aws-ecr-login:
+	aws ecr get-login --no-include-email --region us-east-1 | sh
+
 .PHONY: build
-build:
+build: aws-ecr-login
 	(cd client/ && yarn install --frozen-lockfile && yarn run build)  # build JS and CSS
 	docker build -t wormbase/website -f docker/Dockerfile .
 
@@ -166,7 +170,7 @@ staging-deploy:
 
 .PHONY: release
 release: VERSION ?= ${WS_VERSION}
-release:
+release: aws-ecr-login
 	VERSION=${VERSION} ./release.sh
 
 .PHONY: production-deploy
