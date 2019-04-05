@@ -4,7 +4,6 @@
 if [ -z "$VERSION" ] ; then
     echo "Error: environment variable VERSION must be set"
     exit 1
-
 fi
 
 # ensure no uncommited change
@@ -39,7 +38,6 @@ make build
 docker tag wormbase/website:latest 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:$VERSION
 
 # push containers to AWS ECR
-$(aws ecr get-login --no-include-email --region us-east-1)
 docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:$VERSION
 
 # # post-release clean up
