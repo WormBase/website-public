@@ -1,9 +1,22 @@
 [%
 
-sequence('flanking_sequences');
+IF fields.flanking_sequences.data.defined;
+   sequence('flanking_sequences');
+END;
+
+WRAPPER $field_block title="Sequence" key="sequence_context";
+  IF fields.sequence_context.data;
+    '<div id="feature-sequence-context"><div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div></div>';
+    '<script>WB.renderFeatureSequences(' _ json_encode(fields.sequence_context.data) _ ', "feature-sequence-context", "' _ fields.name.data.id _ '")</script>';
+  END;
+END;
 
 WRAPPER $field_block title='Flanking sequence' key='flanking_sequences';
 	'<div style="white-space:nowrap;">' _ tag2link(fields.flanking_sequences.data.seq) _ '</div>';
+END;
+
+WRAPPER $field_block title='Flanking sequence' key='sequence_context';
+	'<div style="white-space:nowrap;">' _ tag2link(fields.sequence_context.data.seq) _ '</div>';
 END;
 
 WRAPPER $field_block title='DNA text' key='dna_text';
