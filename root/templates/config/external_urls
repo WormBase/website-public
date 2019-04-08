@@ -115,6 +115,12 @@
 	search      = 'http://www.degruyter.com/view/j/%s'
 	}
 
+ BioGRID = {
+	description = 'BioGRID Is An Online Interaction Respository With Data Compiled Through Comprehensive Curation Efforts'
+	base        = 'https://thebiogrid.org/'
+	search      = 'https://thebiogrid.org/interaction/%s'
+	}
+
  BiologyoftheCell = {
 	description = 'Biology of the Cell'
 	base        = 'http://www.biolcell.org'
