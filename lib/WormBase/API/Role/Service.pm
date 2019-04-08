@@ -59,7 +59,7 @@ has 'hosts' => (
 
 sub _build_hosts {
     my $self = shift;
-    return [split /\s+/o , $self->conf->{host}];
+    return $ENV{'ACEDB_HOST'} ? [$ENV{'ACEDB_HOST'}] : [split /\s+/o , $self->conf->{host}];
 }
 
 has log => (
