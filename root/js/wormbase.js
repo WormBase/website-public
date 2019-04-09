@@ -3345,6 +3345,29 @@ var Scrolling = (function(){
       );
     }
 
+    function renderTranscriptSequences(sequenceWidgetData, elementId, wbId) {
+      import('../../client/src/components/Sequence').then(
+        (module) => {
+          const TranscriptSequencesCard = module.TranscriptSequencesCard;
+          const {
+            spliced_sequence_context = {data: null},
+            unspliced_sequence_context = {data: null},
+            protein_sequence = {data: null},
+          } = sequenceWidgetData;
+          ReactDOM.render(
+            <TranscriptSequencesCard
+              wbid={wbId}
+              splicedSequenceContext={spliced_sequence_context.data}
+              unsplicedSequenceContext={unspliced_sequence_context.data}
+              proteinSequence={protein_sequence.data}
+            />,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
+
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
           pluginsLoading = new Array(),
@@ -3607,6 +3630,7 @@ var Scrolling = (function(){
       renderVariationSequence: renderVariationSequence, // render the sequence (context) in molecular details widget on a variation page
       renderVariationConceptualTranslation: renderVariationConceptualTranslation, // render conceptual translation on variation page
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
+      renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
     };
   })();
 

@@ -1,5 +1,5 @@
 [%
-  sequence('print_sequence');
+  IF fields.print_sequence; sequence('print_sequence'); END;
 
   WRAPPER $field_block title="Strand" key='strand';
     '(' _ c.stash.fields.strand.data _ ')';
