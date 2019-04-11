@@ -3356,7 +3356,7 @@ var Scrolling = (function(){
           } = sequenceWidgetData;
           ReactDOM.render(
             <TranscriptSequencesCard
-              wbid={wbId}
+              wbId={wbId}
               splicedSequenceContext={spliced_sequence_context.data}
               unsplicedSequenceContext={unspliced_sequence_context.data}
               proteinSequence={protein_sequence.data}
