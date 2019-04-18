@@ -1,8 +1,8 @@
 [%
   IF fields.print_sequence; sequence('print_sequence'); END;
 
-  WRAPPER $field_block title="Sequence" key="spliced_sequence_context";
-    IF fields.spliced_sequence_context.data;
+  WRAPPER $field_block title="Sequence" key="cds_sequence";
+    IF fields.cds_sequence.data;
       '<div id="print-sequences"><div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div></div>';
       '<script>WB.renderTranscriptSequences(' _ json_encode(fields) _ ', "print-sequences", "' _ fields.name.data.id _ '")</script>';
     END;

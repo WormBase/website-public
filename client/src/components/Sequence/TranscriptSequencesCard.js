@@ -6,8 +6,12 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 function resolveStrand(sequenceContext = {}) {
+  const strandName = {
+    '-': 'negative',
+    '+': 'positive',
+  };
   if (sequenceContext.sequence_strand) {
-    return sequenceContext[`${sequenceContext.sequence_strand}-strand`];
+    return sequenceContext[`${strandName[sequenceContext.sequence_strand]}-strand`];
   }
   return null;
 }
@@ -35,19 +39,54 @@ function rewriteFeatures(features = []) {
   }, []);
 }
 
-function TranscriptSequenceCard(props) {
+const TranscriptSequenceCard = (props) => {
   const {
     wbId,
     proteinSequence,
+    cdsSequence: cdsSequenceRaw,
     splicedSequenceContext: splicedSequenceContextRaw,
     unsplicedSequenceContext: unsplicedSequenceContextRaw,
   } = props;
-  const sequenceOptions = {
-    spliced: resolveStrand(splicedSequenceContextRaw),
-    unspliced: resolveStrand(unsplicedSequenceContextRaw)
-  };
 
-  const [sequenceSelected, setSequenceSelected] = useState('hidden');
+  const [sequenceKeySelected, setSequenceKeySelected] = useState('hidden');
+
+  const sequenceOptions = [];
+
+  if (splicedSequenceContextRaw) {
+    const data = resolveStrand(splicedSequenceContextRaw);
+    sequenceOptions.push({
+      ...data,
+      key: 'spliced',
+      label: `Spliced (${data.sequence.length}bp)`,
+    });
+  }
+
+  if (unsplicedSequenceContextRaw) {
+    const data = resolveStrand(unsplicedSequenceContextRaw);
+    sequenceOptions.push({
+      ...data,
+      key: 'unspliced',
+      label: `Unspliced (${data.sequence.length}bp)`,
+    });
+  }
+
+  if (cdsSequenceRaw) {
+    const data = resolveStrand(cdsSequenceRaw);
+    sequenceOptions.push({
+      ...data,
+      key: 'cds',
+      label: `Coding sequence (${data.sequence.length}bp)`,
+    });
+  }
+
+  if (sequenceOptions.length > 0) {
+    sequenceOptions.unshift({
+      key: 'hidden',
+      label: 'Hide sequence',
+    });
+  }
+
+  const sequenceSelected = sequenceOptions.filter(({key}) => (key === sequenceKeySelected))[0];
 
   return (
     <div>
@@ -55,20 +94,22 @@ function TranscriptSequenceCard(props) {
         aria-label="select sequence"
         name="select-sequence"
         row
-        value={sequenceSelected}
-        onChange={(event) => setSequenceSelected(event.target.value)}
+        value={sequenceKeySelected}
+        onChange={(event) => setSequenceKeySelected(event.target.value)}
       >
-        <FormControlLabel value="hidden" control={<Radio />} label="Hide transcript sequence" />
-        <FormControlLabel value="spliced" control={<Radio />} label={`Spliced (${sequenceOptions.spliced.sequence.length}bp)`} />
-        <FormControlLabel value="unspliced" control={<Radio />} label={`Unspliced (${sequenceOptions.unspliced.sequence.length}bp)`} />
+        {
+          sequenceOptions.map(({key, label}) => (
+            <FormControlLabel value={key} control={<Radio />} label={label} />
+          ))
+        }
       </RadioGroup>
       {
-        sequenceSelected === 'hidden' ? null : (
+        sequenceKeySelected === 'hidden' ? null : (
           <SequenceCard
-            title={`Spliced ${sequenceOptions[sequenceSelected].sequence.length}aa`}
-            downloadFileName={`${sequenceSelected}TranscriptSequence_${wbId}.fasta`}
-            sequence={sequenceOptions[sequenceSelected].sequence}
-            features={rewriteFeatures(sequenceOptions[sequenceSelected].features)}
+            title={`Spliced ${sequenceSelected.sequence.length}aa`}
+            downloadFileName={`${sequenceKeySelected}TranscriptSequence_${wbId}.fasta`}
+            sequence={sequenceSelected.sequence}
+            features={rewriteFeatures(sequenceSelected.features)}
             featureLabelMap={{
               exon_0: 'Exon',
               exon_1: 'Exon',
