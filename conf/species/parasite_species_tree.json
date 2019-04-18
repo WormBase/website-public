@@ -111,7 +111,7 @@
                            }
                         ],
                         "label" : "Trichinella nativa",
-                        "url" : "/Trichinella_nativa_prjna257433/Info/SpeciesLanding/"
+                        "url" : "/Trichinella_nativa_prjna179527/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -187,7 +187,7 @@
                            }
                         ],
                         "label" : "Trichinella pseudospiralis",
-                        "url" : "/Trichinella_pseudospiralis_iss588prjna257433/Info/SpeciesLanding/"
+                        "url" : "/Trichinella_pseudospiralis_iss470prjna257433/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -302,7 +302,7 @@
                            }
                         ],
                         "label" : "Trichuris suis",
-                        "url" : "/Trichuris_suis_prjna179528/Info/SpeciesLanding/"
+                        "url" : "/Trichuris_suis_prjna208416/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -334,13 +334,13 @@
                         "children" : [
                            {
                               "children" : null,
-                              "label" : "PRJEB4306",
+                              "label" : "PRJEB1697",
                               "summary" : "University of Edinburgh genome project",
-                              "url" : "/Acanthocheilonema_viteae_prjeb4306/Info/Index"
+                              "url" : "/Acanthocheilonema_viteae_prjeb1697/Info/Index"
                            }
                         ],
                         "label" : "Acanthocheilonema viteae",
-                        "url" : "/Acanthocheilonema_viteae_prjeb4306/Info/Index/"
+                        "url" : "/Acanthocheilonema_viteae_prjeb1697/Info/Index/"
                      }
                   ],
                   "label" : "Acanthocheilonema",
@@ -397,7 +397,7 @@
                            }
                         ],
                         "label" : "Ascaris suum",
-                        "url" : "/Ascaris_suum_prjna62057/Info/SpeciesLanding/"
+                        "url" : "/Ascaris_suum_prjna80881/Info/SpeciesLanding/"
                      }
                   ],
                   "label" : "Ascaris",
@@ -575,13 +575,13 @@
                            },
                            {
                               "children" : null,
-                              "label" : "PRJNA60051",
+                              "label" : "PRJNA37757",
                               "summary" : "Broad Institute genome project",
-                              "url" : "/Loa_loa_prjna60051/Info/Index"
+                              "url" : "/Loa_loa_prjna37757/Info/Index"
                            }
                         ],
                         "label" : "Loa loa",
-                        "url" : "/Loa_loa_prjna246086/Info/SpeciesLanding/"
+                        "url" : "/Loa_loa_prjna37757/Info/SpeciesLanding/"
                      }
                   ],
                   "label" : "Loa",
@@ -606,7 +606,7 @@
                            }
                         ],
                         "label" : "Onchocerca flexuosa",
-                        "url" : "/Onchocerca_flexuosa_prjna230512/Info/SpeciesLanding/"
+                        "url" : "/Onchocerca_flexuosa_prjeb512/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -619,13 +619,13 @@
                            },
                            {
                               "children" : null,
-                              "label" : "PRJEB1809",
-                              "summary" : "University of Edinburgh genome project",
-                              "url" : "/Onchocerca_ochengi_prjeb1809/Info/Index"
+                              "label" : "PRJEB1465",
+                              "summary" : "ED genome project",
+                              "url" : "/Onchocerca_ochengi_prjeb1465/Info/Index"
                            }
                         ],
                         "label" : "Onchocerca ochengi",
-                        "url" : "/Onchocerca_ochengi_prjeb1809/Info/SpeciesLanding/"
+                        "url" : "/Onchocerca_ochengi_prjeb1465/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -866,9 +866,34 @@
                         "children" : [
                            {
                               "children" : null,
+                              "label" : "PRJNA381081",
+                              "summary" : "Iowa State University genome project",
+                              "url" : "/Heterodera_glycines_prjna381081/Info/Index"
+                           }
+                        ],
+                        "label" : "Heterodera glycines",
+                        "url" : "/Heterodera_glycines_prjna381081/Info/Index/"
+                     }
+                  ],
+                  "label" : "Heterodera",
+                  "url" : "/"
+               },
+               {
+                  "children" : [
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
                               "label" : "PRJEB8714",
                               "summary" : "INRA genome project",
                               "url" : "/Meloidogyne_arenaria_prjeb8714/Info/Index"
+                           },
+                           {
+                              "children" : null,
+                              "label" : "PRJNA340324",
+                              "summary" : "University of Hull genome project",
+                              "url" : "/Meloidogyne_arenaria_prjna340324/Info/Index"
                            },
                            {
                               "children" : null,
@@ -878,7 +903,20 @@
                            }
                         ],
                         "label" : "Meloidogyne arenaria",
-                        "url" : "/Meloidogyne_arenaria_prjeb8714/Info/SpeciesLanding/"
+                        "url" : "/Meloidogyne_arenaria_prjna438575/Info/SpeciesLanding/"
+                     },
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJNA340324",
+                              "summary" : "University of Hull genome project",
+                              "url" : "/Meloidogyne_enterolobii_prjna340324/Info/Index"
+                           }
+                        ],
+                        "label" : "Meloidogyne enterolobii",
+                        "url" : "/Meloidogyne_enterolobii_prjna340324/Info/Index/"
                      },
                      {
                         "aliases" : [],
@@ -888,10 +926,16 @@
                               "label" : "PRJEB6016",
                               "summary" : "University of Edinburgh genome project",
                               "url" : "/Meloidogyne_floridensis_prjeb6016/Info/Index"
+                           },
+                           {
+                              "children" : null,
+                              "label" : "PRJNA340324",
+                              "summary" : "University of Hull genome project",
+                              "url" : "/Meloidogyne_floridensis_prjna340324/Info/Index"
                            }
                         ],
                         "label" : "Meloidogyne floridensis",
-                        "url" : "/Meloidogyne_floridensis_prjeb6016/Info/Index/"
+                        "url" : "/Meloidogyne_floridensis_prjeb6016/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -927,10 +971,16 @@
                               "label" : "PRJEB8714",
                               "summary" : "INRA genome project",
                               "url" : "/Meloidogyne_incognita_prjeb8714/Info/Index"
+                           },
+                           {
+                              "children" : null,
+                              "label" : "PRJNA340324",
+                              "summary" : "University of Hull genome project",
+                              "url" : "/Meloidogyne_incognita_prjna340324/Info/Index"
                            }
                         ],
                         "label" : "Meloidogyne incognita",
-                        "url" : "/Meloidogyne_incognita_prjeb8714/Info/Index/"
+                        "url" : "/Meloidogyne_incognita_prjeb8714/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -940,10 +990,16 @@
                               "label" : "PRJEB8714",
                               "summary" : "INRA genome project",
                               "url" : "/Meloidogyne_javanica_prjeb8714/Info/Index"
+                           },
+                           {
+                              "children" : null,
+                              "label" : "PRJNA340324",
+                              "summary" : "University of Hull genome project",
+                              "url" : "/Meloidogyne_javanica_prjna340324/Info/Index"
                            }
                         ],
                         "label" : "Meloidogyne javanica",
-                        "url" : "/Meloidogyne_javanica_prjeb8714/Info/Index/"
+                        "url" : "/Meloidogyne_javanica_prjna340324/Info/SpeciesLanding/"
                      }
                   ],
                   "label" : "Meloidogyne",
@@ -1173,7 +1229,7 @@
                            }
                         ],
                         "label" : "Ancylostoma ceylanicum",
-                        "url" : "/Ancylostoma_ceylanicum_prjna72583/Info/SpeciesLanding/"
+                        "url" : "/Ancylostoma_ceylanicum_prjna231479/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -1340,7 +1396,7 @@
                            }
                         ],
                         "label" : "Caenorhabditis remanei",
-                        "url" : "/Caenorhabditis_remanei_prjna53967/Info/SpeciesLanding/"
+                        "url" : "/Caenorhabditis_remanei_prjna248911/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -1423,7 +1479,7 @@
                            }
                         ],
                         "label" : "Dictyocaulus viviparus",
-                        "url" : "/Dictyocaulus_viviparus_prjeb5116/Info/SpeciesLanding/"
+                        "url" : "/Dictyocaulus_viviparus_prjna72587/Info/SpeciesLanding/"
                      }
                   ],
                   "label" : "Dictyocaulus",
@@ -1480,7 +1536,7 @@
                            }
                         ],
                         "label" : "Haemonchus contortus",
-                        "url" : "/Haemonchus_contortus_prjna205202/Info/SpeciesLanding/"
+                        "url" : "/Haemonchus_contortus_prjeb506/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -1521,7 +1577,7 @@
                            }
                         ],
                         "label" : "Heligmosomoides polygyrus",
-                        "url" : "/Heligmosomoides_polygyrus_prjeb1203/Info/SpeciesLanding/"
+                        "url" : "/Heligmosomoides_polygyrus_prjeb15396/Info/SpeciesLanding/"
                      }
                   ],
                   "label" : "Heligmosomoides",
@@ -1544,6 +1600,25 @@
                      }
                   ],
                   "label" : "Heterorhabditis",
+                  "url" : "/"
+               },
+               {
+                  "children" : [
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Micoletzkya_japonica_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Micoletzkya japonica",
+                        "url" : "/Micoletzkya_japonica_prjeb27334/Info/Index/"
+                     }
+                  ],
+                  "label" : "Micoletzkya",
                   "url" : "/"
                },
                {
@@ -1629,13 +1704,110 @@
                         "children" : [
                            {
                               "children" : null,
-                              "label" : "PRJEB6009",
-                              "summary" : "Max-Planck Institute for Developmental Biology genome project",
-                              "url" : "/Pristionchus_exspectatus_prjeb6009/Info/Index"
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Parapristionchus_giblindavisi_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Parapristionchus giblindavisi",
+                        "url" : "/Parapristionchus_giblindavisi_prjeb27334/Info/Index/"
+                     }
+                  ],
+                  "label" : "Parapristionchus",
+                  "url" : "/"
+               },
+               {
+                  "children" : [
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_arcanus_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Pristionchus arcanus",
+                        "url" : "/Pristionchus_arcanus_prjeb27334/Info/Index/"
+                     },
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_entomophagus_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Pristionchus entomophagus",
+                        "url" : "/Pristionchus_entomophagus_prjeb27334/Info/Index/"
+                     },
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB24288",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_exspectatus_prjeb24288/Info/Index"
                            }
                         ],
                         "label" : "Pristionchus exspectatus",
-                        "url" : "/Pristionchus_exspectatus_prjeb6009/Info/Index/"
+                        "url" : "/Pristionchus_exspectatus_prjeb24288/Info/Index/"
+                     },
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_fissidentatus_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Pristionchus fissidentatus",
+                        "url" : "/Pristionchus_fissidentatus_prjeb27334/Info/Index/"
+                     },
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_japonicus_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Pristionchus japonicus",
+                        "url" : "/Pristionchus_japonicus_prjeb27334/Info/Index/"
+                     },
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_maxplancki_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Pristionchus maxplancki",
+                        "url" : "/Pristionchus_maxplancki_prjeb27334/Info/Index/"
+                     },
+                     {
+                        "aliases" : [],
+                        "children" : [
+                           {
+                              "children" : null,
+                              "label" : "PRJEB27334",
+                              "summary" : "Max Planck Institute for Developmental Biology genome project",
+                              "url" : "/Pristionchus_mayeri_prjeb27334/Info/Index"
+                           }
+                        ],
+                        "label" : "Pristionchus mayeri",
+                        "url" : "/Pristionchus_mayeri_prjeb27334/Info/Index/"
                      },
                      {
                         "aliases" : [],
@@ -1712,15 +1884,15 @@
                            {
                               "children" : null,
                               "label" : "PRJEB1206",
-                              "summary" : "Wellcome Sanger Institute genome project",
-                              "url" : "/Diphyllobothrium_latum_prjeb1206/Info/Index"
+                              "summary" : "WTSI genome project",
+                              "url" : "/Dibothriocephalus_latus_prjeb1206/Info/Index"
                            }
                         ],
-                        "label" : "Diphyllobothrium latum",
-                        "url" : "/Diphyllobothrium_latum_prjeb1206/Info/Index/"
+                        "label" : "Dibothriocephalus latus",
+                        "url" : "/Dibothriocephalus_latus_prjeb1206/Info/Index/"
                      }
                   ],
-                  "label" : "Diphyllobothrium",
+                  "label" : "Dibothriocephalus",
                   "url" : "/"
                },
                {
@@ -1916,7 +2088,7 @@
                            }
                         ],
                         "label" : "Taenia asiatica",
-                        "url" : "/Taenia_asiatica_prjna299871/Info/SpeciesLanding/"
+                        "url" : "/Taenia_asiatica_prjeb532/Info/SpeciesLanding/"
                      },
                      {
                         "aliases" : [],
@@ -1986,7 +2158,7 @@
                            }
                         ],
                         "label" : "Macrostomum lignano",
-                        "url" : "/Macrostomum_lignano_prjna284736/Info/SpeciesLanding/"
+                        "url" : "/Macrostomum_lignano_prjna371498/Info/SpeciesLanding/"
                      }
                   ],
                   "label" : "Macrostomum",
@@ -2071,10 +2243,16 @@
                               "label" : "PRJDA72781",
                               "summary" : "Sun Yat-sen University genome project",
                               "url" : "/Clonorchis_sinensis_prjda72781/Info/Index"
+                           },
+                           {
+                              "children" : null,
+                              "label" : "PRJNA386618",
+                              "summary" : "The University of Melbourne genome project",
+                              "url" : "/Clonorchis_sinensis_prjna386618/Info/Index"
                            }
                         ],
                         "label" : "Clonorchis sinensis",
-                        "url" : "/Clonorchis_sinensis_prjda72781/Info/Index/"
+                        "url" : "/Clonorchis_sinensis_prjda72781/Info/SpeciesLanding/"
                      }
                   ],
                   "label" : "Clonorchis",
