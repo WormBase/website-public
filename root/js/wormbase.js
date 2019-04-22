@@ -3352,6 +3352,7 @@ var Scrolling = (function(){
           const {
             spliced_sequence_context = {data: null},
             unspliced_sequence_context = {data: null},
+            unspliced_sequence_context_with_padding = {data: null},
             cds_sequence = {data: null},
             protein_sequence = {data: null},
           } = sequenceWidgetData;
@@ -3360,6 +3361,7 @@ var Scrolling = (function(){
               wbId={wbId}
               splicedSequenceContext={spliced_sequence_context.data}
               unsplicedSequenceContext={unspliced_sequence_context.data}
+              unsplicedSequenceContextWithPadding={unspliced_sequence_context_with_padding.data}
               cdsSequence={cds_sequence.data}
               proteinSequence={protein_sequence.data}
             />,

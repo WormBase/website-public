@@ -48,6 +48,7 @@ const TranscriptSequenceCard = (props) => {
     cdsSequence: cdsSequenceRaw,
     splicedSequenceContext: splicedSequenceContextRaw,
     unsplicedSequenceContext: unsplicedSequenceContextRaw,
+    unsplicedSequenceContextWithPadding: unsplicedSequenceContextWithPaddingRaw,
   } = props;
 
   const [sequenceKeySelected, setSequenceKeySelected] = useState('hidden');
@@ -58,8 +59,8 @@ const TranscriptSequenceCard = (props) => {
     const data = resolveStrand(splicedSequenceContextRaw);
     sequenceOptions.push({
       ...data,
-      key: 'spliced + UTR',
-      label: `Spliced (${data.sequence.length}bp)`,
+      key: 'spliced+UTR',
+      label: `Spliced + UTR (${data.sequence.length}bp)`,
     });
   }
 
@@ -67,8 +68,17 @@ const TranscriptSequenceCard = (props) => {
     const data = resolveStrand(unsplicedSequenceContextRaw);
     sequenceOptions.push({
       ...data,
-      key: 'unspliced + UTR',
-      label: `Unspliced (${data.sequence.length}bp)`,
+      key: 'unspliced+UTR',
+      label: `Unspliced + UTR (${data.sequence.length}bp)`,
+    });
+  }
+
+  if (unsplicedSequenceContextWithPaddingRaw) {
+    const data = resolveStrand(unsplicedSequenceContextWithPaddingRaw);
+    sequenceOptions.push({
+      ...data,
+      key: 'unspliced+UTR+upstream+downstream',
+      label: `Unspliced + UTR + upstream + downstream (${data.sequence.length}bp)`,
     });
   }
 
@@ -98,6 +108,8 @@ const TranscriptSequenceCard = (props) => {
             featureLabelMap={{
               exon_0: 'Exon',
               exon_1: 'Exon',
+              intron: 'Intron',
+              padding: 'Upstream/downstream'
             }}
           />
         ))
@@ -131,6 +143,7 @@ TranscriptSequenceCard.propTypes = {
   classes: PropTypes.object.isRequired,
   splicedSequenceContext: SequenceContextPropTypes,
   unsplicedSequenceContext: SequenceContextPropTypes,
+  unsplicedSequenceContextWithPadding: SequenceContextPropTypes,
   proteinSequence: SequencePropType,
   wbId: PropTypes.string.isRequired,
 };

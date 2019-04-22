@@ -140,7 +140,10 @@ const styles = (theme) => ({
   },
   UTRFeature: {
     textTransform: 'lowercase',
-    backgroundColor: '#eee',
+    backgroundColor: '#ccc',
+  },
+  paddingFeature: {
+    backgroundColor: 'beige',
   },
   flankFeature: {
     backgroundColor: 'yellow',
