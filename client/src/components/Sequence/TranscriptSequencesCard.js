@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import SequenceCard from './SequenceCard';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -41,6 +42,7 @@ function rewriteFeatures(features = []) {
 
 const TranscriptSequenceCard = (props) => {
   const {
+    classes,
     wbId,
     proteinSequence,
     cdsSequence: cdsSequenceRaw,
@@ -99,13 +101,14 @@ const TranscriptSequenceCard = (props) => {
       >
         {
           sequenceOptions.map(({key, label}) => (
-            <FormControlLabel value={key} control={<Radio />} label={label} />
+            <FormControlLabel key={key} value={key} control={<Radio />} label={label} />
           ))
         }
       </RadioGroup>
       {
         sequenceKeySelected === 'hidden' ? null : (
           <SequenceCard
+            className={classes.card}
             title={`Spliced ${sequenceSelected.sequence.length}aa`}
             downloadFileName={`${sequenceKeySelected}TranscriptSequence_${wbId}.fasta`}
             sequence={sequenceSelected.sequence}
@@ -120,6 +123,7 @@ const TranscriptSequenceCard = (props) => {
       {
         proteinSequence ?
           <SequenceCard
+            className={classes.card}
             title={`Conceptual translation ${proteinSequence.sequence.length}aa`}
             downloadFileName={`conceptual_translation_${wbId}.fasta`}
             sequence={proteinSequence.sequence}
@@ -142,10 +146,20 @@ const SequenceContextPropTypes = PropTypes.shape({
 });
 
 TranscriptSequenceCard.propTypes = {
+  classes: PropTypes.object.isRequired,
   splicedSequenceContext: SequenceContextPropTypes,
   unsplicedSequenceContext: SequenceContextPropTypes,
   proteinSequence: SequencePropType,
   wbId: PropTypes.string.isRequired,
 };
 
-export default TranscriptSequenceCard;
+const styles = (theme) => ({
+  card: {
+    borderLeft: `1px solid ${theme.palette.text.hint}`,
+    borderRadius: 0,
+    padding: 0,
+    margin: `${theme.spacing.unit * 2}px 0`,
+  }
+});
+
+export default withStyles(styles)(TranscriptSequenceCard);

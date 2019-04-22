@@ -9,7 +9,7 @@ import ExpandMoreIcon from '@material-ui/icons/ArrowRight';
 import ExpandLessIcon from '@material-ui/icons/ArrowDropDown';
 import Sequence from './Sequence';
 import DownloadButton from '../DownloadButton';
-import { IconButton } from '../Button';
+import Button, { IconButton } from '../Button';
 import CardActionArea from '../CardActionArea';
 import Tooltip from '../Tooltip';
 
@@ -31,6 +31,7 @@ class SequenceCard extends React.Component {
   render() {
     const {
       classes,
+      className,
       sequence = '',
       title = 'Sequence',
       downloadFileName = 'sequence.fasta',
@@ -38,9 +39,9 @@ class SequenceCard extends React.Component {
     } = this.props;
     const {expand} = this.state;
     return sequence ? (
-      <Card elevation={0}>
+      <Card elevation={0} className={className}>
         <CardActions className={classes.actions}>
-          <Tooltip title={expand ? 'Collapse' : 'Expand'}>
+          <Tooltip title={expand ? 'Hide sequence' : 'Show sequence'}>
             <CardActionArea className={classes.expandToggleAction} onClick={this.handleExpandToggle}>
 
               {
@@ -54,9 +55,10 @@ class SequenceCard extends React.Component {
             <DownloadButton
               fileName={downloadFileName}
               renderer={(props) => (
-                <IconButton {...props}>
+                <Button variant="outlined" {...props}>
+                  Download
                   <SaveIcon />
-                </IconButton>
+                </Button>
               )}
               contentFunc={() => `> ${title}\r\n${sequence}` }
             />
@@ -89,6 +91,8 @@ const styles = (theme) => ({
     display: 'flex',
     width: 'initial',
     paddingRight: theme.spacing.unit,
+    // border: `1px solid #eee`,
+    // backgroundColor: theme.palette.grey[200],
   },
   title: {
   },
