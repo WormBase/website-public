@@ -58,7 +58,7 @@ const TranscriptSequenceCard = (props) => {
     const data = resolveStrand(splicedSequenceContextRaw);
     sequenceOptions.push({
       ...data,
-      key: 'spliced',
+      key: 'spliced + UTR',
       label: `Spliced (${data.sequence.length}bp)`,
     });
   }
@@ -67,7 +67,7 @@ const TranscriptSequenceCard = (props) => {
     const data = resolveStrand(unsplicedSequenceContextRaw);
     sequenceOptions.push({
       ...data,
-      key: 'unspliced',
+      key: 'unspliced + UTR',
       label: `Unspliced (${data.sequence.length}bp)`,
     });
   }
@@ -81,44 +81,26 @@ const TranscriptSequenceCard = (props) => {
     });
   }
 
-  if (sequenceOptions.length > 0) {
-    sequenceOptions.unshift({
-      key: 'hidden',
-      label: 'Hide sequence',
-    });
-  }
-
   const sequenceSelected = sequenceOptions.filter(({key}) => (key === sequenceKeySelected))[0];
 
   return (
     <div>
-      <RadioGroup
-        aria-label="select sequence"
-        name="select-sequence"
-        row
-        value={sequenceKeySelected}
-        onChange={(event) => setSequenceKeySelected(event.target.value)}
-      >
-        {
-          sequenceOptions.map(({key, label}) => (
-            <FormControlLabel key={key} value={key} control={<Radio />} label={label} />
-          ))
-        }
-      </RadioGroup>
       {
-        sequenceKeySelected === 'hidden' ? null : (
+        sequenceOptions.map(({key, label, ...data}) => (
           <SequenceCard
+            key={key}
             className={classes.card}
-            title={`Spliced ${sequenceSelected.sequence.length}aa`}
-            downloadFileName={`${sequenceKeySelected}TranscriptSequence_${wbId}.fasta`}
-            sequence={sequenceSelected.sequence}
-            features={rewriteFeatures(sequenceSelected.features)}
+            title={label}
+            downloadFileName={`${key}TranscriptSequence_${wbId}.fasta`}
+            sequence={data.sequence}
+            initialExpand={false}
+            features={rewriteFeatures(data.features)}
             featureLabelMap={{
               exon_0: 'Exon',
               exon_1: 'Exon',
             }}
           />
-        )
+        ))
       }
       {
         proteinSequence ?
@@ -158,7 +140,7 @@ const styles = (theme) => ({
     borderLeft: `1px solid ${theme.palette.text.hint}`,
     borderRadius: 0,
     padding: 0,
-    margin: `${theme.spacing.unit * 2}px 0`,
+    marginBottom: theme.spacing.unit * 2,
   }
 });
 
