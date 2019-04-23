@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
+import CheckmarkIcon from '@material-ui/icons/Done';
 import SaveIcon from '@material-ui/icons/Save';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import ExpandMoreIcon from '@material-ui/icons/ArrowRight';
@@ -28,6 +29,20 @@ const  SequenceCard = (props) => {
   } = props;
 
   const [expand, setExpand] = useState(initialExpand);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+      return () => {
+        clearTimeout(timer);
+        setCopied(false);
+      };
+    }
+    return () => {};
+  }, [copied]);
 
   return sequence ? (
     <Card elevation={0} className={className}>
@@ -54,10 +69,14 @@ const  SequenceCard = (props) => {
             contentFunc={() => `> ${title}\r\n${sequence}` }
           />
         </Tooltip>
-        <CopyToClipboard text={`> ${title}\r\n${sequence}`}>
+        <CopyToClipboard
+          text={`> ${title}\r\n${sequence}`}
+          onCopy={() => setCopied(true)}
+        >
           <Tooltip title="Copy to clipboard">
             <Button variant="outlined">
               Copy <CopyIcon className={classes.buttonIcon} />
+              { copied ? <CheckmarkIcon className={classes.buttonIcon} /> : null }
             </Button>
           </Tooltip>
         </CopyToClipboard>
