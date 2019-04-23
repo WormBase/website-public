@@ -11,8 +11,8 @@ function resolveStrand(sequenceContext = {}) {
     '-': 'negative',
     '+': 'positive',
   };
-  if (sequenceContext.sequence_strand) {
-    return sequenceContext[`${strandName[sequenceContext.sequence_strand]}-strand`];
+  if (sequenceContext.strand) {
+    return sequenceContext[`${strandName[sequenceContext.strand]}_strand`];
   }
   return null;
 }
@@ -144,9 +144,9 @@ const SequencePropType = PropTypes.shape({
 });
 
 const SequenceContextPropTypes = PropTypes.shape({
-  "positive-strand": SequencePropType,
-  "negative-strand": SequencePropType,
-  "sequence_strand": PropTypes.string,
+  "positive_strand": SequencePropType,
+  "negative_strand": SequencePropType,
+  "strand": PropTypes.string,
 });
 
 TranscriptSequenceCard.propTypes = {
