@@ -107,6 +107,7 @@ const styles = (theme) => ({
     // backgroundColor: theme.palette.grey[200],
   },
   title: {
+    fontSize: '0.9em',
   },
   buttonIcon: {
     marginLeft: theme.spacing.unit / 2,
