@@ -3354,6 +3354,7 @@ var Scrolling = (function(){
             unspliced_sequence_context = {data: null},
             unspliced_sequence_context_with_padding = {data: null},
             cds_sequence = {data: null},
+            sequence_context = {data: null},
             protein_sequence = {data: null},
           } = sequenceWidgetData;
           ReactDOM.render(
@@ -3363,6 +3364,7 @@ var Scrolling = (function(){
               unsplicedSequenceContext={unspliced_sequence_context.data}
               unsplicedSequenceContextWithPadding={unspliced_sequence_context_with_padding.data}
               cdsSequence={cds_sequence.data}
+              sequenceContext={sequence_context.data}
               proteinSequence={protein_sequence.data}
             />,
             document.getElementById(elementId)

@@ -46,6 +46,7 @@ const TranscriptSequenceCard = (props) => {
     wbId,
     proteinSequence,
     cdsSequence: cdsSequenceRaw,
+    sequenceContext: sequenceContextRaw,
     splicedSequenceContext: splicedSequenceContextRaw,
     unsplicedSequenceContext: unsplicedSequenceContextRaw,
     unsplicedSequenceContextWithPadding: unsplicedSequenceContextWithPaddingRaw,
@@ -88,6 +89,15 @@ const TranscriptSequenceCard = (props) => {
       ...data,
       key: 'cds',
       label: `Coding sequence (${data.sequence.length}bp)`,
+    });
+  }
+
+  if (sequenceContextRaw) {
+    const data = resolveStrand(sequenceContextRaw);
+    sequenceOptions.push({
+      ...data,
+      key: 'sequence',
+      label: `Sequence (${data.sequence.length}bp)`,
     });
   }
 
