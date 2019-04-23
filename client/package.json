@@ -18,6 +18,7 @@
     "json2csv": "^4.1.2",
     "jss": "^9.8.7",
     "react": "^16.8.6",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.6"
   },
   "scripts": {

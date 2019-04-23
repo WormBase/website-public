@@ -4,11 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import SaveIcon from '@material-ui/icons/Save';
-//import CopyIcon from '@material-ui/icons/FileCopy';
+import CopyIcon from '@material-ui/icons/FileCopy';
 import ExpandMoreIcon from '@material-ui/icons/ArrowRight';
 import ExpandLessIcon from '@material-ui/icons/ArrowDropDown';
 import Sequence from './Sequence';
 import DownloadButton from '../DownloadButton';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Button, { IconButton } from '../Button';
 import CardActionArea from '../CardActionArea';
 import Tooltip from '../Tooltip';
@@ -47,17 +48,19 @@ const  SequenceCard = (props) => {
             renderer={(props) => (
               <Button variant="outlined" {...props}>
                 Download
-                <SaveIcon />
+                <SaveIcon className={classes.buttonIcon} />
               </Button>
             )}
             contentFunc={() => `> ${title}\r\n${sequence}` }
           />
         </Tooltip>
-        {/* <Tooltip title="Copy to clipboard">
-           <IconButton >
-           <CopyIcon />
-           </IconButton>
-           </Tooltip> */}
+        <CopyToClipboard text={`> ${title}\r\n${sequence}`}>
+          <Tooltip title="Copy to clipboard">
+            <Button variant="outlined">
+              Copy <CopyIcon className={classes.buttonIcon} />
+            </Button>
+          </Tooltip>
+        </CopyToClipboard>
       </CardActions>
       {
         expand ? <Sequence title={title} sequence={sequence} {...sequenceProps} /> : null
@@ -86,6 +89,9 @@ const styles = (theme) => ({
   },
   title: {
   },
+  buttonIcon: {
+    marginLeft: theme.spacing.unit / 2,
+  }
 });
 
 export default withStyles(styles)(SequenceCard);
