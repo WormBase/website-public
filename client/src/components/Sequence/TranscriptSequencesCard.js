@@ -119,7 +119,7 @@ const TranscriptSequenceCard = (props) => {
               exon_0: 'Exon',
               exon_1: 'Exon',
               intron: 'Intron',
-              padding: 'Upstream/downstream'
+              padding: 'Upstream / downstream'
             }}
           />
         ))
