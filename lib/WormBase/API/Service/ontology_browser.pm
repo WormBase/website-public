@@ -752,7 +752,7 @@ sub makeGenesLink {							# give a focusTermId, focusTermName, number of inferre
 sub makeUrl {								# generate URL to WormBase object given a class and focus term id
   my ($class, $focusTermId) = @_;
   my $url = "/species/all/$class/$focusTermId";				# standard URL
-  if ($class eq 'do_term') { $url = "/resources/disease/$focusTermId"; }	# disease class has a special URL
+  if ($class eq 'disease') { $url = "/resources/disease/$focusTermId"; }	# disease class has a special URL
   return $url;
 } # sub makeUrl
 
