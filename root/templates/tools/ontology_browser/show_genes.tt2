@@ -40,7 +40,11 @@
       <table border="1">
       [% FOREACH id IN geneData.$datatype.keys.sort %]
       <tr><td align="center"><a href="/species/c_elegans/gene/[% id %]">[% id %]</a></td>
-          <td align="center"><a href="/species/c_elegans/gene/[% id %]">[% geneData.$datatype.$id.name %]</a></td>
+          [% IF class == 'disease' %]
+            <td align="center">[% geneData.$datatype.$id.evidence_type %]</td>
+          [% ELSE %]
+            <td align="center"><a href="/species/c_elegans/gene/[% id %]">[% geneData.$datatype.$id.name %]</a></td>
+          [% END %]
           <td align="center">[% geneData.$datatype.$id.species %]</td>
           [% IF class == 'anatomy_term' %]
              <td align="left">

@@ -269,6 +269,10 @@ sub show_genes {
         $url{"direct_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&group.limit=1000&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
         $url{"infDir_anatomy"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=evidence_with,bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&group.limit=1000&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
       }
+      elsif ($class eq 'disease') {			# disease needs an evidence_type query
+        $url{"direct_disease"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,evidence_type,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
+        $url{"infDir_disease"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,evidence_type,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
+      }
       else {						# all other classes get direct, inferred + direct
         $url{"direct"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=annotation_class:%22' . $focusTermId . '%22';
         $url{"infDir"} = $solr_url . 'select?qt=standard&indent=on&wt=json&version=2.2&fl=bioentity,bioentity_label,taxon,taxon_label&start=0&rows=10000000&q=document_category:annotation&sort=bioentity%20asc&group=true&group.field=bioentity&group.ngroups=true&group.format=simple&fq=-qualifier:%22not%22&fq=source:%22WB%22&fq=regulates_closure:%22' . $focusTermId . '%22';
@@ -289,11 +293,14 @@ sub show_genes {
         my $taxon              = $$hashRef{'taxon'};		# get the taxon ID
         my $species            = $$hashRef{'taxon_label'} || $taxon;	# get the species name or default to taxon ID
         my $evidence_withRef   = $$hashRef{'evidence_with'} || '';		# get the evidence_with
+        my $evidence_type   = $$hashRef{'evidence_type'} || '';		# get the evidence_type
         if ($evidence_withRef) {
           foreach my $evi (@$evidence_withRef) {
             $geneData{$type}{$id}{evidence_with}{$evi}++; } }
-        $geneData{$type}{$id}{name}           = $name;
-        $geneData{$type}{$id}{species}        = $species;
+        $geneData{$type}{$id}{name}            = $name;
+        $geneData{$type}{$id}{species}         = $species;
+        if ($class eq 'disease') { 
+          $geneData{$type}{$id}{evidence_type} = $evidence_type; }
       }
 
       $sentenceData{$type} .= qq(<b>List of $ngroups);
@@ -315,7 +322,7 @@ sub show_genes {
       $sentenceData{$type} .= qq(</b>);
     } # foreach my $type (sort keys %url)
 
-    my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation direct_rnaivariation infDir_rnai infDir_variation infDir_rnaivariation direct_anatomy infDir_anatomy );
+    my @sortPriority = qw( direct infDir direct_cele infDir_cele direct_noncele infDir_noncele direct_rnai direct_variation direct_rnaivariation infDir_rnai infDir_variation infDir_rnaivariation direct_anatomy infDir_anatomy direct_disease infDir_disease );
 							# lists are sorted by this priority
     return { 
              class         => $class,			# pass the class to only who an extra column for anatomy_term
@@ -421,7 +428,7 @@ sub run {
       $label{$id} = $lbl;						# map id to label
       if ($children{$id}) { next; }					# don't add node for the children
       my $url = "/species/all/$class/$id";				# URL to link to wormbase page for object
-      if ($class eq 'do_term') { $url = "/resources/disease/$id"; }	# URL to link to wormbase page for disease class
+      if ($class eq 'disease') { $url = "/resources/disease/$id"; }	# URL to link to wormbase page for disease class
       $lbl =~ s/ /\\n/g;						# replace spaces with linebreaks in graph for more-square boxes
       my $label = "$id\n$lbl";						# node label should have full id, not stripped of :, which is required for edge title text
       $id =~ s/:/_placeholderColon_/g;					# edges won't have proper title text if ids have : in them
