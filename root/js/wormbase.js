@@ -3335,7 +3335,7 @@ var Scrolling = (function(){
                       sequence={sequence}
                       features={features}
                     />
-                  )
+                  );
                 }
               }
             </StrandSelect>,
@@ -3344,6 +3344,35 @@ var Scrolling = (function(){
         }
       );
     }
+
+    function renderTranscriptSequences(sequenceWidgetData, elementId, wbId) {
+      import('../../client/src/components/Sequence').then(
+        (module) => {
+          const TranscriptSequencesCard = module.TranscriptSequencesCard;
+          const {
+            spliced_sequence_context = {data: null},
+            unspliced_sequence_context = {data: null},
+            unspliced_sequence_context_with_padding = {data: null},
+            cds_sequence = {data: null},
+            sequence_context = {data: null},
+            protein_sequence = {data: null},
+          } = sequenceWidgetData;
+          ReactDOM.render(
+            <TranscriptSequencesCard
+              wbId={wbId}
+              splicedSequenceContext={spliced_sequence_context.data}
+              unsplicedSequenceContext={unspliced_sequence_context.data}
+              unsplicedSequenceContextWithPadding={unspliced_sequence_context_with_padding.data}
+              cdsSequence={cds_sequence.data}
+              sequenceContext={sequence_context.data}
+              proteinSequence={protein_sequence.data}
+            />,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
 
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
@@ -3607,6 +3636,7 @@ var Scrolling = (function(){
       renderVariationSequence: renderVariationSequence, // render the sequence (context) in molecular details widget on a variation page
       renderVariationConceptualTranslation: renderVariationConceptualTranslation, // render conceptual translation on variation page
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
+      renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
     };
   })();
 

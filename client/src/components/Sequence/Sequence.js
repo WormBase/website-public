@@ -33,20 +33,22 @@ class Sequence extends React.Component {
     return sequence ? (
       <Grid container spacing={0} className={classes.root}>
         {
-          showLegend ? <Grid item xs={12} md={2} className={classes.legendArea}>
-            {
-              [...new Set(features.map(({type: featureType}) => (featureType)))].map(
-                (featureType) => {
-                  return (
-                    <p key={featureType}>
-                      <span
-                        className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItem}
-                      >&nbsp;&nbsp;&nbsp;&nbsp;</span> {featureLabelMap[featureType] || featureType}
-                    </p>
-                  )
-                }
-              )
-            }
+          showLegend && features.length ?
+            <Grid item xs={12} md={2} className={classes.legendArea}>
+              <span><em>Legends</em></span>
+              {
+                [...new Set(features.map(({type: featureType}) => (featureType)))].map(
+                  (featureType) => {
+                    return (
+                      <p key={featureType} className={classes.featureLegendItem}>
+                        <span
+                          className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItemSymbol}
+                        >&nbsp;a&nbsp;</span> {featureLabelMap[featureType] || featureType}
+                      </p>
+                    )
+                  }
+                )
+              }
           </Grid> : null
         }
         <Hidden mdUp>
@@ -126,6 +128,23 @@ const styles = (theme) => ({
       },
     },
   },
+  exon_0Feature: {
+    backgroundColor: 'yellow',
+    textTransform: 'uppercase',
+  },
+  exon_1Feature: {
+    backgroundColor: 'orange',
+    textTransform: 'uppercase',
+  },
+  intronFeature: {
+  },
+  UTRFeature: {
+    textTransform: 'lowercase',
+    backgroundColor: '#ccc',
+  },
+  paddingFeature: {
+    backgroundColor: 'beige',
+  },
   flankFeature: {
     backgroundColor: 'yellow',
   },
@@ -144,10 +163,15 @@ const styles = (theme) => ({
     textTransform: 'uppercase',
   },
   featureLegendItem: {
-    textTransform: 'unset',
+    margin: `${theme.spacing.unit / 2}px 0`,
+  },
+  featureLegendItemSymbol: {
+    // textTransform: 'unset',
+    border: `solid 1px ${theme.palette.grey[300]}`,
   },
   legendArea: {
-    color: theme.palette.text.hint,
+    // color: theme.palette.text.hint,
+    color: '#222',
     [theme.breakpoints.up('md')]: {
       order: 4,
     },
