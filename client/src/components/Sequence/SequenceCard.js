@@ -61,7 +61,7 @@ const  SequenceCard = (props) => {
           <DownloadButton
             fileName={downloadFileName}
             renderer={(props) => (
-              <Button variant="outlined" {...props}>
+              <Button variant="outlined" {...props} className={classes.button}>
                 Download
                 <SaveIcon className={classes.buttonIcon} />
               </Button>
@@ -74,7 +74,7 @@ const  SequenceCard = (props) => {
           onCopy={() => setCopied(true)}
         >
           <Tooltip title="Copy to clipboard">
-            <Button variant="outlined">
+            <Button variant="outlined" className={classes.button}>
               Copy <CopyIcon className={classes.buttonIcon} />
               { copied ? <CheckmarkIcon className={classes.buttonIcon} /> : null }
             </Button>
@@ -98,25 +98,35 @@ SequenceCard.propTypes = {
 const styles = (theme) => ({
   actions: {
     display: 'flex',
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       flexWrap: 'wrap',
     },
     alignItems: 'stretch',
+    '& > *': {
+      margin: `0 ${theme.spacing.unit / 2}px`,
+    },
   },
   expandToggleAction: {
     display: 'flex',
     justifyContent: 'start',
     width: 'initial',
     paddingRight: theme.spacing.unit,
-    flex: '1 0 auto',
-    [theme.breakpoints.down('xs')]: {
+    flex: '1 1 auto',
+    [theme.breakpoints.down('sm')]: {
       width: '100%',
+      marginBottom: theme.spacing.unit / 2,
     },
-    // border: `1px solid #eee`,
+    border: `1px solid rgba(0, 0, 0, 0.23)`,
     // backgroundColor: theme.palette.grey[200],
   },
   title: {
     fontSize: '0.9em',
+  },
+  button: {
+    //    padding: `0 ${theme.spacing.unit / 2}px`,
+    [theme.breakpoints.down('sm')]: {
+      flex: '1 1 auto',
+    },
   },
   buttonIcon: {
     marginLeft: theme.spacing.unit / 2,

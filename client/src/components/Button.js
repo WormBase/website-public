@@ -4,7 +4,7 @@ import MuiIconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 
 const Button = (props) => (
-  <MuiButton disableRipple {...props} />
+  <MuiButton disableRipple size="small" {...props} />
 );
 
 export default withStyles({
