@@ -97,12 +97,21 @@ SequenceCard.propTypes = {
 
 const styles = (theme) => ({
   actions: {
+    display: 'flex',
+    [theme.breakpoints.down('xs')]: {
+      flexWrap: 'wrap',
+    },
     alignItems: 'stretch',
   },
   expandToggleAction: {
     display: 'flex',
+    justifyContent: 'start',
     width: 'initial',
     paddingRight: theme.spacing.unit,
+    flex: '1 0 auto',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+    },
     // border: `1px solid #eee`,
     // backgroundColor: theme.palette.grey[200],
   },
