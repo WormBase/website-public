@@ -7,11 +7,14 @@ const Button = (props) => (
   <MuiButton disableRipple size="small" {...props} />
 );
 
-export default withStyles({
+export default withStyles((theme) => ({
   label: {
     textTransform: 'none',
   },
-})(Button);
+  sizeSmall: {
+    padding: `0 ${theme.spacing.unit}px`
+  },
+}))(Button);
 
 const IconButton = withStyles((theme) => ({
   root: {
