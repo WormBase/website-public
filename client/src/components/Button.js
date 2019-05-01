@@ -12,7 +12,7 @@ export default withStyles((theme) => ({
     textTransform: 'none',
   },
   sizeSmall: {
-    padding: `0 ${theme.spacing.unit}px`
+    padding: `2px ${theme.spacing.unit}px 0 ${theme.spacing.unit}px`,
   },
 }))(Button);
 

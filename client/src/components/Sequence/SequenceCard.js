@@ -63,7 +63,7 @@ const  SequenceCard = (props) => {
             renderer={(props) => (
               <Button variant="outlined" {...props} className={classes.button}>
                 Download
-                <SaveIcon className={classes.buttonIcon} />
+                <SaveIcon className={classes.buttonIcon} fontSize="inherit" />
               </Button>
             )}
             contentFunc={() => `> ${title}\r\n${sequence}` }
@@ -75,8 +75,8 @@ const  SequenceCard = (props) => {
         >
           <Tooltip title="Copy to clipboard">
             <Button variant="outlined" className={classes.button}>
-              Copy <CopyIcon className={classes.buttonIcon} />
-              { copied ? <CheckmarkIcon className={classes.buttonIcon} /> : null }
+              Copy <CopyIcon className={classes.buttonIcon} fontSize="inherit" />
+              { copied ? <CheckmarkIcon className={classes.buttonIcon} fontSize="inherit" /> : null }
             </Button>
           </Tooltip>
         </CopyToClipboard>
@@ -127,6 +127,7 @@ const styles = (theme) => ({
     [theme.breakpoints.down('sm')]: {
       flex: '1 1 auto',
     },
+    minWidth: 95,
   },
   buttonIcon: {
     marginLeft: theme.spacing.unit / 2,
