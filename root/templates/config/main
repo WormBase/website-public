@@ -402,7 +402,7 @@
 
                     function updateHeight() {
                         var heightComputed = 0;
-                        var jbrowseDocument = document.getElementById('innerJBrowse').contentDocument || document.getElementById('innerJBrowse').contentWindow.document;
+                        var jbrowseDocument = innerJBrowseElement.get(0).contentDocument || innerJBrowseElement.get(0).contentWindow.document;
                         var tracks = jbrowseDocument.getElementsByClassName('track');
                         for (var i=0; i < tracks.length; i++) {
                           var id = tracks[i].id;
