@@ -2739,6 +2739,7 @@ li.visible div.widget-container {
 
 #cboxLoadedContent {
   padding: 0px;
+  overflow: scroll !important;
 }
 #cboxContent .widget-data-content-inner {
   padding: 0.5em 1em;
