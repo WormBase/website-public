@@ -4,14 +4,17 @@ import MuiIconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 
 const Button = (props) => (
-  <MuiButton disableRipple {...props} />
+  <MuiButton disableRipple size="small" {...props} />
 );
 
-export default withStyles({
+export default withStyles((theme) => ({
   label: {
     textTransform: 'none',
   },
-})(Button);
+  sizeSmall: {
+    padding: `2px ${theme.spacing.unit}px 0 ${theme.spacing.unit}px`,
+  },
+}))(Button);
 
 const IconButton = withStyles((theme) => ({
   root: {
