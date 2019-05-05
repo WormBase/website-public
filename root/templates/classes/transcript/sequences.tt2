@@ -1,5 +1,12 @@
 [%
-  sequence('print_sequence');
+  IF fields.print_sequence; sequence('print_sequence'); END;
+
+  WRAPPER $field_block title="Sequence" key="unspliced_sequence_context";
+    IF fields.unspliced_sequence_context.data;
+      '<div id="print-sequences"><div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div></div>';
+      '<script>WB.renderTranscriptSequences(' _ json_encode(fields) _ ', "print-sequences", "' _ fields.name.data.id _ '")</script>';
+    END;
+  END;
 
   WRAPPER $field_block title="Strand" key='strand';
     '(' _ c.stash.fields.strand.data _ ')';
