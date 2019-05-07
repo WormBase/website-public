@@ -1,7 +1,7 @@
 [% WRAPPER $field_block title="Gene ontology ribbon" key="gene_ontology_ribbon"; %]
     <div id="gene_ontology_ribbon_container" class="go-ribbon-container"></div>
     <script>
-      WB.renderGORibbon([% json_encode(fields.gene_ontology_ribbon.data) %], "gene_ontology_ribbon_container");
+      WB.renderGORibbon([% json_encode(fields.gene_ontology_ribbon.data || []) %], "gene_ontology_ribbon_container");
     </script>
 [% END; %]
 
