@@ -19,7 +19,11 @@ function resolveStrand(sequenceContext = {}) {
 
 function rewriteFeatures(features = []) {
   let exonCount = 0;
-  return features.reduce((result, feature) => {
+  return [...features]
+    .sort((a, b) => {
+      return a.start - b.start;
+    })
+    .reduce((result, feature) => {
     if (feature.type === 'exon') {
       // put exons in the beginning of the array
       result.unshift({
