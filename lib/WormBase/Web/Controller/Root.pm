@@ -149,6 +149,28 @@ sub me :Path("/me") Args(0) {
     $c->response->headers->expires(time);
 }
 
+sub health :Path("/health")  Args(0) {
+    my ( $self, $c ) = @_;
+
+    # ping ACeDB to prevent it from exiting, but don't throw error,
+    # as it seems that ACeDB failure is causing failed deployment
+    # and repeated restart, when an environment is created
+    eval {
+        my $api = $c->model('WormBaseAPI');
+        my $object = $api->fetch({ class => 'Gene', name  => 'WBGene00015146', nowrap => 1 });
+        1;
+    } or do {
+        my $e = $@;
+        $c->log->debug("Problem fetching with ACeDB: $e\n");
+    };
+
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = 'health/index.tt2';
+
+    $c->response->header('Cache-Control' => 'no-cache');
+
+}
+
 # Action added for Elsevier linking - issue #2086
 # Returns WormBase logo if paper with corresponding doi is located
 # Otherwise returns transparent png

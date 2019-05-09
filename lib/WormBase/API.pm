@@ -165,7 +165,7 @@ sub version {
 
     my $version = readlink ($self->database->{$self->default_datasource}->{root});
     $version =~ s/.*\_(WS\d\d\d)$/$1/g;
-    return $version;
+    return $version || $self->config->{wormbase_release};
 }
 
 # Build a hashref of services, including things like the

@@ -15,7 +15,7 @@ Execute the following commands in a BASH terminal:
     git submodule init
     git submodule update
     export approot=`pwd`
-    perl Makefile.PL
+    perl Makefile.PL FIRST_MAKEFILE=MakefilePL.mk
     make installdeps
 
 Then, setup githook to automatically re-build the static assets _after checking out a branch_
@@ -152,6 +152,123 @@ Creating a reference image set that is used for the comparative tests:
     perl t/gbrowse.t --base http://dev.wormbase.org:4466/cgi-bin/gb2/gbrowse_img --reference
 
 A summary log and a full disclosure of broken URLs is written to the logfile `logs/gbrowse_test.log`.
+
+Deployment with AWS ElasticBeanstalk Overview
+----------------------------------------
+
+AWS ElasticBeanstalk (AWS EB) allow us to deploy our multi-container build easily. It provides health monitoring, load balancing, rolling updates, etc.
+
+Here, we highlight some important aspects for working with AWS EB.
+
+### Credentials
+
+Obtaining the appropriate AWS credentials and privileges is the prerequisite of performing many of the tasks below.
+
+Please work with another WormBase developer to have your AWS account and privileges setup.
+
+Your machine also needs to be configured with the credentials, and you will need to:
+* have `~/.aws/credentials` and `~/.aws/config` properly configured, AND
+* have environment variable AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY correctly set
+
+### Environments
+
+We maintain two kinds of deployments on EB:
+
+* A perpetual staging environment
+* A release specific production
+
+It’s important to know which environment you are working with, when making changes to a deployment.
+
+To learn about their differences and how to work with them, please read the Staging Deployment and Production Deployment sections below, as well as parts of the Makefile, in particular tasks such as `make eb-create`, `make production-deploy`, and `make staging-deploy`.
+
+
+### Configuration
+
+While the EB web management console provides easy ways to experimenting with configuration options, we consider the _source of truth_ for configuration to be:
+* saved configuration used by `make eb-create`, AND
+* configurations in [.ebextensions/](.ebextensions/)
+
+Staging ane Production configuration should be kept virtually the same to facilitate reproducibility and testing.
+
+What this means in practice:
+* Please test a configuration on staging environment before applying it to production environment
+* If there is a configuration change that you applied through the WB web management console that you intent to keep (to future builds/releases), please make a “Saved Configuration” through the web management console, give a version name (like v.1.0), and update the Makefile task `eb-create` to use the new version (such as `--cfg v1.0`
+* `.ebextensions` is intended for more obscure config options that’s not available through the web management console.
+
+
+### Docker Containers
+
+Website (Catalyst) code in this repository are running inside containers when deployed to Beanstalk.
+
+For more details, please refer to the staging deployment and production elopement sections below, as well as the Makefile task `eb-create`.
+
+### Data and File System access
+
+Data associated with a particular release (such as data in ACeDB and BLAST) are deployed to EB through a mounted volume based on a volume snapshot.
+
+**EB needs to be manually configured to use a volume snapshot for each WS release.**
+
+A volume snapshot is created at the end of the "staging process" and is unique each release. The volume ID can be located from AWS console under Services > EC2 > Snapshots.
+
+The exact configuration is done at [.ebextensions/01-setup-volumes.config](.ebextensions/01-setup-volumes.config).
+
+
+Staging Deployment on AWS ElasticBeanstalk
+---------------------------------------------
+
+Staging deployment is mostly automated and continuously deployed. The only manual step is to inform EB of the correct volume (file system) snapshot to use for a particular WS release.
+
+The file system contains data and certain scripts that aren't dockerized. For more details for data and File System access, refer to EB deployment overview section above.
+
+Continuous deploying of the staging site to AWS EB is handled by Jenkins. It's triggered by commits to the staging branch on Github.
+
+Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script to deploy changes.
+
+For detailed setup, please visit the Jenkins web console.
+
+Production Deployment on AWS ElasticBeanstalk
+---------------------------------------------
+
+Deploying to production involves the following steps:
+
+- change the release number in wormbase.conf
+- Make a release
+  ```
+  # at the appropriate git branch for production
+  make release
+  ```
+
+- Deploy to the pre-production environment
+
+  ```console
+  # at the appropriate git branch for production
+  make eb-create
+
+  # If ACeDB TreeView isn't working, which seems to be caused by a race condition
+  # between setting up the file system and starting ACeDB container,
+  # can generally be fixed by re-do the deployment step
+  make production-deploy
+  ```
+
+- Swap the URL between the pre-production environment and the exiting production environment
+	- This can be done through the web console of AWS ElasticBeanstalk.
+
+- After making sure the new production environment is working, shut down the previous production environment
+	- This can be done through the web console of AWS ElasticBeanstalk.
+
+
+Applying Hotfix on AWS ElasticBeanstalk
+-----------------------------------------
+
+- Prior to applying the hotfix, ensure you are at the appropriate git branch for production.
+
+- Then run the following commands,
+
+
+	```
+	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS268.12
+	make production-deploy
+	```
 
 Contributing
 ------------

@@ -286,8 +286,10 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      # OpenID
     } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /google/i && $param->{oauth2} eq '1') {
 
+        $c->log->debug("Referer: " . $c->request->headers->header('Referer'));
+        $c->log->debug("X-Forwarded-Port: " . $c->request->headers->header('X-Forwarded-Port'));
         my $callback_url = $c->uri_for('auth/code/google');
-        $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
+#        $callback_url->scheme('https') if $c->config->{installation_type} eq 'production';
         my $url = WormBase::Web::ThirdParty::Google->new()->get_authorization_url(
             redirect_uri => $callback_url->as_string,
             state => $c->sessionid,
@@ -436,7 +438,7 @@ sub auth_code_callback : Chained('auth') PathPart('code')  Args(1){
     if ($session) {
       unless ($error){
         my $redirect_uri = $c->uri_for($c->req->path);
-        $redirect_uri->scheme('https') if $c->config->{installation_type} eq 'production';
+        #$redirect_uri->scheme('https') if $c->config->{installation_type} eq 'production';
         # seems any registered(!!) callback uri would work.
 
         # currently google specific, will change
@@ -663,10 +665,7 @@ sub create_jwt :Private {
 
 sub get_jwt_secret {
     my ($self) = @_;
-    my $app_root = WormBase::Web->path_to('/');
-    my $path = join('/', ("$app_root", 'credentials', 'jwt_secret.txt'));
-
-    my $secret = `cat $path`;
+    my $secret = $ENV{JWT_SECRET};
     chomp $secret;
     return $secret;
 }

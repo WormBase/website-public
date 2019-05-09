@@ -7,6 +7,8 @@ BEGIN {
 use File::Basename;
 use Test::More;
 
+use lib qw(./);
+
 # Command Line Options module needs to be loaded first, due to some
 # command line argument hackary when starting Catalyst.
 require 't/command_line_options.pm';
@@ -29,9 +31,9 @@ foreach my $test (@tests) {
     next if $options->{'test'} && $options->{'test'} ne basename($test, '.t');
     require_ok($test);
     my $pkg = basename($test, '.t') . '::';
-    &{%$pkg->{'config'}}($configuration);
+    &{$pkg->{'config'}}($configuration);
     for my $sub (keys %$pkg) {
-        subtest("$pkg::$sub", \&{%$pkg->{$sub}}) if $sub =~ /^test_/;
+        subtest("$pkg::$sub", \&{$pkg->{$sub}}) if $sub =~ /^test_/;
     }
 }
 
