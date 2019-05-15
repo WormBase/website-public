@@ -43,20 +43,24 @@
 	}
 
  AGR = {
-	description = 'Addgene is a nonprofit organization dedicated to making it easier for scientists to share plasmids.'
+	description = 'The Alliance of Genome Resources'
 	base        = 'http://www.alliancegenome.org/'
 	gene        = 'http://www.alliancegenome.org/gene/%s'
 	disease     = 'http://www.alliancegenome.org/disease/%s'
 	}
-
+ APPRIS = {
+	description = 'APPRIS - Annotating principal splice isoforms'
+	base        = 'http://appris.bioinfo.cnio.es/'
+	search      = 'http://appris.bioinfo.cnio.es/#/database/id/caenorhabditis_elegans/%s'
+	}
 
  cgc = {
-	description = 'The C. elegans Genetics Center'
-	maintainer  = 'Aric Daul'
-	email       = 'cgc@umn.edu'
-	base        = 'https://cgc.umn.edu/'
-	strains     = 'https://cgc.umn.edu/strains'
-	search      = 'https://cgc.umn.edu/strain/%s'
+	description  = 'The C. elegans Genetics Center'
+	maintainer   = 'Aric Daul'
+	email        = 'cgc@umn.edu'
+	base         = 'https://cgc.umn.edu/'
+	strains      = 'https://cgc.umn.edu/strains'
+	search       = 'https://cgc.umn.edu/strain/%s'
 	nomenclature = 'https://cgc.umn.edu/nomenclature/'
 	}
 
@@ -66,8 +70,8 @@
 	base        = 'http://www.ncbi.nlm.nih.gov/RefSeq/',
 	email       = '',
 	search      = 'http://www.ncbi.nlm.nih.gov/%s'
-	mRNA      = 'http://www.ncbi.nlm.nih.gov/nuccore/%s'
-	protein      = 'http://www.ncbi.nlm.nih.gov/protein/%s'
+	mRNA        = 'http://www.ncbi.nlm.nih.gov/nuccore/%s'
+	protein     = 'http://www.ncbi.nlm.nih.gov/protein/%s'
 	}
 
  AmerChemicalSoc = {
