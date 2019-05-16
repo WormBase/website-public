@@ -41,7 +41,7 @@
 
         ok($response_html =~ /<span class="locus"><a href="\/search\/gene\/dpy-23" class="gene-link">dpy-23<\/a><\/span>/,
            'contains links to gene dpy-23');
-        ok($response_html =~ /<span class="locus"><a href="\/search\/gene\/dpy-23" class="gene-link">dpy-23<\/a><\/span> encodes/,
+        ok($response_html =~ /<span class="locus"><a href="\/search\/gene\/dpy-23" class="gene-link">dpy-23<\/a><\/span> is an ortholog of human AP2M1/,
            'contains link in description to gene dpy-23');
     }
 
