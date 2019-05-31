@@ -207,14 +207,21 @@ sub _setup_parasite_species {
 
     sub _json_to_string {
         my ($obj) = @_;
-        my $species_nested = _sort_descendants($obj); # keep items in an array sorted by label
+        my $species_nested = _process_descendants($obj); # keep items in an array sorted by label
         return (new JSON)->allow_nonref->utf8->relaxed->canonical->pretty->encode($species_nested);  # canonical flag to keep keys sorted
     }
 
-    sub _sort_descendants {
+    # keep items in an array sorted by label, and fix problem values
+    sub _process_descendants {
         my ($children) = @_;
         foreach my $child (@$children){
-            $child->{children} = _sort_descendants($child->{children}) if $child->{children};
+            $child->{children} = _process_descendants($child->{children}) if $child->{children};
+
+	    # Hack to fix url that keeps changing between refreshes
+	    # Related to #7152
+	    if ($child->{url} =~ /specieslanding/i) {
+		$child->{url} = undef; # We don't use species level url anyway, only bioproject level ones
+	    }
         }
         my @sorted_children = sort { $a->{label} cmp $b->{label} } @$children;
         return \@sorted_children;
