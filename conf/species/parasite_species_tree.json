@@ -111,7 +111,7 @@
                            }
                         ],
                         "label" : "Trichinella nativa",
-                        "url" : "/Trichinella_nativa_prjna179527/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -187,7 +187,7 @@
                            }
                         ],
                         "label" : "Trichinella pseudospiralis",
-                        "url" : "/Trichinella_pseudospiralis_iss470prjna257433/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -245,7 +245,7 @@
                            }
                         ],
                         "label" : "Trichinella spiralis",
-                        "url" : "/Trichinella_spiralis_prjna257433/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -302,7 +302,7 @@
                            }
                         ],
                         "label" : "Trichuris suis",
-                        "url" : "/Trichuris_suis_prjna208416/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -397,7 +397,7 @@
                            }
                         ],
                         "label" : "Ascaris suum",
-                        "url" : "/Ascaris_suum_prjna80881/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Ascaris",
@@ -581,7 +581,7 @@
                            }
                         ],
                         "label" : "Loa loa",
-                        "url" : "/Loa_loa_prjna37757/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Loa",
@@ -606,7 +606,7 @@
                            }
                         ],
                         "label" : "Onchocerca flexuosa",
-                        "url" : "/Onchocerca_flexuosa_prjeb512/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -625,7 +625,7 @@
                            }
                         ],
                         "label" : "Onchocerca ochengi",
-                        "url" : "/Onchocerca_ochengi_prjeb1465/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -733,7 +733,7 @@
                            }
                         ],
                         "label" : "Toxocara canis",
-                        "url" : "/Toxocara_canis_prjeb533/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Toxocara",
@@ -758,7 +758,7 @@
                            }
                         ],
                         "label" : "Wuchereria bancrofti",
-                        "url" : "/Wuchereria_bancrofti_prjna275548/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Wuchereria",
@@ -903,7 +903,7 @@
                            }
                         ],
                         "label" : "Meloidogyne arenaria",
-                        "url" : "/Meloidogyne_arenaria_prjna438575/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -935,7 +935,7 @@
                            }
                         ],
                         "label" : "Meloidogyne floridensis",
-                        "url" : "/Meloidogyne_floridensis_prjeb6016/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -980,7 +980,7 @@
                            }
                         ],
                         "label" : "Meloidogyne incognita",
-                        "url" : "/Meloidogyne_incognita_prjeb8714/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -999,7 +999,7 @@
                            }
                         ],
                         "label" : "Meloidogyne javanica",
-                        "url" : "/Meloidogyne_javanica_prjna340324/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Meloidogyne",
@@ -1229,7 +1229,7 @@
                            }
                         ],
                         "label" : "Ancylostoma ceylanicum",
-                        "url" : "/Ancylostoma_ceylanicum_prjna231479/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -1396,7 +1396,7 @@
                            }
                         ],
                         "label" : "Caenorhabditis remanei",
-                        "url" : "/Caenorhabditis_remanei_prjna248911/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -1479,7 +1479,7 @@
                            }
                         ],
                         "label" : "Dictyocaulus viviparus",
-                        "url" : "/Dictyocaulus_viviparus_prjna72587/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Dictyocaulus",
@@ -1536,7 +1536,7 @@
                            }
                         ],
                         "label" : "Haemonchus contortus",
-                        "url" : "/Haemonchus_contortus_prjeb506/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -1577,7 +1577,7 @@
                            }
                         ],
                         "label" : "Heligmosomoides polygyrus",
-                        "url" : "/Heligmosomoides_polygyrus_prjeb15396/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Heligmosomoides",
@@ -1927,7 +1927,7 @@
                            }
                         ],
                         "label" : "Echinococcus granulosus",
-                        "url" : "/Echinococcus_granulosus_prjna182977/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -2088,7 +2088,7 @@
                            }
                         ],
                         "label" : "Taenia asiatica",
-                        "url" : "/Taenia_asiatica_prjeb532/Info/SpeciesLanding/"
+                        "url" : null
                      },
                      {
                         "aliases" : [],
@@ -2158,7 +2158,7 @@
                            }
                         ],
                         "label" : "Macrostomum lignano",
-                        "url" : "/Macrostomum_lignano_prjna371498/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Macrostomum",
@@ -2252,7 +2252,7 @@
                            }
                         ],
                         "label" : "Clonorchis sinensis",
-                        "url" : "/Clonorchis_sinensis_prjda72781/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Clonorchis",
@@ -2296,7 +2296,7 @@
                            }
                         ],
                         "label" : "Fasciola hepatica",
-                        "url" : "/Fasciola_hepatica_prjeb25283/Info/SpeciesLanding/"
+                        "url" : null
                      }
                   ],
                   "label" : "Fasciola",
