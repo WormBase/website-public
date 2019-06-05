@@ -7,26 +7,20 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
-const ListItemByLevel = ({level, indentUnitWidth, style, ...props}) => {
+const ListItemByLevel = ({ level, indentUnitWidth, style, ...props }) => {
   const newStyle = {
     padding: 0,
     paddingLeft: (level || 0) * indentUnitWidth,
-    ...style
+    ...style,
   };
-  return (
-    <MuiListItem
-      style={newStyle}
-      disableRipple
-      {...props}
-    />
-  );
+  return <MuiListItem style={newStyle} disableRipple {...props} />;
 };
 ListItemByLevel.propTypes = {
   level: PropTypes.number,
   indentUnitWidth: PropTypes.number,
 };
 
-const CompactList = (props) => (<List disablePadding {...props} />);
+const CompactList = (props) => <List disablePadding {...props} />;
 
 const List = MuiList;
 

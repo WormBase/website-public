@@ -4,7 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import classNames from 'classnames';
 import CancelIcon from '@material-ui/icons/Cancel';
-import List, { ListItem, ListItemText, ListItemSecondaryAction, ListSubheader } from '../../../List';
+import List, {
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  ListSubheader,
+} from '../../../List';
 import { IconButton } from '../../../Button';
 import { fitComponent } from '../../../styles';
 import { pluralize } from '../../../../utils';
@@ -17,7 +22,7 @@ class References extends Component {
     data: PropTypes.arrayOf(
       PropTypes.shape({
         year: PropTypes.any,
-      }),
+      })
     ).isRequired,
     pageInfo: PropTypes.shape({
       name: PropTypes.string,
@@ -36,18 +41,20 @@ class References extends Component {
     this.setState((prevState) => ({
       paperType: paperType === prevState.paperType ? null : paperType,
     }));
-  }
+  };
 
   filterData = (data) => {
-    return data.filter((row) => !this.state.paperType || row.ptype === this.state.paperType);
+    return data.filter(
+      (row) => !this.state.paperType || row.ptype === this.state.paperType
+    );
   };
 
   compareYear = (rowA, rowB) => {
     const parseRowYear = (row) => {
       return parseInt(row.year, 10) || -1;
-    }
+    };
     return parseRowYear(rowB) - parseRowYear(rowA);
-  }
+  };
 
   countsByPaperTypes = (rows) => {
     return rows.reduce((counts, row) => {
@@ -55,11 +62,11 @@ class References extends Component {
       counts[ptype] = counts[ptype] ? counts[ptype] + 1 : 1;
       return counts;
     }, {});
-  }
+  };
 
   render() {
     const counts = this.countsByPaperTypes(this.props.data);
-    const {classes} = this.props;
+    const { classes } = this.props;
     const data = this.filterData(this.props.data).sort(this.compareYear);
 
     const FittedListSubheader = fitComponent(ListSubheader);
@@ -67,57 +74,72 @@ class References extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.sidebar}>
-          <List dense subheader={<ListSubheader>Filter by article type</ListSubheader>}>
-            {
-              Object.keys(counts).sort().map(
-                (paperType) => {
-                  const isSelected = this.state.paperType && this.state.paperType === paperType;
-                  // console.log(isSelected);
-                  return (
-                    <ListItem
-                      button
-                      dense
-                      key={paperType}
-                      classes={{ button: classNames({[classes.selected]: isSelected})}}
-                      onClick={() => this.handlePaperTypeUpdate(paperType)}
-                      >
-                      <ListItemText primary={paperType} secondary={counts[paperType]} />
-                      {isSelected ? (
-                         <ListItemSecondaryAction>
-                           <IconButton
-                             onClick={() => this.handlePaperTypeUpdate(paperType)}
-                             aria-label="Cancel filter"
-                           >
-                             <CancelIcon />
-                           </IconButton>
-                         </ListItemSecondaryAction>
-                      ) : null}
-                    </ListItem>
-                  )
-                })
-            }
+          <List
+            dense
+            subheader={<ListSubheader>Filter by article type</ListSubheader>}
+          >
+            {Object.keys(counts)
+              .sort()
+              .map((paperType) => {
+                const isSelected =
+                  this.state.paperType && this.state.paperType === paperType;
+                // console.log(isSelected);
+                return (
+                  <ListItem
+                    button
+                    dense
+                    key={paperType}
+                    classes={{
+                      button: classNames({ [classes.selected]: isSelected }),
+                    }}
+                    onClick={() => this.handlePaperTypeUpdate(paperType)}
+                  >
+                    <ListItemText
+                      primary={paperType}
+                      secondary={counts[paperType]}
+                    />
+                    {isSelected ? (
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          onClick={() => this.handlePaperTypeUpdate(paperType)}
+                          aria-label="Cancel filter"
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    ) : null}
+                  </ListItem>
+                );
+              })}
           </List>
         </div>
         <div className={classes.content}>
           <FittedListSubheader widthOnly component="div">
             <div>
-              {
-                this.state.paperType ?
-                <span>{data.length} / {this.props.data.length} {pluralize('reference', data.length)} found matching your filter</span> :
-                <span>{data.length} {pluralize('reference', data.length)} found</span>
-              }
+              {this.state.paperType ? (
+                <span>
+                  {data.length} / {this.props.data.length}{' '}
+                  {pluralize('reference', data.length)} found matching your
+                  filter
+                </span>
+              ) : (
+                <span>
+                  {data.length} {pluralize('reference', data.length)} found
+                </span>
+              )}
             </div>
           </FittedListSubheader>
-          <ReferenceList
-            data={data}
-          >
-            {
-              (pageData) => pageData.map(
-                (itemData) => <ReferenceItem key={itemData.name.id} data={itemData} />
-              )
+          <ReferenceList data={data}>
+            {(pageData) =>
+              pageData.map((itemData) => (
+                <ReferenceItem key={itemData.name.id} data={itemData} />
+              ))
             }
           </ReferenceList>
-          <DownloadReference data={data} fileName={`${this.props.pageInfo.name}_references.csv`}>
+          <DownloadReference
+            data={data}
+            fileName={`${this.props.pageInfo.name}_references.csv`}
+          >
             Download all references
           </DownloadReference>
         </div>
@@ -155,4 +177,4 @@ const styles = (theme) => {
   };
 };
 
-export default withStyles(styles, {withTheme: true})(References);
+export default withStyles(styles, { withTheme: true })(References);

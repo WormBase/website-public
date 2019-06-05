@@ -8,7 +8,11 @@ import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
 import Switch from '../Switch';
 import Checkbox from '../Checkbox';
-import { ListItemByLevel as ListItem, ListItemText, CompactList } from '../List';
+import {
+  ListItemByLevel as ListItem,
+  ListItemText,
+  CompactList,
+} from '../List';
 import { buildUrl } from '../Link';
 import { FormControlLabel } from '../Form';
 import ThemeProvider from '../ThemeProvider';
@@ -34,7 +38,7 @@ class InteractionGraph extends Component {
         id: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
         main: PropTypes.any,
-        "class": PropTypes.string,
+        class: PropTypes.string,
       })
     ),
     focusNodeId: PropTypes.string,
@@ -43,21 +47,28 @@ class InteractionGraph extends Component {
 
   resetSelectedTypes = () => {
     const defaultInclude = ['physical'];
-    const defaultExcludes = this.props.interactions.length < 100 ?
-                            new Set(['predicted', 'regulatory:does not regulate', 'gi-module-three:neutral', 'genetic:other']) :
-                            new Set(['predicted', 'regulatory:does not regulate', 'genetic']);
-    const availableTypes = new Set([...defaultInclude, ...this.props.interactions.map((interaction) => interaction.type)]);
+    const defaultExcludes =
+      this.props.interactions.length < 100
+        ? new Set([
+            'predicted',
+            'regulatory:does not regulate',
+            'gi-module-three:neutral',
+            'genetic:other',
+          ])
+        : new Set(['predicted', 'regulatory:does not regulate', 'genetic']);
+    const availableTypes = new Set([
+      ...defaultInclude,
+      ...this.props.interactions.map((interaction) => interaction.type),
+    ]);
     this.setState({
-      interactionTypeSelected: [...availableTypes].filter(
-        (t) => {
-          const inferredTypes = this.getInferredTypes(t);
-          return inferredTypes.filter(
-            (tx) => defaultExcludes.has(tx)
-          ).length === 0;
-        }
-      )
-    })
-  }
+      interactionTypeSelected: [...availableTypes].filter((t) => {
+        const inferredTypes = this.getInferredTypes(t);
+        return (
+          inferredTypes.filter((tx) => defaultExcludes.has(tx)).length === 0
+        );
+      }),
+    });
+  };
 
   componentWillMount() {
     this.resetSelectedTypes();
@@ -82,76 +93,71 @@ class InteractionGraph extends Component {
   }
 
   edgeId = (interaction) => {
-    const {effector, affected, type} = interaction;
+    const { effector, affected, type } = interaction;
     const source = effector.id;
     const target = affected.id;
     return `${source}|${target}|${type}`;
-  }
+  };
 
   subset = () => {
     const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
-    const edgesSubset = this.props.interactions.filter(
-      (edge) => {
-        return interactionTypeSelected.has(edge.type) &&
-               (this.state.includeNearbyInteraction || !parseInt(edge.nearby, 10));
-      }
-    );
+    const edgesSubset = this.props.interactions.filter((edge) => {
+      return (
+        interactionTypeSelected.has(edge.type) &&
+        (this.state.includeNearbyInteraction || !parseInt(edge.nearby, 10))
+      );
+    });
 
     return new Set([
       ...edgesSubset.map((edge) => edge.effector.id),
       ...edgesSubset.map((edge) => edge.affected.id),
-      ...edgesSubset.map((interaction) => this.edgeId(interaction))
+      ...edgesSubset.map((interaction) => this.edgeId(interaction)),
     ]);
-
-  }
+  };
 
   setupCytoscape = () => {
-    const edges = this.props.interactions.map(
-      (interaction) => {
-        const {effector, affected, direction, type, citations} = interaction;
-        const source = effector.id;
-        const target = affected.id;
-        return {
-          group: 'edges',
-          data: {
-            id: this.edgeId(interaction),
-            source: source,
-            target: target,
-            color: this.getEdgeColor(type),
-            directioned: direction !== "non-directional",
-            weight: Math.max(1, Math.min((citations || []).length, 10)),
-            type: type,
-            visibility: 'hidden',
-          }
-        };
-      }
-    );
+    const edges = this.props.interactions.map((interaction) => {
+      const { effector, affected, direction, type, citations } = interaction;
+      const source = effector.id;
+      const target = affected.id;
+      return {
+        group: 'edges',
+        data: {
+          id: this.edgeId(interaction),
+          source: source,
+          target: target,
+          color: this.getEdgeColor(type),
+          directioned: direction !== 'non-directional',
+          weight: Math.max(1, Math.min((citations || []).length, 10)),
+          type: type,
+          visibility: 'hidden',
+        },
+      };
+    });
 
-    const nodes = Object.keys(this.props.interactorMap).map(
-      (interactorId) => {
-        const {label, ...rest} = this.props.interactorMap[interactorId];
-        const getShape = (type) => {
-          const type2shape = {
-            rearrangement: "hexagon",
-            molecule: "triangle",
-            feature: "rectangle",
-          };
-          return type2shape[type] || 'ellipse';
+    const nodes = Object.keys(this.props.interactorMap).map((interactorId) => {
+      const { label, ...rest } = this.props.interactorMap[interactorId];
+      const getShape = (type) => {
+        const type2shape = {
+          rearrangement: 'hexagon',
+          molecule: 'triangle',
+          feature: 'rectangle',
         };
+        return type2shape[type] || 'ellipse';
+      };
 
-        return {
-          group: 'nodes',
-          data: {
-            id: interactorId,
-            label: label,
-            color: 'gray',
-            main: interactorId === this.props.focusNodeId,
-            shape: getShape(rest.class),
-            visibility: 'hidden',
-          }
-        };
-      }
-    );
+      return {
+        group: 'nodes',
+        data: {
+          id: interactorId,
+          label: label,
+          color: 'gray',
+          main: interactorId === this.props.focusNodeId,
+          shape: getShape(rest.class),
+          visibility: 'hidden',
+        },
+      };
+    });
 
     const elements = [...nodes, ...edges];
     if (this._cy) {
@@ -164,54 +170,52 @@ class InteractionGraph extends Component {
         .stylesheet()
         .selector('node')
         .css({
-          'label': 'data(label)',
-          'visibility': 'data(visibility)',
-          'opacity': 0.9,
+          label: 'data(label)',
+          visibility: 'data(visibility)',
+          opacity: 0.9,
           'border-width': 0,
-          'shape': 'data(shape)',
-          'height': 15,
-          'width': 15,
+          shape: 'data(shape)',
+          height: 15,
+          width: 15,
           'font-size': 10,
           'text-valign': 'center',
-          'color': 'black',
+          color: 'black',
           'text-outline-color': 'white',
           'text-outline-width': 1,
         })
         .selector('edge')
         .css({
-          'visibility': 'data(visibility)',
-          'width': 'data(weight)',
-          'opacity':0.6,
+          visibility: 'data(visibility)',
+          width: 'data(weight)',
+          opacity: 0.6,
           'line-color': 'data(color)',
           'line-style': 'solid',
-          'curve-style': 'bezier'
-
+          'curve-style': 'bezier',
         })
         .selector('edge[type="predicted"]')
         .css({
-          'line-style': 'dotted'
+          'line-style': 'dotted',
         })
         .selector('edge[?directioned]')
         .css({
           'target-arrow-shape': 'triangle',
           'target-arrow-color': 'data(color)',
-          'source-arrow-color': 'data(color)'
+          'source-arrow-color': 'data(color)',
         })
         .selector('node[?main]')
         .css({
-          'height': '40px',
-          'width': '40px',
-          'background-color': 'red'
+          height: '40px',
+          width: '40px',
+          'background-color': 'red',
         })
         .selector(':selected')
         .css({
-          'opacity': 1,
+          opacity: 1,
           'border-color': 'black',
           'border-width': 1,
         }),
 
-      layout: this.getLayoutSetting()
-
+      layout: this.getLayoutSetting(),
     });
 
     this._cy.userZoomingEnabled(false);
@@ -219,9 +223,9 @@ class InteractionGraph extends Component {
     this._cy.on('tap', 'node', (event) => {
       const nodeId = event.target.id();
       const data = this.props.interactorMap[nodeId];
-      window.open(buildUrl({...data}));
+      window.open(buildUrl({ ...data }));
     });
-  }
+  };
 
   getLayoutSetting = () => {
     return {
@@ -238,32 +242,35 @@ class InteractionGraph extends Component {
 
   updateCytoscape = () => {
     const subset = this.subset();
-    this._cy.filter('*').forEach(
-      (ele, i, eles) => ele.data('visibility', subset.has(ele.id()) ? 'visible' : 'hidden')
-    );
-  }
+    this._cy
+      .filter('*')
+      .forEach((ele, i, eles) =>
+        ele.data('visibility', subset.has(ele.id()) ? 'visible' : 'hidden')
+      );
+  };
 
   subsetRedraw = () => {
     const subset = this.subset();
     this._cy.userZoomingEnabled(false);
-    this._cy.filter(
-      (ele) => subset.has(ele.id())
-    ).layout(
-      this.getLayoutSetting()
-    ).run();
-  }
+    this._cy
+      .filter((ele) => subset.has(ele.id()))
+      .layout(this.getLayoutSetting())
+      .run();
+  };
 
   getInferredTypes = (type) => {
     const inferredTypes = new Set([type, 'all']);
-    inferredTypes.add(type.split(":")[0]);
+    inferredTypes.add(type.split(':')[0]);
     if (type.match(/gi-module-.+/)) {
-      inferredTypes.add("genetic");
+      inferredTypes.add('genetic');
     }
     return [...inferredTypes];
-  }
+  };
 
   getDescentTypes = (type) => {
-    const availableTypes = new Set(this.props.interactions.map((interaction) => interaction.type));
+    const availableTypes = new Set(
+      this.props.interactions.map((interaction) => interaction.type)
+    );
     const interactionTypes = [
       'predicted',
       'physical',
@@ -272,31 +279,38 @@ class InteractionGraph extends Component {
       'gi-module-one',
       'gi-module-two',
       'gi-module-three',
-      ...availableTypes
+      ...availableTypes,
     ];
     if (type === 'all') {
       return interactionTypes;
     } else if (type === 'genetic') {
-      return interactionTypes.filter((t) => t.match(/gi-module-.+/) || t === 'genetic:other');
+      return interactionTypes.filter(
+        (t) => t.match(/gi-module-.+/) || t === 'genetic:other'
+      );
     } else {
-      return interactionTypes.filter((t) => t.indexOf(type) !== -1 && t !== type);
+      return interactionTypes.filter(
+        (t) => t.indexOf(type) !== -1 && t !== type
+      );
     }
-  }
+  };
 
   isInteractionTypeSelected = (type) => {
     return this.state.interactionTypeSelected.indexOf(type) !== -1;
-  }
+  };
 
   countInteractionsOfType = (type) => {
     const subtypes = new Set([type, ...this.getDescentTypes(type)]);
     return this.props.interactions.reduce((result, interaction) => {
-      if (subtypes.has(interaction.type) &&
-          (this.state.includeNearbyInteraction || !parseInt(interaction.nearby, 10))) {
+      if (
+        subtypes.has(interaction.type) &&
+        (this.state.includeNearbyInteraction ||
+          !parseInt(interaction.nearby, 10))
+      ) {
         result++;
       }
       return result;
     }, 0);
-  }
+  };
 
   handleInteractionTypeSelection = (type) => {
     this.setState((prevState) => {
@@ -305,42 +319,46 @@ class InteractionGraph extends Component {
       if (this.isInteractionTypeSelected(type)) {
         // de-select
         return {
-          interactionTypeSelected: type === 'all' ? [] : prevState.interactionTypeSelected.filter(
-            (prevType) => {
-              return (
-                inferredTypes.indexOf(prevType) === -1 &&  // prevType is not a inferredType
-                descendentTypes.indexOf(prevType) === -1  // prevType is not a descendent type
-              );
-            }
-          )
+          interactionTypeSelected:
+            type === 'all'
+              ? []
+              : prevState.interactionTypeSelected.filter((prevType) => {
+                  return (
+                    inferredTypes.indexOf(prevType) === -1 && // prevType is not a inferredType
+                    descendentTypes.indexOf(prevType) === -1 // prevType is not a descendent type
+                  );
+                }),
         };
       } else {
         return {
-          interactionTypeSelected: [...prevState.interactionTypeSelected, ...descendentTypes, type]
+          interactionTypeSelected: [
+            ...prevState.interactionTypeSelected,
+            ...descendentTypes,
+            type,
+          ],
         };
       }
-
     });
-  }
+  };
 
   getInteractionTypeName = (interactionType) => {
     const parts = ('' || interactionType).split(':');
     return parts[parts.length - 1];
-  }
+  };
 
   getEdgeColor = (type) => {
     const colorScheme = [
-      "#33a02c",  //"#0A6314",  // green
-      "#6a3d9a",  //"#69088A",  // dark purple
-      "#ff7f00",  //"#FF8000",  // orange
-      "#1f78b4",  //"#08298A",  // blue
-      "#00E300",  // bright green
-      "#05C1F0",  // light blue
-      "#8000FF",  // purple
-      "#B40431",  // red
-      "#B58904",
-      "#E02D8A",
-      "#FFFC2E",
+      '#33a02c', //"#0A6314",  // green
+      '#6a3d9a', //"#69088A",  // dark purple
+      '#ff7f00', //"#FF8000",  // orange
+      '#1f78b4', //"#08298A",  // blue
+      '#00E300', // bright green
+      '#05C1F0', // light blue
+      '#8000FF', // purple
+      '#B40431', // red
+      '#B58904',
+      '#E02D8A',
+      '#FFFC2E',
     ];
     const inferredTypes = new Set(this.getInferredTypes(type));
     const tests = [
@@ -348,15 +366,16 @@ class InteractionGraph extends Component {
       () => inferredTypes.has('genetic'),
       () => inferredTypes.has('regulatory'),
     ];
-    const colorIndex = tests.reduce((result, test, index) => (
-      result === -1 ? test() ? index : result : result
-    ), -1);
+    const colorIndex = tests.reduce(
+      (result, test, index) =>
+        result === -1 ? (test() ? index : result) : result,
+      -1
+    );
     return colorIndex === -1 ? 'gray' : colorScheme[colorIndex];
-  }
+  };
 
-
-  renderInteractionTypeSelect = (interactionType, {label} = {}) => {
-    let level =  this.getInferredTypes(interactionType).length - 1;
+  renderInteractionTypeSelect = (interactionType, { label } = {}) => {
+    let level = this.getInferredTypes(interactionType).length - 1;
     level = Math.max(0, level);
     level = Math.min(2, level);
     return (
@@ -369,7 +388,7 @@ class InteractionGraph extends Component {
       >
         <Checkbox
           type="checkbox"
-          style={{color: this.getEdgeColor(interactionType)}}
+          style={{ color: this.getEdgeColor(interactionType) }}
           disableRipple
           classes={{
             root: this.props.classes.graphSidebarCheckbox,
@@ -379,20 +398,25 @@ class InteractionGraph extends Component {
         <ListItemText
           primary={label || this.getInteractionTypeName(interactionType)}
           classes={{
-            primary: classNames([this.props.classes.graphSidebarText, this.props.classes[`graphSidebarTextLevel${level}`]])
+            primary: classNames([
+              this.props.classes.graphSidebarText,
+              this.props.classes[`graphSidebarTextLevel${level}`],
+            ]),
           }}
         />
-        <span className={this.props.classes.graphSidebarCount}>{this.countInteractionsOfType(interactionType)}</span>
+        <span className={this.props.classes.graphSidebarCount}>
+          {this.countInteractionsOfType(interactionType)}
+        </span>
       </ListItem>
     );
-  }
+  };
 
   render() {
-    const {classes} = this.props;
+    const { classes } = this.props;
 
     const graphView = (
       <div
-        ref={(c) => this._cytoscapeContainer = c }
+        ref={(c) => (this._cytoscapeContainer = c)}
         className={classes.cytoscapeContainer}
       />
     );
@@ -403,7 +427,7 @@ class InteractionGraph extends Component {
           className={classes.button}
           variant="contained"
           size="small"
-          onClick={() => this.subsetRedraw() }
+          onClick={() => this.subsetRedraw()}
         >
           Redraw
         </Button>
@@ -422,50 +446,49 @@ class InteractionGraph extends Component {
       <div className={classes.graphSidebar}>
         <CompactList>
           {this.renderInteractionTypeSelect('all', {
-             label: 'All interaction types',
+            label: 'All interaction types',
           })}
           <CompactList>
             {this.renderInteractionTypeSelect('predicted')}
             {this.renderInteractionTypeSelect('physical')}
             <CompactList>
-              {
-                this.getDescentTypes('physical').map((t) => {
-                  return this.renderInteractionTypeSelect(t)
-                })
-              }
+              {this.getDescentTypes('physical').map((t) => {
+                return this.renderInteractionTypeSelect(t);
+              })}
             </CompactList>
             {this.renderInteractionTypeSelect('regulatory')}
             <CompactList>
-              {
-                this.getDescentTypes('regulatory').map((t) => {
-                  return this.renderInteractionTypeSelect(t)
-                })
-              }
+              {this.getDescentTypes('regulatory').map((t) => {
+                return this.renderInteractionTypeSelect(t);
+              })}
             </CompactList>
             {this.renderInteractionTypeSelect('genetic')}
             <CompactList>
-              {
-                this.getDescentTypes('gi-module-two').map((t) => (
-                  this.renderInteractionTypeSelect(t)
-                ))
-              }
-              {
-                this.getDescentTypes('gi-module-three').map((t) => (
-                  this.renderInteractionTypeSelect(t)
-                ))
-              }
-              {
-                this.renderInteractionTypeSelect('genetic:other')
-              }
+              {this.getDescentTypes('gi-module-two').map((t) =>
+                this.renderInteractionTypeSelect(t)
+              )}
+              {this.getDescentTypes('gi-module-three').map((t) =>
+                this.renderInteractionTypeSelect(t)
+              )}
+              {this.renderInteractionTypeSelect('genetic:other')}
             </CompactList>
           </CompactList>
         </CompactList>
         <FormControlLabel
           classes={{
-            label: classNames([this.props.classes.graphSidebarText, this.props.classes.graphSidebarTextLevel0])
+            label: classNames([
+              this.props.classes.graphSidebarText,
+              this.props.classes.graphSidebarTextLevel0,
+            ]),
           }}
           control={
-            <Switch color="primary" checked={this.state.includeNearbyInteraction} onChange={(event, checked) => this.setState({includeNearbyInteraction: checked})} />
+            <Switch
+              color="primary"
+              checked={this.state.includeNearbyInteraction}
+              onChange={(event, checked) =>
+                this.setState({ includeNearbyInteraction: checked })
+              }
+            />
           }
           label="Nearby interaction"
         />
@@ -476,7 +499,7 @@ class InteractionGraph extends Component {
       <ThemeProvider>
         <div>
           <ResponsiveDrawer
-            innerRef={(c) => this._drawerComponent = c}
+            innerRef={(c) => (this._drawerComponent = c)}
             anchor="right"
             drawerContent={graphSidebar}
             mainContent={graphView}
@@ -489,7 +512,6 @@ class InteractionGraph extends Component {
 }
 
 const styles = (theme) => {
-
   return {
     cytoscapeContainer: {
       minHeight: 360,
@@ -499,8 +521,7 @@ const styles = (theme) => {
       border: 'solid 1px gray',
       overflow: 'hidden',
     },
-    graphToolbar: {
-    },
+    graphToolbar: {},
     buttonWrapper: {
       margin: `${theme.spacing.unit / 2}px`,
     },
@@ -516,7 +537,7 @@ const styles = (theme) => {
       padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit}px`,
     },
     graphSidebarCheckbox: {
-      padding: `${theme.spacing.unit / 4 }px 0`,
+      padding: `${theme.spacing.unit / 4}px 0`,
     },
     graphSidebarText: {
       fontStyle: 'italic',
@@ -542,4 +563,4 @@ const styles = (theme) => {
     },
   };
 };
-export default withStyles(styles, {withTheme: true})(InteractionGraph);
+export default withStyles(styles, { withTheme: true })(InteractionGraph);

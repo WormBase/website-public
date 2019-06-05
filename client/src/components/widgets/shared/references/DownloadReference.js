@@ -39,13 +39,11 @@ class DownloadReference extends Component {
       });
       return json2csvParser.parse(this.props.data);
     });
-  }
+  };
 
   render() {
-    const {data, ...others} = this.props;
-    return (
-      <DownloadButton {...others} contentFunc={this.contentFunc} />
-    );
+    const { data, ...others } = this.props;
+    return <DownloadButton {...others} contentFunc={this.contentFunc} />;
   }
 }
 

@@ -12,7 +12,6 @@ import '../../../node_modules/@geneontology/ribbon/lib/index.css';
 import './style.css';
 
 export default class GORibbon extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -24,13 +23,13 @@ export default class GORibbon extends Component {
     this.setState({
       selectedSlimId: currentGoId,
     });
-  }
+  };
 
   handleSlimLeave = () => {
     this.setState({
       selectedSlimId: null,
     });
-  }
+  };
 
   render() {
     const colorScale = scaleSequential(interpolateBlues).domain([0, 9]);
@@ -62,20 +61,26 @@ export default class GORibbon extends Component {
     });
 
     return (
-      <div style={{position: 'relative'}}>
+      <div style={{ position: 'relative' }}>
         <RibbonBase
           groups={[
             {
               label: 'Molecular function',
-              data: slimDataSimple.filter((slim) => slim.aspect === 'Molecular function'),
+              data: slimDataSimple.filter(
+                (slim) => slim.aspect === 'Molecular function'
+              ),
             },
             {
               label: 'Biological process',
-              data: slimDataSimple.filter((slim) => slim.aspect === 'Biological process'),
+              data: slimDataSimple.filter(
+                (slim) => slim.aspect === 'Biological process'
+              ),
             },
             {
               label: 'Cellular component',
-              data: slimDataSimple.filter((slim) => slim.aspect === 'Cellular component'),
+              data: slimDataSimple.filter(
+                (slim) => slim.aspect === 'Cellular component'
+              ),
             },
           ]}
           onSlimSelect={() => null}
@@ -84,16 +89,23 @@ export default class GORibbon extends Component {
           onDomainEnter={() => null}
           onDomainLeave={() => null}
         />
-        <Grow in={Boolean(hoverSlimItem)} timeout={600} >
-          <Card style={{position: 'absolute', top: 0, width: '100%'}}>
-            {
-              hoverSlimItem ?  (
-                <CardContent>
-                  <strong><p>{hoverSlimItem.count} {pluralize('association', hoverSlimItem.count)} to <em>"{hoverSlimItem.slim.label}"</em></p></strong>
-                  <p><strong>Term definition:</strong> {hoverSlimItem.slim.definition}</p>
-                </CardContent>
-              ) : null
-            }
+        <Grow in={Boolean(hoverSlimItem)} timeout={600}>
+          <Card style={{ position: 'absolute', top: 0, width: '100%' }}>
+            {hoverSlimItem ? (
+              <CardContent>
+                <strong>
+                  <p>
+                    {hoverSlimItem.count}{' '}
+                    {pluralize('association', hoverSlimItem.count)} to{' '}
+                    <em>"{hoverSlimItem.slim.label}"</em>
+                  </p>
+                </strong>
+                <p>
+                  <strong>Term definition:</strong>{' '}
+                  {hoverSlimItem.slim.definition}
+                </p>
+              </CardContent>
+            ) : null}
           </Card>
         </Grow>
       </div>
@@ -111,8 +123,8 @@ GORibbon.propTypes = {
           term: tagType.isRequired,
           annotation_count: PropTypes.number.isRequired,
           aspect: PropTypes.string,
-        }),
+        })
       ),
     })
   ),
-}
+};

@@ -7,7 +7,7 @@ import Hidden from '@material-ui/core/Hidden';
 
 const drawerWidth = 240;
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     width: '100%',
     /* marginTop: theme.spacing.unit * 3,*/
@@ -79,15 +79,15 @@ class ResponsiveDrawer extends Component {
   };
 
   render() {
-    const { classes, anchor, drawerContent, mainContent, mainHeader } = this.props;
+    const {
+      classes,
+      anchor,
+      drawerContent,
+      mainContent,
+      mainHeader,
+    } = this.props;
 
-    const drawer = (
-      <div
-        className={classes.drawerPaper}
-      >
-        {drawerContent}
-      </div>
-    );
+    const drawer = <div className={classes.drawerPaper}>{drawerContent}</div>;
 
     const permanentDrawer = (
       <Hidden smDown implementation="css">
@@ -115,11 +115,11 @@ class ResponsiveDrawer extends Component {
             </Drawer>
           </Hidden>
           {anchor === 'left' ? permanentDrawer : null}
-          <main className={classes.content}>
-            {mainContent}
-          </main>
+          <main className={classes.content}>{mainContent}</main>
           {anchor === 'right' ? permanentDrawer : null}
-          <div className={classNames(classes.appBar, classes[`appBar-${anchor}`])}>
+          <div
+            className={classNames(classes.appBar, classes[`appBar-${anchor}`])}
+          >
             {mainHeader}
           </div>
         </div>
@@ -138,7 +138,4 @@ ResponsiveDrawer.propTypes = {
 
 export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
 
-export {
-  styles,
-  ResponsiveDrawer
-}
+export { styles, ResponsiveDrawer };

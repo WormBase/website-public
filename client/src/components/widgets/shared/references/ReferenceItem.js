@@ -11,7 +11,7 @@ class ReferenceItem extends Component {
     data: PropTypes.shape({
       name: PropTypes.shape({
         id: PropTypes.string.isRequired,
-        "class": PropTypes.string.isRequired,
+        class: PropTypes.string.isRequired,
       }).isRequired,
       author: PropTypes.array,
     }),
@@ -28,27 +28,27 @@ class ReferenceItem extends Component {
     this.setState((prevState) => ({
       expanded: !prevState.expanded,
     }));
-  }
+  };
 
   render() {
-    const {data, classes} = this.props;
+    const { data, classes } = this.props;
     return (
       <div className={classes.referenceItem}>
         <Link
-          id={data.name.id} label={data.title && data.title[0]} class={data.name.class}
+          id={data.name.id}
+          label={data.title && data.title[0]}
+          class={data.name.class}
           classes={{
             linkLabel: classes.title,
           }}
         />
         <div>
-          {
-            (data.author || []).map((tag, index) => (
-              <span key={tag.id}>
-                {index !== 0 ? <span>, </span> : null}
-                <Link {...tag} key={tag.id} />
-              </span>
-            ))
-          }
+          {(data.author || []).map((tag, index) => (
+            <span key={tag.id}>
+              {index !== 0 ? <span>, </span> : null}
+              <Link {...tag} key={tag.id} />
+            </span>
+          ))}
         </div>
         <div className={classes.chipWrapper}>
           <Chip label={data.ptype} />
@@ -56,8 +56,10 @@ class ReferenceItem extends Component {
           <Chip label={data.year} />
         </div>
         <div
-          className={classNames(classes.abstract, classes.fade, {[classes.abstractCollapse]: !this.state.expanded})}
-          onClick={() => this.handleExpandToggle() }
+          className={classNames(classes.abstract, classes.fade, {
+            [classes.abstractCollapse]: !this.state.expanded,
+          })}
+          onClick={() => this.handleExpandToggle()}
         >
           {data.abstract && <p>{data.abstract[0]}</p>}
         </div>
@@ -69,7 +71,6 @@ class ReferenceItem extends Component {
 const styles = (theme) => ({
   referenceItem: {
     margin: `${theme.spacing.unit}px 0px`,
-
   },
   title: {
     textDecoration: 'underline',
@@ -87,7 +88,7 @@ const styles = (theme) => ({
   },
   fade: {
     position: 'relative',
-    "&:after": {
+    '&:after': {
       content: '""',
       textAlign: 'right',
       position: 'absolute',
@@ -95,12 +96,13 @@ const styles = (theme) => ({
       left: 0,
       width: '100%',
       height: '1.0em',
-      background: 'linear-gradient(to bottom, transparent, rgba(255,255,255, 0.7))',
+      background:
+        'linear-gradient(to bottom, transparent, rgba(255,255,255, 0.7))',
     },
   },
   chipWrapper: {
     display: 'flex',
-    marginLeft: -1 * theme.spacing.unit / 2,
+    marginLeft: (-1 * theme.spacing.unit) / 2,
     '& > *': {
       margin: theme.spacing.unit / 2,
       height: theme.spacing.unit * 2.5,
@@ -108,4 +110,4 @@ const styles = (theme) => ({
   },
 });
 
-export default withStyles(styles, {withTheme: true})(ReferenceItem);
+export default withStyles(styles, { withTheme: true })(ReferenceItem);

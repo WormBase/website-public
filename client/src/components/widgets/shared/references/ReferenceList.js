@@ -22,23 +22,24 @@ class ReferenceList extends Component {
     this.setState({
       page: page,
     });
-  }
+  };
 
   handleChangeRowsPerPage = (event) => {
     this.setState({
-      rowsPerPage: event.target.value
+      rowsPerPage: event.target.value,
     });
-  }
+  };
 
   render() {
-    const {page, rowsPerPage} = this.state;
-    const {data, classes} = this.props;
-    const pageData = data.slice(page * rowsPerPage, Math.min(data.length, page * rowsPerPage + rowsPerPage));
+    const { page, rowsPerPage } = this.state;
+    const { data, classes } = this.props;
+    const pageData = data.slice(
+      page * rowsPerPage,
+      Math.min(data.length, page * rowsPerPage + rowsPerPage)
+    );
     return (
       <div className={classes.root}>
-        {
-          this.props.children(pageData)
-        }
+        {this.props.children(pageData)}
         <Pagination
           count={data.length}
           rowsPerPage={rowsPerPage}
@@ -52,8 +53,7 @@ class ReferenceList extends Component {
 }
 
 const styles = (theme) => ({
-  root: {
-  },
+  root: {},
 });
 
-export default withStyles(styles, {withTheme: true})(ReferenceList);
+export default withStyles(styles, { withTheme: true })(ReferenceList);

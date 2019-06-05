@@ -1,2 +1,4 @@
 export { default } from './InteractionGraph';
-export { default as InteractionGraphDataProvider } from './InteractionGraphDataProvider';
+export {
+  default as InteractionGraphDataProvider,
+} from './InteractionGraphDataProvider';

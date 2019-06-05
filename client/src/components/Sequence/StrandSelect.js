@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createMuiTheme, MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import {
+  createMuiTheme,
+  MuiThemeProvider,
+  withStyles,
+} from '@material-ui/core/styles';
 import pink from '@material-ui/core/colors/pink';
 import teal from '@material-ui/core/colors/blue';
 import Tab from '../Tab';
@@ -23,50 +27,52 @@ class StrandSelect extends React.Component {
 
   valueToStrand = (value) => {
     return value === 0 ? '+' : '-';
-  }
+  };
 
   strandToValue = (strand) => {
     return strand === '+' ? 0 : 1;
-  }
+  };
 
   handleChange = (event, value) => {
     this.setState({
       strand: this.valueToStrand(value),
     });
-  }
+  };
 
   render() {
-    const {strand} = this.state;
-    const {classes} = this.props;
+    const { strand } = this.state;
+    const { classes } = this.props;
     return (
       <div>
         <MuiThemeProvider theme={strandTheme}>
           <Tabs
             value={this.strandToValue(strand)}
-            indicatorColor={strand === '+' ? "secondary" : "primary"}
-            textColor={strand === '+' ? "secondary" : "primary"}
+            indicatorColor={strand === '+' ? 'secondary' : 'primary'}
+            textColor={strand === '+' ? 'secondary' : 'primary'}
             onChange={this.handleChange}
-            >
-	    <Tab
-	      classes={{
+          >
+            <Tab
+              classes={{
                 label: classes.positiveStrandLabel,
-	      }}
-	      label="(+) strand"
-	      />
-	    <Tab
-	      classes={{
+              }}
+              label="(+) strand"
+            />
+            <Tab
+              classes={{
                 label: classes.negativeStrandLabel,
-	      }}
-	      label="(-) strand"
-	      />
+              }}
+              label="(-) strand"
+            />
           </Tabs>
         </MuiThemeProvider>
-        <div className={classes[strand === '+' ? 'positiveStrand' : 'negativeStrand']}>
-          {
-            this.props.children({
-              strand: strand,
-            })
+        <div
+          className={
+            classes[strand === '+' ? 'positiveStrand' : 'negativeStrand']
           }
+        >
+          {this.props.children({
+            strand: strand,
+          })}
         </div>
       </div>
     );
@@ -84,10 +90,10 @@ StrandSelect.propTypes = {
 };
 
 const styles = (theme) => ({
-  'positiveStrand': {
+  positiveStrand: {
     borderLeft: `solid ${strandTheme.palette.secondary.light} ${1}px`,
   },
-  'negativeStrand': {
+  negativeStrand: {
     borderLeft: `solid ${strandTheme.palette.primary.light} ${1}px`,
   },
   positiveStrandLabel: {

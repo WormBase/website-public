@@ -12,42 +12,67 @@ class SingleWidgetPage extends React.Component {
         <CircularProgress color="inherit" />
       </div>
     );
-  }
+  };
 
   render() {
-    const Widget = withInnerHtmlFromUrl('div', this.props.widgetUrl, this.renderProgress());
+    const Widget = withInnerHtmlFromUrl(
+      'div',
+      this.props.widgetUrl,
+      this.renderProgress()
+    );
     return (
       <div className={this.props.classes.page}>
         <div className={this.props.classes.pageTitleWrapper}>
           <div className={this.props.classes.breadcrumbs}>
-            {
-              this.props.section === 'species' ?
-              <Breadcrumb trail={[
-                {label: 'Species', url: '/species/all'},
-                this.props.object.taxonomy ? {label: this.props.species.title, url: `/species/${this.props.object.taxonomy}`} : null,
-                {label: this.props.classConf.title, url: `/species/${this.props.object.taxonomy || 'all'}/${this.props.object.class}`},
-              ]} /> :
-              this.props.section === 'resources' ?
-              <Breadcrumb trail={[
-                {label: 'Resources', url: '/resources/all'},
-                {label: this.props.classConf.title, url: `/resources/${this.props.object.class}`},
-              ]} /> :
-              null
-            }
+            {this.props.section === 'species' ? (
+              <Breadcrumb
+                trail={[
+                  { label: 'Species', url: '/species/all' },
+                  this.props.object.taxonomy
+                    ? {
+                        label: this.props.species.title,
+                        url: `/species/${this.props.object.taxonomy}`,
+                      }
+                    : null,
+                  {
+                    label: this.props.classConf.title,
+                    url: `/species/${this.props.object.taxonomy || 'all'}/${
+                      this.props.object.class
+                    }`,
+                  },
+                ]}
+              />
+            ) : this.props.section === 'resources' ? (
+              <Breadcrumb
+                trail={[
+                  { label: 'Resources', url: '/resources/all' },
+                  {
+                    label: this.props.classConf.title,
+                    url: `/resources/${this.props.object.class}`,
+                  },
+                ]}
+              />
+            ) : null}
           </div>
           <div className={this.props.classes.pageTitle}>
             <h2>
               {
-                <Breadcrumb trail={[
-                  this.props.object,
-                  {label: this.props.widgetConf.title},
-                ]} />
+                <Breadcrumb
+                  trail={[
+                    this.props.object,
+                    { label: this.props.widgetConf.title },
+                  ]}
+                />
               }
             </h2>
           </div>
         </div>
         <div className={this.props.classes.pageMain}>
-          <Widget id={`${this.props.widgetConf.name}-content`} className="content" style={{paddingTop: '2em',}} />
+          <Widget
+            id={`${this.props.widgetConf.name}-content`}
+            className="content"
+            style={{ paddingTop: '2em' }}
+          />
         </div>
       </div>
     );
@@ -66,7 +91,7 @@ SingleWidgetPage.propTypes = {
     name: PropTypes.string.isRequired,
   }),
   object: PropTypes.shape({
-    "class": PropTypes.string.isRequired,
+    class: PropTypes.string.isRequired,
     taxonomy: PropTypes.string,
   }),
   species: PropTypes.shape({
