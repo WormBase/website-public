@@ -78,7 +78,7 @@
                    img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
                  END;
                  WRAPPER $field_block title="Genome Browser Preview";
-                    jbrowse_view(position, undef, fields.jbrowse_tracks.data);
+                    jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
                  END;
                  '<br><br>';
                  WRAPPER toggle title="Legacy GBrowse image";
