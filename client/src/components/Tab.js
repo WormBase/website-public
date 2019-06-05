@@ -4,19 +4,17 @@ import { withStyles } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const Tab = (props) => {
-  return (
-    <MuiTab
-      {...props}
-      disableRipple={true}
-    />
-  );
+  return <MuiTab {...props} disableRipple={true} />;
 };
 
 const styles = (theme) => ({
   root: {
     '&:hover': {
       textDecoration: 'none',
-      backgroundColor: fade(theme.palette.text.primary, theme.palette.action.hoverOpacity),
+      backgroundColor: fade(
+        theme.palette.text.primary,
+        theme.palette.action.hoverOpacity
+      ),
       // Reset on touch devices, it doesn't add specificity
       '@media (hover: none)': {
         backgroundColor: 'transparent',
@@ -28,4 +26,4 @@ const styles = (theme) => ({
   },
 });
 
-export default withStyles(styles, {withTheme: true})(Tab);
+export default withStyles(styles, { withTheme: true })(Tab);

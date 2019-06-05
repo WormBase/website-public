@@ -16,6 +16,4 @@ const Pagination = (props) => (
 
 export default Pagination;
 
-export {
-  TablePagination
-};
+export { TablePagination };

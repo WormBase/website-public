@@ -7,18 +7,22 @@ class Breadcrumb extends React.Component {
   render() {
     return (
       <span>
-        {
-          this.props.trail.filter((object) => object).map((object, index) => {
-            const {label,url} = object;
+        {this.props.trail
+          .filter((object) => object)
+          .map((object, index) => {
+            const { label, url } = object;
             const derivedUrl = url || buildUrl(object);
             return [
               index === 0 ? null : ' » ',
               derivedUrl ? (
-                <a href={derivedUrl} key={label}>{label}</a>
-              ) : <span key={label}>{label}</span>,
+                <a href={derivedUrl} key={label}>
+                  {label}
+                </a>
+              ) : (
+                <span key={label}>{label}</span>
+              ),
             ];
-          })
-        }
+          })}
       </span>
     );
   }
@@ -31,12 +35,10 @@ Breadcrumb.propTypes = {
       url: PropTypes.string,
     })
   ),
-}
+};
 
 const styles = (theme) => ({
-  root: {
-
-  },
+  root: {},
 });
 
 export default withStyles(styles)(Breadcrumb);

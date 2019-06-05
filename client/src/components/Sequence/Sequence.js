@@ -5,21 +5,23 @@ import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 
 class Sequence extends React.Component {
-
-  featureClassName = (featureType) => (`${featureType}Feature`);
+  featureClassName = (featureType) => `${featureType}Feature`;
 
   renderLineNumbers = (numberLettersPerLine) => {
-    const {classes, sequence} = this.props;
+    const { classes, sequence } = this.props;
     return (
       <p className={classes.lineNumbers + ' ' + classes.fastaText}>
-        {
-          sequence.match(new RegExp(`.{1,${numberLettersPerLine}}`, 'g')).map((_, index) => (
-            <span key={index}>{index * numberLettersPerLine + 1}<br /></span>
-          ))
-        }
+        {sequence
+          .match(new RegExp(`.{1,${numberLettersPerLine}}`, 'g'))
+          .map((_, index) => (
+            <span key={index}>
+              {index * numberLettersPerLine + 1}
+              <br />
+            </span>
+          ))}
       </p>
     );
-  }
+  };
 
   render() {
     const {
@@ -32,25 +34,31 @@ class Sequence extends React.Component {
     } = this.props;
     return sequence ? (
       <Grid container spacing={0} className={classes.root}>
-        {
-          showLegend && features.length ?
-            <Grid item xs={12} md={2} className={classes.legendArea}>
-              <span><em>Legends</em></span>
-              {
-                [...new Set(features.map(({type: featureType}) => (featureType)))].map(
-                  (featureType) => {
-                    return (
-                      <p key={featureType} className={classes.featureLegendItem}>
-                        <span
-                          className={classes[this.featureClassName(featureType)] + ' ' + classes.featureLegendItemSymbol}
-                        >&nbsp;a&nbsp;</span> {featureLabelMap[featureType] || featureType}
-                      </p>
-                    )
-                  }
-                )
-              }
-          </Grid> : null
-        }
+        {showLegend && features.length ? (
+          <Grid item xs={12} md={2} className={classes.legendArea}>
+            <span>
+              <em>Legends</em>
+            </span>
+            {[
+              ...new Set(features.map(({ type: featureType }) => featureType)),
+            ].map((featureType) => {
+              return (
+                <p key={featureType} className={classes.featureLegendItem}>
+                  <span
+                    className={
+                      classes[this.featureClassName(featureType)] +
+                      ' ' +
+                      classes.featureLegendItemSymbol
+                    }
+                  >
+                    &nbsp;a&nbsp;
+                  </span>{' '}
+                  {featureLabelMap[featureType] || featureType}
+                </p>
+              );
+            })}
+          </Grid>
+        ) : null}
         <Hidden mdUp>
           <Grid item xs={1} className={classes.lineNumberArea}>
             {this.renderLineNumbers(20)}
@@ -64,16 +72,28 @@ class Sequence extends React.Component {
         <Grid item className={classes.fastaText + ' ' + classes.fastaTextArea}>
           <span className={classes.fastaHeaderText}>> {title}</span>
           <p className={classes.sequenceText}>
-            {
-              sequence.split('').map((letter, index) => {
-                const featureClasses = features.filter((feature) => {
-                  return feature.start <= (index + 1) && feature.stop >= (index + 1);
-                }).map(
-                  ({type: featureType}) => classes[this.featureClassName(featureType)]
+            {sequence.split('').map((letter, index) => {
+              const featureClasses = features
+                .filter((feature) => {
+                  return (
+                    feature.start <= index + 1 && feature.stop >= index + 1
+                  );
+                })
+                .map(
+                  ({ type: featureType }) =>
+                    classes[this.featureClassName(featureType)]
                 );
-                return (<span key={index} className={classes.sequenceChar + ' ' + featureClasses.join(' ')}>{letter}</span>);
-              })
-            }
+              return (
+                <span
+                  key={index}
+                  className={
+                    classes.sequenceChar + ' ' + featureClasses.join(' ')
+                  }
+                >
+                  {letter}
+                </span>
+              );
+            })}
           </p>
         </Grid>
       </Grid>
@@ -90,7 +110,7 @@ Sequence.propTypes = {
       type: PropTypes.string,
       start: PropTypes.number,
       stop: PropTypes.number,
-    }),
+    })
   ),
 };
 
@@ -98,15 +118,14 @@ const styles = (theme) => ({
   root: {
     '& div': {
       paddingLeft: theme.spacing.unit * 1.5,
-      maxHeight: 1000000,  /* prevent font boosting that sets line number and sequence to different computed font-size*/
+      maxHeight: 1000000 /* prevent font boosting that sets line number and sequence to different computed font-size*/,
     },
   },
   fastaText: {
     fontFamily: 'monospace',
     fontSize: '10pt',
   },
-  fastaHeaderText: {
-  },
+  fastaHeaderText: {},
   sequenceText: {
     '& span:nth-child(10n)': {
       marginRight: '0.5em',
@@ -136,8 +155,7 @@ const styles = (theme) => ({
     backgroundColor: 'orange',
     textTransform: 'uppercase',
   },
-  intronFeature: {
-  },
+  intronFeature: {},
   UTRFeature: {
     textTransform: 'lowercase',
     backgroundColor: '#ccc',
@@ -155,10 +173,10 @@ const styles = (theme) => ({
     backgroundColor: '#FF8080',
     textTransform: 'uppercase',
   },
-  'cgh_flanking_probeFeature': {
+  cgh_flanking_probeFeature: {
     backgroundColor: '#80FFFF',
   },
-  'cgh_deleted_probeFeature': {
+  cgh_deleted_probeFeature: {
     backgroundColor: '#FFAA54',
     textTransform: 'uppercase',
   },

@@ -15,9 +15,7 @@ import Button, { IconButton } from '../Button';
 import CardActionArea from '../CardActionArea';
 import Tooltip from '../Tooltip';
 
-
-const  SequenceCard = (props) => {
-
+const SequenceCard = (props) => {
   const {
     classes,
     className,
@@ -25,7 +23,7 @@ const  SequenceCard = (props) => {
     title = 'Sequence',
     downloadFileName = 'sequence.fasta',
     initialExpand = true,
-    ...sequenceProps,
+    ...sequenceProps
   } = props;
 
   const [expand, setExpand] = useState(initialExpand);
@@ -48,11 +46,11 @@ const  SequenceCard = (props) => {
     <Card elevation={0} className={className}>
       <CardActions className={classes.actions}>
         <Tooltip title={expand ? 'Hide sequence' : 'Show sequence'}>
-          <CardActionArea className={classes.expandToggleAction} onClick={() => setExpand(!expand)}>
-
-            {
-              expand ? <ExpandLessIcon /> : <ExpandMoreIcon />
-            }
+          <CardActionArea
+            className={classes.expandToggleAction}
+            onClick={() => setExpand(!expand)}
+          >
+            {expand ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 
             <h5 className={classes.title}>{title}</h5>
           </CardActionArea>
@@ -66,7 +64,7 @@ const  SequenceCard = (props) => {
                 <SaveIcon className={classes.buttonIcon} fontSize="inherit" />
               </Button>
             )}
-            contentFunc={() => `> ${title}\r\n${sequence}` }
+            contentFunc={() => `> ${title}\r\n${sequence}`}
           />
         </Tooltip>
         <CopyToClipboard
@@ -75,18 +73,23 @@ const  SequenceCard = (props) => {
         >
           <Tooltip title="Copy to clipboard">
             <Button variant="outlined" className={classes.button}>
-              Copy <CopyIcon className={classes.buttonIcon} fontSize="inherit" />
-              { copied ? <CheckmarkIcon className={classes.buttonIcon} fontSize="inherit" /> : null }
+              Copy{' '}
+              <CopyIcon className={classes.buttonIcon} fontSize="inherit" />
+              {copied ? (
+                <CheckmarkIcon
+                  className={classes.buttonIcon}
+                  fontSize="inherit"
+                />
+              ) : null}
             </Button>
           </Tooltip>
         </CopyToClipboard>
       </CardActions>
-      {
-        expand ? <Sequence title={title} sequence={sequence} {...sequenceProps} /> : null
-      }
+      {expand ? (
+        <Sequence title={title} sequence={sequence} {...sequenceProps} />
+      ) : null}
     </Card>
   ) : null;
-
 };
 
 SequenceCard.propTypes = {
@@ -131,7 +134,7 @@ const styles = (theme) => ({
   },
   buttonIcon: {
     marginLeft: theme.spacing.unit / 2,
-  }
+  },
 });
 
 export default withStyles(styles)(SequenceCard);

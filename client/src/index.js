@@ -30,5 +30,8 @@ if (browserSupportsAllFeatures()) {
   main();
 } else {
   // All other browsers loads polyfills and then run `main()`.
-  loadScript('https://cdn.polyfill.io/v2/polyfill.min.js?features=default-3.6,fetch', main);
+  loadScript(
+    'https://cdn.polyfill.io/v2/polyfill.min.js?features=default-3.6,fetch',
+    main
+  );
 }
