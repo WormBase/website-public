@@ -16,6 +16,10 @@ WRAPPER $field_block title="Expression pattern images" key="expr_pattern_images"
     '</div>';
 END;
 
+WRAPPER $field_block title="Test";
+    '<div id="test_div" style="max-width:500px;">TEST</div>';
+END;
+
 
 WRAPPER $field_block title="Expressed in" key="expressed_in";
 

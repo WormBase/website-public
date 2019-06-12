@@ -1369,6 +1369,42 @@ sub pos_neg_data {
 #######################################
 
 
+sub expression_anatomy_graph {
+    my $self = shift;
+    my $object = $self->object;
+    return {
+        data        => "$object",
+        description => 'The Expression-anatomy Graph of the gene',
+    };
+}
+
+sub expression_lifestage_graph {
+    my $self = shift;
+    my $object = $self->object;
+    return {
+        data        => "$object",
+        description => 'The Expression-life stage Graph of the gene',
+    };
+}
+
+sub gene_ontology_graph {
+    my $self = shift;
+    my $object = $self->object;
+    return {
+        data        => "$object",
+        description => 'The Gene Ontology Graph of the gene',
+    };
+}
+
+sub human_disease_graph {
+    my $self = shift;
+    my $object = $self->object;
+    return {
+        data        => "$object",
+        description => 'The Human Diseases Graph of the gene',
+    };
+}
+
 sub phenotype_graph {
     my $self = shift;
     my $object = $self->object;
