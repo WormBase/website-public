@@ -26,8 +26,9 @@ $jq(function(){
 });
 </script>
 
-[%# WRAPPER $field_block title="Phenotype Graph" key="phenotype_graph" %]
-<b>Phenotype Ontology Graph:</b><br>
+[%# WRAPPER $field_block title="Phenotype Graph" tooltip="the tooltip" key="phenotype_graph" %]
+<b><span title="click to see documentation"><a href="http://wiki.wormbase.org/index.php/User_Guide/SObA" target="_blank">Phenotype Ontology Graph</a></span>:</b><br>
+ <!--<div class="field-title"><span title="click to see documentation" class="has-tooltip"><a href="www.google.com" target="_blank">Phenotype Ontology Graph:</a></span></div>-->
 <input type="hidden" id="focusTermIdPhenotype" value="">
 <input type="hidden" id="urlBasePhenotype" value="">
 <input type="hidden" id="updatingElementsPhenotype" value="radio_etp_all|radio_etp_onlyrnai|radio_etp_onlyvariation">
