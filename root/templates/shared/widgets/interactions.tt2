@@ -1,4 +1,9 @@
-
+ [% WRAPPER $field_block key="interactor_types"; %]
+     <div id="interactor-venn-container"></div>
+     <script>
+       WB.renderInteractorVennDiagram([% json_encode(fields.interactor_types.data || []) %], "interactor-venn-container");
+     </script>
+ [% END; %]
 
 
 [%

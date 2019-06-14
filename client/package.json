@@ -28,7 +28,8 @@
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.6",
     "react-intersection-observer": "^8.24.1",
-    "tippy.js": "^4.3.5"
+    "tippy.js": "^4.3.5",
+    "venn.js": "^0.2.20"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
