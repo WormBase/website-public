@@ -1,10 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function combination(list = [], n) {
-  if (n <= 0) {
+function combination([...list] = [], n) {
+  if (list.length < n) {
+    throw new Error(
+      `Cannot pick ${n} items from a list of length ${list.length}`
+    );
+  } else if (n <= 0) {
     return [];
-  } else if (list.length <= n) {
+  } else if (n === 1) {
+    return list.map((item) => [item]);
+  } else if (n === list.length) {
     return [list];
   } else {
     const [item, ...rest] = list;
@@ -17,7 +23,7 @@ function combination(list = [], n) {
   }
 }
 
-function subsets(list, minSize = 1, maxSize = list.length) {
+function subsets([...list] = [], minSize = 1, maxSize = list.length) {
   let results = [];
   for (let i = minSize; i <= maxSize; i++) {
     results = [...results, ...combination(list, i)];
@@ -25,22 +31,47 @@ function subsets(list, minSize = 1, maxSize = list.length) {
   return results;
 }
 
-// console.log(combination([1, 2, 3, 4], 4));
-// console.log(combination([1, 2, 3, 4], 3));
-// console.log(combination([1, 2, 3, 4], 2));
-// console.log(combination([1, 2, 3, 4], 1));
-// console.log(combination([1, 2, 3, 4], 0));
+//console.log(combination([1, 2, 3, 4], 4));
+console.log(combination([1, 2, 3, 4], 3));
+console.log(combination([1, 2, 3, 4], 2));
+console.log(combination([1, 2, 3, 4], 1));
+console.log(combination([1, 2, 3, 4], 0));
 // console.log(subsets([1, 2, 3, 4]));
-console.log(subsets(['physical', 'genetic', 'regulatory']));
+// console.log(subsets(['physical', 'genetic', 'regulatory']));
+
+function isSuperSet(list1, list2) {
+  // is list1 a super set of list2
+  const set1 = new Set(list1);
+  return list2.every((item) => set1.has(item));
+}
+
+console.log(isSuperSet([1, 2, 3], [2, 3]));
 
 export default function InteractorVennDiagram({ data = [] }) {
+  const typeSet = data.reduce((result, { types = [], interactor = {} }) => {
+    types.forEach((t) => result.add(t));
+    return result;
+  }, new Set());
+  console.log(typeSet);
+  console.log(subsets(typeSet));
+  const vennSubsets = subsets(typeSet)
+    .map((s) => {
+      return {
+        sets: s,
+        size: data.filter(({ types: interactorTypes }) =>
+          isSuperSet(interactorTypes, s)
+        ).length,
+      };
+    })
+    .filter(({ size }) => size > 0);
+  console.log(vennSubsets);
   return <div>Place holder for venn diagram </div>;
 }
 
 InteractorVennDiagram.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
-      type: PropTypes.string,
+      types: PropTypes.arrayOf(PropTypes.string),
       interactor: PropTypes.shape({
         id: PropTypes.string,
       }),
