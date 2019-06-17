@@ -267,40 +267,42 @@ export default function setupCyOntologyGraph(elements, datatype) {
     });
   });
 
-  $jq(radioWeightedElement).on('click', function() {
+  function updateWeighted(isWeighted) {
     var nodes = cyOntologyGraph.nodes();
     for (var i = 0; i < nodes.length; i++) {
       var node = nodes[i];
       var nodeId = node.data('id');
-      var diameterWeighted = node.data('diameter_weighted');
-      cyOntologyGraph.$('#' + nodeId).data('diameter', diameterWeighted);
-      var fontSizeWeighted = node.data('fontSizeWeighted');
-      cyOntologyGraph.$('#' + nodeId).data('fontSize', fontSizeWeighted);
-      var borderWidthWeighted = node.data('borderWidthWeighted');
-      cyOntologyGraph.$('#' + nodeId).data('borderWidth', borderWidthWeighted);
-    }
-    cyOntologyGraph.layout({ name: 'dagre', padding: 10, nodeSep: 5 }).run();
-  });
-  $jq(radioUnweightedElement).on('click', function() {
-    var nodes = cyOntologyGraph.nodes();
-    console.log('clicked ' + radioUnweightedElement);
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
-      var nodeId = node.data('id');
-      var diameterUnweighted = node.data('diameter_unweighted');
-      var diameterWeighted = node.data('diameter_weighted');
-      cyOntologyGraph.$('#' + nodeId).data('diameter', diameterUnweighted);
-      var fontSizeUnweighted = node.data('fontSizeUnweighted');
-      var fontSizeWeighted = node.data('fontSizeWeighted');
-      cyOntologyGraph.$('#' + nodeId).data('fontSize', fontSizeUnweighted);
-      var borderWidthUnweighted = node.data('borderWidthUnweighted');
-      var borderWidthWeighted = node.data('borderWidthWeighted');
       cyOntologyGraph
         .$('#' + nodeId)
-        .data('borderWidth', borderWidthUnweighted);
+        .data(
+          'diameter',
+          node.data(isWeighted ? 'diameter_weighted' : 'diameter_unweighted')
+        );
+      cyOntologyGraph
+        .$('#' + nodeId)
+        .data(
+          'fontSize',
+          node.data(isWeighted ? 'fontSizeWeighted' : 'fontSizeUnweighted')
+        );
+      cyOntologyGraph
+        .$('#' + nodeId)
+        .data(
+          'borderWidth',
+          node.data(
+            isWeighted ? 'borderWidthWeighted' : 'borderWidthUnweighted'
+          )
+        );
     }
     cyOntologyGraph.layout({ name: 'dagre', padding: 10, nodeSep: 5 }).run();
+  }
+
+  $jq(radioWeightedElement).on('click', function() {
+    updateWeighted(true);
   });
+  $jq(radioUnweightedElement).on('click', function() {
+    updateWeighted(false);
+  });
+
   $jq(viewPngButtonElement).on('click', function() {
     var png64 = cyOntologyGraph.png({
       full: true,
@@ -413,7 +415,8 @@ export default function setupCyOntologyGraph(elements, datatype) {
       cyOntologyGraph.json({ elements: elementsNew });
       cyOntologyGraph
         .elements()
-        .layout({ name: 'dagre', padding: 10, nodeSep: 5 });
+        .layout({ name: 'dagre', padding: 10, nodeSep: 5 })
+        .run();
 
       var maxOption = elementsNew.meta.fullDepth;
       var userSelectedValue =
