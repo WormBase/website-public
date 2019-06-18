@@ -27,7 +27,7 @@ END;
 
 [% IF object.name.data.id %]
   [% IF (matches = object.name.data.id.match('^WBGene')) %]
-  <b><span title="click to see documentation">Tissue expression Graph </span>:</b><br>
+<b><span title="click to see documentation"><a href="http://wiki.wormbase.org/index.php/User_Guide/SObA" target="_blank">Tissue expression Graph</a></span>:</b><br>
 <script src="/js/jquery/plugins/cytoscapejs/dagre/0.7.4/dagre.min.js "></script>
 
 <script type="text/javascript">
@@ -98,7 +98,7 @@ $jq(function(){
   </td></tr></table>
 </div>
 
-  <b><span title="click to see documentation">Time expression graph</span>:</b><br>
+  <b><span title="click to see documentation"><a href="http://wiki.wormbase.org/index.php/User_Guide/SObA" target="_blank">Time expression Graph</a></span>:</b><br>
 <script src="/js/jquery/plugins/cytoscapejs/dagre/0.7.4/dagre.min.js "></script>
 
 <script type="text/javascript">

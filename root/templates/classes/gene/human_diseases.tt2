@@ -52,7 +52,7 @@ $jq(function(){
 <input type="hidden" id="focusTermIdDisease" value="">
 <input type="hidden" id="urlBaseDisease" value="">
 <input type="hidden" id="updatingElementsDisease" value="radio_etd_all|radio_etd_excludeiea">
-<b>Human disease graph:<br /></b>
+<b><span title="click to see documentation"><a href="http://wiki.wormbase.org/index.php/User_Guide/SObA" target="_blank">Human disease graph</a></span>:</b><br>
 <div id="graphContentDisease">
   <div id="cyDiseaseGraph" style="height: 750px; width: 950px; position: relative; float: left; border: 1px solid #aaa;"></div>
   <div id="cyDiseaseGraphLoading" style="width: 950px; padding: 20px 0 0 0; position: absolute; text-align: center;"><img src="/img/ajax-loader.gif" alt="Loading graph..." /></div>

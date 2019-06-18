@@ -35,7 +35,7 @@ $jq(function(){
 <input type="hidden" id="urlBaseGo" value="">
 <input type="hidden" id="updatingElementsGo" value="radio_etgo_withiea|radio_etgo_excludeiea|radio_etgo_onlyiea|root_bp|root_cc|root_mf">
 <input type="hidden" id="rootsPossibleGo" value="root_bp|root_cc|root_mf">
-<b>Gene Ontology Graph:</b>
+<b><span title="click to see documentation"><a href="http://wiki.wormbase.org/index.php/User_Guide/SObA" target="_blank">Gene Ontology Graph</a></span>:</b><br>
 <div id="graphContentGo">
   <div id="cyGoGraph" style="height: 750px; width: 950px; position: relative; float: left; border: 1px solid #aaa;"></div>
   <div id="cyGoGraphLoading" style="width: 950px; padding: 20px 0 0 0; position: absolute; text-align: center;"><img src="/img/ajax-loader.gif" alt="Loading graph..." /></div>
