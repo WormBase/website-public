@@ -279,7 +279,7 @@ export default function setupCyOntologyGraph(elements, datatype) {
       var borderWidthWeighted = node.data('borderWidthWeighted');
       cyOntologyGraph.$('#' + nodeId).data('borderWidth', borderWidthWeighted);
     }
-    cyOntologyGraph.layout();
+    cyOntologyGraph.layout({ name: 'dagre', padding: 10, nodeSep: 5 }).run();
   });
   $jq(radioUnweightedElement).on('click', function() {
     var nodes = cyOntologyGraph.nodes();
@@ -299,7 +299,7 @@ export default function setupCyOntologyGraph(elements, datatype) {
         .$('#' + nodeId)
         .data('borderWidth', borderWidthUnweighted);
     }
-    cyOntologyGraph.layout();
+    cyOntologyGraph.layout({ name: 'dagre', padding: 10, nodeSep: 5 }).run();
   });
   $jq(viewPngButtonElement).on('click', function() {
     var png64 = cyOntologyGraph.png({
