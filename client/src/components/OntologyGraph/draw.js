@@ -433,3 +433,223 @@ export default function setupCyOntologyGraph(elements, datatype) {
     }
   } // function updateElements()
 } // function setupCyOntologyGraph(elements, datatype)
+
+export function setupCytoscape(containerElement, datatype, data, {} = {}) {
+  const layout = { name: 'dagre', padding: 10, nodeSep: 5 };
+  var cyOntologyGraph = cytoscape({
+    container: containerElement,
+    layout: layout,
+    style: cytoscape
+      .stylesheet()
+      .selector('node')
+      .css({
+        content: 'data(name)',
+        'background-color': 'data(backgroundColor)',
+        shape: 'data(nodeShape)',
+        'border-color': 'data(nodeColor)',
+        'border-style': 'data(borderStyle)',
+        'border-width': 'data(borderWidth)',
+        width: 'data(diameter)',
+        height: 'data(diameter)',
+        'text-valign': 'center',
+        'text-wrap': 'wrap',
+        //               'min-zoomed-font-size': 8,
+        'border-opacity': 0.3,
+        'background-opacity': 0.3,
+        'font-size': 'data(fontSize)',
+      })
+      .selector('edge')
+      .css({
+        'target-arrow-shape': 'none',
+        'source-arrow-shape': 'triangle',
+        width: 2,
+        'line-color': '#ddd',
+        'target-arrow-color': '#ddd',
+        'source-arrow-color': '#ddd',
+      })
+      .selector('.highlighted')
+      .css({
+        'background-color': '#61bffc',
+        'line-color': '#61bffc',
+        'target-arrow-color': '#61bffc',
+        'transition-property':
+          'background-color, line-color, target-arrow-color',
+        'transition-duration': '0.5s',
+      })
+      .selector('.faded')
+      .css({
+        opacity: 0.25,
+        'text-opacity': 0,
+      }),
+    elements: data,
+    wheelSensitivity: 0.2,
+  });
+
+  cyOntologyGraph.ready(function() {
+    cyOntologyGraph.on('mouseover', 'edge', function(e) {
+      var edge = e.target;
+      var nodeId = edge.data('target');
+      var nodeObj = cyOntologyGraph.getElementById(nodeId);
+      var nodeObjId = nodeObj.data('objId');
+      var nodeName = nodeObj.data('name');
+      var linkout = linkFromEdge(nodeObjId, datatype);
+      var qtipContent = 'No information';
+      if (linkout) {
+        qtipContent =
+          'Explore <a target="_blank" href="' +
+          linkout +
+          '">' +
+          nodeName +
+          '</a> graph';
+      }
+      edge.qtip(
+        {
+          position: {
+            my: 'top center',
+            at: 'bottom center',
+          },
+          style: {
+            classes: 'qtip-bootstrap',
+            tip: {
+              width: 16,
+              height: 8,
+            },
+          },
+          content: qtipContent,
+          show: {
+            e: e.type,
+            ready: true,
+          },
+          hide: {
+            e: 'mouseout unfocus',
+          },
+        },
+        e
+      );
+    });
+
+    cyOntologyGraph.on('tap', 'node', function(e) {
+      var node = e.target;
+      var nodeId = node.data('id');
+      var neighborhood = node.neighborhood().add(node);
+      cyOntologyGraph.elements().addClass('faded');
+      neighborhood.removeClass('faded');
+
+      var node = e.target;
+      var nodeId = node.data('id');
+      var objId = node.data('objId');
+      var nodeName = node.data('name');
+      var annotCounts = node.data('annotCounts');
+      var linkout = linkFromNode(objId, datatype);
+      var qtipContent =
+        'Annotation Count:<br/>' +
+        annotCounts +
+        '<br/><a target="_blank" href="' +
+        linkout +
+        '">' +
+        objId +
+        ' - ' +
+        nodeName +
+        '</a>';
+
+      //             var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+      node.qtip(
+        {
+          position: {
+            my: 'top center',
+            at: 'bottom center',
+          },
+          style: {
+            classes: 'qtip-bootstrap',
+            tip: {
+              width: 16,
+              height: 8,
+            },
+          },
+          content: qtipContent,
+          show: {
+            e: e.type,
+            ready: true,
+          },
+          hide: {
+            e: 'mouseout unfocus',
+          },
+        },
+        e
+      );
+    });
+
+    cyOntologyGraph.on('tap', function(e) {
+      if (e.target === cyOntologyGraph) {
+        cyOntologyGraph.elements().removeClass('faded');
+      }
+    });
+
+    cyOntologyGraph.on('mouseover', 'node', function(event) {
+      var node = event.target;
+      var nodeId = node.data('id');
+      var objId = node.data('objId');
+      var nodeName = node.data('name');
+      var annotCounts = node.data('annotCounts');
+      var linkout = linkFromNode(objId, datatype);
+      var qtipContent =
+        'Annotation Count:<br/>' +
+        annotCounts +
+        '<br/><a target="_blank" href="' +
+        linkout +
+        '">' +
+        objId +
+        ' - ' +
+        nodeName +
+        '</a>';
+      //               var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+      //$jq(infoElement).html(qtipContent);
+    });
+  });
+
+  function onWeightedChange(isWeighted) {
+    var nodes = cyOntologyGraph.nodes();
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      var nodeId = node.data('id');
+      cyOntologyGraph
+        .$('#' + nodeId)
+        .data(
+          'diameter',
+          node.data(isWeighted ? 'diameter_weighted' : 'diameter_unweighted')
+        );
+      cyOntologyGraph
+        .$('#' + nodeId)
+        .data(
+          'fontSize',
+          node.data(isWeighted ? 'fontSizeWeighted' : 'fontSizeUnweighted')
+        );
+      cyOntologyGraph
+        .$('#' + nodeId)
+        .data(
+          'borderWidth',
+          node.data(
+            isWeighted ? 'borderWidthWeighted' : 'borderWidthUnweighted'
+          )
+        );
+    }
+    cyOntologyGraph
+      .layout({
+        ...layout,
+      })
+      .run();
+  }
+
+  function onExport() {
+    const imgSrc = cyOntologyGraph.png({
+      full: true,
+      maxWidth: 8000,
+      maxHeight: 8000,
+      bg: 'white',
+    });
+    console.log(imgSrc);
+    return imgSrc;
+  }
+
+  return { onWeightedChange, onExport };
+}

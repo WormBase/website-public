@@ -2500,7 +2500,7 @@ cytoscape-qtip@^2.7.1:
     jquery "^2.0 || ^1.10.0"
     qtip2 "^3.0 || ^2.2.0"
 
-cytoscape@^3.2.6:
+cytoscape@3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.2.6.tgz#f44141fb82ce4ff1fe2f05b95e10c334a78a7562"
   integrity sha512-GcxyFdnGed57DDM1+q6IfmutB+Xn1TRiuSQS22uSBnjgWExc6yZduh9LIZjer3i2LYuIk8ukVMcqGTszTEuDBA==
@@ -7385,6 +7385,15 @@ qs@~6.4.0:
   dependencies:
     imagesloaded ">=3.0.0"
     jquery ">=1.6.0"
+
+query-string@5:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-5.1.1.tgz#a78c012b71c17e05f2e3fa2319dd330682efb3cb"
+  integrity sha512-gjWOsm2SoGlgLEdAGt7a6slVOk9mGiXmPFMqrEhLQ68rhQuBnpfs3+EmlvqKyxnCo9/PPlF+9MtY02S1aFg+Jw==
+  dependencies:
+    decode-uri-component "^0.2.0"
+    object-assign "^4.1.0"
+    strict-uri-encode "^1.0.0"
 
 query-string@^4.1.0:
   version "4.3.4"

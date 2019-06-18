@@ -23,6 +23,7 @@
     "lint-staged": "^8.1.7",
     "prettier": "^1.17.1",
     "qtip2": "^3.0.3",
+    "query-string": "5",
     "react": "^16.8.6",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.6"

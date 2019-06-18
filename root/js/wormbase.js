@@ -2213,8 +2213,12 @@ var Scrolling = (function(){
       setupCyOntologyGraph(elements, 'Disease');
     }
 
-    function setupCytoscapePhenotypeGraph(elements){
-      setupCyOntologyGraph(elements, 'Phenotype');
+    function setupCytoscapePhenotypeGraph(elementId, wbId){
+      // setupCyOntologyGraph(elements, 'Phenotype');
+      import('../../client/src/components/OntologyGraph').then(module => {
+	const { PhenotypeOntologyGraph } = module;
+	return ReactDOM.render(<PhenotypeOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+      });
     }
 
     function setupCyOntologyGraph(elements, dataType) {
