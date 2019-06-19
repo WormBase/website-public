@@ -1997,6 +1997,13 @@ ul.nav-bar li .submenu {
     left: 44.44%;
     top: 10.4em;
 }
+
+#section-tools .submenu-links > div:nth-child(10) {
+  left: 22.22%;
+  position: absolute;
+  top: 15em;
+}
+
 @media screen and (max-width: 767px) {
   #section-tools .submenu-links > div:nth-child(2) {
       top: 6.5em;
@@ -2009,6 +2016,11 @@ ul.nav-bar li .submenu {
   #section-tools .submenu-links > div:nth-child(6) {
       top: 16.25em;
   }
+
+  #section-tools .submenu-links > div:nth-child(10) {
+    top: 20em;
+  }
+
 }
 
 #section-tools .submenu-links > div:nth-child(7),
