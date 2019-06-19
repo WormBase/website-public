@@ -1989,19 +1989,19 @@ ul.nav-bar li .submenu {
 #section-tools .submenu-links > div:nth-child(5) {
     position: absolute;
     left: 44.44%;
-    top: 4.55em;
+    top: 7.55em;
 }
 
 #section-tools .submenu-links > div:nth-child(6) {
     position: absolute;
     left: 44.44%;
-    top: 10.4em;
+    top: 13.4em;
 }
 
 #section-tools .submenu-links > div:nth-child(10) {
   left: 22.22%;
   position: absolute;
-  top: 15em;
+  top: 15.5em;
 }
 
 @media screen and (max-width: 767px) {
@@ -2010,15 +2010,23 @@ ul.nav-bar li .submenu {
   }
 
   #section-tools .submenu-links > div:nth-child(5) {
-      top: 7.15em;
+      top: 15.15em;
   }
 
   #section-tools .submenu-links > div:nth-child(6) {
-      top: 16.25em;
+      top: 24.25em;
   }
 
   #section-tools .submenu-links > div:nth-child(10) {
     top: 20em;
+  }
+
+
+  #section-tools .submenu-links > div:nth-child(8) {
+    margin-top: -2em;
+  }
+  #section-tools .submenu-links > div:nth-child(9) {
+    margin-bottom: 1em;
   }
 
 }
@@ -2029,9 +2037,12 @@ ul.nav-bar li .submenu {
     width: 33.33%;
 }
 
-#section-tools .submenu-links > div:nth-child(8),
-#section-tools .submenu-links > div:nth-child(9) {
+#section-tools .submenu-links > div:nth-child(8) {
   margin-left: 22.22%;
+}
+
+#section-tools .submenu-links > div:nth-child(9) {
+  margin-left: 66.66%;
 }
 
 /* Links region: Additional styles specific to support section tab */
