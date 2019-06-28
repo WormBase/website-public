@@ -28,6 +28,7 @@ sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' docker-compose.yml
 # release commit
 git diff
 git add Dockerrun.aws.json
+git add docker-compose.yml
 git commit -m "release $VERSION"
 git tag "$VERSION"
 git push origin "$VERSION"
