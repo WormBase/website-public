@@ -1,0 +1,24 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:1.13.7
+    ports:
+      - "5000:80"
+    volumes:
+      - "./proxy/conf.d:/etc/nginx/conf.d"
+      - "./logs/nginx:/var/log/nginx"
+  website:
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS270.8
+    expose:
+      - "5000"
+    volumes:
+      - "/usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html"
+      - "/usr/local/wormbase/services:/usr/local/wormbase/services"
+      - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
+      - "./logs:/usr/local/wormbase/website/logs"
+  acedb:
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/acedb:latest
+    expose:
+      - "2005"
+    volumes:
+      - "/usr/local/wormbase/acedb/wormbase:/root/acedb/wormbase"

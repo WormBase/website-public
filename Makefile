@@ -180,3 +180,9 @@ production-deploy:
 	eb deploy --region us-east-1 --timeout 10
 	eb tags --delete Purpose
 	eb tags --add Purpose=production
+
+# production deployment without EB, ie for bot instance
+.PHONY: production-deploy-no-eb
+production-deploy-no-eb: aws-ecr-login
+	docker-compose down
+	docker-compose up -d

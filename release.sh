@@ -21,8 +21,9 @@ fi
 
 set -x #echo on
 
-# update Version in Dockerrun.aws.json
+# update Version in Dockerrun.aws.json and docker-compose.yml
 sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' Dockerrun.aws.json
+sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' docker-compose.yml
 
 # release commit
 git diff
