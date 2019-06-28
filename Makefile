@@ -184,5 +184,6 @@ production-deploy:
 # production deployment without EB, ie for bot instance
 .PHONY: production-deploy-no-eb
 production-deploy-no-eb: aws-ecr-login
+	docker-compose pull
 	docker-compose down
 	docker-compose up -d
