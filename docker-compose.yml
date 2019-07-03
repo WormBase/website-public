@@ -19,6 +19,8 @@ services:
       - "./logs:/usr/local/wormbase/website/logs"
     restart: always
     environment:
+      - ACEDB_HOST=acedb
+      - ACEDB_PORT=2005
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
