@@ -270,6 +270,15 @@ Applying Hotfix on AWS ElasticBeanstalk
 	make production-deploy
 	```
 
+Production Deployment without AWS Beanstalk
+------------------------------------------
+For instances not managed by Beanstalk, deployment can be performed with:
+
+```
+# ensure port 5000 is available, then
+make production-deploy-no-eb
+```
+
 Contributing
 ------------
 
