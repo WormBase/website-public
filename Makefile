@@ -2,7 +2,7 @@
 
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
-CATALYST_PORT ?= 9013
+CATALYST_PORT ?= 5000
 
 export GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
 export GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
@@ -198,6 +198,13 @@ staging-deploy-no-eb:
 
 # production deployment without EB, ie for bot instance
 .PHONY: production-deploy-no-eb
-production-deploy-no-eb: CATALYST_APP ?= staging
+production-deploy-no-eb: CATALYST_APP ?= production
 production-deploy-no-eb:
 	$(MAKE) deploy-no-eb
+
+# dev deployment
+.PHONY: dev
+dev: aws-ecr-login
+	docker-compose pull
+	docker-compose down
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
