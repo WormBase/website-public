@@ -1553,7 +1553,7 @@ sub _post_to_github {
     my $browser          = $params->{browser};
     my $page_url         = $params->{url};
 
-    my $github_url = "https://api.github.com/repos/" . $c->config->{github_repo} . "/issues";
+    my $github_url = $c->config->{github_api_base} . "/repos/" . $c->config->{github_repo} . "/issues";
 
   # Get a new authorization for the website repo,
   # curl -H "Content-Type: application/json"  -u "tharris" -X POST https://api.github.com/authorizations -d '{"scopes": [ "website" ],"note": "wormbase helpdesk cross-post" }'
