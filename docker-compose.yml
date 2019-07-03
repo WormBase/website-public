@@ -1,14 +1,15 @@
 version: "3"
 services:
-  nginx:
+  nginx-proxy:
     image: nginx:1.13.7
     ports:
       - "5000:80"
     volumes:
       - "./proxy/conf.d:/etc/nginx/conf.d"
       - "./logs/nginx:/var/log/nginx"
+    restart: always
   website:
-    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS270.8
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS271.3
     expose:
       - "5000"
     volumes:
@@ -16,9 +17,27 @@ services:
       - "/usr/local/wormbase/services:/usr/local/wormbase/services"
       - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
       - "./logs:/usr/local/wormbase/website/logs"
+    restart: always
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - JWT_SECRET='${JWT_SECRET}'
   acedb:
     image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/acedb:latest
     expose:
       - "2005"
     volumes:
       - "/usr/local/wormbase/acedb/wormbase:/root/acedb/wormbase"
+    restart: always
+  upstream-proxy:
+    image: nginx:1.13.7
+    expose:
+      - "3001"
+    volumes:
+      - "./proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
+      - "./logs/upstream-proxy:/var/log/nginx"
+    restart: always

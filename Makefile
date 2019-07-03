@@ -37,12 +37,13 @@ dev-start:
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
 		-e JWT_SECRET=$(JWT_SECRET) \
-		wormbase/website-env
+		wormbase/website-env \
+		perl ./script/wormbase_server.pl -p 5000 -r -d
+
 
 .PHONY: env-bash
 env-bash:
 	docker run -it \
-		--entrypoint /bin/bash \
 		-v ${PWD}:/usr/local/wormbase/website \
 		-v /usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html \
 		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
@@ -56,7 +57,9 @@ env-bash:
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
 		-e JWT_SECRET=$(JWT_SECRET) \
-		wormbase/website-env
+		wormbase/website-env \
+		/bin/bash
+
 
 .PHONY: aws-ecr-login
 aws-ecr-login:
@@ -184,5 +187,6 @@ production-deploy:
 # production deployment without EB, ie for bot instance
 .PHONY: production-deploy-no-eb
 production-deploy-no-eb: aws-ecr-login
+	docker-compose pull
 	docker-compose down
 	docker-compose up -d

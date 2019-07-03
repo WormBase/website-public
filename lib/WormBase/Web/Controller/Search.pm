@@ -200,7 +200,7 @@ sub search_git :Path('/search/issue') :Args(2) {
     $c->stash->{type} = 'issue';
     $c->stash->{noboiler} = 1;
 
-    my $url     = "https://api.github.com/" . ($query ? "legacy/issues/search/" . $c->config->{github_repo} . "/" . ($state || 'open') . "/$query" : "repos/" . $c->config->{github_repo} . "/issues");
+    my $url     = $c->config->{github_api_base} . "/" . ($query ? "legacy/issues/search/" . $c->config->{github_repo} . "/" . ($state || 'open') . "/$query" : "repos/" . $c->config->{github_repo} . "/issues");
     $url .= "?page=" . ($page_count) . ($state && !$query ? '&state=' . $state : '');
     my $path = WormBase::Web->path_to('/') . '/credentials';
     my $token = $ENV{GITHUB_TOKEN};
