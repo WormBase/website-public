@@ -7,4 +7,5 @@ RUN chmod u+x /usr/local/wormbase/website
 WORKDIR /usr/local/wormbase/website
 
 # Define default command.
-ENTRYPOINT ["dumb-init", "--", "./script/wormbase-daemon-for-docker.sh"]
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["./script/wormbase-daemon-for-docker.sh"]
