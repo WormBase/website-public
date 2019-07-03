@@ -30,6 +30,12 @@
       "host": {
         "sourcePath": "/var/app/current/proxy/conf.d"
       }
+    },
+    {
+      "name": "upstream-proxy-conf",
+      "host": {
+        "sourcePath": "/var/app/current/proxy/upstream-proxy/conf.d"
+      }
     }
   ],
   "containerDefinitions": [
@@ -75,7 +81,7 @@
 	  "value": "2005"
 	}
       ],
-      "links": ["acedb"],
+      "links": ["acedb", "upstream-proxy"],
       "mountPoints": [
         {
           "sourceVolume": "awseb-logs-website",
@@ -116,6 +122,29 @@
         },
         {
           "sourceVolume": "nginx-proxy-conf",
+          "containerPath": "/etc/nginx/conf.d",
+          "readOnly": true
+        }
+      ],
+      "memoryReservation": 128
+    },
+    {
+      "name": "upstream-proxy",
+      "image": "nginx:1.13.7",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 3001,
+          "containerPort": 3001
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "awseb-logs-upstream-proxy",
+          "containerPath": "/var/log/nginx"
+        },
+        {
+          "sourceVolume": "upstream-proxy-conf",
           "containerPath": "/etc/nginx/conf.d",
           "readOnly": true
         }
