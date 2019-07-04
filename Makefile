@@ -9,6 +9,8 @@ export GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
 export GITHUB_TOKEN=$(shell cat credentials/github_token.txt)
 export JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
 
+export COMPOSE_PROJECT_NAME = "${USER}_$(shell basename ${PWD})"
+
 .PHONY: bare-dev-start
 bare-dev-start:
 	./script/wormbase_server.pl -p $(CATALYST_PORT) -d -r
@@ -208,3 +210,7 @@ dev: aws-ecr-login
 	docker-compose pull
 	docker-compose down
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+.PHONY: shutdown
+shutdown:
+	docker-compose down
