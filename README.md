@@ -101,6 +101,22 @@ different from the port that runs your Catalyst server). Then:
     webpack_dev_server = "http://dev.wormbase.org:[MY_PORT_NUMBER]"
 ```
 
+(Beta) Setup Development Environment with docker-compose
+--------------------------------------------------------
+
+Docker-compose allows us to start Catalyst and webpackDevServer with a single command, and without installing any dependencies.
+
+- Ensure environment variable `CATALYST_PORT` and `WEBPACK_SERVER_PORT` are set.
+
+- Ensure `/usr/local/bin/` is on your $PATH, as dependencies such as `docker-compose` and `yarn` are installed there.
+
+- Run: `make dev` and wait for website/Catalyst, webpack(DevServer), and ACeDB to start.
+
+
+**Note:**
+- The first time running `make dev` will take longer due to installation of dependencies.
+- JavaScript dependencies are installed both on the host and in the container. The former is necessary to enable code formatting with Prettier and git pre-commit hooks with Husky.
+
 Prior to deployment
 ----------------------
 Re-build the static assets:
