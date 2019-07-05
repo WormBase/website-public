@@ -19,6 +19,7 @@ services:
       - "./logs:/usr/local/wormbase/website/logs"
     restart: always
     environment:
+      - APP=${CATALYST_APP}
       - ACEDB_HOST=acedb
       - ACEDB_PORT=2005
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}

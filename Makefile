@@ -3,6 +3,7 @@
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
 CATALYST_PORT ?= 5000
+WEBPACK_SERVER_PORT ?= 3000
 
 export GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
 export GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
@@ -190,7 +191,7 @@ production-deploy:
 .PHONY: deploy-no-eb
 deploy-no-eb: aws-ecr-login
 	docker-compose pull
-	docker-compose down
+	$(MAKE) shutdown
 	docker-compose up -d
 
 .PHONY: staging-deploy-no-eb
@@ -208,9 +209,9 @@ production-deploy-no-eb:
 .PHONY: dev
 dev: aws-ecr-login
 	docker-compose pull
-	docker-compose down
+	$(MAKE) shutdown
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 .PHONY: shutdown
 shutdown:
-	docker-compose down
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down

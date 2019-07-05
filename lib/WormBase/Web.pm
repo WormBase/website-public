@@ -45,6 +45,7 @@ __PACKAGE__->config( 'Plugin::ConfigLoader' => {
     driver => {
         General => {
             -InterPolateVars => 1,
+            -InterPolateEnv => 1,
             -ForceArray      => 0,
             # Plugin::ConfigLoader uses Config::Any[::General]
             # which ForceArray by default. We don't want that.

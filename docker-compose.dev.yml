@@ -1,7 +1,24 @@
 version: "3"
+volumes:
+  node_modules:
 services:
   website:
     image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website-env:1.0.2
     command: "./script/wormbase_server.pl -p 5000 -r -d"
     volumes:
       - "./:/usr/local/wormbase/website"
+    environment:
+      - WEBPACK_SERVER_PORT=${WEBPACK_SERVER_PORT}
+  webpack:
+    image: node:latest
+    ports:
+      - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
+    working_dir: /home/node/client
+    command: >
+      bash -c "yarn &&
+      	       yarn run start"
+    volumes:
+      - "./:/home/node"
+      - "node_modules:/home/node/client/node_modules"
+    environment:
+      - PORT=${WEBPACK_SERVER_PORT}
