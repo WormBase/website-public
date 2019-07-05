@@ -15,7 +15,7 @@ services:
       - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
     working_dir: /home/node/client
     command: >
-      bash -c "yarn &&
+      bash -c "yarn install --frozen-lockfile --verbose &&
       	       yarn run start"
     volumes:
       - "./:/home/node"
