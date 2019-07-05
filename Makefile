@@ -216,3 +216,7 @@ dev: aws-ecr-login
 .PHONY: shutdown
 shutdown:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+
+.PHONY: console
+console:
+	docker-compose logs -f ${SERVICE}
