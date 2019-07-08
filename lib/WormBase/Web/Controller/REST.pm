@@ -1987,7 +1987,8 @@ sub blog_feed :Path("/rest/blog_feed") Args(0) {
 
 sub forum_feed :Path("/rest/forum_feed") Args(0) {
     my ( $self, $c ) = @_;
-    my $url = 'http://forums.wormbase.org/index.php?type=rss;action=.xml;limit=3';
+    my $type = $c->req->param('type') || 'rss';
+    my $url = 'http://forums.wormbase.org/index.php?action=.xml;limit=3;type=' . $type;
     $self->_get_feed_from($c, $url);
 
 }
