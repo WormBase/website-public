@@ -161,6 +161,7 @@ eb-create-staging:
 .PHONY: dockerrun-latest
 dockerrun-latest:
 	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
+	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' docker-compose.yml
 
 
 .PHONY: staging-deploy
@@ -184,9 +185,19 @@ production-deploy:
 	eb tags --delete Purpose
 	eb tags --add Purpose=production
 
-# production deployment without EB, ie for bot instance
-.PHONY: production-deploy-no-eb
-production-deploy-no-eb: aws-ecr-login
+.PHONY: deploy-no-eb
+deploy-no-eb: aws-ecr-login
 	docker-compose pull
 	docker-compose down
 	docker-compose up -d
+
+.PHONY: staging-deploy-no-eb
+staging-deploy-no-eb: CATALYST_APP ?= staging
+staging-deploy-no-eb:
+	$(MAKE) deploy-no-eb
+
+# production deployment without EB, ie for bot instance
+.PHONY: production-deploy-no-eb
+production-deploy-no-eb: CATALYST_APP ?= staging
+production-deploy-no-eb:
+	$(MAKE) deploy-no-eb

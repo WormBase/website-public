@@ -8,6 +8,7 @@ export APP="staging"
 #export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
 #export PATH="/usr/local/wormbase/extlib/bin:$PATH"
 
+source /etc/profile
 export PATH="${HOME}/.local/bin:$PATH";
 
 #perl Makefile.PL
@@ -41,4 +42,11 @@ make dockerrun-latest
 cat Dockerrun.aws.json
 git add Dockerrun.aws.json
 git commit -m "use latest wormbase/website container"  # only needed locally and subsequent build will discard this commit
-make staging-deploy
+
+
+if [ "$1" == "local" ]; then
+    make staging-deploy-no-eb
+else
+    echo "\$1 is NOT local"
+    make staging-deploy
+fi
