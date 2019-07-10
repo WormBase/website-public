@@ -1,0 +1,10 @@
+version: "3"
+services:
+  nginx-proxy:
+    restart: always
+  website:
+    restart: always
+  acedb:
+    restart: always
+  upstream-proxy:
+    restart: always

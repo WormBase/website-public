@@ -7,7 +7,6 @@ services:
     volumes:
       - "./proxy/conf.d:/etc/nginx/conf.d"
       - "./logs/nginx:/var/log/nginx"
-    restart: always
   website:
     image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS271.3
     expose:
@@ -17,7 +16,6 @@ services:
       - "/usr/local/wormbase/services:/usr/local/wormbase/services"
       - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
       - "./logs:/usr/local/wormbase/website/logs"
-    restart: always
     environment:
       - APP=${CATALYST_APP}
       - ACEDB_HOST=acedb
@@ -35,7 +33,6 @@ services:
       - "2005"
     volumes:
       - "/usr/local/wormbase/acedb/wormbase:/root/acedb/wormbase"
-    restart: always
   upstream-proxy:
     image: nginx:1.13.7
     expose:
@@ -43,4 +40,3 @@ services:
     volumes:
       - "./proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
       - "./logs/upstream-proxy:/var/log/nginx"
-    restart: always

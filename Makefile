@@ -193,8 +193,8 @@ deploy-no-eb: COMPOSE_PROJECT_NAME = staging_build  # for both production and st
 deploy-no-eb: CATALYST_PORT  = 5000
 deploy-no-eb: aws-ecr-login
 	docker-compose pull
-	docker-compose down
-	docker-compose up -d
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 .PHONY: staging-deploy-no-eb
 staging-deploy-no-eb: CATALYST_APP ?= staging
