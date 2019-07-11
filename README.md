@@ -110,10 +110,11 @@ Docker-compose allows us to start Catalyst and webpackDevServer with a single co
 
 - Ensure `/usr/local/bin/` is on your $PATH, as dependencies such as `docker-compose` and `yarn` are installed there.
 
-- Run: `make dev` and wait for website/Catalyst, webpack(DevServer), and ACeDB to start.
+- Run: `make dev` and wait for website/Catalyst and webpack(DevServer) to start.
 
 
 **Note:**
+- ACeDB container won't be started as part the development stack to reduce memory footprint. Instead, we rely on a shared acedb container, by joining the docker networked called `wb-network` where the acedb runs on. Instructions to start the shared acedb container is found [here](https://github.com/WormBase/wormbase-architecture/blob/develop/roles/acedb/files/startserver.sh).
 - The first time running `make dev` will take longer due to installation of dependencies.
 - The `stdout` of docker-compose combines the stdouts of the containers. If this is hard to read, stdout of individual containers can be accessed via `SERVICE=[name_of_service] make console`, where the name of service could be website, webpack, acedb, etc as found in [docker-compose.yml](docker-compose.yml) and [docker-compose.dev.yml](docker-compose.dev.yml).
 - JavaScript dependencies are installed both on the host and in the container. The former is necessary to enable code formatting with Prettier and git pre-commit hooks with Husky.
