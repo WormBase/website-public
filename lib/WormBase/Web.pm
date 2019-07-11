@@ -153,6 +153,7 @@ sub finalize_config { # overriding Plugin::ConfigLoader
     $c->_setup_log4perl;
     $c->_setup_cache;
     $c->_setup_static;
+    $c->_setup_webpack;
 };
 
 sub _setup_species {
@@ -574,6 +575,20 @@ sub _setup_static {
 	    #   logging  => 1,
 
 	       });
+}
+
+#
+# For development, configure the webpackDevserver to connect to
+#
+sub _setup_webpack {
+    my $c = shift;
+    if ($c->config->{installation_type} eq 'development') {
+	if (!$c->config->{webpack_dev_server} && $ENV{WEBPACK_SERVER_PORT}) {
+	    my $host = $ENV{WEBPACK_SERVER_HOST} || 'http://dev.wormbase.org';
+	    my $port = $ENV{WEBPACK_SERVER_PORT};
+	    $c->config->{webpack_dev_server} = "$host:$port";
+	}
+    }
 }
 
 ##################################################
