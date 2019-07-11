@@ -212,11 +212,11 @@ production-deploy-no-eb:
 dev: aws-ecr-login
 	(cd client/ && yarn install --frozen-lockfile) # dependency installation on host is required for prettier in git precommit hook
 	docker-compose pull
-	$(MAKE) shutdown
+	$(MAKE) dev-down
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
-.PHONY: shutdown
-shutdown:
+.PHONY: dev-down
+dev-down:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 
 .PHONY: console

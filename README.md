@@ -112,7 +112,7 @@ Docker-compose allows us to start Catalyst and webpackDevServer with a single co
 
 - Run: `make dev` and wait for website/Catalyst and webpack(DevServer) to start.
 
-- To shutdown your development stack, ctrl-C, or `make shutdown`.
+- To shutdown your development stack, ctrl-C, or `make dev-down`.
 
 
 **Note:**
