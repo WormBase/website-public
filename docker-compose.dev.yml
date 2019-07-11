@@ -9,6 +9,9 @@ services:
       - "./:/usr/local/wormbase/website"
     environment:
       - WEBPACK_SERVER_PORT=${WEBPACK_SERVER_PORT}
+    networks:
+      - default
+      - wb-network
   webpack:
     image: node:latest
     ports:
@@ -22,3 +25,7 @@ services:
       - "node_modules:/home/node/client/node_modules"
     environment:
       - PORT=${WEBPACK_SERVER_PORT}
+networks:
+  wb-network:
+    external:
+      name: wb-network
