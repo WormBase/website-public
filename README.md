@@ -112,6 +112,8 @@ Docker-compose allows us to start Catalyst and webpackDevServer with a single co
 
 - Run: `make dev` and wait for website/Catalyst and webpack(DevServer) to start.
 
+- To shutdown your development stack, ctrl-C, or `make shutdown`.
+
 
 **Note:**
 - ACeDB container won't be started as part the development stack to reduce memory footprint. Instead, we rely on a shared acedb container, by joining the docker networked called `wb-network` where the acedb runs on. Instructions to start the shared acedb container is found [here](https://github.com/WormBase/wormbase-architecture/blob/develop/roles/acedb/files/startserver.sh).
