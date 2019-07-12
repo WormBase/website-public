@@ -100,6 +100,7 @@ export default function setupCyOntologyGraph(elements, datatype) {
       })
       .selector('edge')
       .css({
+        'curve-style': 'straight',
         'target-arrow-shape': 'none',
         'source-arrow-shape': 'triangle',
         width: 2,
@@ -460,6 +461,7 @@ export function setupCytoscape(containerElement, datatype, data, {} = {}) {
       })
       .selector('edge')
       .css({
+        'curve-style': 'straight',
         'target-arrow-shape': 'none',
         'source-arrow-shape': 'triangle',
         width: 2,
