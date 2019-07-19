@@ -5,11 +5,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const styles = (theme) => ({
   root: {
     width: '100%',
+    height: '100%',
     /* marginTop: theme.spacing.unit * 3,*/
     zIndex: 1,
     overflow: 'hidden',
@@ -22,6 +23,7 @@ const styles = (theme) => ({
   },
   appBar: {
     position: 'absolute',
+    width: '100%',
     [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },

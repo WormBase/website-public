@@ -26,7 +26,8 @@
 // });
 </script>
 
-<div id="phenotype-ontology-graph-container"></div>
+<div id="phenotype-ontology-graph-container" class="ontology-graph-container">
+</div>
 <script type="text/javascript">
 (function(){
   WB.setupCytoscapePhenotypeGraph('phenotype-ontology-graph-container', 'WB:[% object.name.data.id %]');
