@@ -2197,34 +2197,64 @@ var Scrolling = (function(){
       }
     } // function setupCyPersonLineage(elementsFull, elementsDirect, thisPerson)
 
-    function setupCytoscapeGoGraph(elements){
-      setupCyOntologyGraph(elements, 'Go');
+    // function setupCytoscapeGoGraph(elements){
+    //   setupCyOntologyGraph(elements, 'Go');
+    // }
+
+    // function setupCytoscapeLifestageGraph(elements){
+    //   setupCyOntologyGraph(elements, 'Lifestage');
+    // }
+
+    // function setupCytoscapeAnatomyGraph(elements){
+    //   setupCyOntologyGraph(elements, 'Anatomy');
+    // }
+
+    // function setupCytoscapeDiseaseGraph(elements){
+    //   setupCyOntologyGraph(elements, 'Disease');
+    // }
+
+    // function setupCytoscapePhenotypeGraph(elements){
+    //   setupCyOntologyGraph(elements, 'Phenotype');
+    // }
+
+    // function setupCyOntologyGraph(elements, dataType) {
+    //   loadOntologyGraph().then(module => {
+    // 	module.draw(elements, dataType)
+    //   });
+    // }
+
+    function setupCytoscapeGoGraph(elementId, wbId){
+      loadOntologyGraph().then(({ GeneOntologyGraph }) => {
+	return ReactDOM.render(<GeneOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+      });
     }
 
-    function setupCytoscapeLifestageGraph(elements){
-      setupCyOntologyGraph(elements, 'Lifestage');
+    function setupCytoscapeLifestageGraph(elementId, wbId){
+      loadOntologyGraph().then(({ LifeStageOntologyGraph }) => {
+	return ReactDOM.render(<LifeStageOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+      });
     }
 
-    function setupCytoscapeAnatomyGraph(elements){
-      setupCyOntologyGraph(elements, 'Anatomy');
+    function setupCytoscapeAnatomyGraph(elementId, wbId){
+      loadOntologyGraph().then(({ AnatomyOntologyGraph }) => {
+	return ReactDOM.render(<AnatomyOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+      });
     }
 
-    function setupCytoscapeDiseaseGraph(elements){
-      setupCyOntologyGraph(elements, 'Disease');
+    function setupCytoscapeDiseaseGraph(elementId, wbId){
+      loadOntologyGraph().then(({ DiseaseOntologyGraph }) => {
+	return ReactDOM.render(<DiseaseOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+      });
     }
 
     function setupCytoscapePhenotypeGraph(elementId, wbId){
-      // setupCyOntologyGraph(elements, 'Phenotype');
-      import('../../client/src/components/OntologyGraph').then(module => {
-	const { PhenotypeOntologyGraph } = module;
+      loadOntologyGraph().then(({ PhenotypeOntologyGraph }) => {
 	return ReactDOM.render(<PhenotypeOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
       });
     }
 
-    function setupCyOntologyGraph(elements, dataType) {
-      import('../../client/src/components/OntologyGraph').then(module => {
-	module.draw(elements, dataType)
-      });
+    function loadOntologyGraph(){
+      return import('../../client/src/components/OntologyGraph');
     }
 
     function setupCyInteractionViewer(data, types, clazz){

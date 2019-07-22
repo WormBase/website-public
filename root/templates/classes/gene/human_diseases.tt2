@@ -24,77 +24,14 @@ END;
 [% END %]
 
 
-
-<script src="/js/jquery/plugins/cytoscapejs/dagre/0.7.4/dagre.min.js "></script>
-
+<div id="disease-ontology-graph-container" class="ontology-graph-container">
+</div>
 <script type="text/javascript">
-$jq(function(){
-
-  var graphP = $jq.ajax({
-    url: 'https://wobr2.caltech.edu/~raymond/cgi-bin/soba_biggo.cgi?action=annotSummaryJsonp&focusTermId=WB:[% object.name.data.id  %]&datatype=disease&radio_etd=&showControlsFlag=0&fakeRootFlag=0&filterForLcaFlag=1&filterLongestFlag=1&maxNodes=0&maxDepth=0',
-    type: 'GET',
-    jsonpCallback: 'jsonCallbackDisease',
-    dataType: 'jsonp'
-  });
-
-  Promise.all([ graphP ]).then(initCy);
-
-  function initCy( then ){
-    var elements = then[0].elements;
-    if (elements.nodes.length > 0) {
-        WB.setupCytoscapeDiseaseGraph(elements); }
-      else {
-        document.getElementById('graphContentDisease').innerHTML = 'No observed human diseases.'; }
-  }
-});
+(function(){
+  WB.setupCytoscapeDiseaseGraph('disease-ontology-graph-container', 'WB:[% object.name.data.id %]');
+})();
 </script>
 
-<input type="hidden" id="focusTermIdDisease" value="">
-<input type="hidden" id="urlBaseDisease" value="">
-<input type="hidden" id="updatingElementsDisease" value="radio_etd_all|radio_etd_excludeiea">
-<b><span title="click to see documentation"><a href="http://wiki.wormbase.org/index.php/User_Guide/SObA" target="_blank">Human disease graph</a></span>:</b><br>
-<div id="graphContentDisease">
-  <div id="cyDiseaseGraph" style="height: 750px; width: 950px; position: relative; float: left; border: 1px solid #aaa;"></div>
-  <div id="cyDiseaseGraphLoading" style="width: 950px; padding: 20px 0 0 0; position: absolute; text-align: center;"><img src="/img/ajax-loader.gif" alt="Loading graph..." /></div>
-  <div id="controlsdivDisease" style="height: 750px; position: absolute; float: right; right: 0;">
-    <div id="exportdiv" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
-      <button id="viewPngButtonDisease">Export PNG</button>
-      <button id="viewEditButtonDisease" style="display: none;">go back</button>
-    </div><br/>
-    <div id="legenddiv" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
-      Graph Depth<select size="1" id="maxDepthDisease" name="maxDepthDisease"></select><br/><br/>
-      Legend :<br/>
-      <table>
-        <tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
-          <polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
-          <g id="node1" class="node"><title></title>
-          <polygon fill="none" stroke="blue" stroke-dasharray="5,2" points="36,-36 0,-36 0,-0 36,-0 36,-36"/></g></g></svg></td><td valign="center">Root</td></tr>
-        <tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
-          <polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/>
-          <g id="node1" class="node"><title></title>
-          <ellipse fill="none" stroke="blue" stroke-dasharray="5,2" cx="18" cy="-18" rx="18" ry="18"/></g></g></svg></td><td valign="center">Without direct annotation</td></tr>
-        <tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0.00 0.00 44.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)"><polygon fill="white" stroke="none" points="-4,4 -4,-40 40,-40 40,4 -4,4"/><g id="node1" class="node"><title></title><ellipse fill="none" stroke="red" cx="18" cy="-18" rx="18" ry="18"/></g></g></svg></td><td valign="center">With direct annotation</td></tr>
-        <!--<tr><td valign="center"><span style="font-size: 20pt; color: #CCCCCC">&#8592</span></td><td valign="center">is a</td></tr>-->
-        <!--<tr><td valign="center"> <svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="22" height="22" id="svg2"> <defs id="defs4"> <marker refX="0" refY="0" orient="auto" id="TriangleOutS" style="overflow:visible"> <path d="m 5.77,0 -8.65,5 0,-10 8.65,5 z" transform="scale(0.2,0.2)" id="path3911" style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /> </marker> <marker refX="0" refY="0" orient="auto" id="TriangleInS" style="overflow:visible"> <path d="m 5.77,0 -8.65,5 0,-10 8.65,5 z" transform="scale(-0.2,-0.2)" id="path3902" style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt" /> </marker> </defs> <metadata id="metadata7"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g transform="translate(1.3435234,-1022.9482)" id="layer1"> <path d="M 21.844549,11.645936 C 0,11.645936 0,11.645936 0,11.645936" transform="translate(0,1030.3622)" id="path2989" style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#TriangleInS)" /> <g id="g4978" style="opacity:0.5"> <g id="g4975"> <g id="g3959" style="opacity:0.5"> <path d="m 9.8497024,1028.8214 c -0.123304,16.4726 -0.123304,16.4726 -0.123304,16.4726" id="path2990" style="fill:none;stroke:#000000;stroke-width:4.38010454;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:5;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#TriangleInS)" /> </g> </g> </g> </g> </svg></td><td valign="center">Broader scope</td></tr>-->
-      <tr><td valign="center"><svg width="22pt" height="22pt" viewBox="0 0 292.64526 63.826207">
-      <defs><marker id="marker4922" style="overflow:visible"> <path style="fill:#949494;fill-opacity:1;fill-rule:evenodd;stroke:#5f5f5f;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1" d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-1.1,0,0,-1.1,-1.1,0)" /> </marker> </defs>
-      <g transform="translate(-151.41157,-412.12323)"> <path style="fill:#949494;fill-opacity:1;fill-rule:evenodd;stroke:#5f5f5f;stroke-width:6.69999981;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker4922)" d="m 151.42857,445.21935 281.42857,-1.42857" /></g>
-      </svg></td><td valign="center">Inference Direction</td></tr>
-      </table></div>
-    <div id="weightstateDisease" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">
-      <input type="radio" name="radio_type" id="radioWeightedDisease"   checked="checked" >Annotation weighted</input><br/>
-      <input type="radio" name="radio_type" id="radioUnweightedDisease">Annotation unweighted</input><br/>
-    </div><br/>
-    <div id="evidencetypeDisease" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px; ">
-      <input type="radio" name="radio_etd" id="radio_etd_all"        value="radio_etd_all"        checked="checked" ><a href="http://geneontology.org/docs/guide-go-evidence-codes/" target="_blank">all evidence types</a></input><br/>
-      <input type="radio" name="radio_etd" id="radio_etd_excludeiea" value="radio_etd_excludeiea"  >exclude IEA</input><br/>
-    </div><br/>
-    <div id="infoDisease" style="z-index: 9999; position: relative; top: 0; left: 0; width: 200px;">Mouseover or click node for more information.</div><br/>
-  </div>
-  <img id="pngExportDisease" style="border: 1px solid #ddd; display: none; max-width: 1050px; max-height: 1050px">
-</div>
 
 [%
 # Ranjana will clean up at data level before we want to show this again.
