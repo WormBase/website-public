@@ -13,8 +13,8 @@ function reducer(state, action) {
       return { ...state, loading: false, error: true };
     case 'set_weighted':
       return { ...state, isWeighted: action.payload };
-    case 'set_etp':
-      return { ...state, etp: action.payload };
+    case 'set_evidence_filter':
+      return { ...state, et: action.payload };
     case 'set_max_depth':
       return { ...state, depthRestriction: action.payload };
     case 'set_mode_edit':
@@ -46,25 +46,12 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     imgSrc: 'null',
 
     // evidence types
-    etgo: 'radio_etgp_all',
-    etp: 'radio_etp_all',
-    etd: 'radio_etd_all',
-    eta: 'radio_eta_all',
+    et: datatype === 'Go' ? 'withiea' : 'all',
 
     // for go and Biggo
     rootsChosen: ['GO:0008150', 'GO:0005575', 'GO:0003674'],
   });
-  const {
-    data,
-    isWeighted,
-    depthRestriction,
-    mode,
-    etgo,
-    etp,
-    etd,
-    eta,
-    rootsChosen,
-  } = state;
+  const { data, isWeighted, depthRestriction, mode, et, rootsChosen } = state;
 
   useEffect(() => {
     console.log(state);
@@ -78,26 +65,30 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
       maxDepth: depthRestriction,
     };
     let query;
-    if (datatype === 'Go' || datatype === 'Biggo') {
+    if (datatype === 'Go') {
       query = {
         ...queryDefaults,
         rootsChosen: rootsChosen,
-        radio_etgo: etgo,
+        radio_etgo: `radio_etgo_${et}`,
       };
     } else if (datatype === 'Phenotype') {
       query = {
         ...queryDefaults,
-        radio_etp: etp,
+        radio_etp: `radio_etp_${et}`,
       };
     } else if (datatype === 'Disease') {
       query = {
         ...queryDefaults,
-        radio_etd: etd,
+        radio_etd: `radio_etd_${et}`,
       };
     } else if (datatype === 'Anatomy') {
       query = {
         ...queryDefaults,
-        radio_eta: eta,
+        radio_eta: `radio_eta_${et}`,
+      };
+    } else {
+      query = {
+        ...queryDefaults,
       };
     }
 
@@ -143,7 +134,7 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     return () => {
       didCancel = true;
     };
-  }, [datatype, focusTermId, depthRestriction, eta, etd, etgo, etp]);
+  }, [datatype, focusTermId, depthRestriction, et]);
 
   useEffect(() => {
     // initialize cytoscape

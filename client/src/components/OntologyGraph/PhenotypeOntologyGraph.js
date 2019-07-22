@@ -7,7 +7,6 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
-import Divider from '@material-ui/core/Divider';
 
 export default function PhenotypeOntologyGraph({ focusTermId }) {
   return (
@@ -24,27 +23,27 @@ export default function PhenotypeOntologyGraph({ focusTermId }) {
               <RadioGroup
                 aria-label="evidence-type"
                 name="evidence-type"
-                value={state.etp}
+                value={state.et}
                 onChange={(event) =>
                   dispatch({
-                    type: 'set_etp',
+                    type: 'set_evidence_filter',
                     payload: event.target.value,
                   })
                 }
                 column
               >
                 <FormControlLabel
-                  value="radio_etp_all"
+                  value="all"
                   control={<Radio />}
                   label="Any evidence type"
                 />
                 <FormControlLabel
-                  value="radio_etp_onlyrnai"
+                  value="onlyrnai"
                   control={<Radio />}
                   label="RNAi only"
                 />
                 <FormControlLabel
-                  value="radio_etp_onlyvariation"
+                  value="onlyvariation"
                   control={<Radio />}
                   label="Variation only"
                 />
@@ -334,7 +333,10 @@ function Old({ focusTermId }) {
             value="radio_etp_all"
             checked={etp === 'radio_etp_all'}
             onChange={() =>
-              dispatch({ type: 'set_etp', payload: 'radio_etp_all' })
+              dispatch({
+                type: 'set_evidenece_filter',
+                payload: 'all',
+              })
             }
           />
         </label>
@@ -347,7 +349,10 @@ function Old({ focusTermId }) {
             value="radio_etp_onlyrnai"
             checked={etp === 'radio_etp_onlyrnai'}
             onChange={() =>
-              dispatch({ type: 'set_etp', payload: 'radio_etp_onlyrnai' })
+              dispatch({
+                type: 'set_evidenece_filter',
+                payload: 'onlyrnai',
+              })
             }
           />
         </label>
@@ -361,8 +366,8 @@ function Old({ focusTermId }) {
             checked={etp === 'radio_etp_onlyvariation'}
             onChange={() =>
               dispatch({
-                type: 'set_etp',
-                payload: 'radio_etp_onlyvariation',
+                type: 'set_evidenece_filter',
+                payload: 'onlyvariation',
               })
             }
           />
