@@ -121,6 +121,7 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
         type: 'GET',
         jsonpCallback: 'jsonCallback' + datatype,
         dataType: 'jsonp',
+        timeout: 5000,
       })
       .done((data) => {
         if (!didCancel) {

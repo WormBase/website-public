@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
 import Loading from '../Loading';
+import ErrorMessage from '../ErrorMessage';
 import ThemeProvider from '../ThemeProvider';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -89,8 +90,12 @@ function OntologyGraphBase({
         [classes.cytoscapeContainerLoading]: loading,
       })}
     >
-      <div ref={containerElement} className={classes.cytoscapeElement} />
-      {loading ? <Loading center /> : error ? 'An error occured' : null}
+      {error ? (
+        <ErrorMessage />
+      ) : (
+        <div ref={containerElement} className={classes.cytoscapeElement} />
+      )}
+      {loading ? <Loading center /> : null}
     </div>
   );
 
