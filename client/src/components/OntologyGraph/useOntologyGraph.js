@@ -115,11 +115,12 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     dispatch({
       type: 'fetch_begin',
     });
+    jsonpDisambiguation.current++;
     jQuery
       .ajax({
         url: url,
         type: 'GET',
-        jsonpCallback: 'jsonCallback' + datatype,
+        jsonpCallback: 'jsonCallback' + datatype + jsonpDisambiguation.current,
         dataType: 'jsonp',
         timeout: 5000,
       })
