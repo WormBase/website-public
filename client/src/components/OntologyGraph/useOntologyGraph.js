@@ -15,6 +15,18 @@ function reducer(state, action) {
       return { ...state, isWeighted: action.payload };
     case 'set_evidence_filter':
       return { ...state, et: action.payload };
+    case 'add_go_root':
+      return {
+        ...state,
+        rootsChosen: new Set(state.rootsChosen).add(action.payload),
+      };
+    case 'remove_go_root':
+      const newRootsChosen = new Set(state.rootsChosen);
+      newRootsChosen.delete(action.payload);
+      return {
+        ...state,
+        rootsChosen: newRootsChosen,
+      };
     case 'set_max_depth':
       return { ...state, depthRestriction: action.payload };
     case 'set_mode_edit':
@@ -32,6 +44,7 @@ function reducer(state, action) {
 export default function useOntologyGraph({ datatype, focusTermId }) {
   const containerElement = useRef();
   const eventHandlersRef = useRef({});
+  const jsonpDisambiguation = useRef(0);
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
     error: false,
@@ -49,7 +62,7 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     et: datatype === 'Go' ? 'withiea' : 'all',
 
     // for go and Biggo
-    rootsChosen: ['GO:0008150', 'GO:0005575', 'GO:0003674'],
+    rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
   });
   const { data, isWeighted, depthRestriction, mode, et, rootsChosen } = state;
 
@@ -68,7 +81,7 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     if (datatype === 'Go') {
       query = {
         ...queryDefaults,
-        rootsChosen: rootsChosen,
+        rootsChosen: [...rootsChosen].join(','),
         radio_etgo: `radio_etgo_${et}`,
       };
     } else if (datatype === 'Phenotype') {
@@ -99,31 +112,31 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     let didCancel = false;
     console.log(url);
 
-    new Promise((resolve, reject) => {
-      dispatch({
-        type: 'fetch_begin',
-      });
-      jQuery
-        .ajax({
-          url: url,
-          type: 'GET',
-          jsonpCallback: 'jsonCallback' + datatype,
-          dataType: 'jsonp',
-        })
-        .done((data) => resolve(data.elements));
-      //        .catch(() => reject(new Error('data fails to load')));
-    })
-      .then((result) => {
-        console.log('zzzz');
-        console.log(result);
+    dispatch({
+      type: 'fetch_begin',
+    });
+    jQuery
+      .ajax({
+        url: url,
+        type: 'GET',
+        jsonpCallback: 'jsonCallback' + datatype,
+        dataType: 'jsonp',
+      })
+      .done((data) => {
         if (!didCancel) {
+          const result = data.elements;
+          console.log('zzzz');
+          console.log(didCancel);
+          console.log(rootsChosen);
+          console.log(result);
+
           dispatch({
             type: 'fetch_success',
             payload: result,
           });
         }
       })
-      .catch(() => {
+      .fail(() => {
         if (!didCancel) {
           dispatch({
             type: 'fetch_failure',
@@ -134,7 +147,7 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     return () => {
       didCancel = true;
     };
-  }, [datatype, focusTermId, depthRestriction, et]);
+  }, [datatype, focusTermId, depthRestriction, et, rootsChosen]);
 
   useEffect(() => {
     // initialize cytoscape
