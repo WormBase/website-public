@@ -17,10 +17,14 @@ function Loading({ classes, classNameProp, center }) {
   );
 }
 
-const styles = {
+const styles = (theme) => ({
   root: {
     height: 24,
     width: 24,
+    padding: theme.spacing.unit,
+    backgroundColor: '#fff',
+    border: '2px solid grey',
+    borderRadius: theme.spacing.unit,
   },
   center: {
     position: 'absolute',
@@ -30,6 +34,6 @@ const styles = {
     bottom: 0,
     right: 0,
   },
-};
+});
 
 export default withStyles(styles)(Loading);
