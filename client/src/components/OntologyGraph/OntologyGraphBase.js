@@ -2,9 +2,11 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
+import { CircularProgress } from '../Progress';
 import Loading from '../Loading';
 import ErrorMessage from '../ErrorMessage';
 import ThemeProvider from '../ThemeProvider';
+import DownloadButton from '../DownloadButton';
 
 import { withStyles } from '@material-ui/core/styles';
 import MoreIcon from '@material-ui/icons/MoreVert';
@@ -16,6 +18,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
+
 import classNames from 'classnames';
 
 import useOntologyGraph from './useOntologyGraph';
@@ -29,7 +32,8 @@ function OntologyGraphBase({
     ...useOntologyGraphParams,
   });
 
-  const { loading, error, data, isWeighted, mode, imgSrc, etp } = state;
+  const { datatype, focusTermId } = useOntologyGraphParams;
+  const { loading, error, data, isWeighted, et, blob, save } = state;
 
   const graphSidebar = data ? (
     <div className={classes.sidebar}>
@@ -104,6 +108,20 @@ function OntologyGraphBase({
     <div className={classes.toolbar}>
       <div className={classes.stretch} />
       <Button
+        variant="outlined"
+        disabled={save === 'pending'}
+        onClick={() =>
+          dispatch({
+            type: 'save_image_requested',
+            payload: `${datatype}_soba_${focusTermId}.png`,
+          })
+        }
+      >
+        Save image
+        {save === 'pending' ? <CircularProgress size={20} /> : null}
+      </Button>
+
+      <Button
         className={classes.buttonMore}
         variant="outlined"
         onClick={() =>
@@ -140,6 +158,9 @@ const styles = (theme) => ({
   toolbar: {
     padding: theme.spacing.unit,
     display: 'flex',
+    '& > *': {
+      margin: `0 ${theme.spacing.unit / 2}px`,
+    },
   },
   stretch: {
     flex: '1 1 auto',

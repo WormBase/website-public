@@ -643,14 +643,15 @@ export function setupCytoscape(containerElement, datatype, data, {} = {}) {
   }
 
   function onExport() {
-    const imgSrc = cyOntologyGraph.png({
+    return cyOntologyGraph.png({
       full: true,
       maxWidth: 8000,
       maxHeight: 8000,
       bg: 'white',
+      output: 'blob-promise',
     });
-    console.log(imgSrc);
-    return imgSrc;
+    // console.log(imgSrc);
+    // return imgSrc;
   }
 
   return { onWeightedChange, onExport };

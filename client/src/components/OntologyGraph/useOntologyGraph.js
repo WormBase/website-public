@@ -1,5 +1,6 @@
 import { useReducer, useEffect, useRef } from 'react';
 import { stringify } from 'query-string';
+import { saveAs } from 'file-saver';
 import jQuery from 'jquery';
 import { setupCytoscape } from './draw';
 
@@ -33,8 +34,12 @@ function reducer(state, action) {
       return { ...state, mode: 'edit', imgSrc: null };
     case 'set_mode_export':
       return { ...state, mode: 'export' };
-    case 'export_image_ready':
-      return { ...state, imgSrc: action.payload };
+    case 'save_image_requested':
+      return { ...state, save: 'pending', fileName: action.payload };
+    case 'save_image_ready':
+      return { ...state, save: 'ready', fileName: null };
+    case 'save_image_ready':
+      return { ...state, save: 'failed', fileName: null };
 
     default:
       throw new Error();
@@ -64,7 +69,16 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     // for go and Biggo
     rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
   });
-  const { data, isWeighted, depthRestriction, mode, et, rootsChosen } = state;
+  const {
+    data,
+    isWeighted,
+    depthRestriction,
+    mode,
+    save,
+    fileName,
+    et,
+    rootsChosen,
+  } = state;
 
   useEffect(() => {
     console.log(state);
@@ -170,13 +184,22 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
   }, [isWeighted]);
 
   useEffect(() => {
-    if (mode === 'export') {
+    if (save === 'pending') {
       const { onExport } = eventHandlersRef.current;
       if (onExport) {
-        dispatch({ type: 'export_image_ready', payload: onExport() });
+        onExport()
+          .then((blob) => {
+            saveAs(blob, fileName || 'download.png');
+          })
+          .then(() => {
+            dispatch({ type: 'save_image_ready' });
+          })
+          .catch(() => {
+            dispatch({ type: 'save_image_failed' });
+          });
       }
     }
-  }, [mode]);
+  }, [save, fileName]);
 
   return [state, dispatch, containerElement];
 }
