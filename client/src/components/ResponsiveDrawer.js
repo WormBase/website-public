@@ -44,6 +44,7 @@ const styles = (theme) => ({
   drawerHeader: theme.mixins.toolbar,
   drawerPaper: {
     width: 250,
+    overflow: 'scroll',
     backgroundColor: theme.palette.background.default,
     [theme.breakpoints.up('md')]: {
       width: drawerWidth,
