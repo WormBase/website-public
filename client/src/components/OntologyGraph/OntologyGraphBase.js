@@ -33,9 +33,19 @@ function OntologyGraphBase({
   });
 
   const { datatype, focusTermId } = useOntologyGraphParams;
-  const { loading, error, data, isWeighted, et, blob, save } = state;
+  const {
+    loading,
+    error,
+    data,
+    meta,
+    depthRestriction,
+    isWeighted,
+    et,
+    blob,
+    save,
+  } = state;
 
-  const graphSidebar = data ? (
+  const graphSidebar = data.length ? (
     <div className={classes.sidebar}>
       <FormControl component="fieldset">
         <RadioGroup
@@ -68,8 +78,10 @@ function OntologyGraphBase({
       </FormControl>
       <TextField
         select
-        label="Graph depth"
-        value={state.depthRestriction || data.meta.fullDepth}
+        label={
+          <span>Graph depth ({<strong>maximum {meta.fullDepth}</strong>})</span>
+        }
+        value={depthRestriction || meta.fullDepth}
         onChange={(event) =>
           dispatch({
             type: 'set_max_depth',
@@ -77,13 +89,16 @@ function OntologyGraphBase({
           })
         }
       >
-        {Array(data.meta.fullDepth)
+        {Array(meta.fullDepth)
           .fill(1)
-          .map((_, index) => (
-            <MenuItem key={index} value={index + 1}>
-              {index + 1}
-            </MenuItem>
-          ))}
+          .map((_, index) => {
+            const value = index + 1;
+            return (
+              <MenuItem key={index} value={value}>
+                {value}
+              </MenuItem>
+            );
+          })}
       </TextField>
       {renderCustomSidebar && renderCustomSidebar({ state, dispatch })}
     </div>

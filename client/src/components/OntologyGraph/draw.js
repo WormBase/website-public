@@ -435,8 +435,48 @@ export default function setupCyOntologyGraph(elements, datatype) {
   } // function updateElements()
 } // function setupCyOntologyGraph(elements, datatype)
 
-export function setupCytoscape(containerElement, datatype, data, {} = {}) {
-  const layout = { name: 'dagre', padding: 10, nodeSep: 5 };
+const defaultLegendData = [
+  {
+    data: { id: 'legend', name: 'Legend' },
+  },
+
+  {
+    data: {
+      id: 'a',
+      parent: 'legend',
+      name: 'with inferred annotation',
+      annotationDirectness: 'inferred',
+    },
+  },
+  {
+    data: {
+      id: 'b',
+      parent: 'legend',
+      name: 'with direct annotation',
+      annotationDirectness: 'direct',
+    },
+  },
+  {
+    data: {
+      id: 'ab',
+      parent: 'legend',
+      name: 'direction of inference',
+      source: 'a',
+      target: 'b',
+    },
+    classes: 'autorotate',
+  },
+];
+
+export function setupCytoscape(
+  containerElement,
+  datatype,
+  data = [],
+  { legendData = defaultLegendData } = {}
+) {
+  const layout = { name: 'dagre', padding: 30, nodeSep: 50 };
+  console.log(legendData);
+  console.log(data);
   var cyOntologyGraph = cytoscape({
     container: containerElement,
     layout: layout,
@@ -447,9 +487,11 @@ export function setupCytoscape(containerElement, datatype, data, {} = {}) {
         content: 'data(name)',
         'background-color': 'data(backgroundColor)',
         shape: 'data(nodeShape)',
-        'border-color': 'data(nodeColor)',
-        'border-style': 'data(borderStyle)',
-        'border-width': 'data(borderWidth)',
+        // 'border-color': 'data(nodeColor)',
+        // 'border-style': 'data(borderStyle)',
+        // 'border-width': 'data(borderWidth)',
+        'border-style': 'solid',
+        'border-width': 2,
         width: 'data(diameter)',
         height: 'data(diameter)',
         'text-valign': 'center',
@@ -458,6 +500,14 @@ export function setupCytoscape(containerElement, datatype, data, {} = {}) {
         'border-opacity': 0.3,
         'background-opacity': 0.3,
         'font-size': 'data(fontSize)',
+      })
+      .selector('node[annotationDirectness = "direct"]')
+      .css({
+        'border-color': 'red',
+      })
+      .selector('node[annotationDirectness = "inferred"]')
+      .css({
+        'border-color': 'blue',
       })
       .selector('edge')
       .css({
@@ -482,12 +532,58 @@ export function setupCytoscape(containerElement, datatype, data, {} = {}) {
       .css({
         opacity: 0.25,
         'text-opacity': 0,
+      })
+      .selector('#legend')
+      .css({
+        'text-valign': 'top',
+        'text-halign': 'center',
+        'font-weight': '500',
+        'background-color': '#fff',
+      })
+      .selector('node[parent="legend"]')
+      .css({
+        'font-size': '0.9em',
+        'text-halign': 'left',
+        'background-color': '#fff',
+      })
+      .selector('edge[parent="legend"]')
+      .css({
+        label: 'data(name)',
+        'font-size': '0.9em',
+        'text-halign': 'left',
+        'text-valign': 'top',
+        //        'text-rotation': 'autorotate',
+        'text-margin-x': '-3em',
       }),
-    elements: data,
+    elements: data.length ? [...legendData, ...data] : [],
     wheelSensitivity: 0.2,
   });
 
+  cyOntologyGraph.on('layoutready', () => {});
+
   cyOntologyGraph.ready(function() {
+    // cyOntologyGraph
+    //   .nodes('[parent="legend"]')
+    //   .layout({ name: 'null', fit: false })
+    //   .run();
+    // cyOntologyGraph
+    //   .nodes('#legend')
+    //   .layout({
+    //     name: 'grid',
+    //     avoidOverlapPadding: 50,
+
+    //     fit: false,
+    //     animate: false,
+    //     padding: 10,
+    //     nodeSep: 50,
+    //   })
+    //   .run();
+
+    // const nonLegendElements = cyOntologyGraph.$(
+    //   '[parent != "legend"][id != "legend"]'
+    // );
+    // console.log(nonLegendElements.jsons());
+
     cyOntologyGraph.on('mouseover', 'edge', function(e) {
       var edge = e.target;
       var nodeId = edge.data('target');

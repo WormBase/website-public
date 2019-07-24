@@ -9,7 +9,13 @@ function reducer(state, action) {
     case 'fetch_begin':
       return { ...state, loading: true, error: false };
     case 'fetch_success':
-      return { ...state, loading: false, error: false, data: action.payload };
+      return {
+        ...state,
+        loading: false,
+        error: false,
+        data: action.payload.data,
+        meta: action.payload.meta,
+      };
     case 'fetch_failure':
       return { ...state, loading: false, error: true };
     case 'set_weighted':
@@ -53,7 +59,8 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
     error: false,
-    data: null,
+    data: [],
+    meta: {},
 
     isWeighted: true,
     depthRestriction: 0,
@@ -145,10 +152,14 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
           console.log(didCancel);
           console.log(rootsChosen);
           console.log(result);
+          console.log([...result.nodes, ...result.edges]);
 
           dispatch({
             type: 'fetch_success',
-            payload: result,
+            payload: {
+              data: [...result.nodes, ...result.edges],
+              meta: result.meta,
+            },
           });
         }
       })
