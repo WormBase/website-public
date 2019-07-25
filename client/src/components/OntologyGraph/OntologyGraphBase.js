@@ -78,10 +78,8 @@ function OntologyGraphBase({
       </FormControl>
       <TextField
         select
-        label={
-          <span>Graph depth ({<strong>maximum {meta.fullDepth}</strong>})</span>
-        }
-        value={depthRestriction || meta.fullDepth}
+        label={<span>Graph depth</span>}
+        value={depthRestriction}
         onChange={(event) =>
           dispatch({
             type: 'set_max_depth',
@@ -89,13 +87,16 @@ function OntologyGraphBase({
           })
         }
       >
-        {Array(meta.fullDepth)
+        {Array(Math.max(depthRestriction, meta.fullDepth) + 1)
           .fill(1)
           .map((_, index) => {
-            const value = index + 1;
             return (
-              <MenuItem key={index} value={value}>
-                {value}
+              <MenuItem
+                key={index}
+                value={index}
+                disabled={index > meta.fullDepth}
+              >
+                {index === 0 ? 'Maximum depth' : index}
               </MenuItem>
             );
           })}
