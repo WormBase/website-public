@@ -472,7 +472,7 @@ export function setupCytoscape(
   containerElement,
   datatype,
   data = [],
-  { legendData = defaultLegendData } = {}
+  { legendData = defaultLegendData, onReady } = {}
 ) {
   const layout = { name: 'dagre', padding: 30, nodeSep: 50 };
   console.log(legendData);
@@ -480,6 +480,7 @@ export function setupCytoscape(
   var cyOntologyGraph = cytoscape({
     container: containerElement,
     layout: layout,
+    // userZoomingEnabled: false,
     style: cytoscape
       .stylesheet()
       .selector('node')
@@ -558,8 +559,6 @@ export function setupCytoscape(
     elements: data.length ? [...legendData, ...data] : [],
     wheelSensitivity: 0.2,
   });
-
-  cyOntologyGraph.on('layoutready', () => {});
 
   cyOntologyGraph.ready(function() {
     // cyOntologyGraph
@@ -707,6 +706,8 @@ export function setupCytoscape(
       //               var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
       //$jq(infoElement).html(qtipContent);
     });
+
+    onReady && onReady();
   });
 
   function onWeightedChange(isWeighted) {

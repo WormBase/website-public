@@ -11,11 +11,13 @@ function reducer(state, action) {
     case 'fetch_success':
       return {
         ...state,
-        loading: false,
         error: false,
+        // loading stays true when rendering the display
         data: action.payload.data,
         meta: action.payload.meta,
       };
+    case 'display_ready':
+      return { ...state, loading: false };
     case 'fetch_failure':
       return { ...state, loading: false, error: true };
     case 'set_weighted':
@@ -181,7 +183,12 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
     eventHandlersRef.current = setupCytoscape(
       containerElement.current,
       datatype,
-      data
+      data,
+      {
+        onReady: () => {
+          dispatch({ type: 'display_ready' });
+        },
+      }
     );
   }, [data]);
 
