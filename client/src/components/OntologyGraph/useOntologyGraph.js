@@ -193,19 +193,19 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
   }, [data]);
 
   useEffect(() => {
-    const { onWeightedChange } = eventHandlersRef.current;
+    const { handleWeightedChange } = eventHandlersRef.current;
     console.log(eventHandlersRef.current);
-    if (onWeightedChange) {
-      onWeightedChange(isWeighted);
+    if (handleWeightedChange) {
+      handleWeightedChange(isWeighted);
     }
     // update edge weight
   }, [isWeighted]);
 
   useEffect(() => {
     if (save === 'pending') {
-      const { onExport } = eventHandlersRef.current;
-      if (onExport) {
-        onExport()
+      const { handleExport } = eventHandlersRef.current;
+      if (handleExport) {
+        handleExport()
           .then((blob) => {
             saveAs(blob, fileName || 'download.png');
           })

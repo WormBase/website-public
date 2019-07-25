@@ -710,7 +710,7 @@ export function setupCytoscape(
     onReady && onReady();
   });
 
-  function onWeightedChange(isWeighted) {
+  function handleWeightedChange(isWeighted) {
     var nodes = cyOntologyGraph.nodes();
     for (var i = 0; i < nodes.length; i++) {
       var node = nodes[i];
@@ -743,7 +743,7 @@ export function setupCytoscape(
       .run();
   }
 
-  function onExport() {
+  function handleExport() {
     return cyOntologyGraph.png({
       full: true,
       maxWidth: 8000,
@@ -755,5 +755,5 @@ export function setupCytoscape(
     // return imgSrc;
   }
 
-  return { onWeightedChange, onExport };
+  return { handleWeightedChange, handleExport };
 }
