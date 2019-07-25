@@ -584,7 +584,7 @@ export function setupCytoscape(
     // );
     // console.log(nonLegendElements.jsons());
 
-    cyOntologyGraph.on('mouseover', 'edge', function(e) {
+    cyOntologyGraph.on('mouseover', 'edge[parent != "legend"]', function(e) {
       var edge = e.target;
       var nodeId = edge.data('target');
       var nodeObj = cyOntologyGraph.getElementById(nodeId);
@@ -626,56 +626,60 @@ export function setupCytoscape(
       );
     });
 
-    cyOntologyGraph.on('tap', 'node', function(e) {
-      var node = e.target;
-      var nodeId = node.data('id');
-      var neighborhood = node.neighborhood().add(node);
-      cyOntologyGraph.elements().addClass('faded');
-      neighborhood.removeClass('faded');
+    cyOntologyGraph.on(
+      'tap',
+      'node[parent != "legend"][id != "legend"]',
+      function(e) {
+        var node = e.target;
+        var nodeId = node.data('id');
+        var neighborhood = node.neighborhood().add(node);
+        cyOntologyGraph.elements().addClass('faded');
+        neighborhood.removeClass('faded');
 
-      var node = e.target;
-      var nodeId = node.data('id');
-      var objId = node.data('objId');
-      var nodeName = node.data('name');
-      var annotCounts = node.data('annotCounts');
-      var linkout = linkFromNode(objId, datatype);
-      var qtipContent =
-        'Annotation Count:<br/>' +
-        annotCounts +
-        '<br/><a target="_blank" href="' +
-        linkout +
-        '">' +
-        objId +
-        ' - ' +
-        nodeName +
-        '</a>';
+        var node = e.target;
+        var nodeId = node.data('id');
+        var objId = node.data('objId');
+        var nodeName = node.data('name');
+        var annotCounts = node.data('annotCounts');
+        var linkout = linkFromNode(objId, datatype);
+        var qtipContent =
+          'Annotation Count:<br/>' +
+          annotCounts +
+          '<br/><a target="_blank" href="' +
+          linkout +
+          '">' +
+          objId +
+          ' - ' +
+          nodeName +
+          '</a>';
 
-      //             var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
-      node.qtip(
-        {
-          position: {
-            my: 'top center',
-            at: 'bottom center',
-          },
-          style: {
-            classes: 'qtip-bootstrap',
-            tip: {
-              width: 16,
-              height: 8,
+        //             var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
+        node.qtip(
+          {
+            position: {
+              my: 'top center',
+              at: 'bottom center',
+            },
+            style: {
+              classes: 'qtip-bootstrap',
+              tip: {
+                width: 16,
+                height: 8,
+              },
+            },
+            content: qtipContent,
+            show: {
+              e: e.type,
+              ready: true,
+            },
+            hide: {
+              e: 'mouseout unfocus',
             },
           },
-          content: qtipContent,
-          show: {
-            e: e.type,
-            ready: true,
-          },
-          hide: {
-            e: 'mouseout unfocus',
-          },
-        },
-        e
-      );
-    });
+          e
+        );
+      }
+    );
 
     cyOntologyGraph.on('tap', function(e) {
       if (e.target === cyOntologyGraph) {
