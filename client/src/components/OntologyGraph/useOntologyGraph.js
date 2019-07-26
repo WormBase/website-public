@@ -149,7 +149,7 @@ export default function useOntologyGraph({
         type: 'GET',
         jsonpCallback: 'jsonCallback' + datatype + jsonpDisambiguation.current,
         dataType: 'jsonp',
-        timeout: 5000,
+        timeout: 50000,
       })
       .done((data) => {
         if (!didCancel) {
