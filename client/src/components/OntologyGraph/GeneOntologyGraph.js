@@ -16,6 +16,21 @@ export default function GeneOntologyGraph({ focusTermId }) {
       useOntologyGraphParams={{
         datatype: 'Go',
         focusTermId: focusTermId,
+        legendData: [
+          {
+            data: {
+              id: 'c',
+              parent: 'legend',
+              name: 'GO "Slim" term',
+              backgroundColor: 'blue',
+            },
+            style: { 'border-width': 0 },
+          },
+          {
+            data: { id: 'bc', source: 'b', target: 'c' },
+            style: { visibility: 'hidden' },
+          },
+        ],
       }}
       renderCustomSidebar={({ state, dispatch }) => {
         const renderGOAspectCheckbox = ({ value, label }) => {

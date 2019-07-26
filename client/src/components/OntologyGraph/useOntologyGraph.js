@@ -54,7 +54,11 @@ function reducer(state, action) {
   }
 }
 
-export default function useOntologyGraph({ datatype, focusTermId }) {
+export default function useOntologyGraph({
+  datatype,
+  focusTermId,
+  legendData,
+}) {
   const containerElement = useRef();
   const eventHandlersRef = useRef({});
   const jsonpDisambiguation = useRef(0);
@@ -188,6 +192,7 @@ export default function useOntologyGraph({ datatype, focusTermId }) {
         onReady: () => {
           dispatch({ type: 'display_ready' });
         },
+        legendData: legendData,
       }
     );
   }, [data]);
