@@ -1,50 +1,9 @@
 
 
-
-
-<script src="/js/jquery/plugins/cytoscapejs/dagre/0.7.4/dagre.min.js "></script>
-
-<script type="text/javascript">
-// $jq(function(){
-
-//   var graphP = $jq.ajax({
-//     url: 'https://wobr2.caltech.edu/~raymond/cgi-bin/soba_biggo.cgi?action=annotSummaryJsonp&focusTermId=WB:[% object.name.data.id %]&datatype=phenotype&radio_etp=&showControlsFlag=0&fakeRootFlag=0&filterForLcaFlag=1&filterLongestFlag=1&maxNodes=0&maxDepth=0',
-//     type: 'GET',
-//     jsonpCallback: 'jsonCallbackPhenotype',
-//     dataType: 'jsonp'
-//   });
-
-//   Promise.all([ graphP ]).then(initCy);
-
-//   function initCy( then ){
-//     var elements = then[0].elements;
-//     if (elements.nodes.length > 0) {
-//         WB.setupCytoscapePhenotypeGraph(elements); }
-//       else {
-//         document.getElementById('graphContentPhenotype').innerHTML = 'No observed phenotypes.'; }
-//   }
-// });
-</script>
-
-<div id="phenotype-ontology-graph-container" class="ontology-graph-container">
-</div>
-<script type="text/javascript">
-(function(){
-  WB.setupCytoscapePhenotypeGraph('phenotype-ontology-graph-container', 'WB:[% object.name.data.id %]');
-})();
-</script>
-
-[%# WRAPPER $field_block title="Phenotype Graph" tooltip="the tooltip" key="phenotype_graph" %]
-[%# ??? This shows up as <div class="field disabled "> even though phenotype_graph is added to wormbase.conf %]
-[% WRAPPER $field_block title="Phenotype Graph" key="phenotype_graph" %]
-MEH
-[% END %]
-
-
-
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
-   Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
-
+    <div id="phenotype-ontology-graph-container" class="ontology-graph-container"></div>
+   <br />
+   <p>Alleles for which the sequence change is known are listed in <b>boldface</b>.</p>
 
     <p><i>The following phenotypes have been observed in [% object.name.data.label %]</i>:</p>
 
@@ -95,3 +54,12 @@ MEH
 END %]
 
 [% phenotype_submission_link; %]
+
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('phenotype-ontology-graph-container')) {
+    WB.setupCytoscapePhenotypeGraph('phenotype-ontology-graph-container', 'WB:[% object.name.data.id %]');
+  }
+})();
+</script>

@@ -43,13 +43,6 @@ END;
 
 %]
 
-<script type="text/javascript">
-(function(){
-  if (document.getElementById('anatomy-ontology-graph-container')) {
-    WB.setupCytoscapeAnatomyGraph('anatomy-ontology-graph-container', 'WB:[% object.name.data.id %]');
-  }
-})();
-</script>
 
 [%
 
@@ -69,14 +62,6 @@ WRAPPER $field_block title="Expressed during" key="expressed_during";
 END;
 
 %]
-
-<script type="text/javascript">
-(function(){
-  if (document.getElementById('life-stage-ontology-graph-container')) {
-    WB.setupCytoscapeLifestageGraph('life-stage-ontology-graph-container', 'WB:[% object.name.data.id %]');
-  }
-})();
-</script>
 
 [%
 
@@ -228,4 +213,21 @@ END;
     setTimeout(function(){  // sorry, need time to load summary fpkm plot first
         WB.openField($jq("#fpkm_holder"), "[% '/rest/field/' _ class _ '/' _ fields.name.data.id _ '/fpkm_expression_summary_ls' %]", {noLoadImg: true});
     }, 1000);
+</script>
+
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('anatomy-ontology-graph-container')) {
+    WB.setupCytoscapeAnatomyGraph('anatomy-ontology-graph-container', 'WB:[% object.name.data.id %]');
+  }
+})();
+</script>
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('life-stage-ontology-graph-container')) {
+    WB.setupCytoscapeLifestageGraph('life-stage-ontology-graph-container', 'WB:[% object.name.data.id %]');
+  }
+})();
 </script>

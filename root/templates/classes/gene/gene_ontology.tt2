@@ -7,11 +7,6 @@
 
 <div id="gene-ontology-graph-container" class="ontology-graph-container">
 </div>
-<script type="text/javascript">
-(function(){
-  WB.setupCytoscapeGoGraph('gene-ontology-graph-container', 'WB:[% object.name.data.id %]');
-})();
-</script>
 
 [%#
 
@@ -100,3 +95,10 @@
               END; # END IF facet contains data
          END; # END of facets
 %]
+
+
+<script type="text/javascript">
+(function(){
+  WB.setupCytoscapeGoGraph('gene-ontology-graph-container', 'WB:[% object.name.data.id %]');
+})();
+</script>
