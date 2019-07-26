@@ -472,7 +472,7 @@ export function setupCytoscape(
   containerElement,
   datatype,
   data = [],
-  { legendData = defaultLegendData, onReady } = {}
+  { legendData = defaultLegendData, onReady, isWeighted } = {}
 ) {
   const layout = {
     name: 'dagre',
@@ -492,7 +492,6 @@ export function setupCytoscape(
       .css({
         content: 'data(name)',
         'background-color': (node) => {
-          console.log(node.data('backgroundColor'));
           return node.data('backgroundColor') &&
             node.data('backgroundColor') !== 'white'
             ? '#acd'
@@ -504,14 +503,30 @@ export function setupCytoscape(
         // 'border-style': 'data(borderStyle)',
         // 'border-width': 'data(borderWidth)',
         'border-style': 'solid',
-        'border-width': 2,
-        width: 'data(diameter)',
-        height: 'data(diameter)',
+        'border-width': (node) => {
+          return node.data(
+            isWeighted ? 'borderWidthWeighted' : 'borderWidthUnweighted'
+          );
+        },
+        width: (node) => {
+          return node.data(
+            isWeighted ? 'diameter_weighted' : 'diameter_unweighted'
+          );
+        },
+        height: (node) => {
+          return node.data(
+            isWeighted ? 'diameter_weighted' : 'diameter_unweighted'
+          );
+        },
         'text-valign': 'center',
         'text-wrap': 'wrap',
         //               'min-zoomed-font-size': 8,
         'border-opacity': 0.3,
-        'font-size': 'data(fontSize)',
+        'font-size': (node) => {
+          return node.data(
+            isWeighted ? 'fontSizeWeighted' : 'fontSizeUnweighted'
+          );
+        },
       })
       .selector('node[annotationDirectness = "direct"]')
       .css({
@@ -553,12 +568,14 @@ export function setupCytoscape(
         'text-halign': 'center',
         'font-weight': '500',
         'background-color': '#fff',
+        'border-width': 2,
       })
       .selector('node[parent="legend"]')
       .css({
         'font-size': '0.9em',
         'text-halign': 'left',
         'text-max-width': '8em',
+        'border-width': 2,
       })
       .selector('edge[parent="legend"]')
       .css({
@@ -723,39 +740,6 @@ export function setupCytoscape(
     onReady && onReady();
   });
 
-  function handleWeightedChange(isWeighted) {
-    var nodes = cyOntologyGraph.nodes();
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
-      var nodeId = node.data('id');
-      cyOntologyGraph
-        .$('#' + nodeId)
-        .data(
-          'diameter',
-          node.data(isWeighted ? 'diameter_weighted' : 'diameter_unweighted')
-        );
-      cyOntologyGraph
-        .$('#' + nodeId)
-        .data(
-          'fontSize',
-          node.data(isWeighted ? 'fontSizeWeighted' : 'fontSizeUnweighted')
-        );
-      cyOntologyGraph
-        .$('#' + nodeId)
-        .data(
-          'borderWidth',
-          node.data(
-            isWeighted ? 'borderWidthWeighted' : 'borderWidthUnweighted'
-          )
-        );
-    }
-    cyOntologyGraph
-      .layout({
-        ...layout,
-      })
-      .run();
-  }
-
   function handleExport() {
     return cyOntologyGraph.png({
       full: true,
@@ -768,5 +752,5 @@ export function setupCytoscape(
     // return imgSrc;
   }
 
-  return { handleWeightedChange, handleExport };
+  return { handleExport };
 }

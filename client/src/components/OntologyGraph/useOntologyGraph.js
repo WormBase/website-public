@@ -193,18 +193,10 @@ export default function useOntologyGraph({
           dispatch({ type: 'display_ready' });
         },
         legendData: legendData,
+        isWeighted: isWeighted,
       }
     );
-  }, [data]);
-
-  useEffect(() => {
-    const { handleWeightedChange } = eventHandlersRef.current;
-    console.log(eventHandlersRef.current);
-    if (handleWeightedChange) {
-      handleWeightedChange(isWeighted);
-    }
-    // update edge weight
-  }, [isWeighted]);
+  }, [data, isWeighted]);
 
   useEffect(() => {
     if (save === 'pending') {
