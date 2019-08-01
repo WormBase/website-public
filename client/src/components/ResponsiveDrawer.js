@@ -88,6 +88,7 @@ class ResponsiveDrawer extends Component {
       drawerContent,
       mainContent,
       mainHeader,
+      rootRef,
     } = this.props;
 
     const drawer = <div className={classes.drawerPaper}>{drawerContent}</div>;
@@ -99,7 +100,7 @@ class ResponsiveDrawer extends Component {
     );
 
     return (
-      <div className={classes.root}>
+      <div ref={rootRef} className={classes.root}>
         <div className={classes.appFrame}>
           <Hidden mdUp>
             <Drawer

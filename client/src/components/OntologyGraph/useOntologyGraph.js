@@ -5,6 +5,7 @@ import jQuery from 'jquery';
 import { setupCytoscape } from './draw';
 
 function reducer(state, action) {
+  console.log(action);
   switch (action.type) {
     case 'fetch_begin':
       return { ...state, loading: true, error: false };
@@ -16,6 +17,9 @@ function reducer(state, action) {
         data: action.payload.data,
         meta: action.payload.meta,
       };
+    case 'start_render': {
+      return { ...state, isRenderSuspended: false };
+    }
     case 'display_ready':
       return { ...state, loading: false };
     case 'fetch_failure':
@@ -65,6 +69,7 @@ export default function useOntologyGraph({
   const [state, dispatch] = useReducer(reducer, {
     loading: true,
     error: false,
+    isRenderSuspended: true, // due to performance reason, don't render until triggered
     data: [],
     meta: {},
 
@@ -83,6 +88,7 @@ export default function useOntologyGraph({
     rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
   });
   const {
+    isRenderSuspended,
     data,
     isWeighted,
     depthRestriction,
@@ -184,19 +190,22 @@ export default function useOntologyGraph({
 
   useEffect(() => {
     // initialize cytoscape
-    eventHandlersRef.current = setupCytoscape(
-      containerElement.current,
-      datatype,
-      data,
-      {
-        onReady: () => {
-          dispatch({ type: 'display_ready' });
-        },
-        legendData: legendData,
-        isWeighted: isWeighted,
-      }
-    );
-  }, [data, isWeighted]);
+    if (!isRenderSuspended) {
+      console.log(`view activated`);
+      eventHandlersRef.current = setupCytoscape(
+        containerElement.current,
+        datatype,
+        data,
+        {
+          onReady: () => {
+            dispatch({ type: 'display_ready' });
+          },
+          legendData: legendData,
+          isWeighted: isWeighted,
+        }
+      );
+    }
+  }, [data, isWeighted, isRenderSuspended]);
 
   useEffect(() => {
     if (save === 'pending') {

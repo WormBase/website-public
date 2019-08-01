@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ResponsiveDrawer from '../ResponsiveDrawer';
 import Button from '../Button';
@@ -20,6 +20,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
 import classNames from 'classnames';
+import { useInView } from 'react-intersection-observer';
 
 import useOntologyGraph from './useOntologyGraph';
 
@@ -28,9 +29,19 @@ function OntologyGraphBase({
   renderCustomSidebar,
   classes,
 }) {
+  const [containerWrapperRef, inView] = useInView({
+    //triggerOnce: true,
+  });
   const [state, dispatch, containerElement] = useOntologyGraph({
     ...useOntologyGraphParams,
   });
+
+  useEffect(() => {
+    console.log(`inView: ${inView}`);
+    if (inView) {
+      dispatch({ type: 'start_render' });
+    }
+  }, [inView]);
 
   const { datatype, focusTermId } = useOntologyGraphParams;
   const {
@@ -154,6 +165,7 @@ function OntologyGraphBase({
   return (
     <ThemeProvider>
       <ResponsiveDrawer
+        rootRef={containerWrapperRef}
         innerRef={drawerRef}
         anchor="right"
         drawerContent={graphSidebar}

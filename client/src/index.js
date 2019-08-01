@@ -10,7 +10,12 @@ function main(err) {
 }
 
 function browserSupportsAllFeatures() {
-  return window.Promise && window.fetch && window.Symbol;
+  return (
+    window.Promise &&
+    window.fetch &&
+    window.Symbol &&
+    window.IntersectionObserver
+  );
 }
 
 function loadScript(src, done) {
@@ -31,7 +36,7 @@ if (browserSupportsAllFeatures()) {
 } else {
   // All other browsers loads polyfills and then run `main()`.
   loadScript(
-    'https://cdn.polyfill.io/v2/polyfill.min.js?features=default-3.6,fetch',
+    'https://polyfill.io/v3/polyfill.min.js?features=default%2Cfetch%2CIntersectionObserver',
     main
   );
 }
