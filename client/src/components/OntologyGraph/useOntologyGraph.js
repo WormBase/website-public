@@ -22,6 +22,8 @@ function reducer(state, action) {
     }
     case 'display_ready':
       return { ...state, loading: false };
+    case 'set_lock_toggle':
+      return { ...state, isLocked: !state.isLocked };
     case 'fetch_failure':
       return { ...state, loading: false, error: true };
     case 'set_weighted':
@@ -70,6 +72,8 @@ export default function useOntologyGraph({
     loading: true,
     error: false,
     isRenderSuspended: true, // due to performance reason, don't render until triggered
+    isLocked: true,
+
     data: [],
     meta: {},
 
@@ -88,8 +92,9 @@ export default function useOntologyGraph({
     rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
   });
   const {
-    isRenderSuspended,
     data,
+    isRenderSuspended,
+    isLocked,
     isWeighted,
     depthRestriction,
     mode,
@@ -205,7 +210,14 @@ export default function useOntologyGraph({
         }
       );
     }
-  }, [data, isWeighted, isRenderSuspended]);
+  }, [data, legendData, isWeighted, isRenderSuspended]);
+
+  useEffect(() => {
+    const { handleLock } = eventHandlersRef.current;
+    if (handleLock) {
+      handleLock(isLocked);
+    }
+  }, [isLocked]);
 
   useEffect(() => {
     if (save === 'pending') {

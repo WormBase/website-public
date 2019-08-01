@@ -485,7 +485,8 @@ export function setupCytoscape(
   var cyOntologyGraph = cytoscape({
     container: containerElement,
     layout: layout,
-    // userZoomingEnabled: false,
+    userZoomingEnabled: false,
+    autoungrabify: true,
     style: cytoscape
       .stylesheet()
       .selector('node')
@@ -752,5 +753,9 @@ export function setupCytoscape(
     // return imgSrc;
   }
 
-  return { handleExport };
+  function handleLock(isLocked) {
+    cyOntologyGraph.userZoomingEnabled(!isLocked);
+  }
+
+  return { handleExport, handleLock };
 }

@@ -10,6 +10,8 @@ import DownloadButton from '../DownloadButton';
 
 import { withStyles } from '@material-ui/core/styles';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import LockIcon from '@material-ui/icons/Lock';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
@@ -51,6 +53,7 @@ function OntologyGraphBase({
     meta,
     depthRestriction,
     isWeighted,
+    isLocked,
     et,
     blob,
     save,
@@ -133,6 +136,14 @@ function OntologyGraphBase({
   const drawerRef = useRef();
   const graphToolbar = (
     <div className={classes.toolbar}>
+      <Button
+        variant={isLocked ? 'contained' : 'outlined'}
+        color="primary"
+        onClick={() => dispatch({ type: 'set_lock_toggle' })}
+      >
+        Scroll wheel zoom
+        {isLocked ? <LockIcon /> : <LockOpenIcon />}
+      </Button>
       <div className={classes.stretch} />
       <Button
         variant="outlined"
