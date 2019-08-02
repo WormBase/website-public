@@ -52,11 +52,11 @@ function reducer(state, action) {
       return { ...state, save: 'pending', fileName: action.payload };
     case 'save_image_ready':
       return { ...state, save: 'ready', fileName: null };
-    case 'save_image_ready':
+    case 'save_image_failed':
       return { ...state, save: 'failed', fileName: null };
 
     default:
-      throw new Error();
+      throw new Error(`action type ${action.type} not found`);
   }
 }
 
@@ -223,14 +223,17 @@ export default function useOntologyGraph({
     if (save === 'pending') {
       const { handleExport } = eventHandlersRef.current;
       if (handleExport) {
-        handleExport()
+        handleExport({
+          scale: 5,
+        })
           .then((blob) => {
             saveAs(blob, fileName || 'download.png');
           })
           .then(() => {
             dispatch({ type: 'save_image_ready' });
           })
-          .catch(() => {
+          .catch((e) => {
+            console.log(e);
             dispatch({ type: 'save_image_failed' });
           });
       }

@@ -741,13 +741,12 @@ export function setupCytoscape(
     onReady && onReady();
   });
 
-  function handleExport() {
+  function handleExport(options = {}) {
     return cyOntologyGraph.png({
       full: true,
-      maxWidth: 8000,
-      maxHeight: 8000,
       bg: 'white',
       output: 'blob-promise',
+      ...options,
     });
     // console.log(imgSrc);
     // return imgSrc;
