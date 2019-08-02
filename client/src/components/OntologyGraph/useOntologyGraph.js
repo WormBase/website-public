@@ -7,6 +7,15 @@ import { setupCytoscape } from './draw';
 function reducer(state, action) {
   console.log(action);
   switch (action.type) {
+    case 'reset':
+      // note not all states are reset, for example, isRenderSuspended, isLocked are ignored
+      return {
+        ...state,
+        isWeighted: true,
+        depthRestriction: 0,
+        et: 'all',
+        rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
+      };
     case 'fetch_begin':
       return { ...state, loading: true, error: false };
     case 'fetch_success':
@@ -79,14 +88,13 @@ export default function useOntologyGraph({
 
     isWeighted: true,
     depthRestriction: 0,
-    maxDepth: 0,
 
     // edit vs export mode
     mode: 'edit',
     imgSrc: 'null',
 
     // evidence types
-    et: datatype === 'Go' ? 'withiea' : 'all',
+    et: 'all',
 
     // for go and Biggo
     rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
@@ -120,7 +128,7 @@ export default function useOntologyGraph({
       query = {
         ...queryDefaults,
         rootsChosen: [...rootsChosen].join(','),
-        radio_etgo: `radio_etgo_${et}`,
+        radio_etgo: `radio_etgo_${et === 'all' ? 'withiea' : et}`,
       };
     } else if (datatype === 'Phenotype') {
       query = {

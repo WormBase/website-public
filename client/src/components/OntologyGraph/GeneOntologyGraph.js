@@ -72,7 +72,7 @@ export default function GeneOntologyGraph({ focusTermId }) {
                 column
               >
                 <FormControlLabel
-                  value="withiea"
+                  value="all"
                   control={<Radio />}
                   label="Any evidence type"
                 />

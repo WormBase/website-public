@@ -12,6 +12,8 @@ import { withStyles } from '@material-ui/core/styles';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import SaveIcon from '@material-ui/icons/Save';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
@@ -144,6 +146,9 @@ function OntologyGraphBase({
         Scroll wheel zoom
         {isLocked ? <LockIcon /> : <LockOpenIcon />}
       </Button>
+      <Button variant={'outlined'} onClick={() => dispatch({ type: 'reset' })}>
+        Reset <RefreshIcon />
+      </Button>
       <div className={classes.stretch} />
       <Button
         variant="outlined"
@@ -156,7 +161,7 @@ function OntologyGraphBase({
         }
       >
         Save image
-        {save === 'pending' ? <CircularProgress size={20} /> : null}
+        {save === 'pending' ? <CircularProgress size={20} /> : <SaveIcon />}
       </Button>
 
       <Button
