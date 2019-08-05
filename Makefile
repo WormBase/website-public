@@ -190,20 +190,20 @@ production-deploy:
 
 .PHONY: deploy-no-eb
 deploy-no-eb: COMPOSE_PROJECT_NAME = staging_build  # for both production and staging environment. It's designed to be identical to the derived project name when deployed from the jenkins workspace, where deployments usually happen. This allows docker-compose cli to be used without -p when executed from said directory. At the same time, if the make target were executed else where, the same project name is applied, allowing the stack to be shut down by future deployments.
-deploy-no-eb: CATALYST_PORT  = 5000
+deploy-no-eb: export CATALYST_PORT = 5000
 deploy-no-eb: aws-ecr-login
 	docker-compose pull
 	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
 	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 .PHONY: staging-deploy-no-eb
-staging-deploy-no-eb: CATALYST_APP ?= staging
+staging-deploy-no-eb: export CATALYST_APP ?= staging
 staging-deploy-no-eb:
 	$(MAKE) deploy-no-eb
 
 # production deployment without EB, ie for bot instance
 .PHONY: production-deploy-no-eb
-production-deploy-no-eb: CATALYST_APP ?= production
+production-deploy-no-eb: export CATALYST_APP ?= production
 production-deploy-no-eb:
 	$(MAKE) deploy-no-eb
 
