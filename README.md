@@ -101,6 +101,27 @@ different from the port that runs your Catalyst server). Then:
     webpack_dev_server = "http://dev.wormbase.org:[MY_PORT_NUMBER]"
 ```
 
+(Beta) Setup Development Environment with docker-compose
+--------------------------------------------------------
+
+Docker-compose allows us to start Catalyst and webpackDevServer with a single command, and without installing any dependencies.
+
+- Ensure environment variable `CATALYST_PORT` and `WEBPACK_SERVER_PORT` are set.
+
+- Ensure `/usr/local/bin/` is on your $PATH, as dependencies such as `docker-compose` and `yarn` are installed there.
+
+- Run: `make dev` and wait for website/Catalyst and webpack(DevServer) to start.
+
+- To shutdown your development stack, ctrl-C, or `make dev-down`.
+
+
+**Note:**
+- The first time that `make dev` runs, it takes longer due to installation of dependencies.
+- The `stdout` of docker-compose combines the stdouts of the containers. If this is hard to read, stdout of individual containers can be accessed via `SERVICE=[name_of_service] make console`, where the name of service could be website, webpack, etc as found in [docker-compose.yml](docker-compose.yml) and [docker-compose.dev.yml](docker-compose.dev.yml).
+- The Makefile exports user-specific environment variable `COMPOSE_PROJECT_NAME` to allow multiple instances of the development stack to run on the same machine. If you use docker-compose cli directly, please set `COMPOSE_PROJECT_NAME` accordingly to interact with your particular development instance.
+- ACeDB container isn't started as part the development stack to reduce memory footprint. Instead, we rely on a shared acedb container, by joining the docker networked called `wb-network` where the acedb runs on. If the shared acedb container is down, instructions to start the shared acedb container is found [here](https://github.com/WormBase/wormbase-architecture/blob/develop/roles/acedb/files/startserver.sh).
+- JavaScript dependencies are installed both on the host and in the container. The former is necessary to enable code formatting with Prettier and git pre-commit hooks with Husky.
+
 Prior to deployment
 ----------------------
 Re-build the static assets:

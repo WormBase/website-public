@@ -2,12 +2,15 @@
 
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
-CATALYST_PORT ?= 9013
+CATALYST_PORT ?= 5000
+WEBPACK_SERVER_PORT ?= 3000
 
 export GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
 export GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
 export GITHUB_TOKEN=$(shell cat credentials/github_token.txt)
 export JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
+
+export COMPOSE_PROJECT_NAME = "${USER}_$(shell pwd -P | xargs  basename)"
 
 .PHONY: bare-dev-start
 bare-dev-start:
@@ -186,10 +189,12 @@ production-deploy:
 	eb tags --add Purpose=production
 
 .PHONY: deploy-no-eb
+deploy-no-eb: COMPOSE_PROJECT_NAME = staging_build  # for both production and staging environment. It's designed to be identical to the derived project name when deployed from the jenkins workspace, where deployments usually happen. This allows docker-compose cli to be used without -p when executed from said directory. At the same time, if the make target were executed else where, the same project name is applied, allowing the stack to be shut down by future deployments.
+deploy-no-eb: CATALYST_PORT  = 5000
 deploy-no-eb: aws-ecr-login
 	docker-compose pull
-	docker-compose down
-	docker-compose up -d
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 .PHONY: staging-deploy-no-eb
 staging-deploy-no-eb: CATALYST_APP ?= staging
@@ -198,6 +203,22 @@ staging-deploy-no-eb:
 
 # production deployment without EB, ie for bot instance
 .PHONY: production-deploy-no-eb
-production-deploy-no-eb: CATALYST_APP ?= staging
+production-deploy-no-eb: CATALYST_APP ?= production
 production-deploy-no-eb:
 	$(MAKE) deploy-no-eb
+
+# dev deployment
+.PHONY: dev
+dev: aws-ecr-login
+	(cd client/ && yarn install --frozen-lockfile) # dependency installation on host is required for prettier in git precommit hook
+	docker-compose pull
+	$(MAKE) dev-down
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+.PHONY: dev-down
+dev-down:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+
+.PHONY: console
+console:
+	docker-compose logs -f ${SERVICE}
