@@ -122,10 +122,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@wormbase/react-scripts-for-catalyst@1.0.9-12":
-  version "1.0.9-12"
-  resolved "https://registry.yarnpkg.com/@wormbase/react-scripts-for-catalyst/-/react-scripts-for-catalyst-1.0.9-12.tgz#e96c0a3f2ba24b025915baf0a75f1d9dc1186518"
-  integrity sha512-8Qn3q/gx9MhpDcCiUP4a20H9uMekdxR8PnH+nnlYwTWzDqCssPZfvHJGdVfnEvHCDkrjuI7cVGZjPyZxSA1TAw==
+"@wormbase/react-scripts-for-catalyst@^1.0.9-13":
+  version "1.0.9-13"
+  resolved "https://registry.yarnpkg.com/@wormbase/react-scripts-for-catalyst/-/react-scripts-for-catalyst-1.0.9-13.tgz#41cf294bb3de2dd2c000583b8e565c52f31923b4"
+  integrity sha512-5CnBYuXhFQWM23tTOvwdgJEVQIaTDbEJSk0/angBakFqQ1cDs9Sup4nOV5RPPlIs+SXXJ1Weuy/InrM0alRnTA==
   dependencies:
     autoprefixer "7.1.1"
     babel-core "6.25.0"
@@ -2491,6 +2491,13 @@ cytoscape-dagre@^2.2.2:
   integrity sha512-zsg36qNwua/L2stJSWkcbSDcvW3E6VZf6KRe6aLnQJxuXuz89tMqI5EVYVKEcNBgzTEzFMFv0PE3T0nD4m6VDw==
   dependencies:
     dagre "^0.8.2"
+
+cytoscape-popper@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/cytoscape-popper/-/cytoscape-popper-1.0.4.tgz#13388223d6d84f66f121643fb1213c26d1c693f8"
+  integrity sha512-rKzWiuhGDw0+1UwKK+2eXkZVSNR8TxAXp3k0QOOkH0GW1w55mnCDUVUKZuQyXqHtcZie+TnW1FJ5ml2Uc/lkOg==
+  dependencies:
+    popper.js "^1.0.0"
 
 cytoscape-qtip@^2.7.1:
   version "2.7.1"
@@ -6884,6 +6891,11 @@ pluralize@^1.2.1:
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-1.2.1.tgz#d1a21483fd22bb41e58a12fa3421823140897c45"
   integrity sha1-0aIUg/0iu0HlihL6NCGCMUCJfEU=
 
+popper.js@^1.0.0, popper.js@^1.14.7, popper.js@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.15.0.tgz#5560b99bbad7647e9faa475c6b8056621f5a4ff2"
+  integrity sha512-w010cY1oCUmI+9KwwlWki+r5jxKfTFDVoadl7MSrIujHU5MJ5OR6HTDj6Xo8aoR/QsA56x8jKjA59qGH4ELtrA==
+
 popper.js@^1.14.1:
   version "1.14.6"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.6.tgz#ab20dd4edf9288b8b3b6531c47c361107b60b4b0"
@@ -8890,6 +8902,13 @@ timers-browserify@^2.0.4:
   integrity sha512-uZYhyU3EX8O7HQP+J9fTVYwsq90Vr68xPEFo7yrVImIxYvHgukBEgOB/SgGoorWVTzGM/3Z+wUNnboA4M8jWrg==
   dependencies:
     setimmediate "^1.0.4"
+
+tippy.js@^4.3.5:
+  version "4.3.5"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-4.3.5.tgz#882bff8d92f09bb0546d2826d5668c0560006f54"
+  integrity sha512-NDq3efte8nGK6BOJ1dDN1/WelAwfmh3UtIYXXck6+SxLzbIQNZE/cmRSnwScZ/FyiKdIcvFHvYUgqmoGx8CcyA==
+  dependencies:
+    popper.js "^1.14.7"
 
 tmp@^0.0.33:
   version "0.0.33"
