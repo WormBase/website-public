@@ -144,11 +144,11 @@ function OntologyGraphBase({
         color="primary"
         onClick={() => dispatch({ type: 'set_lock_toggle' })}
       >
-        Scroll wheel zoom
+        <span className={classes.buttonTextLabel}>Scroll wheel zoom</span>
         {isLocked ? <LockIcon /> : <LockOpenIcon />}
       </Button>
       <Button variant={'outlined'} onClick={() => dispatch({ type: 'reset' })}>
-        Reset <RefreshIcon />
+        <span className={classes.buttonTextLabel}>Reset</span> <RefreshIcon />
       </Button>
       <div className={classes.stretch} />
       <Button
@@ -161,7 +161,7 @@ function OntologyGraphBase({
           })
         }
       >
-        Save image
+        <span className={classes.buttonTextLabel}>Save image</span>
         {save === 'pending' ? <CircularProgress size={20} /> : <SaveIcon />}
       </Button>
       <Button
@@ -171,8 +171,7 @@ function OntologyGraphBase({
           drawerRef.current && drawerRef.current.handleDrawerToggle()
         }
       >
-        {' '}
-        Options
+        <span className={classes.buttonTextLabel}>Options</span>
         <MoreIcon />
       </Button>
       <Button
@@ -220,7 +219,6 @@ const styles = (theme) => ({
     margin: 0,
   },
   buttonMore: {
-    paddingRight: 0,
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
@@ -232,6 +230,12 @@ const styles = (theme) => ({
     },
     '&:visited': {
       color: theme.palette.text.primary,
+    },
+  },
+  buttonTextLabel: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'inline',
     },
   },
 
