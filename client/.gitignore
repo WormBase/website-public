@@ -1,9 +1,7 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-#.gitignore file added to node_modules to check in the folder
 node_modules
-!/node_modules/.gitignore
 
 # testing
 /coverage

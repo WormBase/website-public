@@ -1,4 +1,4 @@
-version: "3"
+version: "3.2"
 volumes:
   node_modules:
 services:
@@ -21,8 +21,15 @@ services:
       bash -c "yarn install --frozen-lockfile --verbose &&
       	       yarn run start"
     volumes:
-      - "./:/home/node"
-      - "node_modules:/home/node/client/node_modules"
+      - type: bind
+        source: ./
+        target: /home/node/
+        read_only: true
+      - type: volume
+        source: node_modules
+        target: /home/node/client/node_modules
+        volume:
+          nocopy: true
     environment:
       - PORT=${WEBPACK_SERVER_PORT}
 networks:
