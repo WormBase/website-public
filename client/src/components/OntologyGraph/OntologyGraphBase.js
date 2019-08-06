@@ -10,6 +10,7 @@ import DownloadButton from '../DownloadButton';
 
 import { withStyles } from '@material-ui/core/styles';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import HelpIcon from '@material-ui/icons/Help';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -163,7 +164,6 @@ function OntologyGraphBase({
         Save image
         {save === 'pending' ? <CircularProgress size={20} /> : <SaveIcon />}
       </Button>
-
       <Button
         className={classes.buttonMore}
         variant="outlined"
@@ -174,6 +174,15 @@ function OntologyGraphBase({
         {' '}
         Options
         <MoreIcon />
+      </Button>
+      <Button
+        className={classes.linkHelp}
+        variant="outlined"
+        component="a"
+        target="_blank"
+        href="http://wiki.wormbase.org/index.php/User_Guide/SObA"
+      >
+        <HelpIcon />
       </Button>
     </div>
   );
@@ -208,11 +217,21 @@ const styles = (theme) => ({
   },
   stretch: {
     flex: '1 1 auto',
+    margin: 0,
   },
   buttonMore: {
     paddingRight: 0,
     [theme.breakpoints.up('md')]: {
       display: 'none',
+    },
+  },
+  linkHelp: {
+    color: '#000',
+    '&:link': {
+      color: theme.palette.text.primary,
+    },
+    '&:visited': {
+      color: theme.palette.text.primary,
     },
   },
 
