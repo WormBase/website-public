@@ -58,7 +58,16 @@ export default function GeneOntologyGraph({ focusTermId }) {
         return (
           <React.Fragment>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Evidence type</FormLabel>
+              <FormLabel
+                component={() => (
+                  <a
+                    href="http://geneontology.org/docs/guide-go-evidence-codes/"
+                    target="_blank"
+                  >
+                    <span className="wb-ext">Evidence types</span>
+                  </a>
+                )}
+              />
               <RadioGroup
                 aria-label="evidence-type"
                 name="evidence-type"
