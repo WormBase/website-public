@@ -218,6 +218,13 @@ export default function useOntologyGraph({
         }
       );
     }
+
+    return () => {
+      const { handleCleanup } = eventHandlersRef.current;
+      if (handleCleanup) {
+        handleCleanup();
+      }
+    };
   }, [data, legendData, isWeighted, isRenderSuspended]);
 
   useEffect(() => {

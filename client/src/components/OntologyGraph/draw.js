@@ -212,6 +212,11 @@ export function setupCytoscape(
     wheelSensitivity: 0.2,
   });
 
+  const tippies = [];
+  function cleanupTippies() {
+    tippies.forEach((tippyInstance) => tippyInstance.destroy());
+  }
+
   cyOntologyGraph.ready(function() {
     // cyOntologyGraph
     //   .nodes('[parent="legend"]')
@@ -234,13 +239,10 @@ export function setupCytoscape(
     //   '[parent != "legend"][id != "legend"]'
     // );
     // console.log(nonLegendElements.jsons());
-    let lastTippy;
 
     const makeTippy = function(ele, text) {
       const elePopperRef = ele.popperRef();
-
-      lastTippy && lastTippy.destroy();
-      lastTippy = tippy(ele.popperRef(), {
+      const newTippy = tippy(ele.popperRef(), {
         content: function() {
           var div = document.createElement('div');
 
@@ -251,18 +253,19 @@ export function setupCytoscape(
         trigger: 'manual',
         interactive: true,
         theme: 'light-border',
+        boundary: containerElement,
         arrow: true,
         placement: 'bottom',
         hideOnClick: false,
         multiple: true,
-        sticky: false,
+        sticky: true,
       });
-
-      lastTippy.show();
+      tippies.push(newTippy);
+      newTippy.show();
     };
 
     cyOntologyGraph.on('unselect', () => {
-      lastTippy && lastTippy.destroy();
+      cleanupTippies();
     });
 
     cyOntologyGraph.on('select', 'edge[parent != "legend"]', function(e) {
@@ -338,5 +341,10 @@ export function setupCytoscape(
     cyOntologyGraph.userZoomingEnabled(!isLocked);
   }
 
-  return { handleExport, handleLock };
+  function handleCleanup() {
+    cleanupTippies();
+    cyOntologyGraph.destroy();
+  }
+
+  return { handleExport, handleLock, handleCleanup };
 }
