@@ -1,9 +1,12 @@
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 import cyqtip from 'cytoscape-qtip';
+import popper from 'cytoscape-popper';
+import tippy from 'tippy.js';
+import 'tippy.js/themes/light-border.css';
 
 var $jq = window.$jq;
-cytoscape.use(cyqtip); // register extension
+cytoscape.use(popper); // register extension
 cytoscape.use(dagre); // register extension
 
 function linkFromEdge(nodeObjId, datatype) {
@@ -100,6 +103,7 @@ export function setupCytoscape(
     layout: layout,
     userZoomingEnabled: false,
     autoungrabify: true,
+    selectionType: 'single',
     style: cytoscape
       .stylesheet()
       .selector('node')
@@ -176,6 +180,10 @@ export function setupCytoscape(
         opacity: 0.25,
         'text-opacity': 0,
       })
+      .selector(':selected')
+      .css({
+        //    'line-color': 'red',
+      })
       .selector('#legend')
       .css({
         'text-valign': 'top',
@@ -226,8 +234,38 @@ export function setupCytoscape(
     //   '[parent != "legend"][id != "legend"]'
     // );
     // console.log(nonLegendElements.jsons());
+    let lastTippy;
 
-    cyOntologyGraph.on('mouseover', 'edge[parent != "legend"]', function(e) {
+    const makeTippy = function(ele, text) {
+      const elePopperRef = ele.popperRef();
+
+      lastTippy && lastTippy.destroy();
+      lastTippy = tippy(ele.popperRef(), {
+        content: function() {
+          var div = document.createElement('div');
+
+          div.innerHTML = text;
+
+          return div;
+        },
+        trigger: 'manual',
+        interactive: true,
+        theme: 'light-border',
+        arrow: true,
+        placement: 'bottom',
+        hideOnClick: false,
+        multiple: true,
+        sticky: false,
+      });
+
+      lastTippy.show();
+    };
+
+    cyOntologyGraph.on('unselect', () => {
+      lastTippy && lastTippy.destroy();
+    });
+
+    cyOntologyGraph.on('select', 'edge[parent != "legend"]', function(e) {
       var edge = e.target;
       var nodeId = edge.data('target');
       var nodeObj = cyOntologyGraph.getElementById(nodeId);
@@ -243,34 +281,11 @@ export function setupCytoscape(
           nodeName +
           '</a> graph';
       }
-      edge.qtip(
-        {
-          position: {
-            my: 'top center',
-            at: 'bottom center',
-          },
-          style: {
-            classes: 'qtip-bootstrap',
-            tip: {
-              width: 16,
-              height: 8,
-            },
-          },
-          content: qtipContent,
-          show: {
-            e: e.type,
-            ready: true,
-          },
-          hide: {
-            e: 'mouseout unfocus',
-          },
-        },
-        e
-      );
+      makeTippy(edge, qtipContent);
     });
 
     cyOntologyGraph.on(
-      'tap',
+      'select',
       'node[parent != "legend"][id != "legend"]',
       function(e) {
         var node = e.target;
@@ -295,32 +310,7 @@ export function setupCytoscape(
           ' - ' +
           nodeName +
           '</a>';
-
-        //             var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
-        node.qtip(
-          {
-            position: {
-              my: 'top center',
-              at: 'bottom center',
-            },
-            style: {
-              classes: 'qtip-bootstrap',
-              tip: {
-                width: 16,
-                height: 8,
-              },
-            },
-            content: qtipContent,
-            show: {
-              e: e.type,
-              ready: true,
-            },
-            hide: {
-              e: 'mouseout unfocus',
-            },
-          },
-          e
-        );
+        makeTippy(node, qtipContent);
       }
     );
 
@@ -328,27 +318,6 @@ export function setupCytoscape(
       if (e.target === cyOntologyGraph) {
         cyOntologyGraph.elements().removeClass('faded');
       }
-    });
-
-    cyOntologyGraph.on('mouseover', 'node', function(event) {
-      var node = event.target;
-      var nodeId = node.data('id');
-      var objId = node.data('objId');
-      var nodeName = node.data('name');
-      var annotCounts = node.data('annotCounts');
-      var linkout = linkFromNode(objId, datatype);
-      var qtipContent =
-        'Annotation Count:<br/>' +
-        annotCounts +
-        '<br/><a target="_blank" href="' +
-        linkout +
-        '">' +
-        objId +
-        ' - ' +
-        nodeName +
-        '</a>';
-      //               var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
-      //$jq(infoElement).html(qtipContent);
     });
 
     onReady && onReady();
