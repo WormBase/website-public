@@ -1,6 +1,5 @@
 import React from 'react';
 import OntologyGraphBase from './OntologyGraphBase';
-import useOntologyGraph from './useOntologyGraph';
 
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -58,16 +57,15 @@ export default function GeneOntologyGraph({ focusTermId }) {
         return (
           <React.Fragment>
             <FormControl component="fieldset">
-              <FormLabel
-                component={() => (
-                  <a
-                    href="http://geneontology.org/docs/guide-go-evidence-codes/"
-                    target="_blank"
-                  >
-                    <span className="wb-ext">Evidence types</span>
-                  </a>
-                )}
-              />
+              <FormLabel>
+                <a
+                  href="http://geneontology.org/docs/guide-go-evidence-codes/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="wb-ext">Evidence types</span>
+                </a>
+              </FormLabel>
               <RadioGroup
                 aria-label="evidence-type"
                 name="evidence-type"

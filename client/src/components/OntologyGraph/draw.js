@@ -1,11 +1,9 @@
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
-import cyqtip from 'cytoscape-qtip';
 import popper from 'cytoscape-popper';
 import tippy from 'tippy.js';
 import 'tippy.js/themes/light-border.css';
 
-var $jq = window.$jq;
 cytoscape.use(popper); // register extension
 cytoscape.use(dagre); // register extension
 
@@ -212,35 +210,35 @@ export function setupCytoscape(
   });
 
   const tippies = [];
+
+  const makeTippy = function(ele, text) {
+    const newTippy = tippy(ele.popperRef(), {
+      content: function() {
+        var div = document.createElement('div');
+
+        div.innerHTML = text;
+
+        return div;
+      },
+      trigger: 'manual',
+      interactive: true,
+      theme: 'light-border',
+      boundary: containerElement,
+      arrow: true,
+      placement: 'bottom',
+      hideOnClick: false,
+      multiple: true,
+      sticky: true,
+    });
+    tippies.push(newTippy);
+    newTippy.show();
+  };
+
   function cleanupTippies() {
     tippies.forEach((tippyInstance) => tippyInstance.destroy());
   }
 
   cyOntologyGraph.ready(function() {
-    const makeTippy = function(ele, text) {
-      const elePopperRef = ele.popperRef();
-      const newTippy = tippy(ele.popperRef(), {
-        content: function() {
-          var div = document.createElement('div');
-
-          div.innerHTML = text;
-
-          return div;
-        },
-        trigger: 'manual',
-        interactive: true,
-        theme: 'light-border',
-        boundary: containerElement,
-        arrow: true,
-        placement: 'bottom',
-        hideOnClick: false,
-        multiple: true,
-        sticky: true,
-      });
-      tippies.push(newTippy);
-      newTippy.show();
-    };
-
     cyOntologyGraph.on('unselect', () => {
       cleanupTippies();
     });
@@ -269,13 +267,10 @@ export function setupCytoscape(
       'node[parent != "legend"][id != "legend"]',
       function(e) {
         var node = e.target;
-        var nodeId = node.data('id');
         var neighborhood = node.neighborhood().add(node);
         cyOntologyGraph.elements().addClass('faded');
         neighborhood.removeClass('faded');
 
-        var node = e.target;
-        var nodeId = node.data('id');
         var objId = node.data('objId');
         var nodeName = node.data('name');
         var annotCounts = node.data('annotCounts');
