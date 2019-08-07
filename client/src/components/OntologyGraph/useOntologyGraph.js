@@ -26,6 +26,7 @@ const defaultNonConfigState = {
   error: false,
   data: [],
   meta: {},
+  resetCounter: 0, // used to force refetching of data
 };
 
 function reducer(state, action) {
@@ -34,6 +35,7 @@ function reducer(state, action) {
       return {
         ...state,
         ...defaultConfigState,
+        resetCounter: state.resetCounter + 1,
       };
     case 'fetch_begin':
       return { ...state, loading: true, error: false };
@@ -107,6 +109,7 @@ export default function useOntologyGraph({
     fileName,
     et,
     rootsChosen,
+    resetCounter,
   } = state;
 
   useEffect(() => {
@@ -190,7 +193,7 @@ export default function useOntologyGraph({
     return () => {
       didCancel = true;
     };
-  }, [datatype, focusTermId, depthRestriction, et, rootsChosen]);
+  }, [datatype, focusTermId, depthRestriction, et, rootsChosen, resetCounter]);
 
   useEffect(() => {
     // initialize cytoscape
