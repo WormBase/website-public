@@ -61,7 +61,7 @@ export default class GORibbon extends Component {
     });
 
     return (
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', backgroundColor: '#fff' }}>
         <RibbonBase
           groups={[
             {

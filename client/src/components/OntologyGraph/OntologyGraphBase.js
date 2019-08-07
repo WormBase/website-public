@@ -246,7 +246,7 @@ const styles = (theme) => ({
     height: '100%',
     width: '100%',
     boxSizing: 'border-box',
-    border: 'solid 1px gray',
+    // border: 'solid 1px gray',
     overflow: 'hidden',
   },
   cytoscapeElement: {

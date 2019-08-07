@@ -3045,6 +3045,9 @@ div#google-map {
 /* GO ribbon */
 .go-ribbon-container {
   height: 270px; /* hard code height to avoid content loaded causes scroll position to shift. */
+  background-image: url(/img/ajax-loader.gif);
+  background-repeat: no-repeat;
+  background-position: center;
   padding-bottom: 0.5em;
 }
 
@@ -3290,6 +3293,10 @@ table#table_fpkm_controls_by td:nth-child(3) {
 
 .ontology-graph-container {
   height: 85vh;
+  background-image: url(/img/ajax-loader.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 1px solid #aaa;
 }
 
 /*********************************
