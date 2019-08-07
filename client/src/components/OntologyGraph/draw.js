@@ -99,7 +99,7 @@ export function setupCytoscape(
     container: containerElement,
     layout: layout,
     userZoomingEnabled: !isLocked,
-    autoungrabify: true,
+    // autoungrabify: true,
     selectionType: 'single',
     style: cytoscape
       .stylesheet()
