@@ -21,6 +21,7 @@
 /* This module stays in ES5 to avoid strict mode being enabled */
 /* https://github.com/facebookincubator/create-react-app/issues/3318 */
 
+var testVar = 'testVar5';
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
@@ -2052,24 +2053,6 @@ var Scrolling = (function(){
       );
     }
 
-
-    function loadCytoscapeForPhenGraph(elements) {
-      Plugin.getPlugin('qtip', function() {
-        Plugin.getPlugin('cytoscape_js_qtip', function() {
-          Plugin.getPlugin('cytoscape_js_dagre', function() {
-            setupCyPhenGraph(elements);
-          });
-        });
-      });
-    }
-
-    function setupCytoscapePhenGraph(elements){
-      Plugin.getPlugin('cytoscape_js',function(){
-        loadCytoscapeForPhenGraph(elements)
-        return;
-      });
-    }
-
     function setupCyPersonLineage(elementsDirect, elementsFull, thisPerson) {
       var cyPersonLineageAll = window.cyPersonLineageAll = cytoscape({
         container: document.getElementById('cyPersonLineageAll'),
@@ -2214,158 +2197,39 @@ var Scrolling = (function(){
       }
     } // function setupCyPersonLineage(elementsFull, elementsDirect, thisPerson)
 
-    function setupCyPhenGraph(elements){
-      var cyPhenGraph = window.cyPhenGraph = cytoscape({
-        container: document.getElementById('cyPhenGraph'),
-        layout: { name: 'dagre', padding: 10, nodeSep: 5 },
-        style: cytoscape.stylesheet()
-          .selector('node')
-            .css({
-              'content': 'data(name)',
-              'background-color': 'white',
-              'shape': 'data(nodeShape)',
-              'border-color': 'data(nodeColor)',
-              'border-style': 'data(borderStyle)',
-              'border-width': 'data(borderWidth)',
-              'width': 'data(diameter)',
-              'height': 'data(diameter)',
-              'text-valign': 'center',
-              'text-wrap': 'wrap',
-              'min-zoomed-font-size': 8,
-              'border-opacity': 0.3,
-              'font-size': 'data(fontSize)'
-            })
-          .selector('edge')
-            .css({
-              'target-arrow-shape': 'none',
-              'source-arrow-shape': 'triangle',
-              'width': 2,
-              'line-color': '#ddd',
-              'target-arrow-color': '#ddd',
-              'source-arrow-color': '#ddd'
-            })
-          .selector('.highlighted')
-            .css({
-              'background-color': '#61bffc',
-              'line-color': '#61bffc',
-              'target-arrow-color': '#61bffc',
-              'transition-property': 'background-color, line-color, target-arrow-color',
-              'transition-duration': '0.5s'
-            })
-          .selector('.faded')
-            .css({
-              'opacity': 0.25,
-              'text-opacity': 0
-            }),
-        elements: elements,
-        wheelSensitivity: 0.2,
 
-        ready: function(){
-          window.cyPhenGraph = this;
-          cyPhenGraph.elements().unselectify();
-          $jq('#cyPhenGraphLoading').hide();
-
-          cyPhenGraph.on('tap', 'node', function(e){
-            var node = e.cyTarget;
-            var nodeId   = node.data('id');
-            var neighborhood = node.neighborhood().add(node);
-            cyPhenGraph.elements().addClass('faded');
-            neighborhood.removeClass('faded');
-
-            var node = e.cyTarget;
-            var nodeId   = node.data('id');
-            var nodeName = node.data('name');
-            var annotCounts = node.data('annotCounts');
-            var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
-            node.qtip({
-                 position: {
-                   my: 'top center',
-                   at: 'bottom center'
-                 },
-                 style: {
-                   classes: 'qtip-bootstrap',
-                   tip: {
-                     width: 16,
-                     height: 8
-                   }
-                 },
-                 content: qtipContent,
-                 show: {
-                    e: e.type,
-                    ready: true
-                 },
-                 hide: {
-                    e: 'mouseout unfocus'
-                 }
-            }, e);
-          });
-
-          cyPhenGraph.on('tap', function(e){
-            if( e.cyTarget === cyPhenGraph ){
-              cyPhenGraph.elements().removeClass('faded');
-            }
-          });
-
-          cyPhenGraph.on('mouseover', 'node', function(event) {
-              var node = event.cyTarget;
-              var nodeId   = node.data('id');
-              var nodeName = node.data('name');
-              var annotCounts = node.data('annotCounts');
-              var qtipContent = annotCounts + '<br/><a target="_blank" href="http://www.wormbase.org/species/all/phenotype/WBPhenotype:' + nodeId + '#03--10">' + nodeName + '</a>';
-              $jq('#info').html( qtipContent );
-          });
-        }
-
+    function setupCytoscapeGoGraph(elementId, wbId){
+      loadOntologyGraph().then(({ GeneOntologyGraph }) => {
+	return ReactDOM.render(<GeneOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
       });
+    }
 
-      $jq('#radio_weighted').on('click', function(){
-        var nodes = cyPhenGraph.nodes();
-        for( var i = 0; i < nodes.length; i++ ){
-          var node     = nodes[i];
-          var nodeId   = node.data('id');
-          var diameterWeighted   = node.data('diameter_weighted');
-          cyPhenGraph.$('#' + nodeId).data('diameter', diameterWeighted);
-          var fontSizeWeighted   = node.data('fontSizeWeighted');
-          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeWeighted);
-          var borderWidthWeighted   = node.data('borderWidthWeighted');
-          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthWeighted);
-        }
-        cyPhenGraph.layout();
+    function setupCytoscapeLifestageGraph(elementId, wbId){
+      loadOntologyGraph().then(({ LifeStageOntologyGraph }) => {
+	return ReactDOM.render(<LifeStageOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
       });
-      $jq('#radio_unweighted').on('click', function(){
-        var nodes = cyPhenGraph.nodes();
-        for( var i = 0; i < nodes.length; i++ ){
-          var node     = nodes[i];
-          var nodeId   = node.data('id');
-          var diameterUnweighted = node.data('diameter_unweighted');
-          var diameterWeighted   = node.data('diameter_weighted');
-          cyPhenGraph.$('#' + nodeId).data('diameter', diameterUnweighted);
-          var fontSizeUnweighted = node.data('fontSizeUnweighted');
-          var fontSizeWeighted   = node.data('fontSizeWeighted');
-          cyPhenGraph.$('#' + nodeId).data('fontSize', fontSizeUnweighted);
-          var borderWidthUnweighted = node.data('borderWidthUnweighted');
-          var borderWidthWeighted   = node.data('borderWidthWeighted');
-          cyPhenGraph.$('#' + nodeId).data('borderWidth', borderWidthUnweighted);
-        }
-        cyPhenGraph.layout();
+    }
+
+    function setupCytoscapeAnatomyGraph(elementId, wbId){
+      loadOntologyGraph().then(({ AnatomyOntologyGraph }) => {
+	return ReactDOM.render(<AnatomyOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
       });
-      $jq('#view_png_button').on('click', function(){
-        var png64 = cyPhenGraph.png({ full: true, maxWidth: 8000, maxHeight: 8000, bg: 'white' });
-        $jq('#png-export').attr('src', png64);
-        $jq('#png-export').show();
-        $jq('#cyPhenGraph').hide();
-        $jq('#weightstate').hide();
-        $jq('#view_png_button').hide();
-        $jq('#view_edit_button').show();
-        $jq('#info').text('drag image to desktop, or right-click and save image as');
+    }
+
+    function setupCytoscapeDiseaseGraph(elementId, wbId){
+      loadOntologyGraph().then(({ DiseaseOntologyGraph }) => {
+	return ReactDOM.render(<DiseaseOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
       });
-      $jq('#view_edit_button').on('click', function(){
-        $jq('#png-export').hide();
-        $jq('#cyPhenGraph').show();
-        $jq('#weightstate').show();
-        $jq('#view_png_button').show();
-        $jq('#view_edit_button').hide();
+    }
+
+    function setupCytoscapePhenotypeGraph(elementId, wbId){
+      loadOntologyGraph().then(({ PhenotypeOntologyGraph }) => {
+	return ReactDOM.render(<PhenotypeOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
       });
+    }
+
+    function loadOntologyGraph(){
+      return import('../../client/src/components/OntologyGraph');
     }
 
     function setupCyInteractionViewer(data, types, clazz){
@@ -3625,7 +3489,11 @@ var Scrolling = (function(){
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscapePersonLineage: setupCytoscapePersonLineage,       // setup cytoscape for use by PersonLineage
       setupCytoscapeInteraction: setupCytoscapeInteraction,           // setup cytoscape for use by Interaction
-      setupCytoscapePhenGraph: setupCytoscapePhenGraph,               // setup cytoscape for use by Phenotype Graph
+      setupCytoscapePhenotypeGraph: setupCytoscapePhenotypeGraph,     // setup cytoscape for use by Phenotype Graph
+      setupCytoscapeDiseaseGraph: setupCytoscapeDiseaseGraph,         // setup cytoscape for use by Disease Graph
+      setupCytoscapeAnatomyGraph: setupCytoscapeAnatomyGraph,         // setup cytoscape for use by Expression-Anatomy Graph
+      setupCytoscapeLifestageGraph: setupCytoscapeLifestageGraph,     // setup cytoscape for use by Expression-Lifestage Graph
+      setupCytoscapeGoGraph: setupCytoscapeGoGraph,     	      // setup cytoscape for use by Gene Ontology Graph
       FpkmPlots: FpkmPlots,                         // fpkm by life stage plots
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table

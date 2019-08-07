@@ -1,7 +1,9 @@
 
-[% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
-   Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
 
+[% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
+    <div id="phenotype-ontology-graph-container" class="ontology-graph-container"></div>
+   <br />
+   <p>Alleles for which the sequence change is known are listed in <b>boldface</b>.</p>
 
     <p><i>The following phenotypes have been observed in [% object.name.data.label %]</i>:</p>
 
@@ -52,3 +54,12 @@
 END %]
 
 [% phenotype_submission_link; %]
+
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('phenotype-ontology-graph-container')) {
+    WB.setupCytoscapePhenotypeGraph('phenotype-ontology-graph-container', 'WB:[% object.name.data.id %]');
+  }
+})();
+</script>

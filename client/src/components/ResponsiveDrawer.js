@@ -5,11 +5,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const styles = (theme) => ({
   root: {
     width: '100%',
+    height: '100%',
     /* marginTop: theme.spacing.unit * 3,*/
     zIndex: 1,
     overflow: 'hidden',
@@ -21,18 +22,20 @@ const styles = (theme) => ({
     height: '100%',
   },
   appBar: {
-    position: 'absolute',
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-    },
+    // position: 'absolute',
+    width: '100%',
+    borderBottom: '1px solid #aaa',
+    // [theme.breakpoints.up('md')]: {
+    //   width: `calc(100% - ${drawerWidth}px)`,
+    // },
   },
   'appBar-left': {
-    marginLeft: drawerWidth,
+    // marginLeft: drawerWidth,
   },
   'appBar-right': {
-    [theme.breakpoints.up('md')]: {
-      marginRight: drawerWidth,
-    },
+    // [theme.breakpoints.up('md')]: {
+    //   marginRight: drawerWidth,
+    // },
   },
   navIconHide: {
     [theme.breakpoints.up('md')]: {
@@ -42,6 +45,7 @@ const styles = (theme) => ({
   drawerHeader: theme.mixins.toolbar,
   drawerPaper: {
     width: 250,
+    overflow: 'scroll',
     backgroundColor: theme.palette.background.default,
     [theme.breakpoints.up('md')]: {
       width: drawerWidth,
@@ -53,6 +57,7 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.background.paper,
     width: '100%',
     display: 'flex',
+    flexDirection: 'column',
     /* padding: theme.spacing.unit * 3,*/
     /* marginTop: 56,*/
     /* height: 'calc(100% - 56px)',
@@ -85,6 +90,7 @@ class ResponsiveDrawer extends Component {
       drawerContent,
       mainContent,
       mainHeader,
+      rootRef,
     } = this.props;
 
     const drawer = <div className={classes.drawerPaper}>{drawerContent}</div>;
@@ -96,7 +102,7 @@ class ResponsiveDrawer extends Component {
     );
 
     return (
-      <div className={classes.root}>
+      <div ref={rootRef} className={classes.root}>
         <div className={classes.appFrame}>
           <Hidden mdUp>
             <Drawer
@@ -115,13 +121,19 @@ class ResponsiveDrawer extends Component {
             </Drawer>
           </Hidden>
           {anchor === 'left' ? permanentDrawer : null}
-          <main className={classes.content}>{mainContent}</main>
+          <main className={classes.content}>
+            <div
+              className={classNames(
+                classes.appBar,
+                classes[`appBar-${anchor}`]
+              )}
+            >
+              {mainHeader}
+            </div>
+
+            {mainContent}
+          </main>
           {anchor === 'right' ? permanentDrawer : null}
-          <div
-            className={classNames(classes.appBar, classes[`appBar-${anchor}`])}
-          >
-            {mainHeader}
-          </div>
         </div>
       </div>
     );

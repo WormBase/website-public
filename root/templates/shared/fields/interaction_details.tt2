@@ -1,6 +1,6 @@
 
-<div id="interaction-graph-view"></div>
-
-<script type="text/javascript">WB.setupCytoscapeInteraction([%- json_encode(interaction_details || fields.interactions || {}) -%], "[%- wbid -%]");</script>
+<div id="interaction-graph-view" class="ontology-graph-container"></div>
 
 [%- content -%]
+
+<script type="text/javascript">WB.setupCytoscapeInteraction([%- json_encode(interaction_details || fields.interactions || {}) -%], "[%- wbid -%]");</script>

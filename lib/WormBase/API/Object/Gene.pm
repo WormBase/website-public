@@ -1362,39 +1362,6 @@ sub pos_neg_data {
 }
 
 
-#######################################
-#
-# The Phenotype_Graph Widget
-#
-#######################################
-
-
-sub phenotype_graph {
-    my $self = shift;
-    my $object = $self->object;
-    return {
-        data        => "$object",
-        description => 'The Phenotype Graph of the gene',
-    };
-}
-
-# Was used to get around cross server restriction, now replaced with jsonp call from phenotype_graph.tt2
-# sub phenotype_graph_json {
-#   my $self = shift;
-#   my $geneId = $self->object;
-# # dev server
-# #   my $url = 'http://wobr.caltech.edu:82/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
-# # live server
-#   my $url = 'http://wobr.caltech.edu:81/~azurebrd/cgi-bin/amigo.cgi?action=annotSummaryJson&focusTermId=' . $geneId;
-#   my $data = get $url;
-#   return {
-#     data               => "$data",
-#     description        => 'JSON for Phenotype Graph of the gene',
-#   };
-# }
-
-
-
 
 #######################################
 #

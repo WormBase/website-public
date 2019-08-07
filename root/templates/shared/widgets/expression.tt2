@@ -1,8 +1,13 @@
+
+
+
+
 [%
 
 # IF fields.expressed_in.data || fields.expressed_during.data || fields.subcellular_localization.data;
 #     '<h4>Spatio-Temporal Expression Patterns</h4>';
 # END;
+
 
 
 WRAPPER $field_block title="Anatomic expression pattern";
@@ -16,8 +21,16 @@ WRAPPER $field_block title="Expression pattern images" key="expr_pattern_images"
     '</div>';
 END;
 
+%]
+
+
+[%
 
 WRAPPER $field_block title="Expressed in" key="expressed_in";
+
+    IF object.name.data.id && object.name.data.id.match('^WBGene');
+        '<div id="anatomy-ontology-graph-container" class="ontology-graph-container"></div>';
+    END;
 
     build_data_table(order=['ontology_term', 'details'],
                      columns={
@@ -28,7 +41,16 @@ WRAPPER $field_block title="Expressed in" key="expressed_in";
 
 END;
 
+%]
+
+
+[%
+
 WRAPPER $field_block title="Expressed during" key="expressed_during";
+
+    IF object.name.data.id && object.name.data.id.match('^WBGene');
+        '<div id="life-stage-ontology-graph-container" class="ontology-graph-container"></div>';
+    END;
 
     build_data_table(order=['ontology_term', 'details'],
                      columns={
@@ -38,6 +60,10 @@ WRAPPER $field_block title="Expressed during" key="expressed_during";
                      key='expressed_during');
 
 END;
+
+%]
+
+[%
 
 WRAPPER $field_block title="Subcellular localization" key="subcellular_localization";
 
@@ -187,4 +213,21 @@ END;
     setTimeout(function(){  // sorry, need time to load summary fpkm plot first
         WB.openField($jq("#fpkm_holder"), "[% '/rest/field/' _ class _ '/' _ fields.name.data.id _ '/fpkm_expression_summary_ls' %]", {noLoadImg: true});
     }, 1000);
+</script>
+
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('anatomy-ontology-graph-container')) {
+    WB.setupCytoscapeAnatomyGraph('anatomy-ontology-graph-container', 'WB:[% object.name.data.id %]');
+  }
+})();
+</script>
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('life-stage-ontology-graph-container')) {
+    WB.setupCytoscapeLifestageGraph('life-stage-ontology-graph-container', 'WB:[% object.name.data.id %]');
+  }
+})();
 </script>

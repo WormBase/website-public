@@ -1,12 +1,11 @@
-[% WRAPPER $field_block title="Gene ontology ribbon" key="gene_ontology_ribbon"; %]
+[% WRAPPER $field_block title="Gene Ontology ribbon" key="gene_ontology_ribbon"; %]
     <div id="gene_ontology_ribbon_container" class="go-ribbon-container"></div>
-    <script>
-      WB.renderGORibbon([% json_encode(fields.gene_ontology_ribbon.data || []) %], "gene_ontology_ribbon_container");
-    </script>
 [% END; %]
 
 
-
+[% WRAPPER $field_block title="Gene Ontology graph" key="gene_ontology"; %]
+    <div id="gene-ontology-graph-container" class="ontology-graph-container"></div>
+[% END; %]
 
 [%#
 
@@ -95,3 +94,19 @@
               END; # END IF facet contains data
          END; # END of facets
 %]
+
+<script>
+  (function(){
+    if (document.getElementById('gene_ontology_ribbon_container')) {
+      WB.renderGORibbon([% json_encode(fields.gene_ontology_ribbon.data || []) %], "gene_ontology_ribbon_container");
+    }
+  })();
+</script>
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('gene-ontology-graph-container')) {
+    WB.setupCytoscapeGoGraph('gene-ontology-graph-container', 'WB:[% object.name.data.id %]');
+  }
+})();
+</script>

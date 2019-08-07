@@ -4,17 +4,17 @@ import {
   MuiThemeProvider,
   withStyles,
 } from '@material-ui/core/styles';
-import deepPurple from '@material-ui/core/colors/deepPurple';
-import blueGrey from '@material-ui/core/colors/blueGrey';
-import red from '@material-ui/core/colors/red';
+import secondaryColor from '@material-ui/core/colors/deepPurple';
+import primaryColor from '@material-ui/core/colors/blueGrey';
+import errorColor from '@material-ui/core/colors/red';
 
 const wormbaseTheme = createMuiTheme({
   palette: {
-    primary: blueGrey,
+    primary: primaryColor,
     secondary: {
-      ...deepPurple,
+      ...secondaryColor,
     },
-    error: red,
+    error: errorColor,
   },
 });
 
