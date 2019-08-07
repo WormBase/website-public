@@ -96,6 +96,7 @@ export default function useOntologyGraph({
     ...defaultConfigState,
     ...defaultNonConfigState,
   });
+  const stateRef = useRef(state);
   const {
     data,
     isRenderSuspended,
@@ -108,9 +109,10 @@ export default function useOntologyGraph({
     rootsChosen,
   } = state;
 
-  // useEffect(() => {
-  //   console.log(state);
-  // }, [state]);
+  useEffect(() => {
+    // console.log(state);
+    stateRef.current = state;
+  }, [state]);
 
   useEffect(() => {
     // load data
@@ -203,6 +205,7 @@ export default function useOntologyGraph({
           },
           legendData: legendData,
           isWeighted: isWeighted,
+          isLocked: stateRef.current.isLocked, // if zoom lock is opened before cytoscape initialzes, ensure cytoscape zoom is turned on
         }
       );
     }

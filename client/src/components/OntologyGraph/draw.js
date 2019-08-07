@@ -86,7 +86,7 @@ export function setupCytoscape(
   containerElement,
   datatype,
   data = [],
-  { legendData = defaultLegendData, onReady, isWeighted } = {}
+  { legendData = defaultLegendData, onReady, isWeighted, isLocked } = {}
 ) {
   const layout = {
     name: 'dagre',
@@ -98,7 +98,7 @@ export function setupCytoscape(
   var cyOntologyGraph = cytoscape({
     container: containerElement,
     layout: layout,
-    userZoomingEnabled: false,
+    userZoomingEnabled: !isLocked,
     autoungrabify: true,
     selectionType: 'single',
     style: cytoscape
