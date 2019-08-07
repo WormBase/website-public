@@ -21,6 +21,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
@@ -135,14 +136,16 @@ function OntologyGraphBase({
   const drawerRef = useRef();
   const graphToolbar = (
     <div className={classes.toolbar}>
-      <Button
-        variant={isLocked ? 'contained' : 'outlined'}
-        color="primary"
-        onClick={() => dispatch({ type: 'set_lock_toggle' })}
-      >
-        <span className={classes.buttonTextLabel}>Scroll wheel zoom</span>
-        {isLocked ? <LockIcon /> : <LockOpenIcon />}
-      </Button>
+      <Tooltip title="If unlocked, mouse scroll wheel allows zooming in on the graph.">
+        <Button
+          variant={isLocked ? 'contained' : 'outlined'}
+          color={isLocked ? 'primary' : 'text'}
+          onClick={() => dispatch({ type: 'set_lock_toggle' })}
+        >
+          <span className={classes.buttonTextLabel}>Scroll wheel zoom</span>
+          {isLocked ? <LockIcon /> : <LockOpenIcon />}
+        </Button>
+      </Tooltip>
       <Button variant={'outlined'} onClick={() => dispatch({ type: 'reset' })}>
         <span className={classes.buttonTextLabel}>Reset</span> <RefreshIcon />
       </Button>
