@@ -2197,31 +2197,6 @@ var Scrolling = (function(){
       }
     } // function setupCyPersonLineage(elementsFull, elementsDirect, thisPerson)
 
-    // function setupCytoscapeGoGraph(elements){
-    //   setupCyOntologyGraph(elements, 'Go');
-    // }
-
-    // function setupCytoscapeLifestageGraph(elements){
-    //   setupCyOntologyGraph(elements, 'Lifestage');
-    // }
-
-    // function setupCytoscapeAnatomyGraph(elements){
-    //   setupCyOntologyGraph(elements, 'Anatomy');
-    // }
-
-    // function setupCytoscapeDiseaseGraph(elements){
-    //   setupCyOntologyGraph(elements, 'Disease');
-    // }
-
-    // function setupCytoscapePhenotypeGraph(elements){
-    //   setupCyOntologyGraph(elements, 'Phenotype');
-    // }
-
-    // function setupCyOntologyGraph(elements, dataType) {
-    //   loadOntologyGraph().then(module => {
-    // 	module.draw(elements, dataType)
-    //   });
-    // }
 
     function setupCytoscapeGoGraph(elementId, wbId){
       loadOntologyGraph().then(({ GeneOntologyGraph }) => {

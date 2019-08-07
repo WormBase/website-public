@@ -42,7 +42,6 @@ function OntologyGraphBase({
   });
 
   useEffect(() => {
-    console.log(`inView: ${inView}`);
     if (inView) {
       dispatch({ type: 'start_render' });
     }

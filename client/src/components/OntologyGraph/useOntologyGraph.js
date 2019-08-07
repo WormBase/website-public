@@ -5,7 +5,6 @@ import jQuery from 'jquery';
 import { setupCytoscape } from './draw';
 
 function reducer(state, action) {
-  console.log(action);
   switch (action.type) {
     case 'reset':
       // note not all states are reset, for example, isRenderSuspended, isLocked are ignored
@@ -112,9 +111,9 @@ export default function useOntologyGraph({
     rootsChosen,
   } = state;
 
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
+  // useEffect(() => {
+  //   console.log(state);
+  // }, [state]);
 
   useEffect(() => {
     // load data
@@ -156,7 +155,6 @@ export default function useOntologyGraph({
       stringify(query);
 
     let didCancel = false;
-    console.log(url);
 
     dispatch({
       type: 'fetch_begin',
@@ -173,12 +171,6 @@ export default function useOntologyGraph({
       .done((data) => {
         if (!didCancel) {
           const result = data.elements;
-          console.log('zzzz');
-          console.log(didCancel);
-          console.log(rootsChosen);
-          console.log(result);
-          console.log([...result.nodes, ...result.edges]);
-
           dispatch({
             type: 'fetch_success',
             payload: {
@@ -204,7 +196,6 @@ export default function useOntologyGraph({
   useEffect(() => {
     // initialize cytoscape
     if (!isRenderSuspended) {
-      console.log(`view activated`);
       eventHandlersRef.current = setupCytoscape(
         containerElement.current,
         datatype,
@@ -248,7 +239,6 @@ export default function useOntologyGraph({
             dispatch({ type: 'save_image_ready' });
           })
           .catch((e) => {
-            console.log(e);
             dispatch({ type: 'save_image_failed' });
           });
       }

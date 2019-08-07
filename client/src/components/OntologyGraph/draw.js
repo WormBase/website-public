@@ -96,8 +96,7 @@ export function setupCytoscape(
     nodeSep: 50,
     nodeDimensionsIncludeLabels: false,
   };
-  console.log(legendData);
-  console.log(data);
+
   var cyOntologyGraph = cytoscape({
     container: containerElement,
     layout: layout,
@@ -218,28 +217,6 @@ export function setupCytoscape(
   }
 
   cyOntologyGraph.ready(function() {
-    // cyOntologyGraph
-    //   .nodes('[parent="legend"]')
-    //   .layout({ name: 'null', fit: false })
-    //   .run();
-    // cyOntologyGraph
-    //   .nodes('[parent="legend"]')
-    //   .layout({
-    //     name: 'grid',
-    //     cols: 1,
-    //     fit: false,
-    //     avoidOverlapPadding: 50,
-    //     // animate: false,
-    //     // padding: 10,
-    //     // nodeSep: 50,
-    //   })
-    //   .run();
-
-    // const nonLegendElements = cyOntologyGraph.$(
-    //   '[parent != "legend"][id != "legend"]'
-    // );
-    // console.log(nonLegendElements.jsons());
-
     const makeTippy = function(ele, text) {
       const elePopperRef = ele.popperRef();
       const newTippy = tippy(ele.popperRef(), {
@@ -333,8 +310,6 @@ export function setupCytoscape(
       output: 'blob-promise',
       ...options,
     });
-    // console.log(imgSrc);
-    // return imgSrc;
   }
 
   function handleLock(isLocked) {
