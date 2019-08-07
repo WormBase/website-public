@@ -11,7 +11,7 @@ import ExpandLessIcon from '@material-ui/icons/ArrowDropDown';
 import Sequence from './Sequence';
 import DownloadButton from '../DownloadButton';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import Button, { IconButton } from '../Button';
+import Button from '../Button';
 import CardActionArea from '../CardActionArea';
 import Tooltip from '../Tooltip';
 

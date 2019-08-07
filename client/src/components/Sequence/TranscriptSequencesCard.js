@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import SequenceCard from './SequenceCard';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 function resolveStrand(sequenceContext = {}) {
   const strandName = {
@@ -59,8 +56,6 @@ const TranscriptSequenceCard = (props) => {
     unsplicedSequenceContextWithPadding: unsplicedSequenceContextWithPaddingRaw,
   } = props;
 
-  const [sequenceKeySelected, setSequenceKeySelected] = useState('hidden');
-
   const sequenceOptions = [];
 
   if (splicedSequenceContextRaw) {
@@ -109,10 +104,6 @@ const TranscriptSequenceCard = (props) => {
       label: `Sequence (${data.sequence.length}bp)`,
     });
   }
-
-  const sequenceSelected = sequenceOptions.filter(
-    ({ key }) => key === sequenceKeySelected
-  )[0];
 
   return (
     <div>
