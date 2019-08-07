@@ -4,16 +4,36 @@ import { saveAs } from 'file-saver';
 import jQuery from 'jquery';
 import { setupCytoscape } from './draw';
 
+// states that will be reset by the 'reset' action,
+// such as, parameters for requesting data and visual settings
+const defaultConfigState = {
+  isWeighted: true,
+  depthRestriction: 0,
+
+  // evidence types
+  et: 'all',
+
+  // for go and Biggo
+  rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
+};
+
+// state that won't be reset by the 'reset' action,
+// such as, rendering states, data fetching states, data response
+const defaultNonConfigState = {
+  isRenderSuspended: true, // due to performance reason, don't render until triggered
+  isLocked: true,
+  loading: true,
+  error: false,
+  data: [],
+  meta: {},
+};
+
 function reducer(state, action) {
   switch (action.type) {
     case 'reset':
-      // note not all states are reset, for example, isRenderSuspended, isLocked are ignored
       return {
         ...state,
-        isWeighted: true,
-        depthRestriction: 0,
-        et: 'all',
-        rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
+        ...defaultConfigState,
       };
     case 'fetch_begin':
       return { ...state, loading: true, error: false };
@@ -52,10 +72,6 @@ function reducer(state, action) {
       };
     case 'set_max_depth':
       return { ...state, depthRestriction: action.payload };
-    case 'set_mode_edit':
-      return { ...state, mode: 'edit', imgSrc: null };
-    case 'set_mode_export':
-      return { ...state, mode: 'export' };
     case 'save_image_requested':
       return { ...state, save: 'pending', fileName: action.payload };
     case 'save_image_ready':
@@ -77,26 +93,8 @@ export default function useOntologyGraph({
   const eventHandlersRef = useRef({});
   const jsonpDisambiguation = useRef(0);
   const [state, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: false,
-    isRenderSuspended: true, // due to performance reason, don't render until triggered
-    isLocked: true,
-
-    data: [],
-    meta: {},
-
-    isWeighted: true,
-    depthRestriction: 0,
-
-    // edit vs export mode
-    mode: 'edit',
-    imgSrc: 'null',
-
-    // evidence types
-    et: 'all',
-
-    // for go and Biggo
-    rootsChosen: new Set(['GO:0008150', 'GO:0005575', 'GO:0003674']),
+    ...defaultConfigState,
+    ...defaultNonConfigState,
   });
   const {
     data,
@@ -104,7 +102,6 @@ export default function useOntologyGraph({
     isLocked,
     isWeighted,
     depthRestriction,
-    mode,
     save,
     fileName,
     et,
