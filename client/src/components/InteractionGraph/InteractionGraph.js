@@ -497,15 +497,13 @@ class InteractionGraph extends Component {
 
     return (
       <ThemeProvider>
-        <div>
-          <ResponsiveDrawer
-            innerRef={(c) => (this._drawerComponent = c)}
-            anchor="right"
-            drawerContent={graphSidebar}
-            mainContent={graphView}
-            mainHeader={graphToolbar}
-          />
-        </div>
+        <ResponsiveDrawer
+          innerRef={(c) => (this._drawerComponent = c)}
+          anchor="right"
+          drawerContent={graphSidebar}
+          mainContent={graphView}
+          mainHeader={graphToolbar}
+        />
       </ThemeProvider>
     );
   }
@@ -516,9 +514,8 @@ const styles = (theme) => {
     cytoscapeContainer: {
       minHeight: 360,
       minWidth: 360,
-      height: '70vh',
+      height: '100%',
       width: '100%',
-      border: 'solid 1px gray',
       overflow: 'hidden',
     },
     graphToolbar: {},

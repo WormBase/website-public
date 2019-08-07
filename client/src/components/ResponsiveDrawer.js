@@ -22,19 +22,20 @@ const styles = (theme) => ({
     height: '100%',
   },
   appBar: {
-    position: 'absolute',
+    // position: 'absolute',
     width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-    },
+    borderBottom: '1px solid #aaa',
+    // [theme.breakpoints.up('md')]: {
+    //   width: `calc(100% - ${drawerWidth}px)`,
+    // },
   },
   'appBar-left': {
-    marginLeft: drawerWidth,
+    // marginLeft: drawerWidth,
   },
   'appBar-right': {
-    [theme.breakpoints.up('md')]: {
-      marginRight: drawerWidth,
-    },
+    // [theme.breakpoints.up('md')]: {
+    //   marginRight: drawerWidth,
+    // },
   },
   navIconHide: {
     [theme.breakpoints.up('md')]: {
@@ -56,6 +57,7 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.background.paper,
     width: '100%',
     display: 'flex',
+    flexDirection: 'column',
     /* padding: theme.spacing.unit * 3,*/
     /* marginTop: 56,*/
     /* height: 'calc(100% - 56px)',
@@ -119,13 +121,19 @@ class ResponsiveDrawer extends Component {
             </Drawer>
           </Hidden>
           {anchor === 'left' ? permanentDrawer : null}
-          <main className={classes.content}>{mainContent}</main>
+          <main className={classes.content}>
+            <div
+              className={classNames(
+                classes.appBar,
+                classes[`appBar-${anchor}`]
+              )}
+            >
+              {mainHeader}
+            </div>
+
+            {mainContent}
+          </main>
           {anchor === 'right' ? permanentDrawer : null}
-          <div
-            className={classNames(classes.appBar, classes[`appBar-${anchor}`])}
-          >
-            {mainHeader}
-          </div>
         </div>
       </div>
     );

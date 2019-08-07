@@ -14,17 +14,15 @@ export default class InteractionGraphDataProvider extends Component {
         return result;
       }, {});
     return (
-      <div>
-        {error ||
-          (data ? (
-            this.props.children({
-              interactorMap: nodes,
-              interactions: edges,
-            })
-          ) : (
-            <span>Loading...</span>
-          ))}
-      </div>
+      error ||
+      (data ? (
+        this.props.children({
+          interactorMap: nodes,
+          interactions: edges,
+        })
+      ) : (
+        <span>Loading...</span>
+      ))
     );
   }
 }
