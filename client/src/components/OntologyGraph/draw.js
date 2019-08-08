@@ -11,19 +11,15 @@ function linkFromEdge(nodeObjId, datatype) {
   // generate url from datatype + edge's target node's objId
   var linkout = '';
   if (datatype === 'Anatomy') {
-    linkout =
-      'https://wormbase.org/species/all/anatomy_term/' + nodeObjId + '#4--10';
+    linkout = '/species/all/anatomy_term/' + nodeObjId + '#4--10';
   } else if (datatype === 'Disease') {
-    linkout = 'https://wormbase.org/resources/disease/' + nodeObjId + '#2--10';
+    linkout = '/resources/disease/' + nodeObjId + '#2--10';
   } else if (datatype === 'Go') {
-    linkout =
-      'https://wormbase.org/species/all/go_term/' + nodeObjId + '#2--10';
+    linkout = '/species/all/go_term/' + nodeObjId + '#2--10';
   } else if (datatype === 'Lifestage') {
-    linkout =
-      'https://wormbase.org/species/all/life_stage/' + nodeObjId + '#2--10';
+    linkout = '/species/all/life_stage/' + nodeObjId + '#2--10';
   } else if (datatype === 'Phenotype') {
-    linkout =
-      'https://wormbase.org/species/all/phenotype/' + nodeObjId + '#3--10';
+    linkout = '/species/all/phenotype/' + nodeObjId + '#3--10';
   } else if (datatype === 'Biggo') {
     linkout = '';
   }
@@ -32,17 +28,17 @@ function linkFromEdge(nodeObjId, datatype) {
 
 function linkFromNode(nodeId, datatype) {
   // generate url from datatype + nodeId
-  var linkout = 'http://amigo.geneontology.org/amigo/term/' + nodeId;
+  var linkout = '';
   if (datatype === 'Anatomy') {
-    linkout = 'https://wormbase.org/species/all/anatomy_term/' + nodeId;
+    linkout = '/species/all/anatomy_term/' + nodeId;
   } else if (datatype === 'Disease') {
-    linkout = 'https://wormbase.org/resources/disease/' + nodeId;
+    linkout = '/resources/disease/' + nodeId;
   } else if (datatype === 'Go') {
-    linkout = 'https://wormbase.org/species/all/go_term/' + nodeId;
+    linkout = '/species/all/go_term/' + nodeId;
   } else if (datatype === 'Lifestage') {
-    linkout = 'https://wormbase.org/species/all/life_stage/' + nodeId;
+    linkout = '/species/all/life_stage/' + nodeId;
   } else if (datatype === 'Phenotype') {
-    linkout = 'https://wormbase.org/species/all/phenotype/' + nodeId;
+    linkout = '/species/all/phenotype/' + nodeId;
   } else if (datatype === 'Biggo') {
     linkout = 'http://amigo.geneontology.org/amigo/term/' + nodeId;
   }

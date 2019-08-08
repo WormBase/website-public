@@ -5,7 +5,7 @@ export default function LifeStageOntologyGraph({ focusTermId }) {
   return (
     <OntologyGraphBase
       useOntologyGraphParams={{
-        datatype: 'LifeStage',
+        datatype: 'Lifestage',
         focusTermId: focusTermId,
       }}
     />
