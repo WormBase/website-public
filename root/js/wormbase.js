@@ -26,6 +26,8 @@ var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
+var Root = require('../../client/src/components/Root').default;
+
 var SingleWidgetPage = require('../../client/src/components/SingleWidgetPage').default;
 
 var name2widget = {
@@ -2200,31 +2202,31 @@ var Scrolling = (function(){
 
     function setupCytoscapeGoGraph(elementId, wbId){
       loadOntologyGraph().then(({ GeneOntologyGraph }) => {
-	return ReactDOM.render(<GeneOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+	return ReactDOM.render(<Root><GeneOntologyGraph focusTermId={wbId} /></Root>, document.getElementById(elementId));
       });
     }
 
     function setupCytoscapeLifestageGraph(elementId, wbId){
       loadOntologyGraph().then(({ LifeStageOntologyGraph }) => {
-	return ReactDOM.render(<LifeStageOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+	return ReactDOM.render(<Root><LifeStageOntologyGraph focusTermId={wbId} /></Root>, document.getElementById(elementId));
       });
     }
 
     function setupCytoscapeAnatomyGraph(elementId, wbId){
       loadOntologyGraph().then(({ AnatomyOntologyGraph }) => {
-	return ReactDOM.render(<AnatomyOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+	return ReactDOM.render(<Root><AnatomyOntologyGraph focusTermId={wbId} /></Root>, document.getElementById(elementId));
       });
     }
 
     function setupCytoscapeDiseaseGraph(elementId, wbId){
       loadOntologyGraph().then(({ DiseaseOntologyGraph }) => {
-	return ReactDOM.render(<DiseaseOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+	return ReactDOM.render(<Root><DiseaseOntologyGraph focusTermId={wbId} /></Root>, document.getElementById(elementId));
       });
     }
 
     function setupCytoscapePhenotypeGraph(elementId, wbId){
       loadOntologyGraph().then(({ PhenotypeOntologyGraph }) => {
-	return ReactDOM.render(<PhenotypeOntologyGraph focusTermId={wbId} />, document.getElementById(elementId));
+	return ReactDOM.render(<Root><PhenotypeOntologyGraph focusTermId={wbId} /></Root>, document.getElementById(elementId));
       });
     }
 
