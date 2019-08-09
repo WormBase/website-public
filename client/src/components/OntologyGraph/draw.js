@@ -295,11 +295,22 @@ export function setupCytoscape(
   });
 
   function handleExport(options = {}) {
-    return cyOntologyGraph.png({
-      full: true,
-      bg: 'white',
-      output: 'blob-promise',
-      ...options,
+    return new Promise((resolve) => {
+      resolve(
+        cyOntologyGraph.png({
+          full: true,
+          bg: 'white',
+          output: 'blob-promise',
+          ...options,
+        })
+      );
+    }).catch(() => {
+      // gracefully handle export error (NS_ERROR_FAILURE) in FireFox when 'scale' is large
+      // by reducing the scale
+      return handleExport({
+        ...options,
+        scale: options.scale ? options.scale - 1 : 1,
+      });
     });
   }
 
