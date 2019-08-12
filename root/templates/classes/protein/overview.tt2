@@ -45,16 +45,22 @@ END;
 <div style="clear:both">
 [% FOREACH t IN fields.pfam_graph.data.keys.sort %]
 [% t %]:
-  <div class="pfam_graph" id="dg-[% t %]" data-seq='
-    [% FOREACH line IN fields.pfam_graph.data.$t.split(',') %]
-      [%  match = line.match('href\":\"(.*)/(.*)\"') %]
-      [% IF match %]
-        [% type = match.0 %] [% acc=match.1 %]
-        "href":"[% site.external_urls.$type.search.replace("%s",acc) %]"
-      [% ELSE %][%  line.replace('\'', '&rsquo;') %][% END %]
-      [% UNLESS loop.last %],[% END %]
-    [% END %]
-  '>
+[%
+    xrefs = [];
+    FOREACH line IN fields.pfam_graph.data.$t.split(',');
+	match = line.match('href\":\"(.*)/(.*)\"');
+	IF match;
+	    type = match.0;
+	    acc = match.1;
+	    xrefKey = "$type/$acc";
+	    xrefs.push({
+	      id => xrefKey,
+	      href => site.external_urls.$type.search.replace("%s",acc)
+	    });
+	END;
+    END;
+%]
+  <div class="pfam_graph" id="dg-[% t %]" data-seq='[%- fields.pfam_graph.data.$t || {} -%]' data-xrefs='[%- json_encode(xrefs) -%]'>
 </div>
 [% END %]
 </div>
@@ -79,10 +85,17 @@ END;
 
 <script>
   WB.getPlugin("pfam", function(){
-    $jq(".pfam_graph").each(function() {
+    $jq(".pfam_graph").each(function(index, element) {
         var p = PfamGraphic;
         p.initialize();
-        p.render("#" + this.id, $jq("#" + this.id).data("seq"));
+
+	var xrefs = $jq(element).data('xrefs');
+	var seqData = $jq(element).data("seq");
+	var dataStr = JSON.stringify(seqData);
+	xrefs.map(function(xref) {
+	  dataStr = dataStr.replace('"' + xref.id + '"', '"' + xref.href + '"'); // though the href never worked with domain_graphics, even before the re-write.
+	});
+        p.render("#" + this.id, dataStr);
     });
   });
 </script>
