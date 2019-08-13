@@ -340,10 +340,10 @@ var name2widget = {
       if (singleWidgetHolder) {
         const widgetUrl = singleWidgetHolder.data('rest-url');
         const section = singleWidgetHolder.data('section');
-        const classConf = JSON.parse(singleWidgetHolder.data('class-conf') || '{}');
-        const widgetConf = JSON.parse(singleWidgetHolder.data('widget-conf') || '{}');
-        const object = JSON.parse(singleWidgetHolder.data('object')|| '{}');
-        const species = JSON.parse(singleWidgetHolder.data('species') || '{}');
+        const classConf = singleWidgetHolder.data('class-conf') || {};
+        const widgetConf = singleWidgetHolder.data('widget-conf') || {};
+        const object = singleWidgetHolder.data('object') || {};
+        const species = singleWidgetHolder.data('species') || {};
         if (widgetUrl) {
           ReactDOM.render(<SingleWidgetPage widgetUrl={widgetUrl} section={section} object={object} species={species} classConf={classConf} widgetConf={widgetConf} />,
                           document.getElementById("single-widget-holder"));
