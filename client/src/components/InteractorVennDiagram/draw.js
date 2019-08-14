@@ -75,11 +75,12 @@ export default function draw(node, sets) {
       .attr('venn-area-part-id', partId)
       .append('path')
       .attr('d', d)
-      .attr('fill-rule', 'evenodd');
+      .attr('fill-rule', 'evenodd')
+      .attr('fill-opacity', '0');
   }
 
   function appendPatterns(defs) {
-    let colors = ['none', '#009fdf'];
+    let colors = ['none', '#000000'];
     colors.forEach((color, idx) => {
       let diagonal = defs
         .append('pattern')
@@ -93,12 +94,12 @@ export default function draw(node, sets) {
         .attr('height', '10')
         .attr('x', '0')
         .attr('y', '0')
-        .attr('fill', color)
-        .attr('fill-opacity', '0.15');
+        .attr('fill-opacity', '0.15')
+        .attr('fill', color);
       diagonal
         .append('path')
         .attr('d', 'M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2')
-        .attr('stroke', '#000000')
+        .attr('stroke', '#aaa')
         .attr('opacity', '1')
         .attr('stroke-width', '1');
     });
@@ -116,38 +117,35 @@ export default function draw(node, sets) {
     return partId;
   }
 
+  function colorVennAreaPart(node, { isHover }) {
+    let nodePath = node.select('path');
+    let isNodeAlreadySelected = node.classed('selected');
+    let style;
+    if (isHover && isNodeAlreadySelected) {
+      style = 'fill: url(#diagonal1); fill-opacity: 1';
+    } else if (isHover && !isNodeAlreadySelected) {
+      style = 'fill: #000000; fill-opacity: 0.15';
+    } else if (!isHover && isNodeAlreadySelected) {
+      style = 'fill: url(#diagonal0); fill-opacity: 1';
+    } else {
+      style = 'fill-opacity: 0';
+    }
+    nodePath.attr('style', style);
+  }
+
   function bindVennAreaPartListeners() {
     div
       .selectAll('g')
       .on('mouseover', function(d, i) {
-        let node = select(this);
-        let nodePath = node.select('path');
-        let nodeAlreadySelected = node.classed('selected');
-        nodePath.attr(
-          'style',
-          nodeAlreadySelected
-            ? 'fill: url(#diagonal1)'
-            : 'fill: #009fdf; fill-opacity: 0.15'
-        );
+        colorVennAreaPart(select(this), { isHover: true });
       })
       .on('mouseout', function(d, i) {
-        let node = select(this);
-        let nodePath = node.select('path');
-        let nodeAlreadySelected = node.classed('selected');
-        nodePath.attr(
-          'style',
-          nodeAlreadySelected ? 'fill: url(#diagonal0)' : 'fill: #ffffff'
-        );
+        colorVennAreaPart(select(this), { isHover: false });
       })
       .on('click', function(d, i) {
-        let node = select(this);
-        let nodePath = node.select('path');
-        let nodeAlreadySelected = node.classed('selected');
-        let nodePathStyle = !nodeAlreadySelected
-          ? 'fill: url(#diagonal1)'
-          : 'fill: #ffffff';
-        nodePath.attr('style', nodePathStyle);
-        node.classed('selected', !nodeAlreadySelected);
+        const node = select(this);
+        node.classed('selected', !node.classed('selected'));
+        colorVennAreaPart(node, { isHover: true });
       });
   }
 
@@ -164,5 +162,5 @@ export default function draw(node, sets) {
   appendVennAreaParts(svg, intersectionAreasMapping);
   appendLabels(svg, labels);
   bindVennAreaPartListeners();
-  removeOriginalVennAreas();
+  // removeOriginalVennAreas();
 }
