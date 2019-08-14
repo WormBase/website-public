@@ -1,8 +1,9 @@
 import { select, selectAll, event as d3event } from 'd3-selection';
 import { VennDiagram, sortAreas } from 'venn.js';
 
-export default function draw(node, sets) {
+export default function draw(node, sets, coloursFunc) {
   const chart = VennDiagram();
+  chart.colours(coloursFunc);
   const div = select(node);
   div.datum(sets).call(chart);
 
@@ -101,7 +102,7 @@ export default function draw(node, sets) {
         .attr('d', 'M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2')
         .attr('stroke', '#aaa')
         .attr('opacity', '1')
-        .attr('stroke-width', '1');
+        .attr('stroke-width', '5');
     });
   }
 

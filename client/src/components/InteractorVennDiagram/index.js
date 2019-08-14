@@ -12,18 +12,28 @@ export default function InteractorVennDiagram({ data = [] }) {
       return result;
     }, new Set());
 
-    const vennSubsets = subsets(typeSet)
-      .map((s) => {
-        return {
-          sets: s,
-          size: data.filter(({ types: interactorTypes }) =>
-            isSuperSet(interactorTypes, s)
-          ).length,
-        };
-      })
-      .filter(({ size }) => size > 0);
+    const vennSubsets = subsets(typeSet).map((s) => {
+      return {
+        sets: s,
+        size: data.filter(({ types: interactorTypes }) =>
+          isSuperSet(interactorTypes, s)
+        ).length,
+      };
+    });
 
-    draw(d3Element.current, vennSubsets);
+    const colorMap = vennSubsets
+      .filter((d) => d.sets.length === 1)
+      .reduce((result, d) => {
+        const colors = {
+          physical: '#33a02c',
+          genetic: '#6a3d9a',
+          regulatory: '#ff7f00',
+        };
+        result[d.sets] = colors[d.sets[0]];
+        return result;
+      }, {});
+
+    draw(d3Element.current, vennSubsets, (key) => colorMap[key] || 'gray');
   }, [data, d3Element]);
   return <div ref={d3Element}>Place holder for venn diagram </div>;
 }
