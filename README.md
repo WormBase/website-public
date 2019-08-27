@@ -185,6 +185,8 @@ Here, we highlight some important aspects for working with AWS EB.
 
 Appropriate AWS permission is setup on the development server instance through an [instance profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html). The permissions are granted to the role `wb-web-team-dev-instance-role` that is attached to the development server instance.
 
+In production deployment with beanstalk, the instance profile role `wb-catalyst-beanstalk-ec2-role` is used by instances created by Beanstalk.
+
 Note: WormBase developers no longer need user-level AWS permission to perform the tasks below.
 
 ### Environments
