@@ -130,7 +130,7 @@ eb-local-run:
 
 .PHONY: eb-setenv
 eb-setenv:
-	@eb setenv \
+	@eb setenv --timeout 10 \
 		APP=${CATALYST_APP} \
 		GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
 		GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
