@@ -34,6 +34,8 @@ dev-start:
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
+		-e AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
@@ -52,6 +54,8 @@ env-bash:
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
+		-e AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
@@ -79,6 +83,8 @@ build-start:
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
+		-e AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
@@ -96,6 +102,8 @@ build-bash:
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
+		-e AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
@@ -114,6 +122,8 @@ build-run-test:
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=acedb \
+		-e AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
 		-e GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
