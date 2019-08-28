@@ -10,6 +10,8 @@ services:
       - "./:/usr/local/wormbase/website"
     environment:
       - WEBPACK_SERVER_PORT=${WEBPACK_SERVER_PORT}
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     networks:
       - default
       - wb-network

@@ -183,13 +183,11 @@ Here, we highlight some important aspects for working with AWS EB.
 
 ### Credentials
 
-Obtaining the appropriate AWS credentials and privileges is the prerequisite of performing many of the tasks below.
+Appropriate AWS permission is setup on the development server instance through an [instance profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html). The permissions are granted to the role `wb-web-team-dev-instance-role` that is attached to the development server instance.
 
-Please work with another WormBase developer to have your AWS account and privileges setup.
+In production deployment with beanstalk, the instance profile role `wb-catalyst-beanstalk-ec2-role` is used by instances created by Beanstalk.
 
-Your machine also needs to be configured with the credentials, and you will need to:
-* have `~/.aws/credentials` and `~/.aws/config` properly configured, AND
-* have environment variable AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY correctly set
+Note: WormBase developers no longer need user-level AWS permission to perform the tasks below.
 
 ### Environments
 
