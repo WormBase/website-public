@@ -1980,7 +1980,7 @@ sub _get_page {
 
 sub blog_feed :Path("/rest/blog_feed") Args(0) {
     my ( $self, $c ) = @_;
-    my $url = 'http://blog.wormbase.org/categories/news/feed/';
+    my $url = 'https://blog.wormbase.org/categories/news/feed/';
     $self->_get_feed_from($c, $url);
 
 }
