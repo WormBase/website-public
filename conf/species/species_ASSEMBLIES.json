@@ -271,7 +271,7 @@
             "bioproject_description" : "University of Edinburgh Caenorhabditis sinica genome project",
             "is_canonical" : true,
             "laboratory" : [
-               "Institute of Evolutionary Biology, University of Edinburgh, Edinburgh, UK"
+               "Wellcome Sanger Institute; Hinxton, United Kingdom"
             ],
             "short_label" : "JU800",
             "strain" : "JU800",
@@ -309,7 +309,7 @@
             "bioproject_description" : "The genome of Oscheius tipulae",
             "is_canonical" : true,
             "laboratory" : [
-               "Institute of Evolutionary Biology, University of Edinburgh, Edinburgh, UK"
+               "Wellcome Sanger Institute; Hinxton, United Kingdom"
             ],
             "short_label" : "Oscheius_tipulae_assembly_v2",
             "strain" : "Unknown strain",
