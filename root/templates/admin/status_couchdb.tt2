@@ -5,9 +5,7 @@ Futon (administrative interface to our couchdb instance):
    </table>
 
   <h2>Production</h2>
-  <a target="_blank" href="http://couchdb.wormbase.org/_utils">couchdb.wormbase.org/_utils</a>
-
-  <em>The production couchdb is running on wb-web6.oicr.on.ca, with a proxied domain name of couchdb.wormbase.org. The Couchdb forwards these requests....<br/>
+  <a target="_blank" href="https://couchdb.wormbase.org/_utils">couchdb.wormbase.org/_utils</a>
 
   <h2>Staging</h2>
 

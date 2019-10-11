@@ -232,9 +232,9 @@ END;
         [% END %]
         [%- IF c.stash.served_from_cache -%]
         <span class="data-source-label">Couch
-            <a target="_blank" href="http://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a>
+            <a target="_blank" href="https://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a>
              |
-            <a target="_blank" href="http://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a>
+            <a target="_blank" href="https://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a>
         </span>
         [% END %]
     [% END %]
