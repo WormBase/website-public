@@ -95,8 +95,11 @@ class InteractionGraph extends Component {
 
   edgeId = (interaction) => {
     const { effector, affected, direction, type } = interaction;
-    const source = effector.id;
-    const target = affected.id;
+    let source = effector.id;
+    let target = affected.id;
+    if (direction === 'non-directional') {
+      [source, target] = [source, target].sort();
+    }
     return `${source}|${target}|${direction}|${type}`;
   };
 
