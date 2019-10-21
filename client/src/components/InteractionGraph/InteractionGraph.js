@@ -24,6 +24,7 @@ class InteractionGraph extends Component {
     super(props);
     this.state = {
       includeNearbyInteraction: true,
+      includeHighThroughput: false,
     };
   }
 
@@ -104,7 +105,9 @@ class InteractionGraph extends Component {
     const edgesSubset = this.props.interactions.filter((edge) => {
       return (
         interactionTypeSelected.has(edge.type) &&
-        (this.state.includeNearbyInteraction || !parseInt(edge.nearby, 10))
+        (this.state.includeNearbyInteraction || !edge.nearby) &&
+        (this.state.includeHighThroughput ||
+          edge.throughput !== 'High throughput')
       );
     });
 
@@ -303,8 +306,9 @@ class InteractionGraph extends Component {
     return this.props.interactions.reduce((result, interaction) => {
       if (
         subtypes.has(interaction.type) &&
-        (this.state.includeNearbyInteraction ||
-          !parseInt(interaction.nearby, 10))
+        (this.state.includeNearbyInteraction || !interaction.nearby) &&
+        (this.state.includeHighThroughput ||
+          interaction.throughput !== 'High throughput')
       ) {
         result++;
       }
@@ -474,6 +478,24 @@ class InteractionGraph extends Component {
             </CompactList>
           </CompactList>
         </CompactList>
+        <FormControlLabel
+          classes={{
+            label: classNames([
+              this.props.classes.graphSidebarText,
+              this.props.classes.graphSidebarTextLevel0,
+            ]),
+          }}
+          control={
+            <Switch
+              color="primary"
+              checked={this.state.includeHighThroughput}
+              onChange={(event, checked) =>
+                this.setState({ includeHighThroughput: checked })
+              }
+            />
+          }
+          label="High-throughput"
+        />
         <FormControlLabel
           classes={{
             label: classNames([
