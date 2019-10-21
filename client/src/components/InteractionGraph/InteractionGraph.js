@@ -478,7 +478,7 @@ class InteractionGraph extends Component {
           size="small"
           onClick={() => this.subsetRedraw()}
         >
-          Redraw
+          Re-position
         </Button>
         <Button
           className={classNames([classes.button, classes.sidebarToggleButton])}
