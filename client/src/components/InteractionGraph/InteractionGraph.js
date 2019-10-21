@@ -94,10 +94,10 @@ class InteractionGraph extends Component {
   }
 
   edgeId = (interaction) => {
-    const { effector, affected, type } = interaction;
+    const { effector, affected, direction, type } = interaction;
     const source = effector.id;
     const target = affected.id;
-    return `${source}|${target}|${type}`;
+    return `${source}|${target}|${direction}|${type}`;
   };
 
   subset = () => {
