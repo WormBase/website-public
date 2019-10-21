@@ -306,17 +306,22 @@ class InteractionGraph extends Component {
 
   countInteractionsOfType = (type) => {
     const subtypes = new Set([type, ...this.getDescentTypes(type)]);
-    return this.props.interactions.reduce((result, interaction) => {
-      if (
-        subtypes.has(interaction.type) &&
-        (this.state.includeNearbyInteraction || !interaction.nearby) &&
-        (this.state.includeHighThroughput ||
-          interaction.throughput !== 'High throughput')
-      ) {
-        result++;
-      }
-      return result;
-    }, 0);
+    const interactionsSet = this.props.interactions.reduce(
+      (result, interaction) => {
+        if (
+          subtypes.has(interaction.type) &&
+          (this.state.includeNearbyInteraction || !interaction.nearby) &&
+          (this.state.includeHighThroughput ||
+            interaction.throughput !== 'High throughput')
+        ) {
+          const edgeKey = this.edgeId(interaction);
+          result.add(edgeKey);
+        }
+        return result;
+      },
+      new Set([])
+    );
+    return interactionsSet.size;
   };
 
   handleInteractionTypeSelection = (type) => {
