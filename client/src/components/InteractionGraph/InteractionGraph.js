@@ -105,25 +105,63 @@ class InteractionGraph extends Component {
 
   subset = () => {
     const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
-    const edgesSubset = this.props.interactions.filter((edge) => {
-      return (
-        interactionTypeSelected.has(edge.type) &&
-        (this.state.includeNearbyInteraction || !edge.nearby) &&
-        (this.state.includeHighThroughput ||
-          edge.throughput !== 'High throughput')
-      );
-    });
 
-    return new Set([
-      ...edgesSubset.map((edge) => edge.effector.id),
-      ...edgesSubset.map((edge) => edge.affected.id),
-      ...edgesSubset.map((interaction) => this.edgeId(interaction)),
+    // edges based on un-filtered list of annotations
+    const edgesAll = Object.values(
+      this.props.interactions.reduce((result, annotation) => {
+        const edgeKey = this.edgeId(annotation);
+        const { effector, affected, direction, type } = annotation;
+        if (!result[edgeKey]) {
+          result[edgeKey] = {
+            effector,
+            affected,
+            direction,
+            type,
+          };
+        }
+        return result;
+      }, {})
+    );
+
+    // annotations based on filtering criteria
+    const annotationsSubset = this.props.interactions.filter(
+      ({ type, nearby, throughput }) => {
+        return (
+          interactionTypeSelected.has(type) &&
+          (this.state.includeNearbyInteraction || !nearby) &&
+          (this.state.includeHighThroughput || throughput !== 'High throughput')
+        );
+      }
+    );
+
+    // collect citations based on annotations matching the filtering criteria
+    const edgesSubset = annotationsSubset.reduce((result, annotation) => {
+      const edgeKey = this.edgeId(annotation);
+      const { citation } = annotation;
+      if (!result[edgeKey]) {
+        result[edgeKey] = new Set();
+      }
+      result[edgeKey].add(citation.id);
+      return result;
+    }, {});
+
+    const visibleSet = new Set([
+      ...annotationsSubset.map((edge) => edge.effector.id),
+      ...annotationsSubset.map((edge) => edge.affected.id),
+      ...annotationsSubset.map((edge) => this.edgeId(edge)),
     ]);
+    return {
+      edgesAll: [...edgesAll],
+      getEdgeWeight: (edgeKey) =>
+        edgesSubset[edgeKey] && edgesSubset[edgeKey].size,
+      isVisible: (elementId) => visibleSet.has(elementId),
+    };
   };
 
   setupCytoscape = () => {
-    const edges = this.props.interactions.map((interaction) => {
-      const { effector, affected, direction, type, citations } = interaction;
+    const { edgesAll } = this.subset();
+    const edges = edgesAll.map((interaction) => {
+      const { effector, affected, direction, type } = interaction;
       const source = effector.id;
       const target = affected.id;
       return {
@@ -134,7 +172,6 @@ class InteractionGraph extends Component {
           target: target,
           color: this.getEdgeColor(type),
           directioned: direction !== 'non-directional',
-          weight: Math.max(1, Math.min((citations || []).length, 10)),
           type: type,
           visibility: 'hidden',
         },
@@ -247,19 +284,18 @@ class InteractionGraph extends Component {
   };
 
   updateCytoscape = () => {
-    const subset = this.subset();
-    this._cy
-      .filter('*')
-      .forEach((ele, i, eles) =>
-        ele.data('visibility', subset.has(ele.id()) ? 'visible' : 'hidden')
-      );
+    const { isVisible, getEdgeWeight } = this.subset();
+    this._cy.filter('*').forEach((ele, i, eles) => {
+      ele.data('visibility', isVisible(ele.id()) ? 'visible' : 'hidden');
+      ele.data('weight', getEdgeWeight(ele.id()));
+    });
   };
 
   subsetRedraw = () => {
-    const subset = this.subset();
+    const { isVisible } = this.subset();
     this._cy.userZoomingEnabled(false);
     this._cy
-      .filter((ele) => subset.has(ele.id()))
+      .filter((ele) => isVisible(ele.id()))
       .layout(this.getLayoutSetting())
       .run();
   };
