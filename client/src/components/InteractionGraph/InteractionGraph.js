@@ -78,6 +78,7 @@ class InteractionGraph extends Component {
   componentDidMount() {
     this.setupCytoscape();
     this.updateCytoscape();
+    this.subsetRedraw();
   }
 
   componentWillReceiveProps() {
