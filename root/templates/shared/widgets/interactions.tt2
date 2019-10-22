@@ -42,29 +42,8 @@
   END;
 %]
 
-[% IF fields.interactions.data.edges.size> 0 %]
-  [%# edges_all.size = 0, Interaction.pm has decided that there are too many edges to render with the widget %]
-  [% IF fields.interactions.data.include_details %]
-      [% TYPES = fields.interactions.data.types %]
-      [% NTYPES = fields.interactions.data.ntypes %]
-      [% NODES = fields.interactions.data.nodes %]
-      [% EDGES = fields.interactions.data.edges_all %]
-      [% CLASSTYPE = fields.interactions.data.class %]
-      [% PHENOTYPES = fields.interactions.data.phenotypes %]
-      [% OBJTYPE = fields.interaction_type.data %]
-
-      [% WRAPPER shared/fields/interaction_details.tt2;
-           #this is in a wrapper so the js will execute at the bottom of the widget and prevent blocking
-           interaction_table;
-         END %]
-  [% ELSE %]
-    [% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field',object.name.data.class,object.name.data.id,'interaction_details').path id="interactions_toggle"%][% END %]
-    [% interaction_table %]
-  [% END %]
-[% ELSE %]
-  [% interaction_table %]
-[% END %]
-
+[% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field',object.name.data.class,object.name.data.id,'interaction_details').path id="interactions_toggle"%][% END %]
+[% interaction_table %]
 
 [% IF fields.interactions.data.edges.size> 0 %]
 <a href="http://genemania.org/link?o=6239&g=[%
