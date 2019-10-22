@@ -142,7 +142,9 @@ class InteractionGraph extends Component {
       if (!result[edgeKey]) {
         result[edgeKey] = new Set();
       }
-      result[edgeKey].add(citation.id);
+      if (citation) {
+        result[edgeKey].add(citation.id);
+      }
       return result;
     }, {});
 
