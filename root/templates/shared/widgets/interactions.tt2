@@ -42,7 +42,9 @@
   END;
 %]
 
-[% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field',object.name.data.class,object.name.data.id,'interaction_details').path id="interactions_toggle"%][% END %]
+[% WRAPPER toggle title="<b>View Interaction Network</b>" open=fields.interactions.data.edges.size < 100 ? 1 : 0 id="interactions_toggle"%]
+   [% INCLUDE shared/fields/interaction_details.tt2; %]
+[% END %]
 [% interaction_table %]
 
 [% IF fields.interactions.data.edges.size> 0 %]
