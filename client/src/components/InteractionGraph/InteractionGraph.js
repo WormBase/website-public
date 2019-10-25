@@ -24,6 +24,7 @@ class InteractionGraph extends Component {
     super(props);
     this.state = {
       includeNearbyInteraction: true,
+      includeHighThroughput: false,
     };
   }
 
@@ -77,6 +78,7 @@ class InteractionGraph extends Component {
   componentDidMount() {
     this.setupCytoscape();
     this.updateCytoscape();
+    this.subsetRedraw();
   }
 
   componentWillReceiveProps() {
@@ -93,31 +95,76 @@ class InteractionGraph extends Component {
   }
 
   edgeId = (interaction) => {
-    const { effector, affected, type } = interaction;
-    const source = effector.id;
-    const target = affected.id;
-    return `${source}|${target}|${type}`;
+    const { effector, affected, direction, type } = interaction;
+    let source = effector.id;
+    let target = affected.id;
+    if (direction === 'non-directional') {
+      [source, target] = [source, target].sort();
+    }
+    return `${source}|${target}|${direction}|${type}`;
   };
 
   subset = () => {
     const interactionTypeSelected = new Set(this.state.interactionTypeSelected);
-    const edgesSubset = this.props.interactions.filter((edge) => {
-      return (
-        interactionTypeSelected.has(edge.type) &&
-        (this.state.includeNearbyInteraction || !parseInt(edge.nearby, 10))
-      );
-    });
 
-    return new Set([
-      ...edgesSubset.map((edge) => edge.effector.id),
-      ...edgesSubset.map((edge) => edge.affected.id),
-      ...edgesSubset.map((interaction) => this.edgeId(interaction)),
+    // edges based on un-filtered list of annotations
+    const edgesAll = Object.values(
+      this.props.interactions.reduce((result, annotation) => {
+        const edgeKey = this.edgeId(annotation);
+        const { effector, affected, direction, type } = annotation;
+        if (!result[edgeKey]) {
+          result[edgeKey] = {
+            effector,
+            affected,
+            direction,
+            type,
+          };
+        }
+        return result;
+      }, {})
+    );
+
+    // annotations based on filtering criteria
+    const annotationsSubset = this.props.interactions.filter(
+      ({ type, nearby, throughput }) => {
+        return (
+          interactionTypeSelected.has(type) &&
+          (this.state.includeNearbyInteraction || !nearby) &&
+          (this.state.includeHighThroughput || throughput !== 'High throughput')
+        );
+      }
+    );
+
+    // collect citations based on annotations matching the filtering criteria
+    const edgesSubset = annotationsSubset.reduce((result, annotation) => {
+      const edgeKey = this.edgeId(annotation);
+      const { citation } = annotation;
+      if (!result[edgeKey]) {
+        result[edgeKey] = new Set();
+      }
+      if (citation) {
+        result[edgeKey].add(citation.id);
+      }
+      return result;
+    }, {});
+
+    const visibleSet = new Set([
+      ...annotationsSubset.map((edge) => edge.effector.id),
+      ...annotationsSubset.map((edge) => edge.affected.id),
+      ...annotationsSubset.map((edge) => this.edgeId(edge)),
     ]);
+    return {
+      edgesAll: [...edgesAll],
+      getEdgeWeight: (edgeKey) =>
+        edgesSubset[edgeKey] && edgesSubset[edgeKey].size,
+      isVisible: (elementId) => visibleSet.has(elementId),
+    };
   };
 
   setupCytoscape = () => {
-    const edges = this.props.interactions.map((interaction) => {
-      const { effector, affected, direction, type, citations } = interaction;
+    const { edgesAll } = this.subset();
+    const edges = edgesAll.map((interaction) => {
+      const { effector, affected, direction, type } = interaction;
       const source = effector.id;
       const target = affected.id;
       return {
@@ -128,7 +175,6 @@ class InteractionGraph extends Component {
           target: target,
           color: this.getEdgeColor(type),
           directioned: direction !== 'non-directional',
-          weight: Math.max(1, Math.min((citations || []).length, 10)),
           type: type,
           visibility: 'hidden',
         },
@@ -241,19 +287,18 @@ class InteractionGraph extends Component {
   };
 
   updateCytoscape = () => {
-    const subset = this.subset();
-    this._cy
-      .filter('*')
-      .forEach((ele, i, eles) =>
-        ele.data('visibility', subset.has(ele.id()) ? 'visible' : 'hidden')
-      );
+    const { isVisible, getEdgeWeight } = this.subset();
+    this._cy.filter('*').forEach((ele, i, eles) => {
+      ele.data('visibility', isVisible(ele.id()) ? 'visible' : 'hidden');
+      ele.data('weight', getEdgeWeight(ele.id()));
+    });
   };
 
   subsetRedraw = () => {
-    const subset = this.subset();
+    const { isVisible } = this.subset();
     this._cy.userZoomingEnabled(false);
     this._cy
-      .filter((ele) => subset.has(ele.id()))
+      .filter((ele) => isVisible(ele.id()))
       .layout(this.getLayoutSetting())
       .run();
   };
@@ -300,16 +345,22 @@ class InteractionGraph extends Component {
 
   countInteractionsOfType = (type) => {
     const subtypes = new Set([type, ...this.getDescentTypes(type)]);
-    return this.props.interactions.reduce((result, interaction) => {
-      if (
-        subtypes.has(interaction.type) &&
-        (this.state.includeNearbyInteraction ||
-          !parseInt(interaction.nearby, 10))
-      ) {
-        result++;
-      }
-      return result;
-    }, 0);
+    const interactionsSet = this.props.interactions.reduce(
+      (result, interaction) => {
+        if (
+          subtypes.has(interaction.type) &&
+          (this.state.includeNearbyInteraction || !interaction.nearby) &&
+          (this.state.includeHighThroughput ||
+            interaction.throughput !== 'High throughput')
+        ) {
+          const edgeKey = this.edgeId(interaction);
+          result.add(edgeKey);
+        }
+        return result;
+      },
+      new Set([])
+    );
+    return interactionsSet.size;
   };
 
   handleInteractionTypeSelection = (type) => {
@@ -429,7 +480,7 @@ class InteractionGraph extends Component {
           size="small"
           onClick={() => this.subsetRedraw()}
         >
-          Redraw
+          Re-position
         </Button>
         <Button
           className={classNames([classes.button, classes.sidebarToggleButton])}
@@ -474,6 +525,24 @@ class InteractionGraph extends Component {
             </CompactList>
           </CompactList>
         </CompactList>
+        <FormControlLabel
+          classes={{
+            label: classNames([
+              this.props.classes.graphSidebarText,
+              this.props.classes.graphSidebarTextLevel0,
+            ]),
+          }}
+          control={
+            <Switch
+              color="primary"
+              checked={this.state.includeHighThroughput}
+              onChange={(event, checked) =>
+                this.setState({ includeHighThroughput: checked })
+              }
+            />
+          }
+          label="High-throughput"
+        />
         <FormControlLabel
           classes={{
             label: classNames([

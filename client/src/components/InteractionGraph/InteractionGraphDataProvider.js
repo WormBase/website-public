@@ -1,28 +1,37 @@
-import React, { Component } from 'react';
+import React, { Component, useMemo } from 'react';
+import ErrorMessage from '../ErrorMessage';
+import useData from '../useData';
 
-export default class InteractionGraphDataProvider extends Component {
-  render() {
-    // console.log(this.props.data);
-    const data = this.props.data;
-    const error = this.props.error;
-    const edges = data.data.edges_all;
-    const nodes =
-      data.data.nodes ||
+export default function InteractionGraphDataProvider({ dataUrl, children }) {
+  // console.log(this.props.data);
+  const { data: responseJson, error, isLoading } = useData({ url: dataUrl });
+
+  const { interactorMap, interactions } = useMemo(() => {
+    const { interaction_details } = responseJson || {};
+    const { data } = interaction_details || {};
+    let { edges_all: edges, nodes } = data || {};
+    edges = edges || [];
+    nodes =
+      nodes ||
       edges.reduce((result, edge) => {
         result[edge.affected.id] = edge.affected;
         result[edge.effector.id] = edge.effector;
         return result;
       }, {});
-    return (
-      error ||
-      (data ? (
-        this.props.children({
-          interactorMap: nodes,
-          interactions: edges,
-        })
-      ) : (
-        <span>Loading...</span>
-      ))
-    );
-  }
+    return {
+      interactorMap: nodes,
+      interactions: edges,
+    };
+  }, [responseJson]);
+
+  return isLoading ? (
+    <span>Loading...</span>
+  ) : error ? (
+    <ErrorMessage title={error} />
+  ) : (
+    children({
+      interactorMap,
+      interactions,
+    })
+  );
 }
