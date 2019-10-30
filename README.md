@@ -46,23 +46,23 @@ To shutdown your development stack cleanly:
 
 ### Development Environment Troubleshooting
 
-*`make dev` appears stuck*
+**`make dev` appears stuck**
 
 The first time that `make dev` runs, it takes longer due to installation of dependencies.
 
-*The stdout is jumbled*
+**The stdout is jumbled**
 
 The `stdout` of docker-compose combines the stdouts of the containers. To make it easier to read, stdout of individual containers can be accessed via `SERVICE=[name_of_service] make console`, where the name of service could be website, webpack, etc as found in [docker-compose.yml](docker-compose.yml) and [docker-compose.dev.yml](docker-compose.dev.yml).
 
-*`docker-compose` cli commands not taking effect*
+**`docker-compose` cli commands not taking effect**
 
 The Makefile exports user-specific environment variable `COMPOSE_PROJECT_NAME` to allow multiple instances of the development stack to run on the same machine. If you use docker-compose cli directly, please set `COMPOSE_PROJECT_NAME` accordingly to interact with your particular development instance.
 
-*Unable to connect to ACeDB*
+**Unable to connect to ACeDB**
 
 ACeDB container isn't started as part the development stack to reduce memory footprint. Instead, we rely on a shared acedb container, by joining the docker networked called `wb-network` where the acedb runs on. If the shared acedb container is down, instructions to start the shared acedb container is found [here](https://github.com/WormBase/wormbase-architecture/blob/develop/roles/acedb/files/startserver.sh).
 
-*Prettier git pre-commit hook doesn't trigger*
+**Prettier git pre-commit hook doesn't trigger**
 
 JavaScript dependencies are installed both on the host and in the container. The former is necessary to enable code formatting with Prettier and git pre-commit hooks with Husky.
 
