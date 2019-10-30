@@ -67,65 +67,52 @@ ACeDB container isn't started as part the development stack to reduce memory foo
 JavaScript dependencies are installed both on the host and in the container. The former is necessary to enable code formatting with Prettier and git pre-commit hooks with Husky.
 
 
-Staging Deployment on AWS ElasticBeanstalk
+Staging Environment
 ---------------------------------------------
 
-Staging deployment is mostly automated and continuously deployed. The only manual step is to inform EB of the correct volume (file system) snapshot to use for a particular WS release.
+WormBase staging site is hosted on the shared development instance. Its deployment is automated, triggered by committing to the staging branch on Github.
 
-The file system contains data and certain scripts that aren't dockerized. For more details for data and File System access, refer to EB deployment overview section above.
+Continuous integration for staging environment is handled by Jenkins. Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script to for deployment and testing. For detailed setup, please visit the Jenkins web console.
 
-Continuous deploying of the staging site to AWS EB is handled by Jenkins. It's triggered by commits to the staging branch on Github.
-
-Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script to deploy changes.
-
-For detailed setup, please visit the Jenkins web console.
-
-Production Deployment on AWS ElasticBeanstalk
+Production Environment
 ---------------------------------------------
 
-Deploying to production involves the following steps:
+WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide](docs/beanstalk.md).
 
-- change the release number in wormbase.conf
-- Make a release
-  ```
-  # at the appropriate git branch for production
-  make release
-  ```
+###Prepare for a website release
 
-- Deploy to the pre-production environment
+- Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+- Create the release branch, such as `release/273`
+- At the release branch:
 
   ```console
-  # at the appropriate git branch for production
-  make eb-create
-
-  # If ACeDB TreeView isn't working, which seems to be caused by a race condition
-  # between setting up the file system and starting ACeDB container,
-  # can generally be fixed by re-do the deployment step
-  make production-deploy
+  make release  # to build the assets (ie containers) required for deployment
   ```
 
-- Swap the URL between the pre-production environment and the exiting production environment
-	- This can be done through the web console of AWS ElasticBeanstalk.
+  ```console
+  make eb-create  # to create and deploy to the pre-production environment
+  ```
 
-- After making sure the new production environment is working, shut down the previous production environment
-	- This can be done through the web console of AWS ElasticBeanstalk.
+- Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
+    - Wait for the deployment to complete, and verify the pre-production environment is working
+        - If ACeDB TreeView isn't working, which seems to be caused by a race condition between setting up the file system and starting ACeDB container, the problem can be fixed by re-deploying to the same environment `make production-deploy`.
+    - Swap the URL between the pre-production environment and the current production environment
+    - After making sure the new production environment is working, wait until the DNS TTL passes on Nginx before shutting down the previous production environment
 
 
-Applying Hotfix on AWS ElasticBeanstalk
------------------------------------------
+###Apply Hotfix on AWS ElasticBeanstalk
 
 - Prior to applying the hotfix, ensure you are at the appropriate git branch for production.
 
 - Then run the following commands,
-
 
 	```
 	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS268.12
 	make production-deploy
 	```
 
-Production Deployment without AWS Beanstalk
-------------------------------------------
+###Production Deployment without AWS Beanstalk
+
 For instances not managed by Beanstalk, deployment can be performed with:
 
 ```
