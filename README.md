@@ -27,7 +27,7 @@ Development environment can be setup easily and without installing any dependenc
 
 _For Legacy instructions_ that set up without docker or docker-compose, please visit the [Manual Setup Guide](/docs/manual_setup.md).
 
-Prerequisite:
+**Prerequisite:**
 
 - Obtain access and login to the shared development instance, where data and legacy software are stored.
 
@@ -35,11 +35,11 @@ Prerequisite:
 
 - Ensure `/usr/local/bin/` is on your $PATH, as dependencies such as `docker-compose` and `yarn` are installed there.
 
-To start your development stack:
+**To start your development stack:**
 
 `make dev` and wait for website/Catalyst and webpack(DevServer) to start.
 
-To shutdown your development stack cleanly:
+**To shutdown your development stack cleanly:**
 
 `make dev-down`
 
@@ -79,7 +79,7 @@ Production Environment
 
 WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide](docs/beanstalk.md).
 
-###Prepare for a website release
+### Prepare for a website release
 
 - Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
 - Create the release branch, such as `release/273`
@@ -95,27 +95,29 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
     - Wait for the deployment to complete, and verify the pre-production environment is working
-        - If ACeDB TreeView isn't working, which seems to be caused by a race condition between setting up the file system and starting ACeDB container, the problem can be fixed by re-deploying to the same environment `make production-deploy`.
+        - **If ACeDB TreeView isn't working**, which seems to be caused by a race condition between setting up the file system and starting ACeDB container, the problem can be fixed by re-deploying to the same environment `make production-deploy`.
     - Swap the URL between the pre-production environment and the current production environment
     - After making sure the new production environment is working, wait until the DNS TTL passes on Nginx before shutting down the previous production environment
 
 
-###Apply Hotfix on AWS ElasticBeanstalk
+
+
+### Apply Hotfix on AWS ElasticBeanstalk
 
 - Prior to applying the hotfix, ensure you are at the appropriate git branch for production.
 
 - Then run the following commands,
 
-	```
+	```console
 	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS268.12
 	make production-deploy
 	```
 
-###Production Deployment without AWS Beanstalk
+### Production Deployment without AWS Beanstalk
 
 For instances not managed by Beanstalk, deployment can be performed with:
 
-```
+```console
 # ensure port 5000 is available, then
 make production-deploy-no-eb
 ```
