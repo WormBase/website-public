@@ -29,7 +29,7 @@ To learn about their differences and how to work with them, please read the Stag
 
 While the EB web management console provides easy ways to experimenting with configuration options, we consider the _source of truth_ for configuration to be:
 * saved configuration used by `make eb-create`, AND
-* configurations in [.ebextensions/](.ebextensions/)
+* configurations in [.ebextensions/](../.ebextensions/)
 
 Staging ane Production configuration should be kept virtually the same to facilitate reproducibility and testing.
 
@@ -53,4 +53,4 @@ Data associated with a particular release (such as data in ACeDB and BLAST) are 
 
 A volume snapshot is created at the end of the "staging process" and is unique each release. The volume ID can be located from AWS console under Services > EC2 > Snapshots.
 
-The exact configuration is done at [.ebextensions/01-setup-volumes.config](.ebextensions/01-setup-volumes.config).
+The exact configuration is done at [.ebextensions/01-setup-volumes.config](../.ebextensions/01-setup-volumes.config).
