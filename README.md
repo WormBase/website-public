@@ -25,7 +25,7 @@ For devOps, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
 Development
 --------------------------------------------------------
 
-Development environment can be setup easily and without installing any dependency, using a shared development machine and `docker-compose`.
+Development environment can be setup easily, using a shared development machine and `docker-compose`.
 
 _For Legacy instructions_ that set up without docker or docker-compose, please visit the [Manual Setup Guide](/docs/manual_setup.md).
 
@@ -50,7 +50,7 @@ _For Legacy instructions_ that set up without docker or docker-compose, please v
 
 **`make dev` appears stuck**
 
-The first time that `make dev` runs, it takes longer due to installation of dependencies.
+The first time that `make dev` runs, it takes longer due to installation of dependencies. Subsequent startup should take a few seconds.
 
 **The stdout is jumbled**
 
@@ -62,11 +62,15 @@ The Makefile exports user-specific environment variable `COMPOSE_PROJECT_NAME` t
 
 **Unable to connect to ACeDB**
 
-ACeDB container isn't started as part the development stack to reduce memory footprint. Instead, we rely on a shared acedb container, by joining the docker networked called `wb-network` where the acedb runs on. If the shared acedb container is down, instructions to start the shared acedb container is found [here](https://github.com/WormBase/wormbase-architecture/blob/develop/roles/acedb/files/startserver.sh).
+ACeDB container isn't started as part the development stack to reduce memory footprint. Instead, we rely on a shared acedb container, which is expected to run on the docker networked `wb-network`. If the shared acedb container is down, instructions to start the shared acedb container is found [here](https://github.com/WormBase/wormbase-architecture/blob/develop/roles/acedb/files/startserver.sh).
 
 **Prettier git pre-commit hook doesn't trigger**
 
-JavaScript dependencies are installed both on the host and in the container. The former is necessary to enable code formatting with Prettier and git pre-commit hooks with Husky.
+JavaScript dependencies (such as `prettier` and `husky`) need to be installed on the host for code formatting and other git pre-commit hooks to work.
+
+**Compilation failure: You must configure a default store type unless you use exactly one store plugin.*
+
+This problem seems to show up occasionally, when I modify the wormbase_local.conf while the server is running. Try `make dev-down` and then `make dev`, and repeat a few times until the problem resolves itself.
 
 
 Staging Environment
