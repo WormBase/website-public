@@ -74,6 +74,7 @@ WormBase staging site is hosted on the shared development instance. Its deployme
 
 Continuous integration for staging environment is handled by Jenkins. Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script to for deployment and testing. For detailed setup, please visit the Jenkins web console.
 
+
 Production Environment
 ---------------------------------------------
 
@@ -82,6 +83,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 ### Prepare for a website release
 
 - Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+- Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
 - Create the release branch, such as `release/273`
 - At the release branch:
 
@@ -96,6 +98,9 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
     - Wait for the deployment to complete, and verify the pre-production environment is working
         - **If ACeDB TreeView isn't working**, which seems to be caused by a race condition between setting up the file system and starting ACeDB container, the problem can be fixed by re-deploying to the same environment `make production-deploy`.
+
+### Go live with a release
+- Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
     - Swap the URL between the pre-production environment and the current production environment
     - After making sure the new production environment is working, wait until the DNS TTL passes on Nginx before shutting down the previous production environment
 
