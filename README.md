@@ -114,7 +114,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 - Then run the following commands,
 
 	```console
-	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS268.12
+	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS273.1
 	make production-deploy
 	```
 
@@ -122,8 +122,11 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 For instances not managed by Beanstalk, deployment can be performed with:
 
+- Checkout the latest of the release branch, such as `release/273`
+
+- Ensure port 5000 is available, and run:
+
 ```console
-# ensure port 5000 is available, then
 make production-deploy-no-eb
 ```
 
