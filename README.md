@@ -68,7 +68,7 @@ ACeDB container isn't started as part the development stack to reduce memory foo
 
 JavaScript dependencies (such as `prettier` and `husky`) need to be installed on the host for code formatting and other git pre-commit hooks to work.
 
-**Compilation failure: You must configure a default store type unless you use exactly one store plugin.*
+**Compilation failure: You must configure a default store type unless you use exactly one store plugin.**
 
 This problem seems to show up occasionally, when I modify the wormbase_local.conf while the server is running. Try `make dev-down` and then `make dev`, and repeat a few times until the problem resolves itself.
 
