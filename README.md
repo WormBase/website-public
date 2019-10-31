@@ -11,11 +11,13 @@ Technical Overview
 The technical stack of WormBase website consits of:
 - A web server based on a MVC framework, [Catalyst](http://www.catalystframework.org/) and [Template Toolkit](http://www.template-toolkit.org/)
 - React for some portions of the UI
-- Database engines: ACeDB, MySQL, Datomic
+- Database engines: ACeDB, _MySQL_, _Datomic_
 - Nginx
 - BLAST, and other bioinformatics tools
-- [A RESTful data API](https://github.com/WormBase/wormbase_rest)
-- [A RESTful search API](https://github.com/WormBase/wb-search)
+- [_A RESTful data API_](https://github.com/WormBase/wormbase_rest)
+- [_A RESTful search API_](https://github.com/WormBase/wb-search)
+
+_Italic indicates services whose deployment are managed separately from what is in this repository._
 
 For devOps, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
 
@@ -107,7 +109,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 
 
-### Apply Hotfix on AWS ElasticBeanstalk
+### Hotfix production environment
 
 - Prior to applying the hotfix, ensure you are at the appropriate git branch for production.
 
