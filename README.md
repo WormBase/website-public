@@ -80,7 +80,7 @@ Continuous integration for staging environment is handled by Jenkins. Jenkins ru
 Production Environment
 ---------------------------------------------
 
-WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide](docs/beanstalk.md).
+WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
 
 ### Prepare for a website release
 

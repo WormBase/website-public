@@ -1,7 +1,7 @@
-Deployment with AWS ElasticBeanstalk Overview
+WormBase Elastic Beanstalk Guide for Website
 ----------------------------------------
 
-AWS ElasticBeanstalk (AWS EB) allow us to deploy our multi-container build easily. It provides health monitoring, load balancing, rolling updates, etc.
+AWS Elastic Beanstalk (AWS EB) allow us to deploy our multi-container build easily. It provides health monitoring, load balancing, rolling updates, etc.
 
 Here, we highlight some important aspects for working with AWS EB.
 
