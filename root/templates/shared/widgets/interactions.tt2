@@ -42,7 +42,7 @@
   END;
 %]
 
-[% WRAPPER toggle title="<b>View Interaction Network</b>" open=fields.interactions.data.edges.size < 100 ? 1 : 0 id="interactions_toggle"%]
+[% WRAPPER toggle title="<b>View Interaction Network</b>" open=1 id="interactions_toggle"%]
    [% INCLUDE shared/fields/interaction_details.tt2; %]
 [% END %]
 [% interaction_table %]
