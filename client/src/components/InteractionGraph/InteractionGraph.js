@@ -156,7 +156,7 @@ class InteractionGraph extends Component {
     return {
       edgesAll: [...edgesAll],
       getEdgeWeight: (edgeKey) =>
-        edgesSubset[edgeKey] && edgesSubset[edgeKey].size,
+        edgesSubset[edgeKey] ? edgesSubset[edgeKey].size : 0,
       isVisible: (elementId) => visibleSet.has(elementId),
     };
   };
@@ -177,6 +177,7 @@ class InteractionGraph extends Component {
           directioned: direction !== 'non-directional',
           type: type,
           visibility: 'hidden',
+          weight: 0,
         },
       };
     });
