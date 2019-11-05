@@ -153,6 +153,7 @@ class References extends Component {
             }
           </ReferenceList>
           <DownloadReference
+            className={classes.downloadButton}
             data={data}
             fileName={`${pageInfo.name}_references.csv`}
           >
@@ -209,8 +210,11 @@ const styles = (theme) => {
     selected: {
       backgroundColor: fade(theme.palette.text.primary, 0.12),
     },
+    downloadButton: {
+      position: 'relative',
+      bottom: 45,
+    },
     textpressoSection: {
-      margin: `${theme.spacing.unit * 5}px 0`,
       textAlign: 'center',
       '& p': {
         margin: `${theme.spacing.unit}px 0`,
