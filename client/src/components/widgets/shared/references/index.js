@@ -17,6 +17,20 @@ import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
 import DownloadReference from './DownloadReference';
 
+const TEXTPRESSO_TYPE_SET = new Set([
+  'strain',
+  'gene',
+  'gariation',
+  'transgene',
+  'construct',
+  'anatomy_term',
+  'clone',
+  'life_stage',
+  'rearrangement',
+  'molecule',
+  'process',
+]);
+
 class References extends Component {
   static propTypes = {
     data: PropTypes.arrayOf(
@@ -26,6 +40,7 @@ class References extends Component {
     ).isRequired,
     pageInfo: PropTypes.shape({
       name: PropTypes.string,
+      other_names: PropTypes.arrayOf(PropTypes.string),
     }).isRequired,
     classes: PropTypes.object.isRequired,
   };
@@ -66,7 +81,8 @@ class References extends Component {
 
   render() {
     const counts = this.countsByPaperTypes(this.props.data);
-    const { classes } = this.props;
+    const { classes, pageInfo } = this.props;
+
     const data = this.filterData(this.props.data).sort(this.compareYear);
 
     const FittedListSubheader = fitComponent(ListSubheader);
@@ -138,10 +154,29 @@ class References extends Component {
           </ReferenceList>
           <DownloadReference
             data={data}
-            fileName={`${this.props.pageInfo.name}_references.csv`}
+            fileName={`${pageInfo.name}_references.csv`}
           >
             Download all references
           </DownloadReference>
+
+          {TEXTPRESSO_TYPE_SET.has(pageInfo.class) ? (
+            <section className={classes.textpressoSection}>
+              <h4>Looking for more references? </h4>
+              <p>
+                Find references identified using machine learning on{' '}
+                <a
+                  className="wb-ext"
+                  href={`https://www.textpressocentral.org/tpc/search?keyword=${[
+                    pageInfo.name,
+                    ...pageInfo.other_names,
+                  ].join(' OR ')}&scope=document&literature=C. elegans`}
+                  target="_blank"
+                >
+                  Textpresso
+                </a>
+              </p>
+            </section>
+          ) : null}
         </div>
       </div>
     );
@@ -164,7 +199,7 @@ const styles = (theme) => {
       },
     },
     sidebar: {
-      width: `calc(100% + ${4 * theme.spacing.unit}px)`,
+      width: `calc(100% + ${2 * theme.spacing.unit}px)`,
       margin: `0 ${-2 * theme.spacing.unit}px`,
       [theme.breakpoints.up('md')]: {
         width: sidebarWidth,
@@ -173,6 +208,13 @@ const styles = (theme) => {
     },
     selected: {
       backgroundColor: fade(theme.palette.text.primary, 0.12),
+    },
+    textpressoSection: {
+      margin: `${theme.spacing.unit * 5}px 0`,
+      textAlign: 'center',
+      '& p': {
+        margin: `${theme.spacing.unit}px 0`,
+      },
     },
   };
 };
