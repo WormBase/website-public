@@ -202,6 +202,7 @@ const styles = (theme) => {
       display: 'flex',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
+      alignItems: 'baseline',
       flexDirection: 'row-reverse',
     },
     content: {
