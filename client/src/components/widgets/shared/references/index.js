@@ -181,7 +181,9 @@ class References extends Component {
                 href={`https://www.textpressocentral.org/tpc/search?keyword=${[
                   pageInfo.name,
                   ...pageInfo.other_names,
-                ].join(' OR ')}&scope=document&literature=C. elegans`}
+                ].join(
+                  ' OR '
+                )}&scope=document&literature=C. elegans,C. elegans Supplementals`}
                 target="_blank"
               >
                 Textpresso
