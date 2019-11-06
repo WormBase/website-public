@@ -25,6 +25,7 @@
 [% save = object.name.data.class.match('paper') ? 'my_library' : 'reports'%]
 [% wbid = get_star_id(object.name.data.id || c.req.path) %]
 [% label = label.remove('[\'"]') %]
+[% other_names = object.name.data.other_names %]
 
 <!-- START: Revised header region -->
 <div id="header" class="clearfix" data-page='{
@@ -32,6 +33,12 @@
     "wbid": "[% wbid || class %]",
     "name": "[% label | uri %]",
     "id" : "[% object.name.data.id | uri %]",
+    "other_names" : [
+        [% FOREACH n IN other_names;
+             "\"$n\"";
+	     ',' IF !loop.last;
+        END; %]
+    ],
     "class" : "[% object.name.data.class FILTER lower %]",
     "type" : "[% c.stash.section | uri %]",
     "is_obj": "[% is_obj %]",

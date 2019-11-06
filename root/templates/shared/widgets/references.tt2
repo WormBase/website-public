@@ -1,5 +1,5 @@
 [% element_id = "references-field" %]
 <div id="[%- element_id -%]"></div>
 <script>
-  WB.renderWidget([%- json_encode(fields.references.data.results || {}) -%], "[%- element_id -%]", "references");
+  WB.renderWidget([%- json_encode(fields.references.data.results || []) -%], "[%- element_id -%]", "references");
 </script>

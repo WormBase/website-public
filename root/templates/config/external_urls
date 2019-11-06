@@ -972,6 +972,13 @@
 	search      = 'http://www.expasy.org/uniprot/%s'
 	}
 
+ Textpresso = {
+	description = 'Knowledge discovery through full text mining, classification and searching'
+	base        = 'https://textpressocentral.org/'
+	search      = 'https://www.textpressocentral.org/tpc/search?keyword=%s&scope=document&literature=C. elegans'
+	}
+
+
  TheAmericanSocietyForBiochemistryandMolecularBiology = {
 	description = 'The American Society For Biochemistry and Molecular Biology'
 	base        = 'http://www.asbmb.org/'

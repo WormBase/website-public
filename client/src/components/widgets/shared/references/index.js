@@ -17,6 +17,20 @@ import ReferenceList from './ReferenceList';
 import ReferenceItem from './ReferenceItem';
 import DownloadReference from './DownloadReference';
 
+const TEXTPRESSO_TYPE_SET = new Set([
+  'strain',
+  'gene',
+  'gariation',
+  'transgene',
+  'construct',
+  'anatomy_term',
+  'clone',
+  'life_stage',
+  'rearrangement',
+  'molecule',
+  'process',
+]);
+
 class References extends Component {
   static propTypes = {
     data: PropTypes.arrayOf(
@@ -26,6 +40,7 @@ class References extends Component {
     ).isRequired,
     pageInfo: PropTypes.shape({
       name: PropTypes.string,
+      other_names: PropTypes.arrayOf(PropTypes.string),
     }).isRequired,
     classes: PropTypes.object.isRequired,
   };
@@ -57,7 +72,7 @@ class References extends Component {
   };
 
   countsByPaperTypes = (rows) => {
-    return rows.reduce((counts, row) => {
+    return (rows || []).reduce((counts, row) => {
       const ptype = row.ptype;
       counts[ptype] = counts[ptype] ? counts[ptype] + 1 : 1;
       return counts;
@@ -65,85 +80,116 @@ class References extends Component {
   };
 
   render() {
-    const counts = this.countsByPaperTypes(this.props.data);
-    const { classes } = this.props;
-    const data = this.filterData(this.props.data).sort(this.compareYear);
+    const { classes, pageInfo, data: dataAll = [] } = this.props;
+
+    const counts = this.countsByPaperTypes(dataAll);
+    const data = this.filterData(dataAll).sort(this.compareYear);
 
     const FittedListSubheader = fitComponent(ListSubheader);
 
     return (
-      <div className={classes.root}>
-        <div className={classes.sidebar}>
-          <List
-            dense
-            subheader={<ListSubheader>Filter by article type</ListSubheader>}
-          >
-            {Object.keys(counts)
-              .sort()
-              .map((paperType) => {
-                const isSelected =
-                  this.state.paperType && this.state.paperType === paperType;
-                // console.log(isSelected);
-                return (
-                  <ListItem
-                    button
-                    dense
-                    key={paperType}
-                    classes={{
-                      button: classNames({ [classes.selected]: isSelected }),
-                    }}
-                    onClick={() => this.handlePaperTypeUpdate(paperType)}
-                  >
-                    <ListItemText
-                      primary={paperType}
-                      secondary={counts[paperType]}
-                    />
-                    {isSelected ? (
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          onClick={() => this.handlePaperTypeUpdate(paperType)}
-                          aria-label="Cancel filter"
-                        >
-                          <CancelIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    ) : null}
-                  </ListItem>
-                );
-              })}
-          </List>
-        </div>
-        <div className={classes.content}>
-          <FittedListSubheader widthOnly component="div">
-            <div>
-              {this.state.paperType ? (
-                <span>
-                  {data.length} / {this.props.data.length}{' '}
-                  {pluralize('reference', data.length)} found matching your
-                  filter
-                </span>
-              ) : (
-                <span>
-                  {data.length} {pluralize('reference', data.length)} found
-                </span>
-              )}
+      <React.Fragment>
+        {dataAll.length ? (
+          <div className={classes.root}>
+            <div className={classes.sidebar}>
+              <List
+                dense
+                subheader={
+                  <ListSubheader>Filter by article type</ListSubheader>
+                }
+              >
+                {Object.keys(counts)
+                  .sort()
+                  .map((paperType) => {
+                    const isSelected =
+                      this.state.paperType &&
+                      this.state.paperType === paperType;
+                    // console.log(isSelected);
+                    return (
+                      <ListItem
+                        button
+                        dense
+                        key={paperType}
+                        classes={{
+                          button: classNames({
+                            [classes.selected]: isSelected,
+                          }),
+                        }}
+                        onClick={() => this.handlePaperTypeUpdate(paperType)}
+                      >
+                        <ListItemText
+                          primary={paperType}
+                          secondary={counts[paperType]}
+                        />
+                        {isSelected ? (
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              onClick={() =>
+                                this.handlePaperTypeUpdate(paperType)
+                              }
+                              aria-label="Cancel filter"
+                            >
+                              <CancelIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        ) : null}
+                      </ListItem>
+                    );
+                  })}
+              </List>
             </div>
-          </FittedListSubheader>
-          <ReferenceList data={data}>
-            {(pageData) =>
-              pageData.map((itemData) => (
-                <ReferenceItem key={itemData.name.id} data={itemData} />
-              ))
-            }
-          </ReferenceList>
-          <DownloadReference
-            data={data}
-            fileName={`${this.props.pageInfo.name}_references.csv`}
-          >
-            Download all references
-          </DownloadReference>
-        </div>
-      </div>
+            <div className={classes.content}>
+              <FittedListSubheader widthOnly component="div">
+                <div>
+                  {this.state.paperType ? (
+                    <span>
+                      {data.length} / {this.props.data.length}{' '}
+                      {pluralize('reference', data.length)} found matching your
+                      filter
+                    </span>
+                  ) : (
+                    <span>
+                      {data.length} {pluralize('reference', data.length)} found
+                    </span>
+                  )}
+                </div>
+              </FittedListSubheader>
+              <ReferenceList data={data}>
+                {(pageData) =>
+                  pageData.map((itemData) => (
+                    <ReferenceItem key={itemData.name.id} data={itemData} />
+                  ))
+                }
+              </ReferenceList>
+              <DownloadReference
+                className={classes.downloadButton}
+                data={data}
+                fileName={`${pageInfo.name}_references.csv`}
+              >
+                Download all references
+              </DownloadReference>
+            </div>
+          </div>
+        ) : null}
+        {TEXTPRESSO_TYPE_SET.has(pageInfo.class) ? (
+          <section className={classes.textpressoSection}>
+            <h4>Looking for more references? </h4>
+            <p>
+              Find references identified using machine learning on{' '}
+              <a
+                className="wb-ext"
+                href={`https://www.textpressocentral.org/tpc/search?keyword=${[
+                  pageInfo.name,
+                  ...pageInfo.other_names,
+                ].join(' OR ')}&scope=document&literature=C. elegans`}
+                target="_blank"
+              >
+                Textpresso
+              </a>
+            </p>
+          </section>
+        ) : null}
+      </React.Fragment>
     );
   }
 }
@@ -156,15 +202,17 @@ const styles = (theme) => {
       display: 'flex',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
+      alignItems: 'baseline',
       flexDirection: 'row-reverse',
     },
     content: {
+      position: 'relative',
       [theme.breakpoints.up('md')]: {
         width: `calc(100% - ${sidebarWidth + grooveWidth}px)`,
       },
     },
     sidebar: {
-      width: `calc(100% + ${4 * theme.spacing.unit}px)`,
+      width: `calc(100% + ${2 * theme.spacing.unit}px)`,
       margin: `0 ${-2 * theme.spacing.unit}px`,
       [theme.breakpoints.up('md')]: {
         width: sidebarWidth,
@@ -173,6 +221,17 @@ const styles = (theme) => {
     },
     selected: {
       backgroundColor: fade(theme.palette.text.primary, 0.12),
+    },
+    downloadButton: {
+      position: 'absolute',
+      bottom: 15,
+    },
+    textpressoSection: {
+      margin: `${theme.spacing.unit * 2}px 0 0`,
+      textAlign: 'center',
+      '& p': {
+        margin: `${theme.spacing.unit * 2}px 0 0`,
+      },
     },
   };
 };
