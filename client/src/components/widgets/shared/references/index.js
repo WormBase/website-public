@@ -72,7 +72,7 @@ class References extends Component {
   };
 
   countsByPaperTypes = (rows) => {
-    return rows.reduce((counts, row) => {
+    return (rows || []).reduce((counts, row) => {
       const ptype = row.ptype;
       counts[ptype] = counts[ptype] ? counts[ptype] + 1 : 1;
       return counts;
@@ -80,106 +80,116 @@ class References extends Component {
   };
 
   render() {
-    const counts = this.countsByPaperTypes(this.props.data);
-    const { classes, pageInfo } = this.props;
+    const { classes, pageInfo, data: dataAll = [] } = this.props;
 
-    const data = this.filterData(this.props.data).sort(this.compareYear);
+    const counts = this.countsByPaperTypes(dataAll);
+    const data = this.filterData(dataAll).sort(this.compareYear);
 
     const FittedListSubheader = fitComponent(ListSubheader);
 
     return (
-      <div className={classes.root}>
-        <div className={classes.sidebar}>
-          <List
-            dense
-            subheader={<ListSubheader>Filter by article type</ListSubheader>}
-          >
-            {Object.keys(counts)
-              .sort()
-              .map((paperType) => {
-                const isSelected =
-                  this.state.paperType && this.state.paperType === paperType;
-                // console.log(isSelected);
-                return (
-                  <ListItem
-                    button
-                    dense
-                    key={paperType}
-                    classes={{
-                      button: classNames({ [classes.selected]: isSelected }),
-                    }}
-                    onClick={() => this.handlePaperTypeUpdate(paperType)}
-                  >
-                    <ListItemText
-                      primary={paperType}
-                      secondary={counts[paperType]}
-                    />
-                    {isSelected ? (
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          onClick={() => this.handlePaperTypeUpdate(paperType)}
-                          aria-label="Cancel filter"
-                        >
-                          <CancelIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    ) : null}
-                  </ListItem>
-                );
-              })}
-          </List>
-        </div>
-        <div className={classes.content}>
-          <FittedListSubheader widthOnly component="div">
-            <div>
-              {this.state.paperType ? (
-                <span>
-                  {data.length} / {this.props.data.length}{' '}
-                  {pluralize('reference', data.length)} found matching your
-                  filter
-                </span>
-              ) : (
-                <span>
-                  {data.length} {pluralize('reference', data.length)} found
-                </span>
-              )}
+      <React.Fragment>
+        {dataAll.length ? (
+          <div className={classes.root}>
+            <div className={classes.sidebar}>
+              <List
+                dense
+                subheader={
+                  <ListSubheader>Filter by article type</ListSubheader>
+                }
+              >
+                {Object.keys(counts)
+                  .sort()
+                  .map((paperType) => {
+                    const isSelected =
+                      this.state.paperType &&
+                      this.state.paperType === paperType;
+                    // console.log(isSelected);
+                    return (
+                      <ListItem
+                        button
+                        dense
+                        key={paperType}
+                        classes={{
+                          button: classNames({
+                            [classes.selected]: isSelected,
+                          }),
+                        }}
+                        onClick={() => this.handlePaperTypeUpdate(paperType)}
+                      >
+                        <ListItemText
+                          primary={paperType}
+                          secondary={counts[paperType]}
+                        />
+                        {isSelected ? (
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              onClick={() =>
+                                this.handlePaperTypeUpdate(paperType)
+                              }
+                              aria-label="Cancel filter"
+                            >
+                              <CancelIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        ) : null}
+                      </ListItem>
+                    );
+                  })}
+              </List>
             </div>
-          </FittedListSubheader>
-          <ReferenceList data={data}>
-            {(pageData) =>
-              pageData.map((itemData) => (
-                <ReferenceItem key={itemData.name.id} data={itemData} />
-              ))
-            }
-          </ReferenceList>
-          <DownloadReference
-            className={classes.downloadButton}
-            data={data}
-            fileName={`${pageInfo.name}_references.csv`}
-          >
-            Download all references
-          </DownloadReference>
-
-          {TEXTPRESSO_TYPE_SET.has(pageInfo.class) ? (
-            <section className={classes.textpressoSection}>
-              <h4>Looking for more references? </h4>
-              <p>
-                Find references identified using machine learning on{' '}
-                <a
-                  className="wb-ext"
-                  href={`https://www.textpressocentral.org/tpc/search?keyword=${[
-                    pageInfo.name,
-                    ...pageInfo.other_names,
-                  ].join(' OR ')}&scope=document&literature=C. elegans`}
-                  target="_blank"
-                >
-                  Textpresso
-                </a>
-              </p>
-            </section>
-          ) : null}
-        </div>
-      </div>
+            <div className={classes.content}>
+              <FittedListSubheader widthOnly component="div">
+                <div>
+                  {this.state.paperType ? (
+                    <span>
+                      {data.length} / {this.props.data.length}{' '}
+                      {pluralize('reference', data.length)} found matching your
+                      filter
+                    </span>
+                  ) : (
+                    <span>
+                      {data.length} {pluralize('reference', data.length)} found
+                    </span>
+                  )}
+                </div>
+              </FittedListSubheader>
+              <ReferenceList data={data}>
+                {(pageData) =>
+                  pageData.map((itemData) => (
+                    <ReferenceItem key={itemData.name.id} data={itemData} />
+                  ))
+                }
+              </ReferenceList>
+              <DownloadReference
+                className={classes.downloadButton}
+                data={data}
+                fileName={`${pageInfo.name}_references.csv`}
+              >
+                Download all references
+              </DownloadReference>
+            </div>
+          </div>
+        ) : null}
+        {TEXTPRESSO_TYPE_SET.has(pageInfo.class) ? (
+          <section className={classes.textpressoSection}>
+            <h4>Looking for more references? </h4>
+            <p>
+              Find references identified using machine learning on{' '}
+              <a
+                className="wb-ext"
+                href={`https://www.textpressocentral.org/tpc/search?keyword=${[
+                  pageInfo.name,
+                  ...pageInfo.other_names,
+                ].join(' OR ')}&scope=document&literature=C. elegans`}
+                target="_blank"
+              >
+                Textpresso
+              </a>
+            </p>
+          </section>
+        ) : null}
+      </React.Fragment>
     );
   }
 }
@@ -195,6 +205,7 @@ const styles = (theme) => {
       flexDirection: 'row-reverse',
     },
     content: {
+      position: 'relative',
       [theme.breakpoints.up('md')]: {
         width: `calc(100% - ${sidebarWidth + grooveWidth}px)`,
       },
@@ -211,13 +222,14 @@ const styles = (theme) => {
       backgroundColor: fade(theme.palette.text.primary, 0.12),
     },
     downloadButton: {
-      position: 'relative',
-      bottom: 45,
+      position: 'absolute',
+      bottom: 15,
     },
     textpressoSection: {
+      margin: `${theme.spacing.unit * 2}px 0 0`,
       textAlign: 'center',
       '& p': {
-        margin: `${theme.spacing.unit}px 0`,
+        margin: `${theme.spacing.unit * 2}px 0 0`,
       },
     },
   };
