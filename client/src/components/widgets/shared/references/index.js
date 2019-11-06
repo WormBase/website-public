@@ -175,7 +175,7 @@ class References extends Component {
           <section className={classes.textpressoSection}>
             <h4>Looking for more references? </h4>
             <p>
-              Find references identified using machine learning on{' '}
+              Find references identified using{' '}
               <a
                 className="wb-ext"
                 href={`https://www.textpressocentral.org/tpc/search?keyword=${[
