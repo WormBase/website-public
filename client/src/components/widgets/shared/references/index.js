@@ -183,7 +183,7 @@ class References extends Component {
                   ...pageInfo.other_names,
                 ].join(
                   ' OR '
-                )}&scope=document&literature=C. elegans,C. elegans Supplementals`}
+                )}&scope=document&literature=C. elegans&literature=C. elegans Supplementals`}
                 target="_blank"
               >
                 Textpresso
