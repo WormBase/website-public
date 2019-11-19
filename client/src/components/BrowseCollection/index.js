@@ -5,10 +5,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '../Button';
 import DownloadButton from '../DownloadButton';
+import Link from '../Link';
 
 export default function BrowseCollection({
   collection = [],
-  renderItem = ({ label }) => label,
+  renderItem = (props) => <Link {...props} />,
   renderButton = (props) => <Button {...props} />,
   title = 'Browse collection',
 }) {
@@ -28,12 +29,14 @@ export default function BrowseCollection({
       })}
       <Dialog scroll="paper" open={isOpen} onClose={handleToggle}>
         <DialogTitle>{title}</DialogTitle>
-        <DialogContent>
+        <div>
           <DownloadButton contentFunc={toText} />
           <Button variant={'outlined'}>Analyze</Button>
+        </div>
+        <DialogContent>
           <ul>
             {collection.map((item) => (
-              <li>{renderItem(item)}</li>
+              <li key={item.id}>{renderItem(item)}</li>
             ))}
           </ul>
         </DialogContent>
