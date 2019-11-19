@@ -55,16 +55,18 @@ export default function InteractorVennDiagram({ data = [] }) {
       return sets.every((qs) => querySets.indexOf(qs) > -1);
     }
 
-    return data.filter(({ types }) =>
-      selections.some(({ vennArea, intersectedAreas = [] }) => {
-        const isSelected = intersectedAreas.reduce(
-          (result, { sets: subtractedSet }) =>
-            result && !inIntersection(types, subtractedSet),
-          inIntersection(types, vennArea.sets)
-        );
-        return isSelected;
-      })
-    );
+    return data
+      .filter(({ types }) =>
+        selections.some(({ vennArea, intersectedAreas = [] }) => {
+          const isSelected = intersectedAreas.reduce(
+            (result, { sets: subtractedSet }) =>
+              result && !inIntersection(types, subtractedSet),
+            inIntersection(types, vennArea.sets)
+          );
+          return isSelected;
+        })
+      )
+      .map(({ interactor }) => interactor);
   }, [data, selections]);
 
   return (
@@ -80,7 +82,6 @@ export default function InteractorVennDiagram({ data = [] }) {
             <Button {...props}>Browse selected</Button>
           </Badge>
         )}
-        renderItem={({ interactor }) => interactor.label}
       />
       {selectedInteractors.length ? (
         <Button variant={'outlined'} onClick={venn.current.clearSelection}>
