@@ -181,7 +181,7 @@ export default function draw(
       .nodes()
       .map((area) => {
         select(area).classed('selected', false);
-        colorVennAreaPart(select(area), { isHover: true });
+        colorVennAreaPart(select(area), { isHover: false });
       });
     handleAreaSelectionUpdate();
   }
@@ -196,4 +196,8 @@ export default function draw(
   appendLabels(svg, labels);
   bindVennAreaPartListeners();
   // removeOriginalVennAreas();
+
+  return {
+    clearSelection,
+  };
 }
