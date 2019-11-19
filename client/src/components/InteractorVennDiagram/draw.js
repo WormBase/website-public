@@ -1,13 +1,18 @@
 import { select, selectAll, event as d3event } from 'd3-selection';
 import { VennDiagram, sortAreas } from 'venn.js';
 
-export default function draw(node, sets, coloursFunc) {
+export default function draw(
+  node,
+  sets,
+  coloursFunc,
+  { onAreaSelectionUpdate } = {}
+) {
   const chart = VennDiagram();
   chart.colours(coloursFunc);
   const div = select(node);
   div.datum(sets).call(chart);
 
-  // Code below is lifted out of https://codepen.io/avnerz/pen/dJPWee?editors=1010, created by avnerz
+  // Code below is modified from https://codepen.io/avnerz/pen/dJPWee?editors=1010, created by avnerz
   // to allow areas of set difference to be selected
 
   function getIntersectionAreasMapping() {
@@ -54,10 +59,11 @@ export default function draw(node, sets, coloursFunc) {
       let vennArea = intersectionAreasItem.vennArea;
       let intersectedAreas = intersectionAreasItem.intersectedAreas;
       let partId = getPartId(vennArea, intersectedAreas);
+      let partDescriptor = JSON.stringify({ vennArea, intersectedAreas });
       let d = [vennArea.d].concat(
         intersectedAreas.map((intersectedArea) => intersectedArea.d)
       );
-      appendVennAreaPart(svg, d.join(''), partId);
+      appendVennAreaPart(svg, d.join(''), partId, partDescriptor);
     }
   }
 
@@ -69,11 +75,12 @@ export default function draw(node, sets, coloursFunc) {
     });
   }
 
-  function appendVennAreaPart(svg, d, partId) {
+  function appendVennAreaPart(svg, d, partId, partDescriptor) {
     svg
       .append('g')
       .attr('class', 'venn-area-part')
       .attr('venn-area-part-id', partId)
+      .attr('venn-area-part-descriptor', partDescriptor)
       .append('path')
       .attr('d', d)
       .attr('fill-rule', 'evenodd')
@@ -134,6 +141,19 @@ export default function draw(node, sets, coloursFunc) {
     nodePath.attr('style', style);
   }
 
+  function handleAreaSelectionUpdate() {
+    onAreaSelectionUpdate &&
+      onAreaSelectionUpdate(
+        div
+          .selectAll('g.venn-area-part.selected')
+          .nodes()
+          .map((area) => ({
+            id: select(area).attr('venn-area-part-id'),
+            ...JSON.parse(select(area).attr('venn-area-part-descriptor')),
+          }))
+      );
+  }
+
   function bindVennAreaPartListeners() {
     div
       .selectAll('g')
@@ -147,6 +167,7 @@ export default function draw(node, sets, coloursFunc) {
         const node = select(this);
         node.classed('selected', !node.classed('selected'));
         colorVennAreaPart(node, { isHover: true });
+        handleAreaSelectionUpdate();
       });
   }
 
@@ -154,11 +175,22 @@ export default function draw(node, sets, coloursFunc) {
     selectAll('g.venn-area').remove();
   }
 
+  function clearSelection() {
+    div
+      .selectAll('g')
+      .nodes()
+      .map((area) => {
+        select(area).classed('selected', false);
+        colorVennAreaPart(select(area), { isHover: true });
+      });
+    handleAreaSelectionUpdate();
+  }
+
   let svg = div.select('svg');
   let defs = svg.append('defs');
   let labels = div.selectAll('text').remove();
   let intersectionAreasMapping = getIntersectionAreasMapping();
-
+  console.log(intersectionAreasMapping);
   appendPatterns(defs);
   appendVennAreaParts(svg, intersectionAreasMapping);
   appendLabels(svg, labels);
