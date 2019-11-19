@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button';
 import { CircularProgress } from './Progress';
+import { saveAs } from 'file-saver';
 
 class DownloadButton extends Component {
   constructor(props) {
@@ -36,18 +37,15 @@ class DownloadButton extends Component {
   };
 
   defaultRenderer = (props) => (
-    <Button variant="contained" {...props}>
+    <Button {...props}>
       {props.children || 'Download'}
       {this.state.status === 'PENDING' ? <CircularProgress /> : null}
     </Button>
   );
 
   defaultFileSaveFunc = (content) => {
-    import('file-saver').then((module) => {
-      const { saveAs } = module;
-      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-      saveAs(blob, this.props.fileName || 'download.txt');
-    });
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    saveAs(blob, this.props.fileName || 'download.txt');
   };
 
   render() {
