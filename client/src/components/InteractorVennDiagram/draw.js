@@ -177,7 +177,7 @@ export default function draw(
 
   function clearSelection() {
     div
-      .selectAll('g')
+      .selectAll('g.venn-area-part')
       .nodes()
       .map((area) => {
         select(area).classed('selected', false);
