@@ -2,16 +2,16 @@
 [%
       x = [];
       FOREACH d IN blastp_details.data;
-      x.push(d) IF d.e_value;
+      x.push(d) IF d.evalue;
       END;
-      build_data_table(order=['e_value', 'species', 'hit', 'description', 'source_range', 'target_range'],
-                       columns={ species  => 'Species',
+      build_data_table(order=['evalue', 'taxonomy', 'hit', 'description', 'percentage'],
+                       columns={ taxonomy  => 'Species',
                                  hit      => 'Hit',
                                  description => 'Description',
-                                 e_value   => 'BLAST e-value',
+                                 evalue   => 'BLAST e-value',
 				 source_range => 'Source range',
 				 target_range => 'Target range',
-                                 percent  => '% Length'
+                                 percentage => '% Length'
                                 },
 		       key='blastp_details',
                        passed_data=x,
