@@ -124,7 +124,7 @@ export default function draw(
         .attr('d', 'M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2')
         .attr('stroke', '#aaa')
         .attr('opacity', '1')
-        .attr('stroke-width', '5');
+        .attr('stroke-width', '3');
     });
   }
 
