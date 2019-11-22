@@ -76,6 +76,9 @@ export default function draw(
 
   function appendLabels(svg, labels) {
     labels.nodes().forEach((label) => {
+      if (select(label).text()) {
+        label.append(' interaction');
+      }
       svg.append(function() {
         return label;
       });
