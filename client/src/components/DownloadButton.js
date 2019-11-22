@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button';
 import { CircularProgress } from './Progress';
+import SaveIcon from '@material-ui/icons/SaveAlt';
 import { saveAs } from 'file-saver';
 
 class DownloadButton extends Component {
@@ -38,7 +39,11 @@ class DownloadButton extends Component {
 
   defaultRenderer = (props) => (
     <Button {...props}>
-      {props.children || 'Download'}
+      {props.children || (
+        <React.Fragment>
+          Download <SaveIcon />
+        </React.Fragment>
+      )}
       {this.state.status === 'PENDING' ? <CircularProgress /> : null}
     </Button>
   );
