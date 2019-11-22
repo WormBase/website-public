@@ -39,6 +39,7 @@ export default function draw(
           return {
             sets: intersectedAreaSelection.data()[0].sets,
             d: intersectedAreaSelection.select('path').attr('d'),
+            size: intersectedAreaSelection.data()[0].size,
           };
         });
 
@@ -46,6 +47,7 @@ export default function draw(
         vennArea: {
           sets: areaSets,
           d: areaD,
+          size: areaData.size,
         },
         intersectedAreas: intersectedAreas,
       };
@@ -59,11 +61,16 @@ export default function draw(
       let vennArea = intersectionAreasItem.vennArea;
       let intersectedAreas = intersectionAreasItem.intersectedAreas;
       let partId = getPartId(vennArea, intersectedAreas);
-      let partDescriptor = JSON.stringify({ vennArea, intersectedAreas });
+      let partSize = getPartSize(vennArea, intersectedAreas);
+      let partDescriptor = JSON.stringify({
+        vennArea,
+        intersectedAreas,
+        partSize,
+      });
       let d = [vennArea.d].concat(
         intersectedAreas.map((intersectedArea) => intersectedArea.d)
       );
-      appendVennAreaPart(svg, d.join(''), partId, partDescriptor);
+      appendVennAreaPart(svg, d.join(''), { partId, partDescriptor, partSize });
     }
   }
 
@@ -75,12 +82,17 @@ export default function draw(
     });
   }
 
-  function appendVennAreaPart(svg, d, partId, partDescriptor) {
+  function appendVennAreaPart(
+    svg,
+    d,
+    { partId, partDescriptor, partSize } = {}
+  ) {
     svg
       .append('g')
       .attr('class', 'venn-area-part')
       .attr('venn-area-part-id', partId)
       .attr('venn-area-part-descriptor', partDescriptor)
+      .attr('venn-area-part-size', partSize)
       .append('path')
       .attr('d', d)
       .attr('fill-rule', 'evenodd')
@@ -125,6 +137,14 @@ export default function draw(
     return partId;
   }
 
+  function getPartSize(vennArea, intersectedAreas) {
+    const intersectedSize = intersectedAreas.reduce(
+      (sum, intersectedArea) => sum + intersectedArea.size,
+      0
+    );
+    return vennArea.size - intersectedSize;
+  }
+
   function colorVennAreaPart(node, { isHover }) {
     let nodePath = node.select('path');
     let isNodeAlreadySelected = node.classed('selected');
@@ -155,13 +175,43 @@ export default function draw(
   }
 
   function bindVennAreaPartListeners() {
+    var tooltip = select('body')
+      .append('div')
+      .style('position', 'absolute')
+      .style('text-align', 'center')
+      //      .style('width', '128px')
+      .style('height', '20px')
+      .style('background', '#333')
+      .style('color', '#ddd')
+      .style('padding', '3px 5px')
+      .style('border', '0px')
+      .style('border-radius', '8px')
+      .style('opacity', 0)
+      .attr('class', 'venntooltip');
+
     div
       .selectAll('g')
       .on('mouseover', function(d, i) {
         colorVennAreaPart(select(this), { isHover: true });
+        tooltip
+          .transition()
+          .duration(400)
+          .style('opacity', 0.9);
+        console.log(select(this).attr('venn-area-part-size'));
+        tooltip.text(select(this).attr('venn-area-part-size') + ' genes');
       })
+      .on('mousemove', function() {
+        tooltip
+          .style('left', d3event.pageX + 'px')
+          .style('top', d3event.pageY - 28 + 'px');
+      })
+
       .on('mouseout', function(d, i) {
         colorVennAreaPart(select(this), { isHover: false });
+        tooltip
+          .transition()
+          .duration(400)
+          .style('opacity', 0);
       })
       .on('click', function(d, i) {
         const node = select(this);
