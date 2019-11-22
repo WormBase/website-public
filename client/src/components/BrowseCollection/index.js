@@ -3,6 +3,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Divider from '@material-ui/core/Divider';
+import ClearIcon from '@material-ui/icons/Clear';
+import LaunchIcon from '@material-ui/icons/Launch';
 import Button from '../Button';
 import DownloadButton from '../DownloadButton';
 import Link from '../Link';
@@ -68,17 +72,26 @@ export default function BrowseCollection({
       })}
       <Dialog scroll="paper" open={isOpen} onClose={handleToggle}>
         <DialogTitle>{title}</DialogTitle>
-        <div>
-          <DownloadButton contentFunc={toText} />
-          <Button onClick={toWormMine}>Analyze</Button>
-        </div>
+        <Divider />
         <DialogContent>
-          <ul>
-            {collection.map((item) => (
-              <li key={item.id}>{renderItem(item)}</li>
-            ))}
-          </ul>
+          <DialogContentText>
+            <ul>
+              {collection.map((item) => (
+                <li key={item.id}>{renderItem(item)}</li>
+              ))}
+            </ul>
+          </DialogContentText>
         </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Button variant="text" onClick={handleToggle}>
+            Cancel
+          </Button>
+          <DownloadButton contentFunc={toText} />
+          <Button onClick={toWormMine}>
+            WormMine <LaunchIcon />
+          </Button>
+        </DialogActions>
       </Dialog>
     </React.Fragment>
   );
