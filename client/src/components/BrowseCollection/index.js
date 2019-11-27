@@ -37,6 +37,7 @@ export default function BrowseCollection({
       // It can be made less wordy if you use one.
       const form = document.createElement('form');
       form.setAttribute('method', 'post');
+      form.setAttribute('target', '_blank');
       form.setAttribute(
         'action',
         'http://intermine.wormbase.org/tools/wormmine/buildBag.do'
@@ -65,6 +66,45 @@ export default function BrowseCollection({
       form.submit();
     }
     post_to_wormmine(collection.map(({ id }) => id));
+  }, [collection]);
+
+  const toEnrichmentAnalysisTool = useCallback(() => {
+    // modiied from code from SGD https://github.com/yeastgenome/SGDFrontend
+    function post(geneIds) {
+      // The rest of this code assumes you are not using a library.
+      // It can be made less wordy if you use one.
+      const form = document.createElement('form');
+      form.setAttribute('method', 'post');
+      form.setAttribute(
+        'action',
+        'https://wormbase.org/tools/enrichment/tea/tea.cgi'
+      );
+      form.setAttribute('target', '_blank');
+      form.setAttribute('enctype', 'multipart/form-data');
+
+      const geneListInput = document.createElement('textarea');
+      geneListInput.setAttribute('type', 'hidden');
+      geneListInput.setAttribute('name', 'genelist');
+      geneListInput.value = geneIds.join(' ');
+      form.appendChild(geneListInput);
+
+      const qvalueThresholdInput = document.createElement('input');
+      qvalueThresholdInput.setAttribute('type', 'hidden');
+      qvalueThresholdInput.setAttribute('name', 'qvalueThreshold');
+      qvalueThresholdInput.setAttribute('value', '0.1');
+      qvalueThresholdInput.id = 'qvalueThreshold';
+      form.appendChild(qvalueThresholdInput);
+
+      const submitInput = document.createElement('input');
+      submitInput.setAttribute('name', 'action');
+      submitInput.setAttribute('type', 'submit');
+      submitInput.setAttribute('value', 'Analyze List');
+      form.appendChild(submitInput);
+
+      document.body.appendChild(form);
+      submitInput.click();
+    }
+    post(collection.map(({ id }) => id));
   }, [collection]);
 
   return (
@@ -99,6 +139,9 @@ export default function BrowseCollection({
           <DownloadButton contentFunc={toTSV} fileName={`${title}.txt`}>
             TSV
           </DownloadButton>
+          <Button onClick={toEnrichmentAnalysisTool}>
+            Enrichment Analysis <LaunchIcon />
+          </Button>
           <Button onClick={toWormMine}>
             WormMine <LaunchIcon />
           </Button>
