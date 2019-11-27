@@ -16,6 +16,7 @@ export default function BrowseCollection({
   renderItem = (props) => <Link {...props} />,
   renderButton = (props) => <Button {...props} />,
   title = 'Browse collection',
+  type = 'gene',
 }) {
   const [isOpen, setOpen] = useState(false);
   const handleToggle = () => setOpen((prevIsOpen) => !prevIsOpen);
@@ -139,9 +140,11 @@ export default function BrowseCollection({
           <DownloadButton contentFunc={toTSV} fileName={`${title}.txt`}>
             TSV
           </DownloadButton>
-          <Button onClick={toEnrichmentAnalysisTool}>
-            Enrichment Analysis <LaunchIcon />
-          </Button>
+          {type === 'gene' && collection.length > 1 ? (
+            <Button onClick={toEnrichmentAnalysisTool}>
+              Enrichment Analysis <LaunchIcon />
+            </Button>
+          ) : null}
           <Button onClick={toWormMine}>
             WormMine <LaunchIcon />
           </Button>
