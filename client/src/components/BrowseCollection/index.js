@@ -20,8 +20,13 @@ export default function BrowseCollection({
   const [isOpen, setOpen] = useState(false);
   const handleToggle = () => setOpen((prevIsOpen) => !prevIsOpen);
 
-  const toText = useCallback(
+  const toTSV = useCallback(
     () => collection.map(({ id, label }) => `${label}\t${id}`).join('\n'),
+    [collection]
+  );
+
+  const toCSV = useCallback(
+    () => collection.map(({ id, label }) => `${label},${id}`).join('\n'),
     [collection]
   );
 
@@ -87,7 +92,12 @@ export default function BrowseCollection({
           <Button variant="text" onClick={handleToggle}>
             Cancel
           </Button>
-          <DownloadButton contentFunc={toText} />
+          <DownloadButton contentFunc={toCSV} fileName={`${title}.csv`}>
+            CSV
+          </DownloadButton>
+          <DownloadButton contentFunc={toTSV} fileName={`${title}.txt`}>
+            TSV
+          </DownloadButton>
           <Button onClick={toWormMine}>
             WormMine <LaunchIcon />
           </Button>
