@@ -3,15 +3,13 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
-import CheckmarkIcon from '@material-ui/icons/Done';
 import SaveIcon from '@material-ui/icons/Save';
-import CopyIcon from '@material-ui/icons/FileCopy';
 import ExpandMoreIcon from '@material-ui/icons/ArrowRight';
 import ExpandLessIcon from '@material-ui/icons/ArrowDropDown';
 import Sequence from './Sequence';
-import DownloadButton from '../DownloadButton';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Button from '../Button';
+import CopyButton from '../CopyButton';
+import DownloadButton from '../DownloadButton';
 import CardActionArea from '../CardActionArea';
 import Tooltip from '../Tooltip';
 
@@ -67,23 +65,7 @@ const SequenceCard = (props) => {
             contentFunc={() => `> ${title}\r\n${sequence}`}
           />
         </Tooltip>
-        <CopyToClipboard
-          text={`> ${title}\r\n${sequence}`}
-          onCopy={() => setCopied(true)}
-        >
-          <Tooltip title="Copy to clipboard">
-            <Button variant="outlined" className={classes.button}>
-              Copy{' '}
-              <CopyIcon className={classes.buttonIcon} fontSize="inherit" />
-              {copied ? (
-                <CheckmarkIcon
-                  className={classes.buttonIcon}
-                  fontSize="inherit"
-                />
-              ) : null}
-            </Button>
-          </Tooltip>
-        </CopyToClipboard>
+        <CopyButton text={`> ${title}\r\n${sequence}`} />
       </CardActions>
       {expand ? (
         <Sequence title={title} sequence={sequence} {...sequenceProps} />
