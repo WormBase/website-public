@@ -1,5 +1,5 @@
- [% WRAPPER $field_block title="Interactors Venn Diagram" key="interactor_types"; tooltip="Venn diagram for interactors by the type of interactions" %]
-     <div id="interactor-venn-container"></div>
+ [% WRAPPER $field_block title="Interactors <br/> Venn Diagram" key="interactor_types"; tooltip="Venn diagram for interactors by the type of interactions" %]
+     <div id="interactor-venn-container" style="height:386px;"></div>
      <script>
        WB.renderInteractorVennDiagram([% json_encode(fields.interactor_types.data || []) %], "interactor-venn-container");
      </script>
