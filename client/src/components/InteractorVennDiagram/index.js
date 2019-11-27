@@ -80,6 +80,7 @@ function InteractorVennDiagram({ data = [], classes = {} }) {
       <div className={classes.toolbar}>
         <BrowseCollection
           collection={selectedInteractors}
+          title="Gene Set"
           renderButton={(props) => (
             <Badge
               color="secondary"
