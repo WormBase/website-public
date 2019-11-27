@@ -7,6 +7,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Divider from '@material-ui/core/Divider';
 import LaunchIcon from '@material-ui/icons/Launch';
 import Button from '../Button';
+import CopyButton from '../CopyButton';
 import DownloadButton from '../DownloadButton';
 import Link from '../Link';
 
@@ -91,6 +92,7 @@ export default function BrowseCollection({
           <Button variant="text" onClick={handleToggle}>
             Cancel
           </Button>
+          <CopyButton textFunc={toTSV} />
           <DownloadButton contentFunc={toCSV} fileName={`${title}.csv`}>
             CSV
           </DownloadButton>

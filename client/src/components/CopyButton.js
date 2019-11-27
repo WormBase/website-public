@@ -1,13 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import React, { useState, useEffect, useCallback } from 'react';
+import copy from 'copy-to-clipboard';
 import { withStyles } from '@material-ui/core/styles';
 import CheckmarkIcon from '@material-ui/icons/Done';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import Button from './Button';
 import Tooltip from './Tooltip';
 
-function CopyButton({ classes, text }) {
+function CopyButton({ classes, text, textFunc }) {
   const [copied, setCopied] = useState(false);
+
+  const handleClick = useCallback(() => {
+    const TextPromise = new Promise((resolve) => {
+      if (text) {
+        resolve(text);
+      } else {
+        resolve(textFunc ? textFunc() : '');
+      }
+    }).then((resolvedText) => {
+      copy(resolvedText);
+      setCopied(true);
+    });
+  }, [text, textFunc]);
 
   useEffect(() => {
     if (copied) {
@@ -23,16 +36,18 @@ function CopyButton({ classes, text }) {
   }, [copied]);
 
   return (
-    <CopyToClipboard text={text} onCopy={() => setCopied(true)}>
-      <Tooltip title="Copy to clipboard">
-        <Button variant="outlined" className={classes.button}>
-          Copy <CopyIcon className={classes.buttonIcon} fontSize="inherit" />
-          {copied ? (
-            <CheckmarkIcon className={classes.buttonIcon} fontSize="inherit" />
-          ) : null}
-        </Button>
-      </Tooltip>
-    </CopyToClipboard>
+    <Tooltip title="Copy to clipboard">
+      <Button
+        variant="outlined"
+        className={classes.button}
+        onClick={handleClick}
+      >
+        Copy <CopyIcon className={classes.buttonIcon} fontSize="inherit" />
+        {copied ? (
+          <CheckmarkIcon className={classes.buttonIcon} fontSize="inherit" />
+        ) : null}
+      </Button>
+    </Tooltip>
   );
 }
 
