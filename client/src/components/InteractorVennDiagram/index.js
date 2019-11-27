@@ -69,7 +69,10 @@ function InteractorVennDiagram({ data = [], classes = {} }) {
           return isSelected;
         })
       )
-      .map(({ interactor }) => interactor);
+      .map(({ interactor }) => interactor)
+      .sort(({ label: labelA = '' }, { label: labelB = '' }) =>
+        labelA.localeCompare(labelB)
+      );
   }, [data, selections]);
 
   return (
