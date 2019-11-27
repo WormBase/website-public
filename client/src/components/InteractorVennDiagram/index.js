@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Badge from '@material-ui/core/Badge';
-import Typography from '@material-ui/core/Typography';
 import PageViewIcon from '@material-ui/icons/Pageview';
 import ClearIcon from '@material-ui/icons/Clear';
 import { withStyles } from '@material-ui/core/styles';

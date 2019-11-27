@@ -1,5 +1,5 @@
 import { select, selectAll, event as d3event } from 'd3-selection';
-import { VennDiagram, sortAreas } from 'venn.js';
+import { VennDiagram } from 'venn.js';
 
 export default function draw(
   node,
@@ -131,7 +131,7 @@ export default function draw(
   function getPartId(vennArea, intersectedAreas) {
     let partId = '(' + vennArea.sets.join('∩') + ')';
     partId += intersectedAreas.length > 1 ? '\\(' : '';
-    partId += intersectedAreas.length == 1 ? '\\' : '';
+    partId += intersectedAreas.length === 1 ? '\\' : '';
     partId += intersectedAreas
       .map((intersectedArea) => intersectedArea.sets)
       .map((set) => '(' + set.join('∩') + ')')
@@ -224,15 +224,15 @@ export default function draw(
       });
   }
 
-  function removeOriginalVennAreas() {
-    selectAll('g.venn-area').remove();
-  }
+  // function removeOriginalVennAreas() {
+  //   selectAll('g.venn-area').remove();
+  // }
 
   function clearSelection() {
     div
       .selectAll('g.venn-area-part')
       .nodes()
-      .map((area) => {
+      .forEach((area) => {
         select(area).classed('selected', false);
         colorVennAreaPart(select(area), { isHover: false });
       });
