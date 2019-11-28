@@ -122,9 +122,9 @@ export default function draw(
       diagonal
         .append('path')
         .attr('d', 'M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2')
-        .attr('stroke', '#aaa')
-        .attr('opacity', '1')
-        .attr('stroke-width', '3');
+        .attr('stroke', '#000000')
+        .attr('opacity', '0.5')
+        .attr('stroke-width', '1');
     });
   }
 
@@ -245,8 +245,8 @@ export default function draw(
   let intersectionAreasMapping = getIntersectionAreasMapping();
   console.log(intersectionAreasMapping);
   appendPatterns(defs);
-  appendVennAreaParts(svg, intersectionAreasMapping);
   appendLabels(svg, labels);
+  appendVennAreaParts(svg, intersectionAreasMapping);
   bindVennAreaPartListeners();
   // removeOriginalVennAreas();
 
