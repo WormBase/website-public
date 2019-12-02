@@ -1,6 +1,6 @@
 [%# load defined blocks and variable in
   # shared/report_issue.tt2%]
-[% msg=c.request.param('msg') %]
+[% msg=c.request.param('msg') | html %]
 [% PROCESS shared/report_issue.tt2 %]
 
 [%# override variables %]
