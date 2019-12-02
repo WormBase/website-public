@@ -73,13 +73,6 @@
       [%  '<span id="breadcrumbs">' _ breadcrumbs_string _ '</span>'; %]
       <h2>
           [% title %]
-    [% IF c.request.param('from');
-        from_uri = c.request.param('from');
-        UNLESS (from_uri.match('^(?i)http'));  # case insensitive match for 'http' at start of a uri, Not display these external redirects
-            '<span class="note">(redirected from <a href="' _ c.uri_for(from_uri, {redirect=>'no'}) _ '">' _ from_uri _ '</a>)</span>';
-        END;
-    END; %]
-
       </h2>
 
       </div>
