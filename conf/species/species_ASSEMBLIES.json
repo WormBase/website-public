@@ -12,7 +12,7 @@
                "University of Pittsburgh, Pittsburgh, PA"
             ],
             "short_label" : "B_malayi-4.0",
-            "strain" : "FR3",
+            "strain" : "WBStrain00041073",
             "ucsc_name" : null
          }
       ],
@@ -30,8 +30,8 @@
             "laboratory" : [
                "Caltech, Pasadena CA"
             ],
-            "short_label" : "PS1010",
-            "strain" : "PS1010",
+            "short_label" : "WBStrain00042004",
+            "strain" : "WBStrain00042004",
             "ucsc_name" : null
          }
       ],
@@ -49,8 +49,8 @@
             "laboratory" : [
                "Washington University, St. Louis MO"
             ],
-            "short_label" : "PB2801",
-            "strain" : "PB2801",
+            "short_label" : "WBStrain00041997",
+            "strain" : "WBStrain00041997",
             "ucsc_name" : "caePb2"
          }
       ],
@@ -69,8 +69,8 @@
                "University of Maryland, College Park MD",
                "Washington University, St. Louis MO"
             ],
-            "short_label" : "AF16",
-            "strain" : "AF16",
+            "short_label" : "WBStrain00040935",
+            "strain" : "WBStrain00040935",
             "ucsc_name" : null
          }
       ],
@@ -89,8 +89,8 @@
                "Washington University, St. Louis MO",
                "European Bioinformatics Institute; Hinxton, United Kingdom"
             ],
-            "short_label" : "N2",
-            "strain" : "N2",
+            "short_label" : "WBStrain00000001",
+            "strain" : "WBStrain00000001",
             "ucsc_name" : "ce11"
          },
          {
@@ -103,8 +103,8 @@
             "laboratory" : [
                "University of Washington, Seattle WA"
             ],
-            "short_label" : "CB4856",
-            "strain" : "CB4856",
+            "short_label" : "WBStrain00004602",
+            "strain" : "WBStrain00004602",
             "ucsc_name" : null
          },
          {
@@ -117,8 +117,8 @@
             "laboratory" : [
                "Cornell University, Ithaca NY"
             ],
-            "short_label" : "VC2010",
-            "strain" : "VC2010",
+            "short_label" : "WBStrain00000002",
+            "strain" : "WBStrain00000002",
             "ucsc_name" : null
          }
       ],
@@ -155,8 +155,8 @@
             "laboratory" : [
                "Washington University, St. Louis MO"
             ],
-            "short_label" : "DF5080",
-            "strain" : "DF5080",
+            "short_label" : "WBStrain00041018",
+            "strain" : "WBStrain00041018",
             "ucsc_name" : null
          }
       ],
@@ -193,8 +193,8 @@
             "laboratory" : [
                "Cornell University, Ithaca NY"
             ],
-            "short_label" : "JU1422",
-            "strain" : "JU1422",
+            "short_label" : "WBStrain00041224",
+            "strain" : "WBStrain00041224",
             "ucsc_name" : null
          }
       ],
@@ -212,8 +212,8 @@
             "laboratory" : [
                "Washington University, St. Louis MO"
             ],
-            "short_label" : "PB4641",
-            "strain" : "PB4641",
+            "short_label" : "WBStrain00041998",
+            "strain" : "WBStrain00041998",
             "ucsc_name" : "caeRem3"
          },
          {
@@ -226,8 +226,8 @@
             "laboratory" : [
                "University of Texas, Arlington TX"
             ],
-            "short_label" : "PX356",
-            "strain" : "PX356",
+            "short_label" : "WBStrain00042020",
+            "strain" : "WBStrain00042020",
             "ucsc_name" : null
          },
          {
@@ -240,8 +240,8 @@
             "laboratory" : [
                "University of Texas, Arlington TX"
             ],
-            "short_label" : "PX356",
-            "strain" : "PX356",
+            "short_label" : "WBStrain00042020",
+            "strain" : "WBStrain00042020",
             "ucsc_name" : null
          },
          {
@@ -254,8 +254,8 @@
             "laboratory" : [
                "University of Texas, Arlington TX"
             ],
-            "short_label" : "PX439",
-            "strain" : "PX439",
+            "short_label" : "WBStrain00042021",
+            "strain" : "WBStrain00042021",
             "ucsc_name" : null
          }
       ],
@@ -273,8 +273,8 @@
             "laboratory" : [
                "Wellcome Sanger Institute; Hinxton, United Kingdom"
             ],
-            "short_label" : "JU800",
-            "strain" : "JU800",
+            "short_label" : "WBStrain00041132",
+            "strain" : "WBStrain00041132",
             "ucsc_name" : null
          }
       ],
@@ -292,8 +292,8 @@
             "laboratory" : [
                "Washington University, St. Louis MO"
             ],
-            "short_label" : "JU1373",
-            "strain" : "JU1373",
+            "short_label" : "WBStrain00041208",
+            "strain" : "WBStrain00041208",
             "ucsc_name" : null
          }
       ],
@@ -331,7 +331,7 @@
                "Wellcome Trust Sanger Institute, Cambridge, UK"
             ],
             "short_label" : "O_volvulus_Cameroon_v3",
-            "strain" : "O_volvulus_Cameroon_isolate",
+            "strain" : "WBStrain00041977",
             "ucsc_name" : null
          }
       ],
@@ -351,7 +351,7 @@
                "MPI, Tuebingen, Germany"
             ],
             "short_label" : "P_pacificus-El_Paco",
-            "strain" : "PS312",
+            "strain" : "WBStrain00042002",
             "ucsc_name" : null
          }
       ],
@@ -370,7 +370,7 @@
                "Caltech, Pasadena CA"
             ],
             "short_label" : "Pred3",
-            "strain" : "MT8872",
+            "strain" : "WBStrain00041455",
             "ucsc_name" : null
          }
       ],
@@ -389,7 +389,7 @@
                "Wellcome Trust Sanger Institute, Cambridge, UK"
             ],
             "short_label" : "S_ratti_ED321_v5_0_4",
-            "strain" : "ED321",
+            "strain" : "WBStrain00041039",
             "ucsc_name" : null
          }
       ],
@@ -408,7 +408,7 @@
                "Wellcome Trust Sanger Institute, Cambridge, UK"
             ],
             "short_label" : "T_muris-TMUE3.1",
-            "strain" : "Edinburgh",
+            "strain" : "WBStrain00041054",
             "ucsc_name" : null
          }
       ],
