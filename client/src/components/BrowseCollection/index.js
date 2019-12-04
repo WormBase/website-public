@@ -9,6 +9,7 @@ import LaunchIcon from '@material-ui/icons/Launch';
 import Button from '../Button';
 import CopyButton from '../CopyButton';
 import DownloadButton from '../DownloadButton';
+import SaveIcon from '@material-ui/icons/SaveAlt';
 import Link from '../Link';
 
 export default function BrowseCollection({
@@ -120,6 +121,23 @@ export default function BrowseCollection({
         <DialogTitle>{title}</DialogTitle>
         <Divider />
         <DialogContent>
+          <DialogActions>
+            <CopyButton textFunc={toTSV} />
+            <DownloadButton contentFunc={toCSV} fileName={`${title}.csv`}>
+              CSV <SaveIcon />
+            </DownloadButton>
+            <DownloadButton contentFunc={toTSV} fileName={`${title}.txt`}>
+              TSV <SaveIcon />
+            </DownloadButton>
+            {type === 'gene' && collection.length > 1 ? (
+              <Button onClick={toEnrichmentAnalysisTool}>
+                Enrichment Analysis <LaunchIcon />
+              </Button>
+            ) : null}
+            <Button onClick={toWormMine}>
+              WormMine <LaunchIcon />
+            </Button>
+          </DialogActions>
           <DialogContentText>
             <ul>
               {collection.map((item) => (
@@ -132,21 +150,6 @@ export default function BrowseCollection({
         <DialogActions>
           <Button variant="text" onClick={handleToggle}>
             Cancel
-          </Button>
-          <CopyButton textFunc={toTSV} />
-          <DownloadButton contentFunc={toCSV} fileName={`${title}.csv`}>
-            CSV
-          </DownloadButton>
-          <DownloadButton contentFunc={toTSV} fileName={`${title}.txt`}>
-            TSV
-          </DownloadButton>
-          {type === 'gene' && collection.length > 1 ? (
-            <Button onClick={toEnrichmentAnalysisTool}>
-              Enrichment Analysis <LaunchIcon />
-            </Button>
-          ) : null}
-          <Button onClick={toWormMine}>
-            WormMine <LaunchIcon />
           </Button>
         </DialogActions>
       </Dialog>
