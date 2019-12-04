@@ -908,10 +908,10 @@ END;
                        key='best_blastp_matches',
                        passed_data=matches.hits,
                        style = '"aoColumns": [ { "sSortDataType": "dom-text", "sType": "scientific" },null,null,null,null]');
-           '<div id="blast_details">';
-    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details').path id="blast_details_toggle";
+
+    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blastp_details').path id="blast_details_toggle";
     END;
-         '</div>';
+
     END;
   END;
 

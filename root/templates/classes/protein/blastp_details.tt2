@@ -1,0 +1,20 @@
+<div>
+[%
+      x = [];
+      FOREACH d IN blastp_details.data;
+      x.push(d) IF d.evalue;
+      END;
+      build_data_table(order=['evalue', 'taxonomy', 'hit', 'description', 'percentage'],
+                       columns={ taxonomy  => 'Species',
+                                 hit      => 'Hit',
+                                 description => 'Description',
+                                 evalue   => 'BLAST e-value',
+				 source_range => 'Source range',
+				 target_range => 'Target range',
+                                 percentage => '% Length'
+                                },
+		       key='blastp_details',
+                       passed_data=x,
+		       );
+%]
+</div>
