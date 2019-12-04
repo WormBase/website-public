@@ -9,10 +9,19 @@ import Button from '../Button';
 import draw from './draw';
 import { subsets, isSuperSet } from './utils';
 
-function InteractorVennDiagram({ data = [], classes = {} }) {
+function InteractorVennDiagram({ data: dataRaw = [], classes = {} }) {
   const d3Element = useRef();
   const venn = useRef({});
   const [selections, setSelections] = useState([]);
+
+  const data = useMemo(
+    () =>
+      dataRaw.map(({ types, ...others }) => ({
+        ...others,
+        types: types.map((t) => `${t} interactor`),
+      })),
+    [dataRaw]
+  );
 
   useEffect(() => {
     // draw the venn diagram
@@ -34,9 +43,9 @@ function InteractorVennDiagram({ data = [], classes = {} }) {
       .filter((d) => d.sets.length === 1)
       .reduce((result, d) => {
         const colors = {
-          physical: '#33a02c',
-          genetic: '#6a3d9a',
-          regulatory: '#ff7f00',
+          'physical interactor': '#33a02c',
+          'genetic interactor': '#6a3d9a',
+          'regulatory interactor': '#ff7f00',
         };
         result[d.sets] = colors[d.sets[0]];
         return result;
