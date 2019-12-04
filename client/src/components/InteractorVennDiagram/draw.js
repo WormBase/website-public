@@ -78,6 +78,7 @@ export default function draw(
     labels.nodes().forEach((label) => {
       if (select(label).text()) {
         label.append(' interaction');
+        select(label).attr('font-weight', 'bold');
       }
       svg.append(function() {
         return label;
@@ -249,6 +250,7 @@ export default function draw(
   let labels = div.selectAll('text').remove();
   let intersectionAreasMapping = getIntersectionAreasMapping();
   console.log(intersectionAreasMapping);
+  svg.attr('viewBox', '-20 0 620 350'); // resize the svg to prevent label being cut off (e.g, WBGene00004357)
   appendPatterns(defs);
   appendLabels(svg, labels);
   appendVennAreaParts(svg, intersectionAreasMapping);
