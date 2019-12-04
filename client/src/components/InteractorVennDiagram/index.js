@@ -8,6 +8,7 @@ import BrowseCollection from '../BrowseCollection';
 import Button from '../Button';
 import draw from './draw';
 import { subsets, isSuperSet } from './utils';
+import { capitalize } from '../../utils';
 
 function InteractorVennDiagram({ data: dataRaw = [], classes = {} }) {
   const d3Element = useRef();
@@ -18,7 +19,7 @@ function InteractorVennDiagram({ data: dataRaw = [], classes = {} }) {
     () =>
       dataRaw.map(({ types, ...others }) => ({
         ...others,
-        types: types.map((t) => `${t} interactor`),
+        types: types.map((t) => `${capitalize(t)} interactor`),
       })),
     [dataRaw]
   );
@@ -43,9 +44,9 @@ function InteractorVennDiagram({ data: dataRaw = [], classes = {} }) {
       .filter((d) => d.sets.length === 1)
       .reduce((result, d) => {
         const colors = {
-          'physical interactor': '#33a02c',
-          'genetic interactor': '#6a3d9a',
-          'regulatory interactor': '#ff7f00',
+          'Physical interactor': '#33a02c',
+          'Genetic interactor': '#6a3d9a',
+          'Regulatory interactor': '#ff7f00',
         };
         result[d.sets] = colors[d.sets[0]];
         return result;
