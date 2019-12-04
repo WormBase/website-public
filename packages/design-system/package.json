@@ -1,0 +1,46 @@
+{
+  "name": "@wormbase/design-system",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Sibyl <sibyl@wormbase.org>",
+  "homepage": "https://github.com/WormBase/website#readme",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WormBase/website.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "build": "NODE_ENV=production rollup --config"
+  },
+  "bugs": {
+    "url": "https://github.com/WormBase/website/issues"
+  },
+  "peerDependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "babel-preset-react-app": "^9.0.2",
+    "rollup": "^1.27.8",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.7.1"
+  }
+}

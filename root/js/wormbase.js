@@ -34,6 +34,9 @@ var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
 };
 
+const ButtonTest = require('../../packages/design-system/lib/index.js').Button;
+console.log(ButtonTest);
+
 +function(window, document, undefined){
   var location = window.location,
       $jq = jQuery.noConflict();

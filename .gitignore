@@ -27,3 +27,6 @@ inc/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+#js
+node_modules
