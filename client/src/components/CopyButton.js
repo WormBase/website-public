@@ -10,7 +10,7 @@ function CopyButton({ classes, text, textFunc }) {
   const [copied, setCopied] = useState(false);
 
   const handleClick = useCallback(() => {
-    const TextPromise = new Promise((resolve) => {
+    new Promise((resolve) => {
       if (text) {
         resolve(text);
       } else {
