@@ -142,7 +142,12 @@ export default function draw(
 
   function getPartSize(vennArea, intersectedAreas) {
     const intersectedSize = intersectedAreas.reduce(
-      (sum, intersectedArea) => sum + intersectedArea.size,
+      (sum, intersectedArea) =>
+        sum +
+        (intersectedAreas.length === 3 && intersectedArea.sets.length === 3
+          ? -1
+          : 1) *
+          intersectedArea.size, // this hack only works with venn digram with <= 3 circles
       0
     );
     return vennArea.size - intersectedSize;
