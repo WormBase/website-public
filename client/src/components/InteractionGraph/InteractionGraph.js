@@ -23,7 +23,7 @@ class InteractionGraph extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      includeNearbyInteraction: true,
+      includeNearbyInteraction: false,
       includeHighThroughput: false,
     };
   }
