@@ -3239,6 +3239,18 @@ var Scrolling = (function(){
       );
     }
 
+    function renderInteractorVennDiagram(data, elementId) {
+      import('../../client/src/components/InteractorVennDiagram').then(
+        (module) => {
+          const InteractorVennDiagram = module.default;
+          ReactDOM.render(
+            <InteractorVennDiagram data={data} />,
+            document.getElementById(elementId)
+          );
+        }
+      );
+    }
+
 
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
@@ -3507,6 +3519,7 @@ var Scrolling = (function(){
       renderVariationConceptualTranslation: renderVariationConceptualTranslation, // render conceptual translation on variation page
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
       renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
+      renderInteractorVennDiagram: renderInteractorVennDiagram, // render Venn diagram in interaction widgets of various pages
     };
   })();
 
