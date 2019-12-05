@@ -400,9 +400,9 @@ class InteractionGraph extends Component {
 
   getEdgeColor = (type) => {
     const colorScheme = [
-      '#33a02c', //"#0A6314",  // green
+      '#009e73', //"#0A6314",  // green
       '#6a3d9a', //"#69088A",  // dark purple
-      '#ff7f00', //"#FF8000",  // orange
+      '#ffce3b', //"#FF8000",  // orange
       '#1f78b4', //"#08298A",  // blue
       '#00E300', // bright green
       '#05C1F0', // light blue
