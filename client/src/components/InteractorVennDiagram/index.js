@@ -44,9 +44,9 @@ function InteractorVennDiagram({ data: dataRaw = [], classes = {} }) {
       .filter((d) => d.sets.length === 1)
       .reduce((result, d) => {
         const colors = {
-          'Physical interactor': '#33a02c',
+          'Physical interactor': '#009e73',
           'Genetic interactor': '#6a3d9a',
-          'Regulatory interactor': '#ff7f00',
+          'Regulatory interactor': '#ffce3b',
         };
         result[d.sets] = colors[d.sets[0]];
         return result;
