@@ -89,7 +89,7 @@ function InteractorVennDiagram({ data: dataRaw = [], classes = {} }) {
       <div className={classes.toolbar}>
         <BrowseCollection
           collection={selectedInteractors}
-          title="Gene Set"
+          title="Browse gene set"
           renderButton={(props) => (
             <Badge
               color="secondary"
@@ -97,7 +97,7 @@ function InteractorVennDiagram({ data: dataRaw = [], classes = {} }) {
               invisible={!selectedInteractors.length}
             >
               <Button {...props}>
-                Browse selection <PageViewIcon />
+                View selected genes <PageViewIcon />
               </Button>
             </Badge>
           )}
