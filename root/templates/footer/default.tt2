@@ -33,8 +33,8 @@
           <li><a href="[% c.uri_for('/about','userguide', 'submit_data').path  _ '#01--10'%]">Submit Data</a></li>
           <li><a href="mailto:help@wormbase.org">Email</a></li>
           <li><a href="[% c.uri_for('/about','Frequently_asked_questions').path  %]">FAQ</a></li>
-	  <li>[% external_link('https://www.youtube.com/user/WormBaseHD', 'WormBaseHD YouTube') %]</li>
           <li><a href="[% c.uri_for('/about','userguide').path  %]">User Guide</a></li>
+	  <li>[% external_link('https://www.youtube.com/user/WormBaseHD', 'WormBaseHD YouTube') %]</li>
           <li><a href="[% c.uri_for('/tools', 'support').path  _ '?url=' _ c.req.uri.path %]">Contact Help</a></li>
         </ul>
       </div>
