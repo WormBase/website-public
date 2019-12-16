@@ -42,7 +42,7 @@
       <div class="footer-column">
         <div class="footer-title">Community</div>
         <ul>
-          <li>[% external_link("https://wiki.wormbase.org/index.php/WormBoard#WormBoard_Charter", 'WormBoard') %]</li>
+          <li>[% external_link("https://wiki.wormbase.org/index.php/WormBoard", 'WormBoard') %]</li>
           <li>[% external_link("http://www.wormbook.org/", 'WormBook') %]</li>
           <li>[% external_link("http://forums.wormbase.org", 'Forum') %]</li>
           <li>[% external_link("http://blog.wormbase.org", 'Blog') %]</li>
