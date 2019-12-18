@@ -1036,7 +1036,7 @@
 	description = 'TreeFam (Tree families database) is a database of phylogenetic trees of animal genes. It aims at developing a curated resource that gives reliable information about ortholog and paralog assignments, and evolutionary history of various gene families.'
 	maintainer  = ''
 	base        = 'http://www.treefam.org/'
-	search      = 'http://www.treefam.org/family/%s'
+	search      = 'http://www.treefam.org/family/%s#tabview=tab1'
 	image       = 'http://www.treefam.org/viewtree/%s'
 	#image       = 'http://legacy.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
 	}
