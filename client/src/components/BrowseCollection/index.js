@@ -32,43 +32,43 @@ export default function BrowseCollection({
     [collection]
   );
 
-  const toWormMine = useCallback(() => {
-    // modiied from code from SGD https://github.com/yeastgenome/SGDFrontend
-    function post_to_wormmine(bioent_ids) {
-      // The rest of this code assumes you are not using a library.
-      // It can be made less wordy if you use one.
-      const form = document.createElement('form');
-      form.setAttribute('method', 'post');
-      form.setAttribute('target', '_blank');
-      form.setAttribute(
-        'action',
-        'http://intermine.wormbase.org/tools/wormmine/buildBag.do'
-      );
+  // const toWormMine = useCallback(() => {
+  //   // modiied from code from SGD https://github.com/yeastgenome/SGDFrontend
+  //   function post_to_wormmine(bioent_ids) {
+  //     // The rest of this code assumes you are not using a library.
+  //     // It can be made less wordy if you use one.
+  //     const form = document.createElement('form');
+  //     form.setAttribute('method', 'post');
+  //     form.setAttribute('target', '_blank');
+  //     form.setAttribute(
+  //       'action',
+  //       'http://intermine.wormbase.org/tools/wormmine/buildBag.do'
+  //     );
 
-      const cinp = document.createElement('input');
-      cinp.setAttribute('type', 'hidden');
-      cinp.setAttribute('name', 'type');
-      cinp.setAttribute('value', 'Gene');
-      form.appendChild(cinp);
+  //     const cinp = document.createElement('input');
+  //     cinp.setAttribute('type', 'hidden');
+  //     cinp.setAttribute('name', 'type');
+  //     cinp.setAttribute('value', 'Gene');
+  //     form.appendChild(cinp);
 
-      const vinp = document.createElement('input');
-      vinp.setAttribute('type', 'hidden');
-      vinp.setAttribute('name', 'extraFieldValue');
-      vinp.setAttribute('value', 'C. elegans');
-      form.appendChild(vinp);
+  //     const vinp = document.createElement('input');
+  //     vinp.setAttribute('type', 'hidden');
+  //     vinp.setAttribute('name', 'extraFieldValue');
+  //     vinp.setAttribute('value', 'C. elegans');
+  //     form.appendChild(vinp);
 
-      const hiddenField = document.createElement('input');
-      hiddenField.setAttribute('type', 'hidden');
-      hiddenField.setAttribute('name', 'text');
-      hiddenField.setAttribute('value', bioent_ids);
-      hiddenField.id = 'data';
-      form.appendChild(hiddenField);
+  //     const hiddenField = document.createElement('input');
+  //     hiddenField.setAttribute('type', 'hidden');
+  //     hiddenField.setAttribute('name', 'text');
+  //     hiddenField.setAttribute('value', bioent_ids);
+  //     hiddenField.id = 'data';
+  //     form.appendChild(hiddenField);
 
-      document.body.appendChild(form);
-      form.submit();
-    }
-    post_to_wormmine(collection.map(({ id }) => id));
-  }, [collection]);
+  //     document.body.appendChild(form);
+  //     form.submit();
+  //   }
+  //   post_to_wormmine(collection.map(({ id }) => id));
+  // }, [collection]);
 
   const toEnrichmentAnalysisTool = useCallback(() => {
     // modiied from code from SGD https://github.com/yeastgenome/SGDFrontend
@@ -134,9 +134,9 @@ export default function BrowseCollection({
                 Enrichment Analysis <LaunchIcon />
               </Button>
             ) : null}
-            <Button onClick={toWormMine}>
-              WormMine <LaunchIcon />
-            </Button>
+            {/* <Button onClick={toWormMine}> */}
+            {/*   WormMine <LaunchIcon /> */}
+            {/* </Button> */}
           </DialogActions>
           <DialogContentText>
             <ul>
