@@ -2037,7 +2037,7 @@ var Scrolling = (function(){
       });
     }
 
-    function setupCytoscapeInteraction(dataUrl, focusNodeId){
+    function setupCytoscapeInteraction(dataUrl, focusNodeId, initialState={}){
       import('../../client/src/components/InteractionGraph').then(
         (module) => {
           const InteractionGraph = module.default;
@@ -2045,7 +2045,7 @@ var Scrolling = (function(){
           const InteractionGraphWithData = () => {
             return (
               <InteractionGraphDataProvider dataUrl={dataUrl}>
-                {(providedProps) => <InteractionGraph {...providedProps} focusNodeId={focusNodeId} />}
+                {(providedProps) => <InteractionGraph {...providedProps} focusNodeId={focusNodeId} initialState={initialState} />}
               </InteractionGraphDataProvider>
             );
           };

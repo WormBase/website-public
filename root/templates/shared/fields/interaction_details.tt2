@@ -1,4 +1,4 @@
 
 <div id="interaction-graph-view" class="ontology-graph-container"></div>
 
-<script type="text/javascript">WB.setupCytoscapeInteraction("[%- c.uri_for('/rest','field',object.name.data.class,object.name.data.id,'interaction_details').path _ '?content-type=application/json' -%]", "[%- wbid -%]");</script>
+<script type="text/javascript">WB.setupCytoscapeInteraction("[%- c.uri_for('/rest','field',object.name.data.class,object.name.data.id,'interaction_details').path _ '?content-type=application/json' -%]", "[%- wbid -%]", { includeHighThroughput: [%- object.name.data.class == 'gene' ? 'false' : 'true' -%]});</script>
