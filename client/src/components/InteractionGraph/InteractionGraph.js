@@ -22,9 +22,11 @@ cytoscape.use(cytoscapecola);
 class InteractionGraph extends Component {
   constructor(props) {
     super(props);
+    const { initialState = {} } = props;
     this.state = {
       includeNearbyInteraction: false,
       includeHighThroughput: false,
+      ...initialState,
     };
   }
 
@@ -43,6 +45,7 @@ class InteractionGraph extends Component {
       })
     ),
     focusNodeId: PropTypes.string,
+    initialState: PropTypes.object,
     classes: PropTypes.object.isRequired,
   };
 
