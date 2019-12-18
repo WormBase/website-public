@@ -1597,7 +1597,7 @@ END; %]
       t = widget_name FILTER ucfirst;
       widgets.push({ id = widget_name
                 title = t.replace('_', ' ')
-                href  = c.uri_for('/rest','widget', 'index', species, class, widget_name).path,
+                href  = c.uri_for('/rest','widget', 'index', species || 'all', class, widget_name).path,
                 type = section == 'species' ? class : section
             });
     END;

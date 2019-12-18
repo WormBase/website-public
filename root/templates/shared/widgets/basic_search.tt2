@@ -1,7 +1,7 @@
   [% lowerClass = c.config.sections.species.$class.title || c.config.sections.resources.$class.title FILTER lower %]
 
 Search [% UNLESS class=='all'; 'for ' _ pluralize(lowerClass); END; IF species; ' in <span class="species">' _ c.config.sections.species_list.$species.title _ '</span>'; END; %]
- <form onsubmit='$jq("#basic-search-results").empty(); WB.ajaxGet($jq("#basic-search-results"), "/search/[% class %]/" + $jq("#basic-search-input").val() + "/?species=[% species %]&inline=1&widget=basic_search", undefined, function(){ WB.checkSearch($jq("#basic-search-results"));});return false;'>
+ <form onsubmit='$jq("#basic-search-results").empty(); WB.ajaxGet($jq("#basic-search-results"), "/search/[% class %]/" + $jq("#basic-search-input").val() + "/?species=[% (species && species != 'all') ? species : '' %]&inline=1&widget=basic_search", undefined, function(){ WB.checkSearch($jq("#basic-search-results"));});return false;'>
 
     <input class="text" id="basic-search-input" name="query" type="text" value="">
     <input class="ui-button" type="submit" value="search">

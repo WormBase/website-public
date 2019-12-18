@@ -8,7 +8,7 @@
 <script>
   (function(){
     WB.ajaxGet($jq("#preview"),
-       "/search/[% class %]/*/?species=[% species %]&inline=1&widget=browse",
+       "/search/[% class %]/*/?species=[% (species && species != 'all') ? species : '' %]&inline=1&widget=browse",
        undefined, function(){ WB.checkSearch($jq("#preview"));});
   })();
 </script>
