@@ -43,14 +43,9 @@
 
 
    WRAPPER $field_block title="TreeFam" key="treefam";
-       USE url= format(site.external_urls.TREEFAM.image);
        FOREACH obj IN fields.treefam.data.unique;
-          '<h4>Treefam (ID:' _ external_link('treefam', obj, obj) _  ')</h4>';
-          WRAPPER toggle title="View image" open=1;
-              '<iframe width="750" height="800" name="treefam" src=' _ url(obj,obj) _ ' width="700" height="500" scrolling="auto"></iframe>';
-          END;
-        END;
-        '<br /><p>Phylogenetic trees provided by the' _ text2link('treefam','','Treefam') _ ' project.</p>';
+          external_link('treefam', obj, obj);
+       END;
    END;
 
 %]
