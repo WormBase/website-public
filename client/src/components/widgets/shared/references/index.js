@@ -20,7 +20,7 @@ import DownloadReference from './DownloadReference';
 const TEXTPRESSO_TYPE_SET = new Set([
   'strain',
   'gene',
-  'gariation',
+  'variation',
   'transgene',
   'construct',
   'anatomy_term',
@@ -28,7 +28,7 @@ const TEXTPRESSO_TYPE_SET = new Set([
   'life_stage',
   'rearrangement',
   'molecule',
-  'process',
+  'wbprocess',
 ]);
 
 class References extends Component {
