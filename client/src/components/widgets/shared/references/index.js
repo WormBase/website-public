@@ -20,7 +20,7 @@ import DownloadReference from './DownloadReference';
 const TEXTPRESSO_TYPE_SET = new Set([
   'strain',
   'gene',
-  'gariation',
+  'variation',
   'transgene',
   'construct',
   'anatomy_term',
@@ -28,7 +28,7 @@ const TEXTPRESSO_TYPE_SET = new Set([
   'life_stage',
   'rearrangement',
   'molecule',
-  'process',
+  'wbprocess',
 ]);
 
 class References extends Component {
@@ -181,9 +181,9 @@ class References extends Component {
                 href={`https://www.textpressocentral.org/tpc/search?keyword=${[
                   pageInfo.name,
                   ...pageInfo.other_names,
-                ].join(
-                  ' OR '
-                )}&scope=document&literature=C. elegans&literature=C. elegans Supplementals`}
+                ]
+                  .map((term) => `"${term}"`)
+                  .join(' OR ')}&scope=document&literature=C. elegans`}
                 target="_blank"
               >
                 Textpresso

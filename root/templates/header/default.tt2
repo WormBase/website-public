@@ -35,7 +35,7 @@
     "id" : "[% object.name.data.id | uri %]",
     "other_names" : [
         [% FOREACH n IN other_names;
-             "\"$n\"";
+             "\"$n\"" | html_entity;
 	     ',' IF !loop.last;
         END; %]
     ],
