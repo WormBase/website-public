@@ -20,12 +20,6 @@
       }
     },
     {
-      "name": "acedb-wormbase-files",
-      "host": {
-        "sourcePath": "/usr/local/wormbase/acedb/wormbase"
-      }
-    },
-    {
       "name": "nginx-proxy-conf",
       "host": {
         "sourcePath": "/var/app/current/proxy/conf.d"
@@ -40,26 +34,8 @@
   ],
   "containerDefinitions": [
     {
-      "name": "acedb",
-      "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/acedb:latest",
-      "essential": true,
-      "portMappings": [
-	{
-	  "hostPort": 2006,
-	  "containerPort": 2005
-	}
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "acedb-wormbase-files",
-          "containerPath": "/root/acedb/wormbase"
-        }
-      ],
-      "memoryReservation": 4000
-    },
-    {
       "name": "website",
-      "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS274.1",
+      "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS274.2",
       "essential": true,
       "portMappings": [
         {
@@ -72,16 +48,12 @@
         }
       ],
       "environment": [
-	{
-	  "name": "ACEDB_HOST",
-	  "value": "acedb"
-	},
         {
 	  "name": "ACEDB_PORT",
 	  "value": "2005"
 	}
       ],
-      "links": ["acedb", "upstream-proxy"],
+      "links": ["upstream-proxy"],
       "mountPoints": [
         {
           "sourceVolume": "awseb-logs-website",
