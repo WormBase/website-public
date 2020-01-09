@@ -18,7 +18,7 @@ services:
       - "./logs:/usr/local/wormbase/website/logs"
     environment:
       - APP=${CATALYST_APP}
-      - ACEDB_HOST=acedb
+      - ACEDB_HOST=${ACEDB_HOST}
       - ACEDB_PORT=2005
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
