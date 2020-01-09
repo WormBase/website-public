@@ -12,6 +12,8 @@ export JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
 
 export COMPOSE_PROJECT_NAME = "${USER}_$(shell pwd -P | xargs  basename)"
 
+export ACEDB_HOST ?= acedb
+
 .PHONY: bare-dev-start
 bare-dev-start:
 	./script/wormbase_server.pl -p $(CATALYST_PORT) -d -r
@@ -33,7 +35,7 @@ dev-start:
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
-		-e ACEDB_HOST=acedb \
+		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
@@ -53,7 +55,7 @@ env-bash:
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
-		-e ACEDB_HOST=acedb \
+		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
@@ -82,7 +84,7 @@ build-start:
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
-		-e ACEDB_HOST=acedb \
+		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
@@ -101,7 +103,7 @@ build-bash:
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
-		-e ACEDB_HOST=acedb \
+		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
@@ -121,7 +123,7 @@ build-run-test:
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
 		-p ${CATALYST_PORT}:5000 \
-		-e ACEDB_HOST=acedb \
+		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY \
 		-e GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) \
@@ -136,12 +138,13 @@ eb-local-run: CATALYST_APP ?= staging
 
 eb-local-run:
 	 @eb local run \
-		--envvars APP=${CATALYST_APP},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+		--envvars APP=${CATALYST_APP},ACEDB_HOST=${ACEDB_HOST},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
 
 .PHONY: eb-setenv
 eb-setenv:
 	@eb setenv --timeout 10 \
 		APP=${CATALYST_APP} \
+		ACEDB_HOST=${ACEDB_HOST} \
 		GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
 		GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
 		GITHUB_TOKEN=${GITHUB_TOKEN} \
@@ -152,7 +155,7 @@ eb-create: CATALYST_APP ?= production
 eb-create: CNAME ?= wormbase-website-preproduction
 eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
 eb-create:
-	@eb create ${EB_ENV_NAME} --cfg v2 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+	@eb create ${EB_ENV_NAME} --cfg v2 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},ACEDB_HOST=${ACEDB_HOST},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
 
 .PHONY: eb-create-staging
 eb-create-staging:
