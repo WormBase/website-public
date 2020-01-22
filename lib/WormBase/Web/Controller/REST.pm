@@ -530,7 +530,7 @@ sub rest_register_email {
       template => "auth/register_email.tt2",
   };
 
-  $c->forward('send_email');
+  $c->forward(qw/WormBase::Web::Controller::REST send_email/);
 }
 
 
