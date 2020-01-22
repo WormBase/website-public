@@ -46,8 +46,6 @@
     <div>[% issue_additional_content %]</div>
 [% END %]
 
-[% '<a href="' _ c.uri_for('/search','issue','*') _ '">see more issues ›</a>' %]
-<br />
 <br />
 [% '<a href="mailto:help@wormbase.org">help@wormbase.org</a>' %]
 <br />
