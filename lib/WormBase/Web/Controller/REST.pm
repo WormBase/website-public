@@ -665,7 +665,7 @@ sub feed_POST {
                               issue_url    => $issue_url,
                               issue_title  => encode('utf8', $title . ": " . $issue_title),
                               issue_number => $issue_number});
-        my $message = "<p>You can track the progress on your question, <a href='$issue_url' target='_blank'>$issue_title (#$issue_number)</a> on our <a href='$issue_url' target='_blank'>issue tracker</a>.</p>";
+        my $message = "";
         $self->status_ok(
           $c,
           entity => {
@@ -850,7 +850,7 @@ sub olark_POST {
 			  issue_url    => $issue_url,
 			  issue_title  => encode('utf8', "$conversation_type chat transcript: $issue_title"),
 			  issue_number => $issue_number});
-    my $message = "<p>Track the progress of your question, <a href='$issue_url' target='_blank'>$issue_title (#$issue_number)</a> on our <a href='$issue_url' target='_blank'>issue tracker</a>.</p>";
+    my $message = "";
 
 #    $c->log->debug("$visitor_start_page $visitor_name $visitor_email $operators $transcript");
     $self->status_ok(

@@ -171,7 +171,8 @@ sub search :Path('/search') Args {
     );
 }
 
-sub search_git :Path('/search/issue') :Args(2) {
+#sub search_git :Path('/search/issue') :Args(2) {
+sub search_git : Private {
   my ($self, $c, $query, $page_count) = @_;
 
     $c->response->headers->expires(time);
