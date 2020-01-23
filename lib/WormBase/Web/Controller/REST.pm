@@ -487,7 +487,9 @@ sub send_email :Private {
 
     $c->log->debug(" AWS SES input $send_email_cli_input_json");
 
-    my $out = `aws --region us-east-1 ses send-email --from $from_address --cli-input-json '$send_email_cli_input_json' 2>&1`;
+    my $ses_cmd = "aws --region us-east-1 ses send-email --from $from_address --cli-input-json '$send_email_cli_input_json' 2>&1";
+
+    my $out = `$ses_cmd`;
 
     $c->log->debug(" AWS SES response $out");
 
