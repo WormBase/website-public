@@ -136,8 +136,8 @@
             "laboratory" : [
                "Forestry and Forest Products Research Institute, Ibaraki, Japan"
             ],
-            "short_label" : "Sp34_v7",
-            "strain" : "Unknown strain",
+            "short_label" : "WBStrain00047056",
+            "strain" : "WBStrain00047056",
             "ucsc_name" : null
          }
       ],
@@ -174,8 +174,8 @@
             "laboratory" : [
                "University of Texas, Arlington TX"
             ],
-            "short_label" : "CaeLat1.0",
-            "strain" : "Unknown strain",
+            "short_label" : "WBStrain00047057",
+            "strain" : "WBStrain00047057",
             "ucsc_name" : null
          }
       ],
@@ -312,7 +312,7 @@
                "Wellcome Sanger Institute; Hinxton, United Kingdom"
             ],
             "short_label" : "Oscheius_tipulae_assembly_v2",
-            "strain" : "Unknown strain",
+            "strain" : "WBStrain00047058",
             "ucsc_name" : null
          }
       ],
