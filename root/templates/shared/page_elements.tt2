@@ -18,10 +18,13 @@
     [% END %]
     [% id = id || 0; %]
   [% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" style="display: [% expand ? 'block' : 'none' %];"> [% END %]
-    [% FOREACH type IN data.keys -%]
-        <b>[% type_label = '' _ type; type_label.replace('_',' ') %]</b>[% IF data.$type.size > 0 %]:
+    [% pairs = data.pairs; %]
+    [% FOREACH pair IN pairs -%]
+       [% type = pair.key %]
+       [% value = pair.value; %]
+        <b>[% type_label = '' _ type; type_label.replace('_',' ') %]</b>[% IF  value.size > 0 %]:
           [% IF (type == 'curatorial_remarks'); '<br />'; END; %]
-          [% tags2link(data.$type, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items', 50) %]
+          [% tags2link(value, ((type == 'curatorial_remarks') ? '<br />' : '; '), 'items', 50) %]
         [% END %]
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
