@@ -405,7 +405,7 @@
                     innerJBrowseElement.height(height);
 
                     function updateHeight() {
-                        var heightComputed = 0;
+                        var heightComputed = 10;
                         var jbrowseDocument = innerJBrowseElement.get(0).contentDocument || innerJBrowseElement.get(0).contentWindow.document;
                         var tracks = jbrowseDocument.getElementsByClassName('track');
                         for (var i=0; i < tracks.length; i++) {
