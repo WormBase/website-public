@@ -4,7 +4,7 @@
       FOREACH d IN blastp_details.data;
       x.push(d) IF d.evalue;
       END;
-      build_data_table(order=['evalue', 'taxonomy', 'hit', 'description', 'percentage'],
+      build_data_table(order=['evalue', 'taxonomy', 'hit', 'description', 'percentage', 'target_range', 'source_range'],
                        columns={ taxonomy  => 'Species',
                                  hit      => 'Hit',
                                  description => 'Description',
@@ -15,7 +15,7 @@
                                 },
 		       key='blastp_details',
                        passed_data=x,
-                       style = '"aoColumns": [ { "sSortDataType": "dom-text", "sType": "scientific" },null,null,null,null],
+                       style = '"aoColumns": [ { "sSortDataType": "dom-text", "sType": "scientific" },null,null,null,null, null, null],
 "orderFixed": { "post": [[ 0, "asc" ], [ 4, "desc" ]] },
 '
 		       );
