@@ -1,5 +1,8 @@
 import { select, selectAll, event as d3event } from 'd3-selection';
 import { VennDiagram } from 'venn.js';
+import paper from 'paper';
+
+paper.setup(1000, 1000);
 
 export default function draw(
   node,
@@ -12,6 +15,31 @@ export default function draw(
   const div = select(node);
   div.datum(sets).call(chart);
 
+  const getAreaD = (function() {
+    const dMap = {};
+    selectAll('.venn-circle').each((areaData, areaIdx, areas) => {
+      const area = areas[areaIdx];
+      let areaSetsId = area.dataset.vennSets;
+      dMap[areaSetsId] = select(area)
+        .select('path')
+        .attr('d');
+    });
+    selectAll('.venn-intersection').each((areaData, areaIdx, areas) => {
+      const area = areas[areaIdx];
+      let areaSetsId = area.dataset.vennSets;
+      dMap[areaSetsId] = areaData.sets.reduce((intersectedArea, setId) => {
+        const setAreaPath = new paper.Path(dMap[setId]);
+        if (intersectedArea) {
+          return intersectedArea.intersect(setAreaPath);
+        } else {
+          return setAreaPath;
+        }
+      }, null).pathData;
+    });
+    console.log(dMap);
+    return (areaSetsId) => dMap[areaSetsId];
+  })();
+
   // Code below is modified from https://codepen.io/avnerz/pen/dJPWee?editors=1010, created by avnerz
   // to allow areas of set difference to be selected
 
@@ -22,8 +50,9 @@ export default function draw(
       let area = areas[areaIdx];
       let areaSets = areaData.sets;
       let areaSelection = select(area);
-      let areaD = areaSelection.select('path').attr('d');
       let areaSetsId = area.dataset.vennSets;
+      let areaD = getAreaD(areaSetsId);
+
       let intersectedAreas = selectAll('.venn-area')
         .filter((cAreaData, cAreaIdx, cAreas) => {
           let cAreaSetsId = cAreas[cAreaIdx].dataset.vennSets;
@@ -36,9 +65,10 @@ export default function draw(
         .nodes()
         .map((intersectedArea) => {
           let intersectedAreaSelection = select(intersectedArea);
+          const intersectedAreaSetsId = intersectedArea.dataset.vennSets;
           return {
             sets: intersectedAreaSelection.data()[0].sets,
-            d: intersectedAreaSelection.select('path').attr('d'),
+            d: getAreaD(intersectedAreaSetsId),
             size: intersectedAreaSelection.data()[0].size,
           };
         });
