@@ -1,8 +1,5 @@
 import { select, selectAll, event as d3event } from 'd3-selection';
 import { VennDiagram } from 'venn.js';
-import paper from 'paper';
-
-paper.setup(1000, 1000);
 
 export default function draw(
   node,
@@ -17,27 +14,32 @@ export default function draw(
 
   const getAreaD = (function() {
     const dMap = {};
-    selectAll('.venn-circle').each((areaData, areaIdx, areas) => {
+    selectAll('.venn-area').each((areaData, areaIdx, areas) => {
       const area = areas[areaIdx];
       let areaSetsId = area.dataset.vennSets;
-      dMap[areaSetsId] = select(area)
-        .select('path')
-        .attr('d');
+      dMap[areaSetsId] = {
+        d: select(area)
+          .select('path')
+          .attr('d'),
+        size: areaData.size,
+      };
     });
+
+    // hack to fix incorrect d for .venn-intersection that should superimpose exactly a .venn-circle
     selectAll('.venn-intersection').each((areaData, areaIdx, areas) => {
       const area = areas[areaIdx];
       let areaSetsId = area.dataset.vennSets;
-      dMap[areaSetsId] = areaData.sets.reduce((intersectedArea, setId) => {
-        const setAreaPath = new paper.Path(dMap[setId]);
-        if (intersectedArea) {
-          return intersectedArea.intersect(setAreaPath);
-        } else {
-          return setAreaPath;
+      console.log(areaData, area.dataset);
+      areaData.sets.forEach((setId) => {
+        if (areaData.size === dMap[setId].size) {
+          dMap[areaSetsId] = dMap[setId];
         }
-      }, null).pathData;
+      });
     });
     console.log(dMap);
-    return (areaSetsId) => dMap[areaSetsId];
+    return (areaSetsId) => {
+      return dMap[areaSetsId] && dMap[areaSetsId].d;
+    };
   })();
 
   // Code below is modified from https://codepen.io/avnerz/pen/dJPWee?editors=1010, created by avnerz
@@ -49,7 +51,6 @@ export default function draw(
     vennAreas.each((areaData, areaIdx, areas) => {
       let area = areas[areaIdx];
       let areaSets = areaData.sets;
-      let areaSelection = select(area);
       let areaSetsId = area.dataset.vennSets;
       let areaD = getAreaD(areaSetsId);
 
