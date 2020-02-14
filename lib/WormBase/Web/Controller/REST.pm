@@ -485,11 +485,12 @@ sub send_email :Private {
     };
     my $send_email_cli_input_json = $json->allow_nonref->utf8->relaxed->encode($data);
 
-    $c->log->debug(" AWS SES input $send_email_cli_input_json");
+    my $ses_cmd = "aws --region us-east-1 ses send-email --from $from_address --cli-input-json '$send_email_cli_input_json' 2>&1";
+    $c->log->debug("$ses_cmd");
 
-    my $out = `aws --region us-east-1 ses send-email --from $from_address --cli-input-json '$send_email_cli_input_json' 2>&1`;
+    my $out = `$ses_cmd`;
 
-    $c->log->debug(" AWS SES response $out");
+    $c->log->debug("AWS SES response $out");
 
 }
 
