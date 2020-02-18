@@ -43,24 +43,26 @@ END;
 %]
 
 <div style="clear:both">
-[% FOREACH t IN fields.pfam_graph.data.keys.sort %]
+[% FOREACH item IN fields.pfam_graph.data %]
+[% t = item.source; %]
 [% t %]:
 [%
     xrefs = [];
-    FOREACH line IN fields.pfam_graph.data.$t.split(',');
-	match = line.match('href\":\"(.*)/(.*)\"');
-	IF match;
-	    type = match.0;
-	    acc = match.1;
-	    xrefKey = "$type/$acc";
-	    xrefs.push({
-	      id => xrefKey,
-	      href => site.external_urls.$type.search.replace("%s",acc)
-	    });
-	END;
+    FOREACH region IN item.value.regions;
+       match = region.href.match('href\":\"(.*)/(.*)\"');
+       IF match;
+           type = match.0;
+           acc = match.1;
+           xrefKey = "$type/$acc";
+           xrefs.push({
+             id => xrefKey,
+             href => site.external_urls.$type.search.replace("%s",acc)
+           });
+       END;
     END;
+
 %]
-  <div class="pfam_graph" id="dg-[% t %]" data-seq='[%- fields.pfam_graph.data.$t || {} -%]' data-xrefs='[%- json_encode(xrefs) -%]'>
+  <div class="pfam_graph" id="dg-[% t %]" data-seq='[%- json_encode(item.value || {}) -%]' data-xrefs='[%- json_encode(xrefs) -%]'>
 </div>
 [% END %]
 </div>
