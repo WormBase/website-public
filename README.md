@@ -117,7 +117,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 - Grant permission to the instance by attaching the `wb-catalyst-beanstalk-ec2-role`.
 
-- Prior to applying the hotfix, ensure you are at the appropriate git branch for production.
+- Prior to applying the hotfix, ensure you are at the appropriate git branch for production, such as `release/273`.
 
 - Then run the following commands,
 
