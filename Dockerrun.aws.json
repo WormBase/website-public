@@ -75,6 +75,18 @@
       "memoryReservation": 8000
     },
     {
+      "name": "jbrowse",
+      "image": "gmod/wormbase-jbrowse:WS275",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 9002,
+          "containerPort": 80
+        }
+      ],
+      "memoryReservation": 512
+    },
+    {
       "name": "nginx-proxy",
       "image": "nginx:1.13.7",
       "essential": true,
@@ -85,7 +97,8 @@
         }
       ],
       "links": [
-        "website"
+        "website",
+        "jbrowse"
       ],
       "mountPoints": [
         {
