@@ -13,7 +13,7 @@ FOREACH motif IN motif_dat;
 END;
 
 build_data_table(
-    order=['feat','desc','source_new','start','stop','score'],
+    order=['feat','desc','source_new','start','stop'],
     columns={
             		feat 	=> 'Feature',
             		start 	=> 'Start',
