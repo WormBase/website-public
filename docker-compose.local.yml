@@ -1,0 +1,54 @@
+version: "3.2"
+volumes:
+  node_modules:
+  yarn_cache:
+services:
+  website:
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website-env:1.0.2
+    command: >
+      ./script/wormbase_server.pl -p 5000 -r -d
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./:/usr/local/wormbase/website-shared-files/html"
+      - "./:/usr/local/wormbase/services"
+      - "./:/usr/local/wormbase/databases"
+      - "./:/usr/local/wormbase/website"
+    environment:
+      - WEBPACK_SERVER_PORT=${WEBPACK_SERVER_PORT}
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+    networks:
+      - default
+  webpack:
+    image: node:latest
+    ports:
+      - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
+    working_dir: /home/node/client
+    command: >
+      bash -c "yarn install --frozen-lockfile --verbose &&
+      	       yarn run start"
+    volumes:
+      - type: bind
+        source: ./
+        target: /home/node/
+        read_only: true
+      - type: volume
+        source: node_modules
+        target: /home/node/client/node_modules
+        volume:
+          nocopy: true
+      - type: volume
+        source: yarn_cache
+        target: /usr/local/share/.cache/yarn/v4
+    environment:
+      - PORT=${WEBPACK_SERVER_PORT}
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_USER=wormbase
+      - MYSQL_PASSWORD=test
+      - MYSQL_DATABASE=wormbase_user
+    volumes:
+      - "./util/sql/user_database.sql:/docker-entrypoint-initdb.d/user_database.sql"
