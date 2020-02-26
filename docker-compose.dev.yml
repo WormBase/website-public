@@ -4,7 +4,7 @@ volumes:
   yarn_cache:
 services:
   website:
-    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website-env:1.0.2
+    image: wormbase/website-env:1.0.2
     command: "./script/wormbase_server.pl -p 5000 -r -d"
     volumes:
       - "./:/usr/local/wormbase/website"
