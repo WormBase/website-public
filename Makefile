@@ -225,7 +225,7 @@ dev-down:
 
 # local dev deployment
 .PHONY: local
-local: aws-ecr-login
+local:
 	(cd client/ && yarn install --frozen-lockfile) # dependency installation on host is required for prettier in git precommit hook
 	docker-compose pull
 	$(MAKE) local-down
