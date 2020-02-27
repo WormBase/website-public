@@ -85,6 +85,7 @@ build-start:
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
+		--init \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
@@ -124,6 +125,7 @@ build-run-test:
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
+		--init \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
