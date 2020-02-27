@@ -229,11 +229,11 @@ local: aws-ecr-login
 	(cd client/ && yarn install --frozen-lockfile) # dependency installation on host is required for prettier in git precommit hook
 	docker-compose pull
 	$(MAKE) local-down
-	docker-compose -f docker-compose.yml -f docker-compose.local.yml up
+	docker-compose -f docker-compose.local.yml up
 
 .PHONY: local-down
 local-down:
-	docker-compose -f docker-compose.yml -f docker-compose.local.yml down
+	docker-compose -f docker-compose.local.yml down
 
 .PHONY: console
 console:
