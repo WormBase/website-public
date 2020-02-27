@@ -22,7 +22,7 @@ _Italic indicates services whose deployment are managed separately from what is 
 For devOps, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
 
 
-Development
+Development environment - EC2 option
 --------------------------------------------------------
 
 Development environment can be setup easily, using a shared development machine and `docker-compose`.
@@ -72,6 +72,31 @@ JavaScript dependencies (such as `prettier` and `husky`) need to be installed on
 
 This problem seems to show up occasionally, when I modify the wormbase_local.conf while the server is running. Try `make dev-down` and then `make dev`, and repeat a few times until the problem resolves itself.
 
+
+(Experimental) Development environment - Local option
+--------------------------------------------------------
+
+If a local development environment is preferred, this option would allow you to
+setup a barebone development environment, without requiring credentials, such as
+those for accessing cloud resources. As a result, some features of the website
+will not work in this environment. But it should have enough functionalities for UI
+development and testing.
+
+**Prerequisite:**
+
+- Ensure [Docker](https://docs.docker.com/) (18.06.0+) and [docker-compose](https://docs.docker.com/compose/install/) are installed.
+
+- Ensure [node.js](https://nodejs.org/en/) (10+) and [Yarn](https://yarnpkg.com/) are installed.
+
+- Ensure environment variable `CATALYST_PORT` and `WEBPACK_SERVER_PORT` are set.
+
+**To start your development stack:**
+
+`make local` and wait for website/Catalyst and webpack(DevServer) to start.
+
+**To shutdown your development stack cleanly:**
+
+`make local-down`
 
 Staging Environment
 ---------------------------------------------
