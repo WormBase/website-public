@@ -35,6 +35,7 @@ dev-start:
 		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		--network=wb-network \
+		--init \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
