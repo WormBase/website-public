@@ -35,6 +35,7 @@ dev-start:
 		-v /usr/local/wormbase/services:/usr/local/wormbase/services \
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		--network=wb-network \
+		--init \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
@@ -84,6 +85,7 @@ build-start:
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
+		--init \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
@@ -123,6 +125,7 @@ build-run-test:
 		-v /usr/local/wormbase/databases:/usr/local/wormbase/databases \
 		-v ${PWD}/logs:/usr/local/wormbase/website/logs \
 		--network=wb-network \
+		--init \
 		-p ${CATALYST_PORT}:5000 \
 		-e ACEDB_HOST=$(ACEDB_HOST) \
 		-e AWS_ACCESS_KEY_ID \
@@ -165,7 +168,7 @@ eb-create-staging:
 .PHONY: dockerrun-latest
 dockerrun-latest:
 	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
-	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' docker-compose.yml
+	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' docker-compose.prod.yml
 
 
 .PHONY: staging-deploy
@@ -219,6 +222,18 @@ dev: aws-ecr-login
 .PHONY: dev-down
 dev-down:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+
+# local dev deployment
+.PHONY: local
+local:
+	(cd client/ && yarn install --frozen-lockfile) # dependency installation on host is required for prettier in git precommit hook
+	docker-compose -f docker-compose.local.yml pull
+	$(MAKE) local-down
+	docker-compose -f docker-compose.local.yml up
+
+.PHONY: local-down
+local-down:
+	docker-compose -f docker-compose.local.yml down
 
 .PHONY: console
 console:

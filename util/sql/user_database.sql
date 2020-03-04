@@ -133,7 +133,7 @@ DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
         session_id     char(72) primary key,
         session_data text,
-        expires      int(10)
+        expires      bigint(10)
     );
 
 

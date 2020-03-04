@@ -23,7 +23,7 @@ requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::Controller::CGIBin';
 requires 'Catalyst::DispatchType::Regex';
 requires 'Catalyst::Model::Adaptor';
-requires 'Catalyst::Model::Xapian::Result';
+#requires 'Catalyst::Model::Xapian::Result';
 #requires 'Catalyst::Log::Log4perl';
 requires 'Catalyst::Plugin::Authentication';
 requires 'Catalyst::Plugin::Authorization::Roles';
@@ -51,6 +51,7 @@ requires 'Badge::GoogleTalk';                                    #
 requires 'Bio::Perl'                              => '1.006001'; #
 requires 'Bio::Graphics';                                        #
 requires 'Bio::Graphics::Browser2::Markup';
+requires 'Bio::DB::SeqFeature::Segment';
 requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
 requires 'CGI::Simple::Cookie';                                  #
@@ -112,7 +113,7 @@ requires 'Package::Stash::XS'                    => '0.18';      #
 requires 'Params::Util';                                         #
 requires 'Proc::Wait3';
 requires 'Term::ReadLine';                                       #
-requires 'Search::Xapian';                                       #
+#requires 'Search::Xapian';                                       #
 requires 'Server::Starter';                                      # Daemon running starman
 requires 'Sub::Exporter';                                        #
 requires 'Sub::Install';                                         #

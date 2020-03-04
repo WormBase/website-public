@@ -4,17 +4,20 @@ volumes:
   yarn_cache:
 services:
   website:
-    image: wormbase/website-env:1.0.2
-    command: "./script/wormbase_server.pl -p 5000 -r -d"
+    image: wormbase/website-env:2.0.0-alpha.1
+    command: >
+      ./script/wormbase_server.pl -p 5000 -d -r --restart_directory ./lib
+    ports:
+      - "${CATALYST_PORT}:5000"
     volumes:
+      - "./:/usr/local/wormbase/website-shared-files/html"
+      - "./:/usr/local/wormbase/services"
+      - "./:/usr/local/wormbase/databases"
       - "./:/usr/local/wormbase/website"
     environment:
       - WEBPACK_SERVER_PORT=${WEBPACK_SERVER_PORT}
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
     networks:
       - default
-      - wb-network
   webpack:
     image: node:latest
     ports:
@@ -38,7 +41,12 @@ services:
         target: /usr/local/share/.cache/yarn/v4
     environment:
       - PORT=${WEBPACK_SERVER_PORT}
-networks:
-  wb-network:
-    external:
-      name: wb-network
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_USER=wormbase
+      - MYSQL_PASSWORD=test
+      - MYSQL_DATABASE=wormbase_user
+    volumes:
+      - "./util/sql/user_database.sql:/docker-entrypoint-initdb.d/user_database.sql"
