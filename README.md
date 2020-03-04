@@ -92,7 +92,7 @@ development and testing.
 
 **To start your development stack:**
 
-`make local` and wait for website/Catalyst and webpack(DevServer) to start.
+`make local` and wait for website/Catalyst and webpack(DevServer) to start. _(Running this for the first time will take some time, due to the download of container images and npm dependencies. Subsequent runs will be much faster.)_
 
 **To shutdown your development stack cleanly:**
 
