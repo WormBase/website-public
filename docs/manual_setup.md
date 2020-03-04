@@ -11,7 +11,7 @@ Installation
 
 Execute the following commands in a BASH terminal:
 
-    git clone git://github.com/WormBase/website.git wormbase
+    git clone https://github.com/WormBase/website-public.git
     cd wormbase
     git submodule init
     git submodule update
