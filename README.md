@@ -94,6 +94,8 @@ development and testing.
 
 `make local` and wait for website/Catalyst and webpack(DevServer) to start. _(Running this for the first time will take some time, due to the download of container images and npm dependencies. Subsequent runs will be much faster.)_
 
+Please browse to the `http://localhost:CATALYST_PORT` (instead of the WEBPACK_SERVER_PORT) for testing of the website.
+
 **To shutdown your development stack cleanly:**
 
 `make local-down`
