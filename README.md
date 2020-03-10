@@ -90,6 +90,8 @@ development and testing.
 
 - Ensure environment variable `CATALYST_PORT` and `WEBPACK_SERVER_PORT` are set.
 
+- **(Updated on March 10, 2020):** Copy the file [wormbase_local.conf.template](wormbase_local.conf.template) into a new file named `wormbase_local.conf`.
+
 **To start your development stack:**
 
 `make local` and wait for website/Catalyst and webpack(DevServer) to start. _(Running this for the first time will take some time, due to the download of container images and npm dependencies. Subsequent runs will be much faster.)_
