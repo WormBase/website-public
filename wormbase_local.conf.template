@@ -108,4 +108,4 @@ cached_rest_endpoints_expires_in = 0 # minutes, for staging
 # search_server =
 
 # webpack_dev_server URL
-# webpack_dev_server =
+webpack_dev_server = "http://webpack:__ENV(WEBPACK_SERVER_PORT)__"
