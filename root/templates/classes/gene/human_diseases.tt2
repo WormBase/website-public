@@ -1,8 +1,3 @@
-[% IF fields.human_diseases.data.experimental_model || fields.human_diseases.data.potential_model %]
-    [% WRAPPER $field_block title="Human disease graph" %]
-        <div id="disease-ontology-graph-container" class="ontology-graph-container"></div>
-    [% END %]
-[% END %]
 
 [% IF fields.human_diseases.data.experimental_model || fields.detailed_disease_model.data %]
   [% WRAPPER $field_block title=pluralize("Disease association", fields.human_diseases.data.experimental_model) tooltip="Curated disease associations based on experimental data" %]
@@ -65,6 +60,11 @@ END;
 [% END %]
 [% END %]
 
+[% IF fields.human_diseases.data.experimental_model || fields.human_diseases.data.potential_model %]
+    [% WRAPPER $field_block title="Human disease graph" %]
+        <div id="disease-ontology-graph-container" class="ontology-graph-container"></div>
+    [% END %]
+[% END %]
 
 <script type="text/javascript">
 (function(){
