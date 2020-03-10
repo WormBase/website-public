@@ -12,7 +12,7 @@ services:
       - "./logs/nginx:/var/log/nginx"
     environment:
       - WEBPACK_SERVER_PORT=${WEBPACK_SERVER_PORT}
-    command: /bin/bash -c "envsubst '\$WEBPACK_SERVER_PORT' < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+    command: /bin/bash -c "envsubst '$$WEBPACK_SERVER_PORT' < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
   website:
     image: wormbase/website-env:2.0.0-alpha.1
     command: >

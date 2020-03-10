@@ -13,7 +13,7 @@ upstream wobr-server {
 }
 
 upstream webpack {
-  server webpack:9008;
+  server webpack:$WEBPACK_SERVER_PORT;
 }
 
 server {
