@@ -168,7 +168,7 @@ eb-create-staging:
 .PHONY: dockerrun-latest
 dockerrun-latest:
 	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
-	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' docker-compose.prod.yml
+	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' docker-compose.yml
 
 
 .PHONY: staging-deploy
