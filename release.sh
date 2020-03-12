@@ -23,12 +23,12 @@ set -x #echo on
 
 # update Version in Dockerrun.aws.json and docker-compose.yml
 sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' Dockerrun.aws.json
-sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' docker-compose.prod.yml
+sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' docker-compose.yml
 
 # release commit
 git diff
 git add Dockerrun.aws.json
-git add docker-compose.prod.yml
+git add docker-compose.yml
 git commit -m "release $VERSION"
 git tag "$VERSION"
 git push origin "$VERSION"
