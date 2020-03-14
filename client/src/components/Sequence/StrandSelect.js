@@ -11,6 +11,9 @@ import Tab from '../Tab';
 import Tabs from '../Tabs';
 
 const strandTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     primary: teal,
     secondary: pink,

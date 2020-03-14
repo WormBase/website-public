@@ -9,6 +9,9 @@ import primaryColor from '@material-ui/core/colors/blueGrey';
 import errorColor from '@material-ui/core/colors/red';
 
 const wormbaseTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     primary: primaryColor,
     secondary: {
