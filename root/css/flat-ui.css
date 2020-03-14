@@ -3609,7 +3609,7 @@ body.vjs-full-window {
   position: relative;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
-  border-radius: 6px;
+  border-radius: 6px;    
 }
 .login-form:before {
   content: '';
