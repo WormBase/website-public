@@ -70,6 +70,89 @@ export default function BrowseCollection({
   //   post_to_wormmine(collection.map(({ id }) => id));
   // }, [collection]);
 
+  const toSimpleMine = useCallback(() => {
+    // modiied from code from SGD https://github.com/yeastgenome/SGDFrontend
+    function post(geneIds) {
+      // The rest of this code assumes you are not using a library.
+      // It can be made less wordy if you use one.
+      const form = document.createElement('form');
+      form.setAttribute('method', 'post');
+      form.setAttribute(
+        'action',
+        'https://wormbase.org/tools/mine/simplemine.cgi'
+      );
+      form.setAttribute('target', '_blank');
+      form.setAttribute('enctype', 'multipart/form-data');
+
+      const geneListInput = document.createElement('textarea');
+      geneListInput.setAttribute('type', 'hidden');
+      geneListInput.setAttribute('name', 'geneInput');
+      geneListInput.value = geneIds.join(' ');
+      form.appendChild(geneListInput);
+
+      const columnHeaders = [
+        'WormBase Gene ID',
+        'Public Name',
+        'WormBase Status',
+        'Sequence Name',
+        'Other Name',
+        'Transcript',
+        'Operon',
+        'WormPep',
+        'Protein Domain',
+        'Uniprot',
+        'Reference Uniprot ID',
+        'TreeFam',
+        'RefSeq_mRNA',
+        'RefSeq_protein',
+        'Genetic Map Position',
+        'RNAi Phenotype Observed',
+        'Allele Phenotype Observed',
+        'Sequenced Allele',
+        'Interacting Gene',
+        'Expr_pattern Tissue',
+        'Genomic Study Tissue',
+        'Expr_pattern LifeStage',
+        'Genomic Study LifeStage',
+        'Disease Info',
+        'Human Ortholog',
+        'Reference',
+        'Concise Description',
+        'Automated Description',
+        'Expression Cluster Summary',
+      ];
+
+      const options = [
+        { name: 'outputFormat', value: 'html' },
+        { name: 'duplicatesToggle', value: 'merge' },
+        { name: 'headers', value: columnHeaders.join('\t') },
+      ].concat(
+        columnHeaders.map((name) => ({
+          name,
+        }))
+      );
+
+      options.forEach(({ name, value, checked = 'checked' }) => {
+        const optionInput = document.createElement('input');
+        optionInput.setAttribute('type', 'checkbox');
+        optionInput.setAttribute('name', name);
+        optionInput.setAttribute('value', value || name);
+        optionInput.setAttribute('checked', checked);
+        form.appendChild(optionInput);
+      });
+
+      const submitInput = document.createElement('input');
+      submitInput.setAttribute('name', 'action');
+      submitInput.setAttribute('type', 'submit');
+      submitInput.setAttribute('value', 'query list');
+      form.appendChild(submitInput);
+
+      document.body.appendChild(form);
+      submitInput.click();
+    }
+    post(collection.map(({ id }) => id));
+  }, [collection]);
+
   const toEnrichmentAnalysisTool = useCallback(() => {
     // modiied from code from SGD https://github.com/yeastgenome/SGDFrontend
     function post(geneIds) {
@@ -129,6 +212,11 @@ export default function BrowseCollection({
             <DownloadButton contentFunc={toTSV} fileName={`${title}.txt`}>
               TSV <SaveIcon />
             </DownloadButton>
+            {type === 'gene' ? (
+              <Button onClick={toSimpleMine}>
+                SimpleMine <LaunchIcon />
+              </Button>
+            ) : null}
             {type === 'gene' && collection.length > 1 ? (
               <Button onClick={toEnrichmentAnalysisTool}>
                 Enrichment Analysis <LaunchIcon />
