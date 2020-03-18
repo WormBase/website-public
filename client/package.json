@@ -31,18 +31,6 @@
     "tippy.js": "^4.3.5",
     "venn.js": "^0.2.20"
   },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --config ./.prettierrc",
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
