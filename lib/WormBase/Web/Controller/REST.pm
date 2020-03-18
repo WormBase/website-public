@@ -897,9 +897,7 @@ sub widget_GET {
     my $headers = $c->req->headers;
     my $content_type
         = $headers->content_type
-        || $c->req->params->{'content-type'}
-        || 'text/html';
-    $c->response->header( 'Content-Type' => $content_type );
+        || $c->req->params->{'content-type'};
 
     # # references widget - no need for an object
     # if ( $widget =~ m/references/i && $name =~ m/^WB/ ) {
@@ -1049,31 +1047,30 @@ sub widget_GET {
 
 
 
-    # Forward to the view to render HTML, set stash variables
-    if ( $content_type eq 'text/html' ) {
-        # No boiler since this is an XHR request.
-        $c->stash->{noboiler} = 1;
-        $c->stash->{colorbox} = $c->req->param('colorbox') if $c->req->param('colorbox');
+    # Set stash variables to render HTML
+    # Relies on content negotiation to determine the serializer
+    # https://metacpan.org/pod/Catalyst::Controller::REST#AVAILABLE-SERIALIZERS
 
-        # Hack for empty widgets - know what object they're on
-        $c->stash->{object}->{name} = $c->stash->{fields}->{name};
+    # No boiler since this is an XHR request.
+    $c->stash->{noboiler} = 1;
+    $c->stash->{colorbox} = $c->req->param('colorbox') if $c->req->param('colorbox');
 
-        # Save the name and class of the widget.
-        $c->stash->{wbid} = "$name";
-        $c->stash->{class}  = $class;
-        $c->stash->{widget} = $widget;
+    # Hack for empty widgets - know what object they're on
+    $c->stash->{object}->{name} = $c->stash->{fields}->{name};
 
-        $c->stash->{species} = $c->req->params->{species};
+    # Save the name and class of the widget.
+    $c->stash->{wbid} = "$name";
+    $c->stash->{class}  = $class;
+    $c->stash->{widget} = $widget;
 
-          # Set the template
-        $c->stash->{template} = 'shared/generic/rest_widget.tt2';
-        $c->stash->{child_template}
-            = $self->_select_template('widget', $class, $widget);
+    $c->stash->{species} = $c->req->params->{species};
 
-        my $html = $c->view('TT')->render( $c, $c->{stash}->{template} );
-        $c->forward('WormBase::Web::View::TT');
-        return;
-    }
+    # Set the template
+    $c->stash->{template} = 'shared/generic/rest_widget.tt2';
+    $c->stash->{child_template}
+	= $self->_select_template($c, 'widget', $class, $widget);
+
+    # End of set stash variables to render HTML
 
     $self->status_ok(
         $c,
@@ -1777,7 +1774,7 @@ sub _comment_rss {
 # Maybe I should just maintain
 # a hash, where each field/widget lists its corresponding template
 sub _select_template {
-    my ($self, $type, $class, $render_target) = @_;
+    my ($self, $c, $type, $class, $render_target) = @_;
 
     my $config = $self->_app->config;
 
@@ -1795,7 +1792,7 @@ sub _select_template {
         # Some widgets are shared across Models
         return "shared/widgets/$render_target.tt2";
     } else {
-      die "cannot locate template $render_target.tt2";
+      $c->log->warn("cannot locate template $render_target.tt2");
     }
 }
 
@@ -1837,9 +1834,7 @@ sub field_GET {
     $c->log->debug($headers);
     my $content_type
         = $headers->content_type
-        || $c->req->params->{'content-type'}
-        || 'text/html';
-
+        || $c->req->params->{'content-type'};
 
     my $rest_server = $c->config->{'rest_server'};
     my $path_template = "/rest/field/$class/{id}/$field";
@@ -1931,18 +1926,18 @@ sub field_GET {
 
     my $uri = $c->uri_for( "/species", $class, $name )->path;
 
-    $c->response->header( 'Content-Type' => $content_type );
-    if ( $content_type eq 'text/html' ) {
-   # Set the template
-        $c->stash->{template} = 'shared/generic/rest_field.tt2';
-        $c->stash->{wbid} = "$name";
-        $c->stash->{class}  = $class;
-        $c->stash->{field} = $field;
 
-        $c->stash->{child_template} = $self->_select_template('field', $class, $field );
-        $c->forward('WormBase::Web::View::TT');
-    }elsif($content_type =~ m/image/i) {
+    # Set variables for rendering HTML
+    $c->stash->{template} = 'shared/generic/rest_field.tt2';
+    $c->stash->{wbid} = "$name";
+    $c->stash->{class}  = $class;
+    $c->stash->{field} = $field;
 
+
+    $c->stash->{child_template} = $self->_select_template($c, 'field', $class, $field );
+    # End of set variables for rendering HTML
+
+    if($content_type =~ m/image/i) {
       $c->res->body($c->stash->{$field});
     }
     $self->status_ok(
