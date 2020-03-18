@@ -519,7 +519,7 @@ var name2widget = {
                       : tog.next();
                 iframeContainer.html('<iframe src="' + tog.attr("href") + '"></iframe>');
               } else {
-                  ajaxGet(tog.next(), tog.attr("href"));
+                ajaxGet(tog.next(), tog.attr("href"), { dataType: 'html' });
               }
               tog.removeClass("load-toggle");
             }
@@ -653,6 +653,7 @@ var name2widget = {
       settings = settings || {};
       $jq.ajax({
         url: $url,
+	dataType: settings.dataType,
         cache: settings.hasOwnProperty('cache') ? settings.cache : true,
         beforeSend:function(xhr){
           if(!settings.noLoadImg){ setLoading(ajaxPanel); }
@@ -1042,7 +1043,7 @@ var name2widget = {
 
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
-          ajaxGet(content, url, undefined, function(){
+          ajaxGet(content, url, { dataType: 'html' }, function(){
             //console.log([content.offset().top - scrollPos]);
             scrollToOffsetHeightDiff(content, heightDefault);
             Scrolling.sidebarMove();checkSearch(content);
@@ -1071,6 +1072,8 @@ var name2widget = {
         },2000);
       };
 
+      settings.dataType = 'html';
+
       ajaxGet(container, url, settings);
       return false;
     }
@@ -1093,7 +1096,7 @@ var name2widget = {
     function reloadWidget(widget_name, noLoad, url){
         var con = $jq("#" + widget_name + "-content");
         if(con.text().length > 4)
-          ajaxGet(con, url || $jq("#nav-" + widget_name).attr("href"), { noLoadImg: noLoad }, function(){ checkSearch(con); });
+          ajaxGet(con, url || $jq("#nav-" + widget_name).attr("href"), { noLoadImg: noLoad, dataType: 'html' }, function(){ checkSearch(con); });
     }
 
 
