@@ -21,7 +21,7 @@ use HTTP::Tiny;
 
 
 __PACKAGE__->config(
-    'default'          => 'text/x-yaml',
+    'default'          => 'application/json',
     'stash_key'        => 'rest',
     'map'              => {
         'text/x-yaml'      => 'YAML',
