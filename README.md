@@ -90,6 +90,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 - Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
+- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` in the Makefile
 - Create the release branch, such as `release/273`
 - At the release branch:
 
@@ -103,7 +104,6 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
     - Wait for the deployment to complete, and verify the pre-production environment is working
-        - **If ACeDB TreeView isn't working**, which seems to be caused by a race condition between setting up the file system and starting ACeDB container, the problem can be fixed by re-deploying to the same environment `make production-deploy`.
 
 ### Go live with a release
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
