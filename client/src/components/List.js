@@ -7,10 +7,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
-const ListItemByLevel = ({ level, indentUnitWidth, style, ...props }) => {
+const ListItemByLevel = ({ level = 0, indentUnitWidth, style, ...props }) => {
   const newStyle = {
     padding: 0,
-    paddingLeft: (level || 0) * indentUnitWidth,
+    paddingLeft: level * indentUnitWidth,
     ...style,
   };
   return <MuiListItem style={newStyle} disableRipple {...props} />;

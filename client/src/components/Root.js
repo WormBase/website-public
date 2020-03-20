@@ -12,5 +12,8 @@ export default function Root({ children }) {
 }
 
 Root.propTypes = {
-  children: PropTypes.any,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
 };
