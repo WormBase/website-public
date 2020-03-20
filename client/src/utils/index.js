@@ -1,6 +1,5 @@
-export function pluralize(word, count) {
-  return count > 1 ? `${word}s` : word;
-}
+import pluralize from 'pluralize';
+export { pluralize };
 
 export function capitalize(word) {
   if (word) {
