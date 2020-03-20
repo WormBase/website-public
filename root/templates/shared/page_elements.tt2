@@ -707,8 +707,20 @@ END %]
                 </div>
 
                 <div id="widget-footer" class="ui-helper-hidden">
+ 
+[% MACRO empty_download_check BLOCK;
+  not_empty = 0;
+  FOREACH field IN fields.keys;
+    not_empty = 1;
+    LAST;
+  END; %]
+  [% IF not_empty == 1 %]
+      <a onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,is_class_index? 'all': this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
+  [% END %]
+[% END %]
+
 [% UNLESS (type.match('^(tool)|(me)$') || id == 'basic_search' ) %]
-                    <a   onClick='$jq(this).toggleClass("ui-state-highlight");' class="button feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,is_class_index? 'all': this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span><span>download</span></a>
+    [% empty_download_check %]
 [% END %]
 [% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator", "editor") %]
