@@ -127,6 +127,13 @@ sub layout_POST {
   $c->user_session->{'layout'}->{$class}->{$i}->{'name'} = $layout;
 
   $c->user_session->{'layout'}->{$class}->{$i}->{'lstring'} = $lstring;
+  $self->status_ok(
+      $c,
+      entity =>  {
+          name => $layout,
+          lstring => $lstring,
+      },
+  );
 }
 
 sub layout_GET {
