@@ -288,7 +288,7 @@ sub _request {
 
 sub _prepare_request {
     my ($self, $method, $path, $args) = @_;
-    my $uri = 'https://' . $self->host . ':' . $self->port . '/'
+    my $uri = 'http://' . $self->host . ':' . $self->port . '/'
             . $self->database;
     $uri   .= "/$path" if defined $path;
 
