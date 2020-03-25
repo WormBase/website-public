@@ -16,9 +16,6 @@ const wormbaseTheme = createMuiTheme({
     },
     error: errorColor,
   },
-  typography: {
-    useNextVariants: true,
-  },
 });
 
 const ThemeProvider = ({ children, ...props }) => (
