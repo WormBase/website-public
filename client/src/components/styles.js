@@ -21,7 +21,7 @@ const fitComponent = (WrappedComponent) => {
     }
   }
 
-  return withTheme()(FittedComponent);
+  return withTheme(FittedComponent);
 };
 
 export { fitComponent };
