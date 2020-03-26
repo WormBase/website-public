@@ -12,13 +12,13 @@ export default withStyles((theme) => ({
     textTransform: 'none',
   },
   sizeSmall: {
-    padding: `2px ${theme.spacing.unit}px 0 ${theme.spacing.unit}px`,
+    padding: `2px ${theme.spacing(1)}px 0 ${theme.spacing(1)}px`,
   },
 }))(Button);
 
 const IconButton = withStyles((theme) => ({
   root: {
-    padding: theme.spacing.unit / 2,
+    padding: theme.spacing(0.5),
     borderRadius: '10%',
   },
 }))(({ classes, ...props }) => (

@@ -593,10 +593,10 @@ const styles = (theme) => {
     },
     graphToolbar: {},
     buttonWrapper: {
-      margin: `${theme.spacing.unit / 2}px`,
+      margin: `${theme.spacing(0.5)}px`,
     },
     button: {
-      margin: `${theme.spacing.unit / 2}px`,
+      margin: `${theme.spacing(0.5)}px`,
     },
     sidebarToggleButton: {
       [theme.breakpoints.up('md')]: {
@@ -604,10 +604,10 @@ const styles = (theme) => {
       },
     },
     graphSidebar: {
-      padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit}px`,
+      padding: `${theme.spacing(3)}px ${theme.spacing(1)}px`,
     },
     graphSidebarCheckbox: {
-      padding: `${theme.spacing.unit / 4}px 0`,
+      padding: `${theme.spacing(0.25)}px 0`,
     },
     graphSidebarText: {
       fontStyle: 'italic',

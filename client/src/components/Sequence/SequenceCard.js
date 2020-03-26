@@ -88,18 +88,18 @@ const styles = (theme) => ({
     },
     alignItems: 'stretch',
     '& > *': {
-      margin: `0 ${theme.spacing.unit / 2}px`,
+      margin: `0 ${theme.spacing(0.5)}px`,
     },
   },
   expandToggleAction: {
     display: 'flex',
     justifyContent: 'start',
     width: 'initial',
-    paddingRight: theme.spacing.unit,
+    paddingRight: theme.spacing(1),
     flex: '1 1 auto',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-      marginBottom: theme.spacing.unit / 2,
+      marginBottom: theme.spacing(0.5),
     },
     border: `1px solid rgba(0, 0, 0, 0.23)`,
     // backgroundColor: theme.palette.grey[200],
@@ -115,7 +115,7 @@ const styles = (theme) => ({
     minWidth: 95,
   },
   buttonIcon: {
-    marginLeft: theme.spacing.unit / 2,
+    marginLeft: theme.spacing(0.5),
   },
 });
 

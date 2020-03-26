@@ -117,7 +117,7 @@ Sequence.propTypes = {
 const styles = (theme) => ({
   root: {
     '& div': {
-      paddingLeft: theme.spacing.unit * 1.5,
+      paddingLeft: theme.spacing(1.5),
       maxHeight: 1000000 /* prevent font boosting that sets line number and sequence to different computed font-size*/,
     },
   },
@@ -181,7 +181,7 @@ const styles = (theme) => ({
     textTransform: 'uppercase',
   },
   featureLegendItem: {
-    margin: `${theme.spacing.unit / 2}px 0`,
+    margin: `${theme.spacing(0.5)}px 0`,
   },
   featureLegendItemSymbol: {
     // textTransform: 'unset',

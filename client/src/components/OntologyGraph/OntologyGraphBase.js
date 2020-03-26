@@ -207,10 +207,10 @@ OntologyGraphBase.propTypes = {
 const styles = (theme) => ({
   /* toolbar and buttons */
   toolbar: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     display: 'flex',
     '& > *': {
-      margin: `0 ${theme.spacing.unit / 2}px`,
+      margin: `0 ${theme.spacing(0.5)}px`,
     },
   },
   stretch: {
@@ -262,7 +262,7 @@ const styles = (theme) => ({
     flexDirection: 'column',
     alignItems: 'stretch',
     '& > *': {
-      margin: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+      margin: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
     },
   },
 });

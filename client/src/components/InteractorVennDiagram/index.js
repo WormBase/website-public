@@ -136,7 +136,7 @@ const styles = (theme) => ({
   },
   toolbar: {
     '& > *': {
-      marginRight: theme.spacing.unit / 2,
+      marginRight: theme.spacing(0.5),
     },
   },
 });

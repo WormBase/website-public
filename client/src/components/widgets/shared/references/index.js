@@ -214,8 +214,8 @@ const styles = (theme) => {
       },
     },
     sidebar: {
-      width: `calc(100% + ${2 * theme.spacing.unit}px)`,
-      margin: `0 ${-2 * theme.spacing.unit}px`,
+      width: `calc(100% + ${2 * theme.spacing(1)}px)`,
+      margin: `0 ${-2 * theme.spacing(1)}px`,
       [theme.breakpoints.up('md')]: {
         width: sidebarWidth,
         minHeight: 200,
@@ -229,10 +229,10 @@ const styles = (theme) => {
       bottom: 15,
     },
     textpressoSection: {
-      margin: `${theme.spacing.unit * 2}px 0 0`,
+      margin: `${theme.spacing(2)}px 0 0`,
       textAlign: 'center',
       '& p': {
-        margin: `${theme.spacing.unit * 2}px 0 0`,
+        margin: `${theme.spacing(2)}px 0 0`,
       },
     },
   };
