@@ -60,7 +60,7 @@ const styles = (theme) => ({
     minWidth: 95,
   },
   buttonIcon: {
-    marginLeft: theme.spacing.unit / 2,
+    marginLeft: theme.spacing(0.5),
   },
 });
 

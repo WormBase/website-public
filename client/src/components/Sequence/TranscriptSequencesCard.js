@@ -161,7 +161,7 @@ const styles = (theme) => ({
     borderLeft: `1px solid ${theme.palette.text.hint}`,
     borderRadius: 0,
     padding: 0,
-    marginBottom: theme.spacing.unit * 2,
+    marginBottom: theme.spacing(2),
   },
 });
 

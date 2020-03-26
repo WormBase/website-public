@@ -21,10 +21,10 @@ const styles = (theme) => ({
   root: {
     height: 24,
     width: 24,
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     backgroundColor: '#fff',
     border: '2px solid grey',
-    borderRadius: theme.spacing.unit,
+    borderRadius: theme.spacing(1),
   },
   center: {
     position: 'absolute',
