@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "@material-ui/codemod": "^4.5.0",
     "@wormbase/react-scripts-for-catalyst": "^1.0.9-13"
   },
   "dependencies": {
