@@ -408,7 +408,7 @@
 
  'Gene Ontology Consortium' = {
     description = 'The Gene Ontology (GO) project is a major bioinformatics initiative to develop a computational representation of our evolving knowledge of how genes encode biological functions at the molecular, cellular and tissue system levels.'
-    GO_REF = 'http://www.geneontology.org/cgi-bin/references.cgi#GO_REF:%s'
+    GO_REF = 'https://github.com/geneontology/go-site/blob/master/metadata/gorefs/goref-%s.md'
     }
 
  GeneExpressionPatterns = {
