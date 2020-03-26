@@ -14,7 +14,11 @@ export default function withInnerHtmlFromUrl(
     }
 
     componentDidMount() {
-      fetch(url)
+      fetch(url, {
+        headers: {
+          Accept: 'text/html',
+        },
+      })
         .then((response) => {
           return response.text();
         })
