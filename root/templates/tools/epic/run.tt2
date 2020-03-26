@@ -59,6 +59,26 @@
     [% data.img_panel.join(' ') %]
     [% data.img.join(' ') %]
     [% data.img_map.join(' ') %]
+    <br>
+    <hr>
+    <h2>Key</h2>
+    <br>
+    <p>Yellow and orange markers represent loci that have been cloned. Markers indicated in yellow are well-characterized experimental markers. Markers indicated in orange are inferred and match one or m
+ore are of the following criteria:</p>
+    <ul>
+        <li>
+            Lack an experimentally determined genetic map position
+        </li>
+        <li>
+            Lack experimental multi-pt mapping data
+        </li>
+        <li>
+            Are linked to a sequence and have an interpolated map position
+        </li>
+        <li>
+            Have associated alleles
+        </li>
+    </ul>
 [% END %]
 
 <script type="text/javascript">

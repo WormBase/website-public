@@ -799,7 +799,7 @@ var name2widget = {
         f = f.replace('%26', '&');
         f = f.replace('%2F', '/');
 
-        location.href = '/search/' + cur_search_type + '/' + f + (cur_search_species_type ? '?species=' + cur_search_species_type : '');
+        location.href = '/search/' + cur_search_type + '/' + (f === '' ? '*' : f) + (cur_search_species_type ? '?species=' + cur_search_species_type : '');
     }
 
     function search_change(new_search) {

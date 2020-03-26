@@ -2111,7 +2111,7 @@ ul.nav-bar li .submenu {
 
 #login-box ul.wb-dropdown {
   position: absolute;
-  z-index: 501;
+  z-index: +1501;
   top: 24px;
   right: -15px;
   border: 1px solid #ccc;

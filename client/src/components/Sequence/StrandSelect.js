@@ -15,6 +15,9 @@ const strandTheme = createMuiTheme({
     primary: teal,
     secondary: pink,
   },
+  typography: {
+    useNextVariants: true,
+  },
 });
 
 class StrandSelect extends React.Component {
