@@ -1,0 +1,8 @@
+      [% tag2link(item.name) %]
+    </li>
+
+<div class="text-min">
+  Lab representative: [% tags2link(item.lab_representative) %]
+  <br />
+  [% item.description %]
+</div>
