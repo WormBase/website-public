@@ -24,13 +24,17 @@ END;
       cell_content(fields.identity.data);
     END;
 
-    remarks;
+    WRAPPER $field_block title="Mature product" key='mature_product';
+      cell_content(fields.mature_product.data);
+    END;
 
     laboratory;
 
     WRAPPER $field_block title="Available From" key="available_from";
         tag2link(fields.available_from.data);
     END;
+
+    remarks;
 
 '</div>';
 %]
