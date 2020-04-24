@@ -117,16 +117,16 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 ### Website release checklist
 
-After database has been staged:
+**After database has been staged:**
 
 - Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
 - Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
 
-When JBrowse container is available:
+**When JBrowse container is available:**
 
 - Update JBrowse container version in [Dockerrun.aws.json](./Dockerrun.aws.json) and [docker-compose.yml](docker-compose.yml)
 
-About 10 days before the release date:
+**About 10 days before the release date:**
 
 - Create a snapshot of the filesystem of the shared development instance
 - Create ACeDB deployment using AWS Launch Template:
