@@ -148,7 +148,12 @@ About 10 days before the release date:
   ```
 
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
-    - Wait for the deployment to complete, and verify the pre-production environment is working
+    - Wait for the deployment to complete, and verify the pre-production environment is working, including spot checking
+        - Search and Autocompletion
+	- A example gene page and all the widgets
+        - ACeDB TreeView
+	- JBrowse (to be signed of by JBrowse development)
+
 
 - Coordinate with REST API development to have the REST API deployed to take preaching traffic
 - Pre-caching slow endpoints as described in [WormBase/wb-cache-warmer](https://github.com/WormBase/wb-cache-warmer). Monitor the progress and terminate the process when done.
