@@ -1291,6 +1291,15 @@ _ '</div>';
 END;
 %]
 
+[% MACRO link_button(class_name, url, label) BLOCK;
+  '<a class="button ui-corner-all ' _ class_name _ '" href="'_ url _ '">' _ label _ '</a>';
+END;
+%]
+
+[% MACRO generate_intermine_download(url_query, label) BLOCK;
+  link_button('download-intermine', 'http://im-dev1.wormbase.org/tools/wormmine/service/template/results?format=tab' _ url_query, '<span class="ui-icon ui-icon-arrowthickstop-1-s"></span> ' _ label);
+END; %]
+
 [% MACRO format_sequence(seq, header, offset, length) BLOCK;
     format_seq = header ? ">$header\n" : "";
     IF length;
