@@ -287,7 +287,8 @@ END;
     <div class="field
     [%# Add a class to disable / hide empty fields %]
     [% TRY; IF (key && (!fields.$key.defined('data')
-                        || ((ref(fields.$key.data) == 'ARRAY' || ref(fields.$key.data) == 'HASH') && fields.$key.data.size == 0)))
+                        || ((ref(fields.$key.data) == 'ARRAY' || ref(fields.$key.data) == 'HASH') && fields.$key.data.size == 0))
+                    && (!fields.$key.defined('count') || fields.$key.count == 0))
                 || disabled; " disabled "; END; END;%]
 
         ">
