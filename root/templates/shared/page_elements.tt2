@@ -669,7 +669,8 @@ END %]
   FOREACH field IN fields.keys;
     NEXT IF field == 'name';
     NEXT IF field == 'time_cached';  # time_cached should be moved outside of fields in WS260
-    IF fields.$field.defined('data') && !((ref(fields.$field.data) == 'ARRAY' || ref(fields.$field.data) == 'HASH') && fields.$field.data.size == 0);
+    IF (fields.$field.defined('data') && !((ref(fields.$field.data) == 'ARRAY' || ref(fields.$field.data) == 'HASH') && fields.$field.data.size == 0)) ||
+       (fields.$field.defined('count') && fields.$field.count > 0);
       not_empty = 1;
       LAST;
     END;
