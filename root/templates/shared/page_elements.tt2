@@ -1299,7 +1299,7 @@ END;
 %]
 
 [% MACRO generate_intermine_download(url_query, label) BLOCK;
-  link_button('download-intermine', 'http://im-dev1.wormbase.org/tools/wormmine/service/template/results?format=tab' _ url_query, '<span class="ui-icon ui-icon-arrowthickstop-1-s"></span> ' _ label);
+  link_button('download-intermine', c.config.intermine_server _ '/tools/wormmine/service/template/results?format=tab' _ url_query, '<span class="ui-icon ui-icon-arrowthickstop-1-s"></span> ' _ label);
 END; %]
 
 [% MACRO format_sequence(seq, header, offset, length) BLOCK;
