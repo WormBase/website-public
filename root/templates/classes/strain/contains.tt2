@@ -4,7 +4,7 @@
             variation_table(order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'gene'], key='alleles');
         ELSIF fields.alleles.count;
 	    count_formatted = fields.alleles.count | replace('\d{3}$', 'k+');
-            generate_intermine_download('&name=strain_alleles_test&constraint1=Strain.primaryIdentifier&op1=eq&value1=' _ fields.name.data.id, '<span>download (' _ count_formatted _ ')</span>');
+            generate_intermine_download('&name=strains_alleles&constraint1=Strain.primaryIdentifier&op1=eq&value1=' _ fields.name.data.id, '<span>download (' _ count_formatted _ ')</span>');
         END;
     END;
  %]
