@@ -1,9 +1,12 @@
 [%
-  WRAPPER $field_block title="Variations" key="alleles";
-              variation_table(
-              order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'gene'],
-              key='alleles');
-  END;
+    WRAPPER $field_block title="Variations" key="alleles";
+        IF fields.alleles.data;
+            variation_table(order=['variation','molecular_change','locations','effects','composite_change','isoform', 'phen_count', 'sources', 'gene'], key='alleles');
+        ELSIF fields.alleles.count;
+	    count_formatted = fields.alleles.count | replace('\d{3}$', 'k+');
+            generate_intermine_download('&name=strains_alleles&columnheaders=friendly&constraint1=Strain.primaryIdentifier&op1=eq&value1=' _ fields.name.data.id, '<span>download (' _ count_formatted _ ')</span>');
+        END;
+    END;
  %]
 
 [% WRAPPER $field_block title=pluralize("Gene", fields.genes.data.size) key="genes" %]

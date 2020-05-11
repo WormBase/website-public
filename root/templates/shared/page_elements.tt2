@@ -287,7 +287,8 @@ END;
     <div class="field
     [%# Add a class to disable / hide empty fields %]
     [% TRY; IF (key && (!fields.$key.defined('data')
-                        || ((ref(fields.$key.data) == 'ARRAY' || ref(fields.$key.data) == 'HASH') && fields.$key.data.size == 0)))
+                        || ((ref(fields.$key.data) == 'ARRAY' || ref(fields.$key.data) == 'HASH') && fields.$key.data.size == 0))
+                    && (!fields.$key.defined('count') || fields.$key.count == 0))
                 || disabled; " disabled "; END; END;%]
 
         ">
@@ -669,7 +670,8 @@ END %]
   FOREACH field IN fields.keys;
     NEXT IF field == 'name';
     NEXT IF field == 'time_cached';  # time_cached should be moved outside of fields in WS260
-    IF fields.$field.defined('data') && !((ref(fields.$field.data) == 'ARRAY' || ref(fields.$field.data) == 'HASH') && fields.$field.data.size == 0);
+    IF (fields.$field.defined('data') && !((ref(fields.$field.data) == 'ARRAY' || ref(fields.$field.data) == 'HASH') && fields.$field.data.size == 0)) ||
+       (fields.$field.defined('count') && fields.$field.count > 0);
       not_empty = 1;
       LAST;
     END;
@@ -1290,6 +1292,15 @@ END;
 _ '</div>';
 END;
 %]
+
+[% MACRO link_button(class_name, url, label) BLOCK;
+  '<a class="button ui-corner-all ' _ class_name _ '" href="'_ url _ '">' _ label _ '</a>';
+END;
+%]
+
+[% MACRO generate_intermine_download(url_query, label) BLOCK;
+  link_button('download-intermine', c.config.intermine_server _ '/tools/wormmine/service/template/results?format=tab' _ url_query, '<span class="ui-icon ui-icon-arrowthickstop-1-s"></span> ' _ label);
+END; %]
 
 [% MACRO format_sequence(seq, header, offset, length) BLOCK;
     format_seq = header ? ">$header\n" : "";
