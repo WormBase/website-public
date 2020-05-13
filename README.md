@@ -115,11 +115,28 @@ Production Environment
 
 WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
 
-### Prepare for a website release
+### Website release checklist
 
+**After database has been staged:**
+
+- Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
 - Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+
+**When JBrowse container is available:**
+
+- Update JBrowse container version in [Dockerrun.aws.json](./Dockerrun.aws.json) and [docker-compose.yml](docker-compose.yml)
+
+**About 10 days before the release date:**
+
+- Create a snapshot of the filesystem of the shared development instance
+- Create ACeDB deployment using AWS Launch Template:
+    * Update the snapshot for the non-root volume to use the filesystem snapshot just created
+    * Configure subnet as needed
+    * Configure tags as needed
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
+- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` in the Makefile
 - Create the release branch, such as `release/273`
+
 - At the release branch:
 
   ```console
@@ -131,14 +148,29 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
   ```
 
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
-    - Wait for the deployment to complete, and verify the pre-production environment is working
-        - **If ACeDB TreeView isn't working**, which seems to be caused by a race condition between setting up the file system and starting ACeDB container, the problem can be fixed by re-deploying to the same environment `make production-deploy`.
+    - Wait for the deployment to complete, and verify the pre-production environment is working, including spot checking
+        - Search and Autocompletion
+	- A example gene page and all the widgets
+        - ACeDB TreeView
+	- JBrowse (to be signed of by JBrowse development)
+
+
+- Coordinate with REST API development to have the REST API deployed to take preaching traffic
+- Pre-caching slow endpoints as described in [WormBase/wb-cache-warmer](https://github.com/WormBase/wb-cache-warmer). Monitor the progress and terminate the process when done.
 
 ### Go live with a release
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
     - Swap the URL between the pre-production environment and the current production environment
     - After making sure the new production environment is working, wait until the DNS TTL passes on Nginx before shutting down the previous production environment
 
+### Website post-release checklist
+
+After production is stable for a few days, tear down unused resources.
+* Elastic Beanstalk environment for from the previous release
+    * wormbase-website
+    * wormbase-search
+* AWS EC2, tear down ACeDB instance from the previous release
+* Coordinate with REST API development to tear down resources that the API depends on
 
 
 

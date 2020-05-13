@@ -701,7 +701,6 @@ sub set_cache {
     my ($self, $key, $data, $cache_name) = @_;
 
     return unless $self->config->{cache}{enabled};
-    return if $self->check_any_user_role(qw/admin curator/);
 
     $cache_name ||= 'default';
 

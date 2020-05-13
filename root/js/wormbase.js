@@ -770,7 +770,16 @@ var name2widget = {
             if ( xhr === lastXhr ) {
               data.forEach(function(dat) {
                 var speciesHtml = (dat.taxonomy && dat.taxonomy.species) ? '<span class="species">'  + dat.taxonomy.genus + ' ' + dat.taxonomy.species + '</span>' : '';
-                dat.labelHtml = '<span class="autocomplete-item-wrapper"><span>' + dat.label + '</span>' + speciesHtml + '</span>';
+		const {
+		  autocomplete_keyword_all = [],
+		  autocomplete_all = [],
+		} = dat.highlight || {};
+		var other_names =  autocomplete_keyword_all.sort()[0] || autocomplete_all.join(' ');
+                dat.labelHtml = `
+<span class="autocomplete-item-wrapper">
+  <span>${dat.label}
+  <span style="font-size:x-small;">${other_names.replace(/<[^>]*>/g, '') === dat.label ? '' : other_names} ${speciesHtml}</spn></span>
+</span>`;
               });
               response( data );
             }

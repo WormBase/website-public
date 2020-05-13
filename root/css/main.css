@@ -1248,6 +1248,10 @@ a:hover {
     text-decoration: underline;
 }
 
+a.button {
+    color: #000;
+}
+
 
 
 
@@ -2894,7 +2898,9 @@ div.field .field .field-content {
   padding: 0 0 0 1em;
 }
 
-
+div.field .count {
+  text-decoration: underline;
+}
 
 /* Special field elements */
 /* Google Map */

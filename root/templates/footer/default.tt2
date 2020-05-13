@@ -45,6 +45,7 @@
           <li>[% external_link("https://wiki.wormbase.org/index.php/WormBoard", 'WormBoard') %]</li>
           <li>[% external_link("http://www.wormbook.org/", 'WormBook') %]</li>
           <li>[% external_link("http://forums.wormbase.org", 'Forum') %]</li>
+          <li><a href="[% c.uri_for('/resources','laboratory').path  _ '#012--10' %]">Worm Labs</a></li>
           <li>[% external_link("http://blog.wormbase.org", 'Blog') %]</li>
           <li>[% external_link("http://twitter.com/wormbase", 'Twitter') %]</li>
           <li><a href="[% c.uri_for('/species', 'c_elegans').path  _ '#1--10' %]">Key Papers</a></li>
