@@ -33,10 +33,9 @@ ELSE;
 
 END;
 
-IF fields.rnai_not.data.defined;
-
-    WRAPPER $field_block  title="" key="rnai_not";
+WRAPPER $field_block  title="" key="rnai_not";
        '<span class="caveat-emptor">Gene knockdown via RNAi DOES NOT result in the ' _ tag2link(object.name.data) _ ' phenotype in these experiments.</span><br />';
+    IF fields.rnai_not.data;
 
 	build_data_table (
 		order = [
@@ -56,7 +55,10 @@ IF fields.rnai_not.data.defined;
 			treatment => 'Treatment'
 			},
 		key = 'rnai_not');
-     END;
+    ELSIF fields.rnai_not.count;
+	count_formatted = fields.rnai_not.count | replace('\d{3}$', 'k+');
+        generate_intermine_download('&name=rnai_phenotype_test&constraint1=RNAi.phenotype_not_observed.identifier&op1=eq&value1=' _ fields.name.data.id, '<span>download (' _ count_formatted _ ')</span>');
+    END;
 
 END;
 
