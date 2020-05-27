@@ -57,7 +57,7 @@ WRAPPER $field_block  title="" key="rnai_not";
 		key = 'rnai_not');
     ELSIF fields.rnai_not.count;
 	count_formatted = fields.rnai_not.count | replace('\d{3}$', 'k+');
-        generate_intermine_download('&name=rnai_phenotype_test&constraint1=RNAi.phenotype_not_observed.identifier&op1=eq&value1=' _ fields.name.data.id, '<span>Download ' _ count_formatted _ ' RNAi experiments</span>');
+        generate_intermine_download('&name=rnai_phenotype&constraint1=RNAi.phenotype_not_observed.identifier&op1=eq&value1=' _ fields.name.data.id, '<span>Download ' _ count_formatted _ ' RNAi experiments</span>');
     END;
 
 END;
