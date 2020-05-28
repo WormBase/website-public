@@ -36,6 +36,11 @@
 
 
 <div class="text-width">
+[% IF fields.retracted_in.data %]
+    <p><strong>This paper has been retracted in</strong> [% tag2link(fields.retracted_in.data) %].</p>
+    <hr />
+[% END %]
+
 [%# BEGIN CITATION %]
 	[% IF authors.size > 0 %]
 		[% apa_persons(authors) %]
