@@ -125,10 +125,6 @@
 	   <b>Keywords:</b> [% keywords.join(', ') %]
 	[% END %]
 
-[% WRAPPER tip; %]
-   Seeing your name <span class="author-link">marked red</span>? Please help us <a href="https://wormbase.org/submissions/person.cgi">identify you</a>.
-[% END %]
-
 
 [% IF fields.merged_into.data %]
    <p><b>Note:</b> This paper has been merged into [% tag2link(fields.merged_into.data) %]</p>
@@ -136,3 +132,7 @@
 
 
 [% remarks %]
+
+[% WRAPPER tip; %]
+   Seeing your name <span class="author-link">marked red</span>? Please help us <a href="https://wormbase.org/submissions/person.cgi">identify you</a>.
+[% END %]
