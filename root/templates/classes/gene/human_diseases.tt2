@@ -15,7 +15,7 @@ WRAPPER toggle open=1 title=pluralize("Details", fields.detailed_disease_model.d
     build_human_diseases_table();
 END;
 
-WRAPPER toggle open=1 title=pluralize("Not associated with disease details", fields.detailed_disease_model.data) id="detailed_disease_model_not";
+WRAPPER toggle open=1 title=pluralize("Not associated disease", fields.detailed_disease_model.data) id="detailed_disease_model_not";
     key = "detailed_disease_model_not";
     build_human_diseases_table();
 END;
