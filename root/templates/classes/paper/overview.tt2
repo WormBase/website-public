@@ -32,6 +32,11 @@
     [% WRAPPER $field_block title="Status" key="status" -%]
       [% fields.status.data %]
     [% END %]
+
+    [% WRAPPER $field_block title="Publication type" key="publication_type" -%]
+      [% cell_content(fields.publication_type.data, ', ') %]
+    [% END %]
+
 [% END %]
 
 
