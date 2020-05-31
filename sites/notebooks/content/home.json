@@ -4,7 +4,8 @@
     {
       "name": "New Notebook",
       "id": "ujfem2mq1",
-      "dateLastUpdated": "2020-05-31T03:48:12.801Z"
+      "dateLastUpdated": "2020-05-31T03:48:12.801Z",
+      "thumbnail": "../images/thumbnail/chromosomeMapToolExample.png"
     },
     {
       "name": "Chromosome Map",
