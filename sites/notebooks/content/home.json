@@ -1,3 +1,12 @@
 {
-  "title": "Give me your tots 🦙"
+  "title": "Give me your tots 🦙",
+  "notebooks": [
+    {
+      "name": "Chromosome Map",
+      "id": "c2ewj3xjp",
+      "url": "https://colab.research.google.com/drive/1e83jv94-eO_VQ7kKdJ36TgDDb4WRkFhM?usp=sharing",
+      "author": "Raymond Lee",
+      "short-description": "Here is a sample description."
+    }
+  ]
 }
