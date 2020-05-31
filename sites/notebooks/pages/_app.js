@@ -5,6 +5,7 @@ import {
   GithubClient,
   TinacmsGithubProvider,
 } from 'react-tinacms-github'
+import { MarkdownFieldPlugin } from 'react-tinacms-editor'
 
 export default class Site extends App {
 
@@ -37,6 +38,9 @@ export default class Site extends App {
         hidden: !props.pageProps.preview,
       },
     })
+
+    this.cms.fields.add(MarkdownFieldPlugin)
+
   }
 
   render() {
