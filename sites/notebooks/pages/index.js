@@ -10,7 +10,52 @@ import {
 export default function Home({ file }) {
   const formOptions = {
     label: 'Home Page',
-    fields: [{ name: 'title', component: 'text' }],
+    fields: [
+      { name: 'title', component: 'text' },
+      {
+        name: 'notebooks',
+        component: 'group-list',
+        itemProps: item => ({
+          key: item.id,
+          label: item.name
+        }),
+        defaultItem: () => ({
+          name: 'New Notebook',
+          id: Math.random()
+            .toString(36)
+            .substr(2, 9),
+        }),
+        fields: [
+          {
+            name: 'name',
+            label: 'Name',
+            component: 'text',
+          },
+          {
+            name: 'url',
+            label: 'URL',
+            component: 'text',
+          },
+          {
+            name: 'short-description',
+            label: 'Short description',
+            component: 'markdown',
+          },
+          {
+            name: 'author',
+            label: 'Author',
+            component: 'text',
+          },
+          {
+            name: 'dateLastUpdated',
+            label: 'Last Updated',
+            component: 'date',
+            dateFormat: 'MMMM DD YYYY',
+            timeFormat: false,
+          }
+        ]
+      }
+    ],
   }
 
   const [data, form] = useGithubJsonForm(file, formOptions)
