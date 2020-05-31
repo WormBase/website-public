@@ -24,6 +24,7 @@ export default function Home({ file }) {
           id: Math.random()
             .toString(36)
             .substr(2, 9),
+          dateLastUpdated: new Date(),
         }),
         fields: [
           {
@@ -50,8 +51,8 @@ export default function Home({ file }) {
             name: 'dateLastUpdated',
             label: 'Last Updated',
             component: 'date',
+            utc: false,
             dateFormat: 'MMMM DD YYYY',
-            timeFormat: false,
           }
         ]
       }
