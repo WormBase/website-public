@@ -4,6 +4,7 @@ import {
   useGithubJsonForm,
   useGithubToolbarPlugins,
 } from 'react-tinacms-github'
+import moment from 'moment';
 
 
 
@@ -84,7 +85,7 @@ export default function Home({ file }) {
               <a href={notebook.url} className="card" target="_blank" rel="noopener noreferrer">
                 <h3>{notebook.name} &rarr;</h3>
                 <p>{notebook.author}</p>
-                <p>{notebook.dateLastUpdated}</p>
+                <p>Updated {moment(notebook.dateLastUpdated).fromNow()}</p>
                 <p>{notebook['short-description']}</p>
               </a>
             ))
