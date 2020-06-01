@@ -2,12 +2,6 @@
   "title": "Notebooks 🧪",
   "notebooks": [
     {
-      "name": "New Notebook",
-      "id": "ujfem2mq1",
-      "dateLastUpdated": "2020-05-31T03:48:12.801Z",
-      "thumbnail": "../images/thumbnail/chromosomeMapToolExample.png"
-    },
-    {
       "name": "Chromosome Map",
       "id": "c2ewj3xjp",
       "url": "https://colab.research.google.com/drive/1e83jv94-eO_VQ7kKdJ36TgDDb4WRkFhM?usp=sharing",
