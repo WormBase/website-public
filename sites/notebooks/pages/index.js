@@ -13,6 +13,7 @@ export default function Home({ file }) {
     label: 'Home Page',
     fields: [
       { name: 'title', component: 'text' },
+      { name: 'tagline', component: 'text' },
       {
         name: 'notebooks',
         component: 'group-list',
@@ -77,16 +78,16 @@ export default function Home({ file }) {
         </h1>
 
         <p className="description">
+          {data.tagline}
         </p>
 
         <div className="grid">
           {
             data.notebooks.map(notebook => (
-              <a href={notebook.url} className="card" target="_blank" rel="noopener noreferrer">
+              <a key={notebook.id} href={notebook.url} className="card" target="_blank" rel="noopener noreferrer">
                 <h3>{notebook.name} &rarr;</h3>
                 <p>{notebook.author}</p>
                 <p>Updated {moment(notebook.dateLastUpdated).fromNow()}</p>
-                <p>{notebook['short-description']}</p>
               </a>
             ))
           }
@@ -188,7 +189,8 @@ export default function Home({ file }) {
 
         .card {
           margin: 1rem;
-          flex-basis: 95%;
+          flex-basis: 45%;
+          flex: 0 0 auto;
           padding: 1.5rem;
           text-align: left;
           color: inherit;
