@@ -42,9 +42,14 @@
     END;
 
     WRAPPER $field_block title="Gene ontology" key="gene_ontology";
-       FOREACH data IN fields.gene_ontology.data;
-        tag2link(data.term) _ '<br />';
-       END;
+       build_data_table(
+	 order=['term', 'reference']
+	 columns={
+	   term => 'Gene ontology term',
+	   reference => 'Reference',
+	 }
+	 key='gene_ontology');
+
     END;
 
     WRAPPER $field_block title="Anatomy functions" key="anatomy_functions";

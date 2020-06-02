@@ -1166,7 +1166,7 @@ END;
 %]
 
 [% MACRO build_human_diseases_table BLOCK;
-    order = order || ['disease_term','genetic_entity','genotype','evidence_code','experimental_condition','modifier','reference'];
+    order = order || ['disease_term','genetic_entity','genotype','evidence_code','description','experimental_condition','modifier','reference'];
     columns = columns || {disease_term => 'Disease',
 		              genetic_entity  => 'Genetic entity',
 		              genotype  => 'Genotype',
@@ -1175,6 +1175,7 @@ END;
                               experimental_condition => 'Experimental condition',
                               modifier => 'Modifier',
                               modifier_association_type => 'Modifier association type',
+			      description => 'Description'
                               reference => 'Reference',
                              };
     style = style || '
@@ -1294,12 +1295,12 @@ END;
 %]
 
 [% MACRO link_button(class_name, url, label) BLOCK;
-  '<a class="button ui-corner-all ' _ class_name _ '" href="'_ url _ '">' _ label _ '</a>';
+  '<a class="' _ class_name _ '" href="'_ url _ '" target="_blank">' _ label _ '</a>';
 END;
 %]
 
 [% MACRO generate_intermine_download(url_query, label) BLOCK;
-  link_button('download-intermine', c.config.intermine_server _ '/tools/wormmine/service/template/results?format=tab' _ url_query, '<span class="ui-icon ui-icon-arrowthickstop-1-s"></span> ' _ label);
+  link_button('download-intermine', c.config.intermine_server _ '/tools/wormmine/service/template/results?format=tab&columnheaders=friendly' _ url_query, label);
 END; %]
 
 [% MACRO format_sequence(seq, header, offset, length) BLOCK;

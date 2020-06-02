@@ -32,10 +32,20 @@
     [% WRAPPER $field_block title="Status" key="status" -%]
       [% fields.status.data %]
     [% END %]
+
+    [% WRAPPER $field_block title="Publication type" key="publication_type" -%]
+      [% cell_content(fields.publication_type.data, ', ') %]
+    [% END %]
+
 [% END %]
 
 
 <div class="text-width">
+[% IF fields.retracted_in.data %]
+    <p><strong>This paper has been retracted in</strong> [% tag2link(fields.retracted_in.data) %].</p>
+    <hr />
+[% END %]
+
 [%# BEGIN CITATION %]
 	[% IF authors.size > 0 %]
 		[% apa_persons(authors) %]
@@ -120,10 +130,6 @@
 	   <b>Keywords:</b> [% keywords.join(', ') %]
 	[% END %]
 
-[% WRAPPER tip; %]
-   Seeing your name <span class="author-link">marked red</span>? Please help us <a href="https://wormbase.org/submissions/person.cgi">identify you</a>.
-[% END %]
-
 
 [% IF fields.merged_into.data %]
    <p><b>Note:</b> This paper has been merged into [% tag2link(fields.merged_into.data) %]</p>
@@ -131,3 +137,7 @@
 
 
 [% remarks %]
+
+[% WRAPPER tip; %]
+   Seeing your name <span class="author-link">marked red</span>? Please help us <a href="https://wormbase.org/submissions/person.cgi">identify you</a>.
+[% END %]
