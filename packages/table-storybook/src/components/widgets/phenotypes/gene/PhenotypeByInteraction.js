@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 
-const Table = () => {
+const PhenotypeBI = () => {
   const [tableData, setTableData] = useState([])
 
   const proxyUrl = 'https://calm-reaches-60051.herokuapp.com/'
   const targetUrl =
-    'http://rest.wormbase.org/rest/widget/gene/WBGene00000904/location'
+    'http://rest.wormbase.org/rest/widget/gene/WBGene00000904/phenotype'
 
   useEffect(() => {
     loadData()
@@ -19,11 +19,10 @@ const Table = () => {
 
   return (
     <div>
-      <h1>hoge</h1>
-      <h2>fuga</h2>
+      <h2>data from {targetUrl}</h2>
       {tableData}
     </div>
   )
 }
 
-export default Table
+export default PhenotypeBI
