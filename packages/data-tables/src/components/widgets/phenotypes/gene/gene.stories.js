@@ -9,7 +9,7 @@ export default {
   PhenoBI,
   PhenoNO,
   DrivesOE,
-  title: 'Widgets/Phenotypes/Gene page',
+  title: 'Table|Widgets/Phenotypes/Gene page',
 }
 
 export const Phenotype = () => <Pheno />
