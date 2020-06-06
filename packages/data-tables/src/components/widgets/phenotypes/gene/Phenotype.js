@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useTable } from 'react-table'
+import { useTable, useFilters } from 'react-table'
 import Allele from './Allele'
 
 const Phenotype = () => {
@@ -20,21 +20,56 @@ const Phenotype = () => {
     setData(json.phenotype.data)
   }
 
+  const DefaultColumnFilter = ({
+    column: { filterValue, preFilteredRows, setFilter },
+  }) => {
+    const count = preFilteredRows.length
+
+    return (
+      <input
+        value={filterValue || ''}
+        onChange={(e) => {
+          setFilter(e.target.value || undefined)
+        }}
+        placeholder={`Search ${count} records...`}
+      />
+    )
+  }
+
+  const filterTypes = useMemo(
+    () => ({
+      text: (rows, id, filterValue) => {
+        return rows.filter((row) => {
+          const rowValue = row.values[id]
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true
+        })
+      },
+    }),
+    []
+  )
+
   const columns = useMemo(
     () => [
       {
         Header: 'Phenotype',
         accessor: 'phenotype.label',
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Entities Affected',
         accessor: 'entity',
         Cell: ({ cell: { value } }) => (value === null ? 'N/A' : value),
+        disableFilters: true,
       },
       {
         Header: 'Supporting Evidence',
         accessor: 'evidence.Allele',
         Cell: ({ cell: { value } }) => <Allele values={value} />,
+        disableFilters: true,
       },
     ],
     []
@@ -46,7 +81,7 @@ const Phenotype = () => {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data })
+  } = useTable({ columns, data, filterTypes }, useFilters)
 
   return (
     <div>
@@ -55,7 +90,11 @@ const Phenotype = () => {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps()}>
+                  {column.render('Header')}
+                  <div>{column.canFilter ? column.render('Filter') : null}</div>
+                  {/* <div>{column.render('Filter')}</div> */}
+                </th>
               ))}
             </tr>
           ))}
