@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useTable, useFilters } from 'react-table'
+import { useTable, useFilters, useSortBy } from 'react-table'
 import Allele from './Allele'
 
 const Phenotype = () => {
@@ -81,7 +81,7 @@ const Phenotype = () => {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data, filterTypes }, useFilters)
+  } = useTable({ columns, data, filterTypes }, useFilters, useSortBy)
 
   return (
     <div>
@@ -91,9 +91,15 @@ const Phenotype = () => {
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <th {...column.getHeaderProps()}>
-                  {column.render('Header')}
+                  <span {...column.getSortByToggleProps()}>
+                    {column.render('Header')}
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                  </span>
                   <div>{column.canFilter ? column.render('Filter') : null}</div>
-                  {/* <div>{column.render('Filter')}</div> */}
                 </th>
               ))}
             </tr>
