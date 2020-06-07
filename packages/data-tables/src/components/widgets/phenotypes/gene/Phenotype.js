@@ -1,8 +1,47 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useTable, useFilters, useSortBy } from 'react-table'
+import { makeStyles } from '@material-ui/core/styles'
 import Allele from './Allele'
 
 const Phenotype = () => {
+  const useStyles = makeStyles({
+    table: {
+      borderSpacing: 0,
+      border: '1px solid #ededed',
+      '& thead': {
+        backgroundColor: '#e9eef2',
+      },
+      '& tr:last-child td': {
+        borderBottom: 0,
+      },
+      '& th,td': {
+        margin: 0,
+        padding: '0.5rem',
+        borderBottom: '1px solid #ededed',
+        borderRight: '1px solid #ededed',
+        position: 'relative',
+      },
+      '& th:last-child,td:last-child': {
+        borderRight: 0,
+      },
+      '& tr:nth-child(even)': {
+        backgroundColor: '#e2e5ff',
+      },
+      'th::before': {
+        position: 'absolute',
+        right: '15px',
+        top: '16px',
+        content: '',
+        width: 0,
+        height: 0,
+        borderLeft: '5px solid transparent',
+        borderRight: '5px solid transparent',
+      },
+    },
+  })
+
+  const classes = useStyles()
+
   const [data, setData] = useState([])
 
   const proxyUrl = 'https://calm-reaches-60051.herokuapp.com/'
@@ -85,7 +124,7 @@ const Phenotype = () => {
 
   return (
     <div>
-      <table {...getTableProps()}>
+      <table {...getTableProps()} className={classes.table}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
