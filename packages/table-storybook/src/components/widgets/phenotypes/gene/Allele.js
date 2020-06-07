@@ -1,6 +1,20 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 
 const Allele = ({ values }) => {
+  const useStyles = makeStyles({
+    cell: {
+      '& .allele:not(:last-child)': {
+        marginBottom: '20px',
+      },
+      '& .allele div:not(:first-child)': {
+        paddingLeft: '50px',
+      },
+    },
+  })
+
+  const classes = useStyles()
+
   const showData = (title, detail) => {
     switch (title) {
       case 'Curator':
@@ -85,29 +99,27 @@ const Allele = ({ values }) => {
     }
   }
   return (
-    <>
+    <div className={classes.cell}>
       {values.map((detail, idx) => {
         console.log(detail)
         return (
-          <div key={idx}>
+          <div key={idx} className='allele'>
             <div>
               <b>Allele: </b>
               {detail.text.label}
             </div>
-            <div>
-              {showData('Curator', detail)}
-              {showData('Paper evidence', detail)}
-              {showData('Remark', detail)}
-              {showData('Temperature sensitive', detail)}
-              {showData('Temperature', detail)}
-              {showData('Variation effect', detail)}
-              {showData('Person evidence', detail)}
-              {showData('Ease of scoring', detail)}
-            </div>
+            {showData('Curator', detail)}
+            {showData('Paper evidence', detail)}
+            {showData('Remark', detail)}
+            {showData('Temperature sensitive', detail)}
+            {showData('Temperature', detail)}
+            {showData('Variation effect', detail)}
+            {showData('Person evidence', detail)}
+            {showData('Ease of scoring', detail)}
           </div>
         )
       })}
-    </>
+    </div>
   )
 }
 
