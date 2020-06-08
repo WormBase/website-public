@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useTable, useFilters, useSortBy } from 'react-table'
+import {
+  useTable,
+  useFilters,
+  useSortBy,
+  useBlockLayout,
+  useResizeColumns,
+} from 'react-table'
 import { makeStyles } from '@material-ui/core/styles'
 import Allele from './Allele'
 
@@ -37,6 +43,23 @@ const Phenotype = () => {
         borderLeft: '5px solid transparent',
         borderRight: '5px solid transparent',
       },
+      '& th .resizer': {
+        display: 'inline-block',
+        width: '10px',
+        height: '100%',
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        transform: 'translateX(50%)',
+        zIndex: 1,
+        touchAction: 'none',
+      },
+      '& th .isResizing': {
+        background: '#828A95',
+      },
+      '& th .filter input': {
+        width: '80%',
+      },
     },
   })
 
@@ -59,7 +82,16 @@ const Phenotype = () => {
     setData(json.phenotype.data)
   }
 
-  const DefaultColumnFilter = ({
+  const defaultColumn = useMemo(
+    () => ({
+      minWidth: 120,
+      width: 180,
+      maxWidth: 600,
+    }),
+    []
+  )
+
+  const defaultColumnFilter = ({
     column: { filterValue, preFilteredRows, setFilter },
   }) => {
     const count = preFilteredRows.length
@@ -96,7 +128,7 @@ const Phenotype = () => {
       {
         Header: 'Phenotype',
         accessor: 'phenotype.label',
-        Filter: DefaultColumnFilter,
+        Filter: defaultColumnFilter,
       },
       {
         Header: 'Entities Affected',
@@ -109,6 +141,8 @@ const Phenotype = () => {
         accessor: 'evidence.Allele',
         Cell: ({ cell: { value } }) => <Allele values={value} />,
         disableFilters: true,
+        minWidth: 240,
+        width: 540,
       },
     ],
     []
@@ -120,7 +154,13 @@ const Phenotype = () => {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data, filterTypes }, useFilters, useSortBy)
+  } = useTable(
+    { columns, data, filterTypes, defaultColumn },
+    useBlockLayout,
+    useFilters,
+    useResizeColumns,
+    useSortBy
+  )
 
   return (
     <div>
@@ -138,7 +178,15 @@ const Phenotype = () => {
                         : ' 🔼'
                       : ''}
                   </span>
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
+                  <div className='filter'>
+                    {column.canFilter ? column.render('Filter') : null}
+                  </div>
+                  <div
+                    {...column.getResizerProps()}
+                    className={`resizer ${
+                      column.isResizing ? 'isResizing' : ''
+                    }`}
+                  />
                 </th>
               ))}
             </tr>
