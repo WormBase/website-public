@@ -8,8 +8,9 @@ import {
 } from 'react-table'
 import { makeStyles } from '@material-ui/core/styles'
 import Allele from './Allele'
+import loadData from '../../../../services/loadData'
 
-const Phenotype = () => {
+const Phenotype = ({ targetUrl }) => {
   const useStyles = makeStyles({
     table: {
       borderSpacing: 0,
@@ -67,20 +68,9 @@ const Phenotype = () => {
 
   const [data, setData] = useState([])
 
-  const proxyUrl = 'https://calm-reaches-60051.herokuapp.com/'
-  const targetUrl =
-    'http://rest.wormbase.org/rest/field/gene/WBGene00000904/phenotype'
-
   useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = async () => {
-    const res = await fetch(proxyUrl + targetUrl)
-    const json = await res.json()
-    console.log(json.phenotype.data)
-    setData(json.phenotype.data)
-  }
+    loadData(targetUrl).then((json) => setData(json.phenotype.data))
+  }, [targetUrl])
 
   const defaultColumn = useMemo(
     () => ({
