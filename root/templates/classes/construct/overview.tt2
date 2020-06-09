@@ -23,7 +23,7 @@ WRAPPER $field_block title=pluralize('Gene product', fields.gene_product.data.si
 END;
 
 WRAPPER $field_block title="Fusion Reporter" key="fusion_reporter";
-  fields.fusion_reporter.data;
+  cell_content(fields.fusion_reporter.data, ', ');
 END;
 
 WRAPPER $field_block title="Other Reporters" key="other_reporter";
