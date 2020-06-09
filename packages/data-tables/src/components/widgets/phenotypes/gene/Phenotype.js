@@ -5,6 +5,7 @@ import {
   useSortBy,
   useBlockLayout,
   useResizeColumns,
+  usePagination,
 } from 'react-table'
 import { makeStyles } from '@material-ui/core/styles'
 import Allele from './Allele'
@@ -63,6 +64,9 @@ const Phenotype = ({ targetUrl }) => {
       '& th .filter input': {
         width: '80%',
       },
+    },
+    pagination: {
+      padding: '0.5rem',
     },
   })
 
@@ -167,15 +171,31 @@ const Phenotype = ({ targetUrl }) => {
   const {
     getTableProps,
     getTableBodyProps,
-    headerGroups,
-    rows,
     prepareRow,
+    headerGroups,
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
   } = useTable(
-    { columns, data, filterTypes, defaultColumn },
+    {
+      columns,
+      data,
+      filterTypes,
+      defaultColumn,
+      initialState: { pageIndex: 0 },
+    },
     useBlockLayout,
     useFilters,
     useResizeColumns,
-    useSortBy
+    useSortBy,
+    usePagination
   )
 
   return (
@@ -209,7 +229,7 @@ const Phenotype = ({ targetUrl }) => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
+          {page.map((row) => {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()}>
@@ -221,6 +241,38 @@ const Phenotype = ({ targetUrl }) => {
           })}
         </tbody>
       </table>
+      <div className={classes.pagination}>
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {'<<'}
+        </button>{' '}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {'<'}
+        </button>{' '}
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {'>'}
+        </button>{' '}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {'>>'}
+        </button>{' '}
+        <span>
+          Page{' '}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{' '}
+        </span>
+        <select
+          value={pageSize}
+          onChange={(e) => {
+            setPageSize(Number(e.target.value))
+          }}
+        >
+          {[3, 10, 20, 100].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   )
 }
