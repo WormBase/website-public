@@ -101,7 +101,6 @@ const Allele = ({ values }) => {
   return (
     <div className={classes.cell}>
       {values.map((detail, idx) => {
-        console.log(detail)
         return (
           <div key={idx} className='allele'>
             <div>

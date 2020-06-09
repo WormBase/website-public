@@ -18,7 +18,7 @@ export default {
 }
 
 export const Phenotype_daf8 = () => <Pheno targetUrl={targetUrl.daf8} />
-// export const Phenotype_daf16 = () => <Pheno targetUrl={targetUrl.daf16} />
+export const Phenotype_daf16 = () => <Pheno targetUrl={targetUrl.daf16} />
 export const PhenotypeByInteraction = () => <PhenoBI />
 export const PhenotypeNotObserved = () => <PhenoNO />
 export const DrivesOverexpression = () => <DrivesOE />
