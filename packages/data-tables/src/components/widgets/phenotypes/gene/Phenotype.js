@@ -8,6 +8,8 @@ import {
 } from 'react-table'
 import { makeStyles } from '@material-ui/core/styles'
 import Allele from './Allele'
+import RNAi from './RNAi'
+import Entity from './Entity'
 import loadData from '../../../../services/loadData'
 
 const Phenotype = ({ targetUrl }) => {
@@ -113,6 +115,30 @@ const Phenotype = ({ targetUrl }) => {
     []
   )
 
+  const showEntities = (value) => {
+    if (value === null) {
+      return 'N/A'
+    } else {
+      return <Entity values={value} />
+    }
+  }
+  const showEvidence = (value) => {
+    if (value.Allele && value.RNAi) {
+      return (
+        <>
+          <Allele values={value.Allele} />
+          <RNAi values={value.RNAi} />
+        </>
+      )
+    } else if (value.Allele) {
+      return <Allele values={value.Allele} />
+    } else if (value.RNAi) {
+      return <RNAi values={value.RNAi} />
+    } else {
+      return 'EVIDENCE NOTHING!'
+    }
+  }
+
   const columns = useMemo(
     () => [
       {
@@ -123,13 +149,13 @@ const Phenotype = ({ targetUrl }) => {
       {
         Header: 'Entities Affected',
         accessor: 'entity',
-        Cell: ({ cell: { value } }) => (value === null ? 'N/A' : value),
+        Cell: ({ cell: { value } }) => showEntities(value),
         disableFilters: true,
       },
       {
         Header: 'Supporting Evidence',
-        accessor: 'evidence.Allele',
-        Cell: ({ cell: { value } }) => <Allele values={value} />,
+        accessor: 'evidence',
+        Cell: ({ cell: { value } }) => showEvidence(value),
         disableFilters: true,
         minWidth: 240,
         width: 540,
@@ -188,7 +214,6 @@ const Phenotype = ({ targetUrl }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  console.log(cell.render('Cell'))
                   return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 })}
               </tr>
