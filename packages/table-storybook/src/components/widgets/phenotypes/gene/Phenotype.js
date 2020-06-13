@@ -118,6 +118,36 @@ const Phenotype = ({ targetUrl }) => {
     }),
     []
   )
+  const sortTypes = useMemo(
+    () => ({
+      sortByEntity: (rowA, rowB) => {
+        const entityOfRowA = rowA.values.entity
+        const entityOfRowB = rowB.values.entity
+
+        const comparisonStandardOfRowA =
+          entityOfRowA === null
+            ? 'n/a'
+            : (
+                entityOfRowA[0].pato_evidence.entity_type +
+                entityOfRowA[0].pato_evidence.entity_term.label
+              ).toLowerCase()
+        const comparisonStandardOfRowB =
+          entityOfRowB === null
+            ? 'n/a'
+            : (
+                entityOfRowB[0].pato_evidence.entity_type +
+                entityOfRowB[0].pato_evidence.entity_term.label
+              ).toLowerCase()
+
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
+    }),
+    []
+  )
 
   const showEntities = (value) => {
     if (value === null) {
@@ -155,6 +185,7 @@ const Phenotype = ({ targetUrl }) => {
         accessor: 'entity',
         Cell: ({ cell: { value } }) => showEntities(value),
         disableFilters: true,
+        sortType: 'sortByEntity',
       },
       {
         Header: 'Supporting Evidence',
@@ -188,6 +219,7 @@ const Phenotype = ({ targetUrl }) => {
       columns,
       data,
       filterTypes,
+      sortTypes,
       defaultColumn,
       initialState: { pageIndex: 0 },
     },
