@@ -154,6 +154,8 @@ const Phenotype = ({ targetUrl }) => {
         Header: 'Phenotype',
         accessor: 'phenotype.label',
         Filter: defaultColumnFilter,
+        filter: 'text', // Default. Used builtin 'text' filter.
+        sortType: 'alphanumeric', // Default. Used builtin 'alphanumeric' sortType.
       },
       {
         Header: 'Entities Affected',
