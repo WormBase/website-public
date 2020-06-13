@@ -68,15 +68,6 @@ const Phenotype = ({ targetUrl }) => {
     loadData(targetUrl).then((json) => setData(json.phenotype.data))
   }, [targetUrl])
 
-  const defaultColumn = useMemo(
-    () => ({
-      minWidth: 120,
-      width: 180,
-      maxWidth: 600,
-    }),
-    []
-  )
-
   const defaultColumnFilter = ({
     column: { filterValue, preFilteredRows, setFilter },
   }) => {
@@ -92,6 +83,18 @@ const Phenotype = ({ targetUrl }) => {
       />
     )
   }
+
+  const defaultColumn = useMemo(
+    () => ({
+      filter: 'text', // Default. Used builtin 'text' filter.
+      sortType: 'alphanumeric', // Default. Used builtin 'alphanumeric' sortType.
+      Filter: defaultColumnFilter,
+      minWidth: 120,
+      width: 180,
+      maxWidth: 600,
+    }),
+    []
+  )
 
   const sortTypes = useMemo(
     () => ({
@@ -153,9 +156,6 @@ const Phenotype = ({ targetUrl }) => {
       {
         Header: 'Phenotype',
         accessor: 'phenotype.label',
-        Filter: defaultColumnFilter,
-        filter: 'text', // Default. Used builtin 'text' filter.
-        sortType: 'alphanumeric', // Default. Used builtin 'alphanumeric' sortType.
       },
       {
         Header: 'Entities Affected',
