@@ -37,16 +37,6 @@ const Phenotype = ({ targetUrl }) => {
       '& tr:nth-child(even)': {
         backgroundColor: '#e2e5ff',
       },
-      'th::before': {
-        position: 'absolute',
-        right: '15px',
-        top: '16px',
-        content: '',
-        width: 0,
-        height: 0,
-        borderLeft: '5px solid transparent',
-        borderRight: '5px solid transparent',
-      },
       '& th .resizer': {
         display: 'inline-block',
         width: '10px',
