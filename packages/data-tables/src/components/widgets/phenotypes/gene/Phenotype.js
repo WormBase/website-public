@@ -182,6 +182,7 @@ const Phenotype = ({ targetUrl }) => {
         accessor: 'evidence',
         Cell: ({ cell: { value } }) => showEvidence(value),
         disableFilters: true,
+        disableSortBy: true,
         minWidth: 240,
         width: 540,
       },
