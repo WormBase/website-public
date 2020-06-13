@@ -93,21 +93,6 @@ const Phenotype = ({ targetUrl }) => {
     )
   }
 
-  const filterTypes = useMemo(
-    () => ({
-      text: (rows, id, filterValue) => {
-        return rows.filter((row) => {
-          const rowValue = row.values[id]
-          return rowValue !== undefined
-            ? String(rowValue)
-                .toLowerCase()
-                .startsWith(String(filterValue).toLowerCase())
-            : true
-        })
-      },
-    }),
-    []
-  )
   const sortTypes = useMemo(
     () => ({
       sortByEntity: (rowA, rowB) => {
@@ -209,7 +194,6 @@ const Phenotype = ({ targetUrl }) => {
     {
       columns,
       data,
-      filterTypes,
       sortTypes,
       defaultColumn,
       initialState: { pageIndex: 0 },
