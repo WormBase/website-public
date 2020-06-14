@@ -13,7 +13,7 @@ import RNAi from './RNAi'
 import Entity from './Entity'
 import loadData from '../../../../services/loadData'
 
-const Phenotype = ({ targetUrl }) => {
+const Phenotype = ({ WBid, tableType }) => {
   const useStyles = makeStyles({
     table: {
       borderSpacing: 0,
@@ -65,8 +65,8 @@ const Phenotype = ({ targetUrl }) => {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    loadData(targetUrl).then((json) => setData(json.phenotype.data))
-  }, [targetUrl])
+    loadData(WBid, tableType).then((json) => setData(json.data))
+  }, [WBid, tableType])
 
   const defaultColumnFilter = ({
     column: { filterValue, preFilteredRows, setFilter },
