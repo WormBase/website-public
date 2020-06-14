@@ -138,7 +138,13 @@ const Phenotype = ({ targetUrl }) => {
     if (value.Allele && value.RNAi) {
       return (
         <>
-          <Allele values={value.Allele} />
+          <div
+            style={{
+              marginBottom: '20px',
+            }}
+          >
+            <Allele values={value.Allele} />
+          </div>
           <RNAi values={value.RNAi} />
         </>
       )

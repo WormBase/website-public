@@ -10,6 +10,9 @@ const Allele = ({ values }) => {
       '& .allele div:not(:first-child)': {
         paddingLeft: '50px',
       },
+      '& .allele .bold': {
+        fontWeight: 'bold',
+      },
     },
   })
 
@@ -105,7 +108,9 @@ const Allele = ({ values }) => {
           <div key={idx} className='allele'>
             <div>
               <b>Allele: </b>
-              {detail.text.label}
+              <i className={detail.text.style !== 0 ? 'bold' : ''}>
+                {detail.text.label}
+              </i>
             </div>
             {showData('Curator', detail)}
             {showData('Paper evidence', detail)}
