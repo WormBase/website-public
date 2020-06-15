@@ -18,111 +18,114 @@ const Allele = ({ values }) => {
 
   const classes = useStyles()
 
-  const showData = (title, detail) => {
-    switch (title) {
+  const displayAllele = (key, value) => {
+    switch (key) {
+      case 'Affected_by_molecule':
+        return (
+          <>
+            <b>Affected by molecule: </b>
+            {value[0].label}
+          </>
+        )
       case 'Curator':
         return (
-          <div>
-            <b>{title}: </b>
-            {detail.evidence.Curator[0].label}
-          </div>
+          <>
+            <b>Curator: </b>
+            {value[0].label}
+          </>
         )
-      case 'Paper evidence':
-        if (detail.evidence?.Paper_evidence) {
-          return (
-            <div>
-              <b>{title}: </b>
-              {detail.evidence?.Paper_evidence[0].label}
-            </div>
-          )
-        }
-        break
+      case 'Ease_of_scoring':
+        return (
+          <>
+            <b>Ease of scoring: </b>
+            {value.label}
+          </>
+        )
+      case 'Paper_evidence':
+        return (
+          <>
+            <b>Paper evidence: </b>
+            {value[0].label}
+          </>
+        )
+      case 'Person_evidence':
+        return (
+          <>
+            <b>Person evidence: </b>
+            {value[0].label}
+          </>
+        )
       case 'Remark':
-        if (detail.evidence?.Remark) {
-          return (
-            <div>
-              <b>{title}: </b>
-              {detail.evidence.Remark[0]}
-            </div>
-          )
-        }
-        break
-      case 'Temperature sensitive':
-        if (detail.evidence?.Temperature_sensitive) {
-          return (
-            <div>
-              <b>{title}: </b>
-              {detail.evidence.Temperature_sensitive.label}
-            </div>
-          )
-        }
-        break
+        return (
+          <>
+            <b>Remark: </b>
+            {value[0]}
+          </>
+        )
       case 'Temperature':
-        if (detail.evidence?.Temperature) {
-          return (
-            <div>
-              <b>{title}: </b>
-              {detail.evidence.Temperature}
-            </div>
-          )
-        }
-        break
-      case 'Variation effect':
-        if (detail.evidence?.Variation_effect) {
-          return (
-            <div>
-              <b>{title}: </b>
-              {detail.evidence.Variation_effect[0].label}
-            </div>
-          )
-        }
-        break
-      case 'Person evidence':
-        if (detail.evidence?.Person_evidence) {
-          return (
-            <div>
-              <b>{title}: </b>
-              {detail.evidence.Person_evidence[0].label}
-            </div>
-          )
-        }
-        break
-      case 'Ease of scoring':
-        if (detail.evidence?.Ease_of_scoring) {
-          return (
-            <div>
-              <b>{title}: </b>
-              {detail.evidence.Ease_of_scoring.label}
-            </div>
-          )
-        }
-        break
+        return (
+          <>
+            <b>Temperature: </b>
+            {value}
+          </>
+        )
+      case 'Temperature_sensitive':
+        return (
+          <>
+            <b>Temperature sensitive: </b>
+            {value.label}
+          </>
+        )
+      case 'Treatment':
+        return (
+          <>
+            <b>Treatment: </b>
+            {value}
+          </>
+        )
+      case 'Variation_effect':
+        return (
+          <>
+            <b>Variation effect: </b>
+            {value[0].label}
+          </>
+        )
+      case 'Recessive':
+        return (
+          <>
+            <b>Recessive: </b>
+            {value}
+          </>
+        )
+      case 'Penetrance':
+        return (
+          <>
+            <b>Penetrance: </b>
+            {value}
+          </>
+        )
       default:
-        return ''
+        console.error(key)
+        console.error(value)
+        return null
     }
   }
+
   return (
     <div className={classes.cell}>
-      {values.map((detail, idx) => {
-        return (
-          <div key={idx} className='allele'>
-            <div>
-              <b>Allele: </b>
-              <i className={detail.text.style !== 0 ? 'bold' : ''}>
-                {detail.text.label}
-              </i>
-            </div>
-            {showData('Curator', detail)}
-            {showData('Paper evidence', detail)}
-            {showData('Remark', detail)}
-            {showData('Temperature sensitive', detail)}
-            {showData('Temperature', detail)}
-            {showData('Variation effect', detail)}
-            {showData('Person evidence', detail)}
-            {showData('Ease of scoring', detail)}
+      {values.map((detail, idx1) => (
+        <div key={idx1} className='allele'>
+          <div>
+            <b>Allele: </b>
+            <i className={detail.text.style !== 0 ? 'bold' : ''}>
+              {detail.text.label}
+            </i>
           </div>
-        )
-      })}
+          {Object.entries(detail.evidence).map(([key, value], idx2) => (
+            <div key={idx2}>{displayAllele(key, value)}</div>
+          ))}
+        </div>
+      ))}
     </div>
   )
 }

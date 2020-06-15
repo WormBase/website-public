@@ -1,21 +1,18 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
-const RNAi = ({ values }) => {
+const Overexpression = ({ values }) => {
   const useStyles = makeStyles({
     cell: {
-      '& .rnai:not(:last-child)': {
+      '& .overexpression:not(:last-child)': {
         marginBottom: '20px',
-      },
-      '& .rnai div:not(:first-child)': {
-        paddingLeft: '50px',
       },
     },
   })
 
   const classes = useStyles()
 
-  const displayRNAi = (key, value) => {
+  const displayEvidence = (key, value) => {
     switch (key) {
       case 'Affected_by_molecule':
         return (
@@ -24,29 +21,27 @@ const RNAi = ({ values }) => {
             {value[0].label}
           </>
         )
-      case 'Genotype':
+      case 'Caused_by_gene':
         return (
           <>
-            <b>Genotype: </b>
-            {value}
+            <b>Caused by gene: </b>
+            {value[0].label}
           </>
         )
-      case 'paper':
+      case 'Curator':
         return (
           <>
-            <b>paper: </b>
-            {value.label}
+            <b>Curator: </b>
+            {value[0].label}
           </>
         )
-      case 'Penetrance-range':
+      case 'Paper_evidence':
         return (
           <>
-            <b>Penetrance-range: </b>
-            {value}
+            <b>Paper evidence: </b>
+            {value[0].label}
           </>
         )
-      case 'Quantity_description':
-        return null
       case 'Remark':
         return (
           <>
@@ -54,11 +49,18 @@ const RNAi = ({ values }) => {
             {value[0]}
           </>
         )
-      case 'Strain':
+      case 'Temperature':
         return (
           <>
-            <b>Strain: </b>
-            {value.label}
+            <b>Temperature: </b>
+            {value[0]}
+          </>
+        )
+      case 'Treatment':
+        return (
+          <>
+            <b>Treatment: </b>
+            {value}
           </>
         )
       default:
@@ -70,14 +72,11 @@ const RNAi = ({ values }) => {
 
   return (
     <div className={classes.cell}>
-      {values.map((detail, idx) => (
-        <div key={idx} className='rnai'>
-          <div>
-            <b>RNAi: </b>
-            {detail.text.label}
-          </div>
+      {values.map((detail, idx1) => (
+        <div key={idx1} className='overexpression'>
+          <div>{detail.text.label}</div>
           {Object.entries(detail.evidence).map(([key, value], idx2) => (
-            <div key={idx2}>{displayRNAi(key, value)}</div>
+            <div key={idx2}>{displayEvidence(key, value)}</div>
           ))}
         </div>
       ))}
@@ -85,4 +84,4 @@ const RNAi = ({ values }) => {
   )
 }
 
-export default RNAi
+export default Overexpression
