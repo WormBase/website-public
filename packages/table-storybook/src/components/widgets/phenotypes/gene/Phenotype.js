@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
+import Overexpression from './Overexpression'
 import loadData from '../../../../services/loadData'
 
 const Phenotype = ({ WBid, tableType }) => {
@@ -134,6 +135,7 @@ const Phenotype = ({ WBid, tableType }) => {
       return <Entity values={value} />
     }
   }
+
   const showEvidence = (value) => {
     if (value.Allele && value.RNAi) {
       return (
@@ -153,7 +155,7 @@ const Phenotype = ({ WBid, tableType }) => {
     } else if (value.RNAi) {
       return <RNAi values={value.RNAi} />
     } else {
-      return 'EVIDENCE NOTHING!'
+      return <Overexpression values={value} />
     }
   }
 
