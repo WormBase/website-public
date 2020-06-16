@@ -104,6 +104,13 @@ const Allele = ({ values }) => {
             {value}
           </>
         )
+      case 'Penetrance-range':
+        return (
+          <>
+            <b>Penetrance-range: </b>
+            {value}
+          </>
+        )
       default:
         console.error(key)
         console.error(value)

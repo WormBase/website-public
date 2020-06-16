@@ -6,6 +6,7 @@ const target = {
   WBid: {
     daf8: 'WBGene00000904',
     daf16: 'WBGene00000912',
+    mig2: 'WBGene00003239',
   },
   tableType: {
     pheno: 'phenotype',
@@ -27,6 +28,9 @@ export const Phenotype_daf8 = () => (
 export const Phenotype_daf16 = () => (
   <Pheno WBid={target.WBid.daf16} tableType={target.tableType.pheno} />
 )
+export const Phenotype_mig2 = () => (
+  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.pheno} />
+)
 
 export const PhenotypeNotObserved_daf8 = () => (
   <Pheno WBid={target.WBid.daf8} tableType={target.tableType.phenoNO} />
@@ -34,12 +38,18 @@ export const PhenotypeNotObserved_daf8 = () => (
 export const PhenotypeNotObserved_daf16 = () => (
   <Pheno WBid={target.WBid.daf16} tableType={target.tableType.phenoNO} />
 )
+export const PhenotypeNotObserved_mig2 = () => (
+  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.phenoNO} />
+)
 
 export const DrivesOverexpression_daf8 = () => (
   <Pheno WBid={target.WBid.daf8} tableType={target.tableType.drivesOE} />
 )
 export const DrivesOverexpression_daf16 = () => (
   <Pheno WBid={target.WBid.daf16} tableType={target.tableType.drivesOE} />
+)
+export const DrivesOverexpression_mig2 = () => (
+  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.drivesOE} />
 )
 
 export const PhenotypeByInteraction = () => <PhenoBI />

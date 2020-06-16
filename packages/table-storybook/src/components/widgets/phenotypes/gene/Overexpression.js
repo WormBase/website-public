@@ -63,6 +63,15 @@ const Overexpression = ({ values }) => {
             {value}
           </>
         )
+      case 'Variation_effect':
+        return (
+          <>
+            <b>Variation effect: </b>
+            {value.map((v, idx) => (
+              <span key={idx}>{v.label}; </span>
+            ))}
+          </>
+        )
       default:
         console.error(key)
         console.error(value)
