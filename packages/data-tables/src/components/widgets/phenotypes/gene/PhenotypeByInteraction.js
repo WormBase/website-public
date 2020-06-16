@@ -84,7 +84,7 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
   const defaultColumn = useMemo(
     () => ({
       filter: 'text', // Default. Used builtin 'text' filter.
-      sortType: 'alphanumeric', // Default. Used builtin 'alphanumeric' sortType.
+      sortType: 'caseInsensitiveAlphaNumeric',
       Filter: defaultColumnFilter,
       minWidth: 120,
       width: 180,
@@ -185,7 +185,6 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
       {
         Header: 'Phenotype',
         accessor: 'phenotype.label',
-        sortType: 'caseInsensitiveAlphaNumeric',
       },
       {
         Header: 'Interactions',
