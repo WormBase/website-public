@@ -1,7 +1,6 @@
 import React from 'react'
 import Pheno from './Phenotype'
 import PhenoBI from './PhenotypeByInteraction'
-import DrivesOE from './DrivesOverexpression'
 
 const target = {
   WBid: {
@@ -19,7 +18,6 @@ const target = {
 export default {
   component: Pheno,
   PhenoBI,
-  DrivesOE,
   title: 'Table|Widgets/Phenotypes/Gene page',
 }
 
@@ -37,5 +35,12 @@ export const PhenotypeNotObserved_daf16 = () => (
   <Pheno WBid={target.WBid.daf16} tableType={target.tableType.phenoNO} />
 )
 
+export const DrivesOverexpression_daf8 = () => (
+  <Pheno WBid={target.WBid.daf8} tableType={target.tableType.drivesOE} />
+)
+export const DrivesOverexpression_daf16 = () => (
+  <Pheno WBid={target.WBid.daf16} tableType={target.tableType.drivesOE} />
+)
+
 export const PhenotypeByInteraction = () => <PhenoBI />
-export const DrivesOverexpression = () => <DrivesOE />
+// export const DrivesOverexpression = () => <DrivesOE />
