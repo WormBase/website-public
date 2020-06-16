@@ -8,6 +8,7 @@ import {
   usePagination,
 } from 'react-table'
 import { makeStyles } from '@material-ui/core/styles'
+import matchSorter from 'match-sorter'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
@@ -193,6 +194,32 @@ const Phenotype = ({ WBid, tableType }) => {
     []
   )
 
+  const filterTypes = useMemo(
+    () => ({
+      evidenceFilter: (rows, id, filterValue) => {
+        const keyFunc = (row) => {
+          let keyArr = []
+          if (row.values[id]?.Allele) {
+            const alleleValue = row.values[id].Allele.map((a) => a.text.label)
+            keyArr.push(...alleleValue)
+          }
+          if (row.values[id]?.RNAi) {
+            const rnaiValue = row.values[id].RNAi.map((r) => r.text.label)
+            keyArr.push(...rnaiValue)
+          }
+          // For drives_overexpression table
+          if (!row.values[id]?.Allele && !row.values[id]?.RNAi) {
+            const overExpressionValue = row.values[id].map((o) => o.text.label)
+            keyArr.push(...overExpressionValue)
+          }
+          return keyArr
+        }
+        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+      },
+    }),
+    []
+  )
+
   const showEntities = (value) => {
     if (value === null) {
       return 'N/A'
@@ -241,8 +268,8 @@ const Phenotype = ({ WBid, tableType }) => {
         Header: 'Supporting Evidence',
         accessor: 'evidence',
         Cell: ({ cell: { value } }) => showEvidence(value),
-        disableFilters: true,
         disableSortBy: true,
+        filter: 'evidenceFilter',
         minWidth: 240,
         width: 540,
       },
@@ -270,6 +297,7 @@ const Phenotype = ({ WBid, tableType }) => {
       columns,
       data,
       sortTypes,
+      filterTypes,
       defaultColumn,
       initialState: { pageIndex: 0 },
     },
