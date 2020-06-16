@@ -52,5 +52,12 @@ export const DrivesOverexpression_mig2 = () => (
   <Pheno WBid={target.WBid.mig2} tableType={target.tableType.drivesOE} />
 )
 
-export const PhenotypeByInteraction = () => <PhenoBI />
-// export const DrivesOverexpression = () => <DrivesOE />
+export const PhenotypeByInteraction_daf8 = () => (
+  <PhenoBI WBid={target.WBid.daf8} tableType={target.tableType.phenoBI} />
+)
+export const PhenotypeByInteraction_daf16 = () => (
+  <PhenoBI WBid={target.WBid.daf16} tableType={target.tableType.phenoBI} />
+)
+export const PhenotypeByInteraction_mig2 = () => (
+  <PhenoBI WBid={target.WBid.mig2} tableType={target.tableType.phenoBI} />
+)
