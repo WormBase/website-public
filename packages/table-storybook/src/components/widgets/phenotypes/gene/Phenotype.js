@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react'
 import {
   useTable,
   useFilters,
+  useGlobalFilter,
+  useAsyncDebounce,
   useSortBy,
   useBlockLayout,
   useResizeColumns,
@@ -23,6 +25,10 @@ const Phenotype = ({ WBid, tableType }) => {
       '& thead': {
         backgroundColor: '#e9eef2',
       },
+      '& thead input': {
+        borderRadius: '5px',
+        border: '1px solid #ddd',
+      },
       '& tr:last-child td': {
         borderBottom: 0,
       },
@@ -36,7 +42,7 @@ const Phenotype = ({ WBid, tableType }) => {
       '& th:last-child,td:last-child': {
         borderRight: 0,
       },
-      '& tr:nth-child(even)': {
+      '& tbody tr:nth-child(even)': {
         backgroundColor: '#e2e5ff',
       },
       '& th .resizer': {
@@ -82,6 +88,29 @@ const Phenotype = ({ WBid, tableType }) => {
           setFilter(e.target.value || undefined)
         }}
         placeholder={`Search ${count} records...`}
+      />
+    )
+  }
+
+  const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
+    const [value, setValue] = useState(globalFilter)
+    const onChange = useAsyncDebounce((value) => {
+      setGlobalFilter(value || undefined)
+    }, 1000)
+
+    return (
+      <input
+        value={value || ''}
+        onChange={(e) => {
+          setValue(e.target.value)
+          onChange(e.target.value)
+        }}
+        placeholder={`Search all columns`}
+        style={{
+          fontSize: '1.2rem',
+          marginBottom: '10px',
+          width: '90%',
+        }}
       />
     )
   }
@@ -212,6 +241,71 @@ const Phenotype = ({ WBid, tableType }) => {
             const overExpressionValue = row.values[id].map((o) => o.text.label)
             keyArr.push(...overExpressionValue)
           }
+
+          return keyArr
+        }
+        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+      },
+      defaultGlobalFilter: (rows, id, filterValue) => {
+        /*
+        id[0] is "phenotype.label",
+        id[1] is "entity",
+        id[2] is "evidence"
+        */
+        const keyFunc = (row) => {
+          let keyArr = []
+          keyArr.push(row.values[id[0]])
+
+          if (row.values[id[1]] !== null) {
+            const entityValue = row.values[id[1]].map((e) => [
+              e.pato_evidence.entity_term.label,
+              e.pato_evidence.entity_term,
+            ])
+            keyArr.push(entityValue.flat())
+          }
+
+          if (row.values[id[2]]?.Allele) {
+            for (const a of row.values[id[2]].Allele) {
+              keyArr.push(a.text.label)
+
+              if (a.evidence?.Curator) {
+                keyArr.push(a.evidence.Curator[0].label)
+              }
+              if (a.evidence?.Paper_evidence) {
+                keyArr.push(a.evidence.Paper_evidence[0].label)
+              }
+              if (a.evidence?.Remark) {
+                keyArr.push(a.evidence.Remark[0])
+              }
+            }
+          }
+          if (row.values[id[2]]?.RNAi) {
+            for (const r of row.values[id[2]].RNAi) {
+              keyArr.push(r.text.label)
+
+              if (r.evidence?.Genotype) {
+                keyArr.push(r.evidence.Genotype)
+              }
+              if (r.evidence?.paper) {
+                keyArr.push(r.evidence.paper.label)
+              }
+              if (r.evidence?.Remark) {
+                keyArr.push(r.evidence.Remark[0])
+              }
+            }
+          }
+
+          // For drives_overexpression table
+          if (!row.values[id[2]]?.Allele && !row.values[id[2]]?.RNAi) {
+            const overExpressionValue = row.values[id[2]].map((o) => [
+              o.text.label,
+              o.evidence?.Curator[0].label,
+              o.evidence?.Paper_evidence[0].label,
+              o.evidence?.Remark[0],
+            ])
+            keyArr.push(...overExpressionValue)
+          }
+
           return keyArr
         }
         return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
@@ -291,7 +385,8 @@ const Phenotype = ({ WBid, tableType }) => {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    setGlobalFilter,
+    state: { pageIndex, pageSize, globalFilter },
   } = useTable(
     {
       columns,
@@ -300,9 +395,11 @@ const Phenotype = ({ WBid, tableType }) => {
       filterTypes,
       defaultColumn,
       initialState: { pageIndex: 0 },
+      globalFilter: 'defaultGlobalFilter',
     },
     useBlockLayout,
     useFilters,
+    useGlobalFilter,
     useResizeColumns,
     useSortBy,
     usePagination
@@ -312,6 +409,14 @@ const Phenotype = ({ WBid, tableType }) => {
     <div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
+          <tr>
+            <th>
+              <GlobalFilter
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+              />
+            </th>
+          </tr>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (

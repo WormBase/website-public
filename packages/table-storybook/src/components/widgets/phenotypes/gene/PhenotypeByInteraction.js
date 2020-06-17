@@ -2,12 +2,15 @@ import React, { useState, useEffect, useMemo } from 'react'
 import {
   useTable,
   useFilters,
+  useGlobalFilter,
+  useAsyncDebounce,
   useSortBy,
   useBlockLayout,
   useResizeColumns,
   usePagination,
 } from 'react-table'
 import { makeStyles } from '@material-ui/core/styles'
+import matchSorter from 'match-sorter'
 import loadData from '../../../../services/loadData'
 
 const PhenotypeByInteraction = ({ WBid, tableType }) => {
@@ -17,6 +20,10 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
       border: '1px solid #ededed',
       '& thead': {
         backgroundColor: '#e9eef2',
+      },
+      '& thead input': {
+        borderRadius: '5px',
+        border: '1px solid #ddd',
       },
       '& tr:last-child td': {
         borderBottom: 0,
@@ -31,7 +38,7 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
       '& th:last-child,td:last-child': {
         borderRight: 0,
       },
-      '& tr:nth-child(even)': {
+      '& tbody tr:nth-child(even)': {
         backgroundColor: '#e2e5ff',
       },
       '& th .resizer': {
@@ -77,6 +84,29 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
           setFilter(e.target.value || undefined)
         }}
         placeholder={`Search ${count} records...`}
+      />
+    )
+  }
+
+  const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
+    const [value, setValue] = useState(globalFilter)
+    const onChange = useAsyncDebounce((value) => {
+      setGlobalFilter(value || undefined)
+    }, 1000)
+
+    return (
+      <input
+        value={value || ''}
+        onChange={(e) => {
+          setValue(e.target.value)
+          onChange(e.target.value)
+        }}
+        placeholder={`Search all columns`}
+        style={{
+          fontSize: '1.2rem',
+          marginBottom: '10px',
+          width: '90%',
+        }}
       />
     )
   }
@@ -164,6 +194,36 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
     []
   )
 
+  const filterTypes = useMemo(
+    () => ({
+      defaultGlobalFilter: (rows, id, filterValue) => {
+        /*
+        id[0] is "phenotype.label",
+        id[1] is "interactions",
+        id[2] is "interactions_type",
+        id[3] is "citations"
+        */
+        console.log(rows, id, filterValue)
+        const keyFunc = (row) => {
+          let keyArr = []
+          keyArr.push(row.values[id[0]])
+
+          const interactionsValue = row.values[id[1]].map((i) => i.label)
+          keyArr.push(...interactionsValue)
+
+          keyArr.push(row.values[id[2]])
+
+          const citationsValue = row.values[id[3]].map((c) => c?.label)
+          keyArr.push(...citationsValue)
+
+          return keyArr
+        }
+        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+      },
+    }),
+    []
+  )
+
   const showInteractions = (value) => {
     return value.map((detail, idx) => (
       <ul key={idx}>
@@ -224,18 +284,22 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    setGlobalFilter,
+    state: { pageIndex, pageSize, globalFilter },
   } = useTable(
     {
       columns,
       data,
       sortTypes,
+      filterTypes,
       defaultColumn,
+      globalFilter: 'defaultGlobalFilter',
       // initialState: { pageIndex: 0 },
       initialState: { pageIndex: 0, pageSize: 100 },
     },
     useBlockLayout,
     useFilters,
+    useGlobalFilter,
     useResizeColumns,
     useSortBy,
     usePagination
@@ -245,6 +309,14 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
     <div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
+          <tr>
+            <th>
+              <GlobalFilter
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+              />
+            </th>
+          </tr>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
