@@ -17,6 +17,29 @@ import Entity from './Entity'
 import Overexpression from './Overexpression'
 import loadData from '../../../../services/loadData'
 
+const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
+  const [value, setValue] = useState(globalFilter)
+  const onChange = useAsyncDebounce((value) => {
+    setGlobalFilter(value || undefined)
+  }, 1000)
+
+  return (
+    <input
+      value={value || ''}
+      onChange={(e) => {
+        setValue(e.target.value)
+        onChange(e.target.value)
+      }}
+      placeholder={`Search all columns`}
+      style={{
+        fontSize: '1.2rem',
+        marginBottom: '10px',
+        width: '90%',
+      }}
+    />
+  )
+}
+
 const Phenotype = ({ WBid, tableType }) => {
   const useStyles = makeStyles({
     table: {
@@ -88,29 +111,6 @@ const Phenotype = ({ WBid, tableType }) => {
           setFilter(e.target.value || undefined)
         }}
         placeholder={`Search ${count} records...`}
-      />
-    )
-  }
-
-  const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
-    const [value, setValue] = useState(globalFilter)
-    const onChange = useAsyncDebounce((value) => {
-      setGlobalFilter(value || undefined)
-    }, 1000)
-
-    return (
-      <input
-        value={value || ''}
-        onChange={(e) => {
-          setValue(e.target.value)
-          onChange(e.target.value)
-        }}
-        placeholder={`Search all columns`}
-        style={{
-          fontSize: '1.2rem',
-          marginBottom: '10px',
-          width: '90%',
-        }}
       />
     )
   }
