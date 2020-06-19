@@ -60,13 +60,20 @@ const useStyles = makeStyles({
   pagination: {
     padding: '0.5rem',
   },
+  displayed_data_info: {
+    textAlign: 'right',
+    marginBottom: '5px',
+  },
+  container: {
+    display: 'inline-block',
+  },
 })
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter)
   const onChange = useAsyncDebounce((value) => {
     setGlobalFilter(value || undefined)
-  }, 1000)
+  }, 200)
 
   return (
     <input
@@ -75,9 +82,9 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
         setValue(e.target.value)
         onChange(e.target.value)
       }}
-      placeholder={`Search all columns`}
+      placeholder={`Search all columns...`}
       style={{
-        fontSize: '1.2rem',
+        fontSize: '1.1rem',
         marginBottom: '10px',
         width: '90%',
       }}
@@ -308,18 +315,14 @@ const Table = ({ columns, data, tableType }) => {
     []
   )
 
-  const defaultColumnFilter = ({
-    column: { filterValue, preFilteredRows, setFilter },
-  }) => {
-    const count = preFilteredRows.length
-
+  const defaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
     return (
       <input
         value={filterValue || ''}
         onChange={(e) => {
           setFilter(e.target.value || undefined)
         }}
-        placeholder={`Search ${count} records...`}
+        placeholder={`Search...`}
       />
     )
   }
@@ -361,6 +364,7 @@ const Table = ({ columns, data, tableType }) => {
     prepareRow,
     headerGroups,
     page,
+    rows,
     canPreviousPage,
     canNextPage,
     pageOptions,
@@ -390,7 +394,10 @@ const Table = ({ columns, data, tableType }) => {
   )
 
   return (
-    <div>
+    <div className={classes.container}>
+      <div className={classes.displayed_data_info}>
+        <b>{rows.length}</b> data displayed
+      </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
           <tr>
