@@ -210,19 +210,19 @@ const Table = ({ columns, data, tableType }) => {
       },
 
       globalFilterForTableGroup1: (rows, id, filterValue) => {
-        /*
-        id[0] is "phenotype.label",
-        id[1] is "entity",
-        id[2] is "evidence"
-        */
         const keyFunc = (row) => {
+          /*
+          id[0] is "phenotype.label",
+          id[1] is "entity",
+          id[2] is "evidence"
+          */
           let keyArr = []
           keyArr.push(row.values[id[0]])
 
           if (row.values[id[1]] !== null) {
             const entityValue = row.values[id[1]].map((e) => [
               e.pato_evidence.entity_term.label,
-              e.pato_evidence.entity_term,
+              e.pato_evidence.pato_term,
             ])
             keyArr.push(entityValue.flat())
           }
@@ -260,17 +260,24 @@ const Table = ({ columns, data, tableType }) => {
 
           // For drives_overexpression table
           if (!row.values[id[2]]?.Allele && !row.values[id[2]]?.RNAi) {
-            const overExpressionValue = row.values[id[2]].map((o) => [
-              o.text.label,
-              o.evidence?.Curator[0].label,
-              o.evidence?.Paper_evidence[0].label,
-              o.evidence?.Remark[0],
-            ])
-            keyArr.push(...overExpressionValue)
+            for (const o of row.values[id[2]]) {
+              keyArr.push(o.text.label)
+
+              if (o.evidence?.Curator) {
+                keyArr.push(o.evidence.Curator[0].label)
+              }
+              if (o.evidence?.Paper_evidence) {
+                keyArr.push(o.evidence?.Paper_evidence[0].label)
+              }
+              if (o.evidence?.Remark) {
+                keyArr.push(o.evidence.Remark[0])
+              }
+            }
           }
 
           return keyArr
         }
+
         return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
       },
 
