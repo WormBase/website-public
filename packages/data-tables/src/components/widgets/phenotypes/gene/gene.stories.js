@@ -1,5 +1,6 @@
 import React from 'react'
 import Pheno from './Phenotype'
+import PhenoStaging from './restStaging/Phenotype'
 import PhenoBI from './PhenotypeByInteraction'
 
 const target = {
@@ -13,6 +14,9 @@ const target = {
     phenoNO: 'phenotype_not_observed',
     phenoBI: 'phenotype_by_interaction',
     drivesOE: 'drives_overexpression',
+    staging: {
+      pheno: 'phenotype_flat',
+    },
   },
 }
 
@@ -30,6 +34,25 @@ export const Phenotype_daf16 = () => (
 )
 export const Phenotype_mig2 = () => (
   <Pheno WBid={target.WBid.mig2} tableType={target.tableType.pheno} />
+)
+
+export const Phenotype_staging_daf8 = () => (
+  <PhenoStaging
+    WBid={target.WBid.daf8}
+    tableType={target.tableType.staging.pheno}
+  />
+)
+export const Phenotype_staging_daf16 = () => (
+  <PhenoStaging
+    WBid={target.WBid.daf16}
+    tableType={target.tableType.staging.pheno}
+  />
+)
+export const Phenotype_staging_mig2 = () => (
+  <PhenoStaging
+    WBid={target.WBid.mig2}
+    tableType={target.tableType.staging.pheno}
+  />
 )
 
 export const PhenotypeNotObserved_daf8 = () => (
