@@ -3,6 +3,7 @@ import Table from './Table'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
+import Csv from './Csv'
 import loadData from '../../../../../services/loadData'
 
 const Phenotype = ({ WBid, tableType }) => {
@@ -10,7 +11,6 @@ const Phenotype = ({ WBid, tableType }) => {
 
   useEffect(() => {
     loadData(WBid, tableType).then((json) => {
-      console.log(json.data)
       setData(json.data)
     })
   }, [WBid, tableType])
@@ -73,6 +73,7 @@ const Phenotype = ({ WBid, tableType }) => {
 
   return (
     <>
+      <Csv data={data} />
       <Table columns={columns} data={data} tableType={tableType} />
     </>
   )
