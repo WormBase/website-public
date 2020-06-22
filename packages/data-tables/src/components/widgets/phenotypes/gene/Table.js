@@ -56,6 +56,41 @@ const useStyles = makeStyles({
     '& th .filter input': {
       width: '80%',
     },
+    '& th .sortable::before, th .sort-asc::before, th .sort-desc::before': {
+      position: 'absolute',
+      right: '22px',
+      content: '""',
+      width: 0,
+      height: 0,
+      borderLeft: '5px solid transparent',
+      borderRight: '5px solid transparent',
+      borderTop: '5px solid gray',
+      top: '23px',
+    },
+    '& th .sortable::after, th .sort-asc::after, th .sort-desc::after': {
+      position: 'absolute',
+      right: '22px',
+      content: '""',
+      width: 0,
+      height: 0,
+      borderLeft: '5px solid transparent',
+      borderRight: '5px solid transparent',
+      borderBottom: '5px solid gray',
+      top: '16px',
+    },
+    '& th .sort-asc::before': {
+      borderTop: 'none',
+    },
+    '& th .sort-asc::after': {
+      borderBottom: '5px solid black',
+    },
+    '& th .sort-desc::before': {
+      borderTop: '5px solid black',
+      top: '23px',
+    },
+    '& th .sort-desc::after': {
+      borderBottom: 'none',
+    },
   },
   pagination: {
     padding: '0.5rem',
@@ -412,14 +447,20 @@ const Table = ({ columns, data, tableType }) => {
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <th {...column.getHeaderProps()}>
-                  <span {...column.getSortByToggleProps()}>
+                  <div
+                    {...column.getSortByToggleProps()}
+                    className={
+                      column.canSort
+                        ? column.isSorted
+                          ? column.isSortedDesc
+                            ? 'sort-desc'
+                            : 'sort-asc'
+                          : 'sortable'
+                        : ''
+                    }
+                  >
                     {column.render('Header')}
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? ' 🔽'
-                        : ' 🔼'
-                      : ''}
-                  </span>
+                  </div>
                   <div className='filter'>
                     {column.canFilter ? column.render('Filter') : null}
                   </div>
