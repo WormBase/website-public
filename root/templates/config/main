@@ -369,31 +369,9 @@
       pos_display_string;
     END;
 
-
-    MACRO jbrowse_view(data, label, tracks, url_options) BLOCK;
-      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
-      species = c.config.sections.species_list.$taxonomy;
-      label = label || data.label;
-
-      IF species;
-        bioproject = data.bioproject || species.bioprojects.keys;
-        FOREACH bp IN bioproject;
-            true_coords = data.label; #don't use the data.pos_string which is padded for GBrowse
-            padded_coords = pad_jbrowse_coordinates(true_coords);
-            view_url = jbrowse_url(taxonomy, padded_coords, bp, 1, tracks, url_options);
-            view_id = "jbrowse-view-$padded_coords-$bp";
-            view_id = view_id.replace('\W+', '_');
-
-            '<div id="' _ view_id _ '" class="jbrowse-view-container">';
-            '<div class="jbrowse-view-iframe" style="overflow: hidden;">';
-            '<object id="innerJBrowse" type="text/html" style="pointer-events:none;position:relative;top:-1px;left:0;width:100%;height:14px;overflow: hidden;"></object>';
-            '</div>';
-            '</div>';
+    MACRO build_jbrowse_view_js BLOCK;
 %]
-            <script type="text/javascript">
-            (function() {
-                var viewId = "#[% view_id %]";
-                var viewUrl = "[% view_url %]";
+            function buildJbroweView(viewId, viewUrl, linkUrl) {
                 var innerJBrowseContainer = $jq(viewId + " .jbrowse-view-iframe");
                 var heightDefault = 400;
 
@@ -458,15 +436,103 @@
                 reset(heightDefault);
 
                 $jq(viewId + " .jbrowse-view-iframe").click(function(){
-                  window.location.href = "[% jbrowse_url(taxonomy, padded_coords, bp, 0, tracks); %]";
+                  window.location.href = linkUrl;
                 });
 
-            })();
-            </script>
+            }
+[%
+    END;
+
+
+    MACRO jbrowse_view(data, label, tracks, url_options) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+
+      IF species;
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            true_coords = data.label; #don't use the data.pos_string which is padded for GBrowse
+            padded_coords = pad_jbrowse_coordinates(true_coords);
+            view_url = jbrowse_url(taxonomy, padded_coords, bp, 1, tracks, url_options);
+            view_id = "jbrowse-view-$padded_coords-$bp";
+            view_id = view_id.replace('\W+', '_');
+%]
+<div id="[%- view_id -%]" class="jbrowse-view-container">
+    <div class="jbrowse-view-iframe" style="overflow: hidden;">
+        <object id="innerJBrowse" type="text/html" style="pointer-events:none;position:relative;top:-1px;left:0;width:100%;height:14px;overflow: hidden;"></object>
+    </div>
+    <script type="text/javascript">
+	(function() {
+	    [% build_jbrowse_view_js %]
+	    buildJbroweView('#[%- view_id -%]', '[%- view_url -%]', '[%- jbrowse_url(taxonomy, padded_coords, bp, 0, tracks) -%]');
+        })();
+    </script>
+</div>
 [%
         END;
       END;
     END;
+
+MACRO jbrowse_protein_schematic(data) BLOCK;
+    view_id = "protein-schematic";
+    cds_wbid = data.reference_id;
+    location = data.location;
+%]
+<div id="[%- view_id -%]" class="jbrowse-view-container">
+    <div class="jbrowse-view-iframe" style="overflow: hidden;">
+        <object id="innerJBrowse" type="text/html" style="pointer-events:none;position:relative;top:-1px;left:0;width:100%;height:14px;overflow: hidden;"></object>
+    </div>
+    <script type="text/javascript">
+	(function() {
+
+	  [% build_jbrowse_view_js %]
+
+          fetch('/rest/version').then(function(response) {
+	    return response.json();
+	  }).then(function(data) {
+	    var releaseVersion = data && data.version;
+	    // var releaseVersion = 'WS274';
+            var baseURL = 'https://s3.amazonaws.com/wormbase-modencode/protein_schematic/'+ releaseVersion + '/';
+            var protein = '[%- cds_wbid -%]';
+	    var location = '[%- location -%]';
+	    var tracks = [
+	      'seg',
+	      'signalp',
+	      'tmhmm',
+	      'ncoils',
+	      'Catalytic residue',
+	      'Metal binding site',
+	      'Post transcriptionally modified site',
+	      'Motifs',
+	      'Selected BLASTP Homologies'
+	    ];
+
+            function isTrackAvailableAsync(track) {
+              return fetch(baseURL + 'tracks/' + track + '/' + protein + '/trackData.jsonz').then(function(response) {
+	        return response.ok;
+	      });
+	    };
+
+	    Promise.all(tracks.map(function(track) {
+	      return isTrackAvailableAsync(track);
+	    })).then(function(results) {
+	      var availableTracks = ['Exon boundaries'].concat(tracks.filter(function(track, index) {
+	        return results[index];
+	      }));
+	      var jbrowseBaseURL = '/tools/protein_schematic/?loc=' + encodeURIComponent(location) + '&tracks=' + encodeURIComponent(availableTracks.join(','));
+	      var previewJBrowseURL = jbrowseBaseURL + '&tracklabels=0&nav=0&tracklist=0&overview=0';
+	      var linkoutJBrowseURL = jbrowseBaseURL;
+	      buildJbroweView('#[%- view_id -%]', previewJBrowseURL, linkoutJBrowseURL);
+	    });
+
+	  });
+
+        })();
+    </script>
+</div>
+[%
+END;
 
 MACRO agr_logo_link(id, dbt) BLOCK;
     '<div class="agr-logo-link">';
