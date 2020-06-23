@@ -505,7 +505,8 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
 	      'Metal binding site',
 	      'Post transcriptionally modified site',
 	      'Motifs',
-	      'Selected BLASTP Homologies'
+	      'Selected BLASTP Homologies',
+	      'Mass spec peptides'
 	    ];
 
             function isTrackAvailableAsync(track) {
