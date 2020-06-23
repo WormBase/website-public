@@ -1,14 +1,56 @@
+import { usePlugin } from 'tinacms';
+import {
+  useGithubJsonForm,
+  useGithubToolbarPlugins,
+} from 'react-tinacms-github';
+import { InlineForm, InlineTextField, InlineTextarea } from 'react-tinacms-inline';
 import { getJsonPreviewProps } from '../utils/getJsonPreviewProps';
 import { fileToUrl } from '../utils/fileToUrl';
 
 const NoteBookTemplate = ({
   preview,
   file,
+  slug,
 }) => {
-  return 'zzz' + preview;
+  const [data, form] = useGithubJsonForm(file, formOptions)
+  usePlugin(form);
+  useGithubToolbarPlugins();
+
+  return (
+    <InlineForm form={form}>
+      <main>
+        <h2>
+          <InlineTextField name="metadata.wormbase.title" />
+        </h2>
+        <div>Edit metadata for {slug}.ipynb</div>
+        <section>
+          <InlineTextarea name="metadata.wormbase.shortDescription" />
+        </section>
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      </main>
+    </InlineForm>
+  );
 }
 
 export default NoteBookTemplate;
+
+const formOptions = {
+  label: 'Jupyter Notebook',
+  fields: [
+    {
+      name: 'metadata.wormbase.title',
+      label: 'Name',
+      component: 'text',
+      placeholder: '...',
+    },
+    {
+      name: 'metadata.wormbase.shortDescription',
+      label: 'Short description',
+      component: 'textarea',
+      placeholder: 'Please enter a short description'
+    },
+  ],
+};
 
 export async function getStaticProps(context) {
   const {
@@ -32,6 +74,7 @@ export async function getStaticProps(context) {
   return {
     props: {
       ...jsonProps.props,
+      slug: slug,
     },
   }
 }
