@@ -17,9 +17,9 @@
     "react-dom": "16.13.1",
     "react-tinacms-editor": "0.8.0",
     "react-tinacms-github": "0.4.1",
-    "react-tinacms-inline": "0.7.0",
+    "react-tinacms-inline": "0.8.0",
     "styled-components": "5.1.1",
-    "tinacms": "0.21.1"
+    "tinacms": "0.21.2"
   },
   "devDependencies": {
     "hygen-next-tinacms-github": "https://github.com/dwalkr/hygen-next-tinacms-github"
