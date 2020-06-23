@@ -3,7 +3,6 @@ import {
   useGithubJsonForm,
   useGithubToolbarPlugins,
 } from 'react-tinacms-github';
-import { InlineForm, InlineTextField, InlineTextarea } from 'react-tinacms-inline';
 import { getJsonPreviewProps } from '../utils/getJsonPreviewProps';
 import { fileToUrl } from '../utils/fileToUrl';
 
@@ -12,23 +11,23 @@ const NoteBookTemplate = ({
   file,
   slug,
 }) => {
-  const [data, form] = useGithubJsonForm(file, formOptions)
+  const [data, form] = useGithubJsonForm(file, formOptions);
   usePlugin(form);
   useGithubToolbarPlugins();
 
+  const notebook = (data.metadata && data.metadata.wormbase) || {};
+
   return (
-    <InlineForm form={form}>
       <main>
         <h2>
-          <InlineTextField name="metadata.wormbase.title" />
+          {notebook.title}
         </h2>
         <div>Edit metadata for {slug}.ipynb</div>
         <section>
-          <InlineTextarea name="metadata.wormbase.shortDescription" />
+          {notebook.shortDescription}
         </section>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <pre>{JSON.stringify(data.metadata, null, 2)}</pre>
       </main>
-    </InlineForm>
   );
 }
 
