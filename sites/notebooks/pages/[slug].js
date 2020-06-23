@@ -3,6 +3,7 @@ import {
   useGithubJsonForm,
   useGithubToolbarPlugins,
 } from 'react-tinacms-github';
+import moment from 'moment';
 import { getJsonPreviewProps } from '../utils/getJsonPreviewProps';
 import { fileToUrl } from '../utils/fileToUrl';
 
@@ -15,7 +16,9 @@ const NoteBookTemplate = ({
   usePlugin(form);
   useGithubToolbarPlugins();
 
+
   const notebook = (data.metadata && data.metadata.wormbase) || {};
+  const authors = (data.metadata && data.metadata.authors) || [];
 
   return (
       <main>
@@ -25,6 +28,8 @@ const NoteBookTemplate = ({
         <div>Edit metadata for {slug}.ipynb</div>
         <section>
           {notebook.shortDescription}
+          <p>{authors.map(({name}, index) => name).join(', ')}</p>
+          <p>Updated {moment(notebook.dateLastUpdated).isSame(new Date(), 'day') ? 'today' : moment(notebook.dateLastUpdated).fromNow()}</p>
         </section>
         <pre>{JSON.stringify(data.metadata, null, 2)}</pre>
       </main>
@@ -40,13 +45,37 @@ const formOptions = {
       name: 'metadata.wormbase.title',
       label: 'Name',
       component: 'text',
-      placeholder: '...',
     },
     {
       name: 'metadata.wormbase.shortDescription',
       label: 'Short description',
       component: 'textarea',
       placeholder: 'Please enter a short description'
+    },
+    {
+      name: 'metadata.wormbase.dateLastUpdated',
+      label: 'Last Updated',
+      component: 'date',
+      utc: false,
+      dateFormat: true,
+      timeFormat: false,
+    },
+    {
+      label: 'Authors List',
+      name: 'metadata.authors',
+      component: 'group-list',
+      description: 'Authors List',
+      itemProps: item => ({
+        key: item.name,
+        label: item.name,
+      }),
+      fields: [
+        {
+          label: 'Name',
+          name: 'name',
+          component: 'text',
+        },
+      ],
     },
   ],
 };
