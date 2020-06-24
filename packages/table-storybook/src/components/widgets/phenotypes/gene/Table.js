@@ -128,6 +128,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 }
 
 const Table = ({ columns, data, tableType }) => {
+  console.log(data)
   const classes = useStyles()
 
   const sortTypes = useMemo(
@@ -227,28 +228,83 @@ const Table = ({ columns, data, tableType }) => {
     []
   )
 
+  const storeFilterValOfAllele = (data, kArr) => {
+    if (data?.Allele) {
+      data.Allele.forEach((a) => {
+        kArr.push(a.text.label)
+        if (a.evidence?.Curator) {
+          kArr.push(a.evidence.Curator[0].label)
+        }
+        if (a.evidence?.Paper_evidence) {
+          kArr.push(a.evidence.Paper_evidence[0].label)
+        }
+        if (a.evidence?.Remark) {
+          kArr.push(a.evidence.Remark[0])
+        }
+      })
+    }
+  }
+
+  const storeFilterValOfRNAi = (data, kArr) => {
+    if (data?.RNAi) {
+      data.RNAi.forEach((r) => {
+        kArr.push(r.text.label)
+        if (r.evidence?.Genotype) {
+          kArr.push(r.evidence.Genotype)
+        }
+        if (r.evidence?.Paper_evidence) {
+          kArr.push(r.evidence.Paper_evidence[0].label)
+        }
+        if (r.evidence?.Remark) {
+          kArr.push(r.evidence.Remark[0])
+        }
+      })
+    }
+  }
+
+  const storeFilterValOfEntity = (data, kArr) => {
+    if (data) {
+      data.forEach((e) => {
+        kArr.push(
+          ...[
+            e.pato_evidence.entity_type,
+            e.pato_evidence.entity_term.label,
+            e.pato_evidence.pato_term,
+          ]
+        )
+      })
+    } else {
+      kArr.push('N/A')
+    }
+  }
+
   const filterTypes = useMemo(
     () => ({
       evidenceFilter: (rows, id, filterValue) => {
         const keyFunc = (row) => {
           let keyArr = []
-          if (row.values[id]?.Allele) {
-            const alleleValue = row.values[id].Allele.map((a) => a.text.label)
-            keyArr.push(...alleleValue)
-          }
-          if (row.values[id]?.RNAi) {
-            const rnaiValue = row.values[id].RNAi.map((r) => r.text.label)
-            keyArr.push(...rnaiValue)
-          }
-          // For drives_overexpression table
-          if (!row.values[id]?.Allele && !row.values[id]?.RNAi) {
-            const overExpressionValue = row.values[id].map((o) => o.text.label)
-            keyArr.push(...overExpressionValue)
-          }
+
+          storeFilterValOfAllele(row.values.evidence, keyArr)
+          storeFilterValOfRNAi(row.values.evidence, keyArr)
 
           return keyArr
         }
+
         return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+      },
+
+      entitiesFilter: (rows, id, filterValue) => {
+        const keyFunc = (row) => {
+          let keyArr = []
+
+          storeFilterValOfEntity(row.values.entity, keyArr)
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+        })
       },
 
       globalFilterForTableGroup1: (rows, id, filterValue) => {
@@ -258,51 +314,18 @@ const Table = ({ columns, data, tableType }) => {
           id[1] is "entity",
           id[2] is "evidence"
           */
+
           let keyArr = []
-          keyArr.push(row.values[id[0]])
+          const rowVals = row.values
+          keyArr.push(rowVals[id[0]])
 
-          if (row.values[id[1]] !== null) {
-            const entityValue = row.values[id[1]].map((e) => [
-              e.pato_evidence.entity_term.label,
-              e.pato_evidence.pato_term,
-            ])
-            keyArr.push(entityValue.flat())
-          }
-
-          if (row.values[id[2]]?.Allele) {
-            for (const a of row.values[id[2]].Allele) {
-              keyArr.push(a.text.label)
-
-              if (a.evidence?.Curator) {
-                keyArr.push(a.evidence.Curator[0].label)
-              }
-              if (a.evidence?.Paper_evidence) {
-                keyArr.push(a.evidence.Paper_evidence[0].label)
-              }
-              if (a.evidence?.Remark) {
-                keyArr.push(a.evidence.Remark[0])
-              }
-            }
-          }
-          if (row.values[id[2]]?.RNAi) {
-            for (const r of row.values[id[2]].RNAi) {
-              keyArr.push(r.text.label)
-
-              if (r.evidence?.Genotype) {
-                keyArr.push(r.evidence.Genotype)
-              }
-              if (r.evidence?.paper) {
-                keyArr.push(r.evidence.paper.label)
-              }
-              if (r.evidence?.Remark) {
-                keyArr.push(r.evidence.Remark[0])
-              }
-            }
-          }
+          storeFilterValOfEntity(rowVals[id[1]], keyArr)
+          storeFilterValOfAllele(rowVals[id[2]], keyArr)
+          storeFilterValOfRNAi(rowVals[id[2]], keyArr)
 
           // For drives_overexpression table
-          if (!row.values[id[2]]?.Allele && !row.values[id[2]]?.RNAi) {
-            for (const o of row.values[id[2]]) {
+          if (!rowVals[id[2]]?.Allele && !rowVals[id[2]]?.RNAi) {
+            for (const o of rowVals[id[2]]) {
               keyArr.push(o.text.label)
 
               if (o.evidence?.Curator) {

@@ -54,7 +54,8 @@ const Phenotype = ({ WBid, tableType }) => {
         Header: 'Entities Affected',
         accessor: 'entity',
         Cell: ({ cell: { value } }) => showEntities(value),
-        disableFilters: true,
+        disableSortBy: true,
+        filter: 'entitiesFilter',
         sortType: 'sortByEntity',
       },
       {
