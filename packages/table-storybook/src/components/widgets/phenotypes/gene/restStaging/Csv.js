@@ -1,5 +1,6 @@
 import React from 'react'
 import { CSVLink } from 'react-csv'
+import { cloneDeep } from 'lodash'
 
 const Csv = ({ data }) => {
   const headers = [
@@ -13,39 +14,138 @@ const Csv = ({ data }) => {
     { label: 'entity', key: 'entity' },
 
     // evidence
-    // '_' denotes 'Allele' or 'RNAi'
-    { label: 'evidence', key: 'evidence.type' },
-    { label: 'evidence._.text.class', key: 'evidence.text.class' },
-    { label: 'evidence._.text.id', key: 'evidence.text.id' },
-    { label: 'evidence._.text.label', key: 'evidence.text.label' },
-    { label: 'evidence._.text.taxonomy', key: 'evidence.text.taxonomy' },
-    { label: 'evidence._.evidence', key: 'evidence.evi' },
+
+    // For 'Allele'
+    {
+      label: 'evidence.Allele.evidence.Affected_by_molecule',
+      key: 'evidence.Allele.evidence.Affected_by_molecule',
+    },
+    {
+      label: 'evidence.Allele.evidence.Curator',
+      key: 'evidence.Allele.evidence.Curator',
+    },
+    {
+      label: 'evidence.Allele.evidence.Ease_of_scoring',
+      key: 'evidence.Allele.evidence.Ease_of_scoring',
+    },
+    {
+      label: 'evidence.Allele.evidence.Paper_evidence',
+      key: 'evidence.Allele.evidence.Paper_evidence',
+    },
+    {
+      label: 'evidence.Allele.evidence.Person_evidence',
+      key: 'evidence.Allele.evidence.Person_evidence',
+    },
+    {
+      label: 'evidence.Allele.evidence.Remark',
+      key: 'evidence.Allele.evidence.Remark',
+    },
+    {
+      label: 'evidence.Allele.evidence.Temperature',
+      key: 'evidence.Allele.evidence.Temperature',
+    },
+    {
+      label: 'evidence.Allele.evidence.Temperature_sensitive',
+      key: 'evidence.Allele.evidence.Temperature_sensitive',
+    },
+    {
+      label: 'evidence.Allele.evidence.Treatment',
+      key: 'evidence.Allele.evidence.Treatment',
+    },
+    {
+      label: 'evidence.Allele.evidence.Variation_effect',
+      key: 'evidence.Allele.evidence.Variation_effect',
+    },
+    {
+      label: 'evidence.Allele.evidence.Recessive',
+      key: 'evidence.Allele.evidence.Recessive',
+    },
+    {
+      label: 'evidence.Allele.evidence.Penetrance',
+      key: 'evidence.Allele.evidence.Penetrance',
+    },
+    {
+      label: 'evidence.Allele.evidence.Penetrance-range',
+      key: 'evidence.Allele.evidence.Penetrance-range',
+    },
+
+    { label: 'evidence.Allele.text.class', key: 'evidence.Allele.text.class' },
+    { label: 'evidence.Allele.text.id', key: 'evidence.Allele.text.id' },
+    { label: 'evidence.Allele.text.label', key: 'evidence.Allele.text.label' },
+    {
+      label: 'evidence.Allele.text.taxonomy',
+      key: 'evidence.Allele.text.taxonomy',
+    },
+
+    // For 'RNAi'
+    {
+      label: 'evidence.RNAi.evidence.Affected_by_molecule',
+      key: 'evidence.RNAi.evidence.Affected_by_molecule',
+    },
+    {
+      label: 'evidence.RNAi.evidence.Genotype',
+      key: 'evidence.RNAi.evidence.Genotype',
+    },
+    {
+      label: 'evidence.RNAi.evidence.Paper_evidence',
+      key: 'evidence.RNAi.evidence.Paper_evidence',
+    },
+    {
+      label: 'evidence.RNAi.evidence.Penetrance-range',
+      key: 'evidence.RNAi.evidence.Penetrance-range',
+    },
+    {
+      label: 'evidence.RNAi.evidence.Quantity_description',
+      key: 'evidence.RNAi.evidence.Quantity_description',
+    },
+    {
+      label: 'evidence.RNAi.evidence.Remark',
+      key: 'evidence.RNAi.evidence.Remark',
+    },
+    {
+      label: 'evidence.RNAi.evidence.Strain',
+      key: 'evidence.RNAi.evidence.Strain',
+    },
+
+    { label: 'evidence.RNAi.text.class', key: 'evidence.RNAi.text.class' },
+    { label: 'evidence.RNAi.text.id', key: 'evidence.RNAi.text.id' },
+    { label: 'evidence.RNAi.text.label', key: 'evidence.RNAi.text.label' },
+    {
+      label: 'evidence.RNAi.text.taxonomy',
+      key: 'evidence.RNAi.text.taxonomy',
+    },
   ]
 
   const processedData = data.map((d) => {
-    const shallowCopyOfD = { ...d }
+    const copyOfD = cloneDeep(d)
 
     // Handling 'entity'
-    if (shallowCopyOfD.entity === null) {
-      shallowCopyOfD.entity = 'N/A'
+    if (copyOfD.entity === null) {
+      copyOfD.entity = 'N/A'
     } else {
-      shallowCopyOfD.entity = JSON.stringify(shallowCopyOfD.entity)
+      const keyOfEntity = Object.keys(copyOfD.entity)
+      copyOfD.entity = JSON.stringify(copyOfD.entity[keyOfEntity])
     }
 
     // Handling 'evidence'
-    const keyOfEvidence = Object.keys(shallowCopyOfD.evidence) // 'Allele' or 'RNAi'
+    const keyOfEvidence = Object.keys(copyOfD.evidence) // 'Allele' or 'RNAi'
 
-    shallowCopyOfD.evidence = shallowCopyOfD.evidence[keyOfEvidence]
-    shallowCopyOfD.evidence.type = keyOfEvidence
+    const evidenceSpecific = copyOfD.evidence[keyOfEvidence].evidence
 
-    // WARNING! Don't assign to object property 'shallowCopyOfD.evidence.evidence'.
-    // It will change original data props (I imagine).
-    // So, instead I use 'shallowCopyOfD.evidence.evi'
-    shallowCopyOfD.evidence.evi = JSON.stringify(
-      shallowCopyOfD.evidence.evidence
-    )
+    Object.entries(evidenceSpecific).forEach(([key, value]) => {
+      if (Array.isArray(evidenceSpecific[key])) {
+        evidenceSpecific[key] = JSON.stringify(evidenceSpecific[key])
+      }
 
-    return shallowCopyOfD
+      if (
+        typeof evidenceSpecific[key] === 'object' &&
+        evidenceSpecific !== null
+      ) {
+        evidenceSpecific[key] = JSON.stringify(evidenceSpecific[key])
+      }
+    })
+
+    return copyOfD
   })
 
   return (
