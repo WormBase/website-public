@@ -73,7 +73,7 @@ const Phenotype = ({ WBid, tableType }) => {
 
   return (
     <>
-      <Csv data={data} />
+      <Csv data={data} WBid={WBid} tableType={tableType} />
       <Table columns={columns} data={data} tableType={tableType} />
     </>
   )

@@ -2,7 +2,7 @@ import React from 'react'
 import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 
-const Csv = ({ data }) => {
+const Csv = ({ data, WBid, tableType }) => {
   const headers = [
     // phenotype
     { label: 'phenotype.class', key: 'phenotype.class' },
@@ -157,9 +157,25 @@ const Csv = ({ data }) => {
 
   return (
     <div>
-      <CSVLink data={processedData} headers={headers}>
-        Save table
-      </CSVLink>
+      <div>
+        <CSVLink
+          data={processedData}
+          headers={headers}
+          filename={`${WBid}_${tableType}.csv`}
+        >
+          Save table as CSV
+        </CSVLink>
+      </div>
+      <div>
+        <CSVLink
+          data={processedData}
+          headers={headers}
+          separator={'\t'}
+          filename={`${WBid}_${tableType}.tsv`}
+        >
+          Save table as TSV
+        </CSVLink>
+      </div>
     </div>
   )
 }
