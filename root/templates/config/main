@@ -419,7 +419,7 @@
                     }
 
 
-                    var progress = progressInit(60, 10);
+                    var progress = progressInit(60, 20);
                     var interval = setInterval(function() {
                       if (progress.isProgressComplete()) {
                         innerJBrowseContainer.removeClass('jbrowse-view-iframe__loading');
