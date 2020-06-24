@@ -34,13 +34,14 @@ const RNAi = ({ rObj }) => {
             {value}
           </>
         )
-      case 'paper':
-        return (
-          <>
-            <b>paper: </b>
-            {value.label}
-          </>
-        )
+      // Not observed in rest-stagint API
+      // case 'paper':
+      //   return (
+      //     <>
+      //       <b>paper: </b>
+      //       {value.label}
+      //     </>
+      //   )
       case 'Paper_evidence':
         return (
           <>

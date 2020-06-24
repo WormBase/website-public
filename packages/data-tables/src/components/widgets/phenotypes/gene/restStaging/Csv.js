@@ -86,6 +86,13 @@ const Csv = ({ data }) => {
       label: 'evidence.RNAi.evidence.Genotype',
       key: 'evidence.RNAi.evidence.Genotype',
     },
+
+    // "paper" is not observed in rest-staging API
+    // {
+    //   label: 'evidence.RNAi.evidence.paper',
+    //   key: 'evidence.RNAi.evidence.paper',
+    // },
+
     {
       label: 'evidence.RNAi.evidence.Paper_evidence',
       key: 'evidence.RNAi.evidence.Paper_evidence',
