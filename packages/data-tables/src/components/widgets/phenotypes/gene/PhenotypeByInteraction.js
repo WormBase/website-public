@@ -41,6 +41,7 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
       {
         Header: 'Interaction Type',
         accessor: 'interaction_type',
+        disableSortBy: true,
       },
       {
         Header: 'Citations',
