@@ -18,14 +18,26 @@ const Allele = ({ aObj }) => {
         return (
           <>
             <b>Affected by molecule: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Curator':
         return (
           <>
             <b>Curator: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Ease_of_scoring':
@@ -39,21 +51,39 @@ const Allele = ({ aObj }) => {
         return (
           <>
             <b>Paper evidence: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Person_evidence':
         return (
           <>
             <b>Person evidence: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Remark':
         return (
           <>
             <b>Remark: </b>
-            {value[0]}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v}</span>
+              ) : (
+                <span key={idx}>{v}; </span>
+              )
+            )}
           </>
         )
       case 'Temperature':
@@ -81,7 +111,13 @@ const Allele = ({ aObj }) => {
         return (
           <>
             <b>Variation effect: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Recessive':

@@ -18,7 +18,13 @@ const RNAi = ({ rObj }) => {
         return (
           <>
             <b>Affected by molecule: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Genotype':
@@ -55,7 +61,13 @@ const RNAi = ({ rObj }) => {
         return (
           <>
             <b>Remark: </b>
-            {value[0]}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v}</span>
+              ) : (
+                <span key={idx}>{v}; </span>
+              )
+            )}
           </>
         )
       case 'Strain':
