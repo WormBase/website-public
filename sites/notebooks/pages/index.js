@@ -1,64 +1,20 @@
 import Head from 'next/head'
-import { getGithubPreviewProps, parseJson } from 'next-tinacms-github'
+import { getGithubPreviewProps, parseJson, getFiles as getGithubFiles } from 'next-tinacms-github'
 import {
   useGithubJsonForm,
   useGithubToolbarPlugins,
 } from 'react-tinacms-github'
 import { usePlugin } from 'tinacms'
-import moment from 'moment';
+import { getJsonPreviewProps } from '../utils/getJsonPreviewProps';
+import { fileToUrl } from '../utils/fileToUrl';
 
 
-
-export default function Home({ file }) {
+export default function Home({ file, notebooks }) {
   const formOptions = {
     label: 'Home Page',
     fields: [
       { name: 'title', component: 'text' },
       { name: 'tagline', component: 'text' },
-      {
-        name: 'notebooks',
-        component: 'group-list',
-        itemProps: item => ({
-          key: item.id,
-          label: item.name
-        }),
-        defaultItem: () => ({
-          name: 'New Notebook',
-          id: Math.random()
-            .toString(36)
-            .substr(2, 9),
-          dateLastUpdated: new Date(),
-        }),
-        fields: [
-          {
-            name: 'name',
-            label: 'Name',
-            component: 'text',
-          },
-          {
-            name: 'url',
-            label: 'URL',
-            component: 'text',
-          },
-          {
-            name: 'short-description',
-            label: 'Short description',
-            component: 'markdown',
-          },
-          {
-            name: 'author',
-            label: 'Author',
-            component: 'text',
-          },
-          {
-            name: 'dateLastUpdated',
-            label: 'Last Updated',
-            component: 'date',
-            utc: false,
-            dateFormat: 'MMMM DD YYYY',
-          }
-        ]
-      }
     ],
   }
 
@@ -84,13 +40,17 @@ export default function Home({ file }) {
 
         <div className="grid">
           {
-            data.notebooks.map(notebook => (
-              <a key={notebook.id} href={notebook.url} className="card" target="_blank" rel="noopener noreferrer">
-                <h3>{notebook.name} &rarr;</h3>
-                <p>{notebook.author}</p>
-                <p>Updated {moment(notebook.dateLastUpdated).fromNow()}</p>
-              </a>
-            ))
+            notebooks.map((notebook = {}) => {
+              const { title, shortDescription, dateLastUpdated } = (notebook.metadata && notebook.metadata.wormbase) || {};
+              const authors = (notebook.metadata && notebook.metadata.authors) || [];
+
+              return (
+                <a key={notebook.id} href={`/${notebook.slug}`} className="card" target="_blank" rel="noopener noreferrer">
+                  <h3>{title} &rarr;</h3>
+                  <p>{authors.map(({name}) => name)}</p>
+                </a>
+              );
+            })
           }
         </div>
       </main>
@@ -256,22 +216,48 @@ export const getStaticProps = async function({
   preview,
   previewData,
  }) {
-  if (preview) {
-    return getGithubPreviewProps({
-      ...previewData,
-      fileRelativePath: 'sites/notebooks/content/home.json',
-      parse: parseJson,
-    })
-  }
-  return {
-    props: {
-      sourceProvider: null,
-      error: null,
-      preview: false,
-      file: {
-        fileRelativePath: 'sites/notebooks/content/home.json',
-        data: (await import('../content/home.json')).default,
-      },
-    },
-  }
+   const fg = require('fast-glob');
+
+   try {
+     const files = preview
+       ? await getGithubFiles(
+           'sites/notebooks/content/notebooks',
+           previewData.working_repo_full_name,
+           previewData.head_branch,
+           previewData.github_access_token
+         )
+       : await fg('./content/notebooks/**/*.ipynb');
+
+     const notebooks = await Promise.all(
+       files.map(async file => {
+         const notebook = (await getJsonPreviewProps(file, preview, previewData))
+           .props.file
+
+         const slug = fileToUrl(file, 'content/notebooks');
+
+         return {...notebook.data, slug };
+       })
+     )
+
+     const jsonPreviewPropsHome = await getJsonPreviewProps(
+       preview ? 'sites/notebooks/content/home.json' : 'content/home.json',
+       preview,
+       previewData,
+     );
+
+     return {
+       props: {
+         ...jsonPreviewPropsHome.props,
+         notebooks: notebooks,
+         preview: !!preview,
+       },
+     }
+   } catch (e) {
+     return {
+       props: {
+         notebooks: [],
+         error: { ...e },
+       },
+     }
+   }
 }
