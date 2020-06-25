@@ -90,7 +90,7 @@ export async function getStaticProps(context) {
 
   // get files from Github or locally
   const jsonProps = await getJsonPreviewProps(
-    `content/notebooks/${slug}.ipynb`,
+    preview ? `sites/notebooks/content/notebooks/${slug}.ipynb` : `content/notebooks/${slug}.ipynb`,
     preview,
     previewData,
   );

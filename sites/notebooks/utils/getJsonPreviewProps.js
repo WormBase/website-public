@@ -10,7 +10,7 @@ export const getJsonPreviewProps = async (
   if (preview) {
     return getGithubPreviewProps({
       ...previewData,
-      fileRelativePath: `sites/notebooks/${fileRelativePath}`,
+      fileRelativePath: fileRelativePath,
       parse: parseJson,
     })
   }
