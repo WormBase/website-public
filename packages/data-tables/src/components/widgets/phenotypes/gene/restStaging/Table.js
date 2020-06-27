@@ -19,6 +19,8 @@ import FormControl from '@material-ui/core/FormControl'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormLabel from '@material-ui/core/FormLabel'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import FilterListIcon from '@material-ui/icons/FilterList'
 
 const useStyles = makeStyles({
@@ -72,40 +74,10 @@ const useStyles = makeStyles({
     '& th .filter input': {
       width: '80%',
     },
-    '& th .sortable::before, th .sort-asc::before, th .sort-desc::before': {
-      position: 'absolute',
-      right: '22px',
-      content: '""',
-      width: 0,
-      height: 0,
-      borderLeft: '5px solid transparent',
-      borderRight: '5px solid transparent',
-      borderTop: '5px solid gray',
-      top: '23px',
     },
-    '& th .sortable::after, th .sort-asc::after, th .sort-desc::after': {
-      position: 'absolute',
-      right: '22px',
-      content: '""',
-      width: 0,
-      height: 0,
-      borderLeft: '5px solid transparent',
-      borderRight: '5px solid transparent',
-      borderBottom: '5px solid gray',
-      top: '16px',
-    },
-    '& th .sort-asc::before': {
-      borderTop: 'none',
-    },
-    '& th .sort-asc::after': {
-      borderBottom: '5px solid black',
-    },
-    '& th .sort-desc::before': {
-      borderTop: '5px solid black',
-      top: '23px',
-    },
-    '& th .sort-desc::after': {
-      borderBottom: 'none',
+    '& th .arrow-icon': {
+      fontSize: '1rem',
+      marginLeft: '5px',
     },
   },
   pagination: {
@@ -121,8 +93,6 @@ const useStyles = makeStyles({
   container: {
     display: 'inline-block',
   },
-  xxxxx: {
-    background: 'red',
   column_filter_root: {
     position: 'relative',
   },
@@ -614,17 +584,21 @@ const Table = ({ columns, data, tableType }) => {
                 <th {...column.getHeaderProps()}>
                   <div
                     {...column.getSortByToggleProps()}
-                    className={
-                      column.canSort
-                        ? column.isSorted
-                          ? column.isSortedDesc
-                            ? 'sort-desc'
-                            : 'sort-asc'
-                          : 'sortable'
-                        : ''
-                    }
                   >
                     {column.render('Header')}
+                    {column.canSort ? (
+                      column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <ArrowDownwardIcon className='arrow-icon' />
+                        ) : (
+                          <ArrowUpwardIcon className='arrow-icon' />
+                        )
+                      ) : (
+                        ''
+                      )
+                    ) : (
+                      ''
+                    )}
                   </div>
                   <div className='filter'>
                     {column.canFilter ? displayFilterFn(column) : null}
