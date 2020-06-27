@@ -11,6 +11,7 @@ import {
   usePagination,
   useTable,
 } from 'react-table'
+import Csv from './Csv'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -88,9 +89,6 @@ const useStyles = makeStyles({
   displayed_data_info: {
     textAlign: 'right',
     marginBottom: '5px',
-    '& span': {
-      marginRight: '10px',
-    },
   },
   container: {
     display: 'inline-block',
@@ -133,7 +131,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const Table = ({ columns, data, tableType }) => {
+const Table = ({ columns, data, WBid, tableType }) => {
   console.log(data)
   const classes = useStyles()
 
@@ -568,6 +566,7 @@ const Table = ({ columns, data, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <b>{rows.length}</b> rows displayed
+        <Csv data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
