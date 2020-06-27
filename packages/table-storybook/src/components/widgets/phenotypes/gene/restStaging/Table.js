@@ -23,6 +23,7 @@ import FilterListIcon from '@material-ui/icons/FilterList'
 
 const useStyles = makeStyles({
   table: {
+    color: '#444',
     borderSpacing: 0,
     border: '1px solid #ededed',
     '& thead': {
