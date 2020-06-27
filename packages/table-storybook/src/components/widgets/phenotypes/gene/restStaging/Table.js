@@ -577,6 +577,7 @@ const Table = ({ columns, data, tableType }) => {
       initialState: {
         pageIndex: 0,
         pageSize: 100,
+        sortBy: [{ id: 'phenotype.label', desc: false }],
         groupBy: ['phenotype.label'],
         expanded: getDefaultExpandedRows(data, 10),
       },
