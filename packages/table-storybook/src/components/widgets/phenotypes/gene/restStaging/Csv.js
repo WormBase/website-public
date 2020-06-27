@@ -161,15 +161,6 @@ const Csv = ({ data, WBid, tableType }) => {
         <CSVLink
           data={processedData}
           headers={headers}
-          filename={`${WBid}_${tableType}.csv`}
-        >
-          Save table as CSV
-        </CSVLink>
-      </div>
-      <div>
-        <CSVLink
-          data={processedData}
-          headers={headers}
           separator={'\t'}
           filename={`${WBid}_${tableType}.tsv`}
         >

@@ -3,7 +3,6 @@ import Table from './Table'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
-import Csv from './Csv'
 import loadData from '../../../../../services/loadData'
 
 const Phenotype = ({ WBid, tableType }) => {
@@ -74,8 +73,8 @@ const Phenotype = ({ WBid, tableType }) => {
 
   return (
     <>
-      <Csv data={data} WBid={WBid} tableType={tableType} />
-      <Table columns={columns} data={data} tableType={tableType} />
+      {/* <Csv data={data} WBid={WBid} tableType={tableType} /> */}
+      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
     </>
   )
 }
