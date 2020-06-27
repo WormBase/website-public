@@ -74,6 +74,8 @@ const useStyles = makeStyles({
     '& th .filter input': {
       width: '80%',
     },
+    '& th .column_header': {
+      textAlign: 'left',
     },
     '& th .arrow-icon': {
       fontSize: '1rem',
@@ -584,6 +586,7 @@ const Table = ({ columns, data, tableType }) => {
                 <th {...column.getHeaderProps()}>
                   <div
                     {...column.getSortByToggleProps()}
+                    className='column_header'
                   >
                     {column.render('Header')}
                     {column.canSort ? (
