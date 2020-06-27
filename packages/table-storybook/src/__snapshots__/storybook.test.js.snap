@@ -1,0 +1,4039 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Drives Overexpression Daf 8 1`] = `
+<div
+  className="makeStyles-container-46"
+>
+  <div
+    className="makeStyles-displayed_data_info-45"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-43"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-44"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Drives Overexpression Daf 16 1`] = `
+<div
+  className="makeStyles-container-50"
+>
+  <div
+    className="makeStyles-displayed_data_info-49"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-47"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-48"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Drives Overexpression Mig 2 1`] = `
+<div
+  className="makeStyles-container-54"
+>
+  <div
+    className="makeStyles-displayed_data_info-53"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-51"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-52"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype By Interaction Daf 8 1`] = `
+<div
+  className="makeStyles-container-58"
+>
+  <div
+    className="makeStyles-displayed_data_info-57"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-55"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Interactions
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Interaction Type
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "360px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Citations
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-56"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype By Interaction Daf 16 1`] = `
+<div
+  className="makeStyles-container-62"
+>
+  <div
+    className="makeStyles-displayed_data_info-61"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-59"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Interactions
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Interaction Type
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "360px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Citations
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-60"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype By Interaction Mig 2 1`] = `
+<div
+  className="makeStyles-container-66"
+>
+  <div
+    className="makeStyles-displayed_data_info-65"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-63"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Interactions
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Interaction Type
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "360px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Citations
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-64"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Daf 8 1`] = `
+<div
+  className="makeStyles-container-4"
+>
+  <div
+    className="makeStyles-displayed_data_info-3"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-1"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-2"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Daf 16 1`] = `
+<div
+  className="makeStyles-container-8"
+>
+  <div
+    className="makeStyles-displayed_data_info-7"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-5"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-6"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Mig 2 1`] = `
+<div
+  className="makeStyles-container-12"
+>
+  <div
+    className="makeStyles-displayed_data_info-11"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-9"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-10"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Not Observed Daf 8 1`] = `
+<div
+  className="makeStyles-container-34"
+>
+  <div
+    className="makeStyles-displayed_data_info-33"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-31"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-32"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Not Observed Daf 16 1`] = `
+<div
+  className="makeStyles-container-38"
+>
+  <div
+    className="makeStyles-displayed_data_info-37"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-35"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-36"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Not Observed Mig 2 1`] = `
+<div
+  className="makeStyles-container-42"
+>
+  <div
+    className="makeStyles-displayed_data_info-41"
+  >
+    <b>
+      0
+    </b>
+     data displayed
+  </div>
+  <table
+    className="makeStyles-table-39"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "900px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="sortable"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className=""
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+          </div>
+          <div
+            className="filter"
+          >
+            <input
+              onChange={[Function]}
+              placeholder="Search..."
+              value=""
+            />
+          </div>
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-40"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={10}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Staging Daf 8 1`] = `
+<div
+  className="makeStyles-container-16"
+>
+  <div
+    className="makeStyles-displayed_data_info-15"
+  >
+    <b>
+      0
+    </b>
+     rows displayed
+    <div>
+      <div>
+        <a
+          download="WBGene00000904_phenotype_flat.tsv"
+          href="data:text/csv;charset=utf-8,﻿\\"phenotype.class\\"	\\"phenotype.id\\"	\\"phenotype.label\\"	\\"phenotype.taxonomy\\"	\\"entity\\"	\\"evidence.Allele.evidence.Affected_by_molecule\\"	\\"evidence.Allele.evidence.Curator\\"	\\"evidence.Allele.evidence.Ease_of_scoring\\"	\\"evidence.Allele.evidence.Paper_evidence\\"	\\"evidence.Allele.evidence.Person_evidence\\"	\\"evidence.Allele.evidence.Remark\\"	\\"evidence.Allele.evidence.Temperature\\"	\\"evidence.Allele.evidence.Temperature_sensitive\\"	\\"evidence.Allele.evidence.Treatment\\"	\\"evidence.Allele.evidence.Variation_effect\\"	\\"evidence.Allele.evidence.Recessive\\"	\\"evidence.Allele.evidence.Penetrance\\"	\\"evidence.Allele.evidence.Penetrance-range\\"	\\"evidence.Allele.text.class\\"	\\"evidence.Allele.text.id\\"	\\"evidence.Allele.text.label\\"	\\"evidence.Allele.text.taxonomy\\"	\\"evidence.RNAi.evidence.Affected_by_molecule\\"	\\"evidence.RNAi.evidence.Genotype\\"	\\"evidence.RNAi.evidence.Paper_evidence\\"	\\"evidence.RNAi.evidence.Penetrance-range\\"	\\"evidence.RNAi.evidence.Quantity_description\\"	\\"evidence.RNAi.evidence.Remark\\"	\\"evidence.RNAi.evidence.Strain\\"	\\"evidence.RNAi.text.class\\"	\\"evidence.RNAi.text.id\\"	\\"evidence.RNAi.text.label\\"	\\"evidence.RNAi.text.taxonomy\\""
+          onClick={[Function]}
+          target="_self"
+        >
+          Save table as TSV
+        </a>
+      </div>
+    </div>
+  </div>
+  <table
+    className="makeStyles-table-13"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "marginRight": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+          <span
+            className="makeStyles-column_filter_root-17"
+            onClick={[Function]}
+            onTouchEnd={[Function]}
+          >
+            <button
+              onClick={[Function]}
+              type="button"
+            >
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"
+                />
+              </svg>
+            </button>
+          </span>
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "960px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "240px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root arrow-icon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"
+              />
+            </svg>
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+            
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+            
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-14"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={100}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+      <option
+        value={1000}
+      >
+        Show 
+        1000
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Staging Daf 16 1`] = `
+<div
+  className="makeStyles-container-22"
+>
+  <div
+    className="makeStyles-displayed_data_info-21"
+  >
+    <b>
+      0
+    </b>
+     rows displayed
+    <div>
+      <div>
+        <a
+          download="WBGene00000912_phenotype_flat.tsv"
+          href="data:text/csv;charset=utf-8,﻿\\"phenotype.class\\"	\\"phenotype.id\\"	\\"phenotype.label\\"	\\"phenotype.taxonomy\\"	\\"entity\\"	\\"evidence.Allele.evidence.Affected_by_molecule\\"	\\"evidence.Allele.evidence.Curator\\"	\\"evidence.Allele.evidence.Ease_of_scoring\\"	\\"evidence.Allele.evidence.Paper_evidence\\"	\\"evidence.Allele.evidence.Person_evidence\\"	\\"evidence.Allele.evidence.Remark\\"	\\"evidence.Allele.evidence.Temperature\\"	\\"evidence.Allele.evidence.Temperature_sensitive\\"	\\"evidence.Allele.evidence.Treatment\\"	\\"evidence.Allele.evidence.Variation_effect\\"	\\"evidence.Allele.evidence.Recessive\\"	\\"evidence.Allele.evidence.Penetrance\\"	\\"evidence.Allele.evidence.Penetrance-range\\"	\\"evidence.Allele.text.class\\"	\\"evidence.Allele.text.id\\"	\\"evidence.Allele.text.label\\"	\\"evidence.Allele.text.taxonomy\\"	\\"evidence.RNAi.evidence.Affected_by_molecule\\"	\\"evidence.RNAi.evidence.Genotype\\"	\\"evidence.RNAi.evidence.Paper_evidence\\"	\\"evidence.RNAi.evidence.Penetrance-range\\"	\\"evidence.RNAi.evidence.Quantity_description\\"	\\"evidence.RNAi.evidence.Remark\\"	\\"evidence.RNAi.evidence.Strain\\"	\\"evidence.RNAi.text.class\\"	\\"evidence.RNAi.text.id\\"	\\"evidence.RNAi.text.label\\"	\\"evidence.RNAi.text.taxonomy\\""
+          onClick={[Function]}
+          target="_self"
+        >
+          Save table as TSV
+        </a>
+      </div>
+    </div>
+  </div>
+  <table
+    className="makeStyles-table-19"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "marginRight": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+          <span
+            className="makeStyles-column_filter_root-23"
+            onClick={[Function]}
+            onTouchEnd={[Function]}
+          >
+            <button
+              onClick={[Function]}
+              type="button"
+            >
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"
+                />
+              </svg>
+            </button>
+          </span>
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "960px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "240px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root arrow-icon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"
+              />
+            </svg>
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+            
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+            
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-20"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={100}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+      <option
+        value={1000}
+      >
+        Show 
+        1000
+      </option>
+    </select>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Table|Widgets/Phenotypes/Gene page Phenotype Staging Mig 2 1`] = `
+<div
+  className="makeStyles-container-28"
+>
+  <div
+    className="makeStyles-displayed_data_info-27"
+  >
+    <b>
+      0
+    </b>
+     rows displayed
+    <div>
+      <div>
+        <a
+          download="WBGene00003239_phenotype_flat.tsv"
+          href="data:text/csv;charset=utf-8,﻿\\"phenotype.class\\"	\\"phenotype.id\\"	\\"phenotype.label\\"	\\"phenotype.taxonomy\\"	\\"entity\\"	\\"evidence.Allele.evidence.Affected_by_molecule\\"	\\"evidence.Allele.evidence.Curator\\"	\\"evidence.Allele.evidence.Ease_of_scoring\\"	\\"evidence.Allele.evidence.Paper_evidence\\"	\\"evidence.Allele.evidence.Person_evidence\\"	\\"evidence.Allele.evidence.Remark\\"	\\"evidence.Allele.evidence.Temperature\\"	\\"evidence.Allele.evidence.Temperature_sensitive\\"	\\"evidence.Allele.evidence.Treatment\\"	\\"evidence.Allele.evidence.Variation_effect\\"	\\"evidence.Allele.evidence.Recessive\\"	\\"evidence.Allele.evidence.Penetrance\\"	\\"evidence.Allele.evidence.Penetrance-range\\"	\\"evidence.Allele.text.class\\"	\\"evidence.Allele.text.id\\"	\\"evidence.Allele.text.label\\"	\\"evidence.Allele.text.taxonomy\\"	\\"evidence.RNAi.evidence.Affected_by_molecule\\"	\\"evidence.RNAi.evidence.Genotype\\"	\\"evidence.RNAi.evidence.Paper_evidence\\"	\\"evidence.RNAi.evidence.Penetrance-range\\"	\\"evidence.RNAi.evidence.Quantity_description\\"	\\"evidence.RNAi.evidence.Remark\\"	\\"evidence.RNAi.evidence.Strain\\"	\\"evidence.RNAi.text.class\\"	\\"evidence.RNAi.text.id\\"	\\"evidence.RNAi.text.label\\"	\\"evidence.RNAi.text.taxonomy\\""
+          onClick={[Function]}
+          target="_self"
+        >
+          Save table as TSV
+        </a>
+      </div>
+    </div>
+  </div>
+  <table
+    className="makeStyles-table-25"
+    role="table"
+  >
+    <thead>
+      <tr>
+        <th>
+          <input
+            onChange={[Function]}
+            placeholder="Search all columns..."
+            style={
+              Object {
+                "fontSize": "1.1rem",
+                "marginBottom": "10px",
+                "marginRight": "10px",
+                "width": "90%",
+              }
+            }
+            value=""
+          />
+          <span
+            className="makeStyles-column_filter_root-29"
+            onClick={[Function]}
+            onTouchEnd={[Function]}
+          >
+            <button
+              onClick={[Function]}
+              type="button"
+            >
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"
+                />
+              </svg>
+            </button>
+          </span>
+        </th>
+      </tr>
+      <tr
+        role="row"
+        style={
+          Object {
+            "display": "flex",
+            "width": "960px",
+          }
+        }
+      >
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "240px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+            title="Toggle SortBy"
+          >
+            Phenotype
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root arrow-icon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"
+              />
+            </svg>
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "180px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Entities Affected
+            
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+        <th
+          colSpan={1}
+          role="columnheader"
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "display": "inline-block",
+              "position": "relative",
+              "width": "540px",
+            }
+          }
+        >
+          <div
+            className="column_header"
+            style={
+              Object {
+                "cursor": undefined,
+              }
+            }
+          >
+            Supporting Evidence
+            
+          </div>
+          <div
+            className="filter"
+          />
+          <div
+            className="resizer "
+            draggable={false}
+            onMouseDown={[Function]}
+            onTouchStart={[Function]}
+            role="separator"
+            style={
+              Object {
+                "cursor": "ew-resize",
+              }
+            }
+          />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      role="rowgroup"
+    />
+  </table>
+  <div
+    className="makeStyles-pagination-26"
+  >
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;&lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &lt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;
+    </button>
+     
+    <button
+      disabled={true}
+      onClick={[Function]}
+    >
+      &gt;&gt;
+    </button>
+     
+    <span>
+      Page
+       
+      <strong>
+        1
+         of 
+        0
+      </strong>
+       
+    </span>
+    <select
+      onChange={[Function]}
+      value={100}
+    >
+      <option
+        value={3}
+      >
+        Show 
+        3
+      </option>
+      <option
+        value={10}
+      >
+        Show 
+        10
+      </option>
+      <option
+        value={20}
+      >
+        Show 
+        20
+      </option>
+      <option
+        value={100}
+      >
+        Show 
+        100
+      </option>
+      <option
+        value={1000}
+      >
+        Show 
+        1000
+      </option>
+    </select>
+  </div>
+</div>
+`;
