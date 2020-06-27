@@ -43,6 +43,7 @@ const Phenotype = ({ WBid, tableType }) => {
         aggregate: 'count',
         Aggregated: ({ value }) => `${value} Names`,
         Cell: ({ cell: { value } }) => value,
+        width: 240,
       },
       {
         Header: 'Entities Affected',
