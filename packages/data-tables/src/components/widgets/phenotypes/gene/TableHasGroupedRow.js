@@ -21,7 +21,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormLabel from '@material-ui/core/FormLabel'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import FilterListIcon from '@material-ui/icons/FilterList'
 
 const useStyles = makeStyles({
@@ -79,7 +81,7 @@ const useStyles = makeStyles({
     '& th .column_header': {
       textAlign: 'left',
     },
-    '& th .arrow-icon': {
+    '& th .sort-arrow-icon': {
       fontSize: '1rem',
       marginLeft: '5px',
     },
@@ -105,6 +107,12 @@ const useStyles = makeStyles({
     border: '1px solid',
     backgroundColor: 'white',
     padding: '5px',
+  },
+  rows_count: {
+    '& .row-arrow-icon': {
+      fontSize: '1.5rem',
+      marginRight: '10px',
+    },
   },
 })
 
@@ -531,6 +539,25 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
     return cell.getCellProps()
   }
 
+  const displayHiddenRowsCount = (cell, row) => {
+    if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
+      return (
+        <>
+          {cell.render('Aggregated')}
+          <span className={classes.rows_count}>
+            {row.isExpanded ? (
+              <ArrowDropDownIcon className='row-arrow-icon' />
+            ) : (
+              <ArrowRightIcon className='row-arrow-icon' />
+            )}
+          </span>
+          {row.subRows.length} Results
+        </>
+      )
+    }
+    return cell.render('Aggregated')
+  }
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -605,9 +632,9 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
                     {column.canSort ? (
                       column.isSorted ? (
                         column.isSortedDesc ? (
-                          <ArrowDownwardIcon className='arrow-icon' />
+                          <ArrowDownwardIcon className='sort-arrow-icon' />
                         ) : (
-                          <ArrowUpwardIcon className='arrow-icon' />
+                          <ArrowUpwardIcon className='sort-arrow-icon' />
                         )
                       ) : (
                         ''
@@ -651,11 +678,9 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
                     >
                       <div>
                         {cell.isGrouped ? (
-                          <div>
-                            {cell.render('Cell')} ({row.subRows.length})
-                          </div>
+                          <div>{cell.render('Cell')}</div>
                         ) : cell.isAggregated ? (
-                          <div>{cell.render('Aggregated')}</div>
+                          <div>{displayHiddenRowsCount(cell, row)}</div>
                         ) : cell.isPlaceholder ? null : (
                           <div>{cell.render('Cell')}</div>
                         )}
