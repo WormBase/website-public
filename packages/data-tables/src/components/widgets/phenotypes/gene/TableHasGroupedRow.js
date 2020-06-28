@@ -550,6 +550,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
       defaultColumn,
       globalFilter: 'defaultGlobalFilter',
       // initialState: { pageIndex: 0 },
+      paginateExpandedRows: false,
       initialState: {
         pageIndex: 0,
         pageSize: 100,
