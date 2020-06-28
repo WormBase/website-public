@@ -524,6 +524,13 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
     )
   }
 
+  const enableToggleRowExpand = (row, cell) => {
+    if (cell.isGrouped || cell.isAggregated) {
+      return cell.getCellProps(row.getToggleRowExpandedProps())
+    }
+    return cell.getCellProps()
+  }
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -631,7 +638,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
                 {row.cells.map((cell) => {
                   return (
                     <td
-                      {...cell.getCellProps()}
+                      {...enableToggleRowExpand(row, cell)}
                       className={
                         cell.isGrouped
                           ? 'is_grouped'
@@ -644,7 +651,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
                     >
                       <div>
                         {cell.isGrouped ? (
-                          <div {...row.getToggleRowExpandedProps()}>
+                          <div>
                             {cell.render('Cell')} ({row.subRows.length})
                           </div>
                         ) : cell.isAggregated ? (
