@@ -2,6 +2,7 @@ import React from 'react'
 import Pheno from './Phenotype'
 import PhenoStaging from './restStaging/Phenotype'
 import PhenoBI from './PhenotypeByInteraction'
+import PhenoBIStaging from './restStaging/PhenotypeByInteraction'
 
 const target = {
   WBid: {
@@ -123,4 +124,23 @@ export const PhenotypeByInteraction_daf16 = () => (
 )
 export const PhenotypeByInteraction_mig2 = () => (
   <PhenoBI WBid={target.WBid.mig2} tableType={target.tableType.phenoBI} />
+)
+
+export const PhenotypeByInteraction_staging_daf8 = () => (
+  <PhenoBIStaging
+    WBid={target.WBid.daf8}
+    tableType={target.tableType.phenoBI}
+  />
+)
+export const PhenotypeByInteraction_staging_daf16 = () => (
+  <PhenoBIStaging
+    WBid={target.WBid.daf16}
+    tableType={target.tableType.phenoBI}
+  />
+)
+export const PhenotypeByInteraction_staging_mig2 = () => (
+  <PhenoBIStaging
+    WBid={target.WBid.mig2}
+    tableType={target.tableType.phenoBI}
+  />
 )

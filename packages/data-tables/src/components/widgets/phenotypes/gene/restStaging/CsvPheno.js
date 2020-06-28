@@ -2,7 +2,7 @@ import React from 'react'
 import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 
-const Csv = ({ data, WBid, tableType }) => {
+const CsvPheno = ({ data, WBid, tableType }) => {
   const headers = [
     // phenotype
     { label: 'phenotype.class', key: 'phenotype.class' },
@@ -171,4 +171,4 @@ const Csv = ({ data, WBid, tableType }) => {
   )
 }
 
-export default Csv
+export default CsvPheno
