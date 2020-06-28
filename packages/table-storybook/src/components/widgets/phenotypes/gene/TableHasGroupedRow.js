@@ -587,7 +587,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
       paginateExpandedRows: false,
       initialState: {
         pageIndex: 0,
-        pageSize: 100,
+        pageSize: 10,
         sortBy: [{ id: 'phenotype.label', desc: false }],
         groupBy: ['phenotype.label'],
         expanded: getDefaultExpandedRows(data, 10),
@@ -718,7 +718,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
             setPageSize(Number(e.target.value))
           }}
         >
-          {[3, 10, 20, 100, 1000].map((pageSize) => (
+          {[5, 10, 25, 100, 500].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>

@@ -374,7 +374,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
       // initialState: { pageIndex: 0 },
       initialState: {
         pageIndex: 0,
-        pageSize: 100,
+        pageSize: 10,
         sortBy: [{ id: 'phenotype.label', desc: false }],
       },
     },
@@ -494,7 +494,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
             setPageSize(Number(e.target.value))
           }}
         >
-          {[3, 10, 20, 100, 1000].map((pageSize) => (
+          {[5, 10, 25, 100, 500].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
