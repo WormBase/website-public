@@ -1,17 +1,11 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
-const Allele = ({ values }) => {
+const Allele = ({ aObj }) => {
   const useStyles = makeStyles({
     cell: {
-      '& .allele:not(:last-child)': {
-        marginBottom: '20px',
-      },
-      '& .allele div:not(:first-child)': {
+      '& div:not(:first-child)': {
         paddingLeft: '50px',
-      },
-      '& .allele .bold': {
-        fontWeight: 'bold',
       },
     },
   })
@@ -156,18 +150,12 @@ const Allele = ({ values }) => {
 
   return (
     <div className={classes.cell}>
-      {values.map((detail, idx1) => (
-        <div key={idx1} className='allele'>
-          <div>
-            <b>Allele: </b>
-            <i className={detail.text.style !== 0 ? 'bold' : ''}>
-              {detail.text.label}
-            </i>
-          </div>
-          {Object.entries(detail.evidence).map(([key, value], idx2) => (
-            <div key={idx2}>{displayAllele(key, value)}</div>
-          ))}
-        </div>
+      <div>
+        <b>Allele: </b>
+        {aObj.text.label}
+      </div>
+      {Object.entries(aObj.evidence).map(([key, value], idx) => (
+        <div key={idx}>{displayAllele(key, value)}</div>
       ))}
     </div>
   )

@@ -1,14 +1,14 @@
 import React from 'react'
 
-const Entity = ({ values }) => {
+const Entity = ({ eObj }) => {
   return (
     <div>
-      {values.map((detail, idx) => {
+      {Object.values(eObj)[0].map((e, idx) => {
         return (
           <div key={idx}>
-            <b>{detail.pato_evidence.entity_type}: </b>
-            <span>{detail.pato_evidence.entity_term.label}, </span>
-            <span>{detail.pato_evidence.pato_term}</span>
+            <b>{e.pato_evidence.entity_type}: </b>
+            <span>{e.pato_evidence.entity_term.label}, </span>
+            <span>{e.pato_evidence.pato_term}</span>
           </div>
         )
       })}

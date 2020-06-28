@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
+import TableHasGroupedRow from './TableHasGroupedRow'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
@@ -10,37 +10,31 @@ const Phenotype = ({ WBid, tableType }) => {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    loadData(WBid, tableType).then((json) => setData(json.data))
+    loadData(WBid, tableType).then((json) => {
+      setData(json.data)
+    })
   }, [WBid, tableType])
 
   const showEntities = (value) => {
     if (value === null) {
       return 'N/A'
     } else {
-      return <Entity values={value} />
+      return <Entity eObj={value} />
     }
   }
 
   const showEvidence = (value) => {
-    if (value.Allele && value.RNAi) {
-      return (
-        <>
-          <div
-            style={{
-              marginBottom: '20px',
-            }}
-          >
-            <Allele values={value.Allele} />
-          </div>
-          <RNAi values={value.RNAi} />
-        </>
-      )
-    } else if (value.Allele) {
-      return <Allele values={value.Allele} />
-    } else if (value.RNAi) {
-      return <RNAi values={value.RNAi} />
+    if (value.Allele) {
+      return <Allele aObj={value.Allele} />
+    }
+    if (value.RNAi) {
+      return <RNAi rObj={value.RNAi} />
+    }
+    if (value.Transgene) {
+      return <Overexpression oObj={value.Transgene} />
     } else {
-      return <Overexpression values={value} />
+      console.error(value)
+      return null
     }
   }
 
@@ -49,6 +43,10 @@ const Phenotype = ({ WBid, tableType }) => {
       {
         Header: 'Phenotype',
         accessor: 'phenotype.label',
+        aggregate: 'count',
+        Aggregated: ({ value }) => `${value} Names`,
+        Cell: ({ cell: { value } }) => value,
+        width: 240,
       },
       {
         Header: 'Entities Affected',
@@ -57,6 +55,9 @@ const Phenotype = ({ WBid, tableType }) => {
         disableSortBy: true,
         filter: 'entitiesFilter',
         sortType: 'sortByEntity',
+        aggregate: 'count',
+        Aggregated: () => null,
+        canGroupBy: false,
       },
       {
         Header: 'Supporting Evidence',
@@ -66,6 +67,9 @@ const Phenotype = ({ WBid, tableType }) => {
         filter: 'evidenceFilter',
         minWidth: 240,
         width: 540,
+        aggregate: 'count',
+        Aggregated: () => null,
+        canGroupBy: false,
       },
     ],
     []
@@ -73,7 +77,12 @@ const Phenotype = ({ WBid, tableType }) => {
 
   return (
     <>
-      <Table columns={columns} data={data} tableType={tableType} />
+      <TableHasGroupedRow
+        columns={columns}
+        data={data}
+        WBid={WBid}
+        tableType={tableType}
+      />
     </>
   )
 }

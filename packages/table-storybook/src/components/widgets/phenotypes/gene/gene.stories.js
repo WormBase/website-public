@@ -1,8 +1,6 @@
 import React from 'react'
 import Pheno from './Phenotype'
-import PhenoStaging from './restStaging/Phenotype'
 import PhenoBI from './PhenotypeByInteraction'
-import PhenoBIStaging from './restStaging/PhenotypeByInteraction'
 
 const target = {
   WBid: {
@@ -30,117 +28,53 @@ export default {
 }
 
 export const Phenotype_daf8 = () => (
-  <Pheno WBid={target.WBid.daf8} tableType={target.tableType.pheno} />
+  <Pheno WBid={target.WBid.daf8} tableType={target.tableType.staging.pheno} />
 )
 export const Phenotype_daf16 = () => (
-  <Pheno WBid={target.WBid.daf16} tableType={target.tableType.pheno} />
+  <Pheno WBid={target.WBid.daf16} tableType={target.tableType.staging.pheno} />
 )
 export const Phenotype_mig2 = () => (
-  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.pheno} />
-)
-
-export const Phenotype_staging_daf8 = () => (
-  <PhenoStaging
-    WBid={target.WBid.daf8}
-    tableType={target.tableType.staging.pheno}
-  />
-)
-export const Phenotype_staging_daf16 = () => (
-  <PhenoStaging
-    WBid={target.WBid.daf16}
-    tableType={target.tableType.staging.pheno}
-  />
-)
-export const Phenotype_staging_mig2 = () => (
-  <PhenoStaging
-    WBid={target.WBid.mig2}
-    tableType={target.tableType.staging.pheno}
-  />
+  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.staging.pheno} />
 )
 
 export const PhenotypeNotObserved_daf8 = () => (
-  <Pheno WBid={target.WBid.daf8} tableType={target.tableType.phenoNO} />
+  <Pheno WBid={target.WBid.daf8} tableType={target.tableType.staging.phenoNO} />
 )
 export const PhenotypeNotObserved_daf16 = () => (
-  <Pheno WBid={target.WBid.daf16} tableType={target.tableType.phenoNO} />
-)
-export const PhenotypeNotObserved_mig2 = () => (
-  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.phenoNO} />
-)
-
-export const PhenotypeNotObserved_staging_daf8 = () => (
-  <PhenoStaging
-    WBid={target.WBid.daf8}
-    tableType={target.tableType.staging.phenoNO}
-  />
-)
-export const PhenotypeNotObserved_staging_daf16 = () => (
-  <PhenoStaging
+  <Pheno
     WBid={target.WBid.daf16}
     tableType={target.tableType.staging.phenoNO}
   />
 )
-export const PhenotypeNotObserved_staging_mig2 = () => (
-  <PhenoStaging
-    WBid={target.WBid.mig2}
-    tableType={target.tableType.staging.phenoNO}
-  />
+export const PhenotypeNotObserved_mig2 = () => (
+  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.staging.phenoNO} />
 )
 
 export const DrivesOverexpression_daf8 = () => (
-  <Pheno WBid={target.WBid.daf8} tableType={target.tableType.drivesOE} />
-)
-export const DrivesOverexpression_daf16 = () => (
-  <Pheno WBid={target.WBid.daf16} tableType={target.tableType.drivesOE} />
-)
-export const DrivesOverexpression_mig2 = () => (
-  <Pheno WBid={target.WBid.mig2} tableType={target.tableType.drivesOE} />
-)
-
-export const DrivesOverexpression_staging_daf8 = () => (
-  <PhenoStaging
+  <Pheno
     WBid={target.WBid.daf8}
     tableType={target.tableType.staging.drivesOE}
   />
 )
-export const DrivesOverexpression_staging_daf16 = () => (
-  <PhenoStaging
+export const DrivesOverexpression_daf16 = () => (
+  <Pheno
     WBid={target.WBid.daf16}
     tableType={target.tableType.staging.drivesOE}
   />
 )
-export const DrivesOverexpression_staging_mig2 = () => (
-  <PhenoStaging
+export const DrivesOverexpression_mig2 = () => (
+  <Pheno
     WBid={target.WBid.mig2}
     tableType={target.tableType.staging.drivesOE}
   />
-)
-
-export const PhenotypeByInteraction_daf8 = () => (
-  <PhenoBI WBid={target.WBid.daf8} tableType={target.tableType.phenoBI} />
-)
-export const PhenotypeByInteraction_daf16 = () => (
-  <PhenoBI WBid={target.WBid.daf16} tableType={target.tableType.phenoBI} />
-)
-export const PhenotypeByInteraction_mig2 = () => (
-  <PhenoBI WBid={target.WBid.mig2} tableType={target.tableType.phenoBI} />
 )
 
 export const PhenotypeByInteraction_staging_daf8 = () => (
-  <PhenoBIStaging
-    WBid={target.WBid.daf8}
-    tableType={target.tableType.phenoBI}
-  />
+  <PhenoBI WBid={target.WBid.daf8} tableType={target.tableType.phenoBI} />
 )
 export const PhenotypeByInteraction_staging_daf16 = () => (
-  <PhenoBIStaging
-    WBid={target.WBid.daf16}
-    tableType={target.tableType.phenoBI}
-  />
+  <PhenoBI WBid={target.WBid.daf16} tableType={target.tableType.phenoBI} />
 )
 export const PhenotypeByInteraction_staging_mig2 = () => (
-  <PhenoBIStaging
-    WBid={target.WBid.mig2}
-    tableType={target.tableType.phenoBI}
-  />
+  <PhenoBI WBid={target.WBid.mig2} tableType={target.tableType.phenoBI} />
 )

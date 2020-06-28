@@ -37,6 +37,8 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
         Cell: ({ cell: { value } }) => showInteractions(value),
         disableFilters: true,
         disableSortBy: true,
+        width: 200,
+        minWidth: 145,
       },
       {
         Header: 'Interaction Type',
@@ -50,7 +52,7 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
         disableFilters: true,
         disableSortBy: true,
         minWidth: 240,
-        width: 360,
+        width: 400,
       },
     ],
     []
@@ -58,7 +60,7 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
 
   return (
     <>
-      <Table columns={columns} data={data} tableType={tableType} />
+      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
     </>
   )
 }
