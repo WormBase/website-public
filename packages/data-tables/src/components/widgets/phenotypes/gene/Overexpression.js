@@ -1,7 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
-const Overexpression = ({ values }) => {
+const Overexpression = ({ oObj }) => {
   const useStyles = makeStyles({
     cell: {
       '& .overexpression:not(:last-child)': {
@@ -13,47 +13,78 @@ const Overexpression = ({ values }) => {
   const classes = useStyles()
 
   const displayEvidence = (key, value) => {
+    console.log(key, value)
     switch (key) {
       case 'Affected_by_molecule':
         return (
           <>
             <b>Affected by molecule: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Caused_by_gene':
         return (
           <>
             <b>Caused by gene: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Curator':
         return (
           <>
             <b>Curator: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Paper_evidence':
         return (
           <>
             <b>Paper evidence: </b>
-            {value[0].label}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       case 'Remark':
         return (
           <>
             <b>Remark: </b>
-            {value[0]}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v}</span>
+              ) : (
+                <span key={idx}>{v}; </span>
+              )
+            )}
           </>
         )
       case 'Temperature':
         return (
           <>
             <b>Temperature: </b>
-            {value[0]}
+            {value}
           </>
         )
       case 'Treatment':
@@ -67,9 +98,13 @@ const Overexpression = ({ values }) => {
         return (
           <>
             <b>Variation effect: </b>
-            {value.map((v, idx) => (
-              <span key={idx}>{v.label}; </span>
-            ))}
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
           </>
         )
       default:
@@ -81,13 +116,9 @@ const Overexpression = ({ values }) => {
 
   return (
     <div className={classes.cell}>
-      {values.map((detail, idx1) => (
-        <div key={idx1} className='overexpression'>
-          <div>{detail.text.label}</div>
-          {Object.entries(detail.evidence).map(([key, value], idx2) => (
-            <div key={idx2}>{displayEvidence(key, value)}</div>
-          ))}
-        </div>
+      <div>{oObj.text.label}</div>
+      {Object.entries(oObj.evidence).map(([key, value], idx) => (
+        <div key={idx}>{displayEvidence(key, value)}</div>
       ))}
     </div>
   )

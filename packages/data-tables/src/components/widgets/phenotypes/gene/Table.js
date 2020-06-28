@@ -4,16 +4,28 @@ import {
   useBlockLayout,
   useFilters,
   useGlobalFilter,
-  usePagination,
   useResizeColumns,
   useSortBy,
+  useExpanded,
+  usePagination,
   useTable,
 } from 'react-table'
-import { makeStyles } from '@material-ui/core/styles'
+import CsvPhenoBI from './CsvPhenoBI'
 import matchSorter from 'match-sorter'
+import { makeStyles } from '@material-ui/core/styles'
+import Checkbox from '@material-ui/core/Checkbox'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener'
+import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormLabel from '@material-ui/core/FormLabel'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import FilterListIcon from '@material-ui/icons/FilterList'
 
 const useStyles = makeStyles({
   table: {
+    color: '#444',
     borderSpacing: 0,
     border: '1px solid #ededed',
     '& thead': {
@@ -26,6 +38,18 @@ const useStyles = makeStyles({
     '& tr:last-child td': {
       borderBottom: 0,
     },
+    '& .phenotype_even_cell': {
+      backgroundColor: '#d3d6ff',
+    },
+    '& .phenotype_odd_cell': {
+      backgroundColor: '#e2e5ff',
+    },
+    '& .other_even_cell': {
+      backgroundColor: '#e2e5ff',
+    },
+    '& .other_odd_cell': {
+      backgroundColor: '#fff',
+    },
     '& th,td': {
       margin: 0,
       padding: '0.5rem',
@@ -35,9 +59,6 @@ const useStyles = makeStyles({
     },
     '& th:last-child,td:last-child': {
       borderRight: 0,
-    },
-    '& tbody tr:nth-child(even)': {
-      backgroundColor: '#e2e5ff',
     },
     '& th .resizer': {
       display: 'inline-block',
@@ -56,40 +77,12 @@ const useStyles = makeStyles({
     '& th .filter input': {
       width: '80%',
     },
-    '& th .sortable::before, th .sort-asc::before, th .sort-desc::before': {
-      position: 'absolute',
-      right: '22px',
-      content: '""',
-      width: 0,
-      height: 0,
-      borderLeft: '5px solid transparent',
-      borderRight: '5px solid transparent',
-      borderTop: '5px solid gray',
-      top: '23px',
+    '& th .column_header': {
+      textAlign: 'left',
     },
-    '& th .sortable::after, th .sort-asc::after, th .sort-desc::after': {
-      position: 'absolute',
-      right: '22px',
-      content: '""',
-      width: 0,
-      height: 0,
-      borderLeft: '5px solid transparent',
-      borderRight: '5px solid transparent',
-      borderBottom: '5px solid gray',
-      top: '16px',
-    },
-    '& th .sort-asc::before': {
-      borderTop: 'none',
-    },
-    '& th .sort-asc::after': {
-      borderBottom: '5px solid black',
-    },
-    '& th .sort-desc::before': {
-      borderTop: '5px solid black',
-      top: '23px',
-    },
-    '& th .sort-desc::after': {
-      borderBottom: 'none',
+    '& th .arrow-icon': {
+      fontSize: '1rem',
+      marginLeft: '5px',
     },
   },
   pagination: {
@@ -101,6 +94,18 @@ const useStyles = makeStyles({
   },
   container: {
     display: 'inline-block',
+  },
+  column_filter_root: {
+    position: 'relative',
+  },
+  column_filter_dropdown: {
+    position: 'absolute',
+    top: 28,
+    left: 0,
+    zIndex: 1,
+    border: '1px solid',
+    backgroundColor: 'white',
+    padding: '5px',
   },
 })
 
@@ -121,44 +126,24 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
       style={{
         fontSize: '1.1rem',
         marginBottom: '10px',
+        marginRight: '10px',
         width: '90%',
       }}
     />
   )
 }
 
-const Table = ({ columns, data, tableType }) => {
+const Table = ({ columns, data, WBid, tableType }) => {
   console.log(data)
   const classes = useStyles()
 
+  const [displayFilter, setDisplayFilter] = useState({
+    phentypeLabel: false,
+    interaction_type: false,
+  })
+
   const sortTypes = useMemo(
     () => ({
-      sortByEntity: (rowA, rowB) => {
-        const entityOfRowA = rowA.values.entity
-        const entityOfRowB = rowB.values.entity
-
-        const comparisonStandardOfRowA =
-          entityOfRowA === null
-            ? 'n/a'
-            : (
-                entityOfRowA[0].pato_evidence.entity_type +
-                entityOfRowA[0].pato_evidence.entity_term.label
-              ).toLowerCase()
-        const comparisonStandardOfRowB =
-          entityOfRowB === null
-            ? 'n/a'
-            : (
-                entityOfRowB[0].pato_evidence.entity_type +
-                entityOfRowB[0].pato_evidence.entity_term.label
-              ).toLowerCase()
-
-        return comparisonStandardOfRowA > comparisonStandardOfRowB
-          ? 1
-          : comparisonStandardOfRowA < comparisonStandardOfRowB
-          ? -1
-          : 0
-      },
-
       caseInsensitiveAlphaNumeric: (rowA, rowB, columnId) => {
         const getRowValueByColumnID = (row, columnId) => row.values[columnId]
         const toString = (a) => {
@@ -228,125 +213,9 @@ const Table = ({ columns, data, tableType }) => {
     []
   )
 
-  const storeFilterValOfAllele = (data, kArr) => {
-    if (data?.Allele) {
-      data.Allele.forEach((a) => {
-        kArr.push(a.text.label)
-        if (a.evidence?.Curator) {
-          kArr.push(a.evidence.Curator[0].label)
-        }
-        if (a.evidence?.Paper_evidence) {
-          kArr.push(a.evidence.Paper_evidence[0].label)
-        }
-        if (a.evidence?.Remark) {
-          kArr.push(a.evidence.Remark[0])
-        }
-      })
-    }
-  }
-
-  const storeFilterValOfRNAi = (data, kArr) => {
-    if (data?.RNAi) {
-      data.RNAi.forEach((r) => {
-        kArr.push(r.text.label)
-        if (r.evidence?.Genotype) {
-          kArr.push(r.evidence.Genotype)
-        }
-        if (r.evidence?.Paper_evidence) {
-          kArr.push(r.evidence.Paper_evidence[0].label)
-        }
-        if (r.evidence?.Remark) {
-          kArr.push(r.evidence.Remark[0])
-        }
-      })
-    }
-  }
-
-  const storeFilterValOfEntity = (data, kArr) => {
-    if (data) {
-      data.forEach((e) => {
-        kArr.push(
-          ...[
-            e.pato_evidence.entity_type,
-            e.pato_evidence.entity_term.label,
-            e.pato_evidence.pato_term,
-          ]
-        )
-      })
-    } else {
-      kArr.push('N/A')
-    }
-  }
-
   const filterTypes = useMemo(
     () => ({
-      evidenceFilter: (rows, id, filterValue) => {
-        const keyFunc = (row) => {
-          let keyArr = []
-
-          storeFilterValOfAllele(row.values.evidence, keyArr)
-          storeFilterValOfRNAi(row.values.evidence, keyArr)
-
-          return keyArr
-        }
-
-        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
-      },
-
-      entitiesFilter: (rows, id, filterValue) => {
-        const keyFunc = (row) => {
-          let keyArr = []
-
-          storeFilterValOfEntity(row.values.entity, keyArr)
-
-          return keyArr
-        }
-
-        return matchSorter(rows, filterValue, {
-          keys: [(row) => keyFunc(row)],
-        })
-      },
-
-      globalFilterForTableGroup1: (rows, id, filterValue) => {
-        const keyFunc = (row) => {
-          /*
-          id[0] is "phenotype.label",
-          id[1] is "entity",
-          id[2] is "evidence"
-          */
-
-          let keyArr = []
-          const rowVals = row.values
-          keyArr.push(rowVals[id[0]])
-
-          storeFilterValOfEntity(rowVals[id[1]], keyArr)
-          storeFilterValOfAllele(rowVals[id[2]], keyArr)
-          storeFilterValOfRNAi(rowVals[id[2]], keyArr)
-
-          // For drives_overexpression table
-          if (!rowVals[id[2]]?.Allele && !rowVals[id[2]]?.RNAi) {
-            for (const o of rowVals[id[2]]) {
-              keyArr.push(o.text.label)
-
-              if (o.evidence?.Curator) {
-                keyArr.push(o.evidence.Curator[0].label)
-              }
-              if (o.evidence?.Paper_evidence) {
-                keyArr.push(o.evidence?.Paper_evidence[0].label)
-              }
-              if (o.evidence?.Remark) {
-                keyArr.push(o.evidence.Remark[0])
-              }
-            }
-          }
-
-          return keyArr
-        }
-
-        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
-      },
-
-      globalFilterForTableGroup2: (rows, id, filterValue) => {
+      defaultGlobalFilter: (rows, id, filterValue) => {
         /*
         id[0] is "phenotype.label",
         id[1] is "interactions",
@@ -362,7 +231,12 @@ const Table = ({ columns, data, tableType }) => {
 
           keyArr.push(row.values[id[2]])
 
-          const citationsValue = row.values[id[3]].map((c) => c?.label)
+          const citationsValue = row.values[id[3]].map((c) => {
+            if (c.length >= 1) {
+              return c[0].label
+            }
+            return null
+          })
           keyArr.push(...citationsValue)
 
           return keyArr
@@ -397,23 +271,79 @@ const Table = ({ columns, data, tableType }) => {
     []
   )
 
-  const selectGlobalFilter = (tableType) => {
-    const tableGroup1 = [
-      'phenotype',
-      'phenotype_not_observed',
-      'drives_overexpression',
-    ]
-    const tableGroup2 = ['phenotype_by_interaction']
+  const displayFilterFn = (column) => {
+    if (
+      (column.id === 'phenotype.label' && displayFilter['phenotypeLabel']) ||
+      (column.id === 'interaction_type' && displayFilter['interaction_type'])
+    ) {
+      return column.render('Filter')
+    }
+    return null
+  }
 
-    if (tableGroup1.includes(tableType)) {
-      return 'globalFilterForTableGroup1'
+  const ClickAway = () => {
+    const [open, setOpen] = useState(false)
+
+    const handleClick = () => {
+      setOpen((prev) => !prev)
     }
-    if (tableGroup2.includes(tableType)) {
-      return 'globalFilterForTableGroup2'
-    } else {
-      console.error(tableType)
-      return null
+    const handleClickAway = () => {
+      setOpen(false)
     }
+
+    return (
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <span className={classes.column_filter_root}>
+          <button type='button' onClick={handleClick}>
+            <FilterListIcon />
+          </button>
+          {open ? (
+            <span className={classes.column_filter_dropdown}>
+              <CheckboxesGroup />
+            </span>
+          ) : null}
+        </span>
+      </ClickAwayListener>
+    )
+  }
+
+  const CheckboxesGroup = () => {
+    const handleChange = (event) => {
+      setDisplayFilter({
+        ...displayFilter,
+        [event.target.name]: event.target.checked,
+      })
+    }
+    const { phenotypeLabel, interaction_type } = displayFilter
+
+    return (
+      <FormControl component='fieldset'>
+        <FormLabel component='legend'>Column search</FormLabel>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={phenotypeLabel}
+                onChange={handleChange}
+                name='phenotypeLabel'
+              />
+            }
+            label='Phenotype'
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={interaction_type}
+                onChange={handleChange}
+                name='interaction_type'
+              />
+            }
+            label='Interaction Type'
+          />
+        </FormGroup>
+      </FormControl>
+    )
   }
 
   const {
@@ -440,21 +370,28 @@ const Table = ({ columns, data, tableType }) => {
       sortTypes,
       filterTypes,
       defaultColumn,
-      globalFilter: selectGlobalFilter(tableType),
-      initialState: { pageIndex: 0 },
+      globalFilter: 'defaultGlobalFilter',
+      // initialState: { pageIndex: 0 },
+      initialState: {
+        pageIndex: 0,
+        pageSize: 100,
+        sortBy: [{ id: 'phenotype.label', desc: false }],
+      },
     },
     useBlockLayout,
     useFilters,
     useGlobalFilter,
     useResizeColumns,
     useSortBy,
+    useExpanded,
     usePagination
   )
 
   return (
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
-        <b>{rows.length}</b> data displayed
+        <b>{rows.length}</b> rows displayed
+        <CsvPhenoBI data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
@@ -464,6 +401,7 @@ const Table = ({ columns, data, tableType }) => {
                 globalFilter={globalFilter}
                 setGlobalFilter={setGlobalFilter}
               />
+              <ClickAway />
             </th>
           </tr>
           {headerGroups.map((headerGroup) => (
@@ -472,20 +410,25 @@ const Table = ({ columns, data, tableType }) => {
                 <th {...column.getHeaderProps()}>
                   <div
                     {...column.getSortByToggleProps()}
-                    className={
-                      column.canSort
-                        ? column.isSorted
-                          ? column.isSortedDesc
-                            ? 'sort-desc'
-                            : 'sort-asc'
-                          : 'sortable'
-                        : ''
-                    }
+                    className='column_header'
                   >
                     {column.render('Header')}
+                    {column.canSort ? (
+                      column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <ArrowDownwardIcon className='arrow-icon' />
+                        ) : (
+                          <ArrowUpwardIcon className='arrow-icon' />
+                        )
+                      ) : (
+                        ''
+                      )
+                    ) : (
+                      ''
+                    )}
                   </div>
                   <div className='filter'>
-                    {column.canFilter ? column.render('Filter') : null}
+                    {column.canFilter ? displayFilterFn(column) : null}
                   </div>
                   <div
                     {...column.getResizerProps()}
@@ -499,12 +442,27 @@ const Table = ({ columns, data, tableType }) => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
+          {page.map((row, idx) => {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  return (
+                    <td
+                      {...cell.getCellProps()}
+                      className={
+                        cell.column.id === 'phenotype.label'
+                          ? idx % 2 === 0
+                            ? 'phenotype_even_cell'
+                            : 'phenotype_odd_cell'
+                          : idx % 2 === 0
+                          ? 'other_even_cell'
+                          : 'other_odd_cell'
+                      }
+                    >
+                      {cell.render('Cell')}
+                    </td>
+                  )
                 })}
               </tr>
             )
@@ -536,7 +494,7 @@ const Table = ({ columns, data, tableType }) => {
             setPageSize(Number(e.target.value))
           }}
         >
-          {[3, 10, 20, 100].map((pageSize) => (
+          {[3, 10, 20, 100, 1000].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
