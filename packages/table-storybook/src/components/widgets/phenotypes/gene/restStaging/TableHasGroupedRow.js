@@ -4,13 +4,14 @@ import {
   useBlockLayout,
   useFilters,
   useGlobalFilter,
+  useGroupBy,
   useResizeColumns,
   useSortBy,
   useExpanded,
   usePagination,
   useTable,
 } from 'react-table'
-import CsvPhenoBI from './CsvPhenoBI'
+import CsvPheno from './CsvPheno'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -38,18 +39,6 @@ const useStyles = makeStyles({
     '& tr:last-child td': {
       borderBottom: 0,
     },
-    '& .phenotype_even_cell': {
-      backgroundColor: '#d3d6ff',
-    },
-    '& .phenotype_odd_cell': {
-      backgroundColor: '#e2e5ff',
-    },
-    '& .other_even_cell': {
-      backgroundColor: '#e2e5ff',
-    },
-    '& .other_odd_cell': {
-      backgroundColor: '#fff',
-    },
     '& th,td': {
       margin: 0,
       padding: '0.5rem',
@@ -59,6 +48,15 @@ const useStyles = makeStyles({
     },
     '& th:last-child,td:last-child': {
       borderRight: 0,
+    },
+    '& tbody tr .is_grouped,tbody tr .is_aggregated': {
+      backgroundColor: '#dedede',
+    },
+    '& tbody tr .is_placeholder': {
+      backgroundColor: '#d3d6ff',
+    },
+    '& tbody tr .is_other': {
+      backgroundColor: '#e2e5ff',
     },
     '& th .resizer': {
       display: 'inline-block',
@@ -133,17 +131,44 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const Table = ({ columns, data, WBid, tableType }) => {
+const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
   console.log(data)
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
     phentypeLabel: false,
-    interaction_type: false,
+    entity: false,
+    evidence: false,
   })
 
   const sortTypes = useMemo(
     () => ({
+      sortByEntity: (rowA, rowB) => {
+        const entityOfRowA = rowA.values.entity
+        const entityOfRowB = rowB.values.entity
+
+        const comparisonStandardOfRowA =
+          entityOfRowA === null
+            ? 'n/a'
+            : (
+                entityOfRowA[0].pato_evidence.entity_type +
+                entityOfRowA[0].pato_evidence.entity_term.label
+              ).toLowerCase()
+        const comparisonStandardOfRowB =
+          entityOfRowB === null
+            ? 'n/a'
+            : (
+                entityOfRowB[0].pato_evidence.entity_type +
+                entityOfRowB[0].pato_evidence.entity_term.label
+              ).toLowerCase()
+
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
+
       caseInsensitiveAlphaNumeric: (rowA, rowB, columnId) => {
         const getRowValueByColumnID = (row, columnId) => row.values[columnId]
         const toString = (a) => {
@@ -213,9 +238,131 @@ const Table = ({ columns, data, WBid, tableType }) => {
     []
   )
 
+  const storeFilterValOfAllele = (data, kArr) => {
+    if (data?.Allele) {
+      kArr.push(data.Allele.text.label)
+
+      if (data.Allele.evidence?.Curator) {
+        kArr.push(data.Allele.evidence.Curator[0].label)
+      }
+      if (data.Allele.evidence?.Paper_evidence) {
+        kArr.push(data.Allele.evidence.Paper_evidence[0].label)
+      }
+      if (data.Allele.evidence?.Remark) {
+        kArr.push(data.Allele.evidence.Remark[0])
+      }
+    }
+  }
+
+  const storeFilterValOfRNAi = (data, kArr) => {
+    if (data?.RNAi) {
+      kArr.push(data.RNAi.text.label)
+
+      if (data.RNAi.evidence?.Genotype) {
+        kArr.push(data.RNAi.evidence.Genotype)
+      }
+      if (data.RNAi.evidence?.Paper_evidence) {
+        kArr.push(data.RNAi.evidence.Paper_evidence.label)
+      }
+      if (data.RNAi.evidence?.Remark) {
+        kArr.push(data.RNAi.evidence.Remark[0])
+      }
+    }
+  }
+
+  const storeFilterValOfOverexpression = (data, kArr) => {
+    kArr.push(data.text.label)
+
+    if (data.evidence?.Curator) {
+      kArr.push(data.evidence.Curator[0].label)
+    }
+    if (data.evidence?.Paper_evidence) {
+      kArr.push(data.evidence.Paper_evidence[0].label)
+    }
+    if (data.evidence?.Remark) {
+      kArr.push(data.evidence.Remark[0])
+    }
+    if (data.evidence?.Caused_by_gene) {
+      kArr.push(data.evidence.Caused_by_gene[0].label)
+    }
+  }
+
+  const storeFilterValOfEntity = (data, kArr) => {
+    if (data) {
+      const key = Object.keys(data)
+      data[key].forEach((e) => {
+        kArr.push(
+          ...[
+            e.pato_evidence.entity_type,
+            e.pato_evidence.entity_term.label,
+            e.pato_evidence.pato_term,
+          ]
+        )
+      })
+    } else {
+      kArr.push('N/A')
+    }
+  }
+
   const filterTypes = useMemo(
     () => ({
+      evidenceFilter: (rows, id, filterValue) => {
+        const keyFunc = (row) => {
+          let keyArr = []
+
+          if (row.values[id]?.Transgene) {
+            storeFilterValOfOverexpression(row.values[id].Transgene, keyArr)
+          } else {
+            storeFilterValOfAllele(row.values[id], keyArr)
+            storeFilterValOfRNAi(row.values[id], keyArr)
+          }
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+      },
+
+      entitiesFilter: (rows, id, filterValue) => {
+        const keyFunc = (row) => {
+          let keyArr = []
+
+          storeFilterValOfEntity(row.values[id], keyArr)
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+        })
+      },
+
       defaultGlobalFilter: (rows, id, filterValue) => {
+        const keyFunc = (row) => {
+          /*
+          id[0] is "phenotype.label",
+          id[1] is "entity",
+          id[2] is "evidence"
+          */
+          let keyArr = []
+          const rowVals = row.values
+          keyArr.push(rowVals[id[0]])
+
+          storeFilterValOfEntity(rowVals[id[1]], keyArr)
+          if (rowVals[id[2]]?.Transgene) {
+            storeFilterValOfOverexpression(rowVals[id[2]].Transgene, keyArr)
+          } else {
+            storeFilterValOfAllele(rowVals[id[2]], keyArr)
+            storeFilterValOfRNAi(rowVals[id[2]], keyArr)
+          }
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+      },
+
+      globalFilterForTableGroup2: (rows, id, filterValue) => {
         /*
         id[0] is "phenotype.label",
         id[1] is "interactions",
@@ -231,12 +378,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
           keyArr.push(row.values[id[2]])
 
-          const citationsValue = row.values[id[3]].map((c) => {
-            if (c.length >= 1) {
-              return c[0].label
-            }
-            return null
-          })
+          const citationsValue = row.values[id[3]].map((c) => c?.label)
           keyArr.push(...citationsValue)
 
           return keyArr
@@ -271,10 +413,36 @@ const Table = ({ columns, data, WBid, tableType }) => {
     []
   )
 
+  const getDefaultExpandedRows = (data, threshold) => {
+    const defaultExpandedRows = {}
+    const defaultHidRows = {}
+
+    data.forEach((d) => {
+      const key = `phenotype.label:${d.phenotype.label}`
+      if (defaultHidRows[key]) {
+        defaultHidRows[key] = ++defaultHidRows[key]
+      } else {
+        defaultHidRows[key] = 1
+      }
+    })
+
+    data.forEach((d) => {
+      const key = `phenotype.label:${d.phenotype.label}`
+      if (defaultHidRows[key] < threshold) {
+        defaultExpandedRows[key] = true
+      } else {
+        defaultExpandedRows[key] = false
+      }
+    })
+
+    return defaultExpandedRows
+  }
+
   const displayFilterFn = (column) => {
     if (
       (column.id === 'phenotype.label' && displayFilter['phenotypeLabel']) ||
-      (column.id === 'interaction_type' && displayFilter['interaction_type'])
+      (column.id === 'entity' && displayFilter['entity']) ||
+      (column.id === 'evidence' && displayFilter['evidence'])
     ) {
       return column.render('Filter')
     }
@@ -314,7 +482,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
         [event.target.name]: event.target.checked,
       })
     }
-    const { phenotypeLabel, interaction_type } = displayFilter
+    const { phenotypeLabel, entity, evidence } = displayFilter
 
     return (
       <FormControl component='fieldset'>
@@ -330,16 +498,25 @@ const Table = ({ columns, data, WBid, tableType }) => {
             }
             label='Phenotype'
           />
-
           <FormControlLabel
             control={
               <Checkbox
-                checked={interaction_type}
+                checked={entity}
                 onChange={handleChange}
-                name='interaction_type'
+                name='entity'
               />
             }
-            label='Interaction Type'
+            label='Entities Affected'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={evidence}
+                onChange={handleChange}
+                name='evidence'
+              />
+            }
+            label='Supported Evidence'
           />
         </FormGroup>
       </FormControl>
@@ -376,12 +553,15 @@ const Table = ({ columns, data, WBid, tableType }) => {
         pageIndex: 0,
         pageSize: 100,
         sortBy: [{ id: 'phenotype.label', desc: false }],
+        groupBy: ['phenotype.label'],
+        expanded: getDefaultExpandedRows(data, 10),
       },
     },
     useBlockLayout,
     useFilters,
     useGlobalFilter,
     useResizeColumns,
+    useGroupBy,
     useSortBy,
     useExpanded,
     usePagination
@@ -391,7 +571,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <b>{rows.length}</b> rows displayed
-        <CsvPhenoBI data={data} WBid={WBid} tableType={tableType} />
+        <CsvPheno data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
@@ -442,7 +622,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row, idx) => {
+          {page.map((row) => {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()}>
@@ -451,16 +631,26 @@ const Table = ({ columns, data, WBid, tableType }) => {
                     <td
                       {...cell.getCellProps()}
                       className={
-                        cell.column.id === 'phenotype.label'
-                          ? idx % 2 === 0
-                            ? 'phenotype_even_cell'
-                            : 'phenotype_odd_cell'
-                          : idx % 2 === 0
-                          ? 'other_even_cell'
-                          : 'other_odd_cell'
+                        cell.isGrouped
+                          ? 'is_grouped'
+                          : cell.isAggregated
+                          ? 'is_aggregated'
+                          : cell.isPlaceholder
+                          ? 'is_placeholder'
+                          : 'is_other'
                       }
                     >
-                      {cell.render('Cell')}
+                      <div>
+                        {cell.isGrouped ? (
+                          <div {...row.getToggleRowExpandedProps()}>
+                            {cell.render('Cell')} ({row.subRows.length})
+                          </div>
+                        ) : cell.isAggregated ? (
+                          <div>{cell.render('Aggregated')}</div>
+                        ) : cell.isPlaceholder ? null : (
+                          <div>{cell.render('Cell')}</div>
+                        )}
+                      </div>
                     </td>
                   )
                 })}
@@ -505,4 +695,4 @@ const Table = ({ columns, data, WBid, tableType }) => {
   )
 }
 
-export default Table
+export default TableHasGroupedRow

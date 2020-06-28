@@ -1,0 +1,48 @@
+import React from 'react'
+import { CSVLink } from 'react-csv'
+import { cloneDeep } from 'lodash'
+
+const CsvPhenoBI = ({ data, WBid, tableType }) => {
+  const headers = [
+    // phenotype
+    { label: 'phenotype.id', key: 'phenotype.id' },
+    { label: 'phenotype.label', key: 'phenotype.label' },
+    { label: 'phenotype.class', key: 'phenotype.class' },
+    { label: 'phenotype.taxonomy', key: 'phenotype.taxonomy' },
+
+    // interactions
+    { label: 'interactions', key: 'interactions' },
+
+    // interaction_type
+    { label: 'interaction_type', key: 'interaction_type' },
+
+    // citations
+    { label: 'citations', key: 'citations' },
+  ]
+
+  const processedData = data.map((d) => {
+    const copyOfD = cloneDeep(d)
+
+    copyOfD.interactions = JSON.stringify(copyOfD.interactions)
+    copyOfD.citations = JSON.stringify(copyOfD.citations)
+
+    return copyOfD
+  })
+
+  return (
+    <div>
+      <div>
+        <CSVLink
+          data={processedData}
+          headers={headers}
+          separator={'\t'}
+          filename={`${WBid}_${tableType}.tsv`}
+        >
+          Save table as TSV
+        </CSVLink>
+      </div>
+    </div>
+  )
+}
+
+export default CsvPhenoBI

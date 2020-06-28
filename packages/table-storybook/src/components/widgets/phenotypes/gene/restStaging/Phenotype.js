@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
+import TableHasGroupedRow from './TableHasGroupedRow'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
@@ -77,8 +77,12 @@ const Phenotype = ({ WBid, tableType }) => {
 
   return (
     <>
-      {/* <Csv data={data} WBid={WBid} tableType={tableType} /> */}
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <TableHasGroupedRow
+        columns={columns}
+        data={data}
+        WBid={WBid}
+        tableType={tableType}
+      />
     </>
   )
 }
