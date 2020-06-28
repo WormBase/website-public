@@ -3,6 +3,7 @@ import Table from './Table'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
+import Overexpression from './Overexpression'
 import loadData from '../../../../../services/loadData'
 
 const Phenotype = ({ WBid, tableType }) => {
@@ -28,6 +29,9 @@ const Phenotype = ({ WBid, tableType }) => {
     }
     if (value.RNAi) {
       return <RNAi rObj={value.RNAi} />
+    }
+    if (value.Transgene) {
+      return <Overexpression oObj={value.Transgene} />
     } else {
       console.error(value)
       return null

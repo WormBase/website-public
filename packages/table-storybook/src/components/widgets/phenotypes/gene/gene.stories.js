@@ -16,6 +16,8 @@ const target = {
     drivesOE: 'drives_overexpression',
     staging: {
       pheno: 'phenotype_flat',
+      phenoNO: 'phenotype_not_observed_flat',
+      drivesOE: 'drives_overexpression_flat',
     },
   },
 }
@@ -65,6 +67,25 @@ export const PhenotypeNotObserved_mig2 = () => (
   <Pheno WBid={target.WBid.mig2} tableType={target.tableType.phenoNO} />
 )
 
+export const PhenotypeNotObserved_staging_daf8 = () => (
+  <PhenoStaging
+    WBid={target.WBid.daf8}
+    tableType={target.tableType.staging.phenoNO}
+  />
+)
+export const PhenotypeNotObserved_staging_daf16 = () => (
+  <PhenoStaging
+    WBid={target.WBid.daf16}
+    tableType={target.tableType.staging.phenoNO}
+  />
+)
+export const PhenotypeNotObserved_staging_mig2 = () => (
+  <PhenoStaging
+    WBid={target.WBid.mig2}
+    tableType={target.tableType.staging.phenoNO}
+  />
+)
+
 export const DrivesOverexpression_daf8 = () => (
   <Pheno WBid={target.WBid.daf8} tableType={target.tableType.drivesOE} />
 )
@@ -73,6 +94,25 @@ export const DrivesOverexpression_daf16 = () => (
 )
 export const DrivesOverexpression_mig2 = () => (
   <Pheno WBid={target.WBid.mig2} tableType={target.tableType.drivesOE} />
+)
+
+export const DrivesOverexpression_staging_daf8 = () => (
+  <PhenoStaging
+    WBid={target.WBid.daf8}
+    tableType={target.tableType.staging.drivesOE}
+  />
+)
+export const DrivesOverexpression_staging_daf16 = () => (
+  <PhenoStaging
+    WBid={target.WBid.daf16}
+    tableType={target.tableType.staging.drivesOE}
+  />
+)
+export const DrivesOverexpression_staging_mig2 = () => (
+  <PhenoStaging
+    WBid={target.WBid.mig2}
+    tableType={target.tableType.staging.drivesOE}
+  />
 )
 
 export const PhenotypeByInteraction_daf8 = () => (

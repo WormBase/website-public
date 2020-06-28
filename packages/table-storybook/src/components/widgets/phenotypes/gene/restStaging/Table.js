@@ -270,6 +270,23 @@ const Table = ({ columns, data, WBid, tableType }) => {
     }
   }
 
+  const storeFilterValOfOverexpression = (data, kArr) => {
+    kArr.push(data.text.label)
+
+    if (data.evidence?.Curator) {
+      kArr.push(data.evidence.Curator[0].label)
+    }
+    if (data.evidence?.Paper_evidence) {
+      kArr.push(data.evidence.Paper_evidence[0].label)
+    }
+    if (data.evidence?.Remark) {
+      kArr.push(data.evidence.Remark[0])
+    }
+    if (data.evidence?.Caused_by_gene) {
+      kArr.push(data.evidence.Caused_by_gene[0].label)
+    }
+  }
+
   const storeFilterValOfEntity = (data, kArr) => {
     if (data) {
       const key = Object.keys(data)
@@ -293,8 +310,12 @@ const Table = ({ columns, data, WBid, tableType }) => {
         const keyFunc = (row) => {
           let keyArr = []
 
-          storeFilterValOfAllele(row.values[id], keyArr)
-          storeFilterValOfRNAi(row.values[id], keyArr)
+          if (row.values[id]?.Transgene) {
+            storeFilterValOfOverexpression(row.values[id].Transgene, keyArr)
+          } else {
+            storeFilterValOfAllele(row.values[id], keyArr)
+            storeFilterValOfRNAi(row.values[id], keyArr)
+          }
 
           return keyArr
         }
@@ -328,8 +349,12 @@ const Table = ({ columns, data, WBid, tableType }) => {
           keyArr.push(rowVals[id[0]])
 
           storeFilterValOfEntity(rowVals[id[1]], keyArr)
-          storeFilterValOfAllele(rowVals[id[2]], keyArr)
-          storeFilterValOfRNAi(rowVals[id[2]], keyArr)
+          if (rowVals[id[2]]?.Transgene) {
+            storeFilterValOfOverexpression(rowVals[id[2]].Transgene, keyArr)
+          } else {
+            storeFilterValOfAllele(rowVals[id[2]], keyArr)
+            storeFilterValOfRNAi(rowVals[id[2]], keyArr)
+          }
 
           return keyArr
         }
@@ -393,7 +418,9 @@ const Table = ({ columns, data, WBid, tableType }) => {
       'phenotype',
       'phenotype_flat',
       'phenotype_not_observed',
+      'phenotype_not_observed_flat',
       'drives_overexpression',
+      'drives_overexpression_flat',
     ]
     const tableGroup2 = ['phenotype_by_interaction']
 
