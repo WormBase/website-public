@@ -51,6 +51,7 @@ const useStyles = makeStyles({
     },
     '& tbody tr .is_grouped,tbody tr .is_aggregated': {
       backgroundColor: '#dedede',
+      borderRight: 'none',
     },
     '& tbody tr .is_placeholder': {
       backgroundColor: '#d3d6ff',
