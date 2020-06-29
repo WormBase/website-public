@@ -151,7 +151,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 }
 
 const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
-  console.log(data)
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
