@@ -1,7 +1,9 @@
 const loadData = async (WBid, tableType) => {
   const proxyUrl = 'https://calm-reaches-60051.herokuapp.com/'
   const targetUrl =
-    tableType === 'phenotype_flat'
+    tableType === 'phenotype_flat' ||
+    'phenotype_not_observed_flat' ||
+    'drives_overexpression_flat'
       ? `http://rest-staging.wormbase.org/rest/field/gene/${WBid}/${tableType}`
       : `http://rest.wormbase.org/rest/field/gene/${WBid}/${tableType}`
   const res = await fetch(proxyUrl + targetUrl)
