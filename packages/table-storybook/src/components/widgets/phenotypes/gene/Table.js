@@ -52,10 +52,13 @@ const useStyles = makeStyles({
     },
     '& th,td': {
       margin: 0,
-      padding: '0.5rem',
+      padding: '0.8rem 0.3rem',
       borderBottom: '1px solid #ededed',
       borderRight: '1px solid #ededed',
       position: 'relative',
+    },
+    '& td': {
+      padding: '0.1rem 0.3rem',
     },
     '& th:last-child,td:last-child': {
       borderRight: 0,
