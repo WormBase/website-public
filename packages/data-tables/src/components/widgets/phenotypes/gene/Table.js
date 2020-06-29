@@ -144,7 +144,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 }
 
 const Table = ({ columns, data, WBid, tableType }) => {
-  console.log(data)
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({

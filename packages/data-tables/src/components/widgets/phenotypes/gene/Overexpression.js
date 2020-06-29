@@ -13,7 +13,6 @@ const Overexpression = ({ oObj }) => {
   const classes = useStyles()
 
   const displayEvidence = (key, value) => {
-    console.log(key, value)
     switch (key) {
       case 'Affected_by_molecule':
         return (
