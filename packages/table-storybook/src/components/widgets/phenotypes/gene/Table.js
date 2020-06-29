@@ -123,6 +123,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
         onChange(e.target.value)
       }}
       placeholder={`Search all columns...`}
+      type='search'
       style={{
         fontSize: '1.1rem',
         marginBottom: '10px',
@@ -255,6 +256,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
           setFilter(e.target.value || undefined)
         }}
         placeholder={`Search...`}
+        type='search'
       />
     )
   }
