@@ -76,7 +76,7 @@
     },
     {
       "name": "jbrowse",
-      "image": "gmod/wormbase-jbrowse:WS276",
+      "image": "gmod/wormbase-jbrowse:WS277",
       "essential": true,
       "portMappings": [
         {
