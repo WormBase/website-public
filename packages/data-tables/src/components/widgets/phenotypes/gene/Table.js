@@ -94,6 +94,12 @@ const useStyles = makeStyles({
   displayed_data_info: {
     textAlign: 'right',
     marginBottom: '5px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    '& span': {
+      marginRight: '15px',
+    },
   },
   container: {
     display: 'inline-block',
@@ -395,7 +401,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
   return (
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
-        <b>{rows.length}</b> rows displayed
+        <span>{rows.length} entries</span>
         <CsvPhenoBI data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
