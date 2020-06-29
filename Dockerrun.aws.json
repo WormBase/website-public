@@ -87,6 +87,12 @@
       "memoryReservation": 512
     },
     {
+      "name": "jbrowse-protein",
+      "image": "gmod/wormbase-jbrowse-protein:WS277",
+      "essential": true,
+      "memoryReservation": 512
+    },
+    {
       "name": "nginx-proxy",
       "image": "nginx:1.13.7",
       "essential": true,

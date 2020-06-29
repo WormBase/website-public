@@ -29,6 +29,10 @@ services:
     image: gmod/wormbase-jbrowse:WS277
     expose:
       - "80"
+  jbrowse-protein:
+    image: gmod/wormbase-jbrowse-protein:WS277
+    expose:
+      - "80"
   upstream-proxy:
     image: nginx:1.13.7
     expose:
