@@ -90,6 +90,12 @@
       "name": "jbrowse-protein",
       "image": "gmod/wormbase-jbrowse-protein:WS277",
       "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 9003,
+          "containerPort": 80
+        }
+      ],
       "memoryReservation": 512
     },
     {
@@ -104,7 +110,8 @@
       ],
       "links": [
         "website",
-        "jbrowse"
+        "jbrowse",
+        "jbrowse-protein"
       ],
       "mountPoints": [
         {
