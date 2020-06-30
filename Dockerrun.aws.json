@@ -35,7 +35,7 @@
   "containerDefinitions": [
     {
       "name": "website",
-      "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS276.1",
+      "image": "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS277.3",
       "essential": true,
       "portMappings": [
         {
@@ -76,11 +76,23 @@
     },
     {
       "name": "jbrowse",
-      "image": "gmod/wormbase-jbrowse:WS276",
+      "image": "gmod/wormbase-jbrowse:WS277",
       "essential": true,
       "portMappings": [
         {
           "hostPort": 9002,
+          "containerPort": 80
+        }
+      ],
+      "memoryReservation": 512
+    },
+    {
+      "name": "jbrowse-protein",
+      "image": "gmod/wormbase-jbrowse-protein:WS277",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 9003,
           "containerPort": 80
         }
       ],
@@ -98,7 +110,8 @@
       ],
       "links": [
         "website",
-        "jbrowse"
+        "jbrowse",
+        "jbrowse-protein"
       ],
       "mountPoints": [
         {
