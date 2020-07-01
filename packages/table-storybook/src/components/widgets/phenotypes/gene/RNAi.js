@@ -5,7 +5,7 @@ const RNAi = ({ rObj }) => {
   const useStyles = makeStyles({
     cell: {
       '& div:not(:first-child)': {
-        paddingLeft: '50px',
+        paddingLeft: 50,
       },
     },
   })

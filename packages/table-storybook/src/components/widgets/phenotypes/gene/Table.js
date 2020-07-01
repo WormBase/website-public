@@ -32,7 +32,7 @@ const useStyles = makeStyles({
       backgroundColor: '#e9eef2',
     },
     '& thead input': {
-      borderRadius: '5px',
+      borderRadius: 5,
       border: '1px solid #ddd',
     },
     '& tr:last-child td': {
@@ -65,7 +65,7 @@ const useStyles = makeStyles({
     },
     '& th .resizer': {
       display: 'inline-block',
-      width: '10px',
+      width: 10,
       height: '100%',
       position: 'absolute',
       right: 0,
@@ -85,7 +85,7 @@ const useStyles = makeStyles({
     },
     '& th .arrow-icon': {
       fontSize: '1rem',
-      marginLeft: '5px',
+      marginLeft: 5,
     },
   },
   pagination: {
@@ -93,12 +93,12 @@ const useStyles = makeStyles({
   },
   displayed_data_info: {
     textAlign: 'right',
-    marginBottom: '5px',
+    marginBottom: 5,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     '& span': {
-      marginRight: '15px',
+      marginRight: 15,
     },
   },
   container: {
@@ -114,7 +114,7 @@ const useStyles = makeStyles({
     zIndex: 1,
     border: '1px solid',
     backgroundColor: 'white',
-    padding: '5px',
+    padding: 5,
   },
 })
 
@@ -135,8 +135,8 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
       type='search'
       style={{
         fontSize: '1.1rem',
-        marginBottom: '10px',
-        marginRight: '10px',
+        marginBottom: 10,
+        marginRight: 10,
         width: '90%',
       }}
     />
