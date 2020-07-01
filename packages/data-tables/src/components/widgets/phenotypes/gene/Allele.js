@@ -5,7 +5,7 @@ const Allele = ({ aObj }) => {
   const useStyles = makeStyles({
     cell: {
       '& div:not(:first-child)': {
-        paddingLeft: '50px',
+        paddingLeft: 50,
       },
     },
   })

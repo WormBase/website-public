@@ -5,7 +5,7 @@ const Overexpression = ({ oObj }) => {
   const useStyles = makeStyles({
     cell: {
       '& .overexpression:not(:last-child)': {
-        marginBottom: '20px',
+        marginBottom: 20,
       },
     },
   })
