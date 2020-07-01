@@ -89,7 +89,8 @@ const useStyles = makeStyles({
     },
   },
   pagination: {
-    padding: '0.5rem',
+    padding: '0.8rem 0.5rem',
+    backgroundColor: '#e9eef2',
   },
   displayed_data_info: {
     textAlign: 'right',
