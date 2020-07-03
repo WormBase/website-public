@@ -379,6 +379,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
       columns,
       data,
       sortTypes,
+      disableSortRemove: true,
       filterTypes,
       defaultColumn,
       globalFilter: 'defaultGlobalFilter',
