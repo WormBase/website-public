@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import Table from './Table'
-import loadData from '../../../../services/loadData'
+import loadData from '../../../services/loadData'
 
 const PhenotypeByInteraction = ({ WBid, tableType }) => {
   const [data, setData] = useState([])

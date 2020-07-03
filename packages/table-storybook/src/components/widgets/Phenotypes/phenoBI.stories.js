@@ -1,6 +1,6 @@
 import React from 'react'
 import PhenoBI from './PhenotypeByInteraction'
-import { phenotype_widget } from '../../../../../.storybook/target'
+import { phenotype_widget } from '../../../../.storybook/target'
 
 export default {
   component: PhenoBI,
