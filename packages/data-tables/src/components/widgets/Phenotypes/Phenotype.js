@@ -4,7 +4,7 @@ import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
 import Overexpression from './Overexpression'
-import loadData from '../../../../services/loadData'
+import loadData from '../../../services/loadData'
 
 const Phenotype = ({ WBid, tableType }) => {
   const [data, setData] = useState([])
