@@ -17,4 +17,15 @@ const phenotype_widget = {
   },
 }
 
-export { phenotype_widget }
+const homology_widget = {
+  WBid: {
+    daf8: 'WBGene00000904',
+    daf16: 'WBGene00000912',
+    mig2: 'WBGene00003239',
+  },
+  tableType: {
+    blastp: 'best_blastp_matches',
+  },
+}
+
+export { phenotype_widget, homology_widget }
