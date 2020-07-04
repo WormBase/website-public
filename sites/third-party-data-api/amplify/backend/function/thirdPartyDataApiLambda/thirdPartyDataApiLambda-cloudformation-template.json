@@ -68,7 +68,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-thirdpartydataapi-dev-161936-deployment",
-					"S3Key": "amplify-builds/thirdPartyDataApiLambda-3670333851477a525a36-build.zip"
+					"S3Key": "amplify-builds/thirdPartyDataApiLambda-585552765a64442f4166-build.zip"
 				}
 			}
 		},
