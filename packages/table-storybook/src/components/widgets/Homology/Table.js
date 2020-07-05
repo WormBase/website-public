@@ -229,6 +229,24 @@ const Table = ({ columns, data, WBid, tableType }) => {
           return 1
         } else return 0
       },
+      sortBySpecies: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = `${rowA.values[columnId].genus}${rowA.values[columnId].species}`
+        const comparisonStandardOfRowB = `${rowB.values[columnId].genus}${rowB.values[columnId].species}`
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
+      sortByMethods: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = `${rowA.values[columnId][0].label}`
+        const comparisonStandardOfRowB = `${rowB.values[columnId][0].label}`
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
     }),
     []
   )
@@ -267,24 +285,19 @@ const Table = ({ columns, data, WBid, tableType }) => {
       },
       globalFilterType1: (rows, id, filterValue) => {
         const keyFunc = (row) => {
+          /*
+          id[0] is "species",
+          id[1] is "ortholog.label",
+          id[2] is "method"
+          */
           let keyArr = []
-          keyArr.push(row.values[id[0]])
-
-          const interactionsValue = row.values[id[1]].map((i) => i.label)
-          keyArr.push(...interactionsValue)
-
-          keyArr.push(row.values[id[2]])
-
-          const citationsValue = row.values[id[3]].map((c) => {
-            if (c.length >= 1) {
-              return c[0].label
-            }
-            return null
-          })
-          keyArr.push(...citationsValue)
-
+          const rowVals = row.values
+          keyArr.push(`${rowVals[id[0]].genus}. ${rowVals[id[0]].species}`)
+          keyArr.push(rowVals[id[1]])
+          keyArr.push(rowVals[id[2]].map((r) => r.label))
           return keyArr
         }
+
         return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
       },
     }),
@@ -426,12 +439,11 @@ const Table = ({ columns, data, WBid, tableType }) => {
       disableSortRemove: true,
       filterTypes,
       defaultColumn,
-      globalFilter: 'defaultGlobalFilter',
-      // initialState: { pageIndex: 0 },
+      globalFilter: selectGlobalFilter(tableType),
       initialState: {
         pageIndex: 0,
         pageSize: 10,
-        sortBy: [{ id: 'evalue', desc: false }],
+        sortBy: [{ id: 'species', desc: false }],
       },
     },
     useBlockLayout,
