@@ -220,9 +220,14 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
         return a.length - b.length
       },
-      scientificNotation: (rowA, rowB, columnId) => {
-        console.log(rowA, rowB, columnId)
-        return 0
+      numberWithScientificNotation: (rowA, rowB, columnId) => {
+        const NumberdEValueOfRowA = Number(rowA.values[columnId])
+        const NumberdEValueOfRowB = Number(rowB.values[columnId])
+        if (NumberdEValueOfRowA < NumberdEValueOfRowB) {
+          return -1
+        } else if (NumberdEValueOfRowA > NumberdEValueOfRowB) {
+          return 1
+        } else return 0
       },
     }),
     []
@@ -426,7 +431,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
       initialState: {
         pageIndex: 0,
         pageSize: 10,
-        sortBy: [{ id: 'phenotype.label', desc: false }],
+        sortBy: [{ id: 'evalue', desc: false }],
       },
     },
     useBlockLayout,

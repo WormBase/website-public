@@ -17,7 +17,7 @@ const Blastp = ({ WBid, tableType }) => {
         Header: 'BLAST e-value',
         Cell: ({ cell: { value } }) => Number(value),
         accessor: 'evalue',
-        sortType: 'scientificNotation',
+        sortType: 'numberWithScientificNotation',
         minWidth: 80,
         width: 100,
       },
