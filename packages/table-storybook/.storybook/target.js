@@ -5,14 +5,14 @@ const phenotype_widget = {
     mig2: 'WBGene00003239',
   },
   tableType: {
-    pheno: 'phenotype',
-    phenoNO: 'phenotype_not_observed',
-    phenoBI: 'phenotype_by_interaction',
-    drivesOE: 'drives_overexpression',
+    phenotype: 'phenotype',
+    phenoNotObserved: 'phenotype_not_observed',
+    phenoByInteraction: 'phenotype_by_interaction',
+    drivesOverexpression: 'drives_overexpression',
     staging: {
-      pheno: 'phenotype_flat',
-      phenoNO: 'phenotype_not_observed_flat',
-      drivesOE: 'drives_overexpression_flat',
+      phenotype: 'phenotype_flat',
+      phenoNotObserved: 'phenotype_not_observed_flat',
+      drivesOverexpression: 'drives_overexpression_flat',
     },
   },
 }
@@ -24,8 +24,8 @@ const homology_widget = {
     mig2: 'WBGene00003239',
   },
   tableType: {
-    blastp: 'best_blastp_matches',
-    nemOrtho: 'nematode_orthologs',
+    bestBlastpMatches: 'best_blastp_matches',
+    nematodeOrthologs: 'nematode_orthologs',
   },
 }
 
