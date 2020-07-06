@@ -162,32 +162,6 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
 
   const sortTypes = useMemo(
     () => ({
-      sortByEntity: (rowA, rowB) => {
-        const entityOfRowA = rowA.values.entity
-        const entityOfRowB = rowB.values.entity
-
-        const comparisonStandardOfRowA =
-          entityOfRowA === null
-            ? 'n/a'
-            : (
-                entityOfRowA[0].pato_evidence.entity_type +
-                entityOfRowA[0].pato_evidence.entity_term.label
-              ).toLowerCase()
-        const comparisonStandardOfRowB =
-          entityOfRowB === null
-            ? 'n/a'
-            : (
-                entityOfRowB[0].pato_evidence.entity_type +
-                entityOfRowB[0].pato_evidence.entity_term.label
-              ).toLowerCase()
-
-        return comparisonStandardOfRowA > comparisonStandardOfRowB
-          ? 1
-          : comparisonStandardOfRowA < comparisonStandardOfRowB
-          ? -1
-          : 0
-      },
-
       caseInsensitiveAlphaNumeric: (rowA, rowB, columnId) => {
         const getRowValueByColumnID = (row, columnId) => row.values[columnId]
         const toString = (a) => {
@@ -378,30 +352,6 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
           return keyArr
         }
 
-        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
-      },
-
-      globalFilterForTableGroup2: (rows, id, filterValue) => {
-        /*
-        id[0] is "phenotype.label",
-        id[1] is "interactions",
-        id[2] is "interactions_type",
-        id[3] is "citations"
-        */
-        const keyFunc = (row) => {
-          let keyArr = []
-          keyArr.push(row.values[id[0]])
-
-          const interactionsValue = row.values[id[1]].map((i) => i.label)
-          keyArr.push(...interactionsValue)
-
-          keyArr.push(row.values[id[2]])
-
-          const citationsValue = row.values[id[3]].map((c) => c?.label)
-          keyArr.push(...citationsValue)
-
-          return keyArr
-        }
         return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
       },
     }),

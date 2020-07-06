@@ -54,7 +54,6 @@ const Phenotype = ({ WBid, tableType }) => {
         Cell: ({ cell: { value } }) => showEntities(value),
         disableSortBy: true,
         filter: 'entitiesFilter',
-        sortType: 'sortByEntity',
         aggregate: 'count',
         Aggregated: () => null,
         canGroupBy: false,
