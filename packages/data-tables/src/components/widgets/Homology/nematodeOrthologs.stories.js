@@ -10,6 +10,6 @@ export default {
 export const daf16 = () => (
   <NematodeOrthologs
     WBid={homology_widget.WBid.daf16}
-    tableType={homology_widget.tableType.nemOrtho}
+    tableType={homology_widget.tableType.nematodeOrthologs}
   />
 )

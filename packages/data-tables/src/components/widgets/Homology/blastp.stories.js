@@ -10,6 +10,6 @@ export default {
 export const daf16 = () => (
   <Blastp
     WBid={homology_widget.WBid.daf16}
-    tableType={homology_widget.tableType.blastp}
+    tableType={homology_widget.tableType.bestBlastpMatches}
   />
 )
