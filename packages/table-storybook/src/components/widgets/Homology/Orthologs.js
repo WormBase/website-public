@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import Table from './Table'
 import loadData from '../../../services/loadData'
 
-const NematodeOrthologs = ({ WBid, tableType }) => {
+const Orthologs = ({ WBid, tableType }) => {
   const [data, setData] = useState([])
 
   useEffect(() => {
@@ -55,4 +55,4 @@ const NematodeOrthologs = ({ WBid, tableType }) => {
   )
 }
 
-export default NematodeOrthologs
+export default Orthologs

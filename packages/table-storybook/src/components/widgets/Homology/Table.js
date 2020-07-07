@@ -239,8 +239,8 @@ const Table = ({ columns, data, WBid, tableType }) => {
           : 0
       },
       sortByMethods: (rowA, rowB, columnId) => {
-        const comparisonStandardOfRowA = `${rowA.values[columnId][0].label}`
-        const comparisonStandardOfRowB = `${rowB.values[columnId][0].label}`
+        const comparisonStandardOfRowA = rowA.values[columnId][0].label
+        const comparisonStandardOfRowB = rowB.values[columnId][0].label
         return comparisonStandardOfRowA > comparisonStandardOfRowB
           ? 1
           : comparisonStandardOfRowA < comparisonStandardOfRowB
@@ -408,7 +408,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
     if (tableType === 'best_blastp_matches') {
       return 'globalFilterType0'
     }
-    if (tableType === 'nematode_orthologs') {
+    if (tableType === 'nematode_orthologs' || tableType === 'other_orthologs') {
       return 'globalFilterType1'
     }
     return null
