@@ -1,7 +1,9 @@
 {
   "packages": [
     "packages/*",
-    "client"
+    "client",
+    "sites/third-party-data-api"
   ],
+  "npmClient": "yarn",
   "version": "0.0.0"
 }

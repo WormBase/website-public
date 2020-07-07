@@ -1,5 +1,5 @@
 {
-  "name": "third-party-data-api",
+  "name": "@wormbase/third-party-data-api",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@apollo/react-hooks": "3.1.5",
+    "@wormbase/design-system": "^0.0.0",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
     "apollo-link-http": "1.5.17",
