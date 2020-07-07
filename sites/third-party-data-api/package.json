@@ -4,14 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index.js"
+    "storybook": "start-storybook"
   },
   "dependencies": {
-    "apollo-datasource-rest": "^0.9.3",
-    "apollo-server": "^2.15.1",
-    "graphql": "^15.2.0"
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
   },
   "devDependencies": {
-    "nodemon": "2.0.2"
+    "@storybook/react": "5.3.19"
   }
 }
