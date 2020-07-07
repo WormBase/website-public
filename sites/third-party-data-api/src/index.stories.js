@@ -17,16 +17,22 @@ const client = new ApolloClient({
 });
 
 const GET_REACTOME_PATHWAYS = gql`
-  query ReactomePathways {
-    getReactomePathwayByGene(id: "WBGene00006791") {
+  query ReactomePathways($geneId: String!) {
+    getReactomePathwayByGene(id: $geneId) {
       displayName
       stId
     }
   }
 `;
 
-const PathwayList = () => {
-  const { data, loading, error } = useQuery(GET_REACTOME_PATHWAYS);
+const PathwayList = ({
+  geneId = '',
+}) => {
+  const { data, loading, error } = useQuery(GET_REACTOME_PATHWAYS, {
+    variables: {
+      geneId,
+    },
+  });
 
   if (loading) {
     return <p>Loading...</p>;
@@ -34,24 +40,39 @@ const PathwayList = () => {
     return <p>{error.message}</p>;
   } else {
     return (
-      <ul>
-        {
-          data.getReactomePathwayByGene.map(({stId, displayName}) => (
-            <li key={stId}>
-              <a href={`https://reactome.org/content/detail/${stId}`} target="_blank">
-                {displayName}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      <div>
+        <p>Computationally inferred pathways provided by <a href="https://reactome.org/documentation/inferred-events" target="_blank">Reactome</a>.</p>
+        <ul>
+          {
+            data.getReactomePathwayByGene.map(({stId, displayName}) => (
+              <li key={stId}>
+                <a href={`https://reactome.org/content/detail/${stId}`} target="_blank">
+                  {displayName}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     );
   }
 };
 
 export default { title: 'Reactome' };
 
-export const normal = () => (
+export const unc57 = () => (
+  <ApolloProvider client={client}>
+    <PathwayList geneId="WBGene00006791" />
+  </ApolloProvider>
+);
+
+export const daf8 = () => (
+  <ApolloProvider client={client}>
+    <PathwayList geneId="WBGene00000904" />
+  </ApolloProvider>
+);
+
+export const NonExistent = () => (
   <ApolloProvider client={client}>
     <PathwayList />
   </ApolloProvider>
