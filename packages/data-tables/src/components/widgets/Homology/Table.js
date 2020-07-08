@@ -38,16 +38,16 @@ const useStyles = makeStyles({
     '& tr:last-child td': {
       borderBottom: 0,
     },
-    '& .phenotype_even_cell': {
+    '& .is_sorted_even_cell': {
       backgroundColor: '#d3d6ff',
     },
-    '& .phenotype_odd_cell': {
+    '& .is_sorted_odd_cell': {
       backgroundColor: '#e2e5ff',
     },
-    '& .other_even_cell': {
+    '& .is_not_sorted_even_cell': {
       backgroundColor: '#e2e5ff',
     },
-    '& .other_odd_cell': {
+    '& .is_not_sorted_odd_cell': {
       backgroundColor: '#fff',
     },
     '& th,td': {
@@ -518,13 +518,13 @@ const Table = ({ columns, data, WBid, tableType }) => {
                     <td
                       {...cell.getCellProps()}
                       className={
-                        cell.column.id === 'phenotype.label'
+                        cell.column.isSorted
                           ? idx % 2 === 0
-                            ? 'phenotype_even_cell'
-                            : 'phenotype_odd_cell'
+                            ? 'is_sorted_even_cell'
+                            : 'is_sorted_odd_cell'
                           : idx % 2 === 0
-                          ? 'other_even_cell'
-                          : 'other_odd_cell'
+                          ? 'is_not_sorted_even_cell'
+                          : 'is_not_sorted_odd_cell'
                       }
                     >
                       {cell.render('Cell')}
