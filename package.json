@@ -1,7 +1,17 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "build": "NODE_ENV=production lerna exec --parallel -- babel --root-mode upward src -d lib --ignore **/*.stories.js,**/*.spec.js"
+  },
   "devDependencies": {
+    "@babel/cli": "7.10.4",
+    "@babel/core": "7.10.4",
+    "@babel/preset-env": "7.10.4",
+    "babel-preset-react-app": "9.1.2",
     "lerna": "^3.22.1"
+  },
+  "dependencies": {
+    "@babel/polyfill": "7.10.4"
   }
 }
