@@ -22,6 +22,7 @@ import FormLabel from '@material-ui/core/FormLabel'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import FilterListIcon from '@material-ui/icons/FilterList'
+import SortIcon from '@material-ui/icons/Sort'
 
 const useStyles = makeStyles({
   table: {
@@ -218,6 +219,38 @@ const Table = ({ columns, data, WBid, tableType }) => {
         }
 
         return a.length - b.length
+      },
+      sortByInteractions: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = rowA.values[columnId][0].label
+        const lowerCasedComparisonStandardOfRowA = comparisonStandardOfRowA.toLowerCase()
+
+        const comparisonStandardOfRowB = rowB.values[columnId][0].label
+        const lowerCasedComparisonStandardOfRowB = comparisonStandardOfRowB.toLowerCase()
+
+        return lowerCasedComparisonStandardOfRowA >
+          lowerCasedComparisonStandardOfRowB
+          ? 1
+          : lowerCasedComparisonStandardOfRowA <
+            lowerCasedComparisonStandardOfRowB
+          ? -1
+          : 0
+      },
+      sortByCitations: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA =
+          rowA.values[columnId][0][0]?.label || ''
+        const lowerCasedComparisonStandardOfRowA = comparisonStandardOfRowA.toLowerCase()
+
+        const comparisonStandardOfRowB =
+          rowB.values[columnId][0][0]?.label || ''
+        const lowerCasedComparisonStandardOfRowB = comparisonStandardOfRowB.toLowerCase()
+
+        return lowerCasedComparisonStandardOfRowA >
+          lowerCasedComparisonStandardOfRowB
+          ? 1
+          : lowerCasedComparisonStandardOfRowA <
+            lowerCasedComparisonStandardOfRowB
+          ? -1
+          : 0
       },
     }),
     []
@@ -433,7 +466,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
                           <ArrowUpwardIcon className='arrow-icon' />
                         )
                       ) : (
-                        ''
+                        <SortIcon className='arrow-icon' />
                       )
                     ) : (
                       ''
