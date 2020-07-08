@@ -7,18 +7,18 @@
     "storybook": "start-storybook"
   },
   "dependencies": {
-    "@apollo/react-hooks": "3.1.5",
-    "@wormbase/design-system": "^0.0.0",
-    "apollo-cache-inmemory": "1.6.6",
-    "apollo-client": "2.6.10",
-    "apollo-link-http": "1.5.17",
-    "graphql": "15.3.0",
-    "graphql-tag": "2.10.3",
-    "react": "16.13.1",
-    "react-apollo": "3.1.5",
-    "react-dom": "16.13.1"
+    "@wormbase/design-system": "^0.0.0"
   },
   "devDependencies": {
+    "@apollo/react-hooks": "^3.1.5",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link-http": "^1.5.17",
+    "graphql": "^15.3.0",
+    "graphql-tag": "^2.10.3",
+    "react": "^16.8.0",
+    "react-apollo": "^3.1.5",
+    "react-dom": "^16.8.0",
     "@babel/core": "7.10.4",
     "@storybook/react": "5.3.19",
     "babel-loader": "8.1.0"
