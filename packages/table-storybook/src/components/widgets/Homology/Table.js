@@ -264,11 +264,22 @@ const Table = ({ columns, data, WBid, tableType }) => {
         const keyFunc = (row) => {
           console.log(row)
           /*
+          When tableType is "best_blastp_matches":
           id[0] is "evalue",
           id[1] is "taxonomy",
           id[2] is "hit.label"
           id[3] is "description"
           id[4] is "percent"
+
+          When tableType is "blastp_details":
+          id[0] is "evalue",
+          id[1] is "taxonomy",
+          id[2] is "hit.label"
+          id[3] is "description"
+          id[4] is "percentage"
+          id[5] is "target_range"
+          id[6] is "source_range"
+          *id[5] and id[6] can't be used on global filter in current implementation*
           */
           let keyArr = []
           const rowVals = row.values
@@ -405,7 +416,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
   }
 
   const selectGlobalFilter = (tableType) => {
-    if (tableType === 'best_blastp_matches') {
+    if (tableType === 'best_blastp_matches' || tableType === 'blastp_details') {
       return 'globalFilterType0'
     }
     if (tableType === 'nematode_orthologs' || tableType === 'other_orthologs') {

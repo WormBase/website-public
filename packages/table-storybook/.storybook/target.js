@@ -25,6 +25,7 @@ const homology_widget = {
   },
   tableType: {
     bestBlastpMatches: 'best_blastp_matches',
+    blastpDetails: 'blastp_details',
     nematodeOrthologs: 'nematode_orthologs',
     otherOrthologs: 'other_orthologs',
   },
