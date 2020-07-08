@@ -550,7 +550,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
       initialState: {
         pageIndex: 0,
         pageSize: 10,
-        sortBy: [{ id: 'phenotype.label', desc: false }],
+        sortBy: [{ id: columns[0].accessor, desc: false }],
         groupBy: ['phenotype.label'],
         expanded: getDefaultExpandedRows(data, 10),
       },

@@ -443,7 +443,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
       initialState: {
         pageIndex: 0,
         pageSize: 10,
-        sortBy: [{ id: 'species', desc: false }],
+        sortBy: [{ id: columns[0].accessor, desc: false }],
       },
     },
     useBlockLayout,
