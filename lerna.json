@@ -5,5 +5,6 @@
     "sites/third-party-data-api"
   ],
   "npmClient": "yarn",
+  "useWorkspaces": false,
   "version": "0.0.0"
 }

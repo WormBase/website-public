@@ -65,3 +65,10 @@ FOREACH edge IN fields.interactions.data.edges.sort;
     END;
 END; %]" target="_blank">View Interaction Network in GeneMANIA</a>
 [% END %]
+
+[% IF fields.name.data.class == 'gene'; %]
+    <div id="reactome-inferred-pathways"></div>
+    <script type="text/javascript">
+      WB.renderInferredPathways({geneId: '[%- fields.name.data.id -%]'}, 'reactome-inferred-pathways');
+    </script>
+[% END; %]

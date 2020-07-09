@@ -1,6 +1,7 @@
 version: "3.7"
 volumes:
   node_modules:
+  node_modules_root:
   yarn_cache:
 services:
   local-proxy:

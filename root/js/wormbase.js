@@ -21,7 +21,6 @@
 /* This module stays in ES5 to avoid strict mode being enabled */
 /* https://github.com/facebookincubator/create-react-app/issues/3318 */
 
-var testVar = 'testVar5';
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
@@ -3266,6 +3265,21 @@ var Scrolling = (function(){
       );
     }
 
+    function renderInferredPathways(data = {}, elementId) {
+      const { geneId } = data;
+      import('../../client/node_modules/@wormbase/third-party-data-api/lib').then(({
+        ThirdPartyDataProvider,
+        ReactomePathwayList,
+      }) => (
+        ReactDOM.render(
+          <ThirdPartyDataProvider>
+            <ReactomePathwayList geneId={geneId} />
+          </ThirdPartyDataProvider>,
+          document.getElementById(elementId)
+        )
+      ));
+    }
+
 
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
@@ -3535,6 +3549,7 @@ var Scrolling = (function(){
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
       renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
       renderInteractorVennDiagram: renderInteractorVennDiagram, // render Venn diagram in interaction widgets of various pages
+      renderInferredPathways: renderInferredPathways, // render inferred pathways of a particular gene
     };
   })();
 

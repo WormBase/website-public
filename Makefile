@@ -226,7 +226,8 @@ dev-down:
 # local dev deployment
 .PHONY: local
 local:
-	(cd client/ && yarn install --frozen-lockfile) # dependency installation on host is required for prettier in git precommit hook
+#	(cd client/ && yarn install --frozen-lockfile) # dependency installation on host is required for prettier in git precommit hook
+	yarn --frozen-lockfile
 	docker-compose -f docker-compose.local.yml pull
 	$(MAKE) local-down
 	docker-compose -f docker-compose.local.yml up
