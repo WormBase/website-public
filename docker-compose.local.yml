@@ -31,18 +31,21 @@ services:
     image: node:latest
     ports:
       - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
-    working_dir: /home/node/client
+    working_dir: /home/node
     command: >
-      bash -c "yarn install --frozen-lockfile --verbose &&
-      	       yarn run start"
+      bash -c "yarn --frozen-lockfile --verbose && yarn run bootstrap && yarn run build-packages && yarn run start-client"
     volumes:
       - type: bind
         source: ./
         target: /home/node/
-        read_only: true
       - type: volume
         source: node_modules
         target: /home/node/client/node_modules
+        volume:
+          nocopy: true
+      - type: volume
+        source: node_modules_root
+        target: /home/node/node_modules
         volume:
           nocopy: true
       - type: volume
