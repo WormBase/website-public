@@ -292,7 +292,10 @@ const Table = ({ columns, data, WBid, tableType }) => {
           return keyArr
         }
 
-        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
       },
       globalFilterType1: (rows, id, filterValue) => {
         const keyFunc = (row) => {
@@ -309,7 +312,10 @@ const Table = ({ columns, data, WBid, tableType }) => {
           return keyArr
         }
 
-        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
       },
     }),
     []

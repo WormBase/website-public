@@ -313,7 +313,10 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
           return keyArr
         }
 
-        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
       },
 
       entitiesFilter: (rows, id, filterValue) => {
@@ -327,6 +330,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
 
         return matchSorter(rows, filterValue, {
           keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
         })
       },
 
@@ -352,7 +356,10 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
           return keyArr
         }
 
-        return matchSorter(rows, filterValue, { keys: [(row) => keyFunc(row)] })
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
       },
     }),
     []
