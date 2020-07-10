@@ -24,7 +24,7 @@ services:
     networks:
       - default
   webpack:
-    image: node:latest
+    image: node:12
     ports:
       - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
     working_dir: /home/node
