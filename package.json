@@ -1,6 +1,11 @@
 {
   "name": "root",
   "private": true,
+  "workspaces": [
+    "client",
+    "packages/*",
+    "sites/*"
+  ],
   "scripts": {
     "bootstrap": "lerna bootstrap --force-local --loglevel=silly",
     "start-client": "lerna run start --scope=client --stream",
@@ -19,7 +24,7 @@
     "graphql": "15.3.0",
     "graphql-tag": "2.10.4",
     "lerna": "^3.22.1",
-    "react": "16.13.0",
-    "react-dom": "16.13.0"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   }
 }
