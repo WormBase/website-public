@@ -1,8 +1,4 @@
 version: "3.7"
-volumes:
-  node_modules:
-  node_modules_root:
-  yarn_cache:
 services:
   local-proxy:
     image: nginx:1.13.7
@@ -33,24 +29,11 @@ services:
       - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
     working_dir: /home/node
     command: >
-      bash -c "yarn --frozen-lockfile --verbose && yarn run bootstrap && yarn run build-packages && yarn run start-client"
+      bash -c "yarn run start-client"
     volumes:
       - type: bind
         source: ./
         target: /home/node/
-      - type: volume
-        source: node_modules
-        target: /home/node/client/node_modules
-        volume:
-          nocopy: true
-      - type: volume
-        source: node_modules_root
-        target: /home/node/node_modules
-        volume:
-          nocopy: true
-      - type: volume
-        source: yarn_cache
-        target: /usr/local/share/.cache/yarn/v4
     environment:
       - PORT=${WEBPACK_SERVER_PORT}
   mysql:

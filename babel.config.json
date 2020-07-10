@@ -1,7 +1,10 @@
 {
   "presets": [
     [
-      "react-app",
+      "@babel/preset-react"
     ]
+  ],
+  "plugins": [
+    "graphql-tag"
   ]
 }

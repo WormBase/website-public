@@ -23,7 +23,3 @@ inc/
 # client
 client/
 !client/build
-
-# lerna packages
-packages/*/lib
-sites/*/lib
