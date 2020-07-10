@@ -3270,14 +3270,18 @@ var Scrolling = (function(){
       import('../../client/node_modules/@wormbase/third-party-data-api/lib').then(({
         ThirdPartyDataProvider,
         ReactomePathwayList,
-      }) => (
-        ReactDOM.render(
-          <ThirdPartyDataProvider>
-            <ReactomePathwayList geneId={geneId} />
-          </ThirdPartyDataProvider>,
-          document.getElementById(elementId)
+      }) => {
+        console.log(`Same react? ${require('react') === window.React2}`);
+        console.log(`Same react? ${React === window.React2}`);
+        return (
+          ReactDOM.render(
+            <ThirdPartyDataProvider>
+              <ReactomePathwayList geneId={geneId} />
+            </ThirdPartyDataProvider>,
+            document.getElementById(elementId)
+          )
         )
-      ));
+      });
     }
 
 

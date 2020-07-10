@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-
+window.React2 = require('react');
 const GET_REACTOME_PATHWAYS = gql`
   query ReactomePathways($geneId: String!) {
     getReactomePathwayByGene(id: $geneId) {
