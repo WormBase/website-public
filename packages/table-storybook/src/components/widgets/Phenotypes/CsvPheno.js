@@ -3,124 +3,55 @@ import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 
 const CsvPheno = ({ data, WBid, tableType }) => {
+  const objKeysOfAllele = [
+    'Affected_by_molecule',
+    'Curator',
+    'Ease_of_scoring',
+    'Paper_evidence',
+    'Penetrance',
+    'Penetrance-range',
+    'Person_evidence',
+    'Recessive',
+    'Remark',
+    'Temperature',
+    'Temperature_sensitive',
+    'Treatment',
+    'Variation_effect',
+  ]
+
+  const objKeysOfRNAi = [
+    'Affected_by_molecule',
+    'Genotype',
+    'Paper_evidence',
+    'Penetrance-range',
+    'Quantity_description',
+    'Remark',
+    'Strain',
+  ]
+
+  const objKeysOfTag = ['class', 'id', 'label', 'taxonomy']
+
+  const generateHeader = (commonPart, changeablePartsArr) =>
+    changeablePartsArr.map((changeablePart) => {
+      const dotNotationToBeHeader = `${commonPart}.${changeablePart}`
+      return {
+        label: dotNotationToBeHeader,
+        key: dotNotationToBeHeader,
+      }
+    })
+
   const headers = [
     // phenotype
-    { label: 'phenotype.class', key: 'phenotype.class' },
-    { label: 'phenotype.id', key: 'phenotype.id' },
-    { label: 'phenotype.label', key: 'phenotype.label' },
-    { label: 'phenotype.taxonomy', key: 'phenotype.taxonomy' },
+    ...generateHeader('phenotype', objKeysOfTag),
 
     // entity
     { label: 'entity', key: 'entity' },
 
     // evidence
-
-    // For 'Allele'
-    {
-      label: 'evidence.Allele.evidence.Affected_by_molecule',
-      key: 'evidence.Allele.evidence.Affected_by_molecule',
-    },
-    {
-      label: 'evidence.Allele.evidence.Curator',
-      key: 'evidence.Allele.evidence.Curator',
-    },
-    {
-      label: 'evidence.Allele.evidence.Ease_of_scoring',
-      key: 'evidence.Allele.evidence.Ease_of_scoring',
-    },
-    {
-      label: 'evidence.Allele.evidence.Paper_evidence',
-      key: 'evidence.Allele.evidence.Paper_evidence',
-    },
-    {
-      label: 'evidence.Allele.evidence.Person_evidence',
-      key: 'evidence.Allele.evidence.Person_evidence',
-    },
-    {
-      label: 'evidence.Allele.evidence.Remark',
-      key: 'evidence.Allele.evidence.Remark',
-    },
-    {
-      label: 'evidence.Allele.evidence.Temperature',
-      key: 'evidence.Allele.evidence.Temperature',
-    },
-    {
-      label: 'evidence.Allele.evidence.Temperature_sensitive',
-      key: 'evidence.Allele.evidence.Temperature_sensitive',
-    },
-    {
-      label: 'evidence.Allele.evidence.Treatment',
-      key: 'evidence.Allele.evidence.Treatment',
-    },
-    {
-      label: 'evidence.Allele.evidence.Variation_effect',
-      key: 'evidence.Allele.evidence.Variation_effect',
-    },
-    {
-      label: 'evidence.Allele.evidence.Recessive',
-      key: 'evidence.Allele.evidence.Recessive',
-    },
-    {
-      label: 'evidence.Allele.evidence.Penetrance',
-      key: 'evidence.Allele.evidence.Penetrance',
-    },
-    {
-      label: 'evidence.Allele.evidence.Penetrance-range',
-      key: 'evidence.Allele.evidence.Penetrance-range',
-    },
-
-    { label: 'evidence.Allele.text.class', key: 'evidence.Allele.text.class' },
-    { label: 'evidence.Allele.text.id', key: 'evidence.Allele.text.id' },
-    { label: 'evidence.Allele.text.label', key: 'evidence.Allele.text.label' },
-    {
-      label: 'evidence.Allele.text.taxonomy',
-      key: 'evidence.Allele.text.taxonomy',
-    },
-
-    // For 'RNAi'
-    {
-      label: 'evidence.RNAi.evidence.Affected_by_molecule',
-      key: 'evidence.RNAi.evidence.Affected_by_molecule',
-    },
-    {
-      label: 'evidence.RNAi.evidence.Genotype',
-      key: 'evidence.RNAi.evidence.Genotype',
-    },
-
-    // "paper" is not observed in rest-staging API
-    // {
-    //   label: 'evidence.RNAi.evidence.paper',
-    //   key: 'evidence.RNAi.evidence.paper',
-    // },
-
-    {
-      label: 'evidence.RNAi.evidence.Paper_evidence',
-      key: 'evidence.RNAi.evidence.Paper_evidence',
-    },
-    {
-      label: 'evidence.RNAi.evidence.Penetrance-range',
-      key: 'evidence.RNAi.evidence.Penetrance-range',
-    },
-    {
-      label: 'evidence.RNAi.evidence.Quantity_description',
-      key: 'evidence.RNAi.evidence.Quantity_description',
-    },
-    {
-      label: 'evidence.RNAi.evidence.Remark',
-      key: 'evidence.RNAi.evidence.Remark',
-    },
-    {
-      label: 'evidence.RNAi.evidence.Strain',
-      key: 'evidence.RNAi.evidence.Strain',
-    },
-
-    { label: 'evidence.RNAi.text.class', key: 'evidence.RNAi.text.class' },
-    { label: 'evidence.RNAi.text.id', key: 'evidence.RNAi.text.id' },
-    { label: 'evidence.RNAi.text.label', key: 'evidence.RNAi.text.label' },
-    {
-      label: 'evidence.RNAi.text.taxonomy',
-      key: 'evidence.RNAi.text.taxonomy',
-    },
+    ...generateHeader('evidence.Allele.evidence', objKeysOfAllele),
+    ...generateHeader('evidence.Allele.text', objKeysOfTag),
+    ...generateHeader('evidence.RNAi.evidence', objKeysOfRNAi),
+    ...generateHeader('evidence.RNAi.text', objKeysOfTag),
   ]
 
   const processedData = data.map((d) => {
@@ -131,24 +62,30 @@ const CsvPheno = ({ data, WBid, tableType }) => {
       copyOfD.entity = 'N/A'
     } else {
       const keyOfEntity = Object.keys(copyOfD.entity)
-      copyOfD.entity = JSON.stringify(copyOfD.entity[keyOfEntity])
+      const arrOfEntityString = copyOfD.entity[keyOfEntity].map(
+        (c) =>
+          `${c.pato_evidence.entity_term.label}[${c.pato_evidence.entity_term.id}] ${c.pato_evidence.pato_term}`
+      )
+      copyOfD.entity = arrOfEntityString.join(';')
     }
 
     // Handling 'evidence'
-    const keyOfEvidence = Object.keys(copyOfD.evidence) // 'Allele' or 'RNAi'
+    const keyOfEvidence = Object.keys(copyOfD.evidence)[0] // 'Allele' or 'RNAi'
+    const collectionOfEvidences = copyOfD.evidence[keyOfEvidence].evidence
 
-    const evidenceSpecific = copyOfD.evidence[keyOfEvidence].evidence
-
-    Object.entries(evidenceSpecific).forEach(([key, value]) => {
-      if (Array.isArray(evidenceSpecific[key])) {
-        evidenceSpecific[key] = JSON.stringify(evidenceSpecific[key])
-      }
-
-      if (
-        typeof evidenceSpecific[key] === 'object' &&
-        evidenceSpecific !== null
-      ) {
-        evidenceSpecific[key] = JSON.stringify(evidenceSpecific[key])
+    Object.entries(collectionOfEvidences).forEach(([key, value]) => {
+      const specificEvidence = collectionOfEvidences[key]
+      if (typeof specificEvidence[0] === 'object') {
+        const tagTypeEvidenceArr = specificEvidence.map(
+          (s) => `${s.label}[${s.id}]`
+        )
+        collectionOfEvidences[key] = tagTypeEvidenceArr.join(';')
+      } else if (Array.isArray(specificEvidence)) {
+        collectionOfEvidences[key] = specificEvidence.join(';')
+      } else if (typeof specificEvidence === 'object') {
+        collectionOfEvidences[
+          key
+        ] = `${specificEvidence.label}[${specificEvidence.id}]`
       }
     })
 
@@ -156,18 +93,14 @@ const CsvPheno = ({ data, WBid, tableType }) => {
   })
 
   return (
-    <div>
-      <div>
-        <CSVLink
-          data={processedData}
-          headers={headers}
-          separator={'\t'}
-          filename={`${WBid}_${tableType}.tsv`}
-        >
-          Save table as TSV
-        </CSVLink>
-      </div>
-    </div>
+    <CSVLink
+      data={processedData}
+      headers={headers}
+      separator={'\t'}
+      filename={`${WBid}_${tableType}.tsv`}
+    >
+      Save table as TSV
+    </CSVLink>
   )
 }
 

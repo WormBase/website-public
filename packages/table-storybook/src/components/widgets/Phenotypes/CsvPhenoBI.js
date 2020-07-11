@@ -23,8 +23,14 @@ const CsvPhenoBI = ({ data, WBid, tableType }) => {
   const processedData = data.map((d) => {
     const copyOfD = cloneDeep(d)
 
-    copyOfD.interactions = JSON.stringify(copyOfD.interactions)
-    copyOfD.citations = JSON.stringify(copyOfD.citations)
+    const separetedInteractionsArr = copyOfD.interactions.map(
+      (i) => `${i.label}[${i.id}]`
+    )
+    copyOfD.interactions = separetedInteractionsArr.join(';')
+    const separetedCitationssArr = copyOfD.citations.map((c) =>
+      c.length === 0 ? '' : `${c[0].label}[${c[0].id}]`
+    )
+    copyOfD.citations = separetedCitationssArr.join(';')
 
     return copyOfD
   })
