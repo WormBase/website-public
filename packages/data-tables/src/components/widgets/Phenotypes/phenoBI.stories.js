@@ -10,18 +10,18 @@ export default {
 export const daf8 = () => (
   <PhenoBI
     WBid={phenotype_widget.WBid.daf8}
-    tableType={phenotype_widget.tableType.phenoByInteraction}
+    tableType={phenotype_widget.tableType.phenotypeByInteraction}
   />
 )
 export const daf16 = () => (
   <PhenoBI
     WBid={phenotype_widget.WBid.daf16}
-    tableType={phenotype_widget.tableType.phenoByInteraction}
+    tableType={phenotype_widget.tableType.phenotypeByInteraction}
   />
 )
 export const mig2 = () => (
   <PhenoBI
     WBid={phenotype_widget.WBid.mig2}
-    tableType={phenotype_widget.tableType.phenoByInteraction}
+    tableType={phenotype_widget.tableType.phenotypeByInteraction}
   />
 )
