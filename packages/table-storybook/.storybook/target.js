@@ -1,34 +1,46 @@
-const phenotype_widget = {
-  WBid: {
-    daf8: 'WBGene00000904',
-    daf16: 'WBGene00000912',
-    mig2: 'WBGene00003239',
-  },
-  tableType: {
-    phenotype: 'phenotype',
-    phenoNotObserved: 'phenotype_not_observed',
-    phenoByInteraction: 'phenotype_by_interaction',
-    drivesOverexpression: 'drives_overexpression',
-    staging: {
-      phenotype: 'phenotype_flat',
-      phenoNotObserved: 'phenotype_not_observed_flat',
-      drivesOverexpression: 'drives_overexpression_flat',
-    },
-  },
+const toCamel = (s) => {
+  return s.replace(/([-_][a-z])/gi, ($1) => {
+    return $1.toUpperCase().replace('-', '').replace('_', '')
+  })
 }
 
+const composeObjWithCamelKey = (tableArr) => {
+  const obj = {}
+  tableArr.forEach((t) => (obj[`${toCamel(t)}`] = t))
+  return obj
+}
+
+const WBid = {
+  daf8: 'WBGene00000904',
+  daf16: 'WBGene00000912',
+  mig2: 'WBGene00003239',
+}
+
+const phenotypeTableArr = [
+  'phenotype',
+  'phenotype_not_observed',
+  'phenotype_by_interaction',
+  'drives_overexpression',
+  'phenotype_flat',
+  'phenotype_not_observed_flat',
+  'drives_overexpression_flat',
+]
+const phenotype_widget = {
+  WBid,
+  tableType: composeObjWithCamelKey(phenotypeTableArr),
+}
+
+const homologyTableArr = [
+  'best_blastp_matches',
+  'blastp_details',
+  'nematode_orthologs',
+  'other_orthologs',
+]
 const homology_widget = {
-  WBid: {
-    daf8: 'WBGene00000904',
-    daf16: 'WBGene00000912',
-    mig2: 'WBGene00003239',
-  },
-  tableType: {
-    bestBlastpMatches: 'best_blastp_matches',
-    blastpDetails: 'blastp_details',
-    nematodeOrthologs: 'nematode_orthologs',
-    otherOrthologs: 'other_orthologs',
-  },
+  WBid,
+  tableType: composeObjWithCamelKey(homologyTableArr),
+}
+
 }
 
 export { phenotype_widget, homology_widget }

@@ -10,18 +10,18 @@ export default {
 export const daf8 = () => (
   <Pheno
     WBid={phenotype_widget.WBid.daf8}
-    tableType={phenotype_widget.tableType.staging.phenoNotObserved}
+    tableType={phenotype_widget.tableType.phenotypeNotObservedFlat}
   />
 )
 export const daf16 = () => (
   <Pheno
     WBid={phenotype_widget.WBid.daf16}
-    tableType={phenotype_widget.tableType.staging.phenoNotObserved}
+    tableType={phenotype_widget.tableType.phenotypeNotObservedFlat}
   />
 )
 export const mig2 = () => (
   <Pheno
     WBid={phenotype_widget.WBid.mig2}
-    tableType={phenotype_widget.tableType.staging.phenoNotObserved}
+    tableType={phenotype_widget.tableType.phenotypeNotObservedFlat}
   />
 )
