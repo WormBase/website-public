@@ -9,6 +9,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist='@(react|react-dom)' --force-local --loglevel=silly",
     "start-client": "lerna run start --scope=client --stream",
+    "start-storybook": "start-storybook",
     "build": "yarn run build-packages && yarn run build-client",
     "build-packages": "NODE_ENV=production lerna exec --parallel --no-private -- babel --root-mode upward src -d lib --ignore **/*.stories.js,**/*.spec.js",
     "build-client": "lerna run build --scope=client"
@@ -19,6 +20,8 @@
     "@babel/polyfill": "7.10.4",
     "@babel/preset-env": "7.10.4",
     "@babel/preset-react": "7.10.4",
+    "@storybook/react": "5.3.19",
+    "babel-loader": "8.1.0",
     "babel-plugin-graphql-tag": "2.5.0",
     "babel-preset-react-app": "9.1.2",
     "graphql": "15.3.0",
