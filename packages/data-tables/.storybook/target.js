@@ -44,7 +44,7 @@ const homology_widget = {
 const expressionTableArr = [
   'expressed_in',
   'expressed_during',
-  'subcellular_locarization',
+  'subcellular_localization',
   'expression_profiling_graphs',
   'expression_cluster',
   'anatomy_function',

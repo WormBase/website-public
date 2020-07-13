@@ -3,7 +3,7 @@ import Table from './Table'
 import loadData from '../../../services/loadData'
 import Evidence from './Evidence'
 
-const ExpressedIn = ({ WBid, tableType }) => {
+const Expressed = ({ WBid, tableType }) => {
   const [data, setData] = useState([])
 
   useEffect(() => {
@@ -15,6 +15,7 @@ const ExpressedIn = ({ WBid, tableType }) => {
   const selectHeader = (tableType) => {
     if (tableType === 'expressed_in') return 'Anatomy term'
     if (tableType === 'expressed_during') return 'Life stage'
+    if (tableType === 'subcellular_localization') return 'Cellular component'
     return null
   }
 
@@ -47,4 +48,4 @@ const ExpressedIn = ({ WBid, tableType }) => {
   )
 }
 
-export default ExpressedIn
+export default Expressed
