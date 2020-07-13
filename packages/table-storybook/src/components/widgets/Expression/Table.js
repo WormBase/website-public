@@ -220,27 +220,9 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
         return a.length - b.length
       },
-      numberWithScientificNotation: (rowA, rowB, columnId) => {
-        const NumberdEValueOfRowA = Number(rowA.values[columnId])
-        const NumberdEValueOfRowB = Number(rowB.values[columnId])
-        if (NumberdEValueOfRowA < NumberdEValueOfRowB) {
-          return -1
-        } else if (NumberdEValueOfRowA > NumberdEValueOfRowB) {
-          return 1
-        } else return 0
-      },
-      sortBySpecies: (rowA, rowB, columnId) => {
-        const comparisonStandardOfRowA = `${rowA.values[columnId].genus}${rowA.values[columnId].species}`
-        const comparisonStandardOfRowB = `${rowB.values[columnId].genus}${rowB.values[columnId].species}`
-        return comparisonStandardOfRowA > comparisonStandardOfRowB
-          ? 1
-          : comparisonStandardOfRowA < comparisonStandardOfRowB
-          ? -1
-          : 0
-      },
-      sortByMethods: (rowA, rowB, columnId) => {
-        const comparisonStandardOfRowA = rowA.values[columnId][0].label
-        const comparisonStandardOfRowB = rowB.values[columnId][0].label
+      sortByEvidence: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = rowA.values[columnId][0].text.label
+        const comparisonStandardOfRowB = rowB.values[columnId][0].text.label
         return comparisonStandardOfRowA > comparisonStandardOfRowB
           ? 1
           : comparisonStandardOfRowA < comparisonStandardOfRowB
