@@ -276,9 +276,15 @@ const Table = ({ columns, data, WBid, tableType }) => {
     })
   }
 
+  const storeFilterValOfDescription = (data, kArr) => {
+    Object.entries(data).forEach(([key, value]) => {
+      kArr.push(...value.map((v) => v.label))
+    })
+  }
+
   const filterTypes = useMemo(
     () => ({
-      defaultGlobalFilter: (rows, id, filterValue) => {
+      globalFilterType0: (rows, id, filterValue) => {
         /*
         id[0] is "ontology_term.label",
         id[1] is "details",
@@ -289,6 +295,34 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
           keyArr.push(rowVals[id[0]])
           storeFilterValOfEvidence(rowVals[id[1]], keyArr)
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
+      },
+
+      globalFilterType1: (rows, id, filterValue) => {
+        /*
+        id[0] is "expression_pattern.label",
+        id[1] is "type[0]",
+        id[2] is "description",
+        id[3] is "database",
+        */
+        const keyFunc = (row) => {
+          let keyArr = []
+          const rowVals = row.values
+
+          keyArr.push(rowVals[id[0]])
+          keyArr.push(rowVals[id[1]])
+          keyArr.push(rowVals[id[2]].text)
+          storeFilterValOfDescription(rowVals[id[2]].evidence, keyArr)
+          if (rowVals[id[3]]) {
+            keyArr.push(...rowVals[id[3]].map((r) => r.label))
+          }
 
           return keyArr
         }
@@ -402,6 +436,20 @@ const Table = ({ columns, data, WBid, tableType }) => {
     )
   }
 
+  const selectGlobalFilter = (tableType) => {
+    if (
+      ['expressed_in', 'expressed_during', 'subcellular_localization'].includes(
+        tableType
+      )
+    ) {
+      return 'globalFilterType0'
+    }
+    if (tableType === 'expression_profiling_graphs') {
+      return 'globalFilterType1'
+    }
+    return null
+  }
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -427,7 +475,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
       disableSortRemove: true,
       filterTypes,
       defaultColumn,
-      globalFilter: 'defaultGlobalFilter',
+      globalFilter: selectGlobalFilter(tableType),
       initialState: {
         pageIndex: 0,
         pageSize: 100,
