@@ -34,3 +34,6 @@ node_modules
 # lerna packages
 packages/*/lib
 sites/*/lib
+
+# mac osx
+.DS_Store
