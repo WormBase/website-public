@@ -41,6 +41,18 @@ const homology_widget = {
   tableType: composeObjWithCamelKey(homologyTableArr),
 }
 
+const expressionTableArr = [
+  'expressed_in',
+  'expressed_during',
+  'subcellular_locarization',
+  'expression_profiling_graphs',
+  'expression_cluster',
+  'anatomy_function',
+  'fpkm_expression_summaly_ls',
+]
+const expression_widget = {
+  WBid,
+  tableType: composeObjWithCamelKey(expressionTableArr),
 }
 
-export { phenotype_widget, homology_widget }
+export { phenotype_widget, homology_widget, expression_widget }
