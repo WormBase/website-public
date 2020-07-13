@@ -3,15 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "scripts": {
-    "storybook": "start-storybook"
-  },
   "dependencies": {
     "@babel/runtime": "^7.10.4",
     "@wormbase/design-system": "^0.0.0"
   },
   "peerDependencies": {
-    "@storybook/react": "5.3.19",
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
   },
