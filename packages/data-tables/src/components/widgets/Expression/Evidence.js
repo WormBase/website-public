@@ -3,6 +3,26 @@ import React from 'react'
 const Evidence = ({ evidences }) => {
   const displayEvidence = (key, value) => {
     switch (key) {
+      case 'Algorithm':
+        return (
+          <>
+            <b>Algorithm: </b>
+            {value}
+          </>
+        )
+      case 'Citation':
+        return (
+          <>
+            <b>Citation: </b>
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
+          </>
+        )
       case 'Description':
         if (Array.isArray(value)) {
           return (
@@ -24,11 +44,10 @@ const Evidence = ({ evidences }) => {
             {value}
           </>
         )
-
-      case 'Citation':
+      case 'Expressed_during':
         return (
           <>
-            <b>Citation: </b>
+            <b>Expressed during: </b>
             {value.map((v, idx) =>
               idx === value.length - 1 ? (
                 <span key={idx}>{v.label}</span>
@@ -38,50 +57,10 @@ const Evidence = ({ evidences }) => {
             )}
           </>
         )
-      case 'Algorithm':
+      case 'Expressed_in':
         return (
           <>
-            <b>Algorithm: </b>
-            {value}
-          </>
-        )
-      case 'Method_of_isolation':
-        return (
-          <>
-            <b>Method of isolation: </b>
-            {value}
-          </>
-        )
-      case 'Type':
-        return (
-          <>
-            <b>Type: </b>
-            {value.map((v, idx) =>
-              idx === value.length - 1 ? (
-                <span key={idx}>{v}</span>
-              ) : (
-                <span key={idx}>{v}; </span>
-              )
-            )}
-          </>
-        )
-      case 'Reagents':
-        return (
-          <>
-            <b>Reagents: </b>
-            {value.map((v, idx) =>
-              idx === value.length - 1 ? (
-                <span key={idx}>{v.label}</span>
-              ) : (
-                <span key={idx}>{v.label}; </span>
-              )
-            )}
-          </>
-        )
-      case 'Paper':
-        return (
-          <>
-            <b>Paper: </b>
+            <b>Expressed in: </b>
             {value.map((v, idx) =>
               idx === value.length - 1 ? (
                 <span key={idx}>{v.label}</span>
@@ -104,15 +83,48 @@ const Evidence = ({ evidences }) => {
             )}
           </>
         )
-      case 'Expressed_during':
+      case 'Method_of_isolation':
         return (
           <>
-            <b>Expressed during: </b>
+            <b>Method of isolation: </b>
+            {value}
+          </>
+        )
+      case 'Paper':
+        return (
+          <>
+            <b>Paper: </b>
             {value.map((v, idx) =>
               idx === value.length - 1 ? (
                 <span key={idx}>{v.label}</span>
               ) : (
                 <span key={idx}>{v.label}; </span>
+              )
+            )}
+          </>
+        )
+      case 'Reagents':
+        return (
+          <>
+            <b>Reagents: </b>
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v.label}</span>
+              ) : (
+                <span key={idx}>{v.label}; </span>
+              )
+            )}
+          </>
+        )
+      case 'Type':
+        return (
+          <>
+            <b>Type: </b>
+            {value.map((v, idx) =>
+              idx === value.length - 1 ? (
+                <span key={idx}>{v}</span>
+              ) : (
+                <span key={idx}>{v}; </span>
               )
             )}
           </>

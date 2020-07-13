@@ -12,10 +12,16 @@ const ExpressedIn = ({ WBid, tableType }) => {
     })
   }, [WBid, tableType])
 
+  const selectHeader = (tableType) => {
+    if (tableType === 'expressed_in') return 'Anatomy term'
+    if (tableType === 'expressed_during') return 'Life stage'
+    return null
+  }
+
   const columns = useMemo(
     () => [
       {
-        Header: 'Anatomy term',
+        Header: selectHeader(tableType),
         Cell: ({ cell: { value } }) => value,
         accessor: 'ontology_term.label',
         minWidth: 150,
@@ -28,11 +34,10 @@ const ExpressedIn = ({ WBid, tableType }) => {
         minWidth: 560,
         width: 720,
         maxWidth: 800,
-        // TODO: Add proper sortType
-        // sortType: 'sortByMethods',
+        sortType: 'sortByEvidence',
       },
     ],
-    []
+    [tableType]
   )
 
   return (
