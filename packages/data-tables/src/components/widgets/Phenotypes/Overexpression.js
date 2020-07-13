@@ -1,17 +1,6 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 
 const Overexpression = ({ oObj }) => {
-  const useStyles = makeStyles({
-    cell: {
-      '& .overexpression:not(:last-child)': {
-        marginBottom: 20,
-      },
-    },
-  })
-
-  const classes = useStyles()
-
   const displayEvidence = (key, value) => {
     switch (key) {
       case 'Affected_by_molecule':
@@ -114,7 +103,7 @@ const Overexpression = ({ oObj }) => {
   }
 
   return (
-    <div className={classes.cell}>
+    <div>
       <div>{oObj.text.label}</div>
       {Object.entries(oObj.evidence).map(([key, value], idx) => (
         <div key={idx}>{displayEvidence(key, value)}</div>
