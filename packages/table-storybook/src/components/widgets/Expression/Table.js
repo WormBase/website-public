@@ -245,6 +245,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
         'Citation',
         'Method of analysis, Microarray',
         'Expressed_during',
+        'Expressed_in',
       ]
       const storeTypeString = (arr) => {
         arr.forEach((a) => {
