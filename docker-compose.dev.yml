@@ -1,7 +1,4 @@
 version: "3.7"
-volumes:
-  node_modules:
-  yarn_cache:
 services:
   website:
     image: wormbase/website-env:1.0.2
@@ -16,26 +13,16 @@ services:
       - default
       - wb-network
   webpack:
-    image: node:latest
+    image: node:12
     ports:
       - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
-    working_dir: /home/node/client
+    working_dir: /home/node
     command: >
-      bash -c "yarn install --frozen-lockfile --verbose &&
-      	       yarn run start"
+      bash -c "npm run start-client"
     volumes:
       - type: bind
         source: ./
         target: /home/node/
-        read_only: true
-      - type: volume
-        source: node_modules
-        target: /home/node/client/node_modules
-        volume:
-          nocopy: true
-      - type: volume
-        source: yarn_cache
-        target: /usr/local/share/.cache/yarn/v4
     environment:
       - PORT=${WEBPACK_SERVER_PORT}
 networks:
