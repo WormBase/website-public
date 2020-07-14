@@ -1,6 +1,6 @@
 import React from 'react'
-import Pheno from './Phenotype'
-import { phenotype_widget } from '../../../../.storybook/target'
+import Pheno from '../Phenotype'
+import { phenotype_widget } from '../../../../../.storybook/target'
 
 export default {
   component: Pheno,

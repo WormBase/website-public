@@ -1,6 +1,6 @@
 import React from 'react'
-import Expressed from './Expressed'
-import { expression_widget } from '../../../../.storybook/target'
+import Expressed from '../Expressed'
+import { expression_widget } from '../../../../../.storybook/target'
 
 export default {
   component: Expressed,
