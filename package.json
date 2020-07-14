@@ -20,8 +20,6 @@
     "@babel/polyfill": "7.10.4",
     "@babel/preset-env": "7.10.4",
     "@babel/preset-react": "7.10.4",
-    "@storybook/react": "5.3.19",
-    "babel-loader": "8.1.0",
     "babel-plugin-graphql-tag": "2.5.0",
     "babel-preset-react-app": "9.1.2",
     "graphql": "15.3.0",
