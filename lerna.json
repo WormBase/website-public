@@ -2,7 +2,7 @@
   "packages": [
     "packages/*",
     "client",
-    "sites/third-party-data-api"
+    "sites/*"
   ],
   "npmClient": "npm",
   "useWorkspaces": false,
