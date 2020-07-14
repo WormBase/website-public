@@ -255,6 +255,19 @@ const Table = ({ columns, data, WBid, tableType }) => {
           ? -1
           : 0
       },
+      sortByAnatomicalSites: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = rowA.values[
+          columnId
+        ].text.label.toLowerCase()
+        const comparisonStandardOfRowB = rowB.values[
+          columnId
+        ].text.label.toLowerCase()
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
     }),
     []
   )
@@ -370,6 +383,33 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
           keyArr.push(rowVals[id[0]])
           keyArr.push(...rowVals[id[1]])
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
+      },
+
+      globalFilterType3: (rows, id, filterValue) => {
+        /*
+        id[0] is "bp_inv",
+        id[1] is "assay",
+        id[2] is "phenotype.label",
+        id[3] is "reference.label",
+        */
+        const keyFunc = (row) => {
+          let keyArr = []
+          const rowVals = row.values
+
+          keyArr.push(...Object.entries(rowVals[id[0]].evidence).flat())
+          keyArr.push(rowVals[id[0]].text.label)
+          keyArr.push(...Object.entries(rowVals[id[1]].evidence).flat())
+          keyArr.push(rowVals[id[1]].text)
+          keyArr.push(rowVals[id[2]])
+          keyArr.push(rowVals[id[3]])
 
           return keyArr
         }
@@ -496,6 +536,9 @@ const Table = ({ columns, data, WBid, tableType }) => {
     }
     if (tableType === 'expression_cluster') {
       return 'globalFilterType2'
+    }
+    if (tableType === 'anatomy_function') {
+      return 'globalFilterType3'
     }
     return null
   }
