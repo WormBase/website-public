@@ -459,7 +459,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
       globalFilter: selectGlobalFilter(tableType),
       initialState: {
         pageIndex: 0,
-        pageSize: 10,
+        pageSize: 100,
         sortBy: [{ id: columns[0].accessor, desc: false }],
       },
     },

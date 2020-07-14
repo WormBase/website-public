@@ -1,6 +1,6 @@
 import React from 'react'
-import Epg from './ExpressionProfilingGraphs'
-import { expression_widget } from '../../../../.storybook/target'
+import Epg from '../ExpressionProfilingGraphs'
+import { expression_widget } from '../../../../../.storybook/target'
 
 export default {
   component: Epg,

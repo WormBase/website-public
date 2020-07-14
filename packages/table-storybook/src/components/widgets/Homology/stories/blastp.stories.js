@@ -1,6 +1,6 @@
 import React from 'react'
-import Blastp from './Blastp'
-import { homology_widget } from '../../../../.storybook/target'
+import Blastp from '../Blastp'
+import { homology_widget } from '../../../../../.storybook/target'
 
 export default {
   component: Blastp,

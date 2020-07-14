@@ -1,6 +1,6 @@
 import React from 'react'
-import Orthologs from './Orthologs'
-import { homology_widget } from '../../../../.storybook/target'
+import Orthologs from '../Orthologs'
+import { homology_widget } from '../../../../../.storybook/target'
 
 export default {
   component: Orthologs,
