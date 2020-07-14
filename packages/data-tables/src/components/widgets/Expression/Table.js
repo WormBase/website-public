@@ -220,9 +220,35 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
         return a.length - b.length
       },
+      sortByDescriptionType0: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = rowA.values[
+          columnId
+        ].text.toLowerCase()
+        const comparisonStandardOfRowB = rowB.values[
+          columnId
+        ].text.toLowerCase()
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
+      sortByDescriptionType1: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = rowA.values[columnId][0].toLowerCase()
+        const comparisonStandardOfRowB = rowB.values[columnId][0].toLowerCase()
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
       sortByEvidence: (rowA, rowB, columnId) => {
-        const comparisonStandardOfRowA = rowA.values[columnId][0].text.label
-        const comparisonStandardOfRowB = rowB.values[columnId][0].text.label
+        const comparisonStandardOfRowA = rowA.values[
+          columnId
+        ][0].text.label.toLowerCase()
+        const comparisonStandardOfRowB = rowB.values[
+          columnId
+        ][0].text.label.toLowerCase()
         return comparisonStandardOfRowA > comparisonStandardOfRowB
           ? 1
           : comparisonStandardOfRowA < comparisonStandardOfRowB
@@ -323,6 +349,27 @@ const Table = ({ columns, data, WBid, tableType }) => {
           if (rowVals[id[3]]) {
             keyArr.push(...rowVals[id[3]].map((r) => r.label))
           }
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
+      },
+
+      globalFilterType2: (rows, id, filterValue) => {
+        /*
+        id[0] is "expression_cluster.label",
+        id[1] is "description",
+        */
+        const keyFunc = (row) => {
+          let keyArr = []
+          const rowVals = row.values
+
+          keyArr.push(rowVals[id[0]])
+          keyArr.push(...rowVals[id[1]])
 
           return keyArr
         }
@@ -446,6 +493,9 @@ const Table = ({ columns, data, WBid, tableType }) => {
     }
     if (tableType === 'expression_profiling_graphs') {
       return 'globalFilterType1'
+    }
+    if (tableType === 'expression_cluster') {
+      return 'globalFilterType2'
     }
     return null
   }

@@ -68,6 +68,7 @@ const ExpressedProfillingGraphs = ({ WBid, tableType }) => {
         accessor: 'description',
         minWidth: 450,
         width: 510,
+        sortType: 'sortByDescriptionType0',
       },
       {
         Header: 'Database',
