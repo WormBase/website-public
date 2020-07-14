@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "@wormbase/react-scripts-for-catalyst": "^1.0.9-13"
+    "@wormbase/react-scripts-for-catalyst": "^1.0.9-13",
+    "react": "^16.13.1"
   },
   "dependencies": {
     "@geneontology/ribbon": "1.4.1",
@@ -26,8 +27,8 @@
     "popper.js": "^1.15.0",
     "prettier": "^1.17.1",
     "query-string": "5",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "react-intersection-observer": "^8.24.1",
     "tippy.js": "^4.3.5",
     "venn.js": "^0.2.20"

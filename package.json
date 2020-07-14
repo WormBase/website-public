@@ -7,7 +7,7 @@
     "sites/*"
   ],
   "scripts": {
-    "bootstrap": "lerna bootstrap --force-local --loglevel=silly",
+    "bootstrap": "lerna bootstrap --hoist='@(react|react-dom)' --force-local --loglevel=silly",
     "start-client": "lerna run start --scope=client --stream",
     "build": "yarn run build-packages && yarn run build-client",
     "build-packages": "NODE_ENV=production lerna exec --parallel --no-private -- babel --root-mode upward src -d lib --ignore **/*.stories.js,**/*.spec.js",

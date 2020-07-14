@@ -21,8 +21,8 @@
 /* This module stays in ES5 to avoid strict mode being enabled */
 /* https://github.com/facebookincubator/create-react-app/issues/3318 */
 
-var React = require('../../client/node_modules/react');
-var ReactDOM = require('../../client/node_modules/react-dom');
+var React = require('react');
+var ReactDOM = require('react-dom');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;

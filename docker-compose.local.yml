@@ -29,7 +29,7 @@ services:
       - "${WEBPACK_SERVER_PORT}:${WEBPACK_SERVER_PORT}"
     working_dir: /home/node
     command: >
-      bash -c "yarn run start-client"
+      bash -c "npm run start-client"
     volumes:
       - type: bind
         source: ./
