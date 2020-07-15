@@ -74,7 +74,11 @@ aws-ecr-login:
 
 .PHONY: build
 build: aws-ecr-login
-	(cd client/ && yarn install --frozen-lockfile && yarn run build)  # build JS and CSS
+#	(cd client/ && yarn install --frozen-lockfile && yarn run build)  # build JS and CSS
+	npm install
+	npm run bootstrap
+	npm run build-packages
+	npm run build-client
 	docker build -t wormbase/website -f docker/Dockerfile .
 
 .PHONY: build-start
