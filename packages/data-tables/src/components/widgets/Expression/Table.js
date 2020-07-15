@@ -255,6 +255,19 @@ const Table = ({ columns, data, WBid, tableType }) => {
           ? -1
           : 0
       },
+      sortByDatabase: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = rowA.values[columnId]
+          ? rowA.values[columnId][0].label.toLowerCase()
+          : ''
+        const comparisonStandardOfRowB = rowB.values[columnId]
+          ? rowB.values[columnId][0].label.toLowerCase()
+          : ''
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
       sortByAnatomicalSites: (rowA, rowB, columnId) => {
         const comparisonStandardOfRowA = rowA.values[
           columnId
