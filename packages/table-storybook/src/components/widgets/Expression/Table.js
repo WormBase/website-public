@@ -281,6 +281,15 @@ const Table = ({ columns, data, WBid, tableType }) => {
           ? -1
           : 0
       },
+      sortByMedianOrMean: (rowA, rowB, columnId) => {
+        const comparisonStandardOfRowA = rowA.values[columnId].text
+        const comparisonStandardOfRowB = rowB.values[columnId].text
+        return comparisonStandardOfRowA > comparisonStandardOfRowB
+          ? 1
+          : comparisonStandardOfRowA < comparisonStandardOfRowB
+          ? -1
+          : 0
+      },
     }),
     []
   )
@@ -432,6 +441,31 @@ const Table = ({ columns, data, WBid, tableType }) => {
           threshold: matchSorter.rankings.CONTAINS,
         })
       },
+
+      globalFilterType4: (rows, id, filterValue) => {
+        /*
+        id[0] is "life_stage.label",
+        id[1] is "control median",
+        id[2] is "control mean",
+        */
+        const keyFunc = (row) => {
+          let keyArr = []
+          const rowVals = row.values
+
+          keyArr.push(rowVals[id[0]])
+          keyArr.push(rowVals[id[1]].text)
+          keyArr.push(...Object.entries(rowVals[id[1]].evidence).flat())
+          keyArr.push(rowVals[id[2]].text)
+          keyArr.push(...Object.entries(rowVals[id[2]].evidence).flat())
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
+      },
     }),
     []
   )
@@ -552,6 +586,9 @@ const Table = ({ columns, data, WBid, tableType }) => {
     }
     if (tableType === 'anatomy_function') {
       return 'globalFilterType3'
+    }
+    if (tableType === 'fpkm_expression_summary_ls') {
+      return 'globalFilterType4'
     }
     return null
   }
