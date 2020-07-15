@@ -48,7 +48,7 @@ const expressionTableArr = [
   'expression_profiling_graphs',
   'expression_cluster',
   'anatomy_function',
-  'fpkm_expression_summaly_ls',
+  'fpkm_expression_summary_ls',
 ]
 const expression_widget = {
   WBid,
