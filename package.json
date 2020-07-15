@@ -12,7 +12,7 @@
     "storybook": "lerna run storybook --scope=@wormbase/storybook --stream",
     "build": "yarn run build-packages && yarn run build-client",
     "build-packages": "NODE_ENV=production lerna exec --parallel --no-private -- babel --root-mode upward src -d lib --ignore **/*.stories.js,**/*.spec.js",
-    "build-client": "lerna run build --scope=client"
+    "build-client": "lerna run build --scope=client --stream"
   },
   "devDependencies": {
     "@babel/cli": "7.10.4",
