@@ -33,8 +33,9 @@ var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
 };
 
-const ButtonTest = require('../../packages/design-system/lib/index.js').Button;
-console.log(ButtonTest);
+const {
+  LegacyDataField,
+} = require('../../packages/design-system/lib');
 
 +function(window, document, undefined){
   var location = window.location,
@@ -3267,7 +3268,7 @@ var Scrolling = (function(){
 
     function renderInferredPathways(data = {}, elementId) {
       const { geneId } = data;
-      import('../../client/node_modules/@wormbase/third-party-data-api/lib').then(({
+      import('../../sites/third-party-data-api/lib').then(({
         ThirdPartyDataProvider,
         ReactomePathwayList,
       }) => {
@@ -3276,7 +3277,9 @@ var Scrolling = (function(){
         return (
           ReactDOM.render(
             <ThirdPartyDataProvider>
-              <ReactomePathwayList geneId={geneId} />
+              <LegacyDataField title="Inferred pathway">
+                <ReactomePathwayList geneId={geneId} />
+              </LegacyDataField>
             </ThirdPartyDataProvider>,
             document.getElementById(elementId)
           )
