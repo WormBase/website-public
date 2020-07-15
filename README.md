@@ -35,7 +35,7 @@ _For Legacy instructions_ that set up without docker or docker-compose, please v
 
 - Ensure environment variable `CATALYST_PORT` and `WEBPACK_SERVER_PORT` are set.
 
-- Ensure `/usr/local/bin/` is on your $PATH, as dependencies such as `docker-compose` and `yarn` are installed there.
+- Ensure `/usr/local/bin/` is on your $PATH, as dependencies such as `docker-compose` and `npm` are installed there.
 
 **To start your development stack:**
 
@@ -86,7 +86,7 @@ development and testing.
 
 - Ensure [Docker](https://docs.docker.com/) (18.06.0+) and [docker-compose](https://docs.docker.com/compose/install/) are installed.
 
-- Ensure [node.js](https://nodejs.org/en/) (10+) and [Yarn](https://yarnpkg.com/) are installed.
+- Ensure [node.js](https://nodejs.org/en/) (12+) are installed.
 
 - Ensure environment variable `CATALYST_PORT` and `WEBPACK_SERVER_PORT` are set.
 

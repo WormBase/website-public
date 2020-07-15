@@ -24,17 +24,14 @@ Then, setup githook to automatically re-build the static assets _after checking 
     # Before setting up the automation,
     # run the following commands to ensure static assets can be built manually without error
     cd client/
-    npm install  # alternatively, yarn install
-    npm run build  # alternatively, yarn run build
-
-    yarn --version  # check if Yarn (https://yarnpkg.com) is installed, install it if necessary
+    npm install
+    npm run build
 
     # Setup githook that automates static asset re-build
     cd ..  # ensure you are at project root
     ln -s ../../githooks/post-checkout .git/hooks/post-checkout
 
-- **Note**: **Only** works for checking out a branch. If you modify a JS or CSS file, or if you merge in changes involving JS or CSS, you still need to manually re-build with `npm install` (or `yarn install`) and `npm run build` (or `yarn run build`).
-- `yarn` is mostly equivalent to `npm`. Yarn is required here, because `yarn install` is faster than `npm install`, hence can be run frequently, such as after `git checkout`.
+- **Note**: **Only** works for checking out a branch. If you modify a JS or CSS file, or if you merge in changes involving JS or CSS, you still need to manually re-build with `npm install` and `npm run build`.
 
 
 If you did not start off in `/usr/local`, then you can either change the preset paths in the application's configuration files, or alternatively, carry out these two steps:
@@ -58,15 +55,15 @@ Run the application in development
 **First, build the static assets:**
 
     cd client/
-    npm install  # alternatively, yarn install
-    npm run build  # alternatively, yarn run build
+    npm install
+    npm run build
 
 - **Note**: You might see `npm install` and `npm run build` several times in this README. Here is some explanation:
     - The former needs to be re-run when and **only when** new (devD/d)ependencies are declared in client/package.json
     - The latter needs to be re-run when and **only when** a JS, CSS, or image file is modified
     - It’s always safe to do either command any time during development
     - The client/mode_modules and client/build folder contain only derived/auto-generated content. The client/node_modules folder is created and modified by `npm install`. the client/build folder is created and modified by `npm run build`. Both are considered safe to delete and recreate by calling the respective command during development. (So please don’t modify content of the folder manually, as the change won’t persist).
-- **Note**: If you have setup a **post-checkout** githook to automate static asset re-build, you may skip this step when and **only when you checkout a branch**. This **does not help**, if you modify a JS or CSS file, or if you merge in changes involving JS or CSS. In those cases, you still need to manually re-build with `npm install` (or `yarn install`) and `npm run build` (or `yarn run build`).
+- **Note**: If you have setup a **post-checkout** githook to automate static asset re-build, you may skip this step when and **only when you checkout a branch**. This **does not help**, if you modify a JS or CSS file, or if you merge in changes involving JS or CSS. In those cases, you still need to manually re-build with `npm install` and `npm run build`.
 - **Note**: If you are making changes to JS, CSS and images, you may want to automate and speed up the re-build step with instructions below to Setup development enviroment for JS and CSS development.
 
 **Then, to run the app using the built-in Catalyst server:**
