@@ -1,26 +1,27 @@
 import React from 'react'
-import AggregateExpressionEstimates from '../AggregateExpressionEstimates'
+import FpkmExpression from '../FpkmExpression'
 import { expression_widget } from '../../../../../.storybook/target'
 
 export default {
-  component: AggregateExpressionEstimates,
-  title: 'Table|Widgets/Expression/fpkm_expression_summary_ls/data__controls',
+  component: FpkmExpression,
+  title:
+    'Table|Widgets/Expression/fpkm_expression_summary_ls/data__table__fpkm__data',
 }
 
 export const daf8 = () => (
-  <AggregateExpressionEstimates
+  <FpkmExpression
     WBid={expression_widget.WBid.daf8}
     tableType={expression_widget.tableType.fpkmExpressionSummaryLs}
   />
 )
 export const daf16 = () => (
-  <AggregateExpressionEstimates
+  <FpkmExpression
     WBid={expression_widget.WBid.daf16}
     tableType={expression_widget.tableType.fpkmExpressionSummaryLs}
   />
 )
 export const mig2 = () => (
-  <AggregateExpressionEstimates
+  <FpkmExpression
     WBid={expression_widget.WBid.mig2}
     tableType={expression_widget.tableType.fpkmExpressionSummaryLs}
   />

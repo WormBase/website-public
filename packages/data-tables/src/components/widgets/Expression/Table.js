@@ -444,6 +444,31 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
       globalFilterType4: (rows, id, filterValue) => {
         /*
+        id[0] is "label.label",
+        id[1] is "project_info.label",
+        id[2] is "life_stage.label",
+        id[3] is "value",
+        */
+        const keyFunc = (row) => {
+          let keyArr = []
+          const rowVals = row.values
+
+          keyArr.push(rowVals[id[0]])
+          keyArr.push(rowVals[id[1]])
+          keyArr.push(rowVals[id[2]])
+          keyArr.push(rowVals[id[3]])
+
+          return keyArr
+        }
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        })
+      },
+
+      globalFilterType5: (rows, id, filterValue) => {
+        /*
         id[0] is "life_stage.label",
         id[1] is "control median",
         id[2] is "control mean",
@@ -587,8 +612,11 @@ const Table = ({ columns, data, WBid, tableType }) => {
     if (tableType === 'anatomy_function') {
       return 'globalFilterType3'
     }
-    if (tableType === 'fpkm_expression_summary_ls') {
+    if (tableType === 'fpkm_expression_summary_ls' && data[0]?.project_info) {
       return 'globalFilterType4'
+    }
+    if (tableType === 'fpkm_expression_summary_ls') {
+      return 'globalFilterType5'
     }
     return null
   }
