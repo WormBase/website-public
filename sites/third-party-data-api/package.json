@@ -1,0 +1,17 @@
+{
+  "name": "third-party-data-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "apollo-datasource-rest": "^0.9.3",
+    "apollo-server": "^2.15.1",
+    "graphql": "^15.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.2"
+  }
+}

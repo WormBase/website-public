@@ -1,0 +1,34 @@
+{
+    "paths": [
+        {
+            "name": "/graphql",
+            "lambdaFunction": "thirdPartyDataApiLambda",
+            "privacy": {
+                "open": true
+            }
+        }
+    ],
+    "resourceName": "thirdPartyDataApi",
+    "apiName": "thirdPartyDataApi",
+    "functionArns": [
+        {
+            "lambdaFunction": "thirdPartyDataApiLambda"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "amplify-thirdpartydataapi-dev-161936-authRole",
+        "unAuthRoleName": "amplify-thirdpartydataapi-dev-161936-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "thirdPartyDataApiLambda",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
