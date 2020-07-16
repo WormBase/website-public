@@ -1,7 +1,10 @@
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { LegacyDataField } from '@wormbase/design-system';
+import {
+  LegacyDataField,
+  LegacyLinkExternal,
+} from '@wormbase/design-system';
 
 const GET_REACTOME_PATHWAYS = gql`
   query ReactomePathways($geneId: String!) {
@@ -27,15 +30,15 @@ const ReactomePathwayList = ({
     return (
       <LegacyDataField title="Inferred pathway">
         <p>Computationally inferred pathways provided by{' '}
-          <a href="https://reactome.org/documentation/inferred-events" target="_blank">Reactome</a>.
+          <LegacyLinkExternal href="https://reactome.org/documentation/inferred-events">Reactome</LegacyLinkExternal>.
         </p>
         <ul>
           {
             data.getReactomePathwayByGene.map(({stId, displayName}) => (
               <li key={stId}>
-                <a href={`https://reactome.org/content/detail/${stId}`} target="_blank">
+                <LegacyLinkExternal href={`https://reactome.org/content/detail/${stId}`}>
                   {displayName}
-                </a>
+                </LegacyLinkExternal>
               </li>
             ))
           }

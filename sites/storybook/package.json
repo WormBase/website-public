@@ -22,7 +22,7 @@
     "url": "git+https://github.com/WormBase/website.git"
   },
   "scripts": {
-    "storybook": "start-storybook",
+    "storybook": "start-storybook -s ../../root",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
