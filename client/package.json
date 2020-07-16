@@ -9,6 +9,7 @@
     "@geneontology/ribbon": "1.4.1",
     "@material-ui/core": "^3.6.2",
     "@material-ui/icons": "^3.0.1",
+    "@wormbase/design-system": "^0.0.0",
     "@wormbase/third-party-data-api": "^1.0.0",
     "classnames": "^2.2.5",
     "copy-to-clipboard": "^3.2.0",

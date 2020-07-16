@@ -33,10 +33,6 @@ var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
 };
 
-const {
-  LegacyDataField,
-} = require('../../packages/design-system/lib');
-
 +function(window, document, undefined){
   var location = window.location,
       $jq = jQuery.noConflict();
@@ -3277,9 +3273,7 @@ var Scrolling = (function(){
         return (
           ReactDOM.render(
             <ThirdPartyDataProvider>
-              <LegacyDataField title="Inferred pathway">
-                <ReactomePathwayList geneId={geneId} />
-              </LegacyDataField>
+              <ReactomePathwayList geneId={geneId} />
             </ThirdPartyDataProvider>,
             document.getElementById(elementId)
           )
