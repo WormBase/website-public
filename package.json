@@ -33,14 +33,14 @@
   },
   "lint-staged": {
     "client/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --config ./.prettierrc",
-      "prettier --write",
+      "npx prettier --config ./.prettierrc",
+      "npx prettier --write",
       "git add"
     ]
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "npx lint-staged"
     }
   }
 }
