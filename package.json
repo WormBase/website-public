@@ -24,8 +24,23 @@
     "babel-preset-react-app": "9.1.2",
     "graphql": "15.3.0",
     "graphql-tag": "2.10.4",
+    "husky": "^2.4.0",
     "lerna": "^3.22.1",
+    "lint-staged": "^8.1.7",
+    "prettier": "^1.17.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
+  },
+  "lint-staged": {
+    "client/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --config ./.prettierrc",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
