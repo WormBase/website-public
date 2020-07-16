@@ -8,5 +8,5 @@
 
 <input type="text" name="sequence" value="[% c.stash.sequence %]" />
 <input type="submit" value ="Run" /> <br />
- (e.g. <cite><a href="[% align_url _ '?sequence=WP:CE25115' %]">WP:CE25115</a> or <a href="[% align_url _ '?sequence=BP:CBP00571' %]">BP:CBP00571</a></cite>)
+ (e.g. <cite><a href="[% align_url _ '?sequence=CE25115' %]">CE25115</a> or <a href="[% align_url _ '?sequence=CBP00571' %]">CBP00571</a></cite>)
 </form>
