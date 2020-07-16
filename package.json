@@ -32,7 +32,7 @@
     "react-dom": "^16.13.1"
   },
   "lint-staged": {
-    "client/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+    "(client|packages/*|sites/*)/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "npx prettier --config ./.prettierrc",
       "npx prettier --write",
       "git add"
