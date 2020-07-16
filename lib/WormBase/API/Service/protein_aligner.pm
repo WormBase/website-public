@@ -67,6 +67,8 @@ sub run {
 	    push @results, $coloured_data;
     }
 
+    return {msg=>"Sorry, no alignment data available"} unless @results;
+
     return {data=>\@results, sequence=>$peptide_id};
 }
 
