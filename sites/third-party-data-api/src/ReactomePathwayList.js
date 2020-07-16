@@ -23,9 +23,7 @@ const ReactomePathwayList = ({
 
   if (loading) {
     return <p>Loading...</p>;
-  } else if (error) {
-    return <p>{error.message}</p>;
-  } else {
+  } else if (data && data.getReactomePathwayByGene && data.getReactomePathwayByGene.length) {
     return (
       <LegacyDataField title="Inferred pathway">
         <p>Computationally inferred pathways provided by{' '}
@@ -44,6 +42,8 @@ const ReactomePathwayList = ({
         </ul>
       </LegacyDataField>
     );
+  } else {
+    return <p />;
   }
 };
 
