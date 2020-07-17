@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const LegacyDataField = ({title, children}) => (
+const LegacyDataField = ({ title, children }) => (
   <div className="field">
-    <div className="field-title">
-      {title}
-    </div>
-    <div className="field-content">
-      {children}
-    </div>
+    <div className="field-title">{title}:</div>
+    <div className="field-content">{children}</div>
   </div>
 );
 
