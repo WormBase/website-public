@@ -574,10 +574,10 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
 
   return (
     <div className={classes.container}>
-      <span className={classes.displayed_data_info}>
+      <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
         <CsvPheno data={data} WBid={WBid} tableType={tableType} />
-      </span>
+      </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
           <tr>
