@@ -29,8 +29,6 @@ const CsvPheno = ({ data, WBid, tableType }) => {
     'Strain',
   ]
 
-  const objKeysOfTag = ['class', 'id', 'label', 'taxonomy']
-
   const generateHeader = (commonPart, changeablePartsArr) =>
     changeablePartsArr.map((changeablePart) => {
       const dotNotationToBeHeader = `${commonPart}.${changeablePart}`
@@ -42,20 +40,23 @@ const CsvPheno = ({ data, WBid, tableType }) => {
 
   const headers = [
     // phenotype
-    ...generateHeader('phenotype', objKeysOfTag),
+    { label: 'phenotype', key: 'phenotype' },
 
     // entity
     { label: 'entity', key: 'entity' },
 
     // evidence
     ...generateHeader('evidence.Allele.evidence', objKeysOfAllele),
-    ...generateHeader('evidence.Allele.text', objKeysOfTag),
+    { label: 'evidence.Allele.text', key: 'evidence.Allele.text' },
     ...generateHeader('evidence.RNAi.evidence', objKeysOfRNAi),
-    ...generateHeader('evidence.RNAi.text', objKeysOfTag),
+    { label: 'evidence.RNAi.text', key: 'evidence.RNAi.text' },
   ]
 
   const processedData = data.map((d) => {
     const copyOfD = cloneDeep(d)
+
+    // Handling 'phenotype'
+    copyOfD.phenotype = `${copyOfD.phenotype.label}[${copyOfD.phenotype.id}]`
 
     // Handling 'entity'
     if (copyOfD.entity === null) {
@@ -71,8 +72,13 @@ const CsvPheno = ({ data, WBid, tableType }) => {
 
     // Handling 'evidence'
     const keyOfEvidence = Object.keys(copyOfD.evidence)[0] // 'Allele' or 'RNAi'
-    const collectionOfEvidences = copyOfD.evidence[keyOfEvidence].evidence
 
+    const evidenceText = copyOfD.evidence[keyOfEvidence].text
+    copyOfD.evidence[
+      keyOfEvidence
+    ].text = `${evidenceText.label}[${evidenceText.id}]`
+
+    const collectionOfEvidences = copyOfD.evidence[keyOfEvidence].evidence
     Object.entries(collectionOfEvidences).forEach(([key, value]) => {
       const specificEvidence = collectionOfEvidences[key]
       if (typeof specificEvidence[0] === 'object') {
