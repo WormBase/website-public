@@ -3,30 +3,33 @@ import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 
 const CsvPhenoBI = ({ data, WBid, tableType }) => {
-  const headers = [
-    // phenotype
-    { label: 'phenotype.id', key: 'phenotype.id' },
-    { label: 'phenotype.label', key: 'phenotype.label' },
-    { label: 'phenotype.class', key: 'phenotype.class' },
-    { label: 'phenotype.taxonomy', key: 'phenotype.taxonomy' },
+  const generateHeaders = (labelAndKeyArr) =>
+    labelAndKeyArr.map((lk) => {
+      return {
+        label: lk,
+        key: lk,
+      }
+    })
 
-    // interactions
-    { label: 'interactions', key: 'interactions' },
-
-    // interaction_type
-    { label: 'interaction_type', key: 'interaction_type' },
-
-    // citations
-    { label: 'citations', key: 'citations' },
+  const toBeHeaderArr = [
+    'phenotype',
+    'interactions',
+    'interaction_type',
+    'citations',
   ]
+
+  const headers = generateHeaders(toBeHeaderArr)
 
   const processedData = data.map((d) => {
     const copyOfD = cloneDeep(d)
+
+    copyOfD.phenotype = `${copyOfD.phenotype.label}[${copyOfD.phenotype.id}]`
 
     const separetedInteractionsArr = copyOfD.interactions.map(
       (i) => `${i.label}[${i.id}]`
     )
     copyOfD.interactions = separetedInteractionsArr.join(';')
+
     const separetedCitationssArr = copyOfD.citations.map((c) =>
       c.length === 0 ? '' : `${c[0].label}[${c[0].id}]`
     )
