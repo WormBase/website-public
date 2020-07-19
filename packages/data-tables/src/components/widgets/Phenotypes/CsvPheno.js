@@ -59,9 +59,7 @@ const CsvPheno = ({ data, WBid, tableType }) => {
     copyOfD.phenotype = `${copyOfD.phenotype.label}[${copyOfD.phenotype.id}]`
 
     // Handling 'entity'
-    if (copyOfD.entity === null) {
-      copyOfD.entity = 'N/A'
-    } else {
+    if (copyOfD.entity !== null) {
       const keyOfEntity = Object.keys(copyOfD.entity)
       const arrOfEntityString = copyOfD.entity[keyOfEntity].map(
         (c) =>
