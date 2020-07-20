@@ -1,7 +1,7 @@
 {
   "name": "@wormbase/data-tables",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@material-ui/core": "^4.10.1",
     "@material-ui/icons": "^4.9.1",
