@@ -23,7 +23,7 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Table = require('../../packages/table-storybook/lib/components/widgets/Phenotypes/PhenotypeByInteraction');
+var Table = require('../../packages/table-storybook/lib/components/widgets/Phenotypes/PhenotypeByInteraction').default;
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;
