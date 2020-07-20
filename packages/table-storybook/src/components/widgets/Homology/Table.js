@@ -10,6 +10,8 @@ import {
   usePagination,
   useTable,
 } from 'react-table'
+import TsvBlastp from './tsv/TsvBlastp'
+import TsvOrthologs from './tsv/TsvOrthologs'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -431,6 +433,16 @@ const Table = ({ columns, data, WBid, tableType }) => {
     return null
   }
 
+  const selectTsv = (tableType) => {
+    if (tableType === 'best_blastp_matches' || tableType === 'blastp_details') {
+      return <TsvBlastp data={data} WBid={WBid} tableType={tableType} />
+    }
+    if (tableType === 'nematode_orthologs' || tableType === 'other_orthologs') {
+      return <TsvOrthologs data={data} WBid={WBid} tableType={tableType} />
+    }
+    return null
+  }
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -476,6 +488,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
+        {selectTsv(tableType)}
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
