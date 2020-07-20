@@ -23,6 +23,7 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+var Table = require('../../packages/table-storybook/lib/components/widgets/Phenotypes/PhenotypeByInteraction');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;
@@ -3281,6 +3282,14 @@ var Scrolling = (function(){
       });
     }
 
+    function buildDataTable(elementId) {
+      if (elementId === 'table_phenotype_by_interaction') {
+        ReactDOM.render(
+          <Table WBid='WBGene00000904' tableType='phenotype_by_interaction' />,
+          document.getElementById(elementId)
+        )
+      }
+    }
 
     var Plugin = (function(){
       var pluginsLoaded = new Array(),
@@ -3544,6 +3553,7 @@ var Scrolling = (function(){
       partitioned_table: partitioned_table,         // augment to a datatable setting, when table rows are partitioned by certain attributes
       tooltipInit: tooltipInit,                     // initalize tooltip
       renderWidget: renderWidget,                   // render widget component
+      buildDataTable: buildDataTable,
       renderGORibbon: renderGORibbon,             // render GO ribbon
       renderVariationSequence: renderVariationSequence, // render the sequence (context) in molecular details widget on a variation page
       renderVariationConceptualTranslation: renderVariationConceptualTranslation, // render conceptual translation on variation page
