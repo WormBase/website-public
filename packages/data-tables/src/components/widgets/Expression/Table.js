@@ -10,6 +10,12 @@ import {
   usePagination,
   useTable,
 } from 'react-table'
+import TsvAnatomyFn from './tsv/TsvAnatomyFn'
+import TsvDataCtrl from './tsv/TsvDataCtrl'
+import TsvDataTable from './tsv/TsvDataTable'
+import TsvExpCluster from './tsv/TsvExpCluster'
+import TsvExpProfGraphs from './tsv/TsvExpProfGraphs'
+import TsvExpressed from './tsv/TsvExpressed'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -621,6 +627,32 @@ const Table = ({ columns, data, WBid, tableType }) => {
     return null
   }
 
+  const selectTsv = (tableType) => {
+    if (
+      ['expressed_in', 'expressed_during', 'subcellular_localization'].includes(
+        tableType
+      )
+    ) {
+      return <TsvExpressed data={data} WBid={WBid} tableType={tableType} />
+    }
+    if (tableType === 'expression_profiling_graphs') {
+      return <TsvExpProfGraphs data={data} WBid={WBid} tableType={tableType} />
+    }
+    if (tableType === 'expression_cluster') {
+      return <TsvExpCluster data={data} WBid={WBid} tableType={tableType} />
+    }
+    if (tableType === 'anatomy_function') {
+      return <TsvAnatomyFn data={data} WBid={WBid} tableType={tableType} />
+    }
+    if (tableType === 'fpkm_expression_summary_ls' && data[0]?.project_info) {
+      return <TsvDataTable data={data} WBid={WBid} tableType={tableType} />
+    }
+    if (tableType === 'fpkm_expression_summary_ls') {
+      return <TsvDataCtrl data={data} WBid={WBid} tableType={tableType} />
+    }
+    return null
+  }
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -666,6 +698,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
+        {selectTsv(tableType)}
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
