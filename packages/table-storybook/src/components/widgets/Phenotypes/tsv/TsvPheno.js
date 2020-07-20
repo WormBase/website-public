@@ -1,6 +1,7 @@
 import React from 'react'
 import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
+import { generateDerivedHeaders } from '../../../../util/tsvHelper'
 
 const CsvPheno = ({ data, WBid, tableType }) => {
   const objKeysOfAllele = [
@@ -29,15 +30,6 @@ const CsvPheno = ({ data, WBid, tableType }) => {
     'Strain',
   ]
 
-  const generateHeader = (commonPart, changeablePartsArr) =>
-    changeablePartsArr.map((changeablePart) => {
-      const dotNotationToBeHeader = `${commonPart}.${changeablePart}`
-      return {
-        label: dotNotationToBeHeader,
-        key: dotNotationToBeHeader,
-      }
-    })
-
   const headers = [
     // phenotype
     { label: 'phenotype', key: 'phenotype' },
@@ -46,9 +38,9 @@ const CsvPheno = ({ data, WBid, tableType }) => {
     { label: 'entity', key: 'entity' },
 
     // evidence
-    ...generateHeader('evidence.Allele.evidence', objKeysOfAllele),
+    ...generateDerivedHeaders('evidence.Allele.evidence', objKeysOfAllele),
     { label: 'evidence.Allele.text', key: 'evidence.Allele.text' },
-    ...generateHeader('evidence.RNAi.evidence', objKeysOfRNAi),
+    ...generateDerivedHeaders('evidence.RNAi.evidence', objKeysOfRNAi),
     { label: 'evidence.RNAi.text', key: 'evidence.RNAi.text' },
   ]
 
