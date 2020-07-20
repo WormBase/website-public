@@ -29,6 +29,8 @@ const TableFilterComboBox = ({
     highlightedIndex,
     getItemProps,
     selectItem,
+    openMenu,
+    closeMenu,
   } = useCombobox({
     inputValue,
     items: getFilteredItems(items),
@@ -73,7 +75,15 @@ const TableFilterComboBox = ({
         ))}
         <div {...getComboboxProps()}>
           <input
-            {...getInputProps(getDropdownProps({preventKeyAction: isOpen}))}
+            {...getInputProps(getDropdownProps({
+              onFocus: openMenu,
+              onBlur: closeMenu,
+              onKeyDown: (event) => {
+                if (event.key === 'Enter' && highlightedIndex === -1 && inputValue) {
+                  selectItem(inputValue);
+                }
+              }
+            }))}
           />
           <button {...getToggleButtonProps()} aria-label={'toggle menu'}>
             &#8595;
