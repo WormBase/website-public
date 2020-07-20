@@ -11,7 +11,7 @@ import {
   usePagination,
   useTable,
 } from 'react-table'
-import CsvPheno from './CsvPheno'
+import TsvPheno from './tsv/TsvPheno'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -576,7 +576,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
-        <CsvPheno data={data} WBid={WBid} tableType={tableType} />
+        <TsvPheno data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>

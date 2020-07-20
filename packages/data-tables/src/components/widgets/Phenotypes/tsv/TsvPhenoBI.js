@@ -1,16 +1,9 @@
 import React from 'react'
 import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
+import { generateHeaders } from '../../../../util/tsvHelper'
 
-const CsvPhenoBI = ({ data, WBid, tableType }) => {
-  const generateHeaders = (labelAndKeyArr) =>
-    labelAndKeyArr.map((lk) => {
-      return {
-        label: lk,
-        key: lk,
-      }
-    })
-
+const TsvPhenoBI = ({ data, WBid, tableType }) => {
   const toBeHeaderArr = [
     'phenotype',
     'interactions',
@@ -39,19 +32,15 @@ const CsvPhenoBI = ({ data, WBid, tableType }) => {
   })
 
   return (
-    <div>
-      <div>
-        <CSVLink
-          data={processedData}
-          headers={headers}
-          separator={'\t'}
-          filename={`${WBid}_${tableType}.tsv`}
-        >
-          Save table as TSV
-        </CSVLink>
-      </div>
-    </div>
+    <CSVLink
+      data={processedData}
+      headers={headers}
+      separator={'\t'}
+      filename={`${WBid}_${tableType}.tsv`}
+    >
+      Save table as TSV
+    </CSVLink>
   )
 }
 
-export default CsvPhenoBI
+export default TsvPhenoBI

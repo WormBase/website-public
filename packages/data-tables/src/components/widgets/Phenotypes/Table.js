@@ -10,7 +10,7 @@ import {
   usePagination,
   useTable,
 } from 'react-table'
-import CsvPhenoBI from './CsvPhenoBI'
+import TsvPhenoBI from './tsv/TsvPhenoBI'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -439,7 +439,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
-        <CsvPhenoBI data={data} WBid={WBid} tableType={tableType} />
+        <TsvPhenoBI data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
