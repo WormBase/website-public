@@ -1,24 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useCombobox, useMultipleSelection } from 'downshift';
 
 const TableFilterComboBox = ({
   options
 }) => {
   const [inputValue, setInputValue] = useState('')
-  const items = options['food'];
+  const items = useMemo(() => {
+    if (inputValue) {
+      const [, filterName] = inputValue.match(/^(.+?) : (.+)?/) || []
+      return (options[filterName] || []).map (item => `${filterName} : ${item}`)
+    } else {
+      return Object.keys(options)
+    }
+  }, [options, inputValue])
   const {
     getSelectedItemProps,
     getDropdownProps,
     addSelectedItem,
     removeSelectedItem,
     selectedItems,
-  } = useMultipleSelection({initialSelectedItems: [items[0], items[1]]})
-  const getFilteredItems = items =>
-    items.filter(
+  } = useMultipleSelection({})
+  const getFilteredItems = items => {
+    const [, inputValueSuffix = ''] = inputValue.match(/^.+? : (.+)?/) || []
+    return items.filter(
       item =>
         selectedItems.indexOf(item) < 0 &&
-        item.toLowerCase().startsWith(inputValue.toLowerCase()),
+        item.toLowerCase().startsWith(inputValueSuffix.toLowerCase()),
     )
+  }
+
   const {
     isOpen,
     getToggleButtonProps,
@@ -46,9 +56,19 @@ const TableFilterComboBox = ({
         case useCombobox.stateChangeTypes.InputBlur:
         case useCombobox.stateChangeTypes.FunctionSelectItem:
           if (selectedItem) {
-            setInputValue('')
-            addSelectedItem(selectedItem)
-            selectItem(null)
+            const [, filterName, , filterValue] = selectedItem.match(/^(.+?)( : (.+))?$/) || []
+            console.log([selectedItem, filterName, filterValue]);
+            if (filterName && filterValue) {
+              setInputValue('')
+              addSelectedItem(selectedItem)
+              selectItem(null)
+            } else if (filterName) {
+              setInputValue(`${filterName} : `)
+            } else {
+              setInputValue('')
+              addSelectedItem(`search : ${selectedItem}`)
+              selectItem(null)
+            }
           }
 
           break
