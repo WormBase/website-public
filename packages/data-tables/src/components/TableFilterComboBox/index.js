@@ -35,6 +35,7 @@ const TableFilterComboBox = ({
     inputValue,
     items: getFilteredItems(items),
     onStateChange: ({inputValue, type, selectedItem}) => {
+      console.log([inputValue, type, selectedItem]);
       switch (type) {
         case useCombobox.stateChangeTypes.InputChange:
           setInputValue(inputValue)
@@ -43,6 +44,7 @@ const TableFilterComboBox = ({
         case useCombobox.stateChangeTypes.InputKeyDownEnter:
         case useCombobox.stateChangeTypes.ItemClick:
         case useCombobox.stateChangeTypes.InputBlur:
+        case useCombobox.stateChangeTypes.FunctionSelectItem:
           if (selectedItem) {
             setInputValue('')
             addSelectedItem(selectedItem)
@@ -90,7 +92,7 @@ const TableFilterComboBox = ({
           </button>
         </div>
       </div>
-      <ul {...getMenuProps()}>
+      <ul {...getMenuProps()} style={{backgroundColor: '#eee'}}>
         {isOpen &&
           getFilteredItems(items).map((item, index) => (
             <li
