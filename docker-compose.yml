@@ -8,7 +8,7 @@ services:
       - "./proxy/conf.d:/etc/nginx/conf.d"
       - "./logs/nginx:/var/log/nginx"
   website:
-    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS276.1
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS277.5
     init: true
     expose:
       - "5000"
@@ -26,7 +26,11 @@ services:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - JWT_SECRET='${JWT_SECRET}'
   jbrowse:
-    image: gmod/wormbase-jbrowse:WS276
+    image: gmod/wormbase-jbrowse:WS277
+    expose:
+      - "80"
+  jbrowse-protein:
+    image: gmod/wormbase-jbrowse-protein:WS277
     expose:
       - "80"
   upstream-proxy:

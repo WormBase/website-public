@@ -49,7 +49,7 @@ class DownloadButton extends Component {
   );
 
   defaultFileSaveFunc = (content) => {
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([content], { type: 'text/plain' });
     saveAs(blob, this.props.fileName || 'download.txt');
   };
 

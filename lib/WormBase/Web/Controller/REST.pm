@@ -927,7 +927,7 @@ sub widget_GET {
 
 
     # check_cache checks couchdb
-    my $key = join( '_', $class, $widget, $name );  # Cache key - "$class_$widget_$name"
+    my $key = join( '_', 'widget', $class, $widget, $name );  # Cache key - "widget_$class_$widget_$name"
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
 
     if (!$c->config->{skip_datomic} && !@datomic_endpoints) {
@@ -1856,7 +1856,7 @@ sub field_GET {
 
 
     # Cache key - "$class_$field_$name"
-    my $key = join( '_', $class, $field, $name );
+    my $key = join( '_', 'field', $class, $field, $name );
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
 
 

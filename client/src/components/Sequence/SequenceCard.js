@@ -62,10 +62,10 @@ const SequenceCard = (props) => {
                 <SaveIcon className={classes.buttonIcon} fontSize="inherit" />
               </Button>
             )}
-            contentFunc={() => `> ${title}\r\n${sequence}`}
+            contentFunc={() => `>${title}\r\n${sequence}`}
           />
         </Tooltip>
-        <CopyButton text={`> ${title}\r\n${sequence}`} />
+        <CopyButton text={`>${title}\r\n${sequence}`} />
       </CardActions>
       {expand ? (
         <Sequence title={title} sequence={sequence} {...sequenceProps} />

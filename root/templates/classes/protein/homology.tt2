@@ -18,9 +18,14 @@
      END;
 
 
-     WRAPPER $field_block title="Protein Schematic" key="homology_image";
+     WRAPPER $field_block title="Protein Schematic" key="schematic_parameters";
           # image(fields.homology_image.data);
+	 jbrowse_protein_schematic(fields.schematic_parameters.data);
+
+	 WRAPPER toggle title="Legacy Protein Schematics";
            image("/rest/field/protein/" _ object.name.data.id  _ "/rest_homology_image?content-type=image/png");
+	 END;
+
      END;
 
 %]
@@ -39,4 +44,3 @@
     });
   });
 </script>
-
