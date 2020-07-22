@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import TableFilterComboBox from './index';
+import { useTable } from 'react-table'
 import loadData from '../../services/loadData';
 
 export default {
@@ -26,6 +27,9 @@ function flattenRecursive(data, prefix = [], result = {}) {
     return result
   }
 }
+
+const CellDefault = ({value}) => <pre>{JSON.stringify(flattenRecursive(value), null, 2)}</pre>
+// const CellDefault = ({value}) => <span>NA</span>
 
 export const Phenotype = () => {
   const [data, setData] = useState([])
@@ -62,7 +66,67 @@ export const Phenotype = () => {
 
   console.log(options);
 
+  const columns = useMemo(() => ([
+    {accessor: 'phenotype', Header: 'phenotype', Cell: CellDefault},
+    {accessor: 'entity', Header: 'entity', Cell: CellDefault},
+    {accessor: 'evidence', Header: 'evidence', Cell: CellDefault},
+  ]), [])
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data })
+
   return (
-    <TableFilterComboBox options={options} />
+    <div>
+      <TableFilterComboBox options={options} />
+      <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
+       <thead>
+         {headerGroups.map(headerGroup => (
+           <tr {...headerGroup.getHeaderGroupProps()}>
+             {headerGroup.headers.map(column => (
+               <th
+                 {...column.getHeaderProps()}
+                 style={{
+                   borderBottom: 'solid 3px red',
+                   background: 'aliceblue',
+                   color: 'black',
+                   fontWeight: 'bold',
+                 }}
+               >
+                 {column.render('Header')}
+               </th>
+             ))}
+           </tr>
+         ))}
+       </thead>
+       <tbody {...getTableBodyProps()}>
+         {rows.map(row => {
+           prepareRow(row)
+           return (
+             <tr {...row.getRowProps()}>
+               {row.cells.map(cell => {
+                 return (
+                   <td
+                     {...cell.getCellProps()}
+                     style={{
+                       padding: '10px',
+                       border: 'solid 1px gray',
+                       background: 'papayawhip',
+                     }}
+                   >
+                     {cell.render('Cell')}
+                   </td>
+                 )
+               })}
+             </tr>
+           )
+         })}
+       </tbody>
+      </table>
+    </div>
   )
 }
