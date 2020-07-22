@@ -27,10 +27,10 @@ function flattenRecursive(data, prefix = [], result = {}) {
   }
 }
 
-export const PhenotypeByInteraction = () => {
+export const Phenotype = () => {
   const [data, setData] = useState([])
   const wbId = 'WBGene00015146'
-  const tableType = 'phenotype_by_interaction'
+  const tableType = 'phenotype_flat'
 
   useEffect(() => {
     loadData(wbId, tableType).then((json) => {
@@ -50,7 +50,7 @@ export const PhenotypeByInteraction = () => {
       const itemflat = flattenRecursive(item)
       Object.keys(itemflat).forEach((key, i) => {
         if (!result[key]) {
-          result[key] = []
+          result[key] = ['(Empty)']
         }
         if (result[key].indexOf(itemflat[key]) === -1) {
           result[key].push(itemflat[key])
