@@ -2,8 +2,8 @@
 
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
-CATALYST_PORT ?= 5000
-WEBPACK_SERVER_PORT ?= 3000
+export CATALYST_PORT ?= 5000
+export WEBPACK_SERVER_PORT ?= 3000
 
 export GOOGLE_CLIENT_ID=$(shell cat credentials/google/client_id.txt)
 export GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
