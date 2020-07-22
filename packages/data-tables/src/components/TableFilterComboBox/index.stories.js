@@ -30,7 +30,6 @@ function flattenRecursive(data, prefix = [], result = {}) {
 }
 
 const CellDefault = ({value}) => <pre>{JSON.stringify(flattenRecursive(value), null, 2)}</pre>
-// const CellDefault = ({value}) => <span>NA</span>
 
 export const Phenotype = () => {
   const [data, setData] = useState([])
@@ -73,19 +72,21 @@ export const Phenotype = () => {
     {accessor: 'evidence', Header: 'evidence', Cell: CellDefault},
   ]), [])
 
+  const [filters, setFilters] = useState([])
+
   const filterTypes = React.useMemo(
     () => ({
       testGlobalFilter: (rows,b,c) => {
-        const filters = [
-          {
-            key: 'evidence.RNAi.text.id',
-            value: 'WBRNAi00073492',
-          },
-          {
-            key: 'phenotype.id',
-            value: 'WBPhenotype:0000688',
-          },
-        ]
+        // const filters = [
+        //   {
+        //     key: 'evidence.RNAi.text.id',
+        //     value: 'WBRNAi00073492',
+        //   },
+        //   {
+        //     key: 'phenotype.id',
+        //     value: 'WBPhenotype:0000688',
+        //   },
+        // ]
         return rows.filter(({values}) => {
           return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
             return isMatchSoFar && (get(values, key.split('.')) === filterValue)
@@ -93,7 +94,7 @@ export const Phenotype = () => {
         });
       }
     }),
-    []
+    [filters]
   )
 
   const {
@@ -114,7 +115,8 @@ export const Phenotype = () => {
 
   return (
     <div>
-      <TableFilterComboBox options={options} />
+      <TableFilterComboBox options={options} onChange={setFilters} />
+      <pre>{JSON.stringify(filters, null, 2)}</pre>
       <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
        <thead>
          {headerGroups.map(headerGroup => (
