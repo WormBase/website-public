@@ -1,14 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import Table from './Table'
-import loadData from '../../../services/loadData'
 
-const PhenotypeByInteraction = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => setData(json.data))
-  }, [WBid, tableType])
-
+const PhenotypeByInteraction = ({ data }) => {
   const showInteractions = (value) => {
     return value.map((detail, idx) => (
       <ul key={idx}>
@@ -59,7 +52,7 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <Table columns={columns} data={data} />
     </>
   )
 }

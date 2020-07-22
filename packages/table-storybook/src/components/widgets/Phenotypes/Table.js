@@ -10,7 +10,6 @@ import {
   usePagination,
   useTable,
 } from 'react-table'
-import TsvPhenoBI from './tsv/TsvPhenoBI'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -145,7 +144,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const Table = ({ columns, data, WBid, tableType }) => {
+const Table = ({ columns, data }) => {
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
@@ -439,7 +438,6 @@ const Table = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
-        <TsvPhenoBI data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
