@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import get from 'lodash/get'
 import TableFilterComboBox from './index';
-import { useTable } from 'react-table'
+import { useTable, useFilters, useGlobalFilter } from 'react-table'
 import loadData from '../../services/loadData';
 
 export default {
@@ -72,13 +73,44 @@ export const Phenotype = () => {
     {accessor: 'evidence', Header: 'evidence', Cell: CellDefault},
   ]), [])
 
+  const filterTypes = React.useMemo(
+    () => ({
+      testGlobalFilter: (rows,b,c) => {
+        const filters = [
+          {
+            key: 'evidence.RNAi.text.id',
+            value: 'WBRNAi00073492',
+          },
+          {
+            key: 'phenotype.id',
+            value: 'WBPhenotype:0000688',
+          },
+        ]
+        return rows.filter(({values}) => {
+          return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
+            return isMatchSoFar && (get(values, key.split('.')) === filterValue)
+          }, true)
+        });
+      }
+    }),
+    []
+  )
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data })
+  } = useTable({
+    columns,
+    data,
+    filterTypes,
+    globalFilter: 'testGlobalFilter',
+    initialState: {
+      globalFilter: 'testGlobalFilter',
+    },
+  }, useGlobalFilter)
 
   return (
     <div>
