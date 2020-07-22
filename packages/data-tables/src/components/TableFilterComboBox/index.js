@@ -91,12 +91,21 @@ const TableFilterComboBox = ({
 
   return (
     <div>
-      <label {...getLabelProps()}>Choose some elements:</label>
-      <div>
+      <label {...getLabelProps()}>Filering by:</label>
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        border: '1px solid #ccc',
+      }}>
         {selectedItems.map((selectedItem, index) => (
-          <span
+          <div
             key={`selected-item-${index}`}
             {...getSelectedItemProps({selectedItem, index})}
+            style={{
+              padding: 5,
+              margin: 5,
+              backgroundColor: '#eee',
+            }}
           >
             {selectedItem}
             <span
@@ -104,9 +113,14 @@ const TableFilterComboBox = ({
             >
               &#10005;
             </span>
-          </span>
+          </div>
         ))}
-        <div {...getComboboxProps()}>
+        <div {...getComboboxProps()}
+          style={{
+            flex: '1 0 500px',
+            padding: 5,
+          }}
+        >
           <input
             {...getInputProps(getDropdownProps({
               onFocus: openMenu,
@@ -117,6 +131,9 @@ const TableFilterComboBox = ({
                 }
               }
             }))}
+            style={{
+              width: 'calc(100% - 40px)',
+            }}
           />
           <button {...getToggleButtonProps()} aria-label={'toggle menu'}>
             &#8595;
