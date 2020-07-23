@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useCombobox, useMultipleSelection } from 'downshift';
+import matchSorter from 'match-sorter'
 
 function parseSelectedItem(selectedItem) {
   let [filterName, filterValue] = selectedItem.split(' : ', 2).map(value => value.trim())
@@ -41,11 +42,7 @@ const TableFilterComboBox = ({
     },
   })
   const getFilteredItems = items => {
-    return items.filter(
-      item =>
-        selectedItems.indexOf(item) < 0 &&
-        item.toLowerCase().startsWith(inputValue.toLowerCase()),
-    )
+    return matchSorter(items, inputValue);
   }
 
   const {
