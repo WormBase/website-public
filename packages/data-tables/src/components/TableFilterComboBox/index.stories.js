@@ -42,13 +42,6 @@ export const Phenotype = () => {
     })
   }, [wbId, tableType])
 
-  const attributeKeysAll = []
-  console.log(flattenRecursive({a: 1}));
-  console.log(flattenRecursive({a: [2, 4]}));
-  console.log(flattenRecursive({a: [2, null]}));
-  console.log(data[0]);
-  console.log(flattenRecursive(data[0]));
-
   const options = useMemo(() => {
     return data.reduce((result, item) => {
       const itemflat = flattenRecursive(item)
@@ -63,8 +56,6 @@ export const Phenotype = () => {
       return result;
     }, {})
   }, [data])
-
-  console.log(options);
 
   const columns = useMemo(() => ([
     {accessor: 'phenotype', Header: 'phenotype', Cell: CellDefault},

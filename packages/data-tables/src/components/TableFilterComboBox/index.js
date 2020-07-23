@@ -68,7 +68,6 @@ const TableFilterComboBox = ({
         case useCombobox.stateChangeTypes.FunctionSelectItem:
           if (selectedItem) {
             const [, filterName, , filterValue] = selectedItem.match(/^(.+?)( : (.+))?$/) || []
-            console.log([selectedItem, filterName, filterValue]);
             if (filterName && filterValue) {
               setInputValue('')
               addSelectedItem(selectedItem)
