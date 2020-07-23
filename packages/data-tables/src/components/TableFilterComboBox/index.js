@@ -53,7 +53,6 @@ const TableFilterComboBox = ({
       priorityItems: [],
       otherItems: [],
     })
-    console.log({priorityItems, otherItems});
     return [...priorityItems, ...otherItems]
   }
 
