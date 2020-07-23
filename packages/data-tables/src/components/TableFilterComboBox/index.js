@@ -42,7 +42,7 @@ const TableFilterComboBox = ({
     },
   })
   const getFilteredItems = items => {
-    const {priorityItems, otherItems} = matchSorter(items, inputValue).reduce((result, item) => {
+    const {priorityItems, otherItems} = matchSorter(items, inputValue.trim()).reduce((result, item) => {
       if (item.match(/\(.+\)$/)) {
         result.priorityItems.push(item)
       } else {
