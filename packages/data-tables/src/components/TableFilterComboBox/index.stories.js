@@ -42,9 +42,14 @@ export const Phenotype = () => {
     })
   }, [wbId, tableType])
 
+  const dataFlat = useMemo(() => {
+    return data.map((item) => {
+      return flattenRecursive(item)
+    }, {})
+  }, [data])
+
   const options = useMemo(() => {
-    return data.reduce((result, item) => {
-      const itemflat = flattenRecursive(item)
+    return dataFlat.reduce((result, itemflat) => {
       Object.keys(itemflat).forEach((key, i) => {
         if (!result[key]) {
           result[key] = ['(non-empty)', '(empty)']
@@ -55,7 +60,7 @@ export const Phenotype = () => {
       })
       return result;
     }, {})
-  }, [data])
+  }, [dataFlat])
 
   const columns = useMemo(() => ([
     {accessor: 'phenotype', Header: 'phenotype', Cell: CellDefault},
@@ -86,12 +91,16 @@ export const Phenotype = () => {
           }
           return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
             if (isMatchSoFar) {
-              const value = get(values, key.split('.'));
-              return (
-                value === filterValue ||
-                (filterValue === '(empty)' && isEmpty(value)) ||
-                (filterValue === '(non-empty)' && !isEmpty(value))
-              )
+              if (key === 'search') {
+                return true
+              } else {
+                const value = get(values, key.split('.'));
+                return (
+                  value === filterValue ||
+                  (filterValue === '(empty)' && isEmpty(value)) ||
+                  (filterValue === '(non-empty)' && !isEmpty(value))
+                )
+              }
             } else {
               return false;
             }
