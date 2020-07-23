@@ -9,7 +9,11 @@ const TableFilterComboBox = ({
   const items = useMemo(() => {
     if (inputValue) {
       const [, filterName] = inputValue.match(/^(.+?) : (.+)?/) || []
-      return (options[filterName] || []).map (item => `${filterName} : ${item}`)
+      if (filterName) {
+        return (options[filterName] || []).map (item => `${filterName} : ${item}`)
+      } else {
+        return Object.keys(options)
+      }
     } else {
       return Object.keys(options)
     }
@@ -32,11 +36,10 @@ const TableFilterComboBox = ({
     },
   })
   const getFilteredItems = items => {
-    const [, inputValueSuffix = ''] = inputValue.match(/^.+? : (.+)?/) || []
     return items.filter(
       item =>
         selectedItems.indexOf(item) < 0 &&
-        item.toLowerCase().startsWith(inputValueSuffix.toLowerCase()),
+        item.toLowerCase().startsWith(inputValue.toLowerCase()),
     )
   }
 
