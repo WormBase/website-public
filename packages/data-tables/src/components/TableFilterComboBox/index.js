@@ -82,20 +82,28 @@ const TableFilterComboBox = ({
         case useCombobox.stateChangeTypes.InputKeyDownEnter:
         case useCombobox.stateChangeTypes.ItemClick:
         case useCombobox.stateChangeTypes.InputBlur:
-        case useCombobox.stateChangeTypes.FunctionSelectItem:
           if (selectedItem) {
             const { filterName, filterValue } =  parseSelectedItem(selectedItem)
             if (filterName && filterValue) {
               setInputValue('')
               addSelectedItem(selectedItem)
               selectItem(null)
-            } else if (filterName) {
-              setInputValue(`${filterName} : `)
             } else {
-              setInputValue('')
-              addSelectedItem(`search : ${selectedItem}`)
-              selectItem(null)
+              setInputValue(`${filterName} : `)
             }
+          }
+
+          break
+        case useCombobox.stateChangeTypes.FunctionSelectItem:
+          if (selectedItem) {
+            setInputValue('')
+            const { filterName, filterValue } =  parseSelectedItem(selectedItem)
+            if (filterName && filterValue ) {
+              addSelectedItem(selectedItem)
+            } else {
+              addSelectedItem(`search : ${selectedItem}`)
+            }
+            selectItem(null)
           }
 
           break
