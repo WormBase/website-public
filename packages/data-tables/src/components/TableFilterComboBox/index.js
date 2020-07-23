@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useCombobox, useMultipleSelection } from 'downshift';
 
-function parseInputValue(inputValue) {
-  let [filterName, filterValue] = inputValue.split(' : ', 2).map(value => value.trim());
+function parseSelectedItem(selectedItem) {
+  let [filterName, filterValue] = selectedItem.split(' : ', 2).map(value => value.trim())
   return {
     filterName,
     filterValue,
@@ -15,13 +15,9 @@ const TableFilterComboBox = ({
 }) => {
   const [inputValue, setInputValue] = useState('')
   const items = useMemo(() => {
-    if (inputValue) {
-      const [, filterName] = inputValue.match(/^(.+?) : (.+)?/) || []
-      if (filterName) {
-        return (options[filterName] || []).map (item => `${filterName} : ${item}`)
-      } else {
-        return Object.keys(options)
-      }
+    const { filterName } = inputValue.match(/ : /) ? parseSelectedItem(inputValue) : {}
+    if (filterName) {
+      return (options[filterName] || []).map (item => `${filterName} : ${item}`)
     } else {
       return Object.keys(options)
     }
@@ -35,7 +31,7 @@ const TableFilterComboBox = ({
   } = useMultipleSelection({
     onSelectedItemsChange: ({selectedItems}) => {
       onChange && onChange(selectedItems.map(item => {
-        const [key, value] = item.split(' : ', 2);
+        const {filterName: key, filterValue: value} = parseSelectedItem(item);
         return {
           key,
           value,
@@ -78,7 +74,7 @@ const TableFilterComboBox = ({
         case useCombobox.stateChangeTypes.InputBlur:
         case useCombobox.stateChangeTypes.FunctionSelectItem:
           if (selectedItem) {
-            const { filterName, filterValue } =  parseInputValue(selectedItem)
+            const { filterName, filterValue } =  parseSelectedItem(selectedItem)
             if (filterName && filterValue) {
               setInputValue('')
               addSelectedItem(selectedItem)
