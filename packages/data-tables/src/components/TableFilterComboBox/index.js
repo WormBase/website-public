@@ -27,6 +27,7 @@ const TableFilterComboBox = ({
     getDropdownProps,
     addSelectedItem,
     removeSelectedItem,
+    reset: resetMultiple,
     selectedItems,
   } = useMultipleSelection({
     onSelectedItemsChange: ({selectedItems}) => {
@@ -56,6 +57,7 @@ const TableFilterComboBox = ({
     getComboboxProps,
     highlightedIndex,
     getItemProps,
+    reset: resetCombobox,
     selectItem,
     openMenu,
     closeMenu,
@@ -138,9 +140,16 @@ const TableFilterComboBox = ({
               }
             }))}
             style={{
-              width: 'calc(100% - 40px)',
+              width: 'calc(100% - 60px)',
             }}
           />
+          <button onClick={() => {
+            setInputValue('')
+            resetCombobox()
+            resetMultiple()
+          }}>
+            &#10005;
+          </button>
           <button {...getToggleButtonProps()} aria-label={'toggle menu'}>
             &#8595;
           </button>
