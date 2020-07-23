@@ -27,7 +27,7 @@ const TableFilterComboBox = ({
   } = useMultipleSelection({
     onSelectedItemsChange: ({selectedItems}) => {
       onChange && onChange(selectedItems.map(item => {
-        const [key, value] = item.split(' : ');
+        const [key, value] = item.split(' : ', 2);
         return {
           key,
           value,
