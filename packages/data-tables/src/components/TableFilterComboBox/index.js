@@ -1,6 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { useCombobox, useMultipleSelection } from 'downshift';
 
+function parseInputValue(inputValue) {
+  let [filterName, filterValue] = inputValue.split(' : ', 2).map(value => value.trim());
+  return {
+    filterName,
+    filterValue,
+  }
+}
+
 const TableFilterComboBox = ({
   options,
   onChange,
@@ -70,7 +78,7 @@ const TableFilterComboBox = ({
         case useCombobox.stateChangeTypes.InputBlur:
         case useCombobox.stateChangeTypes.FunctionSelectItem:
           if (selectedItem) {
-            const [, filterName, , filterValue] = selectedItem.match(/^(.+?)( : (.+))?$/) || []
+            const { filterName, filterValue } =  parseInputValue(selectedItem)
             if (filterName && filterValue) {
               setInputValue('')
               addSelectedItem(selectedItem)
