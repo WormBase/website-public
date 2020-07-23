@@ -47,7 +47,7 @@ export const Phenotype = () => {
       const itemflat = flattenRecursive(item)
       Object.keys(itemflat).forEach((key, i) => {
         if (!result[key]) {
-          result[key] = ['(Empty)']
+          result[key] = ['(non-empty)', '(empty)']
         }
         if (result[key].indexOf(itemflat[key]) === -1) {
           result[key].push(itemflat[key])
@@ -79,8 +79,22 @@ export const Phenotype = () => {
         //   },
         // ]
         return rows.filter(({values}) => {
+          const isEmpty = (value) => {
+            return (
+              !value && value !== 0
+            )
+          }
           return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
-            return isMatchSoFar && (get(values, key.split('.')) === filterValue)
+            if (isMatchSoFar) {
+              const value = get(values, key.split('.'));
+              return (
+                value === filterValue ||
+                (filterValue === '(empty)' && isEmpty(value)) ||
+                (filterValue === '(non-empty)' && !isEmpty(value))
+              )
+            } else {
+              return false;
+            }
           }, true)
         });
       }
