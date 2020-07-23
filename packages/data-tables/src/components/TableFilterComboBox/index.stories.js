@@ -83,7 +83,7 @@ export const Phenotype = () => {
         //     value: 'WBPhenotype:0000688',
         //   },
         // ]
-        return rows.filter(({values}) => {
+        return rows.filter(({values, index}) => {
           const isEmpty = (value) => {
             return (
               !value && value !== 0
@@ -92,7 +92,9 @@ export const Phenotype = () => {
           return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
             if (isMatchSoFar) {
               if (key === 'search') {
-                return true
+                return Object.values(dataFlat[index]).reduce((any, value) => {
+                  return any || value === filterValue
+                }, false)
               } else {
                 const value = get(values, key.split('.'));
                 return (
@@ -108,7 +110,7 @@ export const Phenotype = () => {
         });
       }
     }),
-    [filters]
+    [filters, dataFlat]
   )
 
   const {
