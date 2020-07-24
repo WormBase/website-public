@@ -4,14 +4,12 @@ import {
   useBlockLayout,
   useFilters,
   useGlobalFilter,
-  useGroupBy,
   useResizeColumns,
   useSortBy,
   useExpanded,
   usePagination,
   useTable,
 } from 'react-table'
-import TsvPheno from './tsv/TsvPheno'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -21,10 +19,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormLabel from '@material-ui/core/FormLabel'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
-import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import FilterListIcon from '@material-ui/icons/FilterList'
+import SortIcon from '@material-ui/icons/Sort'
 
 const useStyles = makeStyles({
   table: {
@@ -41,9 +38,21 @@ const useStyles = makeStyles({
     '& tr:last-child td': {
       borderBottom: 0,
     },
+    '& .is_sorted_even_cell': {
+      backgroundColor: '#d3d6ff',
+    },
+    '& .is_sorted_odd_cell': {
+      backgroundColor: '#e2e5ff',
+    },
+    '& .is_not_sorted_even_cell': {
+      backgroundColor: '#e2e5ff',
+    },
+    '& .is_not_sorted_odd_cell': {
+      backgroundColor: '#fff',
+    },
     '& th,td': {
       margin: 0,
-      padding: '0.6rem 0.3rem',
+      padding: '0.8rem 0.3rem',
       borderBottom: '1px solid #ededed',
       borderRight: '1px solid #ededed',
       position: 'relative',
@@ -53,16 +62,6 @@ const useStyles = makeStyles({
     },
     '& th:last-child,td:last-child': {
       borderRight: 0,
-    },
-    '& tbody tr .is_grouped,tbody tr .is_aggregated': {
-      backgroundColor: '#dedede',
-      borderRight: 'none',
-    },
-    '& tbody tr .is_placeholder': {
-      backgroundColor: '#d3d6ff',
-    },
-    '& tbody tr .is_other': {
-      backgroundColor: '#e2e5ff',
     },
     '& th .resizer': {
       display: 'inline-block',
@@ -84,7 +83,7 @@ const useStyles = makeStyles({
     '& th .column_header': {
       textAlign: 'left',
     },
-    '& th .sort-arrow-icon': {
+    '& th .arrow-icon': {
       fontSize: '1rem',
       marginLeft: 5,
     },
@@ -118,12 +117,6 @@ const useStyles = makeStyles({
     backgroundColor: 'white',
     padding: 5,
   },
-  rows_count: {
-    '& .row-arrow-icon': {
-      fontSize: '1.5rem',
-      marginRight: 10,
-    },
-  },
 })
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
@@ -151,13 +144,13 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
+const Table = ({ columns, data, id }) => {
+  console.log(data)
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
     phentypeLabel: false,
-    entity: false,
-    evidence: false,
+    interaction_type: false,
   })
 
   const sortTypes = useMemo(
@@ -231,127 +224,63 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
     []
   )
 
-  const storeFilterValOfAllele = (data, kArr) => {
-    if (data?.Allele) {
-      kArr.push(data.Allele.text.label)
-
-      if (data.Allele.evidence?.Curator) {
-        kArr.push(data.Allele.evidence.Curator[0].label)
-      }
-      if (data.Allele.evidence?.Paper_evidence) {
-        kArr.push(data.Allele.evidence.Paper_evidence[0].label)
-      }
-      if (data.Allele.evidence?.Remark) {
-        kArr.push(data.Allele.evidence.Remark[0])
-      }
-    }
-  }
-
-  const storeFilterValOfRNAi = (data, kArr) => {
-    if (data?.RNAi) {
-      kArr.push(data.RNAi.text.label)
-
-      if (data.RNAi.evidence?.Genotype) {
-        kArr.push(data.RNAi.evidence.Genotype)
-      }
-      if (data.RNAi.evidence?.Paper_evidence) {
-        kArr.push(data.RNAi.evidence.Paper_evidence.label)
-      }
-      if (data.RNAi.evidence?.Remark) {
-        kArr.push(data.RNAi.evidence.Remark[0])
-      }
-    }
-  }
-
-  const storeFilterValOfOverexpression = (data, kArr) => {
-    kArr.push(data.text.label)
-
-    if (data.evidence?.Curator) {
-      kArr.push(data.evidence.Curator[0].label)
-    }
-    if (data.evidence?.Paper_evidence) {
-      kArr.push(data.evidence.Paper_evidence[0].label)
-    }
-    if (data.evidence?.Remark) {
-      kArr.push(data.evidence.Remark[0])
-    }
-    if (data.evidence?.Caused_by_gene) {
-      kArr.push(data.evidence.Caused_by_gene[0].label)
-    }
-  }
-
-  const storeFilterValOfEntity = (data, kArr) => {
-    if (data) {
-      const key = Object.keys(data)
-      data[key].forEach((e) => {
-        kArr.push(
-          ...[
-            e.pato_evidence.entity_type,
-            e.pato_evidence.entity_term.label,
-            e.pato_evidence.pato_term,
-          ]
-        )
-      })
-    } else {
-      kArr.push('N/A')
-    }
-  }
-
-  const filterTypes = useMemo(
-    () => ({
-      evidenceFilter: (rows, id, filterValue) => {
-        const keyFunc = (row) => {
-          let keyArr = []
-
-          if (row.values[id]?.Transgene) {
-            storeFilterValOfOverexpression(row.values[id].Transgene, keyArr)
-          } else {
-            storeFilterValOfAllele(row.values[id], keyArr)
-            storeFilterValOfRNAi(row.values[id], keyArr)
+  const filterTypes = useMemo(() => {
+    const storeValuesOfNestedObj = (obj, keyArr) => {
+      for (const key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          if (
+            obj[key].class &&
+            obj[key].id &&
+            obj[key].label &&
+            obj[key].taxonomy
+          ) {
+            keyArr.push(obj[key].label)
           }
-
-          return keyArr
+          if (Array.isArray(obj[key]) && typeof obj[key][0] === 'object') {
+            if (
+              obj[key][0].class &&
+              obj[key][0].id &&
+              obj[key][0].label &&
+              obj[key][0].taxonomy
+            ) {
+              keyArr.push(obj[key].map((o) => o.label))
+            } else if (obj[key][0].pato_evidence) {
+              keyArr.push(
+                ...obj[key].map((o) => [
+                  o.pato_evidence.entity_term.label,
+                  o.pato_evidence.entity_type,
+                  o.pato_evidence.pato_term,
+                ])
+              )
+            } else {
+              console.error(
+                'Data is surely array of Object. But it is not Tagtype data.'
+              )
+              console.error(key)
+              console.error(obj[key])
+            }
+          } else {
+            storeValuesOfNestedObj(obj[key], keyArr)
+          }
+        } else {
+          keyArr.push(obj[key])
         }
+      }
+    }
 
-        return matchSorter(rows, filterValue, {
-          keys: [(row) => keyFunc(row)],
-          threshold: matchSorter.rankings.CONTAINS,
-        })
-      },
-
-      entitiesFilter: (rows, id, filterValue) => {
+    return {
+      defaultFilter: (rows, id, filterValue) => {
         const keyFunc = (row) => {
-          let keyArr = []
-
-          storeFilterValOfEntity(row.values[id], keyArr)
-
-          return keyArr
-        }
-
-        return matchSorter(rows, filterValue, {
-          keys: [(row) => keyFunc(row)],
-          threshold: matchSorter.rankings.CONTAINS,
-        })
-      },
-
-      defaultGlobalFilter: (rows, id, filterValue) => {
-        const keyFunc = (row) => {
-          /*
-          id[0] is "phenotype.label",
-          id[1] is "entity",
-          id[2] is "evidence"
-          */
           let keyArr = []
           const rowVals = row.values
-          keyArr.push(rowVals[id[0]])
 
-          storeFilterValOfEntity(rowVals[id[1]], keyArr)
-          if (rowVals[id[2]]?.Transgene) {
-            storeFilterValOfOverexpression(rowVals[id[2]].Transgene, keyArr)
-          } else {
-            storeFilterValOfAllele(rowVals[id[2]], keyArr)
-            storeFilterValOfRNAi(rowVals[id[2]], keyArr)
-          }
+          id.forEach((i) => {
+            if (typeof rowVals[i] === 'object') {
+              storeValuesOfNestedObj(rowVals[i], keyArr)
+            } else {
+              keyArr.push(rowVals[i])
+            }
+          })
 
           return keyArr
         }
@@ -361,9 +290,8 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
           threshold: matchSorter.rankings.CONTAINS,
         })
       },
-    }),
-    []
-  )
+    }
+  }, [])
 
   const defaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
     return (
@@ -380,7 +308,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
 
   const defaultColumn = useMemo(
     () => ({
-      filter: 'text', // Default. Used builtin 'text' filter.
+      filter: 'defaultFilter',
       sortType: 'caseInsensitiveAlphaNumeric',
       Filter: defaultColumnFilter,
       minWidth: 120,
@@ -390,36 +318,10 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
     []
   )
 
-  const getDefaultExpandedRows = (data, threshold) => {
-    const defaultExpandedRows = {}
-    const defaultHidRows = {}
-
-    data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`
-      if (defaultHidRows[key]) {
-        defaultHidRows[key] = ++defaultHidRows[key]
-      } else {
-        defaultHidRows[key] = 1
-      }
-    })
-
-    data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`
-      if (defaultHidRows[key] < threshold) {
-        defaultExpandedRows[key] = true
-      } else {
-        defaultExpandedRows[key] = false
-      }
-    })
-
-    return defaultExpandedRows
-  }
-
   const displayFilterFn = (column) => {
     if (
       (column.id === 'phenotype.label' && displayFilter['phenotypeLabel']) ||
-      (column.id === 'entity' && displayFilter['entity']) ||
-      (column.id === 'evidence' && displayFilter['evidence'])
+      (column.id === 'interaction_type' && displayFilter['interaction_type'])
     ) {
       return column.render('Filter')
     }
@@ -459,7 +361,7 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
         [event.target.name]: event.target.checked,
       })
     }
-    const { phenotypeLabel, entity, evidence } = displayFilter
+    const { phenotypeLabel, interaction_type } = displayFilter
 
     return (
       <FormControl component='fieldset'>
@@ -475,55 +377,20 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
             }
             label='Phenotype'
           />
+
           <FormControlLabel
             control={
               <Checkbox
-                checked={entity}
+                checked={interaction_type}
                 onChange={handleChange}
-                name='entity'
+                name='interaction_type'
               />
             }
-            label='Entities Affected'
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={evidence}
-                onChange={handleChange}
-                name='evidence'
-              />
-            }
-            label='Supported Evidence'
+            label='Interaction Type'
           />
         </FormGroup>
       </FormControl>
     )
-  }
-
-  const enableToggleRowExpand = (row, cell) => {
-    if (cell.isGrouped || cell.isAggregated) {
-      return cell.getCellProps(row.getToggleRowExpandedProps())
-    }
-    return cell.getCellProps()
-  }
-
-  const displayHiddenRowsCount = (cell, row) => {
-    if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
-      return (
-        <>
-          {cell.render('Aggregated')}
-          <span className={classes.rows_count}>
-            {row.isExpanded ? (
-              <ArrowDropDownIcon className='row-arrow-icon' />
-            ) : (
-              <ArrowRightIcon className='row-arrow-icon' />
-            )}
-          </span>
-          {row.subRows.length} Results
-        </>
-      )
-    }
-    return cell.render('Aggregated')
   }
 
   const {
@@ -551,22 +418,17 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
       disableSortRemove: true,
       filterTypes,
       defaultColumn,
-      globalFilter: 'defaultGlobalFilter',
-      // initialState: { pageIndex: 0 },
-      paginateExpandedRows: false,
+      globalFilter: 'defaultFilter',
       initialState: {
         pageIndex: 0,
         pageSize: 10,
         sortBy: [{ id: columns[0].accessor, desc: false }],
-        groupBy: ['phenotype.label'],
-        expanded: getDefaultExpandedRows(data, 10),
       },
     },
     useBlockLayout,
     useFilters,
     useGlobalFilter,
     useResizeColumns,
-    useGroupBy,
     useSortBy,
     useExpanded,
     usePagination
@@ -576,7 +438,6 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
-        <TsvPheno data={data} WBid={WBid} tableType={tableType} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
@@ -601,12 +462,12 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
                     {column.canSort ? (
                       column.isSorted ? (
                         column.isSortedDesc ? (
-                          <ArrowDownwardIcon className='sort-arrow-icon' />
+                          <ArrowDownwardIcon className='arrow-icon' />
                         ) : (
-                          <ArrowUpwardIcon className='sort-arrow-icon' />
+                          <ArrowUpwardIcon className='arrow-icon' />
                         )
                       ) : (
-                        ''
+                        <SortIcon className='arrow-icon' />
                       )
                     ) : (
                       ''
@@ -627,33 +488,25 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
+          {page.map((row, idx) => {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
                     <td
-                      {...enableToggleRowExpand(row, cell)}
+                      {...cell.getCellProps()}
                       className={
-                        cell.isGrouped
-                          ? 'is_grouped'
-                          : cell.isAggregated
-                          ? 'is_aggregated'
-                          : cell.isPlaceholder
-                          ? 'is_placeholder'
-                          : 'is_other'
+                        cell.column.isSorted
+                          ? idx % 2 === 0
+                            ? 'is_sorted_even_cell'
+                            : 'is_sorted_odd_cell'
+                          : idx % 2 === 0
+                          ? 'is_not_sorted_even_cell'
+                          : 'is_not_sorted_odd_cell'
                       }
                     >
-                      <div>
-                        {cell.isGrouped ? (
-                          <div>{cell.render('Cell')}</div>
-                        ) : cell.isAggregated ? (
-                          <div>{displayHiddenRowsCount(cell, row)}</div>
-                        ) : cell.isPlaceholder ? null : (
-                          <div>{cell.render('Cell')}</div>
-                        )}
-                      </div>
+                      {cell.render('Cell')}
                     </td>
                   )
                 })}
@@ -698,4 +551,4 @@ const TableHasGroupedRow = ({ columns, data, WBid, tableType }) => {
   )
 }
 
-export default TableHasGroupedRow
+export default Table

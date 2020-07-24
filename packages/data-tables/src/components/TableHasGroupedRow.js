@@ -4,14 +4,13 @@ import {
   useBlockLayout,
   useFilters,
   useGlobalFilter,
+  useGroupBy,
   useResizeColumns,
   useSortBy,
   useExpanded,
   usePagination,
   useTable,
 } from 'react-table'
-import TsvBlastp from './tsv/TsvBlastp'
-import TsvOrthologs from './tsv/TsvOrthologs'
 import matchSorter from 'match-sorter'
 import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -21,9 +20,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormLabel from '@material-ui/core/FormLabel'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import FilterListIcon from '@material-ui/icons/FilterList'
-import SortIcon from '@material-ui/icons/Sort'
 
 const useStyles = makeStyles({
   table: {
@@ -40,21 +40,9 @@ const useStyles = makeStyles({
     '& tr:last-child td': {
       borderBottom: 0,
     },
-    '& .is_sorted_even_cell': {
-      backgroundColor: '#d3d6ff',
-    },
-    '& .is_sorted_odd_cell': {
-      backgroundColor: '#e2e5ff',
-    },
-    '& .is_not_sorted_even_cell': {
-      backgroundColor: '#e2e5ff',
-    },
-    '& .is_not_sorted_odd_cell': {
-      backgroundColor: '#fff',
-    },
     '& th,td': {
       margin: 0,
-      padding: '0.8rem 0.3rem',
+      padding: '0.6rem 0.3rem',
       borderBottom: '1px solid #ededed',
       borderRight: '1px solid #ededed',
       position: 'relative',
@@ -64,6 +52,16 @@ const useStyles = makeStyles({
     },
     '& th:last-child,td:last-child': {
       borderRight: 0,
+    },
+    '& tbody tr .is_grouped,tbody tr .is_aggregated': {
+      backgroundColor: '#dedede',
+      borderRight: 'none',
+    },
+    '& tbody tr .is_placeholder': {
+      backgroundColor: '#d3d6ff',
+    },
+    '& tbody tr .is_other': {
+      backgroundColor: '#e2e5ff',
     },
     '& th .resizer': {
       display: 'inline-block',
@@ -85,7 +83,7 @@ const useStyles = makeStyles({
     '& th .column_header': {
       textAlign: 'left',
     },
-    '& th .arrow-icon': {
+    '& th .sort-arrow-icon': {
       fontSize: '1rem',
       marginLeft: 5,
     },
@@ -119,6 +117,12 @@ const useStyles = makeStyles({
     backgroundColor: 'white',
     padding: 5,
   },
+  rows_count: {
+    '& .row-arrow-icon': {
+      fontSize: '1.5rem',
+      marginRight: 10,
+    },
+  },
 })
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
@@ -146,13 +150,13 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const Table = ({ columns, data, WBid, tableType }) => {
-  console.log(data)
+const TableHasGroupedRow = ({ columns, data, id }) => {
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
     phentypeLabel: false,
-    interaction_type: false,
+    entity: false,
+    evidence: false,
   })
 
   const sortTypes = useMemo(
@@ -222,75 +226,68 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
         return a.length - b.length
       },
-      numberWithScientificNotation: (rowA, rowB, columnId) => {
-        const NumberdEValueOfRowA = Number(rowA.values[columnId])
-        const NumberdEValueOfRowB = Number(rowB.values[columnId])
-        if (NumberdEValueOfRowA < NumberdEValueOfRowB) {
-          return -1
-        } else if (NumberdEValueOfRowA > NumberdEValueOfRowB) {
-          return 1
-        } else return 0
-      },
-      sortBySpecies: (rowA, rowB, columnId) => {
-        const comparisonStandardOfRowA = `${rowA.values[columnId].genus}${rowA.values[columnId].species}`
-        const comparisonStandardOfRowB = `${rowB.values[columnId].genus}${rowB.values[columnId].species}`
-        return comparisonStandardOfRowA > comparisonStandardOfRowB
-          ? 1
-          : comparisonStandardOfRowA < comparisonStandardOfRowB
-          ? -1
-          : 0
-      },
-      sortByMethods: (rowA, rowB, columnId) => {
-        const comparisonStandardOfRowA = rowA.values[columnId][0].label
-        const comparisonStandardOfRowB = rowB.values[columnId][0].label
-        return comparisonStandardOfRowA > comparisonStandardOfRowB
-          ? 1
-          : comparisonStandardOfRowA < comparisonStandardOfRowB
-          ? -1
-          : 0
-      },
     }),
     []
   )
 
-  const filterTypes = useMemo(
-    () => ({
-      /*
-        id[0] is "phenotype.label",
-        id[1] is "interactions",
-        id[2] is "interactions_type",
-        id[3] is "citations"
-        */
-      globalFilterType0: (rows, id, filterValue) => {
-        console.log(id)
-        const keyFunc = (row) => {
-          console.log(row)
-          /*
-          When tableType is "best_blastp_matches":
-          id[0] is "evalue",
-          id[1] is "taxonomy",
-          id[2] is "hit.label"
-          id[3] is "description"
-          id[4] is "percent"
+  const filterTypes = useMemo(() => {
+    const storeValueOfNestedObj = (obj, keyArr) => {
+      for (const key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          if (
+            obj[key].class &&
+            obj[key].id &&
+            obj[key].label &&
+            obj[key].taxonomy
+          ) {
+            keyArr.push(obj[key].label)
+          }
+          if (Array.isArray(obj[key]) && typeof obj[key][0] === 'object') {
+            if (
+              obj[key][0].class &&
+              obj[key][0].id &&
+              obj[key][0].label &&
+              obj[key][0].taxonomy
+            ) {
+              keyArr.push(obj[key].map((o) => o.label))
+            } else if (obj[key][0].pato_evidence) {
+              keyArr.push(
+                ...obj[key].map((o) => [
+                  o.pato_evidence.entity_term.label,
+                  o.pato_evidence.entity_type,
+                  o.pato_evidence.pato_term,
+                ])
+              )
+            } else {
+              console.error(
+                'Data is surely array of Object. But it is not Tagtype data.'
+              )
+              console.error(key)
+              console.error(obj[key])
+            }
+          } else {
+            storeValueOfNestedObj(obj[key], keyArr)
+          }
+        } else {
+          keyArr.push(obj[key])
+        }
+      }
+    }
 
-          When tableType is "blastp_details":
-          id[0] is "evalue",
-          id[1] is "taxonomy",
-          id[2] is "hit.label"
-          id[3] is "description"
-          id[4] is "percentage"
-          id[5] is "target_range"
-          id[6] is "source_range"
-          *id[5] and id[6] can't be used on global filter in current implementation*
-          */
+    return {
+      defaultFilter: (rows, id, filterValue) => {
+        const keyFunc = (row) => {
           let keyArr = []
           const rowVals = row.values
 
-          keyArr.push(Number(rowVals[id[0]]))
-          keyArr.push(`${rowVals[id[1]].genus}. ${rowVals[id[1]].species}`)
-          keyArr.push(rowVals[id[2]])
-          keyArr.push(rowVals[id[3]])
-          keyArr.push(Number(rowVals[id[4]]))
+          id.forEach((i) => {
+            if (typeof rowVals[i] === 'object') {
+              storeValueOfNestedObj(rowVals[i], keyArr)
+            } else {
+              keyArr.push(rowVals[i])
+            }
+          })
+
           return keyArr
         }
 
@@ -299,29 +296,8 @@ const Table = ({ columns, data, WBid, tableType }) => {
           threshold: matchSorter.rankings.CONTAINS,
         })
       },
-      globalFilterType1: (rows, id, filterValue) => {
-        const keyFunc = (row) => {
-          /*
-          id[0] is "species",
-          id[1] is "ortholog.label",
-          id[2] is "method"
-          */
-          let keyArr = []
-          const rowVals = row.values
-          keyArr.push(`${rowVals[id[0]].genus}. ${rowVals[id[0]].species}`)
-          keyArr.push(rowVals[id[1]])
-          keyArr.push(rowVals[id[2]].map((r) => r.label))
-          return keyArr
-        }
-
-        return matchSorter(rows, filterValue, {
-          keys: [(row) => keyFunc(row)],
-          threshold: matchSorter.rankings.CONTAINS,
-        })
-      },
-    }),
-    []
-  )
+    }
+  }, [])
 
   const defaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
     return (
@@ -338,7 +314,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
 
   const defaultColumn = useMemo(
     () => ({
-      filter: 'text', // Default. Used builtin 'text' filter.
+      filter: 'defaultFilter',
       sortType: 'caseInsensitiveAlphaNumeric',
       Filter: defaultColumnFilter,
       minWidth: 120,
@@ -348,10 +324,36 @@ const Table = ({ columns, data, WBid, tableType }) => {
     []
   )
 
+  const getDefaultExpandedRows = (data, threshold) => {
+    const defaultExpandedRows = {}
+    const defaultHidRows = {}
+
+    data.forEach((d) => {
+      const key = `phenotype.label:${d.phenotype.label}`
+      if (defaultHidRows[key]) {
+        defaultHidRows[key] = ++defaultHidRows[key]
+      } else {
+        defaultHidRows[key] = 1
+      }
+    })
+
+    data.forEach((d) => {
+      const key = `phenotype.label:${d.phenotype.label}`
+      if (defaultHidRows[key] < threshold) {
+        defaultExpandedRows[key] = true
+      } else {
+        defaultExpandedRows[key] = false
+      }
+    })
+
+    return defaultExpandedRows
+  }
+
   const displayFilterFn = (column) => {
     if (
       (column.id === 'phenotype.label' && displayFilter['phenotypeLabel']) ||
-      (column.id === 'interaction_type' && displayFilter['interaction_type'])
+      (column.id === 'entity' && displayFilter['entity']) ||
+      (column.id === 'evidence' && displayFilter['evidence'])
     ) {
       return column.render('Filter')
     }
@@ -391,7 +393,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
         [event.target.name]: event.target.checked,
       })
     }
-    const { phenotypeLabel, interaction_type } = displayFilter
+    const { phenotypeLabel, entity, evidence } = displayFilter
 
     return (
       <FormControl component='fieldset'>
@@ -407,40 +409,55 @@ const Table = ({ columns, data, WBid, tableType }) => {
             }
             label='Phenotype'
           />
-
           <FormControlLabel
             control={
               <Checkbox
-                checked={interaction_type}
+                checked={entity}
                 onChange={handleChange}
-                name='interaction_type'
+                name='entity'
               />
             }
-            label='Interaction Type'
+            label='Entities Affected'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={evidence}
+                onChange={handleChange}
+                name='evidence'
+              />
+            }
+            label='Supported Evidence'
           />
         </FormGroup>
       </FormControl>
     )
   }
 
-  const selectGlobalFilter = (tableType) => {
-    if (tableType === 'best_blastp_matches' || tableType === 'blastp_details') {
-      return 'globalFilterType0'
+  const enableToggleRowExpand = (row, cell) => {
+    if (cell.isGrouped || cell.isAggregated) {
+      return cell.getCellProps(row.getToggleRowExpandedProps())
     }
-    if (tableType === 'nematode_orthologs' || tableType === 'other_orthologs') {
-      return 'globalFilterType1'
-    }
-    return null
+    return cell.getCellProps()
   }
 
-  const selectTsv = (tableType) => {
-    if (tableType === 'best_blastp_matches' || tableType === 'blastp_details') {
-      return <TsvBlastp data={data} WBid={WBid} tableType={tableType} />
+  const displayHiddenRowsCount = (cell, row) => {
+    if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
+      return (
+        <>
+          {cell.render('Aggregated')}
+          <span className={classes.rows_count}>
+            {row.isExpanded ? (
+              <ArrowDropDownIcon className='row-arrow-icon' />
+            ) : (
+              <ArrowRightIcon className='row-arrow-icon' />
+            )}
+          </span>
+          {row.subRows.length} Results
+        </>
+      )
     }
-    if (tableType === 'nematode_orthologs' || tableType === 'other_orthologs') {
-      return <TsvOrthologs data={data} WBid={WBid} tableType={tableType} />
-    }
-    return null
+    return cell.render('Aggregated')
   }
 
   const {
@@ -468,17 +485,22 @@ const Table = ({ columns, data, WBid, tableType }) => {
       disableSortRemove: true,
       filterTypes,
       defaultColumn,
-      globalFilter: selectGlobalFilter(tableType),
+      globalFilter: 'defaultFilter',
+      // initialState: { pageIndex: 0 },
+      paginateExpandedRows: false,
       initialState: {
         pageIndex: 0,
-        pageSize: 100,
+        pageSize: 10,
         sortBy: [{ id: columns[0].accessor, desc: false }],
+        groupBy: ['phenotype.label'],
+        expanded: getDefaultExpandedRows(data, 10),
       },
     },
     useBlockLayout,
     useFilters,
     useGlobalFilter,
     useResizeColumns,
+    useGroupBy,
     useSortBy,
     useExpanded,
     usePagination
@@ -488,7 +510,6 @@ const Table = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
-        {selectTsv(tableType)}
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
@@ -513,12 +534,12 @@ const Table = ({ columns, data, WBid, tableType }) => {
                     {column.canSort ? (
                       column.isSorted ? (
                         column.isSortedDesc ? (
-                          <ArrowDownwardIcon className='arrow-icon' />
+                          <ArrowDownwardIcon className='sort-arrow-icon' />
                         ) : (
-                          <ArrowUpwardIcon className='arrow-icon' />
+                          <ArrowUpwardIcon className='sort-arrow-icon' />
                         )
                       ) : (
-                        <SortIcon className='arrow-icon' />
+                        ''
                       )
                     ) : (
                       ''
@@ -539,25 +560,33 @@ const Table = ({ columns, data, WBid, tableType }) => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row, idx) => {
+          {page.map((row) => {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
                     <td
-                      {...cell.getCellProps()}
+                      {...enableToggleRowExpand(row, cell)}
                       className={
-                        cell.column.isSorted
-                          ? idx % 2 === 0
-                            ? 'is_sorted_even_cell'
-                            : 'is_sorted_odd_cell'
-                          : idx % 2 === 0
-                          ? 'is_not_sorted_even_cell'
-                          : 'is_not_sorted_odd_cell'
+                        cell.isGrouped
+                          ? 'is_grouped'
+                          : cell.isAggregated
+                          ? 'is_aggregated'
+                          : cell.isPlaceholder
+                          ? 'is_placeholder'
+                          : 'is_other'
                       }
                     >
-                      {cell.render('Cell')}
+                      <div>
+                        {cell.isGrouped ? (
+                          <div>{cell.render('Cell')}</div>
+                        ) : cell.isAggregated ? (
+                          <div>{displayHiddenRowsCount(cell, row)}</div>
+                        ) : cell.isPlaceholder ? null : (
+                          <div>{cell.render('Cell')}</div>
+                        )}
+                      </div>
                     </td>
                   )
                 })}
@@ -602,4 +631,4 @@ const Table = ({ columns, data, WBid, tableType }) => {
   )
 }
 
-export default Table
+export default TableHasGroupedRow
