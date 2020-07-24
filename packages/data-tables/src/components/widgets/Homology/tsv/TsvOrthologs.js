@@ -3,7 +3,7 @@ import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 import { generateHeaders } from '../../../../util/tsvHelper'
 
-const TsvOrthologs = ({ data, WBid, tableType }) => {
+const TsvOrthologs = ({ data, id }) => {
   const toBeHeaderArr = [
     'species.genus',
     'species.species',
@@ -28,7 +28,7 @@ const TsvOrthologs = ({ data, WBid, tableType }) => {
       data={processedData}
       headers={headers}
       separator={'\t'}
-      filename={`${WBid}_${tableType}.tsv`}
+      filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>

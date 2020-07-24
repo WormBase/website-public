@@ -1,16 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
-import loadData from '../../../services/loadData'
+import React, { useMemo } from 'react'
+import Table from '../../Table'
+import { decideHeader } from '../../../util/columnsHelper'
+import { sortBySpecies, sortByMethods } from '../../../util/sortTypeHelper'
+import TsvOrthologs from './tsv/TsvOrthologs'
 
-const Orthologs = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => {
-      setData(json.data)
-    })
-  }, [WBid, tableType])
-
+const Orthologs = ({ data, id, columnsHeader }) => {
   const showMethods = (value) => {
     return (
       <ul>
@@ -24,33 +18,34 @@ const Orthologs = ({ WBid, tableType }) => {
   const columns = useMemo(
     () => [
       {
-        Header: 'Species',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => `${value.genus}. ${value.species}`,
         accessor: 'species',
-        sortType: 'sortBySpecies',
+        sortType: (rowA, rowB, columnId) => sortBySpecies(rowA, rowB, columnId),
       },
       {
-        Header: 'Ortholog',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'ortholog.label',
         minWidth: 290,
         width: 390,
       },
       {
-        Header: 'Method',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => showMethods(value),
         accessor: 'method',
         minWidth: 200,
         width: 390,
-        sortType: 'sortByMethods',
+        sortType: (rowA, rowB, columnId) => sortByMethods(rowA, rowB, columnId),
       },
     ],
-    []
+    [columnsHeader]
   )
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <TsvOrthologs data={data} id={id} />
+      <Table columns={columns} data={data} id={id} />
     </>
   )
 }

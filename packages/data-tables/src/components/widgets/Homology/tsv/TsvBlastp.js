@@ -3,9 +3,9 @@ import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 import { generateHeaders } from '../../../../util/tsvHelper'
 
-const TsvBlastp = ({ data, WBid, tableType }) => {
-  const selectToBeHeaderArr = (tableType) => {
-    if (tableType === 'best_blastp_matches') {
+const TsvBlastp = ({ data, id }) => {
+  const selectToBeHeaderArr = (id) => {
+    if (id === 'table_best_blastp_matches') {
       return [
         'evalue',
         'taxonomy.genus',
@@ -15,7 +15,7 @@ const TsvBlastp = ({ data, WBid, tableType }) => {
         'percent',
       ]
     }
-    if (tableType === 'blastp_details') {
+    if (id === 'table_blastp_details') {
       return [
         'evalue',
         'taxonomy.genus',
@@ -27,11 +27,12 @@ const TsvBlastp = ({ data, WBid, tableType }) => {
         'target_range',
       ]
     } else {
+      console.error('An improper id was passed')
       return []
     }
   }
 
-  const toBeHeaderArr = selectToBeHeaderArr(tableType)
+  const toBeHeaderArr = selectToBeHeaderArr(id)
 
   const headers = generateHeaders(toBeHeaderArr)
 
@@ -47,7 +48,7 @@ const TsvBlastp = ({ data, WBid, tableType }) => {
       data={processedData}
       headers={headers}
       separator={'\t'}
-      filename={`${WBid}_${tableType}.tsv`}
+      filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>

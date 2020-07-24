@@ -1,75 +1,72 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
-import loadData from '../../../services/loadData'
+import React, { useMemo } from 'react'
+import Table from '../../Table'
+import { decideHeader } from '../../../util/columnsHelper'
+import { numberWithScientificNotation } from '../../../util/sortTypeHelper'
+import TsvBlastp from './tsv/TsvBlastp'
 
-const BlastpDetails = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => {
-      setData(json.data)
-    })
-  }, [WBid, tableType])
-
+const BlastpDetails = ({ data, id, columnsHeader }) => {
   const columns = useMemo(
     () => [
       {
-        Header: 'BLAST e-value',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => Number(value),
         accessor: 'evalue',
-        sortType: 'numberWithScientificNotation',
+        // sortType: 'numberWithScientificNotation',
+        sortType: (rowA, rowB, columnId) =>
+          numberWithScientificNotation(rowA, rowB, columnId),
         minWidth: 90,
         width: 90,
       },
       {
-        Header: 'Species',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => `${value.genus}. ${value.species}`,
         accessor: 'taxonomy',
         minWidth: 120,
         width: 120,
       },
       {
-        Header: 'Hit',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'hit.label',
         minWidth: 250,
         width: 250,
       },
       {
-        Header: 'Description',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'description',
         minWidth: 250,
         width: 250,
       },
       {
-        Header: '% Length',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => (value === null ? '' : Number(value)),
         accessor: 'percentage',
         minWidth: 70,
         width: 70,
       },
       {
-        Header: 'Target range',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'target_range',
         minWidth: 80,
         width: 90,
       },
       {
-        Header: 'Source range',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'source_range',
         minWidth: 80,
         width: 90,
       },
     ],
-    []
+    [columnsHeader]
   )
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <TsvBlastp data={data} id={id} />
+      <Table columns={columns} data={data} id={id} />
     </>
   )
 }

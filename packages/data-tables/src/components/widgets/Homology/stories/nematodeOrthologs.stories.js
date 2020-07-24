@@ -1,25 +1,45 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Orthologs from '../Orthologs'
+import loadData from '../../../../services/loadData'
 import { homology_widget } from '../../../../../.storybook/target'
 
+const Wrapper = ({ WBid, tableType }) => {
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    loadData(WBid, tableType).then((json) => {
+      setData(json.data)
+    })
+  }, [WBid, tableType])
+
+  const id = 'table_nematode_orthologs'
+  const columnsHeader = {
+    species: 'Species',
+    ortholog: 'Ortholog',
+    method: 'Method',
+  }
+
+  return <Orthologs data={data} id={id} columnsHeader={columnsHeader} />
+}
+
 export default {
-  component: Orthologs,
+  component: Wrapper,
   title: 'Table|Widgets/Homology/nematode_orthologs',
 }
 export const daf8 = () => (
-  <Orthologs
+  <Wrapper
     WBid={homology_widget.WBid.daf8}
     tableType={homology_widget.tableType.nematodeOrthologs}
   />
 )
 export const daf16 = () => (
-  <Orthologs
+  <Wrapper
     WBid={homology_widget.WBid.daf16}
     tableType={homology_widget.tableType.nematodeOrthologs}
   />
 )
 export const mig2 = () => (
-  <Orthologs
+  <Wrapper
     WBid={homology_widget.WBid.mig2}
     tableType={homology_widget.tableType.nematodeOrthologs}
   />
