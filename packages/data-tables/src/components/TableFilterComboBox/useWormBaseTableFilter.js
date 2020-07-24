@@ -47,8 +47,8 @@ export default function useWormBaseTableFilter(data = []) {
           return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
             if (isMatchSoFar) {
               if (key === 'search') {
-                return Object.values(dataFlat[index]).reduce((any, value) => {
-                  return any || value === filterValue
+                return Object.values(dataFlat[index]).reduce((any, value = '') => {
+                  return any || new RegExp(filterValue, 'i').test(value)
                 }, false)
               } else {
                 const value = get(values, key.split('.'));
