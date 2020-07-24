@@ -142,3 +142,41 @@ export const PhenotypeAbi1 = () => {
     <GenericTestTable data={data} columns={columns} />
   )
 }
+
+export const PhenotypeByInteractionAbi1 = () => {
+  const { data } = useTableDataFetch({
+    wbId: 'WBGene00015146',
+    tableType: 'phenotype_by_interaction',
+  })
+
+  const columns = useMemo(() => ([
+    {accessor: 'phenotype'},
+    {accessor: 'interactions'},
+    {accessor: 'interaction_type'},
+    {accessor: 'citations'},
+  ]), [])
+
+  return (
+    <GenericTestTable data={data} columns={columns} />
+  )
+}
+
+export const BestBlastpMatchesAbi1 = () => {
+  const { data } = useTableDataFetch({
+    wbId: 'WBGene00015146',
+    tableType: 'best_blastp_matches',
+    defaultValue: {},
+  })
+
+  const columns = useMemo(() => ([
+    {accessor: 'evalue'},
+    {accessor: 'taxonomy'},
+    {accessor: 'hit'},
+    {accessor: 'description'},
+    {accessor: 'percent'},
+  ]), [])
+
+  return (
+    <GenericTestTable data={data.hits} columns={columns} />
+  )
+}
