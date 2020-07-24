@@ -7,7 +7,7 @@ import {
   generateDerivedHeaders,
 } from '../../../../util/tsvHelper'
 
-const TsvExpressed = ({ data, WBid, tableType }) => {
+const TsvExpressed = ({ data, id }) => {
   const toBeHeaderArr = ['ontology_term', 'images', 'details.text']
 
   const objKeysOfDetails = [
@@ -61,7 +61,7 @@ const TsvExpressed = ({ data, WBid, tableType }) => {
       data={processedData}
       headers={headers}
       separator={'\t'}
-      filename={`${WBid}_${tableType}.tsv`}
+      filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>

@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
-import loadData from '../../../services/loadData'
+import React, { useMemo } from 'react'
+import Table from '../../Table'
+import { decideHeader } from '../../../util/columnsHelper'
+import {
+  sortByAnatomicalSites,
+  sortByDescriptionType0,
+} from '../../../util/sortTypeHelper'
+import TsvAnatomyFn from './tsv/TsvAnatomyFn'
 
-const ExpressionCluster = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => {
-      setData(json.data)
-    })
-  }, [WBid, tableType])
-
+const ExpressionCluster = ({ data, id, columnsHeader }) => {
   const showAnatomicalSites = (value) => {
     return (
       <>
@@ -34,38 +31,41 @@ const ExpressionCluster = ({ WBid, tableType }) => {
   const columns = useMemo(
     () => [
       {
-        Header: 'Anatomical Sites',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => showAnatomicalSites(value),
         accessor: 'bp_inv',
-        sortType: 'sortByAnatomicalSites',
+        sortType: (rowA, rowB, columnId) =>
+          sortByAnatomicalSites(rowA, rowB, columnId),
       },
       {
-        Header: 'Assay',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => showAssay(value),
         accessor: 'assay',
-        sortType: 'sortByDescriptionType0',
+        sortType: (rowA, rowB, columnId) =>
+          sortByDescriptionType0(rowA, rowB, columnId),
       },
       {
-        Header: 'Phenotype',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'phenotype.label',
         minWidth: 200,
         width: 280,
       },
       {
-        Header: 'Reference',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'reference.label',
         minWidth: 250,
         width: 320,
       },
     ],
-    []
+    [columnsHeader]
   )
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <TsvAnatomyFn data={data} id={id} />
+      <Table columns={columns} data={data} id={id} />
     </>
   )
 }

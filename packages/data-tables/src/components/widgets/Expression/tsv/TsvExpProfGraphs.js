@@ -6,7 +6,7 @@ import {
   generateDerivedHeaders,
 } from '../../../../util/tsvHelper'
 
-const TsvExpProfGraphs = ({ data, WBid, tableType }) => {
+const TsvExpProfGraphs = ({ data, id }) => {
   const toBeHeaderArr = [
     'expression_pattern',
     'type',
@@ -55,7 +55,7 @@ const TsvExpProfGraphs = ({ data, WBid, tableType }) => {
       data={processedData}
       headers={headers}
       separator={'\t'}
-      filename={`${WBid}_${tableType}.tsv`}
+      filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>

@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
-import loadData from '../../../services/loadData'
+import React, { useMemo } from 'react'
+import Table from '../../Table'
+import { decideHeader } from '../../../util/columnsHelper'
+import {
+  sortByDescriptionType0,
+  sortByDatabase,
+} from '../../../util/sortTypeHelper'
+import TsvExpProfGraphs from './tsv/TsvExpProfGraphs'
 
-const ExpressedProfillingGraphs = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => {
-      setData(json.data)
-    })
-  }, [WBid, tableType])
-
+const ExpressedProfillingGraphs = ({ data, id, columnsHeader }) => {
   const showDescription = (value) => {
     return (
       <>
@@ -49,42 +46,45 @@ const ExpressedProfillingGraphs = ({ WBid, tableType }) => {
   const columns = useMemo(
     () => [
       {
-        Header: 'Pattern',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'expression_pattern.label',
         minWidth: 100,
         width: 150,
       },
       {
-        Header: 'Type',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'type[0]',
         minWidth: 100,
         width: 150,
       },
       {
-        Header: 'Description',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => showDescription(value),
         accessor: 'description',
         minWidth: 450,
         width: 510,
-        sortType: 'sortByDescriptionType0',
+        sortType: (rowA, rowB, columnId) =>
+          sortByDescriptionType0(rowA, rowB, columnId),
       },
       {
-        Header: 'Database',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => showDatabase(value),
         accessor: 'database',
         minWidth: 100,
         width: 150,
-        sortType: 'sortByDatabase',
+        sortType: (rowA, rowB, columnId) =>
+          sortByDatabase(rowA, rowB, columnId),
       },
     ],
-    []
+    [columnsHeader]
   )
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <TsvExpProfGraphs data={data} id={id} />
+      <Table columns={columns} data={data} id={id} />
     </>
   )
 }

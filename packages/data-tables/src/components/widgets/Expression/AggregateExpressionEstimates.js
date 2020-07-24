@@ -1,16 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
-import loadData from '../../../services/loadData'
+import React, { useMemo } from 'react'
+import Table from '../../Table'
+import { decideHeader } from '../../../util/columnsHelper'
+import { sortByMedianOrMean } from '../../../util/sortTypeHelper'
+import TsvDataCtrl from './tsv/TsvDataCtrl'
 
-const AggregateExpressionEstimates = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => {
-      setData(json.data.controls)
-    })
-  }, [WBid, tableType])
-
+const AggregateExpressionEstimates = ({ data, id, columnsHeader }) => {
   const showMedianAndMean = (value) => {
     return (
       <>
@@ -24,33 +18,36 @@ const AggregateExpressionEstimates = ({ WBid, tableType }) => {
   const columns = useMemo(
     () => [
       {
-        Header: 'Life stage',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'life_stage.label',
       },
       {
-        Header: 'Median',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => showMedianAndMean(value),
         accessor: 'control median',
         minWidth: 300,
         width: 390,
-        sortType: 'sortByMedianOrMean',
+        sortType: (rowA, rowB, columnId) =>
+          sortByMedianOrMean(rowA, rowB, columnId),
       },
       {
-        Header: 'Mean',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => showMedianAndMean(value),
         accessor: 'control mean',
         minWidth: 300,
         width: 390,
-        sortType: 'sortByMedianOrMean',
+        sortType: (rowA, rowB, columnId) =>
+          sortByMedianOrMean(rowA, rowB, columnId),
       },
     ],
-    []
+    [columnsHeader]
   )
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <TsvDataCtrl data={data} id={id} />
+      <Table columns={columns} data={data} id={id} />
     </>
   )
 }

@@ -3,7 +3,7 @@ import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 import { generateHeaders } from '../../../../util/tsvHelper'
 
-const TsvDataTable = ({ data, WBid, tableType }) => {
+const TsvDataTable = ({ data, id }) => {
   const toBeHeaderArr = ['value', 'life_stage', 'project_info', 'label']
 
   const headers = generateHeaders(toBeHeaderArr)
@@ -22,7 +22,7 @@ const TsvDataTable = ({ data, WBid, tableType }) => {
       data={processedData}
       headers={headers}
       separator={'\t'}
-      filename={`${WBid}_${tableType}.tsv`}
+      filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>

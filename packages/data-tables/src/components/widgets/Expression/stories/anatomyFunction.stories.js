@@ -1,9 +1,28 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import AnatomyFunction from '../AnatomyFunction'
+import loadData from '../../../../services/loadData'
 import { expression_widget } from '../../../../../.storybook/target'
+const Wrapper = ({ WBid, tableType }) => {
+  const [data, setData] = useState([])
 
+  useEffect(() => {
+    loadData(WBid, tableType).then((json) => {
+      setData(json.data)
+    })
+  }, [WBid, tableType])
+
+  const id = 'table_anatomy_function'
+  const columnsHeader = {
+    bp_inv: 'Anatomical Sites',
+    assay: 'Assay',
+    phenotype: 'Phenotype',
+    reference: 'Reference',
+  }
+
+  return <AnatomyFunction data={data} id={id} columnsHeader={columnsHeader} />
+}
 export default {
-  component: AnatomyFunction,
+  component: Wrapper,
   title: 'Table|Widgets/Expression/anatomy_function',
 }
 
@@ -17,7 +36,7 @@ export default {
 // )
 
 export const daf16 = () => (
-  <AnatomyFunction
+  <Wrapper
     WBid={expression_widget.WBid.daf16}
     tableType={expression_widget.tableType.anatomyFunction}
   />

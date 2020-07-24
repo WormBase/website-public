@@ -1,20 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import Table from './Table'
-import loadData from '../../../services/loadData'
+import React, { useMemo } from 'react'
+import Table from '../../Table'
+import { decideHeader } from '../../../util/columnsHelper'
+import TsvDataTable from './tsv/TsvDataTable'
 
-const FpkmExpression = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => {
-      setData(json.data.table.fpkm.data)
-    })
-  }, [WBid, tableType])
-
+const FpkmExpression = ({ data, id, columnsHeader }) => {
   const columns = useMemo(
     () => [
       {
-        Header: 'Name',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'label.label',
         minWidth: 200,
@@ -22,29 +15,30 @@ const FpkmExpression = ({ WBid, tableType }) => {
         maxWidth: 1500,
       },
       {
-        Header: 'Project',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'project_info.label',
         minWidth: 240,
         width: 300,
       },
       {
-        Header: 'Life stage',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'life_stage.label',
       },
       {
-        Header: 'FPKM value',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => value,
         accessor: 'value',
       },
     ],
-    []
+    [columnsHeader]
   )
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <TsvDataTable data={data} id={id} />
+      <Table columns={columns} data={data} id={id} />
     </>
   )
 }
