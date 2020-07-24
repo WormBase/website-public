@@ -1,7 +1,10 @@
 import React, { useMemo } from 'react'
 import Table from '../../Table'
 import { decideHeader } from '../../../util/columnsHelper'
-import { numberWithScientificNotation } from '../../../util/sortTypeHelper'
+import {
+  numberWithScientificNotation,
+  sortBySpecies,
+} from '../../../util/sortTypeHelper'
 import TsvBlastp from './tsv/TsvBlastp'
 
 const Blastp = ({ data, id, columnsHeader }) => {
@@ -20,6 +23,7 @@ const Blastp = ({ data, id, columnsHeader }) => {
         Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         Cell: ({ cell: { value } }) => `${value.genus}. ${value.species}`,
         accessor: 'taxonomy',
+        sortType: (rowA, rowB, columnId) => sortBySpecies(rowA, rowB, columnId),
         width: 170,
       },
       {
