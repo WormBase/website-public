@@ -87,9 +87,11 @@ const TableFilterComboBox = ({
             if (filterName && filterValue) {
               setInputValue('')
               addSelectedItem(selectedItem)
+              closeMenu()
               selectItem(null)
             } else {
               setInputValue(`${filterName} : `)
+              openMenu() // show suggestion on the values available for the key entered
             }
           }
 
@@ -103,6 +105,7 @@ const TableFilterComboBox = ({
             } else {
               addSelectedItem(`search : ${selectedItem}`)
             }
+            closeMenu()
             selectItem(null)
           }
 
