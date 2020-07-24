@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import TableFilterComboBox from './index';
 import { useWormBaseTableFilter } from './useWormBaseTableFilter'
-import { useTable, useFilters, useGlobalFilter } from 'react-table'
+import { useTable, useGlobalFilter } from 'react-table'
 import loadData from '../../services/loadData';
 
 export default {
