@@ -182,3 +182,37 @@ export const BestBlastpMatchesAbi1 = () => {
     </LoadDataProgress>
   )
 }
+
+export const InteractionsAbi1 = () => {
+  const columns = useMemo(() => ([
+    {accessor: 'interactions'},
+    {accessor: 'type'},
+    {accessor: 'effector'},
+    {accessor: 'affected'},
+    {accessor: 'direction'},
+    {accessor: 'citations'},
+  ]), [])
+
+  return (
+    <LoadDataProgress wbId="WBGene00015146" tableType="interactions">
+      {({data}) => <GenericTestTable data={data.edges} columns={columns} />}
+    </LoadDataProgress>
+  )
+}
+
+export const InteractionsDaf2 = () => {
+  const columns = useMemo(() => ([
+    {accessor: 'interactions'},
+    {accessor: 'type'},
+    {accessor: 'effector'},
+    {accessor: 'affected'},
+    {accessor: 'direction'},
+    {accessor: 'citations'},
+  ]), [])
+
+  return (
+    <LoadDataProgress wbId="WBGene00000898" tableType="interactions">
+      {({data}) => <GenericTestTable data={data.edges} columns={columns} />}
+    </LoadDataProgress>
+  )
+}
