@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import Table from './Table'
-import loadData from '../../../services/loadData'
+// import { sortByCitations } from '../../../services/loadData'
+import { decideHeader } from '../../../util/columnsHelper'
 
-const PhenotypeByInteraction = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => setData(json.data))
-  }, [WBid, tableType])
-
+const PhenotypeByInteraction = ({ data, id, columnsHeader }) => {
   const showInteractions = (value) => {
     return value.map((detail, idx) => (
       <ul key={idx}>
@@ -25,14 +20,14 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
     ))
   }
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    return [
       {
-        Header: 'Phenotype',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'phenotype.label',
       },
       {
-        Header: 'Interactions',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'interactions',
         Cell: ({ cell: { value } }) => showInteractions(value),
         sortType: 'sortByInteractions',
@@ -41,25 +36,26 @@ const PhenotypeByInteraction = ({ WBid, tableType }) => {
         minWidth: 145,
       },
       {
-        Header: 'Interaction Type',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'interaction_type',
       },
       {
-        Header: 'Citations',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'citations',
         Cell: ({ cell: { value } }) => showCitations(value),
         sortType: 'sortByCitations',
+        // sortType: (rowA, rowB, columnId) =>
+        //   sortByCitations(rowA, rowB, columnId),
         disableFilters: true,
         minWidth: 240,
         width: 400,
       },
-    ],
-    []
-  )
+    ]
+  }, [columnsHeader])
 
   return (
     <>
-      <Table columns={columns} data={data} WBid={WBid} tableType={tableType} />
+      <Table columns={columns} data={data} id={id} />
     </>
   )
 }

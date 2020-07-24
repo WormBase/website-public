@@ -3,7 +3,7 @@ import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 import { generateHeaders } from '../../../../util/tsvHelper'
 
-const TsvPhenoBI = ({ data, WBid, tableType }) => {
+const TsvPhenoBI = ({ data, id }) => {
   const toBeHeaderArr = [
     'phenotype',
     'interactions',
@@ -36,7 +36,7 @@ const TsvPhenoBI = ({ data, WBid, tableType }) => {
       data={processedData}
       headers={headers}
       separator={'\t'}
-      filename={`${WBid}_${tableType}.tsv`}
+      filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>

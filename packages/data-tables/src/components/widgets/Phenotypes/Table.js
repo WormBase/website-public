@@ -145,7 +145,8 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const Table = ({ columns, data, WBid, tableType }) => {
+const Table = ({ columns, data, id }) => {
+  console.log(data)
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
@@ -439,7 +440,7 @@ const Table = ({ columns, data, WBid, tableType }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
-        <TsvPhenoBI data={data} WBid={WBid} tableType={tableType} />
+        <TsvPhenoBI data={data} id={id} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>
