@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import get from 'lodash/get'
 import flattenRecursive from '../../utils/flattenRecursive'
 
-export default function useWormBaseTableFilter(data) {
+export default function useWormBaseTableFilter(data = []) {
   const dataFlat = useMemo(() => {
     return data.map((item) => {
       return flattenRecursive(item)

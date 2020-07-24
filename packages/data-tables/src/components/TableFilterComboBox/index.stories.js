@@ -17,7 +17,7 @@ export const mock = () => (
 const CellDefault = ({value}) => <pre>{JSON.stringify(value, null, 2)}</pre>
 
 const GenericTestTable = ({
-  data,
+  data = [],
   columns: columnsRaw,
 }) => {
 
@@ -103,6 +103,7 @@ const GenericTestTable = ({
 const useTableDataFetch = ({
   wbId,
   tableType,
+  defaultValue = [],
 }) => {
   const [data, setData] = useState([])
   const [error, setError] = useState(null)
