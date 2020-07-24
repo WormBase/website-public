@@ -126,12 +126,17 @@ const useTableDataFetch = ({
   }
 }
 
-export const PhenotypeAbi1 = () => {
-  const { data } = useTableDataFetch({
-    wbId: 'WBGene00015146',
-    tableType: 'phenotype_flat',
-  })
+const LoadDataProgress = ({children, ...useTableDataFetchOptions}) => {
+  const state = useTableDataFetch(useTableDataFetchOptions)
+  const { data, loading, error } = state
+  return (
+    loading ? 'Loading data from the server...' :
+    error ? <span style={{color: 'tomato'}}> Error occured loading data</span> :
+    children(state)
+  )
+}
 
+export const PhenotypeAbi1 = () => {
   const columns = useMemo(() => ([
     {accessor: 'phenotype'},
     {accessor: 'entity'},
@@ -139,7 +144,9 @@ export const PhenotypeAbi1 = () => {
   ]), [])
 
   return (
-    <GenericTestTable data={data} columns={columns} />
+    <LoadDataProgress wbId="WBGene00015146" tableType="phenotype_flat">
+      {({data}) => <GenericTestTable data={data} columns={columns} />}
+    </LoadDataProgress>
   )
 }
 
@@ -157,16 +164,13 @@ export const PhenotypeByInteractionAbi1 = () => {
   ]), [])
 
   return (
-    <GenericTestTable data={data} columns={columns} />
+    <LoadDataProgress wbId="WBGene00015146" tableType="phenotype_by_interaction">
+      {({data}) => <GenericTestTable data={data} columns={columns} />}
+    </LoadDataProgress>
   )
 }
 
 export const BestBlastpMatchesAbi1 = () => {
-  const { data } = useTableDataFetch({
-    wbId: 'WBGene00015146',
-    tableType: 'best_blastp_matches',
-    defaultValue: {},
-  })
 
   const columns = useMemo(() => ([
     {accessor: 'evalue'},
@@ -177,6 +181,8 @@ export const BestBlastpMatchesAbi1 = () => {
   ]), [])
 
   return (
-    <GenericTestTable data={data.hits} columns={columns} />
+    <LoadDataProgress wbId="WBGene00015146" tableType="best_blastp_matches">
+      {({data}) => <GenericTestTable data={data.hits} columns={columns} />}
+    </LoadDataProgress>
   )
 }
