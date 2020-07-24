@@ -100,16 +100,36 @@ const GenericTestTable = ({
   )
 }
 
-export const PhenotypeAbi1 = () => {
+const useTableDataFetch = ({
+  wbId,
+  tableType,
+}) => {
   const [data, setData] = useState([])
-  const wbId = 'WBGene00015146'
-  const tableType = 'phenotype_flat'
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadData(wbId, tableType).then((json) => {
       setData(json.data)
+      setLoading(false)
+    }).catch((error) => {
+      setError(error)
+      setLoading(false)
     })
   }, [wbId, tableType])
+
+  return {
+    data,
+    error,
+    loading,
+  }
+}
+
+export const PhenotypeAbi1 = () => {
+  const { data } = useTableDataFetch({
+    wbId: 'WBGene00015146',
+    tableType: 'phenotype_flat',
+  })
 
   const columns = useMemo(() => ([
     {accessor: 'phenotype'},
