@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
-import get from 'lodash/get'
 import TableFilterComboBox from './index';
+import { useWormBaseTableFilter } from './useWormBaseTableFilter'
 import { useTable, useFilters, useGlobalFilter } from 'react-table'
 import loadData from '../../services/loadData';
 
@@ -15,21 +15,7 @@ export const mock = () => (
   }} />
 );
 
-function flattenRecursive(data, prefix = [], result = {}) {
-  if (Object(data) !== data) {
-    if (data) {
-      result[prefix.join('.')] = data
-    }
-    return result
-  } else {
-    Object.keys(data).forEach((key) => {
-      flattenRecursive(data[key], [...prefix, key], result)
-    })
-    return result
-  }
-}
-
-const CellDefault = ({value}) => <pre>{JSON.stringify(flattenRecursive(value), null, 2)}</pre>
+const CellDefault = ({value}) => <pre>{JSON.stringify(value, null, 2)}</pre>
 
 export const Phenotype = () => {
   const [data, setData] = useState([])
@@ -42,76 +28,19 @@ export const Phenotype = () => {
     })
   }, [wbId, tableType])
 
-  const dataFlat = useMemo(() => {
-    return data.map((item) => {
-      return flattenRecursive(item)
-    }, {})
-  }, [data])
-
-  const options = useMemo(() => {
-    return dataFlat.reduce((result, itemflat) => {
-      Object.keys(itemflat).forEach((key, i) => {
-        if (!result[key]) {
-          result[key] = ['(non-empty)', '(empty)']
-        }
-        if (result[key].indexOf(itemflat[key]) === -1) {
-          result[key].push(itemflat[key])
-        }
-      })
-      return result;
-    }, {})
-  }, [dataFlat])
+  const {
+    filters,
+    setFilters,
+    filterTypes,
+    globalFilter,
+    options,
+  } = useWormBaseTableFilter(data);
 
   const columns = useMemo(() => ([
     {accessor: 'phenotype', Header: 'phenotype', Cell: CellDefault},
     {accessor: 'entity', Header: 'entity', Cell: CellDefault},
     {accessor: 'evidence', Header: 'evidence', Cell: CellDefault},
   ]), [])
-
-  const [filters, setFilters] = useState([])
-
-  const filterTypes = React.useMemo(
-    () => ({
-      testGlobalFilter: (rows,b,c) => {
-        // const filters = [
-        //   {
-        //     key: 'evidence.RNAi.text.id',
-        //     value: 'WBRNAi00073492',
-        //   },
-        //   {
-        //     key: 'phenotype.id',
-        //     value: 'WBPhenotype:0000688',
-        //   },
-        // ]
-        return rows.filter(({values, index}) => {
-          const isEmpty = (value) => {
-            return (
-              !value && value !== 0
-            )
-          }
-          return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
-            if (isMatchSoFar) {
-              if (key === 'search') {
-                return Object.values(dataFlat[index]).reduce((any, value) => {
-                  return any || value === filterValue
-                }, false)
-              } else {
-                const value = get(values, key.split('.'));
-                return (
-                  value === filterValue ||
-                  (filterValue === '(empty)' && isEmpty(value)) ||
-                  (filterValue === '(non-empty)' && !isEmpty(value))
-                )
-              }
-            } else {
-              return false;
-            }
-          }, true)
-        });
-      }
-    }),
-    [filters, dataFlat]
-  )
 
   const {
     getTableProps,
