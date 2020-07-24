@@ -1,20 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import TableHasGroupedRow from './TableHasGroupedRow'
+import React, { useMemo } from 'react'
+import TableHasGroupedRow from '../../TableHasGroupedRow'
+import { decideHeader } from '../../../util/columnsHelper'
 import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
 import Overexpression from './Overexpression'
-import loadData from '../../../services/loadData'
+import TsvPheno from './tsv/TsvPheno'
 
-const Phenotype = ({ WBid, tableType }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    loadData(WBid, tableType).then((json) => {
-      setData(json.data)
-    })
-  }, [WBid, tableType])
-
+const Phenotype = ({ data, id, columnsHeader }) => {
   const showEntities = (value) => {
     if (value === null) {
       return 'N/A'
@@ -41,7 +34,7 @@ const Phenotype = ({ WBid, tableType }) => {
   const columns = useMemo(
     () => [
       {
-        Header: 'Phenotype',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'phenotype.label',
         aggregate: 'count',
         Aggregated: ({ value }) => `${value} Names`,
@@ -49,21 +42,19 @@ const Phenotype = ({ WBid, tableType }) => {
         width: 240,
       },
       {
-        Header: 'Entities Affected',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'entity',
         Cell: ({ cell: { value } }) => showEntities(value),
         disableSortBy: true,
-        filter: 'entitiesFilter',
         aggregate: 'count',
         Aggregated: () => null,
         canGroupBy: false,
       },
       {
-        Header: 'Supporting Evidence',
+        Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'evidence',
         Cell: ({ cell: { value } }) => showEvidence(value),
         disableSortBy: true,
-        filter: 'evidenceFilter',
         minWidth: 240,
         width: 540,
         aggregate: 'count',
@@ -71,17 +62,13 @@ const Phenotype = ({ WBid, tableType }) => {
         canGroupBy: false,
       },
     ],
-    []
+    [columnsHeader]
   )
 
   return (
     <>
-      <TableHasGroupedRow
-        columns={columns}
-        data={data}
-        WBid={WBid}
-        tableType={tableType}
-      />
+      <TsvPheno data={data} id={id} />
+      <TableHasGroupedRow columns={columns} data={data} id={id} />
     </>
   )
 }

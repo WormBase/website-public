@@ -1,7 +1,11 @@
 import React, { useMemo } from 'react'
-import Table from './Table'
-// import { sortByCitations } from '../../../services/loadData'
+import Table from '../../Table'
 import { decideHeader } from '../../../util/columnsHelper'
+import {
+  sortByInteractions,
+  sortByCitations,
+} from '../../../util/sortTypeHelper'
+import TsvPhenoBI from './tsv/TsvPhenoBI'
 
 const PhenotypeByInteraction = ({ data, id, columnsHeader }) => {
   const showInteractions = (value) => {
@@ -30,8 +34,8 @@ const PhenotypeByInteraction = ({ data, id, columnsHeader }) => {
         Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'interactions',
         Cell: ({ cell: { value } }) => showInteractions(value),
-        sortType: 'sortByInteractions',
-        disableFilters: true,
+        sortType: (rowA, rowB, columnId) =>
+          sortByInteractions(rowA, rowB, columnId),
         width: 200,
         minWidth: 145,
       },
@@ -43,10 +47,8 @@ const PhenotypeByInteraction = ({ data, id, columnsHeader }) => {
         Header: ({ column: { id } }) => decideHeader(id, columnsHeader),
         accessor: 'citations',
         Cell: ({ cell: { value } }) => showCitations(value),
-        sortType: 'sortByCitations',
-        // sortType: (rowA, rowB, columnId) =>
-        //   sortByCitations(rowA, rowB, columnId),
-        disableFilters: true,
+        sortType: (rowA, rowB, columnId) =>
+          sortByCitations(rowA, rowB, columnId),
         minWidth: 240,
         width: 400,
       },
@@ -55,6 +57,7 @@ const PhenotypeByInteraction = ({ data, id, columnsHeader }) => {
 
   return (
     <>
+      <TsvPhenoBI data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )

@@ -3,7 +3,7 @@ import { CSVLink } from 'react-csv'
 import { cloneDeep } from 'lodash'
 import { generateDerivedHeaders } from '../../../../util/tsvHelper'
 
-const TsvPheno = ({ data, WBid, tableType }) => {
+const TsvPheno = ({ data, id }) => {
   const objKeysOfAllele = [
     'Affected_by_molecule',
     'Curator',
@@ -93,7 +93,7 @@ const TsvPheno = ({ data, WBid, tableType }) => {
       data={processedData}
       headers={headers}
       separator={'\t'}
-      filename={`${WBid}_${tableType}.tsv`}
+      filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>
