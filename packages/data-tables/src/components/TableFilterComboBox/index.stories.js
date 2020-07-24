@@ -16,16 +16,10 @@ export const mock = () => (
 
 const CellDefault = ({value}) => <pre>{JSON.stringify(value, null, 2)}</pre>
 
-export const Phenotype = () => {
-  const [data, setData] = useState([])
-  const wbId = 'WBGene00015146'
-  const tableType = 'phenotype_flat'
-
-  useEffect(() => {
-    loadData(wbId, tableType).then((json) => {
-      setData(json.data)
-    })
-  }, [wbId, tableType])
+const GenericTestTable = ({
+  data,
+  columns: columnsRaw,
+}) => {
 
   const {
     filters,
@@ -34,11 +28,13 @@ export const Phenotype = () => {
     tableOptions,
   } = useWormBaseTableFilter(data);
 
-  const columns = useMemo(() => ([
-    {accessor: 'phenotype', Header: 'phenotype', Cell: CellDefault},
-    {accessor: 'entity', Header: 'entity', Cell: CellDefault},
-    {accessor: 'evidence', Header: 'evidence', Cell: CellDefault},
-  ]), [])
+  const columns = useMemo(() => {
+    return columnsRaw.map(columnRaw => ({
+      Header: columnRaw.accessor,
+      Cell: CellDefault,
+      ...columnRaw,
+    }))
+  }, [columnsRaw])
 
   const {
     getTableProps,
@@ -101,5 +97,27 @@ export const Phenotype = () => {
        </tbody>
       </table>
     </div>
+  )
+}
+
+export const PhenotypeAbi1 = () => {
+  const [data, setData] = useState([])
+  const wbId = 'WBGene00015146'
+  const tableType = 'phenotype_flat'
+
+  useEffect(() => {
+    loadData(wbId, tableType).then((json) => {
+      setData(json.data)
+    })
+  }, [wbId, tableType])
+
+  const columns = useMemo(() => ([
+    {accessor: 'phenotype'},
+    {accessor: 'entity'},
+    {accessor: 'evidence'},
+  ]), [])
+
+  return (
+    <GenericTestTable data={data} columns={columns} />
   )
 }
