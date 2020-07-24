@@ -128,7 +128,7 @@ const useTableDataFetch = ({
 
 const LoadDataProgress = ({children, ...useTableDataFetchOptions}) => {
   const state = useTableDataFetch(useTableDataFetchOptions)
-  const { data, loading, error } = state
+  const { loading, error } = state
   return (
     loading ? 'Loading data from the server...' :
     error ? <span style={{color: 'tomato'}}> Error occured loading data</span> :
@@ -151,10 +151,6 @@ export const PhenotypeAbi1 = () => {
 }
 
 export const PhenotypeByInteractionAbi1 = () => {
-  const { data } = useTableDataFetch({
-    wbId: 'WBGene00015146',
-    tableType: 'phenotype_by_interaction',
-  })
 
   const columns = useMemo(() => ([
     {accessor: 'phenotype'},
