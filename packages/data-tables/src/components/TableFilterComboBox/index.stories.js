@@ -31,9 +31,8 @@ export const Phenotype = () => {
   const {
     filters,
     setFilters,
-    filterTypes,
-    globalFilter,
     options,
+    tableOptions,
   } = useWormBaseTableFilter(data);
 
   const columns = useMemo(() => ([
@@ -49,13 +48,9 @@ export const Phenotype = () => {
     rows,
     prepareRow,
   } = useTable({
+    ...tableOptions,
     columns,
     data,
-    filterTypes,
-    globalFilter: 'testGlobalFilter',
-    initialState: {
-      globalFilter: 'testGlobalFilter',
-    },
   }, useGlobalFilter)
 
   return (

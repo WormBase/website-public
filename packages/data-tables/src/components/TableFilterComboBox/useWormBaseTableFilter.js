@@ -81,11 +81,21 @@ export function useWormBaseTableFilter(data) {
     [filters, dataFlat]
   )
 
+  const tableOptions = React.useMemo(
+    () => ({
+      filterTypes,
+      globalFilter: 'testGlobalFilter',
+      initialState: {
+        globalFilter: 'testGlobalFilter',
+      },
+    }),
+    [filterTypes]
+  )
+
   return {
     filters,
     setFilters,
-    filterTypes,
-    globalFilter: 'testGlobalFilter',
-    options,
+    options, // options for the combobox
+    tableOptions,
   }
 }
