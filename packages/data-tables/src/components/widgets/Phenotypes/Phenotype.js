@@ -5,7 +5,7 @@ import Allele from './Allele'
 import RNAi from './RNAi'
 import Entity from './Entity'
 import Overexpression from './Overexpression'
-import TsvPheno from './tsv/TsvPheno'
+import Tsv from '../../Tsv'
 
 const Phenotype = ({ data, id, columnsHeader }) => {
   const showEntities = (value) => {
@@ -67,7 +67,7 @@ const Phenotype = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <TsvPheno data={data} id={id} />
+      <Tsv data={data} id={id} />
       <TableHasGroupedRow columns={columns} data={data} id={id} />
     </>
   )

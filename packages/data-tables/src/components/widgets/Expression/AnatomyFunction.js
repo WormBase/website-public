@@ -5,7 +5,7 @@ import {
   sortByAnatomicalSites,
   sortByDescriptionType0,
 } from '../../../util/sortTypeHelper'
-import TsvAnatomyFn from './tsv/TsvAnatomyFn'
+import Tsv from '../../Tsv'
 
 const ExpressionCluster = ({ data, id, columnsHeader }) => {
   const showAnatomicalSites = (value) => {
@@ -64,7 +64,7 @@ const ExpressionCluster = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <TsvAnatomyFn data={data} id={id} />
+      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import Table from '../../Table'
 import { decideHeader } from '../../../util/columnsHelper'
 import { sortByMedianOrMean } from '../../../util/sortTypeHelper'
-import TsvDataCtrl from './tsv/TsvDataCtrl'
+import Tsv from '../../Tsv'
 
 const AggregateExpressionEstimates = ({ data, id, columnsHeader }) => {
   const showMedianAndMean = (value) => {
@@ -46,7 +46,7 @@ const AggregateExpressionEstimates = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <TsvDataCtrl data={data} id={id} />
+      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )

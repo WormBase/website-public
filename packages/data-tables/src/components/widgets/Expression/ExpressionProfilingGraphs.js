@@ -5,7 +5,7 @@ import {
   sortByDescriptionType0,
   sortByDatabase,
 } from '../../../util/sortTypeHelper'
-import TsvExpProfGraphs from './tsv/TsvExpProfGraphs'
+import Tsv from '../../Tsv'
 
 const ExpressedProfillingGraphs = ({ data, id, columnsHeader }) => {
   const showDescription = (value) => {
@@ -83,7 +83,7 @@ const ExpressedProfillingGraphs = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <TsvExpProfGraphs data={data} id={id} />
+      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )

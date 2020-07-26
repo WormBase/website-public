@@ -5,7 +5,7 @@ import {
   sortByInteractions,
   sortByCitations,
 } from '../../../util/sortTypeHelper'
-import TsvPhenoBI from './tsv/TsvPhenoBI'
+import Tsv from '../../Tsv'
 
 const PhenotypeByInteraction = ({ data, id, columnsHeader }) => {
   const showInteractions = (value) => {
@@ -57,7 +57,7 @@ const PhenotypeByInteraction = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <TsvPhenoBI data={data} id={id} />
+      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )
