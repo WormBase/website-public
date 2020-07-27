@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import Table from '../../Table'
 import { decideHeader } from '../../../util/columnsHelper'
-import Tsv from '../../Tsv'
 
 const FpkmExpression = ({ data, id, columnsHeader }) => {
   const columns = useMemo(
@@ -37,7 +36,6 @@ const FpkmExpression = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )

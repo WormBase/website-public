@@ -22,6 +22,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import FilterListIcon from '@material-ui/icons/FilterList'
 import SortIcon from '@material-ui/icons/Sort'
+import Tsv from './Tsv'
 
 const useStyles = makeStyles({
   table: {
@@ -144,8 +145,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const Table = ({ columns, data, id }) => {
-  console.log(data)
+const Table = ({ columns, data, id, dataForTsv }) => {
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
@@ -438,6 +438,7 @@ const Table = ({ columns, data, id }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
+        <Tsv data={dataForTsv || data} id={id} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>

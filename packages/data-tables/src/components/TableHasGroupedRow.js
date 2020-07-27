@@ -24,6 +24,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import FilterListIcon from '@material-ui/icons/FilterList'
+import Tsv from './Tsv'
 
 const useStyles = makeStyles({
   table: {
@@ -150,7 +151,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   )
 }
 
-const TableHasGroupedRow = ({ columns, data, id }) => {
+const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
   const classes = useStyles()
 
   const [displayFilter, setDisplayFilter] = useState({
@@ -510,6 +511,7 @@ const TableHasGroupedRow = ({ columns, data, id }) => {
     <div className={classes.container}>
       <div className={classes.displayed_data_info}>
         <span>{rows.length} entries</span>
+        <Tsv data={dataForTsv || data} id={id} />
       </div>
       <table {...getTableProps()} className={classes.table}>
         <thead>

@@ -5,7 +5,6 @@ import {
   numberWithScientificNotation,
   sortBySpecies,
 } from '../../../util/sortTypeHelper'
-import Tsv from '../../Tsv'
 
 const BlastpDetails = ({ data, id, columnsHeader }) => {
   const columns = useMemo(
@@ -68,7 +67,6 @@ const BlastpDetails = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )

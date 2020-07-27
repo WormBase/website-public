@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import Table from '../../Table'
 import { decideHeader } from '../../../util/columnsHelper'
 import { sortBySpecies, sortByMethods } from '../../../util/sortTypeHelper'
-import Tsv from '../../Tsv'
 
 const Orthologs = ({ data, id, columnsHeader }) => {
   const showMethods = (value) => {
@@ -44,7 +43,6 @@ const Orthologs = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )

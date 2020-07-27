@@ -3,7 +3,6 @@ import Table from '../../Table'
 import { decideHeader } from '../../../util/columnsHelper'
 import { sortByEvidence } from '../../../util/sortTypeHelper'
 import Evidence from './Evidence'
-import Tsv from '../../Tsv'
 import unwind from 'javascript-unwind'
 
 const Expressed = ({ data, id, columnsHeader }) => {
@@ -40,8 +39,12 @@ const Expressed = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <Tsv data={data.length === 0 ? [] : unwind(data, 'details')} id={id} />
-      <Table columns={columns} data={data} id={id} />
+      <Table
+        columns={columns}
+        data={data}
+        id={id}
+        dataForTsv={data.length === 0 ? null : unwind(data, 'details')}
+      />
     </>
   )
 }

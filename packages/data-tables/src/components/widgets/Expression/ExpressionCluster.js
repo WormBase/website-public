@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import Table from '../../Table'
 import { decideHeader } from '../../../util/columnsHelper'
 import { sortByDescriptionType1 } from '../../../util/sortTypeHelper'
-import Tsv from '../../Tsv'
 
 const ExpressionCluster = ({ data, id, columnsHeader }) => {
   const showDescription = (value) => {
@@ -39,7 +38,6 @@ const ExpressionCluster = ({ data, id, columnsHeader }) => {
 
   return (
     <>
-      <Tsv data={data} id={id} />
       <Table columns={columns} data={data} id={id} />
     </>
   )
