@@ -21,7 +21,7 @@ const Wrapper = ({ WBid, tableType }) => {
 }
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Expression/expressed_in',
+  title: 'Table/Widgets/Expression/expressed_in',
 }
 
 export const daf8 = () => (

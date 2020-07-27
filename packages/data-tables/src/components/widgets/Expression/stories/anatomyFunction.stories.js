@@ -23,7 +23,7 @@ const Wrapper = ({ WBid, tableType }) => {
 }
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Expression/anatomy_function',
+  title: 'Table/Widgets/Expression/anatomy_function',
 }
 
 // This table for daf8 doesn't exist

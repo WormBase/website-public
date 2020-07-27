@@ -24,7 +24,7 @@ const Wrapper = ({ WBid, tableType }) => {
 
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Homology/other_orthologs',
+  title: 'Table/Widgets/Homology/other_orthologs',
 }
 
 export const daf8 = () => (

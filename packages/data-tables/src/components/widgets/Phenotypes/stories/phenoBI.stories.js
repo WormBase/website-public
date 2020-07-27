@@ -33,7 +33,7 @@ const Wrapper = ({ WBid, tableType }) => {
 
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Phenotypes/phenotype_by_interaction',
+  title: 'Table/Widgets/Phenotypes/phenotype_by_interaction',
 }
 
 export const daf8 = () => (

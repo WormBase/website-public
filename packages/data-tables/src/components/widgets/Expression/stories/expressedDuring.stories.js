@@ -21,7 +21,7 @@ const Wrapper = ({ WBid, tableType }) => {
 }
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Expression/expressed_during',
+  title: 'Table/Widgets/Expression/expressed_during',
 }
 
 export const daf8 = () => (

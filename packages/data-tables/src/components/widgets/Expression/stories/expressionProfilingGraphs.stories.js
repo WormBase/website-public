@@ -23,7 +23,7 @@ const Wrapper = ({ WBid, tableType }) => {
 }
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Expression/expression_profiling_graphs',
+  title: 'Table/Widgets/Expression/expression_profiling_graphs',
 }
 
 export const daf8 = () => (

@@ -24,7 +24,7 @@ const Wrapper = ({ WBid, tableType }) => {
 
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Phenotypes/drives_overexpression',
+  title: 'Table/Widgets/Phenotypes/drives_overexpression',
 }
 
 export const daf8 = () => (

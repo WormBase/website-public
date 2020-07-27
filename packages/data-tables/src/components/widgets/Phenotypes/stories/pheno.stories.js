@@ -24,7 +24,7 @@ const Wrapper = ({ WBid, tableType }) => {
 
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Phenotypes/phenotype',
+  title: 'Table/Widgets/Phenotypes/phenotype',
 }
 
 export const daf8 = () => (

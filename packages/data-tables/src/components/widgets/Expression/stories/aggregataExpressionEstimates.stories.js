@@ -28,7 +28,7 @@ const Wrapper = ({ WBid, tableType }) => {
 }
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Expression/fpkm_expression_summary_ls/data__controls',
+  title: 'Table/Widgets/Expression/fpkm_expression_summary_ls/data__controls',
 }
 
 export const daf8 = () => (

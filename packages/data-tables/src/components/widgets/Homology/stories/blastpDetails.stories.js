@@ -28,7 +28,7 @@ const Wrapper = ({ WBid, tableType }) => {
 
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Homology/blastp_details',
+  title: 'Table/Widgets/Homology/blastp_details',
 }
 
 export const daf8 = () => (

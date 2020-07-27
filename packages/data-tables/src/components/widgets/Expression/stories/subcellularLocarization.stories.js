@@ -21,7 +21,7 @@ const Wrapper = ({ WBid, tableType }) => {
 }
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Expression/subcellular_localization',
+  title: 'Table/Widgets/Expression/subcellular_localization',
 }
 
 // This table for daf8 doesn't exist

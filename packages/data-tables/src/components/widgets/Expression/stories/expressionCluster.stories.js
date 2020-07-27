@@ -21,7 +21,7 @@ const Wrapper = ({ WBid, tableType }) => {
 }
 export default {
   component: Wrapper,
-  title: 'Table|Widgets/Expression/expression_cluster',
+  title: 'Table/Widgets/Expression/expression_cluster',
 }
 
 export const daf8 = () => (
