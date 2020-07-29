@@ -1,5 +1,5 @@
 {
-  "name": "table-storybook",
+  "name": "@wormbase/data-tables",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
