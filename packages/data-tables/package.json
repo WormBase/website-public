@@ -46,6 +46,7 @@
     "@storybook/addon-links": "^5.3.19",
     "@storybook/addon-storyshots": "^5.3.19",
     "@storybook/addons": "^5.3.19",
+    "@storybook/node-logger": "5.3.19",
     "@storybook/preset-create-react-app": "^3.0.0",
     "@storybook/react": "^5.3.19",
     "react-test-renderer": "^16.13.1"
