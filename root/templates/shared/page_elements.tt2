@@ -363,7 +363,7 @@ END;
         %]
         <div id=[% table_id %]></div>
         <script type="text/javascript">
-          WB.buildDataTable("[% table_id %]")
+          WB.buildDataTable("[% table_id %]", [% json_encode(local_data) %], [% json_encode(columns) %]);
         </script>
         [%
 #       jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener, column_args);

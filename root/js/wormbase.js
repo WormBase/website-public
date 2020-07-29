@@ -3282,10 +3282,10 @@ var Scrolling = (function(){
       });
     }
 
-    function buildDataTable(elementId) {
+    function buildDataTable(elementId, data, columns) {
       if (elementId === 'table_phenotype_by_interaction') {
         ReactDOM.render(
-          <Table WBid='WBGene00000904' tableType='phenotype_by_interaction' />,
+          <Table data={data} columnsHeader={columns} WBid='WBGene00000904' tableType='phenotype_by_interaction' />,
           document.getElementById(elementId)
         )
       }
