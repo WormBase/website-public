@@ -210,17 +210,21 @@ const TableFilterComboBox = ({ options, onChange }) => {
       </div>
       <ul {...getMenuProps()} style={{ backgroundColor: '#eee' }}>
         {isOpen &&
-          getFilteredItems(items).map((item, index) => (
-            <li
-              style={
-                highlightedIndex === index ? { backgroundColor: '#bde4ff' } : {}
-              }
-              key={`${item}${index}`}
-              {...getItemProps({ item, index })}
-            >
-              {item}
-            </li>
-          ))}
+          getFilteredItems(items)
+            .slice(0, 100)
+            .map((item, index) => (
+              <li
+                style={
+                  highlightedIndex === index
+                    ? { backgroundColor: '#bde4ff' }
+                    : {}
+                }
+                key={`${item}${index}`}
+                {...getItemProps({ item, index })}
+              >
+                {item}
+              </li>
+            ))}
       </ul>
     </div>
   );
