@@ -84,8 +84,9 @@ const TableFilterComboBox = ({ options, onChange }) => {
   } = useCombobox({
     inputValue,
     items: getFilteredItems(items),
-    onStateChange: ({ inputValue, type, selectedItem }) => {
-      console.log([inputValue, type, selectedItem]);
+    onStateChange: (change) => {
+      const { inputValue, type, selectedItem } = change;
+      console.log(JSON.stringify(change, null, 2));
       switch (type) {
         case useCombobox.stateChangeTypes.InputChange:
           setInputValue(inputValue);
@@ -99,7 +100,6 @@ const TableFilterComboBox = ({ options, onChange }) => {
             if (filterName && filterValue) {
               setInputValue('');
               addSelectedItem(selectedItem);
-              closeMenu();
               selectItem(null);
             } else {
               setInputValue(`${filterName} : `);
@@ -117,7 +117,6 @@ const TableFilterComboBox = ({ options, onChange }) => {
             } else {
               addSelectedItem(`search : ${selectedItem}`);
             }
-            closeMenu();
             selectItem(null);
           }
 
@@ -164,8 +163,11 @@ const TableFilterComboBox = ({ options, onChange }) => {
           <input
             {...getInputProps(
               getDropdownProps({
-                onFocus: openMenu,
-                onBlur: closeMenu,
+                onFocus: () => {
+                  if (!isOpen) {
+                    openMenu();
+                  }
+                },
                 onKeyDown: (event) => {
                   if (
                     event.key === 'Enter' &&
