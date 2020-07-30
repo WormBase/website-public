@@ -80,6 +80,7 @@ const TableFilterComboBox = ({ options, onChange }) => {
     reset: resetCombobox,
     selectItem,
     openMenu,
+    closeMenu,
     toggleMenu,
   } = useCombobox({
     inputValue,
@@ -118,6 +119,7 @@ const TableFilterComboBox = ({ options, onChange }) => {
               addSelectedItem(`search : ${selectedItem}`);
             }
             selectItem(null);
+            closeMenu();
           }
 
           break;
