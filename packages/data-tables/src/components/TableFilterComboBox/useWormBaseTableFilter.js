@@ -18,14 +18,13 @@ function flattenLossyRecursive(data, prefix = [], result = {}) {
     result[key] = result[key] || [];
     result[key].push(`${data.label} [${data.id}]`);
     return result;
-  } else if (Array.isArray(data)) {
-    data.forEach((item, i) => {
-      flattenLossyRecursive(item, prefix, result); // same prefix
-    });
-    return result;
   } else {
     Object.keys(data).forEach((key) => {
-      flattenLossyRecursive(data[key], [...prefix, key], result);
+      if (key === 'text' || parseInt(key) >= 0) {
+        flattenLossyRecursive(data[key], prefix, result); // same prefix
+      } else {
+        flattenLossyRecursive(data[key], [...prefix, key], result);
+      }
     });
     return result;
   }
