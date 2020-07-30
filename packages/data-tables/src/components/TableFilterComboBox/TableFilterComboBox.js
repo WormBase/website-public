@@ -80,7 +80,6 @@ const TableFilterComboBox = ({ options, onChange }) => {
     reset: resetCombobox,
     selectItem,
     openMenu,
-    closeMenu,
     toggleMenu,
   } = useCombobox({
     inputValue,
