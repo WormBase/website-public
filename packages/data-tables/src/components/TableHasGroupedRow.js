@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react';
 import {
   useAsyncDebounce,
   useBlockLayout,
@@ -10,21 +10,21 @@ import {
   useExpanded,
   usePagination,
   useTable,
-} from 'react-table'
-import matchSorter from 'match-sorter'
-import { makeStyles } from '@material-ui/core/styles'
-import Checkbox from '@material-ui/core/Checkbox'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
-import FormControl from '@material-ui/core/FormControl'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormLabel from '@material-ui/core/FormLabel'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
-import ArrowRightIcon from '@material-ui/icons/ArrowRight'
-import FilterListIcon from '@material-ui/icons/FilterList'
-import Tsv from './Tsv'
+} from 'react-table';
+import matchSorter from 'match-sorter';
+import { makeStyles } from '@material-ui/core/styles';
+import Checkbox from '@material-ui/core/Checkbox';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormLabel from '@material-ui/core/FormLabel';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Tsv from './Tsv';
 
 const useStyles = makeStyles({
   table: {
@@ -124,23 +124,23 @@ const useStyles = makeStyles({
       marginRight: 10,
     },
   },
-})
+});
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
-  const [value, setValue] = useState(globalFilter)
+  const [value, setValue] = useState(globalFilter);
   const onChange = useAsyncDebounce((value) => {
-    setGlobalFilter(value || undefined)
-  }, 200)
+    setGlobalFilter(value || undefined);
+  }, 200);
 
   return (
     <input
       value={value || ''}
       onChange={(e) => {
-        setValue(e.target.value)
-        onChange(e.target.value)
+        setValue(e.target.value);
+        onChange(e.target.value);
       }}
       placeholder={`Search all columns...`}
-      type='search'
+      type="search"
       style={{
         fontSize: '1.1rem',
         marginBottom: 10,
@@ -148,88 +148,88 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
         width: '90%',
       }}
     />
-  )
-}
+  );
+};
 
 const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
-  const classes = useStyles()
+  const classes = useStyles();
 
   const [displayFilter, setDisplayFilter] = useState({
     phentypeLabel: false,
     entity: false,
     evidence: false,
-  })
+  });
 
   const sortTypes = useMemo(
     () => ({
       caseInsensitiveAlphaNumeric: (rowA, rowB, columnId) => {
-        const getRowValueByColumnID = (row, columnId) => row.values[columnId]
+        const getRowValueByColumnID = (row, columnId) => row.values[columnId];
         const toString = (a) => {
           if (typeof a === 'number') {
             if (isNaN(a) || a === Infinity || a === -Infinity) {
-              return ''
+              return '';
             }
-            return String(a)
+            return String(a);
           }
           if (typeof a === 'string') {
-            return a
+            return a;
           }
-          return ''
-        }
-        const reSplitAlphaNumeric = /([0-9]+)/gm
+          return '';
+        };
+        const reSplitAlphaNumeric = /([0-9]+)/gm;
 
-        let a = getRowValueByColumnID(rowA, columnId)
-        let b = getRowValueByColumnID(rowB, columnId)
+        let a = getRowValueByColumnID(rowA, columnId);
+        let b = getRowValueByColumnID(rowB, columnId);
         // Force to strings (or "" for unsupported types)
         // And lowercase to accomplish insensitive sort
-        a = toString(a).toLowerCase()
-        b = toString(b).toLowerCase()
+        a = toString(a).toLowerCase();
+        b = toString(b).toLowerCase();
 
         // Split on number groups, but keep the delimiter
         // Then remove falsey split values
-        a = a.split(reSplitAlphaNumeric).filter(Boolean)
-        b = b.split(reSplitAlphaNumeric).filter(Boolean)
+        a = a.split(reSplitAlphaNumeric).filter(Boolean);
+        b = b.split(reSplitAlphaNumeric).filter(Boolean);
 
         // While
         while (a.length && b.length) {
-          let aa = a.shift()
-          let bb = b.shift()
+          let aa = a.shift();
+          let bb = b.shift();
 
-          const an = parseInt(aa, 10)
-          const bn = parseInt(bb, 10)
+          const an = parseInt(aa, 10);
+          const bn = parseInt(bb, 10);
 
-          const combo = [an, bn].sort()
+          const combo = [an, bn].sort();
 
           // Both are string
           if (isNaN(combo[0])) {
             if (aa > bb) {
-              return 1
+              return 1;
             }
             if (bb > aa) {
-              return -1
+              return -1;
             }
-            continue
+            continue;
           }
 
           // One is a string, one is a number
           if (isNaN(combo[1])) {
-            return isNaN(an) ? -1 : 1
+            return isNaN(an) ? -1 : 1;
           }
 
           // Both are numbers
           if (an > bn) {
-            return 1
+            return 1;
           }
           if (bn > an) {
-            return -1
+            return -1;
           }
         }
 
-        return a.length - b.length
+        return a.length - b.length;
       },
     }),
     []
-  )
+  );
 
   const filterTypes = useMemo(() => {
     const storeValueOfNestedObj = (obj, keyArr) => {
@@ -241,7 +241,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
             obj[key].label &&
             obj[key].taxonomy
           ) {
-            keyArr.push(obj[key].label)
+            keyArr.push(obj[key].label);
           }
           if (Array.isArray(obj[key]) && typeof obj[key][0] === 'object') {
             if (
@@ -250,7 +250,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
               obj[key][0].label &&
               obj[key][0].taxonomy
             ) {
-              keyArr.push(obj[key].map((o) => o.label))
+              keyArr.push(obj[key].map((o) => o.label));
             } else if (obj[key][0].pato_evidence) {
               keyArr.push(
                 ...obj[key].map((o) => [
@@ -258,60 +258,60 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
                   o.pato_evidence.entity_type,
                   o.pato_evidence.pato_term,
                 ])
-              )
+              );
             } else {
               console.error(
                 'Data is surely array of Object. But it is not Tagtype data.'
-              )
-              console.error(key)
-              console.error(obj[key])
+              );
+              console.error(key);
+              console.error(obj[key]);
             }
           } else {
-            storeValueOfNestedObj(obj[key], keyArr)
+            storeValueOfNestedObj(obj[key], keyArr);
           }
         } else {
-          keyArr.push(obj[key])
+          keyArr.push(obj[key]);
         }
       }
-    }
+    };
 
     return {
       defaultFilter: (rows, id, filterValue) => {
         const keyFunc = (row) => {
-          let keyArr = []
-          const rowVals = row.values
+          let keyArr = [];
+          const rowVals = row.values;
 
           id.forEach((i) => {
             if (typeof rowVals[i] === 'object') {
-              storeValueOfNestedObj(rowVals[i], keyArr)
+              storeValueOfNestedObj(rowVals[i], keyArr);
             } else {
-              keyArr.push(rowVals[i])
+              keyArr.push(rowVals[i]);
             }
-          })
+          });
 
-          return keyArr
-        }
+          return keyArr;
+        };
 
         return matchSorter(rows, filterValue, {
           keys: [(row) => keyFunc(row)],
           threshold: matchSorter.rankings.CONTAINS,
-        })
+        });
       },
-    }
-  }, [])
+    };
+  }, []);
 
   const defaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
     return (
       <input
         value={filterValue || ''}
         onChange={(e) => {
-          setFilter(e.target.value || undefined)
+          setFilter(e.target.value || undefined);
         }}
         placeholder={`Search...`}
-        type='search'
+        type="search"
       />
-    )
-  }
+    );
+  };
 
   const defaultColumn = useMemo(
     () => ({
@@ -323,32 +323,32 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
       maxWidth: 600,
     }),
     []
-  )
+  );
 
   const getDefaultExpandedRows = (data, threshold) => {
-    const defaultExpandedRows = {}
-    const defaultHidRows = {}
+    const defaultExpandedRows = {};
+    const defaultHidRows = {};
 
     data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`
+      const key = `phenotype.label:${d.phenotype.label}`;
       if (defaultHidRows[key]) {
-        defaultHidRows[key] = ++defaultHidRows[key]
+        defaultHidRows[key] = ++defaultHidRows[key];
       } else {
-        defaultHidRows[key] = 1
+        defaultHidRows[key] = 1;
       }
-    })
+    });
 
     data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`
+      const key = `phenotype.label:${d.phenotype.label}`;
       if (defaultHidRows[key] < threshold) {
-        defaultExpandedRows[key] = true
+        defaultExpandedRows[key] = true;
       } else {
-        defaultExpandedRows[key] = false
+        defaultExpandedRows[key] = false;
       }
-    })
+    });
 
-    return defaultExpandedRows
-  }
+    return defaultExpandedRows;
+  };
 
   const displayFilterFn = (column) => {
     if (
@@ -356,25 +356,25 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
       (column.id === 'entity' && displayFilter['entity']) ||
       (column.id === 'evidence' && displayFilter['evidence'])
     ) {
-      return column.render('Filter')
+      return column.render('Filter');
     }
-    return null
-  }
+    return null;
+  };
 
   const ClickAway = () => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
 
     const handleClick = () => {
-      setOpen((prev) => !prev)
-    }
+      setOpen((prev) => !prev);
+    };
     const handleClickAway = () => {
-      setOpen(false)
-    }
+      setOpen(false);
+    };
 
     return (
       <ClickAwayListener onClickAway={handleClickAway}>
         <span className={classes.column_filter_root}>
-          <button type='button' onClick={handleClick}>
+          <button type="button" onClick={handleClick}>
             <FilterListIcon />
           </button>
           {open ? (
@@ -384,63 +384,63 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
           ) : null}
         </span>
       </ClickAwayListener>
-    )
-  }
+    );
+  };
 
   const CheckboxesGroup = () => {
     const handleChange = (event) => {
       setDisplayFilter({
         ...displayFilter,
         [event.target.name]: event.target.checked,
-      })
-    }
-    const { phenotypeLabel, entity, evidence } = displayFilter
+      });
+    };
+    const { phenotypeLabel, entity, evidence } = displayFilter;
 
     return (
-      <FormControl component='fieldset'>
-        <FormLabel component='legend'>Column search</FormLabel>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Column search</FormLabel>
         <FormGroup>
           <FormControlLabel
             control={
               <Checkbox
                 checked={phenotypeLabel}
                 onChange={handleChange}
-                name='phenotypeLabel'
+                name="phenotypeLabel"
               />
             }
-            label='Phenotype'
+            label="Phenotype"
           />
           <FormControlLabel
             control={
               <Checkbox
                 checked={entity}
                 onChange={handleChange}
-                name='entity'
+                name="entity"
               />
             }
-            label='Entities Affected'
+            label="Entities Affected"
           />
           <FormControlLabel
             control={
               <Checkbox
                 checked={evidence}
                 onChange={handleChange}
-                name='evidence'
+                name="evidence"
               />
             }
-            label='Supported Evidence'
+            label="Supported Evidence"
           />
         </FormGroup>
       </FormControl>
-    )
-  }
+    );
+  };
 
   const enableToggleRowExpand = (row, cell) => {
     if (cell.isGrouped || cell.isAggregated) {
-      return cell.getCellProps(row.getToggleRowExpandedProps())
+      return cell.getCellProps(row.getToggleRowExpandedProps());
     }
-    return cell.getCellProps()
-  }
+    return cell.getCellProps();
+  };
 
   const displayHiddenRowsCount = (cell, row) => {
     if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
@@ -449,17 +449,17 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
           {cell.render('Aggregated')}
           <span className={classes.rows_count}>
             {row.isExpanded ? (
-              <ArrowDropDownIcon className='row-arrow-icon' />
+              <ArrowDropDownIcon className="row-arrow-icon" />
             ) : (
-              <ArrowRightIcon className='row-arrow-icon' />
+              <ArrowRightIcon className="row-arrow-icon" />
             )}
           </span>
           {row.subRows.length} Results
         </>
-      )
+      );
     }
-    return cell.render('Aggregated')
-  }
+    return cell.render('Aggregated');
+  };
 
   const {
     getTableProps,
@@ -505,7 +505,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
     useSortBy,
     useExpanded,
     usePagination
-  )
+  );
 
   return (
     <div className={classes.container}>
@@ -530,15 +530,15 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
                 <th {...column.getHeaderProps()}>
                   <div
                     {...column.getSortByToggleProps()}
-                    className='column_header'
+                    className="column_header"
                   >
                     {column.render('Header')}
                     {column.canSort ? (
                       column.isSorted ? (
                         column.isSortedDesc ? (
-                          <ArrowDownwardIcon className='sort-arrow-icon' />
+                          <ArrowDownwardIcon className="sort-arrow-icon" />
                         ) : (
-                          <ArrowUpwardIcon className='sort-arrow-icon' />
+                          <ArrowUpwardIcon className="sort-arrow-icon" />
                         )
                       ) : (
                         ''
@@ -547,7 +547,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
                       ''
                     )}
                   </div>
-                  <div className='filter'>
+                  <div className="filter">
                     {column.canFilter ? displayFilterFn(column) : null}
                   </div>
                   <div
@@ -563,7 +563,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
         </thead>
         <tbody {...getTableBodyProps()}>
           {page.map((row) => {
-            prepareRow(row)
+            prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
@@ -590,10 +590,10 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
                         )}
                       </div>
                     </td>
-                  )
+                  );
                 })}
               </tr>
-            )
+            );
           })}
         </tbody>
       </table>
@@ -619,7 +619,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
         <select
           value={pageSize}
           onChange={(e) => {
-            setPageSize(Number(e.target.value))
+            setPageSize(Number(e.target.value));
           }}
         >
           {[5, 10, 25, 100, 500].map((pageSize) => (
@@ -630,7 +630,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
         </select>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TableHasGroupedRow
+export default TableHasGroupedRow;
