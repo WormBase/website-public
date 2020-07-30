@@ -81,6 +81,7 @@ const TableFilterComboBox = ({ options, onChange }) => {
     selectItem,
     openMenu,
     closeMenu,
+    toggleMenu,
   } = useCombobox({
     inputValue,
     items: getFilteredItems(items),
@@ -127,6 +128,8 @@ const TableFilterComboBox = ({ options, onChange }) => {
     },
   });
 
+  const [isOpenByFocus, setIsOpenByFocus] = useState(false);
+
   return (
     <div>
       <label {...getLabelProps()}>Filering by:</label>
@@ -165,7 +168,15 @@ const TableFilterComboBox = ({ options, onChange }) => {
               getDropdownProps({
                 onFocus: () => {
                   if (!isOpen) {
+                    setIsOpenByFocus(true);
                     openMenu();
+                  }
+                },
+                onClick: () => {
+                  if (isOpenByFocus) {
+                    setIsOpenByFocus(false);
+                  } else {
+                    toggleMenu();
                   }
                 },
                 onKeyDown: (event) => {
