@@ -1,33 +1,64 @@
-import React, { useState, useMemo } from 'react'
-import get from 'lodash/get'
-import flattenRecursive from '../../utils/flattenRecursive'
+import React, { useState, useMemo } from 'react';
+
+// Inspired by the document representation of Elasticsearch,
+// flatten the keys using dot notation to remove nestedness, and
+// make the leaf node an array to accommodate any cardinality
+
+function flattenLossyRecursive(data, prefix = [], result = {}) {
+  if (Object(data) !== data) {
+    if (data || data === 0) {
+      const key = prefix.join('.');
+      result[key] = result[key] || [];
+      result[key].push(data);
+    }
+    return result;
+  } else if (data.id && data.label && data.class) {
+    // consider a leaf node
+    const key = prefix.join('.');
+    result[key] = result[key] || [];
+    result[key].push(`${data.label} [${data.id}]`);
+    return result;
+  } else if (Array.isArray(data)) {
+    data.forEach((item, i) => {
+      flattenLossyRecursive(item, prefix, result); // same prefix
+    });
+    return result;
+  } else {
+    Object.keys(data).forEach((key) => {
+      flattenLossyRecursive(data[key], [...prefix, key], result);
+    });
+    return result;
+  }
+}
 
 export default function useWormBaseTableFilter(data = []) {
   const dataFlat = useMemo(() => {
     return data.map((item) => {
-      return flattenRecursive(item)
-    }, {})
-  }, [data])
+      return flattenLossyRecursive(item);
+    }, {});
+  }, [data]);
 
   const options = useMemo(() => {
     return dataFlat.reduce((result, itemflat) => {
       Object.keys(itemflat).forEach((key, i) => {
         if (!result[key]) {
-          result[key] = ['(non-empty)', '(empty)']
+          result[key] = ['(non-empty)', '(empty)'];
         }
-        if (result[key].indexOf(itemflat[key]) === -1) {
-          result[key].push(itemflat[key])
-        }
-      })
+        itemflat[key].forEach((item, i) => {
+          if (result[key].indexOf(item) === -1) {
+            result[key].push(item);
+          }
+        });
+      });
       return result;
-    }, {})
-  }, [dataFlat])
+    }, {});
+  }, [dataFlat]);
 
-  const [filters, setFilters] = useState([])
+  const [filters, setFilters] = useState([]);
 
   const filterTypes = React.useMemo(
     () => ({
-      testGlobalFilter: (rows,b,c) => {
+      testGlobalFilter: (rows, b, c) => {
         // const filters = [
         //   {
         //     key: 'evidence.RNAi.text.id',
@@ -38,35 +69,38 @@ export default function useWormBaseTableFilter(data = []) {
         //     value: 'WBPhenotype:0000688',
         //   },
         // ]
-        return rows.filter(({values, index}) => {
-          const isEmpty = (value) => {
-            return (
-              !value && value !== 0
-            )
-          }
+        return rows.filter(({ index }) => {
+          const isContent = (value) => {
+            return value && Object.keys(value).length;
+          };
           return filters.reduce((isMatchSoFar, { key, value: filterValue }) => {
             if (isMatchSoFar) {
               if (key === 'search') {
-                return Object.values(dataFlat[index]).reduce((any, value = '') => {
-                  return any || new RegExp(filterValue, 'i').test(value)
-                }, false)
+                return Object.values(dataFlat[index]).reduce(
+                  (any, value = '') => {
+                    return any || new RegExp(filterValue, 'i').test(value);
+                  },
+                  false
+                );
               } else {
-                const value = get(values, key.split('.'));
+                const valuesFlat = dataFlat[index][key] || [];
                 return (
-                  value === filterValue ||
-                  (filterValue === '(empty)' && isEmpty(value)) ||
-                  (filterValue === '(non-empty)' && !isEmpty(value))
-                )
+                  (filterValue === '(empty)' && !isContent(valuesFlat)) ||
+                  (filterValue === '(non-empty)' && isContent(valuesFlat)) ||
+                  valuesFlat.reduce((any, value) => {
+                    return any || value === filterValue;
+                  }, false)
+                );
               }
             } else {
               return false;
             }
-          }, true)
+          }, true);
         });
-      }
+      },
     }),
     [filters, dataFlat]
-  )
+  );
 
   const tableOptions = React.useMemo(
     () => ({
@@ -77,12 +111,12 @@ export default function useWormBaseTableFilter(data = []) {
       },
     }),
     [filterTypes]
-  )
+  );
 
   return {
     filters,
     setFilters,
     options, // options for the combobox
     tableOptions,
-  }
+  };
 }
