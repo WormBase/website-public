@@ -21,7 +21,7 @@ const TableFilterComboBox = ({ options, onChange }) => {
         (item) => `${filterName} : ${item}`
       );
     } else {
-      return Object.keys(options);
+      return Object.keys(options).sort();
     }
   }, [options, inputValue]);
   const {
