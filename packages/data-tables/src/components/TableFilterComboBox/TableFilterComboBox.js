@@ -131,7 +131,9 @@ const TableFilterComboBox = ({ options, onChange }) => {
 
   return (
     <div>
-      <label {...getLabelProps()}>Filering by:</label>
+      <label {...getLabelProps()}>
+        Search by keywords or filter by specific attributes:
+      </label>
       <div
         style={{
           display: 'flex',
