@@ -133,14 +133,13 @@ const TableFilterComboBox = ({ options, onChange }) => {
 
   return (
     <div>
-      <label {...getLabelProps()}>
-        Search by keywords or filter by specific attributes:
-      </label>
       <div
         style={{
           display: 'flex',
           flexWrap: 'wrap',
+          alignItems: 'center',
           border: '1px solid #ccc',
+          padding: `0px ${2}px`,
         }}
       >
         {selectedItems.map((selectedItem, index) => (
@@ -148,8 +147,8 @@ const TableFilterComboBox = ({ options, onChange }) => {
             key={`selected-item-${index}`}
             {...getSelectedItemProps({ selectedItem, index })}
             style={{
-              padding: 5,
-              margin: 5,
+              padding: 4,
+              margin: `${4}px ${2}px`,
               backgroundColor: '#eee',
             }}
           >
@@ -164,6 +163,7 @@ const TableFilterComboBox = ({ options, onChange }) => {
           style={{
             flex: '1 0 500px',
             padding: 5,
+            boxSizing: 'border-box',
           }}
         >
           <input
@@ -193,6 +193,7 @@ const TableFilterComboBox = ({ options, onChange }) => {
                 },
               })
             )}
+            placeholder="Search by keywords or filter by specific criteria"
             style={{
               width: 'calc(100% - 60px)',
             }}
@@ -209,26 +210,42 @@ const TableFilterComboBox = ({ options, onChange }) => {
           <button {...getToggleButtonProps()} aria-label={'toggle menu'}>
             &#8595;
           </button>
+          <ul
+            {...getMenuProps()}
+            style={{
+              backgroundColor: '#eee',
+              position: 'absolute',
+              margin: 0,
+              padding: `0px ${4}px`,
+              width: '100%',
+              listStyleType: 'none',
+            }}
+          >
+            {isOpen && getFilteredItems(items).length
+              ? [
+                  <li style={{ padding: `${4}px 0` }}>
+                    <strong>Filter by:</strong>
+                  </li>,
+                  getFilteredItems(items)
+                    .slice(0, 100)
+                    .map((item, index) => (
+                      <li
+                        style={
+                          highlightedIndex === index
+                            ? { backgroundColor: '#bde4ff' }
+                            : {}
+                        }
+                        key={`${item}${index}`}
+                        {...getItemProps({ item, index })}
+                      >
+                        {item}
+                      </li>
+                    )),
+                ]
+              : null}
+          </ul>
         </div>
       </div>
-      <ul {...getMenuProps()} style={{ backgroundColor: '#eee' }}>
-        {isOpen &&
-          getFilteredItems(items)
-            .slice(0, 100)
-            .map((item, index) => (
-              <li
-                style={
-                  highlightedIndex === index
-                    ? { backgroundColor: '#bde4ff' }
-                    : {}
-                }
-                key={`${item}${index}`}
-                {...getItemProps({ item, index })}
-              >
-                {item}
-              </li>
-            ))}
-      </ul>
     </div>
   );
 };
