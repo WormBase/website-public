@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   useAsyncDebounce,
-  useBlockLayout,
+  useFlexLayout,
   useFilters,
   useGlobalFilter,
   useGroupBy,
@@ -27,84 +27,87 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import Tsv from './Tsv';
 
 const useStyles = makeStyles({
+  wrapper: {
+    display: 'block',
+    overflow: 'auto',
+  },
   table: {
     color: '#444',
     borderSpacing: 0,
     border: '1px solid #ededed',
-    '& thead': {
+    '& .thead': {
       backgroundColor: '#e9eef2',
     },
-    '& thead input': {
-      borderRadius: 5,
-      border: '1px solid #ddd',
-    },
-    '& tr:last-child td': {
+    '& .tr:last-child .td': {
       borderBottom: 0,
     },
-    '& th,td': {
+    '& .th, .td': {
       margin: 0,
       padding: '0.6rem 0.3rem',
       borderBottom: '1px solid #ededed',
       borderRight: '1px solid #ededed',
       position: 'relative',
     },
-    '& td': {
+    '& .td': {
       padding: '0.1rem 0.3rem',
     },
-    '& th:last-child,td:last-child': {
+    '& .th:last-child, .td:last-child': {
       borderRight: 0,
     },
-    '& tbody tr .is_grouped,tbody tr .is_aggregated': {
+    '& .tbody .tr .is_grouped, .tbody .tr .is_aggregated': {
       backgroundColor: '#dedede',
       borderRight: 'none',
     },
-    '& tbody tr .is_placeholder': {
+    '& .tbody .tr .is_placeholder': {
       backgroundColor: '#d3d6ff',
     },
-    '& tbody tr .is_other': {
+    '& .tbody .tr .is_other': {
       backgroundColor: '#e2e5ff',
     },
-    '& th .resizer': {
+    '& .th .resizer': {
       display: 'inline-block',
       width: 10,
       height: '100%',
       position: 'absolute',
       right: 0,
       top: 0,
-      transform: 'translateX(50%)',
       zIndex: 1,
       touchAction: 'none',
     },
-    '& th .isResizing': {
+    '& .th .isResizing': {
       background: '#828A95',
     },
-    '& th .filter input': {
+    '& .th .filter input': {
       width: '80%',
     },
-    '& th .column_header': {
+    '& .th .column_header': {
       textAlign: 'left',
     },
-    '& th .sort-arrow-icon': {
+    '& .th .sort-arrow-icon': {
       fontSize: '1rem',
       marginLeft: 5,
+    },
+  },
+  subElement: {
+    textAlign: 'right',
+    '& span': {
+      marginRight: 15,
+    },
+  },
+  globalFilter: {
+    backgroundColor: '#e9eef2',
+    textAlign: 'center',
+    '& input': {
+      borderRadius: 5,
+      fontSize: '1.2rem',
+      border: '1px solid #ddd',
+      margin: '0.8rem 0',
+      width: '95%',
     },
   },
   pagination: {
     padding: '0.8rem 0.5rem',
     backgroundColor: '#e9eef2',
-  },
-  displayed_data_info: {
-    textAlign: 'right',
-    marginBottom: 5,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    '& span': {
-      marginRight: 15,
-    },
-  },
-  container: {
-    display: 'inline-block',
   },
   column_filter_root: {
     position: 'relative',
@@ -141,12 +144,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
       }}
       placeholder={`Search all columns...`}
       type="search"
-      style={{
-        fontSize: '1.1rem',
-        marginBottom: 10,
-        marginRight: 10,
-        width: '90%',
-      }}
     />
   );
 };
@@ -497,7 +494,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
         expanded: getDefaultExpandedRows(data, 10),
       },
     },
-    useBlockLayout,
+    useFlexLayout,
     useFilters,
     useGlobalFilter,
     useResizeColumns,
@@ -508,126 +505,129 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
   );
 
   return (
-    <div className={classes.container}>
-      <div className={classes.displayed_data_info}>
-        <span>{rows.length} entries</span>
-        <Tsv data={dataForTsv || data} id={id} />
-      </div>
-      <table {...getTableProps()} className={classes.table}>
-        <thead>
-          <tr>
-            <th>
-              <GlobalFilter
-                globalFilter={globalFilter}
-                setGlobalFilter={setGlobalFilter}
-              />
-              <ClickAway />
-            </th>
-          </tr>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
-                  <div
-                    {...column.getSortByToggleProps()}
-                    className="column_header"
-                  >
-                    {column.render('Header')}
-                    {column.canSort ? (
-                      column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <ArrowDownwardIcon className="sort-arrow-icon" />
+    <div className={classes.wrapper}>
+      <div {...getTableProps()}>
+        <div className={classes.subElement}>
+          <span>{rows.length} entries</span>
+          <Tsv data={dataForTsv || data} id={id} />
+        </div>
+        <div className={classes.globalFilter}>
+          <GlobalFilter
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+        </div>
+        <div className={classes.table}>
+          <div className="thead">
+            {headerGroups.map((headerGroup) => (
+              <div className="tr" {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <div className="th" {...column.getHeaderProps()}>
+                    <div
+                      {...column.getSortByToggleProps()}
+                      className="column_header"
+                    >
+                      {column.render('Header')}
+                      {column.canSort ? (
+                        column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <ArrowDownwardIcon className="sort-arrow-icon" />
+                          ) : (
+                            <ArrowUpwardIcon className="sort-arrow-icon" />
+                          )
                         ) : (
-                          <ArrowUpwardIcon className="sort-arrow-icon" />
+                          ''
                         )
                       ) : (
                         ''
-                      )
-                    ) : (
-                      ''
-                    )}
+                      )}
+                    </div>
+                    <div className="filter">
+                      {column.canFilter ? displayFilterFn(column) : null}
+                    </div>
+                    <div
+                      {...column.getResizerProps()}
+                      className={`resizer ${
+                        column.isResizing ? 'isResizing' : ''
+                      }`}
+                    />
                   </div>
-                  <div className="filter">
-                    {column.canFilter ? displayFilterFn(column) : null}
-                  </div>
-                  <div
-                    {...column.getResizerProps()}
-                    className={`resizer ${
-                      column.isResizing ? 'isResizing' : ''
-                    }`}
-                  />
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td
-                      {...enableToggleRowExpand(row, cell)}
-                      className={
-                        cell.isGrouped
-                          ? 'is_grouped'
-                          : cell.isAggregated
-                          ? 'is_aggregated'
-                          : cell.isPlaceholder
-                          ? 'is_placeholder'
-                          : 'is_other'
-                      }
-                    >
-                      <div>
-                        {cell.isGrouped ? (
-                          <div>{cell.render('Cell')}</div>
-                        ) : cell.isAggregated ? (
-                          <div>{displayHiddenRowsCount(cell, row)}</div>
-                        ) : cell.isPlaceholder ? null : (
-                          <div>{cell.render('Cell')}</div>
-                        )}
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="tbody" {...getTableBodyProps()}>
+            {page.map((row) => {
+              prepareRow(row);
+              return (
+                <div className="tr" {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <div
+                        className="td"
+                        {...enableToggleRowExpand(row, cell)}
+                        className={
+                          cell.isGrouped
+                            ? 'is_grouped td'
+                            : cell.isAggregated
+                            ? 'is_aggregated td'
+                            : cell.isPlaceholder
+                            ? 'is_placeholder td'
+                            : 'is_other td'
+                        }
+                      >
+                        <div>
+                          {cell.isGrouped ? (
+                            <div>{cell.render('Cell')}</div>
+                          ) : cell.isAggregated ? (
+                            <div>{displayHiddenRowsCount(cell, row)}</div>
+                          ) : cell.isPlaceholder ? null : (
+                            <div>{cell.render('Cell')}</div>
+                          )}
+                        </div>
                       </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div className={classes.pagination}>
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {'>'}
-        </button>{' '}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-        <span>
-          Page{' '}
-          <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>{' '}
-        </span>
-        <select
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(Number(e.target.value));
-          }}
-        >
-          {[5, 10, 25, 100, 500].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className={classes.pagination}>
+          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+            {'<<'}
+          </button>{' '}
+          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+            {'<'}
+          </button>{' '}
+          <button onClick={() => nextPage()} disabled={!canNextPage}>
+            {'>'}
+          </button>{' '}
+          <button
+            onClick={() => gotoPage(pageCount - 1)}
+            disabled={!canNextPage}
+          >
+            {'>>'}
+          </button>{' '}
+          <span>
+            Page{' '}
+            <strong>
+              {pageIndex + 1} of {pageOptions.length}
+            </strong>{' '}
+          </span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+            }}
+          >
+            {[5, 10, 25, 100, 500].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

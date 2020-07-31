@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   useAsyncDebounce,
-  useBlockLayout,
+  useFlexLayout,
   useFilters,
   useGlobalFilter,
   useResizeColumns,
@@ -25,18 +25,18 @@ import SortIcon from '@material-ui/icons/Sort';
 import Tsv from './Tsv';
 
 const useStyles = makeStyles({
+  wrapper: {
+    display: 'block',
+    overflow: 'auto',
+  },
   table: {
     color: '#444',
     borderSpacing: 0,
     border: '1px solid #ededed',
-    '& thead': {
+    '& .thead': {
       backgroundColor: '#e9eef2',
     },
-    '& thead input': {
-      borderRadius: 5,
-      border: '1px solid #ddd',
-    },
-    '& tr:last-child td': {
+    '& .tr:last-child .td': {
       borderBottom: 0,
     },
     '& .is_sorted_even_cell': {
@@ -51,60 +51,63 @@ const useStyles = makeStyles({
     '& .is_not_sorted_odd_cell': {
       backgroundColor: '#fff',
     },
-    '& th,td': {
+    '& .th, .td': {
       margin: 0,
       padding: '0.8rem 0.3rem',
       borderBottom: '1px solid #ededed',
       borderRight: '1px solid #ededed',
       position: 'relative',
     },
-    '& td': {
+    '& .td': {
       padding: '0.1rem 0.3rem',
     },
-    '& th:last-child,td:last-child': {
+    '& .th:last-child, .td:last-child': {
       borderRight: 0,
     },
-    '& th .resizer': {
+    '& .th .resizer': {
       display: 'inline-block',
       width: 10,
       height: '100%',
       position: 'absolute',
       right: 0,
       top: 0,
-      transform: 'translateX(50%)',
       zIndex: 1,
       touchAction: 'none',
     },
-    '& th .isResizing': {
+    '& .th .isResizing': {
       background: '#828A95',
     },
-    '& th .filter input': {
+    '& .th .filter input': {
       width: '80%',
     },
-    '& th .column_header': {
+    '& .th .column_header': {
       textAlign: 'left',
     },
-    '& th .arrow-icon': {
+    '& .th .arrow-icon': {
       fontSize: '1rem',
       marginLeft: 5,
+    },
+  },
+  subElement: {
+    textAlign: 'right',
+    '& span': {
+      marginRight: 15,
+    },
+  },
+  globalFilter: {
+    backgroundColor: '#e9eef2',
+    textAlign: 'center',
+    '& input': {
+      borderRadius: 5,
+      fontSize: '1.2rem',
+      border: '1px solid #ddd',
+      margin: '0.8rem 0',
+      width: '95%',
     },
   },
   pagination: {
     padding: '0.8rem 0.5rem',
     backgroundColor: '#e9eef2',
-  },
-  displayed_data_info: {
-    textAlign: 'right',
-    marginBottom: 5,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    '& span': {
-      marginRight: 15,
-    },
-  },
-  container: {
-    display: 'inline-block',
   },
   column_filter_root: {
     position: 'relative',
@@ -135,12 +138,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
       }}
       placeholder={`Search all columns...`}
       type="search"
-      style={{
-        fontSize: '1.1rem',
-        marginBottom: 10,
-        marginRight: 10,
-        width: '90%',
-      }}
     />
   );
 };
@@ -425,7 +422,7 @@ const Table = ({ columns, data, id, dataForTsv }) => {
         sortBy: [{ id: columns[0].accessor, desc: false }],
       },
     },
-    useBlockLayout,
+    useFlexLayout,
     useFilters,
     useGlobalFilter,
     useResizeColumns,
@@ -434,120 +431,121 @@ const Table = ({ columns, data, id, dataForTsv }) => {
     usePagination
   );
 
-  console.log('yay!');
   return (
-    <div className={classes.container}>
-      <div className={classes.displayed_data_info}>
-        <span>{rows.length} entries</span>
-        <Tsv data={dataForTsv || data} id={id} />
-      </div>
-      <table {...getTableProps()} className={classes.table}>
-        <thead>
-          <tr>
-            <th>
-              <GlobalFilter
-                globalFilter={globalFilter}
-                setGlobalFilter={setGlobalFilter}
-              />
-              <ClickAway />
-            </th>
-          </tr>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
-                  <div
-                    {...column.getSortByToggleProps()}
-                    className="column_header"
-                  >
-                    {column.render('Header')}
-                    {column.canSort ? (
-                      column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <ArrowDownwardIcon className="arrow-icon" />
+    <div className={classes.wrapper}>
+      <div {...getTableProps()}>
+        <div className={classes.subElement}>
+          <span>{rows.length} entries</span>
+          <Tsv data={dataForTsv || data} id={id} />
+        </div>
+        <div className={classes.globalFilter}>
+          <GlobalFilter
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+        </div>
+        <div className={classes.table}>
+          <div className="thead">
+            {headerGroups.map((headerGroup) => (
+              <div className="tr" {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <div className="th" {...column.getHeaderProps()}>
+                    <div
+                      {...column.getSortByToggleProps()}
+                      className="column_header"
+                    >
+                      {column.render('Header')}
+                      {column.canSort ? (
+                        column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <ArrowDownwardIcon className="arrow-icon" />
+                          ) : (
+                            <ArrowUpwardIcon className="arrow-icon" />
+                          )
                         ) : (
-                          <ArrowUpwardIcon className="arrow-icon" />
+                          <SortIcon className="arrow-icon" />
                         )
                       ) : (
-                        <SortIcon className="arrow-icon" />
-                      )
-                    ) : (
-                      ''
-                    )}
+                        ''
+                      )}
+                    </div>
+                    <div className="filter">
+                      {column.canFilter ? displayFilterFn(column) : null}
+                    </div>
+                    <div
+                      {...column.getResizerProps()}
+                      className={`resizer ${
+                        column.isResizing ? 'isResizing' : ''
+                      }`}
+                    />
                   </div>
-                  <div className="filter">
-                    {column.canFilter ? displayFilterFn(column) : null}
-                  </div>
-                  <div
-                    {...column.getResizerProps()}
-                    className={`resizer ${
-                      column.isResizing ? 'isResizing' : ''
-                    }`}
-                  />
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row, idx) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td
-                      {...cell.getCellProps()}
-                      className={
-                        cell.column.isSorted
-                          ? idx % 2 === 0
-                            ? 'is_sorted_even_cell'
-                            : 'is_sorted_odd_cell'
-                          : idx % 2 === 0
-                          ? 'is_not_sorted_even_cell'
-                          : 'is_not_sorted_odd_cell'
-                      }
-                    >
-                      {cell.render('Cell')}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div className={classes.pagination}>
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {'>'}
-        </button>{' '}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-        <span>
-          Page{' '}
-          <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>{' '}
-        </span>
-        <select
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(Number(e.target.value));
-          }}
-        >
-          {[5, 10, 25, 100, 500].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="tbody" {...getTableBodyProps()}>
+            {page.map((row, idx) => {
+              prepareRow(row);
+              return (
+                <div className="tr" {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <div
+                        {...cell.getCellProps()}
+                        className={
+                          cell.column.isSorted
+                            ? idx % 2 === 0
+                              ? 'is_sorted_even_cell td'
+                              : 'is_sorted_odd_cell td'
+                            : idx % 2 === 0
+                            ? 'is_not_sorted_even_cell td'
+                            : 'is_not_sorted_odd_cell td'
+                        }
+                      >
+                        {cell.render('Cell')}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className={classes.pagination}>
+          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+            {'<<'}
+          </button>{' '}
+          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+            {'<'}
+          </button>{' '}
+          <button onClick={() => nextPage()} disabled={!canNextPage}>
+            {'>'}
+          </button>{' '}
+          <button
+            onClick={() => gotoPage(pageCount - 1)}
+            disabled={!canNextPage}
+          >
+            {'>>'}
+          </button>{' '}
+          <span>
+            Page{' '}
+            <strong>
+              {pageIndex + 1} of {pageOptions.length}
+            </strong>{' '}
+          </span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+            }}
+          >
+            {[5, 10, 25, 100, 500].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
