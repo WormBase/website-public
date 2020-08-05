@@ -4,6 +4,13 @@ import { hasContent } from '../util/hasContent';
 //import SimpleCell from './SimpleCell';
 
 const HashCell = ({ data, render }) => {
+  if (data.species) {
+    return (
+      <span>
+        {data.genus}. {data.species}
+      </span>
+    );
+  }
   return (
     <ul>
       {Object.keys(data)
