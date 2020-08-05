@@ -1037,7 +1037,7 @@ END;
 
             '<div style="white-space:nowrap;">';
             IF title == "Available From" && lab.laboratory.label.match('CGC') && fields.name.data.class == 'strain';
-                external_link('cgc', lab.laboratory.label, fields.name.data.id);
+                external_link('cgc', lab.laboratory.label, fields.name.data.label);
             ELSE;
                 tag2link(lab.laboratory);
             END;
