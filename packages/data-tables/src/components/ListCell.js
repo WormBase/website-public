@@ -1,6 +1,6 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { hasContent } from '../util/hasContent'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { hasContent } from '../util/hasContent';
 
 const ListCell = ({ data, render }) => {
   return (
@@ -11,12 +11,12 @@ const ListCell = ({ data, render }) => {
           <li key={index}>{render({ elementData: dat })}</li>
         ))}
     </ul>
-  )
-}
+  );
+};
 
 ListCell.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
   render: PropTypes.func,
-}
+};
 
-export default ListCell
+export default ListCell;
