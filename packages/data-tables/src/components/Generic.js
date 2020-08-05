@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import Table from './Table';
 import TableHasGroupedRow from './TableHasGroupedRow';
-import CellContent from './CellContent';
 import { decideSortType } from '../util/sortTypeHelper';
+import SmartCell from './SmartCell';
 
 const Generic = ({ data, id, columnsHeader, order, hasGroupedRow }) => {
   const columns = useMemo(() => {
@@ -14,7 +14,7 @@ const Generic = ({ data, id, columnsHeader, order, hasGroupedRow }) => {
           if (hasGroupedRow && value === null) {
             return <span>N/A</span>;
           }
-          return <CellContent cell={value} />;
+          return <SmartCell data={value} />;
         },
         sortType: (rowA, rowB, columnId) => {
           return decideSortType(rowA, rowB, columnId);
