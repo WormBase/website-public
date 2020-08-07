@@ -16,7 +16,7 @@ installation_type = development
 google_api_key    = ABQIAAAAX6AZGEUlM28m4mzs0PsGkhRVfLFVmRFz44kSxZwC_XT2TLrxixTVyjZlGBxla25vFXfsh17xrvYj0g
 
 # SSL
-enable_ssl        = 1
+enable_ssl        = 0
 
 ######################################################
 #
