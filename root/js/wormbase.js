@@ -23,7 +23,7 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Table = require('../../packages/data-tables/lib/components/widgets/Phenotypes/PhenotypeByInteraction').default;
+var Table = require('../../packages/data-tables/lib/components/Generic').default;
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;
@@ -3282,13 +3282,29 @@ var Scrolling = (function(){
       });
     }
 
-    function buildDataTable(elementId, data, columns) {
-      if (elementId === 'table_phenotype_by_interaction') {
-        ReactDOM.render(
-          <Table data={data} columnsHeader={columns} WBid='WBGene00000904' tableType='phenotype_by_interaction' />,
-          document.getElementById(elementId)
-        )
+    function hasGroupedRow(id) {
+      const tablesHaveGroupedRow = [
+        'table_phenotype_flat',
+        'table_phenotype_not_observed_flat',
+        'table_drives_overexpression_flat',
+      ]
+      if (tablesHaveGroupedRow.includes(id)) {
+        return true
       }
+      return false
+    }
+    
+    function buildDataTable(elementId, data, columns, order) {
+      ReactDOM.render(
+        <Table
+          data={data}
+          id={elementId}
+          columnsHeader={columns}
+          order={order}
+          hasGroupedRow={hasGroupedRow(elementId)}
+        />,
+        document.getElementById(elementId)
+      )
     }
 
     var Plugin = (function(){

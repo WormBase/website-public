@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react';
 import {
   useAsyncDebounce,
-  useBlockLayout,
+  useFlexLayout,
   useFilters,
   useGlobalFilter,
   useGroupBy,
@@ -10,101 +10,104 @@ import {
   useExpanded,
   usePagination,
   useTable,
-} from 'react-table'
-import matchSorter from 'match-sorter'
-import { makeStyles } from '@material-ui/core/styles'
-import Checkbox from '@material-ui/core/Checkbox'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
-import FormControl from '@material-ui/core/FormControl'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormLabel from '@material-ui/core/FormLabel'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
-import ArrowRightIcon from '@material-ui/icons/ArrowRight'
-import FilterListIcon from '@material-ui/icons/FilterList'
-import Tsv from './Tsv'
+} from 'react-table';
+import matchSorter from 'match-sorter';
+import { makeStyles } from '@material-ui/core/styles';
+import Checkbox from '@material-ui/core/Checkbox';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormLabel from '@material-ui/core/FormLabel';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Tsv from './Tsv';
 
 const useStyles = makeStyles({
+  wrapper: {
+    display: 'block',
+    overflow: 'auto',
+  },
   table: {
     color: '#444',
     borderSpacing: 0,
     border: '1px solid #ededed',
-    '& thead': {
+    '& .thead': {
       backgroundColor: '#e9eef2',
     },
-    '& thead input': {
-      borderRadius: 5,
-      border: '1px solid #ddd',
-    },
-    '& tr:last-child td': {
+    '& .tr:last-child .td': {
       borderBottom: 0,
     },
-    '& th,td': {
+    '& .th, .td': {
       margin: 0,
       padding: '0.6rem 0.3rem',
       borderBottom: '1px solid #ededed',
       borderRight: '1px solid #ededed',
       position: 'relative',
     },
-    '& td': {
+    '& .td': {
       padding: '0.1rem 0.3rem',
     },
-    '& th:last-child,td:last-child': {
+    '& .th:last-child, .td:last-child': {
       borderRight: 0,
     },
-    '& tbody tr .is_grouped,tbody tr .is_aggregated': {
+    '& .tbody .tr .is_grouped, .tbody .tr .is_aggregated': {
       backgroundColor: '#dedede',
       borderRight: 'none',
     },
-    '& tbody tr .is_placeholder': {
+    '& .tbody .tr .is_placeholder': {
       backgroundColor: '#d3d6ff',
     },
-    '& tbody tr .is_other': {
+    '& .tbody .tr .is_other': {
       backgroundColor: '#e2e5ff',
     },
-    '& th .resizer': {
+    '& .th .resizer': {
       display: 'inline-block',
       width: 10,
       height: '100%',
       position: 'absolute',
       right: 0,
       top: 0,
-      transform: 'translateX(50%)',
       zIndex: 1,
       touchAction: 'none',
     },
-    '& th .isResizing': {
+    '& .th .isResizing': {
       background: '#828A95',
     },
-    '& th .filter input': {
+    '& .th .filter input': {
       width: '80%',
     },
-    '& th .column_header': {
+    '& .th .column_header': {
       textAlign: 'left',
     },
-    '& th .sort-arrow-icon': {
+    '& .th .sort-arrow-icon': {
       fontSize: '1rem',
       marginLeft: 5,
+    },
+  },
+  subElement: {
+    textAlign: 'right',
+    '& span': {
+      marginRight: 15,
+    },
+  },
+  globalFilter: {
+    backgroundColor: '#e9eef2',
+    textAlign: 'center',
+    '& input': {
+      borderRadius: 5,
+      fontSize: '1.2rem',
+      border: '1px solid #ddd',
+      margin: '0.8rem 0',
+      width: '95%',
     },
   },
   pagination: {
     padding: '0.8rem 0.5rem',
     backgroundColor: '#e9eef2',
-  },
-  displayed_data_info: {
-    textAlign: 'right',
-    marginBottom: 5,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    '& span': {
-      marginRight: 15,
-    },
-  },
-  container: {
-    display: 'inline-block',
   },
   column_filter_root: {
     position: 'relative',
@@ -124,112 +127,106 @@ const useStyles = makeStyles({
       marginRight: 10,
     },
   },
-})
+});
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
-  const [value, setValue] = useState(globalFilter)
+  const [value, setValue] = useState(globalFilter);
   const onChange = useAsyncDebounce((value) => {
-    setGlobalFilter(value || undefined)
-  }, 200)
+    setGlobalFilter(value || undefined);
+  }, 200);
 
   return (
     <input
       value={value || ''}
       onChange={(e) => {
-        setValue(e.target.value)
-        onChange(e.target.value)
+        setValue(e.target.value);
+        onChange(e.target.value);
       }}
       placeholder={`Search all columns...`}
-      type='search'
-      style={{
-        fontSize: '1.1rem',
-        marginBottom: 10,
-        marginRight: 10,
-        width: '90%',
-      }}
+      type="search"
     />
-  )
-}
+  );
+};
 
 const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
-  const classes = useStyles()
+  const classes = useStyles();
 
   const [displayFilter, setDisplayFilter] = useState({
     phentypeLabel: false,
     entity: false,
     evidence: false,
-  })
+  });
 
   const sortTypes = useMemo(
     () => ({
       caseInsensitiveAlphaNumeric: (rowA, rowB, columnId) => {
-        const getRowValueByColumnID = (row, columnId) => row.values[columnId]
+        const getRowValueByColumnID = (row, columnId) => row.values[columnId];
         const toString = (a) => {
           if (typeof a === 'number') {
             if (isNaN(a) || a === Infinity || a === -Infinity) {
-              return ''
+              return '';
             }
-            return String(a)
+            return String(a);
           }
           if (typeof a === 'string') {
-            return a
+            return a;
           }
-          return ''
-        }
-        const reSplitAlphaNumeric = /([0-9]+)/gm
+          return '';
+        };
+        const reSplitAlphaNumeric = /([0-9]+)/gm;
 
-        let a = getRowValueByColumnID(rowA, columnId)
-        let b = getRowValueByColumnID(rowB, columnId)
+        let a = getRowValueByColumnID(rowA, columnId);
+        let b = getRowValueByColumnID(rowB, columnId);
         // Force to strings (or "" for unsupported types)
         // And lowercase to accomplish insensitive sort
-        a = toString(a).toLowerCase()
-        b = toString(b).toLowerCase()
+        a = toString(a).toLowerCase();
+        b = toString(b).toLowerCase();
 
         // Split on number groups, but keep the delimiter
         // Then remove falsey split values
-        a = a.split(reSplitAlphaNumeric).filter(Boolean)
-        b = b.split(reSplitAlphaNumeric).filter(Boolean)
+        a = a.split(reSplitAlphaNumeric).filter(Boolean);
+        b = b.split(reSplitAlphaNumeric).filter(Boolean);
 
         // While
         while (a.length && b.length) {
-          let aa = a.shift()
-          let bb = b.shift()
+          let aa = a.shift();
+          let bb = b.shift();
 
-          const an = parseInt(aa, 10)
-          const bn = parseInt(bb, 10)
+          const an = parseInt(aa, 10);
+          const bn = parseInt(bb, 10);
 
-          const combo = [an, bn].sort()
+          const combo = [an, bn].sort();
 
           // Both are string
           if (isNaN(combo[0])) {
             if (aa > bb) {
-              return 1
+              return 1;
             }
             if (bb > aa) {
-              return -1
+              return -1;
             }
-            continue
+            continue;
           }
 
           // One is a string, one is a number
           if (isNaN(combo[1])) {
-            return isNaN(an) ? -1 : 1
+            return isNaN(an) ? -1 : 1;
           }
 
           // Both are numbers
           if (an > bn) {
-            return 1
+            return 1;
           }
           if (bn > an) {
-            return -1
+            return -1;
           }
         }
 
-        return a.length - b.length
+        return a.length - b.length;
       },
     }),
     []
-  )
+  );
 
   const filterTypes = useMemo(() => {
     const storeValueOfNestedObj = (obj, keyArr) => {
@@ -241,7 +238,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
             obj[key].label &&
             obj[key].taxonomy
           ) {
-            keyArr.push(obj[key].label)
+            keyArr.push(obj[key].label);
           }
           if (Array.isArray(obj[key]) && typeof obj[key][0] === 'object') {
             if (
@@ -250,7 +247,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
               obj[key][0].label &&
               obj[key][0].taxonomy
             ) {
-              keyArr.push(obj[key].map((o) => o.label))
+              keyArr.push(obj[key].map((o) => o.label));
             } else if (obj[key][0].pato_evidence) {
               keyArr.push(
                 ...obj[key].map((o) => [
@@ -258,60 +255,60 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
                   o.pato_evidence.entity_type,
                   o.pato_evidence.pato_term,
                 ])
-              )
+              );
             } else {
               console.error(
                 'Data is surely array of Object. But it is not Tagtype data.'
-              )
-              console.error(key)
-              console.error(obj[key])
+              );
+              console.error(key);
+              console.error(obj[key]);
             }
           } else {
-            storeValueOfNestedObj(obj[key], keyArr)
+            storeValueOfNestedObj(obj[key], keyArr);
           }
         } else {
-          keyArr.push(obj[key])
+          keyArr.push(obj[key]);
         }
       }
-    }
+    };
 
     return {
       defaultFilter: (rows, id, filterValue) => {
         const keyFunc = (row) => {
-          let keyArr = []
-          const rowVals = row.values
+          let keyArr = [];
+          const rowVals = row.values;
 
           id.forEach((i) => {
             if (typeof rowVals[i] === 'object') {
-              storeValueOfNestedObj(rowVals[i], keyArr)
+              storeValueOfNestedObj(rowVals[i], keyArr);
             } else {
-              keyArr.push(rowVals[i])
+              keyArr.push(rowVals[i]);
             }
-          })
+          });
 
-          return keyArr
-        }
+          return keyArr;
+        };
 
         return matchSorter(rows, filterValue, {
           keys: [(row) => keyFunc(row)],
           threshold: matchSorter.rankings.CONTAINS,
-        })
+        });
       },
-    }
-  }, [])
+    };
+  }, []);
 
   const defaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
     return (
       <input
         value={filterValue || ''}
         onChange={(e) => {
-          setFilter(e.target.value || undefined)
+          setFilter(e.target.value || undefined);
         }}
         placeholder={`Search...`}
-        type='search'
+        type="search"
       />
-    )
-  }
+    );
+  };
 
   const defaultColumn = useMemo(
     () => ({
@@ -323,32 +320,32 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
       maxWidth: 600,
     }),
     []
-  )
+  );
 
   const getDefaultExpandedRows = (data, threshold) => {
-    const defaultExpandedRows = {}
-    const defaultHidRows = {}
+    const defaultExpandedRows = {};
+    const defaultHidRows = {};
 
     data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`
+      const key = `phenotype.label:${d.phenotype.label}`;
       if (defaultHidRows[key]) {
-        defaultHidRows[key] = ++defaultHidRows[key]
+        defaultHidRows[key] = ++defaultHidRows[key];
       } else {
-        defaultHidRows[key] = 1
+        defaultHidRows[key] = 1;
       }
-    })
+    });
 
     data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`
+      const key = `phenotype.label:${d.phenotype.label}`;
       if (defaultHidRows[key] < threshold) {
-        defaultExpandedRows[key] = true
+        defaultExpandedRows[key] = true;
       } else {
-        defaultExpandedRows[key] = false
+        defaultExpandedRows[key] = false;
       }
-    })
+    });
 
-    return defaultExpandedRows
-  }
+    return defaultExpandedRows;
+  };
 
   const displayFilterFn = (column) => {
     if (
@@ -356,25 +353,25 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
       (column.id === 'entity' && displayFilter['entity']) ||
       (column.id === 'evidence' && displayFilter['evidence'])
     ) {
-      return column.render('Filter')
+      return column.render('Filter');
     }
-    return null
-  }
+    return null;
+  };
 
   const ClickAway = () => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
 
     const handleClick = () => {
-      setOpen((prev) => !prev)
-    }
+      setOpen((prev) => !prev);
+    };
     const handleClickAway = () => {
-      setOpen(false)
-    }
+      setOpen(false);
+    };
 
     return (
       <ClickAwayListener onClickAway={handleClickAway}>
         <span className={classes.column_filter_root}>
-          <button type='button' onClick={handleClick}>
+          <button type="button" onClick={handleClick}>
             <FilterListIcon />
           </button>
           {open ? (
@@ -384,63 +381,63 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
           ) : null}
         </span>
       </ClickAwayListener>
-    )
-  }
+    );
+  };
 
   const CheckboxesGroup = () => {
     const handleChange = (event) => {
       setDisplayFilter({
         ...displayFilter,
         [event.target.name]: event.target.checked,
-      })
-    }
-    const { phenotypeLabel, entity, evidence } = displayFilter
+      });
+    };
+    const { phenotypeLabel, entity, evidence } = displayFilter;
 
     return (
-      <FormControl component='fieldset'>
-        <FormLabel component='legend'>Column search</FormLabel>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Column search</FormLabel>
         <FormGroup>
           <FormControlLabel
             control={
               <Checkbox
                 checked={phenotypeLabel}
                 onChange={handleChange}
-                name='phenotypeLabel'
+                name="phenotypeLabel"
               />
             }
-            label='Phenotype'
+            label="Phenotype"
           />
           <FormControlLabel
             control={
               <Checkbox
                 checked={entity}
                 onChange={handleChange}
-                name='entity'
+                name="entity"
               />
             }
-            label='Entities Affected'
+            label="Entities Affected"
           />
           <FormControlLabel
             control={
               <Checkbox
                 checked={evidence}
                 onChange={handleChange}
-                name='evidence'
+                name="evidence"
               />
             }
-            label='Supported Evidence'
+            label="Supported Evidence"
           />
         </FormGroup>
       </FormControl>
-    )
-  }
+    );
+  };
 
   const enableToggleRowExpand = (row, cell) => {
     if (cell.isGrouped || cell.isAggregated) {
-      return cell.getCellProps(row.getToggleRowExpandedProps())
+      return cell.getCellProps(row.getToggleRowExpandedProps());
     }
-    return cell.getCellProps()
-  }
+    return cell.getCellProps();
+  };
 
   const displayHiddenRowsCount = (cell, row) => {
     if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
@@ -449,17 +446,17 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
           {cell.render('Aggregated')}
           <span className={classes.rows_count}>
             {row.isExpanded ? (
-              <ArrowDropDownIcon className='row-arrow-icon' />
+              <ArrowDropDownIcon className="row-arrow-icon" />
             ) : (
-              <ArrowRightIcon className='row-arrow-icon' />
+              <ArrowRightIcon className="row-arrow-icon" />
             )}
           </span>
           {row.subRows.length} Results
         </>
-      )
+      );
     }
-    return cell.render('Aggregated')
-  }
+    return cell.render('Aggregated');
+  };
 
   const {
     getTableProps,
@@ -497,7 +494,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
         expanded: getDefaultExpandedRows(data, 10),
       },
     },
-    useBlockLayout,
+    useFlexLayout,
     useFilters,
     useGlobalFilter,
     useResizeColumns,
@@ -505,132 +502,135 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
     useSortBy,
     useExpanded,
     usePagination
-  )
+  );
 
   return (
-    <div className={classes.container}>
-      <div className={classes.displayed_data_info}>
-        <span>{rows.length} entries</span>
-        <Tsv data={dataForTsv || data} id={id} />
-      </div>
-      <table {...getTableProps()} className={classes.table}>
-        <thead>
-          <tr>
-            <th>
-              <GlobalFilter
-                globalFilter={globalFilter}
-                setGlobalFilter={setGlobalFilter}
-              />
-              <ClickAway />
-            </th>
-          </tr>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
-                  <div
-                    {...column.getSortByToggleProps()}
-                    className='column_header'
-                  >
-                    {column.render('Header')}
-                    {column.canSort ? (
-                      column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <ArrowDownwardIcon className='sort-arrow-icon' />
+    <div className={classes.wrapper}>
+      <div {...getTableProps()}>
+        <div className={classes.subElement}>
+          <span>{rows.length} entries</span>
+          <Tsv data={dataForTsv || data} id={id} />
+        </div>
+        <div className={classes.globalFilter}>
+          <GlobalFilter
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+        </div>
+        <div className={classes.table}>
+          <div className="thead">
+            {headerGroups.map((headerGroup) => (
+              <div className="tr" {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <div className="th" {...column.getHeaderProps()}>
+                    <div
+                      {...column.getSortByToggleProps()}
+                      className="column_header"
+                    >
+                      {column.render('Header')}
+                      {column.canSort ? (
+                        column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <ArrowDownwardIcon className="sort-arrow-icon" />
+                          ) : (
+                            <ArrowUpwardIcon className="sort-arrow-icon" />
+                          )
                         ) : (
-                          <ArrowUpwardIcon className='sort-arrow-icon' />
+                          ''
                         )
                       ) : (
                         ''
-                      )
-                    ) : (
-                      ''
-                    )}
+                      )}
+                    </div>
+                    <div className="filter">
+                      {column.canFilter ? displayFilterFn(column) : null}
+                    </div>
+                    <div
+                      {...column.getResizerProps()}
+                      className={`resizer ${
+                        column.isResizing ? 'isResizing' : ''
+                      }`}
+                    />
                   </div>
-                  <div className='filter'>
-                    {column.canFilter ? displayFilterFn(column) : null}
-                  </div>
-                  <div
-                    {...column.getResizerProps()}
-                    className={`resizer ${
-                      column.isResizing ? 'isResizing' : ''
-                    }`}
-                  />
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
-            prepareRow(row)
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td
-                      {...enableToggleRowExpand(row, cell)}
-                      className={
-                        cell.isGrouped
-                          ? 'is_grouped'
-                          : cell.isAggregated
-                          ? 'is_aggregated'
-                          : cell.isPlaceholder
-                          ? 'is_placeholder'
-                          : 'is_other'
-                      }
-                    >
-                      <div>
-                        {cell.isGrouped ? (
-                          <div>{cell.render('Cell')}</div>
-                        ) : cell.isAggregated ? (
-                          <div>{displayHiddenRowsCount(cell, row)}</div>
-                        ) : cell.isPlaceholder ? null : (
-                          <div>{cell.render('Cell')}</div>
-                        )}
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="tbody" {...getTableBodyProps()}>
+            {page.map((row) => {
+              prepareRow(row);
+              return (
+                <div className="tr" {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <div
+                        className="td"
+                        {...enableToggleRowExpand(row, cell)}
+                        className={
+                          cell.isGrouped
+                            ? 'is_grouped td'
+                            : cell.isAggregated
+                            ? 'is_aggregated td'
+                            : cell.isPlaceholder
+                            ? 'is_placeholder td'
+                            : 'is_other td'
+                        }
+                      >
+                        <div>
+                          {cell.isGrouped ? (
+                            <div>{cell.render('Cell')}</div>
+                          ) : cell.isAggregated ? (
+                            <div>{displayHiddenRowsCount(cell, row)}</div>
+                          ) : cell.isPlaceholder ? null : (
+                            <div>{cell.render('Cell')}</div>
+                          )}
+                        </div>
                       </div>
-                    </td>
-                  )
-                })}
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      <div className={classes.pagination}>
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {'>'}
-        </button>{' '}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-        <span>
-          Page{' '}
-          <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>{' '}
-        </span>
-        <select
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(Number(e.target.value))
-          }}
-        >
-          {[5, 10, 25, 100, 500].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className={classes.pagination}>
+          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+            {'<<'}
+          </button>{' '}
+          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+            {'<'}
+          </button>{' '}
+          <button onClick={() => nextPage()} disabled={!canNextPage}>
+            {'>'}
+          </button>{' '}
+          <button
+            onClick={() => gotoPage(pageCount - 1)}
+            disabled={!canNextPage}
+          >
+            {'>>'}
+          </button>{' '}
+          <span>
+            Page{' '}
+            <strong>
+              {pageIndex + 1} of {pageOptions.length}
+            </strong>{' '}
+          </span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+            }}
+          >
+            {[5, 10, 25, 100, 500].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TableHasGroupedRow
+export default TableHasGroupedRow;
