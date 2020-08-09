@@ -1,7 +1,7 @@
 import React from 'react';
 import { CSVLink } from 'react-csv';
 
-const Tsv = ({ data, id }) => {
+const Tsv = ({ data, id, order }) => {
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
     if (Object(data) !== data) {
       if (data) {
@@ -93,9 +93,23 @@ const Tsv = ({ data, id }) => {
     return result;
   };
 
+  const flattenedData = data.map((d) => flattenRecursiveForTsv(d));
+
+  const uniqueKeys = Object.keys(
+    flattenedData.reduce((result, obj) => {
+      return Object.assign(result, obj);
+    }, {})
+  );
+
+  const uniqueKeysSortedByColumnOrder = order.map((ord) => {
+    const regex = new RegExp(`^${ord}.*`);
+    return uniqueKeys.filter((u) => regex.test(u)).sort();
+  });
+
   return (
     <CSVLink
-      data={data.map((d) => flattenRecursiveForTsv(d))}
+      data={flattenedData}
+      headers={uniqueKeysSortedByColumnOrder.flat()}
       separator={'\t'}
       filename={`${id}.tsv`}
     >
