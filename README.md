@@ -90,7 +90,19 @@ development and testing.
 
 - Ensure environment variable `CATALYST_PORT` and `WEBPACK_SERVER_PORT` are set.
 
-- **(Updated on March 10, 2020):** Copy the file [wormbase_local.conf.template](wormbase_local.conf.template) into a new file named `wormbase_local.conf`.
+- Copy the file [wormbase_local.conf.template](wormbase_local.conf.template) into a new file named `wormbase_local.conf`, and add the following configuration:
+```
+<Model::Schema>
+  schema_class = WormBase::Schema
+  <connect_info>
+        dsn =  dbi:mysql:wormbase_user:hostname=mysql
+        user = wormbase
+        password = test
+   </connect_info>
+</Model::Schema>
+
+webpack_dev_server = "http://webpack:__ENV(WEBPACK_SERVER_PORT)__"
+```
 
 **To start your development stack:**
 

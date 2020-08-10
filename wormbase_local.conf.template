@@ -91,14 +91,14 @@ cache_content = false
 #
 ########################################################
 
-<Model::Schema>
-  schema_class = WormBase::Schema
-  <connect_info>
-        dsn =  dbi:mysql:wormbase_user:hostname=mysql
-        user = wormbase
-        password = test
-   </connect_info>
-</Model::Schema>
+# <Model::Schema>
+#   schema_class = WormBase::Schema
+#   <connect_info>
+#         dsn =  dbi:mysql:wormbase_user:hostname=mysql
+#         user = wormbase
+#         password = test
+#    </connect_info>
+# </Model::Schema>
 
 # Datomic to catalyst URL
 # rest_server =
@@ -108,4 +108,4 @@ cached_rest_endpoints_expires_in = 0 # minutes, for staging
 # search_server =
 
 # webpack_dev_server URL
-webpack_dev_server = "http://webpack:__ENV(WEBPACK_SERVER_PORT)__"
+# webpack_dev_server = "http://webpack:__ENV(WEBPACK_SERVER_PORT)__"
