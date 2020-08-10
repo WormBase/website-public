@@ -37,6 +37,12 @@ _For Legacy instructions_ that set up without docker or docker-compose, please v
 
 - Ensure `/usr/local/bin/` is on your $PATH, as dependencies such as `docker-compose` and `yarn` are installed there.
 
+- Copy the file [wormbase_local.conf.template](wormbase_local.conf.template) into a new file named `wormbase_local.conf`, and configure, if necessary :
+```
+rest_server =    # to override REST API base URL
+search_server =     # to override search API base URL
+```
+
 **To start your development stack:**
 
 `make dev` and wait for website/Catalyst and webpack(DevServer) to start.
