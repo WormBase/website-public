@@ -42,9 +42,14 @@ const Generic = ({ data, id, columnsHeader, order, hasGroupedRow }) => {
   return (
     <>
       {hasGroupedRow ? (
-        <TableHasGroupedRow columns={columns} data={data} id={id} />
+        <TableHasGroupedRow
+          columns={columns}
+          data={data}
+          id={id}
+          order={order}
+        />
       ) : (
-        <Table columns={columns} data={data} id={id} />
+        <Table columns={columns} data={data} id={id} order={order} />
       )}
     </>
   );

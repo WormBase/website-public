@@ -148,7 +148,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   );
 };
 
-const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
+const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   const classes = useStyles();
 
   const [displayFilter, setDisplayFilter] = useState({
@@ -509,7 +509,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv }) => {
       <div {...getTableProps()}>
         <div className={classes.subElement}>
           <span>{rows.length} entries</span>
-          <Tsv data={dataForTsv || data} id={id} />
+          <Tsv data={dataForTsv || data} id={id} order={order} />
         </div>
         <div className={classes.globalFilter}>
           <GlobalFilter

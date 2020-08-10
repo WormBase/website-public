@@ -1,13 +1,13 @@
-import React from 'react'
-import { CSVLink } from 'react-csv'
+import React from 'react';
+import { CSVLink } from 'react-csv';
 
-const Tsv = ({ data, id }) => {
+const Tsv = ({ data, id, order }) => {
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
     if (Object(data) !== data) {
       if (data) {
-        result[prefix.join('.')] = data
+        result[prefix.join('.')] = data;
       }
-      return result
+      return result;
     }
 
     // data: [~]
@@ -16,8 +16,8 @@ const Tsv = ({ data, id }) => {
       if (Array.isArray(data[0])) {
         // data: [[],[],...]
         if (data.flat().length === 0) {
-          result[prefix.join('.')] = ''
-          return result
+          result[prefix.join('.')] = '';
+          return result;
         }
         // data: [[{Tag}],[{Tag}],[],[{Tag}],...]
         if (
@@ -27,20 +27,20 @@ const Tsv = ({ data, id }) => {
         ) {
           const tagTypeDataArr = data.map((da) => {
             if (da.length === 0) {
-              return ''
+              return '';
             }
             return da.map((d) => {
-              return `${d.label}[${d.id}]`
-            })
-          })
-          result[prefix.join('.')] = tagTypeDataArr.join(';')
-          return result
+              return `${d.label}[${d.id}]`;
+            });
+          });
+          result[prefix.join('.')] = tagTypeDataArr.join(';');
+          return result;
         }
 
-        console.error(data)
+        console.error(data);
         throw new Error(
           'Data is surely array of array. But it is not Tag type one.'
-        )
+        );
       }
 
       // data: [{~},{~},...]
@@ -51,9 +51,9 @@ const Tsv = ({ data, id }) => {
           data[0].id !== undefined &&
           data[0].label !== undefined
         ) {
-          const tagTypeDataArr = data.map((d) => `${d.label}[${d.id}]`)
-          result[prefix.join('.')] = tagTypeDataArr.join(';')
-          return result
+          const tagTypeDataArr = data.map((d) => `${d.label}[${d.id}]`);
+          result[prefix.join('.')] = tagTypeDataArr.join(';');
+          return result;
         }
 
         // data: [{Pato},{Pato},...]
@@ -61,20 +61,20 @@ const Tsv = ({ data, id }) => {
           const patoTypeDataArr = data.map(
             (d) =>
               `${d.pato_evidence.entity_term.label}[${d.pato_evidence.entity_term.id}] ${d.pato_evidence.pato_term}`
-          )
-          result['entity'] = patoTypeDataArr.join(';')
-          return result
+          );
+          result['entity'] = patoTypeDataArr.join(';');
+          return result;
         }
 
-        console.error(data)
+        console.error(data);
         throw new Error(
           'Data is surely array of object. But it is neigher Tag type one nor Pato type one.'
-        )
+        );
       }
 
       // data: [~,~,...]
-      result[prefix.join('.')] = data.join(';')
-      return result
+      result[prefix.join('.')] = data.join(';');
+      return result;
     }
 
     // data: {Tag}
@@ -83,25 +83,39 @@ const Tsv = ({ data, id }) => {
       data.id !== undefined &&
       data.label !== undefined
     ) {
-      result[prefix.join('.')] = `${data.label}[${data.id}]`
-      return result
+      result[prefix.join('.')] = `${data.label}[${data.id}]`;
+      return result;
     }
 
     Object.keys(data).forEach((key) => {
-      flattenRecursiveForTsv(data[key], [...prefix, key], result)
-    })
-    return result
-  }
+      flattenRecursiveForTsv(data[key], [...prefix, key], result);
+    });
+    return result;
+  };
+
+  const flattenedData = data.map((d) => flattenRecursiveForTsv(d));
+
+  const uniqueKeys = Object.keys(
+    flattenedData.reduce((result, obj) => {
+      return Object.assign(result, obj);
+    }, {})
+  );
+
+  const uniqueKeysSortedByColumnOrder = order.map((ord) => {
+    const regex = new RegExp(`^${ord}.*`);
+    return uniqueKeys.filter((u) => regex.test(u)).sort();
+  });
 
   return (
     <CSVLink
-      data={data.map((d) => flattenRecursiveForTsv(d))}
+      data={flattenedData}
+      headers={uniqueKeysSortedByColumnOrder.flat()}
       separator={'\t'}
       filename={`${id}.tsv`}
     >
       Save table as TSV
     </CSVLink>
-  )
-}
+  );
+};
 
-export default Tsv
+export default Tsv;
