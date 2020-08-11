@@ -13,7 +13,14 @@ const useStyles = makeStyles({
   },
 });
 
-const Generic = ({ data, id, columnsHeader, order, hasGroupedRow }) => {
+const Generic = ({
+  data,
+  id,
+  columnsHeader,
+  order,
+  hasGroupedRow,
+  dataForTsv,
+}) => {
   const classes = useStyles();
 
   const columns = useMemo(() => {
@@ -47,9 +54,16 @@ const Generic = ({ data, id, columnsHeader, order, hasGroupedRow }) => {
           data={data}
           id={id}
           order={order}
+          dataForTsv={dataForTsv}
         />
       ) : (
-        <Table columns={columns} data={data} id={id} order={order} />
+        <Table
+          columns={columns}
+          data={data}
+          id={id}
+          order={order}
+          dataForTsv={dataForTsv}
+        />
       )}
     </>
   );

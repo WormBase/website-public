@@ -1,27 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import Generic from './Generic';
 import loadData from '../services/loadData';
-
-const handleData = (data, tableType) => {
-  if (tableType === 'best_blastp_matches') {
-    return data.hits;
-  }
-  return data;
-};
+import get from 'lodash/get';
+import unwind from 'javascript-unwind';
 
 const hasGroupedRow = (tableType) => {
-  if (tableType === 'phenotype_flat') {
+  const groupedRowTables = [
+    'phenotype_flat',
+    'phenotype_not_observed_flat',
+    'drives_overexpression_flat',
+  ];
+  if (groupedRowTables.includes(tableType)) {
     return true;
   }
   return false;
 };
 
-const Wrapper = ({ WBid, tableType, id, order, columnsHeader }) => {
+const getDataForTsv = (tableType, data) => {
+  const tablesNeedUnwind4Tsv = [
+    'expressed_in',
+    'expressed_during',
+    'subcellular_localization',
+  ];
+  if (tablesNeedUnwind4Tsv.includes(tableType)) {
+    return data.length === 0 ? null : unwind(data, 'details');
+  }
+  return null;
+};
+
+const Wrapper = ({
+  WBid,
+  tableType,
+  id,
+  order,
+  columnsHeader,
+  additionalKey = '',
+}) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     loadData(WBid, tableType).then((json) => {
-      setData(handleData(json.data, tableType));
+      setData(additionalKey ? get(json.data, additionalKey) : json.data);
     });
   }, [WBid, tableType]);
 
@@ -34,6 +53,7 @@ const Wrapper = ({ WBid, tableType, id, order, columnsHeader }) => {
       order={order}
       columnsHeader={columnsHeader}
       hasGroupedRow={hasGroupedRow(tableType)}
+      dataForTsv={getDataForTsv(tableType, data)}
     />
   );
 };

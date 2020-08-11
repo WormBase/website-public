@@ -8,7 +8,7 @@ const order = [
   'taxonomy',
   'hit',
   'description',
-  'percent',
+  'percentage',
   'target_range',
   'source_range',
 ];
@@ -27,12 +27,10 @@ export default {
   title: 'Table/Generic/Widgets/Homology/blastp_details',
 };
 
-// TODO: Fix something prevents from executing useEffect hook in <Wrapper> component.
-
-// export const daf8 = () => (
-//   <Wrapper
-//     WBid={homology_widget.WBid.daf8}
-//     tableType={homology_widget.tableType.blastpDetails}
-//     {...{ id, order, columnsHeader }}
-//   />
-// )
+export const daf8 = () => (
+  <Wrapper
+    WBid={homology_widget.WBid.daf8}
+    tableType={homology_widget.tableType.blastpDetails}
+    {...{ id, order, columnsHeader }}
+  />
+);
