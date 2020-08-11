@@ -3294,6 +3294,18 @@ var Scrolling = (function(){
       return false
     }
     
+    function getPropertyForUnwinding(id) {
+      const tablesNeedUnwind4Tsv = [
+        'table_expressed_in',
+        'table_expressed_during',
+        'table_subcellular_localization',
+      ]
+      if (tablesNeedUnwind4Tsv.includes(id)) {
+        return 'details'
+      }
+      return null
+    }
+    
     function buildDataTable(elementId, data, columns, order) {
       ReactDOM.render(
         <Table
@@ -3302,6 +3314,7 @@ var Scrolling = (function(){
           columnsHeader={columns}
           order={order}
           hasGroupedRow={hasGroupedRow(elementId)}
+          propertyForUnwinding={getPropertyForUnwinding(elementId)}
         />,
         document.getElementById(elementId)
       )
