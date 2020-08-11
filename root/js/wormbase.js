@@ -3284,9 +3284,9 @@ var Scrolling = (function(){
 
     function hasGroupedRow(id) {
       const tablesHaveGroupedRow = [
-        'table_phenotype_flat',
-        'table_phenotype_not_observed_flat',
-        'table_drives_overexpression_flat',
+        'table_phenotype',
+        'table_phenotype_not_observed',
+        'table_drives_overexpression',
       ]
       if (tablesHaveGroupedRow.includes(id)) {
         return true

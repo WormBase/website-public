@@ -124,10 +124,7 @@ const sortByMedianOrMean = (rowA, rowB, columnId) => {
 };
 
 const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
-  const getRowValueByColumnID = (row, columnId) =>
-    /\.label$/.test(columnId)
-      ? row.values[columnId.slice(0, -6)]['label']
-      : row.values[columnId];
+  const getRowValueByColumnID = (row, columnId) => row.values[columnId];
 
   const toString = (a) => {
     if (typeof a === 'number') {
@@ -198,9 +195,6 @@ const decideSortType = (rowA, rowB, columnId) => {
   if (rowVal) {
     if (rowVal.species) {
       return sortBySpecies(rowA, rowB, columnId);
-    }
-    if (rowVal.label && rowVal.class) {
-      return caseInsensitiveAlphaNumeric(rowA, rowB, `${columnId}.label`);
     }
     if (!isNaN(Number(rowVal))) {
       return numberWithScientificNotation(rowA, rowB, columnId);

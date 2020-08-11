@@ -32,14 +32,14 @@ const Generic = ({
   const classes = useStyles();
 
   const columns = useMemo(() => {
-    return order.map((ord) => {
+    return order.map((ord, idx) => {
       return {
         Header: () => (
           <span className={classes.columnHeader}>
             {columnsHeader[`${ord}`]}
           </span>
         ),
-        accessor: ord,
+        accessor: idx === 0 && hasGroupedRow ? `${ord}.label` : ord,
         Cell: ({ cell: { value } }) => {
           if (hasGroupedRow && value === null) {
             return <span>N/A</span>;
