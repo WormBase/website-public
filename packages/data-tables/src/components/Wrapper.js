@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Generic from './Generic';
 import loadData from '../services/loadData';
 import get from 'lodash/get';
-import unwind from 'javascript-unwind';
 
 const hasGroupedRow = (tableType) => {
   const groupedRowTables = [
@@ -16,14 +15,14 @@ const hasGroupedRow = (tableType) => {
   return false;
 };
 
-const getDataForTsv = (tableType, data) => {
+const getPropertyForUnwinding = (tableType) => {
   const tablesNeedUnwind4Tsv = [
     'expressed_in',
     'expressed_during',
     'subcellular_localization',
   ];
   if (tablesNeedUnwind4Tsv.includes(tableType)) {
-    return data.length === 0 ? null : unwind(data, 'details');
+    return 'details';
   }
   return null;
 };
@@ -53,7 +52,7 @@ const Wrapper = ({
       order={order}
       columnsHeader={columnsHeader}
       hasGroupedRow={hasGroupedRow(tableType)}
-      dataForTsv={getDataForTsv(tableType, data)}
+      propertyForUnwinding={getPropertyForUnwinding(tableType)}
     />
   );
 };

@@ -4,6 +4,7 @@ import TableHasGroupedRow from './TableHasGroupedRow';
 import { decideSortType } from '../util/sortTypeHelper';
 import SmartCell from './SmartCell';
 import { makeStyles } from '@material-ui/core/styles';
+import unwind from 'javascript-unwind';
 
 const useStyles = makeStyles({
   columnHeader: {
@@ -13,13 +14,20 @@ const useStyles = makeStyles({
   },
 });
 
+const getDataForTsv = (data, property) => {
+  if (property) {
+    return data.length === 0 ? null : unwind(data, `${property}`);
+  }
+  return null;
+};
+
 const Generic = ({
   data,
   id,
   columnsHeader,
   order,
   hasGroupedRow,
-  dataForTsv,
+  propertyForUnwinding,
 }) => {
   const classes = useStyles();
 
@@ -54,7 +62,7 @@ const Generic = ({
           data={data}
           id={id}
           order={order}
-          dataForTsv={dataForTsv}
+          dataForTsv={getDataForTsv(data, propertyForUnwinding)}
         />
       ) : (
         <Table
@@ -62,7 +70,7 @@ const Generic = ({
           data={data}
           id={id}
           order={order}
-          dataForTsv={dataForTsv}
+          dataForTsv={getDataForTsv(data, propertyForUnwinding)}
         />
       )}
     </>
