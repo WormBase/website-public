@@ -12,7 +12,7 @@ const fitComponent = (WrappedComponent) => {
 
     render() {
       const { theme, heightOnly, widthOnly, ...childProps } = this.props;
-      const defaultMargin = -2 * theme.spacing.unit;
+      const defaultMargin = -2 * theme.spacing(1);
       const style = {
         width: `calc(100% + ${-2 * defaultMargin}px)`,
         margin: `${0}px ${heightOnly ? 0 : defaultMargin}px`,
@@ -21,7 +21,7 @@ const fitComponent = (WrappedComponent) => {
     }
   }
 
-  return withTheme()(FittedComponent);
+  return withTheme(FittedComponent);
 };
 
 export { fitComponent };

@@ -5,10 +5,10 @@ import {
   MuiThemeProvider,
   withStyles,
 } from '@material-ui/core/styles';
-import pink from '@material-ui/core/colors/pink';
-import teal from '@material-ui/core/colors/blue';
 import Tab from '../Tab';
 import Tabs from '../Tabs';
+
+import { pink, blue as teal } from '@material-ui/core/colors';
 
 const strandTheme = createMuiTheme({
   palette: {

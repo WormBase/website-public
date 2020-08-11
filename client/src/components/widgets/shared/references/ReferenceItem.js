@@ -70,7 +70,7 @@ class ReferenceItem extends Component {
 
 const styles = (theme) => ({
   referenceItem: {
-    margin: `${theme.spacing.unit}px 0px`,
+    margin: `${theme.spacing(1)}px 0px`,
   },
   title: {
     textDecoration: 'underline',
@@ -102,10 +102,10 @@ const styles = (theme) => ({
   },
   chipWrapper: {
     display: 'flex',
-    marginLeft: (-1 * theme.spacing.unit) / 2,
+    marginLeft: (-1 * theme.spacing(1)) / 2,
     '& > *': {
-      margin: theme.spacing.unit / 2,
-      height: theme.spacing.unit * 2.5,
+      margin: theme.spacing(0.5),
+      height: theme.spacing(2.5),
     },
   },
 });
