@@ -80,6 +80,7 @@ export default function BrowseCollection({
       form.setAttribute(
         'action',
         'https://wormbase.org/tools/mine/simplemine.cgi'
+        // 'http://mangolassi.caltech.edu/~azurebrd/cgi-bin/forms/simplemine.cgi'
       );
       form.setAttribute('target', '_blank');
       form.setAttribute('enctype', 'multipart/form-data');
@@ -108,7 +109,8 @@ export default function BrowseCollection({
         'Genetic Map Position',
         'RNAi Phenotype Observed',
         'Allele Phenotype Observed',
-        'Sequenced Allele',
+        'Coding_exon Non_silent Allele',
+        'Gene Ontology Association',
         'Interacting Gene',
         'Expr_pattern Tissue',
         'Genomic Study Tissue',
@@ -123,6 +125,7 @@ export default function BrowseCollection({
       ];
 
       const options = [
+        { name: 'species', value: 'mix' },
         { name: 'outputFormat', value: 'html' },
         { name: 'duplicatesToggle', value: 'merge' },
         { name: 'headers', value: columnHeaders.join('\t') },
