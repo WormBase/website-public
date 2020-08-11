@@ -1,8 +1,8 @@
-import React from 'react'
-import { homology_widget } from '../../../../.storybook/target'
-import Wrapper from '../../Wrapper'
+import React from 'react';
+import { homology_widget } from '../../../../.storybook/target';
+import Wrapper from '../../Wrapper';
 
-const id = 'table_blastp_details'
+const id = 'table_blastp_details';
 const order = [
   'evalue',
   'taxonomy',
@@ -11,7 +11,7 @@ const order = [
   'percent',
   'target_range',
   'source_range',
-]
+];
 const columnsHeader = {
   evalue: 'BLAST e-value',
   taxonomy: 'Species',
@@ -20,12 +20,12 @@ const columnsHeader = {
   percentage: '% Length',
   target_range: 'Target range',
   source_range: 'Source range',
-}
+};
 
 export default {
   component: Wrapper,
   title: 'Table/Generic/Widgets/Homology/blastp_details',
-}
+};
 
 // TODO: Fix something prevents from executing useEffect hook in <Wrapper> component.
 
