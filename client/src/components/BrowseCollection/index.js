@@ -91,63 +91,9 @@ export default function BrowseCollection({
       geneListInput.value = geneIds.join(' ');
       form.appendChild(geneListInput);
 
-      const columnHeaders = [
-        'WormBase Gene ID',
-        'Public Name',
-        'WormBase Status',
-        'Sequence Name',
-        'Other Name',
-        'Transcript',
-        'Operon',
-        'WormPep',
-        'Protein Domain',
-        'Uniprot',
-        'Reference Uniprot ID',
-        'TreeFam',
-        'RefSeq_mRNA',
-        'RefSeq_protein',
-        'Genetic Map Position',
-        'RNAi Phenotype Observed',
-        'Allele Phenotype Observed',
-        'Coding_exon Non_silent Allele',
-        'Gene Ontology Association',
-        'Interacting Gene',
-        'Expr_pattern Tissue',
-        'Genomic Study Tissue',
-        'Expr_pattern LifeStage',
-        'Genomic Study LifeStage',
-        'Disease Info',
-        'Human Ortholog',
-        'Reference',
-        'Concise Description',
-        'Automated Description',
-        'Expression Cluster Summary',
-      ];
-
-      const options = [
-        { name: 'species', value: 'mix' },
-        { name: 'outputFormat', value: 'html' },
-        { name: 'duplicatesToggle', value: 'merge' },
-        { name: 'headers', value: columnHeaders.join('\t') },
-      ].concat(
-        columnHeaders.map((name) => ({
-          name,
-        }))
-      );
-
-      options.forEach(({ name, value, checked = 'checked' }) => {
-        const optionInput = document.createElement('input');
-        optionInput.setAttribute('type', 'checkbox');
-        optionInput.setAttribute('name', name);
-        optionInput.setAttribute('value', value || name);
-        optionInput.setAttribute('checked', checked);
-        form.appendChild(optionInput);
-      });
-
       const submitInput = document.createElement('input');
       submitInput.setAttribute('name', 'action');
       submitInput.setAttribute('type', 'submit');
-      submitInput.setAttribute('value', 'query list');
       form.appendChild(submitInput);
 
       document.body.appendChild(form);
