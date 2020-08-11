@@ -75,12 +75,12 @@ const sortByDescriptionType1 = (rowA, rowB, columnId) => {
     : 0;
 };
 const sortByEvidence = (rowA, rowB, columnId) => {
-  const comparisonStandardOfRowA = rowA.values[
-    columnId
-  ][0].text.label.toLowerCase();
-  const comparisonStandardOfRowB = rowB.values[
-    columnId
-  ][0].text.label.toLowerCase();
+  const comparisonStandardOfRowA = Object.values(
+    rowA.values[columnId]
+  )[0].text.label.toLowerCase();
+  const comparisonStandardOfRowB = Object.values(
+    rowB.values[columnId]
+  )[0].text.label.toLowerCase();
   return comparisonStandardOfRowA > comparisonStandardOfRowB
     ? 1
     : comparisonStandardOfRowA < comparisonStandardOfRowB
@@ -124,10 +124,7 @@ const sortByMedianOrMean = (rowA, rowB, columnId) => {
 };
 
 const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
-  const getRowValueByColumnID = (row, columnId) =>
-    /\.label$/.test(columnId)
-      ? row.values[columnId.slice(0, -6)]['label']
-      : row.values[columnId];
+  const getRowValueByColumnID = (row, columnId) => row.values[columnId];
 
   const toString = (a) => {
     if (typeof a === 'number') {
@@ -195,14 +192,26 @@ const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
 
 const decideSortType = (rowA, rowB, columnId) => {
   const rowVal = rowA.values[columnId];
-  if (rowVal.species) {
-    return sortBySpecies(rowA, rowB, columnId);
-  }
-  if (rowVal.label && rowVal.class) {
-    return caseInsensitiveAlphaNumeric(rowA, rowB, `${columnId}.label`);
-  }
-  if (!isNaN(Number(rowVal))) {
-    return numberWithScientificNotation(rowA, rowB, columnId);
+  if (rowVal) {
+    if (rowVal.species) {
+      return sortBySpecies(rowA, rowB, columnId);
+    }
+    if (!isNaN(Number(rowVal))) {
+      return numberWithScientificNotation(rowA, rowB, columnId);
+    }
+    if (rowVal.evidence && rowVal.text) {
+      if (rowVal.text.label) {
+        return sortByAnatomicalSites(rowA, rowB, columnId);
+      }
+      return sortByDescriptionType0(rowA, rowB, columnId);
+    }
+    const objValOfRowVal = Object.values(rowVal);
+    if (
+      Object.keys(...objValOfRowVal).includes('evidence') &&
+      Object.keys(...objValOfRowVal).includes('text')
+    ) {
+      return sortByEvidence(rowA, rowB, columnId);
+    }
   }
   return caseInsensitiveAlphaNumeric(rowA, rowB, columnId);
 };
