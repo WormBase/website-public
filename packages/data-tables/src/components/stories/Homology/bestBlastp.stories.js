@@ -11,6 +11,7 @@ const columnsHeader = {
   description: 'Description',
   percent: '% Length',
 };
+const additionalKey = 'hits';
 
 export default {
   component: Wrapper,
@@ -21,20 +22,20 @@ export const daf8 = () => (
   <Wrapper
     WBid={homology_widget.WBid.daf8}
     tableType={homology_widget.tableType.bestBlastpMatches}
-    {...{ id, order, columnsHeader }}
+    {...{ id, order, columnsHeader, additionalKey }}
   />
 );
 export const daf16 = () => (
   <Wrapper
     WBid={homology_widget.WBid.daf16}
     tableType={homology_widget.tableType.bestBlastpMatches}
-    {...{ id, order, columnsHeader }}
+    {...{ id, order, columnsHeader, additionalKey }}
   />
 );
 export const mig2 = () => (
   <Wrapper
     WBid={homology_widget.WBid.mig2}
     tableType={homology_widget.tableType.bestBlastpMatches}
-    {...{ id, order, columnsHeader }}
+    {...{ id, order, columnsHeader, additionalKey }}
   />
 );
