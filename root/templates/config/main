@@ -361,6 +361,14 @@
       END;
 
       USE Math;
+      #if the width of the JBrowse window is less that 1000bp, bump it up to 1000
+      IF end_pos - start_pos +1 < 1000;
+        width_buffer = (1000 - (end_pos - start_pos +1))/2;
+        start_pos = start_pos - width_buffer;
+        end_pos = end_pos + width_buffer;
+      END;
+
+
       start_pos_display = Math.int(start_pos - 0.5 * (end_pos - start_pos));
       start_pos_display = start_pos_display < 0 ? 0 : start_pos_display;  # make sure no starting coord < 0
       end_pos_display = Math.int(end_pos + 0.3 * (end_pos - start_pos));
