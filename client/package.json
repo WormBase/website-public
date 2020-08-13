@@ -10,8 +10,6 @@
     "@apollo/react-hooks": "^3.1.5",
     "@babel/core": "7.10.4",
     "@geneontology/ribbon": "1.4.1",
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
     "@wormbase/design-system": "^0.0.0",
     "@wormbase/third-party-data-api": "^1.0.0",
     "apollo-cache-inmemory": "^1.6.6",

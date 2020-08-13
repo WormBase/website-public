@@ -27,11 +27,11 @@
     "url": "https://github.com/WormBase/website/issues"
   },
   "peerDependencies": {
+    "@material-ui/core": "^4.7.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
-    "@material-ui/core": "^4.7.1",
     "prop-types": "15.7.2"
   },
   "dependencies": {}
