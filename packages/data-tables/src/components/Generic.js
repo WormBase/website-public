@@ -5,6 +5,7 @@ import { decideSortType } from '../util/sortTypeHelper';
 import SmartCell from './SmartCell';
 import { makeStyles } from '@material-ui/core/styles';
 import unwind from 'javascript-unwind';
+import ReactHtmlParser from 'react-html-parser';
 
 const useStyles = makeStyles({
   columnHeader: {
@@ -36,7 +37,7 @@ const Generic = ({
       return {
         Header: () => (
           <span className={classes.columnHeader}>
-            {columnsHeader[`${ord}`]}
+            {ReactHtmlParser(columnsHeader[`${ord}`])}
           </span>
         ),
         accessor: idx === 0 && hasGroupedRow ? `${ord}.label` : ord,
