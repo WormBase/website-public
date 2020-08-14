@@ -30,8 +30,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EvidenceCell = ({ renderContent, renderEvidence, data }) => {
-  const [expanded, setExpanded] = useState(true);
+const EvidenceCell = ({
+  renderContent,
+  renderEvidence,
+  data,
+  defaultExpanded = false,
+}) => {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const classes = useStyles();
 
   return (
