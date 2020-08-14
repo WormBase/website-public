@@ -8,17 +8,16 @@ const HashCell = ({ data, render }) => {
     return <SimpleCell data={`${data.genus}. ${data.species}`} />;
   }
   return (
-    <ul>
+    <dl>
       {Object.keys(data)
         .filter((key) => hasContent(data[key]))
         .map((key) => (
-          <li key={key}>
-            {key.replace(/_+/g, ' ')}:
-            <br />
-            {render({ elementValue: data[key] })}
-          </li>
+          <>
+            <dt key={key}>{key.replace(/_+/g, ' ')}:</dt>
+            <dd>{render({ elementValue: data[key] })}</dd>
+          </>
         ))}
-    </ul>
+    </dl>
   );
 };
 
