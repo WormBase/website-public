@@ -9,7 +9,6 @@ import ReactHtmlParser from 'react-html-parser';
 
 const useStyles = makeStyles({
   columnHeader: {
-    fontSize: '1.1rem',
     fontWeight: '600',
     color: '#666',
   },
