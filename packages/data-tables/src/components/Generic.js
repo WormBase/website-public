@@ -43,7 +43,7 @@ const Generic = ({
         accessor: idx === 0 && hasGroupedRow ? `${ord}.label` : ord,
         Cell: ({ cell: { value } }) => {
           if (hasGroupedRow && value === null) {
-            return <span>N/A</span>;
+            return <SmartCell data="N/A" />;
           }
           return <SmartCell data={value} />;
         },
