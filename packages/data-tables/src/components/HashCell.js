@@ -1,15 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { hasContent } from '../util/hasContent';
-//import SimpleCell from './SimpleCell';
+import SimpleCell from './SimpleCell';
 
 const HashCell = ({ data, render }) => {
   if (data.species) {
-    return (
-      <span>
-        {data.genus}. {data.species}
-      </span>
-    );
+    return <SimpleCell data={`${data.genus}. ${data.species}`} />;
   }
   return (
     <ul>
