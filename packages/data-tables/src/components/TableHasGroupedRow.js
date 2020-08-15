@@ -20,11 +20,14 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+// import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+// import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Tsv from './Tsv';
+import SimpleCell from './SimpleCell';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -121,11 +124,9 @@ const useStyles = makeStyles({
     backgroundColor: 'white',
     padding: 5,
   },
-  rows_count: {
-    '& .row-arrow-icon': {
-      fontSize: '1.5rem',
-      marginRight: 10,
-    },
+  rowArrowIcon: {
+    marginRight: 10,
+    verticalAlign: 'bottom',
   },
 });
 
@@ -442,17 +443,15 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   const displayHiddenRowsCount = (cell, row) => {
     if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
       return (
-        <>
+        <SimpleCell>
           {cell.render('Aggregated')}
-          <span className={classes.rows_count}>
-            {row.isExpanded ? (
-              <ArrowDropDownIcon className="row-arrow-icon" />
-            ) : (
-              <ArrowRightIcon className="row-arrow-icon" />
-            )}
-          </span>
-          {row.subRows.length} Results
-        </>
+          {row.isExpanded ? (
+            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
+          ) : (
+            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
+          )}
+          <span>{row.subRows.length} Results</span>
+        </SimpleCell>
       );
     }
     return cell.render('Aggregated');
