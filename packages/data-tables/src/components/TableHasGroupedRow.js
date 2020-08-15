@@ -441,7 +441,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   };
 
   const displayHiddenRowsCount = (cell, row) => {
-    if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
+    if (cell.column.id === 'evidence') {
       return (
         <SimpleCell>
           {cell.render('Aggregated')}
