@@ -10,11 +10,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SimpleCell = ({ data }) => {
+const SimpleCell = ({ data, children }) => {
   const classes = useStyles();
   let content;
 
-  if (data !== null && typeof data === 'object') {
+  if (children) {
+    content = children;
+  } else if (data !== null && typeof data === 'object') {
     if (data.text && typeof data.text !== 'object') {
       content = data.text;
     } else if (data.class) {
