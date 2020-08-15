@@ -22,7 +22,9 @@ const HashCell = ({ data, render }) => {
         .filter((key) => hasContent(data[key]))
         .map((key) => (
           <>
-            <dt key={key}>{key.replace(/_+/g, ' ')}:</dt>
+            <dt key={key}>
+              <SimpleCell>{key.replace(/_+/g, ' ')}:</SimpleCell>
+            </dt>
             <dd>{render({ elementValue: data[key] })}</dd>
           </>
         ))}
