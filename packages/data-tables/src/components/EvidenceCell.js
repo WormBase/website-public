@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
   accordionSummaryRoot: {
     minHeight: 0,
+    paddingLeft: 0,
 
     '&.Mui-expanded': {
       minHeight: 0,
