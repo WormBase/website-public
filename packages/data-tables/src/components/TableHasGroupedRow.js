@@ -20,13 +20,16 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+// import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+// import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Tsv from './Tsv';
+import SimpleCell from './SimpleCell';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   wrapper: {
     display: 'block',
     overflow: 'auto',
@@ -96,13 +99,12 @@ const useStyles = makeStyles({
   },
   globalFilter: {
     backgroundColor: '#e9eef2',
-    textAlign: 'center',
+    display: 'flex',
     '& input': {
       borderRadius: 5,
-      fontSize: '1.2rem',
       border: '1px solid #ddd',
-      margin: '0.8rem 0',
-      width: '95%',
+      flex: '1 0 auto',
+      margin: `${theme.spacing(1.5)}px ${theme.spacing(0.5)}px 0`,
     },
   },
   pagination: {
@@ -121,13 +123,11 @@ const useStyles = makeStyles({
     backgroundColor: 'white',
     padding: 5,
   },
-  rows_count: {
-    '& .row-arrow-icon': {
-      fontSize: '1.5rem',
-      marginRight: 10,
-    },
+  rowArrowIcon: {
+    marginRight: 10,
+    verticalAlign: 'bottom',
   },
-});
+}));
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter);
@@ -440,19 +440,17 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   };
 
   const displayHiddenRowsCount = (cell, row) => {
-    if (cell.column.id === 'evidence' && row.subRows.length >= 10) {
+    if (cell.column.id === 'evidence') {
       return (
-        <>
+        <SimpleCell>
           {cell.render('Aggregated')}
-          <span className={classes.rows_count}>
-            {row.isExpanded ? (
-              <ArrowDropDownIcon className="row-arrow-icon" />
-            ) : (
-              <ArrowRightIcon className="row-arrow-icon" />
-            )}
-          </span>
-          {row.subRows.length} Results
-        </>
+          {row.isExpanded ? (
+            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
+          ) : (
+            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
+          )}
+          <span>{row.subRows.length} Results</span>
+        </SimpleCell>
       );
     }
     return cell.render('Aggregated');

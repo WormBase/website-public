@@ -9,7 +9,6 @@ import ReactHtmlParser from 'react-html-parser';
 
 const useStyles = makeStyles({
   columnHeader: {
-    fontSize: '1.1rem',
     fontWeight: '600',
     color: '#666',
   },
@@ -43,7 +42,7 @@ const Generic = ({
         accessor: idx === 0 && hasGroupedRow ? `${ord}.label` : ord,
         Cell: ({ cell: { value } }) => {
           if (hasGroupedRow && value === null) {
-            return <span>N/A</span>;
+            return <SmartCell data="N/A" />;
           }
           return <SmartCell data={value} />;
         },

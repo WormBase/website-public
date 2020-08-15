@@ -1,28 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
 import { hasContent } from '../util/hasContent';
-//import SimpleCell from './SimpleCell';
+import SimpleCell from './SimpleCell';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    margin: 0,
+  },
+}));
 
 const HashCell = ({ data, render }) => {
+  const classes = useStyles();
+
   if (data.species) {
-    return (
-      <span>
-        {data.genus}. {data.species}
-      </span>
-    );
+    return <SimpleCell data={`${data.genus}. ${data.species}`} />;
   }
   return (
-    <ul>
+    <dl className={classes.root}>
       {Object.keys(data)
         .filter((key) => hasContent(data[key]))
         .map((key) => (
-          <li key={key}>
-            {key.replace(/_+/g, ' ')}:
-            <br />
-            {render({ elementValue: data[key] })}
-          </li>
+          <>
+            <dt key={key}>
+              <SimpleCell>{key.replace(/_+/g, ' ')}:</SimpleCell>
+            </dt>
+            <dd>{render({ elementValue: data[key] })}</dd>
+          </>
         ))}
-    </ul>
+    </dl>
   );
 };
 

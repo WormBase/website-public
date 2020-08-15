@@ -24,7 +24,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
 import Tsv from './Tsv';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   wrapper: {
     display: 'block',
     overflow: 'auto',
@@ -96,13 +96,12 @@ const useStyles = makeStyles({
   },
   globalFilter: {
     backgroundColor: '#e9eef2',
-    textAlign: 'center',
+    display: 'flex',
     '& input': {
       borderRadius: 5,
-      fontSize: '1.2rem',
       border: '1px solid #ddd',
-      margin: '0.8rem 0',
-      width: '95%',
+      flex: '1 0 auto',
+      margin: `${theme.spacing(1.5)}px ${theme.spacing(0.5)}px 0`,
     },
   },
   pagination: {
@@ -121,7 +120,7 @@ const useStyles = makeStyles({
     backgroundColor: 'white',
     padding: 5,
   },
-});
+}));
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
   const [value, setValue] = useState(globalFilter);
