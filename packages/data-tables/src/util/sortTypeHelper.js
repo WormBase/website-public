@@ -23,6 +23,9 @@ const sortBySpecies = (rowA, rowB, columnId) => {
 const sortByText = (rowA, rowB, columnId) => {
   const a = getRowValueByColumnID(rowA, columnId).text;
   const b = getRowValueByColumnID(rowB, columnId).text;
+  if (!isNaN(Number(a))) {
+    return compareBasic(a, b);
+  }
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
