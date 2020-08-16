@@ -20,7 +20,7 @@ const sortBySpecies = (rowA, rowB, columnId) => {
   return compareBasic(a, b);
 };
 
-const sortByDescriptionType0 = (rowA, rowB, columnId) => {
+const sortByText = (rowA, rowB, columnId) => {
   const a = getRowValueByColumnID(rowA, columnId).text;
   const b = getRowValueByColumnID(rowB, columnId).text;
   return compareBasic(a.toLowerCase(), b.toLowerCase());
@@ -32,7 +32,7 @@ const sortByEvidence = (rowA, rowB, columnId) => {
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
-const sortByAnatomicalSites = (rowA, rowB, columnId) => {
+const sortByTextLabel = (rowA, rowB, columnId) => {
   const a = getRowValueByColumnID(rowA, columnId).text.label;
   const b = getRowValueByColumnID(rowB, columnId).text.label;
   return compareBasic(a.toLowerCase(), b.toLowerCase());
@@ -132,9 +132,9 @@ const decideSortType = (rowA, rowB, columnId) => {
     }
     if (rowVal.evidence && rowVal.text) {
       if (rowVal.text.label) {
-        return sortByAnatomicalSites(rowA, rowB, columnId);
+        return sortByTextLabel(rowA, rowB, columnId);
       }
-      return sortByDescriptionType0(rowA, rowB, columnId);
+      return sortByText(rowA, rowB, columnId);
     }
     if (rowVal.class && rowVal.label) {
       return sortByTagData(rowA, rowB, columnId);
