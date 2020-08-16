@@ -78,6 +78,12 @@ const sortByMedianOrMean = (rowA, rowB, columnId) => {
   return compareBasic(a, b);
 };
 
+const sortByTagData = (rowA, rowB, columnId) => {
+  const a = rowA.values[columnId].label;
+  const b = rowB.values[columnId].label;
+  return compareBasic(a.toLowerCase(), b.toLowerCase());
+};
+
 const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
   const getRowValueByColumnID = (row, columnId) => row.values[columnId];
 
@@ -160,6 +166,9 @@ const decideSortType = (rowA, rowB, columnId) => {
         return sortByAnatomicalSites(rowA, rowB, columnId);
       }
       return sortByDescriptionType0(rowA, rowB, columnId);
+    }
+    if (rowVal.class && rowVal.label) {
+      return sortByTagData(rowA, rowB, columnId);
     }
     const objValOfRowVal = Object.values(rowVal);
     if (
