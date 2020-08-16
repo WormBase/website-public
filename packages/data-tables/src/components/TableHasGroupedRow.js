@@ -13,19 +13,10 @@ import {
 } from 'react-table';
 import matchSorter from 'match-sorter';
 import { makeStyles } from '@material-ui/core/styles';
-import Checkbox from '@material-ui/core/Checkbox';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormLabel from '@material-ui/core/FormLabel';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-// import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-// import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import Tsv from './Tsv';
 import SimpleCell from './SimpleCell';
 
@@ -111,18 +102,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '0.8rem 0.5rem',
     backgroundColor: '#e9eef2',
   },
-  column_filter_root: {
-    position: 'relative',
-  },
-  column_filter_dropdown: {
-    position: 'absolute',
-    top: 28,
-    left: 0,
-    zIndex: 1,
-    border: '1px solid',
-    backgroundColor: 'white',
-    padding: 5,
-  },
   rowArrowIcon: {
     marginRight: 10,
     verticalAlign: 'bottom',
@@ -150,12 +129,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 
 const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   const classes = useStyles();
-
-  const [displayFilter, setDisplayFilter] = useState({
-    phentypeLabel: false,
-    entity: false,
-    evidence: false,
-  });
 
   const sortTypes = useMemo(
     () => ({
@@ -347,91 +320,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     return defaultExpandedRows;
   };
 
-  const displayFilterFn = (column) => {
-    if (
-      (column.id === 'phenotype.label' && displayFilter['phenotypeLabel']) ||
-      (column.id === 'entity' && displayFilter['entity']) ||
-      (column.id === 'evidence' && displayFilter['evidence'])
-    ) {
-      return column.render('Filter');
-    }
-    return null;
-  };
-
-  const ClickAway = () => {
-    const [open, setOpen] = useState(false);
-
-    const handleClick = () => {
-      setOpen((prev) => !prev);
-    };
-    const handleClickAway = () => {
-      setOpen(false);
-    };
-
-    return (
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <span className={classes.column_filter_root}>
-          <button type="button" onClick={handleClick}>
-            <FilterListIcon />
-          </button>
-          {open ? (
-            <span className={classes.column_filter_dropdown}>
-              <CheckboxesGroup />
-            </span>
-          ) : null}
-        </span>
-      </ClickAwayListener>
-    );
-  };
-
-  const CheckboxesGroup = () => {
-    const handleChange = (event) => {
-      setDisplayFilter({
-        ...displayFilter,
-        [event.target.name]: event.target.checked,
-      });
-    };
-    const { phenotypeLabel, entity, evidence } = displayFilter;
-
-    return (
-      <FormControl component="fieldset">
-        <FormLabel component="legend">Column search</FormLabel>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={phenotypeLabel}
-                onChange={handleChange}
-                name="phenotypeLabel"
-              />
-            }
-            label="Phenotype"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={entity}
-                onChange={handleChange}
-                name="entity"
-              />
-            }
-            label="Entities Affected"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={evidence}
-                onChange={handleChange}
-                name="evidence"
-              />
-            }
-            label="Supported Evidence"
-          />
-        </FormGroup>
-      </FormControl>
-    );
-  };
-
   const enableToggleRowExpand = (row, cell) => {
     if (cell.isGrouped || cell.isAggregated) {
       return cell.getCellProps(row.getToggleRowExpandedProps());
@@ -539,9 +427,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
                       ) : (
                         ''
                       )}
-                    </div>
-                    <div className="filter">
-                      {column.canFilter ? displayFilterFn(column) : null}
                     </div>
                     <div
                       {...column.getResizerProps()}

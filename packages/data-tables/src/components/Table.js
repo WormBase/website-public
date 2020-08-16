@@ -12,15 +12,8 @@ import {
 } from 'react-table';
 import matchSorter from 'match-sorter';
 import { makeStyles } from '@material-ui/core/styles';
-import Checkbox from '@material-ui/core/Checkbox';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormLabel from '@material-ui/core/FormLabel';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
 import Tsv from './Tsv';
 
@@ -108,18 +101,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '0.8rem 0.5rem',
     backgroundColor: '#e9eef2',
   },
-  column_filter_root: {
-    position: 'relative',
-  },
-  column_filter_dropdown: {
-    position: 'absolute',
-    top: 28,
-    left: 0,
-    zIndex: 1,
-    border: '1px solid',
-    backgroundColor: 'white',
-    padding: 5,
-  },
 }));
 
 const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
@@ -143,11 +124,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 
 const Table = ({ columns, data, id, dataForTsv, order }) => {
   const classes = useStyles();
-
-  const [displayFilter, setDisplayFilter] = useState({
-    phentypeLabel: false,
-    interaction_type: false,
-  });
 
   const sortTypes = useMemo(
     () => ({
@@ -314,81 +290,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     []
   );
 
-  const displayFilterFn = (column) => {
-    if (
-      (column.id === 'phenotype.label' && displayFilter['phenotypeLabel']) ||
-      (column.id === 'interaction_type' && displayFilter['interaction_type'])
-    ) {
-      return column.render('Filter');
-    }
-    return null;
-  };
-
-  const ClickAway = () => {
-    const [open, setOpen] = useState(false);
-
-    const handleClick = () => {
-      setOpen((prev) => !prev);
-    };
-    const handleClickAway = () => {
-      setOpen(false);
-    };
-
-    return (
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <span className={classes.column_filter_root}>
-          <button type="button" onClick={handleClick}>
-            <FilterListIcon />
-          </button>
-          {open ? (
-            <span className={classes.column_filter_dropdown}>
-              <CheckboxesGroup />
-            </span>
-          ) : null}
-        </span>
-      </ClickAwayListener>
-    );
-  };
-
-  const CheckboxesGroup = () => {
-    const handleChange = (event) => {
-      setDisplayFilter({
-        ...displayFilter,
-        [event.target.name]: event.target.checked,
-      });
-    };
-    const { phenotypeLabel, interaction_type } = displayFilter;
-
-    return (
-      <FormControl component="fieldset">
-        <FormLabel component="legend">Column search</FormLabel>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={phenotypeLabel}
-                onChange={handleChange}
-                name="phenotypeLabel"
-              />
-            }
-            label="Phenotype"
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={interaction_type}
-                onChange={handleChange}
-                name="interaction_type"
-              />
-            }
-            label="Interaction Type"
-          />
-        </FormGroup>
-      </FormControl>
-    );
-  };
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -467,9 +368,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                       ) : (
                         ''
                       )}
-                    </div>
-                    <div className="filter">
-                      {column.canFilter ? displayFilterFn(column) : null}
                     </div>
                     <div
                       {...column.getResizerProps()}
