@@ -172,18 +172,4 @@ const decideSortType = (rowA, rowB, columnId) => {
   return caseInsensitiveAlphaNumeric(rowA, rowB, columnId);
 };
 
-export {
-  numberWithScientificNotation,
-  sortBySpecies,
-  sortByMethods,
-  sortByInteractions,
-  sortByCitations,
-  sortByDescriptionType0,
-  sortByDescriptionType1,
-  sortByEvidence,
-  sortByDatabase,
-  sortByAnatomicalSites,
-  sortByMedianOrMean,
-  caseInsensitiveAlphaNumeric,
-  decideSortType,
-};
+export { decideSortType };
