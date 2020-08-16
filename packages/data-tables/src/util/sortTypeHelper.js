@@ -2,33 +2,39 @@ const compareBasic = (a, b) => {
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
+const getRowValueByColumnID = (row, columnId) => row.values[columnId];
+
 const numberWithScientificNotation = (rowA, rowB, columnId) => {
-  const a = Number(rowA.values[columnId]);
-  const b = Number(rowB.values[columnId]);
+  const a = Number(getRowValueByColumnID(rowA, columnId));
+  const b = Number(getRowValueByColumnID(rowB, columnId));
   return compareBasic(a, b);
 };
 
 const sortBySpecies = (rowA, rowB, columnId) => {
-  const a = `${rowA.values[columnId].genus}${rowA.values[columnId].species}`;
-  const b = `${rowB.values[columnId].genus}${rowB.values[columnId].species}`;
+  const a = `${getRowValueByColumnID(rowA, columnId).genus}${
+    getRowValueByColumnID(rowA, columnId).species
+  }`;
+  const b = `${getRowValueByColumnID(rowB, columnId).genus}${
+    getRowValueByColumnID(rowB, columnId).species
+  }`;
   return compareBasic(a, b);
 };
 
 const sortByMethods = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId][0].label;
-  const b = rowB.values[columnId][0].label;
+  const a = getRowValueByColumnID(rowA, columnId)[0].label;
+  const b = getRowValueByColumnID(rowB, columnId)[0].label;
   return compareBasic(a, b);
 };
 
 const sortByInteractions = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId][0].label;
-  const b = rowB.values[columnId][0].label;
+  const a = getRowValueByColumnID(rowA, columnId)[0].label;
+  const b = getRowValueByColumnID(rowB, columnId)[0].label;
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
 const sortByCitations = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId][0][0]?.label || '';
-  const b = rowB.values[columnId][0][0]?.label || '';
+  const a = getRowValueByColumnID(rowA, columnId)[0][0]?.label || '';
+  const b = getRowValueByColumnID(rowB, columnId)[0][0]?.label || '';
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
@@ -39,32 +45,36 @@ const sortByDescriptionType0 = (rowA, rowB, columnId) => {
 };
 
 const sortByDescriptionType1 = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId][0].toLowerCase();
-  const b = rowB.values[columnId][0].toLowerCase();
+  const a = getRowValueByColumnID(rowA, columnId)[0].toLowerCase();
+  const b = getRowValueByColumnID(rowB, columnId)[0].toLowerCase();
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
 const sortByEvidence = (rowA, rowB, columnId) => {
-  const a = Object.values(rowA.values[columnId])[0].text.label;
-  const b = Object.values(rowB.values[columnId])[0].text.label;
+  const a = Object.values(getRowValueByColumnID(rowA, columnId))[0].text.label;
+  const b = Object.values(getRowValueByColumnID(rowB, columnId))[0].text.label;
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
 const sortByDatabase = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId] ? rowA.values[columnId][0].label : '';
-  const b = rowB.values[columnId] ? rowB.values[columnId][0].label : '';
+  const a = getRowValueByColumnID(rowA, columnId)
+    ? getRowValueByColumnID(rowA, columnId)[0].label
+    : '';
+  const b = getRowValueByColumnID(rowB, columnId)
+    ? getRowValueByColumnID(rowB, columnId)[0].label
+    : '';
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
 const sortByAnatomicalSites = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId].text.label;
-  const b = rowB.values[columnId].text.label;
+  const a = getRowValueByColumnID(rowA, columnId).text.label;
+  const b = getRowValueByColumnID(rowB, columnId).text.label;
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
 const sortByMedianOrMean = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId].text;
-  const b = rowB.values[columnId].text;
+  const a = getRowValueByColumnID(rowA, columnId).text;
+  const b = getRowValueByColumnID(rowB, columnId).text;
   return compareBasic(a, b);
 };
 
@@ -136,7 +146,8 @@ const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
 };
 
 const decideSortType = (rowA, rowB, columnId) => {
-  const rowVal = rowA.values[columnId];
+  const rowVal = getRowValueByColumnID(rowA, columnId);
+
   if (rowVal) {
     if (rowVal.species) {
       return sortBySpecies(rowA, rowB, columnId);
