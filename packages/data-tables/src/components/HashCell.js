@@ -21,12 +21,12 @@ const HashCell = ({ data, render }) => {
       {Object.keys(data)
         .filter((key) => hasContent(data[key]))
         .map((key) => (
-          <>
-            <dt key={key}>
+          <React.Fragment key={key}>
+            <dt>
               <SimpleCell>{key.replace(/_+/g, ' ')}:</SimpleCell>
             </dt>
             <dd>{render({ elementValue: data[key] })}</dd>
-          </>
+          </React.Fragment>
         ))}
     </dl>
   );
