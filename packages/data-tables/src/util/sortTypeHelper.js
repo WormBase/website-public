@@ -84,6 +84,12 @@ const sortByTagData = (rowA, rowB, columnId) => {
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
+const sortByArrayValue = (rowA, rowB, columnId) => {
+  const a = getRowValueByColumnID(rowA, columnId)[0];
+  const b = getRowValueByColumnID(rowB, columnId)[0];
+  return compareBasic(a.toLowerCase(), b.toLowerCase());
+};
+
 const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
   const getRowValueByColumnID = (row, columnId) => row.values[columnId];
 
@@ -155,6 +161,9 @@ const decideSortType = (rowA, rowB, columnId) => {
   const rowVal = getRowValueByColumnID(rowA, columnId);
 
   if (rowVal) {
+    if (Array.isArray(rowVal) && typeof rowVal[0] !== 'object') {
+      return sortByArrayValue(rowA, rowB, columnId);
+    }
     if (rowVal.species) {
       return sortBySpecies(rowA, rowB, columnId);
     }
