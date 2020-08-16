@@ -20,33 +20,9 @@ const sortBySpecies = (rowA, rowB, columnId) => {
   return compareBasic(a, b);
 };
 
-const sortByMethods = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId)[0].label;
-  const b = getRowValueByColumnID(rowB, columnId)[0].label;
-  return compareBasic(a, b);
-};
-
-const sortByInteractions = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId)[0].label;
-  const b = getRowValueByColumnID(rowB, columnId)[0].label;
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
-const sortByCitations = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId)[0][0]?.label || '';
-  const b = getRowValueByColumnID(rowB, columnId)[0][0]?.label || '';
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
 const sortByDescriptionType0 = (rowA, rowB, columnId) => {
   const a = getRowValueByColumnID(rowA, columnId).text;
   const b = getRowValueByColumnID(rowB, columnId).text;
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
-const sortByDescriptionType1 = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId)[0].toLowerCase();
-  const b = getRowValueByColumnID(rowB, columnId)[0].toLowerCase();
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
@@ -56,26 +32,10 @@ const sortByEvidence = (rowA, rowB, columnId) => {
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
-const sortByDatabase = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId)
-    ? getRowValueByColumnID(rowA, columnId)[0].label
-    : '';
-  const b = getRowValueByColumnID(rowB, columnId)
-    ? getRowValueByColumnID(rowB, columnId)[0].label
-    : '';
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
 const sortByAnatomicalSites = (rowA, rowB, columnId) => {
   const a = getRowValueByColumnID(rowA, columnId).text.label;
   const b = getRowValueByColumnID(rowB, columnId).text.label;
   return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
-const sortByMedianOrMean = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId).text;
-  const b = getRowValueByColumnID(rowB, columnId).text;
-  return compareBasic(a, b);
 };
 
 const sortByTagData = (rowA, rowB, columnId) => {
