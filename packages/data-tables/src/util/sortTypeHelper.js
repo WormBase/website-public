@@ -48,8 +48,10 @@ const sortByTagData = (rowA, rowB, columnId) => {
 };
 
 const sortByArrayValue = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId)[0];
-  const b = getRowValueByColumnID(rowB, columnId)[0];
+  const aa = getRowValueByColumnID(rowA, columnId);
+  const a = aa === undefined || aa.length === 0 ? null : aa[0];
+  const bb = getRowValueByColumnID(rowB, columnId);
+  const b = bb === undefined || bb.length === 0 ? null : bb[0];
   return compareBasic(a.toLowerCase(), b.toLowerCase());
 };
 
