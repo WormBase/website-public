@@ -42,17 +42,27 @@ const sortByTextLabel = (rowA, rowB, columnId) => {
 };
 
 const sortByTagData = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId].label;
-  const b = rowB.values[columnId].label;
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
+  const aa = getRowValueByColumnID(rowA, columnId)?.label;
+  const a = aa === undefined ? null : aa.toLowerCase();
+  const bb = getRowValueByColumnID(rowB, columnId)?.label;
+  const b = bb === undefined ? null : bb.toLowerCase();
+  return compareBasic(a, b);
 };
 
 const sortByArrayValue = (rowA, rowB, columnId) => {
   const aa = getRowValueByColumnID(rowA, columnId);
-  const a = aa === undefined || aa.length === 0 ? null : aa[0];
+  const a = aa === undefined || aa.length === 0 ? null : aa[0].toLowerCase();
   const bb = getRowValueByColumnID(rowB, columnId);
-  const b = bb === undefined || bb.length === 0 ? null : bb[0];
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
+  const b = bb === undefined || bb.length === 0 ? null : bb[0].toLowerCase();
+  return compareBasic(a, b);
+};
+
+const sortByFirstArrayElementTagData = (rowA, rowB, columnId) => {
+  const aa = getRowValueByColumnID(rowA, columnId)[0]?.label;
+  const a = aa === undefined ? null : aa.toLowerCase();
+  const bb = getRowValueByColumnID(rowB, columnId)[0]?.label;
+  const b = bb === undefined ? null : bb.toLowerCase();
+  return compareBasic(a, b);
 };
 
 const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
@@ -126,8 +136,13 @@ const decideSortType = (rowA, rowB, columnId) => {
   const rowVal = getRowValueByColumnID(rowA, columnId);
 
   if (rowVal) {
-    if (Array.isArray(rowVal) && typeof rowVal[0] !== 'object') {
-      return sortByArrayValue(rowA, rowB, columnId);
+    if (Array.isArray(rowVal)) {
+      if (typeof rowVal[0] !== 'object') {
+        return sortByArrayValue(rowA, rowB, columnId);
+      }
+      if (rowVal[0]?.class && rowVal[0]?.label) {
+        return sortByFirstArrayElementTagData(rowA, rowB, columnId);
+      }
     }
     if (rowVal.species) {
       return sortBySpecies(rowA, rowB, columnId);

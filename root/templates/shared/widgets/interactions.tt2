@@ -11,7 +11,7 @@
   WRAPPER $field_block title="Interactions" key="interactions";
       'Found ' _ (fields.interactions.data.edges.size || 0) _ pluralize(" interaction", fields.interactions.data.edges.size);
 
-      build_data_table(order=['interactions','type','type','effector','affected','direction','phenotype','citations'],
+      build_data_table(order=['interactions','type','subtype','effector','affected','direction','phenotype','citations'],
                        columns={
                         type  => 'Type',
                         subtype => 'Subtype',
