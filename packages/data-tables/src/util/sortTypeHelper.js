@@ -49,10 +49,10 @@ const sortByTagData = (rowA, rowB, columnId) => {
 
 const sortByArrayValue = (rowA, rowB, columnId) => {
   const aa = getRowValueByColumnID(rowA, columnId);
-  const a = aa === undefined || aa.length === 0 ? null : aa[0];
+  const a = aa === undefined || aa.length === 0 ? null : aa[0].toLowerCase();
   const bb = getRowValueByColumnID(rowB, columnId);
-  const b = bb === undefined || bb.length === 0 ? null : bb[0];
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
+  const b = bb === undefined || bb.length === 0 ? null : bb[0].toLowerCase();
+  return compareBasic(a, b);
 };
 
 const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
