@@ -42,9 +42,11 @@ const sortByTextLabel = (rowA, rowB, columnId) => {
 };
 
 const sortByTagData = (rowA, rowB, columnId) => {
-  const a = rowA.values[columnId].label;
-  const b = rowB.values[columnId].label;
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
+  const aa = getRowValueByColumnID(rowA, columnId)?.label;
+  const a = aa === undefined ? null : aa.toLowerCase();
+  const bb = getRowValueByColumnID(rowB, columnId)?.label;
+  const b = bb === undefined ? null : bb.toLowerCase();
+  return compareBasic(a, b);
 };
 
 const sortByArrayValue = (rowA, rowB, columnId) => {
