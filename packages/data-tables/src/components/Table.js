@@ -438,6 +438,14 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
           <button onClick={() => previousPage()} disabled={!canPreviousPage}>
             {'<'}
           </button>{' '}
+          <span>
+            Showing{' '}
+            <strong>
+              {Math.min(pageIndex * pageSize + 1, rows.length)} -{' '}
+              {Math.min((pageIndex + 1) * pageSize, rows.length)}
+            </strong>{' '}
+            of <strong>{rows.length}</strong> entries
+          </span>{' '}
           <button onClick={() => nextPage()} disabled={!canNextPage}>
             {'>'}
           </button>{' '}
@@ -447,12 +455,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
           >
             {'>>'}
           </button>{' '}
-          <span>
-            Page{' '}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>{' '}
-          </span>
         </div>
       </div>
     </div>
