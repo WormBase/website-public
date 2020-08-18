@@ -3282,6 +3282,26 @@ var Scrolling = (function(){
       });
     }
 
+    function preprocessInteractionTableData(data) {
+      const processedData = data.map((dat) => {
+        const typeSegments = dat.type.split(':')
+        const rawSupertype = typeSegments[0]
+        dat.type = (rawSupertype || '').match(/gi-module-.+/)
+          ? 'genetic'
+          : rawSupertype
+        dat.subtype = typeSegments[typeSegments.length - 1]
+        return dat
+      })
+      return processedData
+    }
+    
+    function preprocessData(data, elementId) {
+      if (elementId === 'table_interaction') {
+        return preprocessInteractionTableData(data)
+      }
+      return data
+    }
+    
     function hasGroupedRow(id) {
       const tablesHaveGroupedRow = [
         'table_phenotype',
@@ -3309,7 +3329,7 @@ var Scrolling = (function(){
     function buildDataTable(elementId, data, columns, order) {
       ReactDOM.render(
         <Table
-          data={data}
+          data={preprocessData(data, elementId)}
           id={elementId}
           columnsHeader={columns}
           order={order}
