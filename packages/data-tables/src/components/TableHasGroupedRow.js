@@ -340,11 +340,25 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     return 'is_other td';
   };
 
+  const renderCell = (cell, row) => {
+    if (cell.isAggregated) {
+      return (
+        <div>
+          {cell.render('Aggregated')}
+          {displayHiddenRowsCount(cell, row)}
+        </div>
+      );
+    }
+    if (cell.isPlaceholder) {
+      return null;
+    }
+    return cell.render('Cell');
+  };
+
   const displayHiddenRowsCount = (cell, row) => {
     if (cell.column.id === 'evidence') {
       return (
         <SimpleCell>
-          {cell.render('Aggregated')}
           {row.isExpanded ? (
             <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
           ) : (
@@ -354,7 +368,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
         </SimpleCell>
       );
     }
-    return cell.render('Aggregated');
   };
 
   const {
@@ -463,15 +476,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
                         {...enableToggleRowExpand(row, cell)}
                         className={decideClassNameOfCell(cell)}
                       >
-                        <div>
-                          {cell.isGrouped ? (
-                            <div>{cell.render('Cell')}</div>
-                          ) : cell.isAggregated ? (
-                            <div>{displayHiddenRowsCount(cell, row)}</div>
-                          ) : cell.isPlaceholder ? null : (
-                            <div>{cell.render('Cell')}</div>
-                          )}
-                        </div>
+                        <div>{renderCell(cell, row)}</div>
                       </div>
                     );
                   })}
