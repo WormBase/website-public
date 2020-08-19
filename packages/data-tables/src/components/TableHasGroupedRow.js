@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#dedede',
       borderRight: 'none',
     },
-    '& .tbody .tr .is_placeholder': {
+    '& .tbody .tr .is_other_sorted': {
       backgroundColor: '#d3d6ff',
     },
     '& .tbody .tr .is_other': {
@@ -327,6 +327,19 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     return cell.getCellProps();
   };
 
+  const decideClassNameOfCell = (cell) => {
+    if (cell.isGrouped) {
+      return 'is_grouped td';
+    }
+    if (cell.isAggregated) {
+      return 'is_aggregated td';
+    }
+    if (cell.column.isSorted) {
+      return 'is_other_sorted td';
+    }
+    return 'is_other td';
+  };
+
   const displayHiddenRowsCount = (cell, row) => {
     if (cell.column.id === 'evidence') {
       return (
@@ -447,17 +460,8 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
                   {row.cells.map((cell) => {
                     return (
                       <div
-                        className="td"
                         {...enableToggleRowExpand(row, cell)}
-                        className={
-                          cell.isGrouped
-                            ? 'is_grouped td'
-                            : cell.isAggregated
-                            ? 'is_aggregated td'
-                            : cell.isPlaceholder
-                            ? 'is_placeholder td'
-                            : 'is_other td'
-                        }
+                        className={decideClassNameOfCell(cell)}
                       >
                         <div>
                           {cell.isGrouped ? (
