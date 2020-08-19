@@ -1,7 +1,7 @@
 import React from 'react';
 import { CSVLink } from 'react-csv';
 
-const Tsv = ({ data, id, order }) => {
+const Tsv = ({ data, id, order, ...otherProps }) => {
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
     if (Object(data) !== data) {
       if (data) {
@@ -112,6 +112,7 @@ const Tsv = ({ data, id, order }) => {
       headers={uniqueKeysSortedByColumnOrder.flat()}
       separator={'\t'}
       filename={`${id}.tsv`}
+      {...otherProps}
     >
       Save table as TSV
     </CSVLink>

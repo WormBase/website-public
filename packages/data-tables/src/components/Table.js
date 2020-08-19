@@ -12,6 +12,7 @@ import {
 } from 'react-table';
 import matchSorter from 'match-sorter';
 import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import SortIcon from '@material-ui/icons/Sort';
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   wrapper: {
     display: 'block',
     overflow: 'auto',
+    backgroundColor: '#e9eef2',
   },
   table: {
     color: '#444',
@@ -82,24 +84,21 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   subElement: {
-    textAlign: 'right',
-    '& span': {
-      marginRight: 15,
+    [theme.breakpoints.up('md')]: {
+      textAlign: 'right',
     },
   },
-  globalFilter: {
-    backgroundColor: '#e9eef2',
-    display: 'flex',
+  toolbarWrapper: {
+    overflow: 'hidden', // work around -4px margin in Grid
+  },
+  toolbar: {
+    padding: `${theme.spacing(1.5)}px ${theme.spacing(0.5)}px`,
     '& input': {
-      borderRadius: 5,
-      border: '1px solid #ddd',
       flex: '1 0 auto',
-      margin: `${theme.spacing(1.5)}px ${theme.spacing(0.5)}px 0`,
     },
   },
   pagination: {
     padding: '0.8rem 0.5rem',
-    backgroundColor: '#e9eef2',
   },
 }));
 
@@ -333,17 +332,43 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
 
   return (
     <div className={classes.wrapper}>
+      <div className={classes.toolbarWrapper}>
+        <Grid
+          container
+          spacing={1}
+          justify="space-between"
+          className={classes.toolbar}
+        >
+          <Grid item xs={12} md={6} className={classes.count}>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+            >
+              {[10, 25, 100, 500, rows.length]
+                .filter((pageSize) => pageSize <= rows.length)
+                .map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize === rows.length ? 'All' : pageSize}
+                  </option>
+                ))}
+            </select>
+            {' of '}
+            <strong>{rows.length}</strong> entries
+          </Grid>
+          <Grid item xs={12} md={6} className={classes.subElement}>
+            <Tsv data={dataForTsv || data} id={id} order={order} />
+          </Grid>
+          <Grid item container xs={12}>
+            <GlobalFilter
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
+          </Grid>
+        </Grid>
+      </div>
       <div {...getTableProps()}>
-        <div className={classes.subElement}>
-          <span>{rows.length} entries</span>
-          <Tsv data={dataForTsv || data} id={id} order={order} />
-        </div>
-        <div className={classes.globalFilter}>
-          <GlobalFilter
-            globalFilter={globalFilter}
-            setGlobalFilter={setGlobalFilter}
-          />
-        </div>
         <div className={classes.table}>
           <div className="thead">
             {headerGroups.map((headerGroup) => (
@@ -415,6 +440,14 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
           <button onClick={() => previousPage()} disabled={!canPreviousPage}>
             {'<'}
           </button>{' '}
+          <span>
+            Showing{' '}
+            <strong>
+              {Math.min(pageIndex * pageSize + 1, rows.length)} -{' '}
+              {Math.min((pageIndex + 1) * pageSize, rows.length)}
+            </strong>{' '}
+            of <strong>{rows.length}</strong> entries
+          </span>{' '}
           <button onClick={() => nextPage()} disabled={!canNextPage}>
             {'>'}
           </button>{' '}
@@ -424,24 +457,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
           >
             {'>>'}
           </button>{' '}
-          <span>
-            Page{' '}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>{' '}
-          </span>
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-            }}
-          >
-            {[5, 10, 25, 100, 500].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
     </div>
