@@ -346,11 +346,13 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                 setPageSize(Number(e.target.value));
               }}
             >
-              {[5, 10, 25, 100, 500].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
+              {[10, 25, 100, 500, rows.length]
+                .filter((pageSize) => pageSize <= rows.length)
+                .map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize === rows.length ? 'All' : pageSize}
+                  </option>
+                ))}
             </select>
             {' of '}
             <strong>{rows.length}</strong> entries
