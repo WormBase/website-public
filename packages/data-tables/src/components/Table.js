@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: {
     padding: `${theme.spacing(1.5)}px ${theme.spacing(0.5)}px`,
-    '& input': {
+    '& input:focus': {
       flex: '1 0 auto',
     },
   },
