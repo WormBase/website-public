@@ -84,15 +84,21 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   subElement: {
-    [theme.breakpoints.up('md')]: {
-      textAlign: 'right',
-    },
+    fontSize: '0.8em',
   },
   toolbarWrapper: {
     overflow: 'hidden', // work around -4px margin in Grid
   },
   toolbar: {
     padding: `${theme.spacing(1.5)}px ${theme.spacing(0.5)}px`,
+
+    '& input': {
+      flex: '1 0 auto',
+      [theme.breakpoints.up('sm')]: {
+        flex: '0 0 auto',
+      },
+    },
+
     '& input:focus': {
       flex: '1 0 auto',
     },
@@ -339,7 +345,7 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
           justify="space-between"
           className={classes.toolbar}
         >
-          <Grid item xs={12} md={6} className={classes.count}>
+          <Grid item xs={12} sm={6} className={classes.count}>
             <select
               value={pageSize}
               onChange={(e) => {
@@ -355,12 +361,12 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                 ))}
             </select>
             {' of '}
-            <strong>{rows.length}</strong> entries
+            <strong>{rows.length}</strong> entries{' '}
+            <span className={classes.subElement}>
+              [<Tsv data={dataForTsv || data} id={id} order={order} />]
+            </span>
           </Grid>
-          <Grid item xs={12} md={6} className={classes.subElement}>
-            <Tsv data={dataForTsv || data} id={id} order={order} />
-          </Grid>
-          <Grid item container xs={12}>
+          <Grid item container justify="flex-end" xs={12} sm={6}>
             <GlobalFilter
               globalFilter={globalFilter}
               setGlobalFilter={setGlobalFilter}

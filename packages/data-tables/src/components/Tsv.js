@@ -114,7 +114,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
       filename={`${id}.tsv`}
       {...otherProps}
     >
-      Save table as TSV
+      Download TSV
     </CSVLink>
   );
 };
