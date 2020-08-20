@@ -346,7 +346,7 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                 setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 25, 100, 500, rows.length]
+              {[10, 25, Math.min(100, rows.length)]
                 .filter((pageSize) => pageSize <= rows.length)
                 .map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
