@@ -110,11 +110,11 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
     <CSVLink
       data={flattenedData}
       headers={uniqueKeysSortedByColumnOrder.flat()}
-      separator={'\t'}
-      filename={`${id}.tsv`}
+      separator={','}
+      filename={`${id}.csv`}
       {...otherProps}
     >
-      Download TSV
+      Download CSV
     </CSVLink>
   );
 };
