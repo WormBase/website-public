@@ -47,7 +47,11 @@ const Generic = ({
           return <SmartCell data={value} />;
         },
         sortType: (rowA, rowB, columnId) => {
-          return decideSortType(rowA, rowB, columnId);
+          try {
+            return decideSortType(rowA, rowB, columnId);
+          } catch (err) {
+            console.error(err);
+          }
         },
         Aggregated: () => null,
       };
