@@ -611,7 +611,6 @@ const styles = (theme) => {
     },
     graphSidebarText: {
       fontStyle: 'italic',
-      marginLeft: '-0.5em',
       textTransform: 'capitalize',
     },
     graphSidebarTextLevel0: {
