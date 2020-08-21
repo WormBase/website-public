@@ -4,6 +4,7 @@ import EvidenceCell from './EvidenceCell';
 import SimpleCell from './SimpleCell';
 import ListCell from './ListCell';
 import HashCell from './HashCell';
+import PatoEntityCell from './PatoEntityCell';
 
 function SmartCell({ data }) {
   if (data !== null && typeof data === 'object') {
@@ -27,6 +28,8 @@ function SmartCell({ data }) {
             )}
           />
         );
+      } else if (data.pato_evidence) {
+        return <PatoEntityCell data={data.pato_evidence} />;
       } else if (data.class || data.text) {
         return <SimpleCell data={data} />;
       } else {
