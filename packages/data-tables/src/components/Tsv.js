@@ -87,6 +87,12 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
       return result;
     }
 
+    // data: {Species}
+    if (data.species !== undefined && data.genus !== undefined) {
+      result['species'] = `${data.genus}. ${data.species}`;
+      return result;
+    }
+
     Object.keys(data).forEach((key) => {
       flattenRecursiveForTsv(data[key], [...prefix, key], result);
     });
