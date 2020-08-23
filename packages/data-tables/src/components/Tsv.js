@@ -1,5 +1,6 @@
 import React from 'react';
 import { CSVLink } from 'react-csv';
+import get from 'lodash/get';
 
 const Tsv = ({ data, id, order, ...otherProps }) => {
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
@@ -119,9 +120,47 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
     return uniqueKeys.filter((u) => filterFunc(u)).sort();
   });
 
+  const sortByKey = (array, key) => {
+    const checkAndModify = (data) => {
+      if (data === undefined) {
+        return null;
+      }
+      if (!isNaN(Number(data))) {
+        return Number(data);
+      }
+      return data.toLowerCase();
+    };
+
+    return array.sort((a, b) => {
+      const ax = checkAndModify(get(a, key));
+      const bx = checkAndModify(get(b, key));
+      return ax === bx ? 0 : ax > bx ? 1 : -1;
+    });
+  };
+
+  const getKeyUsedByDefaultColumnSort = (keys) => {
+    if (keys[0].length === 1) {
+      return keys[0];
+    }
+
+    const regex = new RegExp(`.+\\.text$`);
+    const found = keys[0].find((k) => regex.test(k));
+    if (found) {
+      return found;
+    }
+
+    console.error(keys);
+    throw new Error(
+      'It is not possible to determine which key in the data is used for the default sorting'
+    );
+  };
+
   return (
     <CSVLink
-      data={flattenedData}
+      data={sortByKey(
+        flattenedData,
+        getKeyUsedByDefaultColumnSort(uniqueKeysSortedByColumnOrder)
+      )}
       headers={uniqueKeysSortedByColumnOrder.flat()}
       separator={','}
       filename={`${id}.csv`}
