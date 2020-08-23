@@ -102,8 +102,15 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
   );
 
   const uniqueKeysSortedByColumnOrder = order.map((ord) => {
-    const regex = new RegExp(`^${ord}.*`);
-    return uniqueKeys.filter((u) => regex.test(u)).sort();
+    const filterFunc = (fi) => {
+      const regex = new RegExp(`^${ord}\\..+`);
+      if (fi === ord || regex.test(fi)) {
+        return true;
+      }
+      return false;
+    };
+
+    return uniqueKeys.filter((u) => filterFunc(u)).sort();
   });
 
   return (
