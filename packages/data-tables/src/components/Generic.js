@@ -21,6 +21,16 @@ const getDataForTsv = (data, property) => {
   return null;
 };
 
+const disableSort = (data, ord) => {
+  const ArrayHasMoreThanOneElement = (dat) =>
+    Array.isArray(dat[ord]) && dat[ord].length > 1;
+
+  if (data.some(ArrayHasMoreThanOneElement)) {
+    return true;
+  }
+  return false;
+};
+
 const Generic = ({
   data,
   id,
@@ -54,6 +64,7 @@ const Generic = ({
           }
         },
         Aggregated: () => null,
+        disableSortBy: disableSort(data, ord),
       };
     });
   }, []);
