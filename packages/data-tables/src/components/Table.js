@@ -308,6 +308,19 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     return null;
   };
 
+  const decideClassNameOfCell = (cell, idx) => {
+    if (cell.column.isSorted) {
+      if (idx % 2 === 0) {
+        return 'is_sorted_even_cell td';
+      }
+      return 'is_sorted_odd_cell td';
+    }
+    if (idx % 2 === 0) {
+      return 'is_not_sorted_even_cell td';
+    }
+    return 'is_not_sorted_odd_cell td';
+  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -421,15 +434,7 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                     return (
                       <div
                         {...cell.getCellProps()}
-                        className={
-                          cell.column.isSorted
-                            ? idx % 2 === 0
-                              ? 'is_sorted_even_cell td'
-                              : 'is_sorted_odd_cell td'
-                            : idx % 2 === 0
-                            ? 'is_not_sorted_even_cell td'
-                            : 'is_not_sorted_odd_cell td'
-                        }
+                        className={decideClassNameOfCell(cell, idx)}
                       >
                         {cell.render('Cell')}
                       </div>
