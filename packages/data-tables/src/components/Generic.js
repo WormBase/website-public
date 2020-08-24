@@ -22,7 +22,10 @@ const getDataForTsv = (data, property) => {
 };
 
 const disableSort = (data, ord) => {
-  if (data.some((dat) => Array.isArray(dat[ord]))) {
+  const ArrayHasMoreThanOneElement = (dat) =>
+    Array.isArray(dat[ord]) && dat[ord].length > 1;
+
+  if (data.some(ArrayHasMoreThanOneElement)) {
     return true;
   }
   return false;
