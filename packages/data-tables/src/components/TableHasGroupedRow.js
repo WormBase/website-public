@@ -17,6 +17,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import SortIcon from '@material-ui/icons/Sort';
 import Tsv from './Tsv';
 import SimpleCell from './SimpleCell';
 
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#dedede',
       borderRight: 'none',
     },
-    '& .tbody .tr .is_placeholder': {
+    '& .tbody .tr .is_other_sorted': {
       backgroundColor: '#d3d6ff',
     },
     '& .tbody .tr .is_other': {
@@ -129,77 +130,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 
 const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   const classes = useStyles();
-
-  const sortTypes = useMemo(
-    () => ({
-      caseInsensitiveAlphaNumeric: (rowA, rowB, columnId) => {
-        const getRowValueByColumnID = (row, columnId) => row.values[columnId];
-        const toString = (a) => {
-          if (typeof a === 'number') {
-            if (isNaN(a) || a === Infinity || a === -Infinity) {
-              return '';
-            }
-            return String(a);
-          }
-          if (typeof a === 'string') {
-            return a;
-          }
-          return '';
-        };
-        const reSplitAlphaNumeric = /([0-9]+)/gm;
-
-        let a = getRowValueByColumnID(rowA, columnId);
-        let b = getRowValueByColumnID(rowB, columnId);
-        // Force to strings (or "" for unsupported types)
-        // And lowercase to accomplish insensitive sort
-        a = toString(a).toLowerCase();
-        b = toString(b).toLowerCase();
-
-        // Split on number groups, but keep the delimiter
-        // Then remove falsey split values
-        a = a.split(reSplitAlphaNumeric).filter(Boolean);
-        b = b.split(reSplitAlphaNumeric).filter(Boolean);
-
-        // While
-        while (a.length && b.length) {
-          let aa = a.shift();
-          let bb = b.shift();
-
-          const an = parseInt(aa, 10);
-          const bn = parseInt(bb, 10);
-
-          const combo = [an, bn].sort();
-
-          // Both are string
-          if (isNaN(combo[0])) {
-            if (aa > bb) {
-              return 1;
-            }
-            if (bb > aa) {
-              return -1;
-            }
-            continue;
-          }
-
-          // One is a string, one is a number
-          if (isNaN(combo[1])) {
-            return isNaN(an) ? -1 : 1;
-          }
-
-          // Both are numbers
-          if (an > bn) {
-            return 1;
-          }
-          if (bn > an) {
-            return -1;
-          }
-        }
-
-        return a.length - b.length;
-      },
-    }),
-    []
-  );
 
   const filterTypes = useMemo(() => {
     const storeValueOfNestedObj = (obj, keyArr) => {
@@ -286,7 +216,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   const defaultColumn = useMemo(
     () => ({
       filter: 'defaultFilter',
-      sortType: 'caseInsensitiveAlphaNumeric',
       Filter: defaultColumnFilter,
       minWidth: 120,
       width: 180,
@@ -320,6 +249,19 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     return defaultExpandedRows;
   };
 
+  const renderIcon = (column) => {
+    if (column.canSort) {
+      if (column.isSorted) {
+        if (column.isSortedDesc) {
+          return <ArrowDownwardIcon className="sort-arrow-icon" />;
+        }
+        return <ArrowUpwardIcon className="sort-arrow-icon" />;
+      }
+      return <SortIcon className="sort-arrow-icon" />;
+    }
+    return null;
+  };
+
   const enableToggleRowExpand = (row, cell) => {
     if (cell.isGrouped || cell.isAggregated) {
       return cell.getCellProps(row.getToggleRowExpandedProps());
@@ -327,11 +269,38 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     return cell.getCellProps();
   };
 
+  const decideClassNameOfCell = (cell) => {
+    if (cell.isGrouped) {
+      return 'is_grouped td';
+    }
+    if (cell.isAggregated) {
+      return 'is_aggregated td';
+    }
+    if (cell.column.isSorted) {
+      return 'is_other_sorted td';
+    }
+    return 'is_other td';
+  };
+
+  const renderCell = (cell, row) => {
+    if (cell.isAggregated) {
+      return (
+        <div>
+          {cell.render('Aggregated')}
+          {displayHiddenRowsCount(cell, row)}
+        </div>
+      );
+    }
+    if (cell.isPlaceholder) {
+      return null;
+    }
+    return cell.render('Cell');
+  };
+
   const displayHiddenRowsCount = (cell, row) => {
     if (cell.column.id === 'evidence') {
       return (
         <SimpleCell>
-          {cell.render('Aggregated')}
           {row.isExpanded ? (
             <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
           ) : (
@@ -341,7 +310,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
         </SimpleCell>
       );
     }
-    return cell.render('Aggregated');
   };
 
   const {
@@ -365,7 +333,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     {
       columns,
       data,
-      sortTypes,
       disableSortRemove: true,
       filterTypes,
       defaultColumn,
@@ -414,19 +381,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
                       className="column_header"
                     >
                       {column.render('Header')}
-                      {column.canSort ? (
-                        column.isSorted ? (
-                          column.isSortedDesc ? (
-                            <ArrowDownwardIcon className="sort-arrow-icon" />
-                          ) : (
-                            <ArrowUpwardIcon className="sort-arrow-icon" />
-                          )
-                        ) : (
-                          ''
-                        )
-                      ) : (
-                        ''
-                      )}
+                      {renderIcon(column)}
                     </div>
                     <div
                       {...column.getResizerProps()}
@@ -447,27 +402,10 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
                   {row.cells.map((cell) => {
                     return (
                       <div
-                        className="td"
                         {...enableToggleRowExpand(row, cell)}
-                        className={
-                          cell.isGrouped
-                            ? 'is_grouped td'
-                            : cell.isAggregated
-                            ? 'is_aggregated td'
-                            : cell.isPlaceholder
-                            ? 'is_placeholder td'
-                            : 'is_other td'
-                        }
+                        className={decideClassNameOfCell(cell)}
                       >
-                        <div>
-                          {cell.isGrouped ? (
-                            <div>{cell.render('Cell')}</div>
-                          ) : cell.isAggregated ? (
-                            <div>{displayHiddenRowsCount(cell, row)}</div>
-                          ) : cell.isPlaceholder ? null : (
-                            <div>{cell.render('Cell')}</div>
-                          )}
-                        </div>
+                        <div>{renderCell(cell, row)}</div>
                       </div>
                     );
                   })}

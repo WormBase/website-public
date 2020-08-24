@@ -130,77 +130,6 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
 const Table = ({ columns, data, id, dataForTsv, order }) => {
   const classes = useStyles();
 
-  const sortTypes = useMemo(
-    () => ({
-      caseInsensitiveAlphaNumeric: (rowA, rowB, columnId) => {
-        const getRowValueByColumnID = (row, columnId) => row.values[columnId];
-        const toString = (a) => {
-          if (typeof a === 'number') {
-            if (isNaN(a) || a === Infinity || a === -Infinity) {
-              return '';
-            }
-            return String(a);
-          }
-          if (typeof a === 'string') {
-            return a;
-          }
-          return '';
-        };
-        const reSplitAlphaNumeric = /([0-9]+)/gm;
-
-        let a = getRowValueByColumnID(rowA, columnId);
-        let b = getRowValueByColumnID(rowB, columnId);
-        // Force to strings (or "" for unsupported types)
-        // And lowercase to accomplish insensitive sort
-        a = toString(a).toLowerCase();
-        b = toString(b).toLowerCase();
-
-        // Split on number groups, but keep the delimiter
-        // Then remove falsey split values
-        a = a.split(reSplitAlphaNumeric).filter(Boolean);
-        b = b.split(reSplitAlphaNumeric).filter(Boolean);
-
-        // While
-        while (a.length && b.length) {
-          let aa = a.shift();
-          let bb = b.shift();
-
-          const an = parseInt(aa, 10);
-          const bn = parseInt(bb, 10);
-
-          const combo = [an, bn].sort();
-
-          // Both are string
-          if (isNaN(combo[0])) {
-            if (aa > bb) {
-              return 1;
-            }
-            if (bb > aa) {
-              return -1;
-            }
-            continue;
-          }
-
-          // One is a string, one is a number
-          if (isNaN(combo[1])) {
-            return isNaN(an) ? -1 : 1;
-          }
-
-          // Both are numbers
-          if (an > bn) {
-            return 1;
-          }
-          if (bn > an) {
-            return -1;
-          }
-        }
-
-        return a.length - b.length;
-      },
-    }),
-    []
-  );
-
   const filterTypes = useMemo(() => {
     const storeValuesOfNestedObj = (obj, keyArr) => {
       for (const key in obj) {
@@ -286,7 +215,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
   const defaultColumn = useMemo(
     () => ({
       filter: 'defaultFilter',
-      sortType: 'caseInsensitiveAlphaNumeric',
       Filter: defaultColumnFilter,
       minWidth: 120,
       width: 180,
@@ -294,6 +222,32 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     }),
     []
   );
+
+  const renderIcon = (column) => {
+    if (column.canSort) {
+      if (column.isSorted) {
+        if (column.isSortedDesc) {
+          return <ArrowDownwardIcon className="arrow-icon" />;
+        }
+        return <ArrowUpwardIcon className="arrow-icon" />;
+      }
+      return <SortIcon className="arrow-icon" />;
+    }
+    return null;
+  };
+
+  const decideClassNameOfCell = (cell, idx) => {
+    if (cell.column.isSorted) {
+      if (idx % 2 === 0) {
+        return 'is_sorted_even_cell td';
+      }
+      return 'is_sorted_odd_cell td';
+    }
+    if (idx % 2 === 0) {
+      return 'is_not_sorted_even_cell td';
+    }
+    return 'is_not_sorted_odd_cell td';
+  };
 
   const {
     getTableProps,
@@ -316,7 +270,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     {
       columns,
       data,
-      sortTypes,
       disableSortRemove: true,
       filterTypes,
       defaultColumn,
@@ -386,19 +339,7 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                       className="column_header"
                     >
                       {column.render('Header')}
-                      {column.canSort ? (
-                        column.isSorted ? (
-                          column.isSortedDesc ? (
-                            <ArrowDownwardIcon className="arrow-icon" />
-                          ) : (
-                            <ArrowUpwardIcon className="arrow-icon" />
-                          )
-                        ) : (
-                          <SortIcon className="arrow-icon" />
-                        )
-                      ) : (
-                        ''
-                      )}
+                      {renderIcon(column)}
                     </div>
                     <div
                       {...column.getResizerProps()}
@@ -420,15 +361,7 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                     return (
                       <div
                         {...cell.getCellProps()}
-                        className={
-                          cell.column.isSorted
-                            ? idx % 2 === 0
-                              ? 'is_sorted_even_cell td'
-                              : 'is_sorted_odd_cell td'
-                            : idx % 2 === 0
-                            ? 'is_not_sorted_even_cell td'
-                            : 'is_not_sorted_odd_cell td'
-                        }
+                        className={decideClassNameOfCell(cell, idx)}
                       >
                         {cell.render('Cell')}
                       </div>
