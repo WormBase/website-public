@@ -295,6 +295,19 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     []
   );
 
+  const renderIcon = (column) => {
+    if (column.canSort) {
+      if (column.isSorted) {
+        if (column.isSortedDesc) {
+          return <ArrowDownwardIcon className="arrow-icon" />;
+        }
+        return <ArrowUpwardIcon className="arrow-icon" />;
+      }
+      return <SortIcon className="arrow-icon" />;
+    }
+    return null;
+  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -386,19 +399,7 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
                       className="column_header"
                     >
                       {column.render('Header')}
-                      {column.canSort ? (
-                        column.isSorted ? (
-                          column.isSortedDesc ? (
-                            <ArrowDownwardIcon className="arrow-icon" />
-                          ) : (
-                            <ArrowUpwardIcon className="arrow-icon" />
-                          )
-                        ) : (
-                          <SortIcon className="arrow-icon" />
-                        )
-                      ) : (
-                        ''
-                      )}
+                      {renderIcon(column)}
                     </div>
                     <div
                       {...column.getResizerProps()}

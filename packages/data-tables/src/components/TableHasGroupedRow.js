@@ -321,6 +321,19 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     return defaultExpandedRows;
   };
 
+  const renderIcon = (column) => {
+    if (column.canSort) {
+      if (column.isSorted) {
+        if (column.isSortedDesc) {
+          return <ArrowDownwardIcon className="sort-arrow-icon" />;
+        }
+        return <ArrowUpwardIcon className="sort-arrow-icon" />;
+      }
+      return <SortIcon className="sort-arrow-icon" />;
+    }
+    return null;
+  };
+
   const enableToggleRowExpand = (row, cell) => {
     if (cell.isGrouped || cell.isAggregated) {
       return cell.getCellProps(row.getToggleRowExpandedProps());
@@ -441,19 +454,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
                       className="column_header"
                     >
                       {column.render('Header')}
-                      {column.canSort ? (
-                        column.isSorted ? (
-                          column.isSortedDesc ? (
-                            <ArrowDownwardIcon className="sort-arrow-icon" />
-                          ) : (
-                            <ArrowUpwardIcon className="sort-arrow-icon" />
-                          )
-                        ) : (
-                          <SortIcon className="sort-arrow-icon" />
-                        )
-                      ) : (
-                        ''
-                      )}
+                      {renderIcon(column)}
                     </div>
                     <div
                       {...column.getResizerProps()}
