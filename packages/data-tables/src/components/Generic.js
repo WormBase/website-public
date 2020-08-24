@@ -69,9 +69,6 @@ const Generic = ({
     });
   }, []);
 
-  if (data.length === 0) {
-    return null;
-  }
   return (
     <>
       {hasGroupedRow ? (
