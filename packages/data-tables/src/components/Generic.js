@@ -21,6 +21,13 @@ const getDataForTsv = (data, property) => {
   return null;
 };
 
+const disableSort = (data, ord) => {
+  if (data.some((dat) => Array.isArray(dat[ord]))) {
+    return true;
+  }
+  return false;
+};
+
 const Generic = ({
   data,
   id,
@@ -54,6 +61,7 @@ const Generic = ({
           }
         },
         Aggregated: () => null,
+        disableSortBy: disableSort(data, ord),
       };
     });
   }, []);
