@@ -45,7 +45,7 @@ const Wrapper = ({
 
   console.log(data);
 
-  return (
+  return data.length === 0 ? null : (
     <Generic
       data={data}
       id={id}
