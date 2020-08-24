@@ -17,6 +17,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import SortIcon from '@material-ui/icons/Sort';
 import Tsv from './Tsv';
 import SimpleCell from './SimpleCell';
 
@@ -448,7 +449,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
                             <ArrowUpwardIcon className="sort-arrow-icon" />
                           )
                         ) : (
-                          ''
+                          <SortIcon className="sort-arrow-icon" />
                         )
                       ) : (
                         ''
