@@ -19,14 +19,14 @@
     END;
 
     build_data_table(
-        order = ['name', 'description', 'method', 'interaction', 'expr_pattern', 'bound_by', 'tf'],
+        order = ['name', 'description', 'method', 'interaction', 'expr_pattern', 'bounded_by', 'tf'],
         columns = {
             name => 'Feature',
             description => 'Description',
             method => 'Method',
             interaction => '<div style="width:12em">Interaction</div>',
             expr_pattern => '<div style="width:10em">Drives expression in</div>'
-            bound_by => 'Bound by',
+            bounded_by => 'Bound by',
             tf => 'Transcription factor'
         },
         passed_data = fields.features.data,
