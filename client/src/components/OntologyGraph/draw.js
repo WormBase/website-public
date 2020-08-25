@@ -87,7 +87,9 @@ export function setupCytoscape(
   const layout = {
     name: 'dagre',
     padding: 10,
-    nodeSep: 50,
+    nodeSep: 15,
+    edgeSep: 1,
+    rankSep: 5,
     nodeDimensionsIncludeLabels: false,
   };
 
