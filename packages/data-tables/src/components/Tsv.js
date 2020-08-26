@@ -3,6 +3,10 @@ import { CSVLink } from 'react-csv';
 import get from 'lodash/get';
 
 const Tsv = ({ data, id, order, ...otherProps }) => {
+  const isTag = (x) => {
+    return x.class !== undefined && x.label !== undefined;
+  };
+
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
     if (Object(data) !== data) {
       if (data) {
@@ -21,11 +25,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
           return result;
         }
         // data: [[{Tag}],[{Tag}],[],[{Tag}],...]
-        if (
-          data.flat()[0].class !== undefined &&
-          data.flat()[0].id !== undefined &&
-          data.flat()[0].label !== undefined
-        ) {
+        if (isTag(data.flat()[0])) {
           const tagTypeDataArr = data.map((da) => {
             if (da.length === 0) {
               return '';
@@ -47,11 +47,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
       // data: [{~},{~},...]
       if (typeof data[0] === 'object') {
         // data: [{Tag},{Tag},...]
-        if (
-          data[0].class !== undefined &&
-          data[0].id !== undefined &&
-          data[0].label !== undefined
-        ) {
+        if (isTag(data[0])) {
           const tagTypeDataArr = data.map((d) => `${d.label}[${d.id}]`);
           result[prefix.join('.')] = tagTypeDataArr.join(';');
           return result;
@@ -79,11 +75,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
     }
 
     // data: {Tag}
-    if (
-      data.class !== undefined &&
-      data.id !== undefined &&
-      data.label !== undefined
-    ) {
+    if (isTag(data)) {
       result[prefix.join('.')] = `${data.label}[${data.id}]`;
       return result;
     }
