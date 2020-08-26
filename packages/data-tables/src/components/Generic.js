@@ -64,7 +64,8 @@ const Generic = ({
           }
         },
         Aggregated: () => null,
-        disableSortBy: disableSort(data, ord),
+        disableSortBy:
+          idx !== 0 && hasGroupedRow ? true : disableSort(data, ord),
       };
     });
   }, []);

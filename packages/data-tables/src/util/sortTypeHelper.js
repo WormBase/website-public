@@ -4,170 +4,68 @@ const compareBasic = (a, b) => {
 
 const getRowValueByColumnID = (row, columnId) => row.values[columnId];
 
-const numberWithScientificNotation = (rowA, rowB, columnId) => {
-  const a = Number(getRowValueByColumnID(rowA, columnId));
-  const b = Number(getRowValueByColumnID(rowB, columnId));
-  return compareBasic(a, b);
-};
-
-const sortBySpecies = (rowA, rowB, columnId) => {
-  const a = `${getRowValueByColumnID(rowA, columnId).genus}${
-    getRowValueByColumnID(rowA, columnId).species
-  }`;
-  const b = `${getRowValueByColumnID(rowB, columnId).genus}${
-    getRowValueByColumnID(rowB, columnId).species
-  }`;
-  return compareBasic(a, b);
-};
-
-const sortByText = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId).text;
-  const b = getRowValueByColumnID(rowB, columnId).text;
-  if (!isNaN(Number(a))) {
-    return compareBasic(a, b);
-  }
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
-const sortByEvidence = (rowA, rowB, columnId) => {
-  const a = Object.values(getRowValueByColumnID(rowA, columnId))[0].text.label;
-  const b = Object.values(getRowValueByColumnID(rowB, columnId))[0].text.label;
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
-const sortByTextLabel = (rowA, rowB, columnId) => {
-  const a = getRowValueByColumnID(rowA, columnId).text.label;
-  const b = getRowValueByColumnID(rowB, columnId).text.label;
-  return compareBasic(a.toLowerCase(), b.toLowerCase());
-};
-
-const sortByTagData = (rowA, rowB, columnId) => {
-  const aa = getRowValueByColumnID(rowA, columnId)?.label;
-  const a = aa === undefined ? null : aa.toLowerCase();
-  const bb = getRowValueByColumnID(rowB, columnId)?.label;
-  const b = bb === undefined ? null : bb.toLowerCase();
-  return compareBasic(a, b);
-};
-
-const sortByArrayValue = (rowA, rowB, columnId) => {
-  const aa = getRowValueByColumnID(rowA, columnId);
-  const a = aa === undefined || aa.length === 0 ? null : aa[0].toLowerCase();
-  const bb = getRowValueByColumnID(rowB, columnId);
-  const b = bb === undefined || bb.length === 0 ? null : bb[0].toLowerCase();
-  return compareBasic(a, b);
-};
-
-const sortByFirstArrayElementTagData = (rowA, rowB, columnId) => {
-  const aa = getRowValueByColumnID(rowA, columnId)[0]?.label;
-  const a = aa === undefined ? null : aa.toLowerCase();
-  const bb = getRowValueByColumnID(rowB, columnId)[0]?.label;
-  const b = bb === undefined ? null : bb.toLowerCase();
-  return compareBasic(a, b);
-};
-
-const caseInsensitiveAlphaNumeric = (rowA, rowB, columnId) => {
-  const getRowValueByColumnID = (row, columnId) => row.values[columnId];
-
-  const toString = (a) => {
-    if (typeof a === 'number') {
-      if (isNaN(a) || a === Infinity || a === -Infinity) {
+const decideSortType = (rowA, rowB, columnId) => {
+  const convertInvalidValueToEmptyString = (cellValue) => {
+    if (cellValue === null || cellValue === undefined) {
+      return '';
+    }
+    if (Array.isArray(cellValue)) {
+      if (cellValue.length === 0) {
         return '';
       }
-      return String(a);
+      return cellValue[0];
     }
-    if (typeof a === 'string') {
-      return a;
-    }
-    return '';
+    return cellValue;
   };
-  const reSplitAlphaNumeric = /([0-9]+)/gm;
 
-  let a = getRowValueByColumnID(rowA, columnId);
-  let b = getRowValueByColumnID(rowB, columnId);
-  // Force to strings (or "" for unsupported types)
-  // And lowercase to accomplish insensitive sort
-  a = toString(a).toLowerCase();
-  b = toString(b).toLowerCase();
-
-  // Split on number groups, but keep the delimiter
-  // Then remove falsey split values
-  a = a.split(reSplitAlphaNumeric).filter(Boolean);
-  b = b.split(reSplitAlphaNumeric).filter(Boolean);
-
-  // While
-  while (a.length && b.length) {
-    let aa = a.shift();
-    let bb = b.shift();
-
-    const an = parseInt(aa, 10);
-    const bn = parseInt(bb, 10);
-
-    const combo = [an, bn].sort();
-
-    // Both are string
-    if (isNaN(combo[0])) {
-      if (aa > bb) {
-        return 1;
+  const extractValueToBeSorted = (values) => {
+    if (values.species) {
+      return `${values.genus}${values.species}`;
+    }
+    if (values.class && values.label) {
+      return values.label;
+    }
+    if (values.evidence && values.text) {
+      if (values.text.class && values.text.label) {
+        return values.text.label;
       }
-      if (bb > aa) {
-        return -1;
-      }
-      continue;
+      return values.text;
+    }
+    return values;
+  };
+
+  const convertToNumOrLowerCaseStr = (toBeSorted) => {
+    if (!isNaN(Number(toBeSorted)) && toBeSorted !== '') {
+      return Number(toBeSorted);
+    }
+    if (typeof toBeSorted === 'string') {
+      return toBeSorted.toLowerCase();
     }
 
-    // One is a string, one is a number
-    if (isNaN(combo[1])) {
-      return isNaN(an) ? -1 : 1;
-    }
+    console.error(toBeSorted);
+    throw new Error(
+      'It is not possible to sort by a value that is neither number nor string'
+    );
+  };
 
-    // Both are numbers
-    if (an > bn) {
-      return 1;
+  const matchType = (x, y) => {
+    if (typeof x !== typeof y) {
+      return [x.toString(), y.toString()];
     }
-    if (bn > an) {
-      return -1;
-    }
-  }
+    return [x, y];
+  };
 
-  return a.length - b.length;
-};
+  const a = getRowValueByColumnID(rowA, columnId);
+  const b = getRowValueByColumnID(rowB, columnId);
 
-const decideSortType = (rowA, rowB, columnId) => {
-  const rowVal = getRowValueByColumnID(rowA, columnId);
+  const ax = convertToNumOrLowerCaseStr(
+    extractValueToBeSorted(convertInvalidValueToEmptyString(a))
+  );
+  const bx = convertToNumOrLowerCaseStr(
+    extractValueToBeSorted(convertInvalidValueToEmptyString(b))
+  );
 
-  if (rowVal) {
-    if (Array.isArray(rowVal)) {
-      if (typeof rowVal[0] !== 'object') {
-        return sortByArrayValue(rowA, rowB, columnId);
-      }
-      if (rowVal[0]?.class && rowVal[0]?.label) {
-        return sortByFirstArrayElementTagData(rowA, rowB, columnId);
-      }
-    }
-    if (rowVal.species) {
-      return sortBySpecies(rowA, rowB, columnId);
-    }
-    if (!isNaN(Number(rowVal))) {
-      return numberWithScientificNotation(rowA, rowB, columnId);
-    }
-    if (rowVal.evidence && rowVal.text) {
-      if (rowVal.text.label) {
-        return sortByTextLabel(rowA, rowB, columnId);
-      }
-      return sortByText(rowA, rowB, columnId);
-    }
-    if (rowVal.class && rowVal.label) {
-      return sortByTagData(rowA, rowB, columnId);
-    }
-    const objValOfRowVal = Object.values(rowVal);
-    if (
-      Object.keys(...objValOfRowVal).includes('evidence') &&
-      Object.keys(...objValOfRowVal).includes('text')
-    ) {
-      return sortByEvidence(rowA, rowB, columnId);
-    }
-  }
-  return caseInsensitiveAlphaNumeric(rowA, rowB, columnId);
+  return compareBasic(...matchType(ax, bx));
 };
 
 export { decideSortType };
