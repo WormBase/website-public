@@ -26,12 +26,12 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
         }
         // data: [[{Tag}],[{Tag}],[],[{Tag}],...]
         if (isTag(data.flat()[0])) {
-          const tagTypeDataArr = data.map((da) => {
-            if (da.length === 0) {
+          const tagTypeDataArr = data.map((dat) => {
+            if (dat.length === 0) {
               return '';
             }
-            return da.map((d) => {
-              return `${d.label}[${d.id}]`;
+            return dat.map((da) => {
+              return `${da.label}[${da.id}]`;
             });
           });
           result[prefix.join('.')] = tagTypeDataArr.join(';');
@@ -48,7 +48,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
       if (typeof data[0] === 'object') {
         // data: [{Tag},{Tag},...]
         if (isTag(data[0])) {
-          const tagTypeDataArr = data.map((d) => `${d.label}[${d.id}]`);
+          const tagTypeDataArr = data.map((dat) => `${dat.label}[${dat.id}]`);
           result[prefix.join('.')] = tagTypeDataArr.join(';');
           return result;
         }
@@ -56,8 +56,8 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
         // data: [{Pato},{Pato},...]
         if (data[0].pato_evidence) {
           const patoTypeDataArr = data.map(
-            (d) =>
-              `${d.pato_evidence.entity_term.label}[${d.pato_evidence.entity_term.id}] ${d.pato_evidence.pato_term}`
+            (dat) =>
+              `${dat.pato_evidence.entity_term.label}[${dat.pato_evidence.entity_term.id}] ${dat.pato_evidence.pato_term}`
           );
           result['entity'] = patoTypeDataArr.join(';');
           return result;
@@ -92,7 +92,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
     return result;
   };
 
-  const flattenedData = data.map((d) => flattenRecursiveForTsv(d));
+  const flattenedData = data.map((dat) => flattenRecursiveForTsv(dat));
 
   const uniqueKeys = Object.keys(
     flattenedData.reduce((result, obj) => {
