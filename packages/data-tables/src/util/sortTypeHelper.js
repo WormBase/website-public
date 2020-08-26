@@ -39,6 +39,11 @@ const decideSortType = (rowA, rowB, columnId) => {
       return Number(toBeSorted);
     }
     if (typeof toBeSorted === 'string') {
+      // check if it contains HTML elements
+      if (/<\/?[a-z][\s\S]*>/i.test(toBeSorted)) {
+        // extract content from HTML string, and make it lower case
+        return toBeSorted.replace(/<[^>]+>/g, '').toLowerCase();
+      }
       return toBeSorted.toLowerCase();
     }
 
