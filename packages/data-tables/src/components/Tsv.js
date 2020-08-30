@@ -9,7 +9,9 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
 
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
     if (Object(data) !== data) {
-      if (data) {
+      if (data === null) {
+        result[prefix.join('.')] = '';
+      } else {
         result[prefix.join('.')] = data;
       }
       return result;
