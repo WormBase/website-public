@@ -12,7 +12,13 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
       if (data === null) {
         result[prefix.join('.')] = '';
       } else {
-        result[prefix.join('.')] = data;
+        // check if it contains HTML elements
+        if (/<\/?[a-z][\s\S]*>/i.test(data)) {
+          // extract content from HTML string on the right side
+          result[prefix.join('.')] = data.replace(/<[^>]+>/g, '');
+        } else {
+          result[prefix.join('.')] = data;
+        }
       }
       return result;
     }
