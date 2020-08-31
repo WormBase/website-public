@@ -3,10 +3,22 @@ import { CSVLink } from 'react-csv';
 import get from 'lodash/get';
 
 const Tsv = ({ data, id, order, ...otherProps }) => {
+  const isTag = (x) => {
+    return x.class !== undefined && x.label !== undefined;
+  };
+
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
     if (Object(data) !== data) {
-      if (data) {
-        result[prefix.join('.')] = data;
+      if (data === null) {
+        result[prefix.join('.')] = '';
+      } else {
+        // check if it contains HTML elements
+        if (/<\/?[a-z][\s\S]*>/i.test(data)) {
+          // extract content from HTML string on the right side
+          result[prefix.join('.')] = data.replace(/<[^>]+>/g, '');
+        } else {
+          result[prefix.join('.')] = data;
+        }
       }
       return result;
     }
@@ -21,17 +33,13 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
           return result;
         }
         // data: [[{Tag}],[{Tag}],[],[{Tag}],...]
-        if (
-          data.flat()[0].class !== undefined &&
-          data.flat()[0].id !== undefined &&
-          data.flat()[0].label !== undefined
-        ) {
-          const tagTypeDataArr = data.map((da) => {
-            if (da.length === 0) {
+        if (isTag(data.flat()[0])) {
+          const tagTypeDataArr = data.map((dat) => {
+            if (dat.length === 0) {
               return '';
             }
-            return da.map((d) => {
-              return `${d.label}[${d.id}]`;
+            return dat.map((da) => {
+              return `${da.label}[${da.id}]`;
             });
           });
           result[prefix.join('.')] = tagTypeDataArr.join(';');
@@ -47,12 +55,8 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
       // data: [{~},{~},...]
       if (typeof data[0] === 'object') {
         // data: [{Tag},{Tag},...]
-        if (
-          data[0].class !== undefined &&
-          data[0].id !== undefined &&
-          data[0].label !== undefined
-        ) {
-          const tagTypeDataArr = data.map((d) => `${d.label}[${d.id}]`);
+        if (isTag(data[0])) {
+          const tagTypeDataArr = data.map((dat) => `${dat.label}[${dat.id}]`);
           result[prefix.join('.')] = tagTypeDataArr.join(';');
           return result;
         }
@@ -60,8 +64,8 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
         // data: [{Pato},{Pato},...]
         if (data[0].pato_evidence) {
           const patoTypeDataArr = data.map(
-            (d) =>
-              `${d.pato_evidence.entity_term.label}[${d.pato_evidence.entity_term.id}] ${d.pato_evidence.pato_term}`
+            (dat) =>
+              `${dat.pato_evidence.entity_term.label}[${dat.pato_evidence.entity_term.id}] ${dat.pato_evidence.pato_term}`
           );
           result['entity'] = patoTypeDataArr.join(';');
           return result;
@@ -79,11 +83,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
     }
 
     // data: {Tag}
-    if (
-      data.class !== undefined &&
-      data.id !== undefined &&
-      data.label !== undefined
-    ) {
+    if (isTag(data)) {
       result[prefix.join('.')] = `${data.label}[${data.id}]`;
       return result;
     }
@@ -100,7 +100,7 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
     return result;
   };
 
-  const flattenedData = data.map((d) => flattenRecursiveForTsv(d));
+  const flattenedData = data.map((dat) => flattenRecursiveForTsv(dat));
 
   const uniqueKeys = Object.keys(
     flattenedData.reduce((result, obj) => {
