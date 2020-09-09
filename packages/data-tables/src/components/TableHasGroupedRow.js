@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   useAsyncDebounce,
   useFlexLayout,
@@ -340,6 +340,10 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     previousPage,
     setPageSize,
     setGlobalFilter,
+
+    // useExpanded
+    toggleAllRowsExpanded,
+
     state: { pageIndex, pageSize, globalFilter },
   } = useTable(
     {
@@ -356,7 +360,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
         pageSize: 10,
         sortBy: [{ id: columns[0].accessor, desc: false }],
         groupBy: ['phenotype.label'],
-        expanded: getDefaultExpandedRows(data, 10),
+        expanded: isCellExpanded,
       },
     },
     useFlexLayout,
@@ -368,6 +372,10 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     useExpanded,
     usePagination
   );
+
+  useEffect(() => {
+    toggleAllRowsExpanded(isCellExpanded);
+  }, [isCellExpanded, toggleAllRowsExpanded]);
 
   return (
     <div className={classes.wrapper}>
