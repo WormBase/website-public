@@ -17,6 +17,10 @@ const useStyles = makeStyles((theme) => ({
   moreOrLess: {
     fontSize: '0.8em',
     marginBottom: `${theme.spacing(0.5)}px`,
+
+    '&:hover': {
+      textDecoration: 'underline',
+    },
   },
 }));
 

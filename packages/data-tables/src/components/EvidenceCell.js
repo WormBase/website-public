@@ -19,6 +19,10 @@ const useStyles = makeStyles((theme) => ({
     '&.Mui-expanded': {
       minHeight: 0,
     },
+
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
+    },
   },
   accordionSummaryContent: {
     margin: 0,
