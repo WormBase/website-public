@@ -359,7 +359,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
         pageIndex: 0,
         pageSize: 10,
         sortBy: [{ id: columns[0].accessor, desc: false }],
-        groupBy: ['phenotype.label'],
+        groupBy: [columns[0].accessor],
         expanded: isCellExpanded,
       },
     },
