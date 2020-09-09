@@ -35,7 +35,6 @@ const ListCell = (props) => {
       style={{
         cursor: data.length > collapsedItemCount ? 'pointer' : 'default',
       }}
-      onClick={toggleOpen}
     >
       {data
         .filter((dat) => hasContent(dat))
@@ -47,9 +46,15 @@ const ListCell = (props) => {
         ))}
       {data.length > collapsedItemCount ? (
         isOpen ? (
-          <li className={classes.moreOrLess}> show less</li>
+          <li className={classes.moreOrLess} onClick={toggleOpen}>
+            {' '}
+            show less
+          </li>
         ) : (
-          <li className={classes.moreOrLess}> and {data.length - 1} more</li>
+          <li className={classes.moreOrLess} onClick={toggleOpen}>
+            {' '}
+            and {data.length - 1} more
+          </li>
         )
       ) : null}
     </ul>
