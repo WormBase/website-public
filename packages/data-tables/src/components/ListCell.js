@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { hasContent } from '../util/hasContent';
 import SimpleCell from './SimpleCell';
+import TableCellExpandAllContext from './TableCellExpandAllContext';
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -28,6 +29,12 @@ const ListCell = (props) => {
   const { data = [], render, collapsedItemCount = 1 } = props;
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
+
+  const expandedFromContext = useContext(TableCellExpandAllContext);
+
+  useEffect(() => {
+    setOpen(expandedFromContext);
+  }, [expandedFromContext, setOpen]);
 
   const toggleOpen = useCallback(() => {
     setOpen(!isOpen);
