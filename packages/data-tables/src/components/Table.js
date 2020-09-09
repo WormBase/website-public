@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
   useAsyncDebounce,
   useFlexLayout,
@@ -16,7 +16,10 @@ import Grid from '@material-ui/core/Grid';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import SortIcon from '@material-ui/icons/Sort';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import Tsv from './Tsv';
+import TableCellExpandAllContext from './TableCellExpandAllContext';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -48,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& .th, .td': {
       margin: 0,
-      padding: '0.8rem 0.3rem',
+      padding: '0.5rem 0.3rem',
       borderBottom: '1px solid #ededed',
       borderRight: '1px solid #ededed',
       position: 'relative',
@@ -85,12 +88,13 @@ const useStyles = makeStyles((theme) => ({
   },
   subElement: {
     fontSize: '0.8em',
+    paddingRight: theme.spacing(2),
   },
   toolbarWrapper: {
     overflow: 'hidden', // work around -4px margin in Grid
   },
   toolbar: {
-    padding: `${theme.spacing(1.5)}px ${theme.spacing(0.5)}px`,
+    padding: `${theme.spacing(0.5)}px ${theme.spacing(0.5)}px 0`,
 
     '& input': {
       flex: '1 0 auto',
@@ -249,6 +253,14 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     return 'is_not_sorted_odd_cell td';
   };
 
+  const [isCellExpanded, setCellExpanded] = useState(false);
+  const handleCellExpandedToggle = useCallback(
+    (event) => {
+      setCellExpanded(!isCellExpanded);
+    },
+    [isCellExpanded, setCellExpanded]
+  );
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -318,8 +330,26 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
             <span className={classes.subElement}>
               [<Tsv data={dataForTsv || data} id={id} order={order} />]
             </span>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isCellExpanded}
+                  onChange={handleCellExpandedToggle}
+                  name="expand-all"
+                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                />
+              }
+              label={isCellExpanded ? 'Details expanded' : 'Details collapsed'}
+            />
           </Grid>
-          <Grid item container justify="flex-end" xs={12} sm={6}>
+          <Grid
+            item
+            container
+            justify="flex-end"
+            alignItems="center"
+            xs={12}
+            sm={6}
+          >
             <GlobalFilter
               globalFilter={globalFilter}
               setGlobalFilter={setGlobalFilter}
@@ -353,23 +383,25 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
             ))}
           </div>
           <div className="tbody" {...getTableBodyProps()}>
-            {page.map((row, idx) => {
-              prepareRow(row);
-              return (
-                <div className="tr" {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <div
-                        {...cell.getCellProps()}
-                        className={decideClassNameOfCell(cell, idx)}
-                      >
-                        {cell.render('Cell')}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+            <TableCellExpandAllContext.Provider value={isCellExpanded}>
+              {page.map((row, idx) => {
+                prepareRow(row);
+                return (
+                  <div className="tr" {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <div
+                          {...cell.getCellProps()}
+                          className={decideClassNameOfCell(cell, idx)}
+                        >
+                          {cell.render('Cell')}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </TableCellExpandAllContext.Provider>
           </div>
         </div>
         <div className={classes.pagination}>

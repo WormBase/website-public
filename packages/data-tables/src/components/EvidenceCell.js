@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { makeStyles } from '@material-ui/core/styles';
+import TableCellExpandAllContext from './TableCellExpandAllContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
 
     '&.Mui-expanded': {
       minHeight: 0,
+    },
+
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
     },
   },
   accordionSummaryContent: {
@@ -35,9 +40,24 @@ const EvidenceCell = ({
   renderContent,
   renderEvidence,
   data,
-  defaultExpanded = false,
+  defaultExpanded,
 }) => {
-  const [expanded, setExpanded] = useState(defaultExpanded);
+  const expandedFromContext = useContext(TableCellExpandAllContext);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setExpanded(expandedFromContext);
+  }, [expandedFromContext, setExpanded]);
+
+  useEffect(() => {
+    // override expandedFromContext is this set or changes
+    if (defaultExpanded) {
+      setExpanded(defaultExpanded);
+    }
+  }, [defaultExpanded, setExpanded]);
+
+  // console.log(`expandedFromContext: ${expandedFromContext}`);
+  // console.log(`expanded: ${expanded}`);
   const classes = useStyles();
 
   return (

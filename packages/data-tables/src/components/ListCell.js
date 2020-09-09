@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { hasContent } from '../util/hasContent';
 import SimpleCell from './SimpleCell';
+import TableCellExpandAllContext from './TableCellExpandAllContext';
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -17,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
   moreOrLess: {
     fontSize: '0.8em',
     marginBottom: `${theme.spacing(0.5)}px`,
+
+    '&:hover': {
+      textDecoration: 'underline',
+    },
   },
 }));
 
@@ -24,6 +29,12 @@ const ListCell = (props) => {
   const { data = [], render, collapsedItemCount = 1 } = props;
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
+
+  const expandedFromContext = useContext(TableCellExpandAllContext);
+
+  useEffect(() => {
+    setOpen(expandedFromContext);
+  }, [expandedFromContext, setOpen]);
 
   const toggleOpen = useCallback(() => {
     setOpen(!isOpen);
@@ -35,7 +46,6 @@ const ListCell = (props) => {
       style={{
         cursor: data.length > collapsedItemCount ? 'pointer' : 'default',
       }}
-      onClick={toggleOpen}
     >
       {data
         .filter((dat) => hasContent(dat))
@@ -47,9 +57,15 @@ const ListCell = (props) => {
         ))}
       {data.length > collapsedItemCount ? (
         isOpen ? (
-          <li className={classes.moreOrLess}> show less</li>
+          <li className={classes.moreOrLess} onClick={toggleOpen}>
+            {' '}
+            show less
+          </li>
         ) : (
-          <li className={classes.moreOrLess}> and {data.length - 1} more</li>
+          <li className={classes.moreOrLess} onClick={toggleOpen}>
+            {' '}
+            and {data.length - 1} more
+          </li>
         )
       ) : null}
     </ul>

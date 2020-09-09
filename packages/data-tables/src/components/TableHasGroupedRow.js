@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   useAsyncDebounce,
   useFlexLayout,
@@ -18,8 +18,11 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import SortIcon from '@material-ui/icons/Sort';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import Tsv from './Tsv';
 import SimpleCell from './SimpleCell';
+import TableCellExpandAllContext from './TableCellExpandAllContext';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -85,10 +88,11 @@ const useStyles = makeStyles((theme) => ({
   },
   subElement: {
     textAlign: 'right',
-    '& span': {
+    '& $nEntries': {
       marginRight: 15,
     },
   },
+  nEntries: {},
   globalFilter: {
     backgroundColor: '#e9eef2',
     display: 'flex',
@@ -312,6 +316,14 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     }
   };
 
+  const [isCellExpanded, setCellExpanded] = useState(false);
+  const handleCellExpandedToggle = useCallback(
+    (event) => {
+      setCellExpanded(!isCellExpanded);
+    },
+    [isCellExpanded, setCellExpanded]
+  );
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -328,6 +340,10 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     previousPage,
     setPageSize,
     setGlobalFilter,
+
+    // useExpanded
+    toggleAllRowsExpanded,
+
     state: { pageIndex, pageSize, globalFilter },
   } = useTable(
     {
@@ -344,7 +360,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
         pageSize: 10,
         sortBy: [{ id: columns[0].accessor, desc: false }],
         groupBy: ['phenotype.label'],
-        expanded: getDefaultExpandedRows(data, 10),
+        expanded: isCellExpanded,
       },
     },
     useFlexLayout,
@@ -357,11 +373,26 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     usePagination
   );
 
+  useEffect(() => {
+    toggleAllRowsExpanded(isCellExpanded);
+  }, [isCellExpanded, toggleAllRowsExpanded]);
+
   return (
     <div className={classes.wrapper}>
       <div {...getTableProps()}>
         <div className={classes.subElement}>
-          <span>{rows.length} entries</span>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isCellExpanded}
+                onChange={handleCellExpandedToggle}
+                name="expand-all"
+                inputProps={{ 'aria-label': 'secondary checkbox' }}
+              />
+            }
+            label={isCellExpanded ? 'Details expanded' : 'Details collapsed'}
+          />
+          <span className={classes.nEntries}>{rows.length} entries</span>
           <Tsv data={dataForTsv || data} id={id} order={order} />
         </div>
         <div className={classes.globalFilter}>
@@ -395,23 +426,25 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
             ))}
           </div>
           <div className="tbody" {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <div className="tr" {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <div
-                        {...enableToggleRowExpand(row, cell)}
-                        className={decideClassNameOfCell(cell)}
-                      >
-                        <div>{renderCell(cell, row)}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+            <TableCellExpandAllContext.Provider value={isCellExpanded}>
+              {page.map((row) => {
+                prepareRow(row);
+                return (
+                  <div className="tr" {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <div
+                          {...enableToggleRowExpand(row, cell)}
+                          className={decideClassNameOfCell(cell)}
+                        >
+                          <div>{renderCell(cell, row)}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </TableCellExpandAllContext.Provider>
           </div>
         </div>
         <div className={classes.pagination}>
