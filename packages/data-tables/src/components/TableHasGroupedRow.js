@@ -23,6 +23,7 @@ import Switch from '@material-ui/core/Switch';
 import Tsv from './Tsv';
 import SimpleCell from './SimpleCell';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
+import GlobalFilter from './GlobalFilter';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -112,25 +113,6 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: 'bottom',
   },
 }));
-
-const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
-  const [value, setValue] = useState(globalFilter);
-  const onChange = useAsyncDebounce((value) => {
-    setGlobalFilter(value || undefined);
-  }, 200);
-
-  return (
-    <input
-      value={value || ''}
-      onChange={(e) => {
-        setValue(e.target.value);
-        onChange(e.target.value);
-      }}
-      placeholder={`Search all columns...`}
-      type="search"
-    />
-  );
-};
 
 const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   const classes = useStyles();

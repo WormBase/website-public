@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import {
-  useAsyncDebounce,
   useFlexLayout,
   useFilters,
   useGlobalFilter,
@@ -20,6 +19,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Tsv from './Tsv';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
+import GlobalFilter from './GlobalFilter';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -111,25 +111,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '0.8rem 0.5rem',
   },
 }));
-
-const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
-  const [value, setValue] = useState(globalFilter);
-  const onChange = useAsyncDebounce((value) => {
-    setGlobalFilter(value || undefined);
-  }, 200);
-
-  return (
-    <input
-      value={value || ''}
-      onChange={(e) => {
-        setValue(e.target.value);
-        onChange(e.target.value);
-      }}
-      placeholder={`Search all columns...`}
-      type="search"
-    />
-  );
-};
 
 const Table = ({ columns, data, id, dataForTsv, order }) => {
   const classes = useStyles();
