@@ -3,6 +3,7 @@ import Table from './Table';
 import TableHasGroupedRow from './TableHasGroupedRow';
 import { decideSortType } from '../util/sortTypeHelper';
 import SmartCell from './SmartCell';
+import SimpleCell from './SimpleCell';
 import { makeStyles } from '@material-ui/core/styles';
 import unwind from 'javascript-unwind';
 import ReactHtmlParser from 'react-html-parser';
@@ -51,9 +52,6 @@ const Generic = ({
         ),
         accessor: idx === 0 && hasGroupedRow ? `${ord}.label` : ord,
         Cell: ({ cell: { value } }) => {
-          if (hasGroupedRow && value === null) {
-            return <SmartCell data="N/A" />;
-          }
           return <SmartCell data={value} />;
         },
         sortType: (rowA, rowB, columnId) => {
@@ -63,7 +61,6 @@ const Generic = ({
             console.error(err);
           }
         },
-        Aggregated: () => null,
         disableSortBy:
           idx !== 0 && hasGroupedRow ? true : disableSort(data, ord),
       };

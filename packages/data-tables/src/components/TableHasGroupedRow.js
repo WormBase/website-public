@@ -210,31 +210,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     []
   );
 
-  const getDefaultExpandedRows = (data, threshold) => {
-    const defaultExpandedRows = {};
-    const defaultHidRows = {};
-
-    data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`;
-      if (defaultHidRows[key]) {
-        defaultHidRows[key] = ++defaultHidRows[key];
-      } else {
-        defaultHidRows[key] = 1;
-      }
-    });
-
-    data.forEach((d) => {
-      const key = `phenotype.label:${d.phenotype.label}`;
-      if (defaultHidRows[key] < threshold) {
-        defaultExpandedRows[key] = true;
-      } else {
-        defaultExpandedRows[key] = false;
-      }
-    });
-
-    return defaultExpandedRows;
-  };
-
   const renderIcon = (column) => {
     if (column.canSort) {
       if (column.isSorted) {
@@ -269,32 +244,19 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   };
 
   const renderCell = (cell, row) => {
-    if (cell.isAggregated) {
+    if (cell.isGrouped) {
       return (
-        <div>
-          {cell.render('Aggregated')}
-          {displayHiddenRowsCount(cell, row)}
-        </div>
+        <>
+          {cell.render('Cell')}
+          <small>{` ${row.subRows.length} annotation(s)`}</small>
+        </>
       );
-    }
-    if (cell.isPlaceholder) {
+    } else if (cell.isAggregated) {
+      return cell.render('Aggregated');
+    } else if (cell.isPlaceholder) {
       return null;
-    }
-    return cell.render('Cell');
-  };
-
-  const displayHiddenRowsCount = (cell, row) => {
-    if (cell.column.id === 'evidence') {
-      return (
-        <SimpleCell>
-          {row.isExpanded ? (
-            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
-          ) : (
-            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
-          )}
-          <span>{row.subRows.length} Results</span>
-        </SimpleCell>
-      );
+    } else {
+      return cell.render('Cell');
     }
   };
 
