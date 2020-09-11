@@ -187,23 +187,9 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     };
   }, []);
 
-  const defaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
-    return (
-      <input
-        value={filterValue || ''}
-        onChange={(e) => {
-          setFilter(e.target.value || undefined);
-        }}
-        placeholder={`Search...`}
-        type="search"
-      />
-    );
-  };
-
   const defaultColumn = useMemo(
     () => ({
       filter: 'defaultFilter',
-      Filter: defaultColumnFilter,
       minWidth: 120,
       width: 180,
       maxWidth: 600,
