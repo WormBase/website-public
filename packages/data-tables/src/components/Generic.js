@@ -43,14 +43,14 @@ const Generic = ({
   const classes = useStyles();
 
   const columns = useMemo(() => {
-    return order.map((ord, idx) => {
+    const columnsTemp = order.map((ord, idx) => {
       return {
         Header: () => (
           <span className={classes.columnHeader}>
             {ReactHtmlParser(columnsHeader[`${ord}`])}
           </span>
         ),
-        accessor: idx === 0 && hasGroupedRow ? `${ord}.label` : ord,
+        accessor: ord,
         Cell: ({ cell: { value } }) => {
           return <SmartCell data={value} />;
         },
@@ -61,10 +61,23 @@ const Generic = ({
             console.error(err);
           }
         },
-        disableSortBy:
-          idx !== 0 && hasGroupedRow ? true : disableSort(data, ord),
+        disableSortBy: hasGroupedRow ? true : disableSort(data, ord),
       };
     });
+
+    if (hasGroupedRow) {
+      // add the grouped column
+      columnsTemp.push({
+        accessor: `${order[0]}.label`,
+        Header: () => (
+          <span className={classes.columnHeader}>
+            {columnsHeader[`${order[0]}`]}
+          </span>
+        ),
+      });
+    }
+
+    return columnsTemp;
   }, []);
 
   return (

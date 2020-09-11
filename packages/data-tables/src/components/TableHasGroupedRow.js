@@ -22,6 +22,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Tsv from './Tsv';
 import SimpleCell from './SimpleCell';
+import SmartCell from './SmartCell';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
 import GlobalFilter from './GlobalFilter';
 
@@ -252,7 +253,7 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
           ) : (
             <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
           )}
-          {cell.render('Cell')}
+          <SmartCell data={row.subRows[0].values['phenotype']} />
           <small>{` ${row.subRows.length} annotation(s)`}</small>
         </>
       );
@@ -307,8 +308,9 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
       initialState: {
         pageIndex: 0,
         pageSize: 10,
-        sortBy: [{ id: columns[0].accessor, desc: false }],
-        groupBy: [columns[0].accessor],
+        sortBy: [{ id: `${columns[0].accessor}.label`, desc: false }],
+        groupBy: [`${columns[0].accessor}.label`],
+        hiddenColumns: [`${columns[0].accessor}`],
         expanded: isCellExpanded,
       },
     },
