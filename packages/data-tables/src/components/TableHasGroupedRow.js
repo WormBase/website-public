@@ -110,7 +110,7 @@ const useStyles = makeStyles((theme) => ({
   },
   rowArrowIcon: {
     marginRight: 10,
-    verticalAlign: 'bottom',
+    verticalAlign: 'middle',
   },
 }));
 
@@ -247,6 +247,11 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     if (cell.isGrouped) {
       return (
         <>
+          {row.isExpanded ? (
+            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
+          ) : (
+            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
+          )}
           {cell.render('Cell')}
           <small>{` ${row.subRows.length} annotation(s)`}</small>
         </>
