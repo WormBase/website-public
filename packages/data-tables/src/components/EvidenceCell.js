@@ -60,9 +60,12 @@ const EvidenceCell = ({
   // console.log(`expanded: ${expanded}`);
   const classes = useStyles();
 
-  const transitionProps = useMemo(() => ({
-    timeout: 0,
-  }));
+  const transitionProps = useMemo(
+    () => ({
+      timeout: 0,
+    }),
+    []
+  );
 
   return (
     <Accordion

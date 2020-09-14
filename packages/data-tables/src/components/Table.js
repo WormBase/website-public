@@ -251,7 +251,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     rows,
     canPreviousPage,
     canNextPage,
-    pageOptions,
     pageCount,
     gotoPage,
     nextPage,

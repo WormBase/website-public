@@ -3,7 +3,6 @@ import Table from './Table';
 import TableHasGroupedRow from './TableHasGroupedRow';
 import { decideSortType } from '../util/sortTypeHelper';
 import SmartCell from './SmartCell';
-import SimpleCell from './SimpleCell';
 import { makeStyles } from '@material-ui/core/styles';
 import unwind from 'javascript-unwind';
 import ReactHtmlParser from 'react-html-parser';
@@ -78,7 +77,7 @@ const Generic = ({
     }
 
     return columnsTemp;
-  }, []);
+  }, [classes.columnHeader, columnsHeader, data, hasGroupedRow, order]);
 
   return (
     <>

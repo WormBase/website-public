@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import {
-  useAsyncDebounce,
   useFlexLayout,
   useFilters,
   useGlobalFilter,
@@ -21,7 +20,6 @@ import SortIcon from '@material-ui/icons/Sort';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Tsv from './Tsv';
-import SimpleCell from './SimpleCell';
 import SmartCell from './SmartCell';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
 import GlobalFilter from './GlobalFilter';
