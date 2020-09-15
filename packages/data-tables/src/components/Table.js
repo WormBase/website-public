@@ -1,22 +1,14 @@
-import React, { useMemo, useState, useCallback } from 'react';
-import {
-  useFlexLayout,
-  useFilters,
-  useGlobalFilter,
-  useResizeColumns,
-  useSortBy,
-  useExpanded,
-  usePagination,
-  useTable,
-} from 'react-table';
-import matchSorter from 'match-sorter';
+import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import SortIcon from '@material-ui/icons/Sort';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import SmartCell from './SmartCell';
 import Tsv from './Tsv';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
 import GlobalFilter from './GlobalFilter';
@@ -33,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid #ededed',
     '& .thead': {
       backgroundColor: '#e9eef2',
+    },
+    '& $rowGrouped.tr > *': {
+      background: theme.palette.background.default,
     },
     '& .tr:last-child .td': {
       borderBottom: 0,
@@ -86,6 +81,11 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 5,
     },
   },
+  rowGrouped: {},
+  rowArrowIcon: {
+    marginRight: 10,
+    verticalAlign: 'middle',
+  },
   subElement: {
     fontSize: '0.8em',
     paddingRight: theme.spacing(2),
@@ -112,101 +112,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Table = ({ columns, data, id, dataForTsv, order }) => {
+const Table = ({
+  columns,
+  data,
+  id,
+  dataForTsv,
+  order,
+  getTableProps,
+  getTableBodyProps,
+  prepareRow,
+  headerGroups,
+  page,
+  rows,
+  canPreviousPage,
+  canNextPage,
+  pageCount,
+  pageOptions,
+  gotoPage,
+  nextPage,
+  previousPage,
+  setPageSize,
+  setGlobalFilter,
+
+  // useExpanded
+  toggleAllRowsExpanded,
+
+  state: { pageIndex, pageSize, globalFilter },
+}) => {
   const classes = useStyles();
-
-  const filterTypes = useMemo(() => {
-    const storeValuesOfNestedObj = (obj, keyArr) => {
-      for (const key in obj) {
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-          if (
-            obj[key].class &&
-            obj[key].id &&
-            obj[key].label &&
-            obj[key].taxonomy
-          ) {
-            keyArr.push(obj[key].label);
-          }
-          if (Array.isArray(obj[key]) && typeof obj[key][0] === 'object') {
-            if (
-              obj[key][0].class &&
-              obj[key][0].id &&
-              obj[key][0].label &&
-              obj[key][0].taxonomy
-            ) {
-              keyArr.push(obj[key].map((o) => o.label));
-            } else if (obj[key][0].pato_evidence) {
-              keyArr.push(
-                ...obj[key].map((o) => [
-                  o.pato_evidence.entity_term.label,
-                  o.pato_evidence.entity_type,
-                  o.pato_evidence.pato_term,
-                ])
-              );
-            } else {
-              console.error(
-                'Data is surely array of Object. But it is not Tagtype data.'
-              );
-              console.error(key);
-              console.error(obj[key]);
-            }
-          } else {
-            storeValuesOfNestedObj(obj[key], keyArr);
-          }
-        } else {
-          keyArr.push(obj[key]);
-        }
-      }
-    };
-
-    return {
-      defaultFilter: (rows, id, filterValue) => {
-        const keyFunc = (row) => {
-          let keyArr = [];
-          const rowVals = row.values;
-
-          id.forEach((i) => {
-            if (typeof rowVals[i] === 'object') {
-              storeValuesOfNestedObj(rowVals[i], keyArr);
-            } else {
-              keyArr.push(rowVals[i]);
-            }
-          });
-
-          return keyArr;
-        };
-
-        return matchSorter(rows, filterValue, {
-          keys: [(row) => keyFunc(row)],
-          threshold: matchSorter.rankings.CONTAINS,
-        });
-      },
-    };
-  }, []);
-
-  const defaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
-    return (
-      <input
-        value={filterValue || ''}
-        onChange={(e) => {
-          setFilter(e.target.value || undefined);
-        }}
-        placeholder={`Search...`}
-        type="search"
-      />
-    );
-  };
-
-  const defaultColumn = useMemo(
-    () => ({
-      filter: 'defaultFilter',
-      Filter: defaultColumnFilter,
-      minWidth: 120,
-      width: 180,
-      maxWidth: 600,
-    }),
-    []
-  );
 
   const [isCellExpanded, setCellExpanded] = useState(false);
   const handleCellExpandedToggle = useCallback(
@@ -216,44 +149,9 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     [isCellExpanded, setCellExpanded]
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    prepareRow,
-    headerGroups,
-    page,
-    rows,
-    canPreviousPage,
-    canNextPage,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    setGlobalFilter,
-    state: { pageIndex, pageSize, globalFilter },
-  } = useTable(
-    {
-      columns,
-      data,
-      disableSortRemove: true,
-      filterTypes,
-      defaultColumn,
-      globalFilter: 'defaultFilter',
-      initialState: {
-        pageIndex: 0,
-        pageSize: 10,
-        sortBy: [{ id: columns[0].accessor, desc: false }],
-      },
-    },
-    useFlexLayout,
-    useFilters,
-    useGlobalFilter,
-    useResizeColumns,
-    useSortBy,
-    useExpanded,
-    usePagination
-  );
+  useEffect(() => {
+    toggleAllRowsExpanded(isCellExpanded);
+  }, [isCellExpanded, toggleAllRowsExpanded]);
 
   const renderIcon = (column) => {
     if (column.canSort) {
@@ -279,6 +177,35 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
       return 'is_not_sorted_even_cell td';
     }
     return 'is_not_sorted_odd_cell td';
+  };
+
+  const renderCell = (cell, row) => {
+    if (cell.isGrouped) {
+      return (
+        <>
+          {row.isExpanded ? (
+            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
+          ) : (
+            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
+          )}
+          <SmartCell data={row.subRows[0].values['phenotype']} />
+          <small>{` ${row.subRows.length} annotation(s)`}</small>
+        </>
+      );
+    } else if (cell.isAggregated) {
+      return cell.render('Aggregated');
+    } else if (cell.isPlaceholder) {
+      return null;
+    } else {
+      return cell.render('Cell');
+    }
+  };
+
+  const enableToggleRowExpand = (row, cell) => {
+    if (cell.isGrouped || cell.isAggregated) {
+      return cell.getCellProps(row.getToggleRowExpandedProps());
+    }
+    return cell.getCellProps();
   };
 
   return (
@@ -367,14 +294,19 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
               {page.map((row, idx) => {
                 prepareRow(row);
                 return (
-                  <div className="tr" {...row.getRowProps()}>
+                  <div
+                    className={
+                      row.isGrouped ? 'tr ' + classes.rowGrouped : 'tr'
+                    }
+                    {...row.getRowProps()}
+                  >
                     {row.cells.map((cell) => {
                       return (
                         <div
-                          {...cell.getCellProps()}
+                          {...enableToggleRowExpand(row, cell)}
                           className={decideClassNameOfCell(cell, idx)}
                         >
-                          {cell.render('Cell')}
+                          <div>{renderCell(cell, row)}</div>
                         </div>
                       );
                     })}
