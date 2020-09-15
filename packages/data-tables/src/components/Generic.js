@@ -169,6 +169,22 @@ const Generic = ({
     []
   );
 
+  const initialState = useMemo(() => {
+    return hasGroupedRow
+      ? {
+          pageIndex: 0,
+          pageSize: 10,
+          sortBy: [{ id: `${columns[0].accessor}.label`, desc: false }],
+          groupBy: [`${columns[0].accessor}.label`],
+          hiddenColumns: [`${columns[0].accessor}`],
+        }
+      : {
+          pageIndex: 0,
+          pageSize: 10,
+          sortBy: [{ id: columns[0].accessor, desc: false }],
+        };
+  }, [hasGroupedRow, columns]);
+
   const tableProps = useTable(
     {
       columns,
@@ -179,13 +195,7 @@ const Generic = ({
       globalFilter: 'defaultFilter',
       // initialState: { pageIndex: 0 },
       paginateExpandedRows: false,
-      initialState: {
-        pageIndex: 0,
-        pageSize: 10,
-        sortBy: [{ id: `${columns[0].accessor}.label`, desc: false }],
-        groupBy: [`${columns[0].accessor}.label`],
-        hiddenColumns: [`${columns[0].accessor}`],
-      },
+      initialState: initialState,
     },
     useFlexLayout,
     useFilters,
