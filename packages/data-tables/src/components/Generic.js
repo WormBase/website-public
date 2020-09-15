@@ -162,8 +162,8 @@ const Generic = ({
   const defaultColumn = useMemo(
     () => ({
       filter: 'defaultFilter',
-      minWidth: 120,
-      width: 180,
+      minWidth: 80,
+      width: 120,
       maxWidth: 600,
     }),
     []
