@@ -42,18 +42,15 @@ const Generic = ({
   const classes = useStyles();
 
   const columns = useMemo(() => {
-    return order.map((ord, idx) => {
+    const columnsTemp = order.map((ord, idx) => {
       return {
         Header: () => (
           <span className={classes.columnHeader}>
             {ReactHtmlParser(columnsHeader[`${ord}`])}
           </span>
         ),
-        accessor: idx === 0 && hasGroupedRow ? `${ord}.label` : ord,
+        accessor: ord,
         Cell: ({ cell: { value } }) => {
-          if (hasGroupedRow && value === null) {
-            return <SmartCell data="N/A" />;
-          }
           return <SmartCell data={value} />;
         },
         sortType: (rowA, rowB, columnId) => {
@@ -63,12 +60,24 @@ const Generic = ({
             console.error(err);
           }
         },
-        Aggregated: () => null,
-        disableSortBy:
-          idx !== 0 && hasGroupedRow ? true : disableSort(data, ord),
+        disableSortBy: hasGroupedRow ? true : disableSort(data, ord),
       };
     });
-  }, []);
+
+    if (hasGroupedRow) {
+      // add the grouped column
+      columnsTemp.push({
+        accessor: `${order[0]}.label`,
+        Header: () => (
+          <span className={classes.columnHeader}>
+            {columnsHeader[`${order[0]}`]}
+          </span>
+        ),
+      });
+    }
+
+    return columnsTemp;
+  }, [classes.columnHeader, columnsHeader, data, hasGroupedRow, order]);
 
   return (
     <>

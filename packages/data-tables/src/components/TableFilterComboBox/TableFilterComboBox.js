@@ -71,7 +71,7 @@ const TableFilterComboBox = ({ options, onChange }) => {
   const {
     isOpen,
     getToggleButtonProps,
-    getLabelProps,
+    // getLabelProps,
     getMenuProps,
     getInputProps,
     getComboboxProps,

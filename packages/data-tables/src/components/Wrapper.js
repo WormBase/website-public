@@ -41,7 +41,7 @@ const Wrapper = ({
     loadData(WBid, tableType).then((json) => {
       setData(additionalKey ? get(json.data, additionalKey) : json.data);
     });
-  }, [WBid, tableType]);
+  }, [WBid, tableType, additionalKey]);
 
   console.log(data);
 

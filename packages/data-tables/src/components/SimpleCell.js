@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     margin: `${theme.spacing(0.75)}px 0`,
     overflowWrap: 'anywhere',
+    display: 'inline-block',
   },
 }));
 

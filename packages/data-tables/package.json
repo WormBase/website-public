@@ -13,7 +13,7 @@
     "react-csv": "^2.0.3",
     "react-html-parser": "^2.0.2",
     "react-scripts": "3.4.1",
-    "react-table": "^7.1.0"
+    "react-table": "^7.5.0"
   },
   "peerDependencies": {
     "@material-ui/core": "^4.10.1",

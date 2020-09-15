@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -60,11 +60,19 @@ const EvidenceCell = ({
   // console.log(`expanded: ${expanded}`);
   const classes = useStyles();
 
+  const transitionProps = useMemo(
+    () => ({
+      timeout: 0,
+    }),
+    []
+  );
+
   return (
     <Accordion
       classes={{
         root: classes.root,
       }}
+      TransitionProps={transitionProps}
       expanded={expanded}
       onChange={() => setExpanded(!expanded)}
     >
