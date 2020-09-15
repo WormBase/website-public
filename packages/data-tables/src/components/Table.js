@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
     '& .thead': {
       backgroundColor: '#e9eef2',
     },
+    '& .tr.row-grouped > *': {
+      background: theme.palette.background.default,
+    },
     '& .tr:last-child .td': {
       borderBottom: 0,
     },
@@ -290,7 +293,10 @@ const Table = ({
               {page.map((row, idx) => {
                 prepareRow(row);
                 return (
-                  <div className="tr" {...row.getRowProps()}>
+                  <div
+                    className={row.isGrouped ? 'tr row-grouped' : 'tr'}
+                    {...row.getRowProps()}
+                  >
                     {row.cells.map((cell) => {
                       return (
                         <div
