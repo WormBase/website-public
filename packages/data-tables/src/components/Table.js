@@ -1,11 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import SortIcon from '@material-ui/icons/Sort';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import SmartCell from './SmartCell';
 import Tsv from './Tsv';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
 import GlobalFilter from './GlobalFilter';
@@ -116,11 +119,16 @@ const Table = ({
   canPreviousPage,
   canNextPage,
   pageCount,
+  pageOptions,
   gotoPage,
   nextPage,
   previousPage,
   setPageSize,
   setGlobalFilter,
+
+  // useExpanded
+  toggleAllRowsExpanded,
+
   state: { pageIndex, pageSize, globalFilter },
 }) => {
   const classes = useStyles();
@@ -132,6 +140,10 @@ const Table = ({
     },
     [isCellExpanded, setCellExpanded]
   );
+
+  useEffect(() => {
+    toggleAllRowsExpanded(isCellExpanded);
+  }, [isCellExpanded, toggleAllRowsExpanded]);
 
   const renderIcon = (column) => {
     if (column.canSort) {
@@ -157,6 +169,35 @@ const Table = ({
       return 'is_not_sorted_even_cell td';
     }
     return 'is_not_sorted_odd_cell td';
+  };
+
+  const renderCell = (cell, row) => {
+    if (cell.isGrouped) {
+      return (
+        <>
+          {row.isExpanded ? (
+            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
+          ) : (
+            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
+          )}
+          <SmartCell data={row.subRows[0].values['phenotype']} />
+          <small>{` ${row.subRows.length} annotation(s)`}</small>
+        </>
+      );
+    } else if (cell.isAggregated) {
+      return cell.render('Aggregated');
+    } else if (cell.isPlaceholder) {
+      return null;
+    } else {
+      return cell.render('Cell');
+    }
+  };
+
+  const enableToggleRowExpand = (row, cell) => {
+    if (cell.isGrouped || cell.isAggregated) {
+      return cell.getCellProps(row.getToggleRowExpandedProps());
+    }
+    return cell.getCellProps();
   };
 
   return (
@@ -249,10 +290,10 @@ const Table = ({
                     {row.cells.map((cell) => {
                       return (
                         <div
-                          {...cell.getCellProps()}
+                          {...enableToggleRowExpand(row, cell)}
                           className={decideClassNameOfCell(cell, idx)}
                         >
-                          {cell.render('Cell')}
+                          <div>{renderCell(cell, row)}</div>
                         </div>
                       );
                     })}

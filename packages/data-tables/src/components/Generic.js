@@ -12,7 +12,6 @@ import {
 } from 'react-table';
 import matchSorter from 'match-sorter';
 import Table from './Table';
-import TableHasGroupedRow from './TableHasGroupedRow';
 import { decideSortType } from '../util/sortTypeHelper';
 import SmartCell from './SmartCell';
 import { makeStyles } from '@material-ui/core/styles';
@@ -199,27 +198,14 @@ const Generic = ({
   );
 
   return (
-    <>
-      {hasGroupedRow ? (
-        <TableHasGroupedRow
-          columns={columns}
-          data={data}
-          id={id}
-          order={order}
-          dataForTsv={getDataForTsv(data, propertyForUnwinding)}
-          {...tableProps}
-        />
-      ) : (
-        <Table
-          columns={columns}
-          data={data}
-          id={id}
-          order={order}
-          dataForTsv={getDataForTsv(data, propertyForUnwinding)}
-          {...tableProps}
-        />
-      )}
-    </>
+    <Table
+      columns={columns}
+      data={data}
+      id={id}
+      order={order}
+      dataForTsv={getDataForTsv(data, propertyForUnwinding)}
+      {...tableProps}
+    />
   );
 };
 
