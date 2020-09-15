@@ -78,6 +78,10 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 5,
     },
   },
+  rowArrowIcon: {
+    marginRight: 10,
+    verticalAlign: 'middle',
+  },
   subElement: {
     fontSize: '0.8em',
     paddingRight: theme.spacing(2),
