@@ -1,4 +1,16 @@
 import React, { useMemo } from 'react';
+import {
+  useFlexLayout,
+  useFilters,
+  useGlobalFilter,
+  useGroupBy,
+  useResizeColumns,
+  useSortBy,
+  useExpanded,
+  usePagination,
+  useTable,
+} from 'react-table';
+import matchSorter from 'match-sorter';
 import Table from './Table';
 import TableHasGroupedRow from './TableHasGroupedRow';
 import { decideSortType } from '../util/sortTypeHelper';
@@ -79,6 +91,113 @@ const Generic = ({
     return columnsTemp;
   }, [classes.columnHeader, columnsHeader, data, hasGroupedRow, order]);
 
+  const filterTypes = useMemo(() => {
+    const storeValueOfNestedObj = (obj, keyArr) => {
+      for (const key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          if (
+            obj[key].class &&
+            obj[key].id &&
+            obj[key].label &&
+            obj[key].taxonomy
+          ) {
+            keyArr.push(obj[key].label);
+          }
+          if (Array.isArray(obj[key]) && typeof obj[key][0] === 'object') {
+            if (
+              obj[key][0].class &&
+              obj[key][0].id &&
+              obj[key][0].label &&
+              obj[key][0].taxonomy
+            ) {
+              keyArr.push(obj[key].map((o) => o.label));
+            } else if (obj[key][0].pato_evidence) {
+              keyArr.push(
+                ...obj[key].map((o) => [
+                  o.pato_evidence.entity_term.label,
+                  o.pato_evidence.entity_type,
+                  o.pato_evidence.pato_term,
+                ])
+              );
+            } else {
+              console.error(
+                'Data is surely array of Object. But it is not Tagtype data.'
+              );
+              console.error(key);
+              console.error(obj[key]);
+            }
+          } else {
+            storeValueOfNestedObj(obj[key], keyArr);
+          }
+        } else {
+          keyArr.push(obj[key]);
+        }
+      }
+    };
+
+    return {
+      defaultFilter: (rows, id, filterValue) => {
+        const keyFunc = (row) => {
+          let keyArr = [];
+          const rowVals = row.values;
+
+          id.forEach((i) => {
+            if (typeof rowVals[i] === 'object') {
+              storeValueOfNestedObj(rowVals[i], keyArr);
+            } else {
+              keyArr.push(rowVals[i]);
+            }
+          });
+
+          return keyArr;
+        };
+
+        return matchSorter(rows, filterValue, {
+          keys: [(row) => keyFunc(row)],
+          threshold: matchSorter.rankings.CONTAINS,
+        });
+      },
+    };
+  }, []);
+
+  const defaultColumn = useMemo(
+    () => ({
+      filter: 'defaultFilter',
+      minWidth: 120,
+      width: 180,
+      maxWidth: 600,
+    }),
+    []
+  );
+
+  const tableProps = useTable(
+    {
+      columns,
+      data,
+      disableSortRemove: true,
+      filterTypes,
+      defaultColumn,
+      globalFilter: 'defaultFilter',
+      // initialState: { pageIndex: 0 },
+      paginateExpandedRows: false,
+      initialState: {
+        pageIndex: 0,
+        pageSize: 10,
+        sortBy: [{ id: `${columns[0].accessor}.label`, desc: false }],
+        groupBy: [`${columns[0].accessor}.label`],
+        hiddenColumns: [`${columns[0].accessor}`],
+      },
+    },
+    useFlexLayout,
+    useFilters,
+    useGlobalFilter,
+    useResizeColumns,
+    useGroupBy,
+    useSortBy,
+    useExpanded,
+    usePagination
+  );
+
   return (
     <>
       {hasGroupedRow ? (
@@ -88,6 +207,7 @@ const Generic = ({
           id={id}
           order={order}
           dataForTsv={getDataForTsv(data, propertyForUnwinding)}
+          {...tableProps}
         />
       ) : (
         <Table
@@ -96,6 +216,7 @@ const Generic = ({
           id={id}
           order={order}
           dataForTsv={getDataForTsv(data, propertyForUnwinding)}
+          {...tableProps}
         />
       )}
     </>
