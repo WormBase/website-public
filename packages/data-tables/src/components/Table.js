@@ -208,32 +208,6 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     []
   );
 
-  const renderIcon = (column) => {
-    if (column.canSort) {
-      if (column.isSorted) {
-        if (column.isSortedDesc) {
-          return <ArrowDownwardIcon className="arrow-icon" />;
-        }
-        return <ArrowUpwardIcon className="arrow-icon" />;
-      }
-      return <SortIcon className="arrow-icon" />;
-    }
-    return null;
-  };
-
-  const decideClassNameOfCell = (cell, idx) => {
-    if (cell.column.isSorted) {
-      if (idx % 2 === 0) {
-        return 'is_sorted_even_cell td';
-      }
-      return 'is_sorted_odd_cell td';
-    }
-    if (idx % 2 === 0) {
-      return 'is_not_sorted_even_cell td';
-    }
-    return 'is_not_sorted_odd_cell td';
-  };
-
   const [isCellExpanded, setCellExpanded] = useState(false);
   const handleCellExpandedToggle = useCallback(
     (event) => {
@@ -280,6 +254,32 @@ const Table = ({ columns, data, id, dataForTsv, order }) => {
     useExpanded,
     usePagination
   );
+
+  const renderIcon = (column) => {
+    if (column.canSort) {
+      if (column.isSorted) {
+        if (column.isSortedDesc) {
+          return <ArrowDownwardIcon className="arrow-icon" />;
+        }
+        return <ArrowUpwardIcon className="arrow-icon" />;
+      }
+      return <SortIcon className="arrow-icon" />;
+    }
+    return null;
+  };
+
+  const decideClassNameOfCell = (cell, idx) => {
+    if (cell.column.isSorted) {
+      if (idx % 2 === 0) {
+        return 'is_sorted_even_cell td';
+      }
+      return 'is_sorted_odd_cell td';
+    }
+    if (idx % 2 === 0) {
+      return 'is_not_sorted_even_cell td';
+    }
+    return 'is_not_sorted_odd_cell td';
+  };
 
   return (
     <div className={classes.wrapper}>

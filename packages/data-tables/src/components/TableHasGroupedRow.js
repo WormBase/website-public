@@ -195,61 +195,6 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
     []
   );
 
-  const renderIcon = (column) => {
-    if (column.canSort) {
-      if (column.isSorted) {
-        if (column.isSortedDesc) {
-          return <ArrowDownwardIcon className="sort-arrow-icon" />;
-        }
-        return <ArrowUpwardIcon className="sort-arrow-icon" />;
-      }
-      return <SortIcon className="sort-arrow-icon" />;
-    }
-    return null;
-  };
-
-  const enableToggleRowExpand = (row, cell) => {
-    if (cell.isGrouped || cell.isAggregated) {
-      return cell.getCellProps(row.getToggleRowExpandedProps());
-    }
-    return cell.getCellProps();
-  };
-
-  const decideClassNameOfCell = (cell) => {
-    if (cell.isGrouped) {
-      return 'is_grouped td';
-    }
-    if (cell.isAggregated) {
-      return 'is_aggregated td';
-    }
-    if (cell.column.isSorted) {
-      return 'is_other_sorted td';
-    }
-    return 'is_other td';
-  };
-
-  const renderCell = (cell, row) => {
-    if (cell.isGrouped) {
-      return (
-        <>
-          {row.isExpanded ? (
-            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
-          ) : (
-            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
-          )}
-          <SmartCell data={row.subRows[0].values['phenotype']} />
-          <small>{` ${row.subRows.length} annotation(s)`}</small>
-        </>
-      );
-    } else if (cell.isAggregated) {
-      return cell.render('Aggregated');
-    } else if (cell.isPlaceholder) {
-      return null;
-    } else {
-      return cell.render('Cell');
-    }
-  };
-
   const [isCellExpanded, setCellExpanded] = useState(false);
   const handleCellExpandedToggle = useCallback(
     (event) => {
@@ -311,6 +256,61 @@ const TableHasGroupedRow = ({ columns, data, id, dataForTsv, order }) => {
   useEffect(() => {
     toggleAllRowsExpanded(isCellExpanded);
   }, [isCellExpanded, toggleAllRowsExpanded]);
+
+  const renderIcon = (column) => {
+    if (column.canSort) {
+      if (column.isSorted) {
+        if (column.isSortedDesc) {
+          return <ArrowDownwardIcon className="sort-arrow-icon" />;
+        }
+        return <ArrowUpwardIcon className="sort-arrow-icon" />;
+      }
+      return <SortIcon className="sort-arrow-icon" />;
+    }
+    return null;
+  };
+
+  const enableToggleRowExpand = (row, cell) => {
+    if (cell.isGrouped || cell.isAggregated) {
+      return cell.getCellProps(row.getToggleRowExpandedProps());
+    }
+    return cell.getCellProps();
+  };
+
+  const decideClassNameOfCell = (cell) => {
+    if (cell.isGrouped) {
+      return 'is_grouped td';
+    }
+    if (cell.isAggregated) {
+      return 'is_aggregated td';
+    }
+    if (cell.column.isSorted) {
+      return 'is_other_sorted td';
+    }
+    return 'is_other td';
+  };
+
+  const renderCell = (cell, row) => {
+    if (cell.isGrouped) {
+      return (
+        <>
+          {row.isExpanded ? (
+            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
+          ) : (
+            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
+          )}
+          <SmartCell data={row.subRows[0].values['phenotype']} />
+          <small>{` ${row.subRows.length} annotation(s)`}</small>
+        </>
+      );
+    } else if (cell.isAggregated) {
+      return cell.render('Aggregated');
+    } else if (cell.isPlaceholder) {
+      return null;
+    } else {
+      return cell.render('Cell');
+    }
+  };
 
   return (
     <div className={classes.wrapper}>
