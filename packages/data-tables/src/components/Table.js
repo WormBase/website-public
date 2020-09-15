@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     '& .thead': {
       backgroundColor: '#e9eef2',
     },
-    '& .tr.row-grouped > *': {
+    '& $rowGrouped.tr > *': {
       background: theme.palette.background.default,
     },
     '& .tr:last-child .td': {
@@ -81,6 +81,7 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 5,
     },
   },
+  rowGrouped: {},
   rowArrowIcon: {
     marginRight: 10,
     verticalAlign: 'middle',
@@ -294,7 +295,9 @@ const Table = ({
                 prepareRow(row);
                 return (
                   <div
-                    className={row.isGrouped ? 'tr row-grouped' : 'tr'}
+                    className={
+                      row.isGrouped ? 'tr ' + classes.rowGrouped : 'tr'
+                    }
                     {...row.getRowProps()}
                   >
                     {row.cells.map((cell) => {
