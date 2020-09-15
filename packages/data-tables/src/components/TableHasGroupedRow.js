@@ -155,13 +155,6 @@ const TableHasGroupedRow = ({
     return null;
   };
 
-  const enableToggleRowExpand = (row, cell) => {
-    if (cell.isGrouped || cell.isAggregated) {
-      return cell.getCellProps(row.getToggleRowExpandedProps());
-    }
-    return cell.getCellProps();
-  };
-
   const decideClassNameOfCell = (cell) => {
     if (cell.isGrouped) {
       return 'is_grouped td';
@@ -195,6 +188,13 @@ const TableHasGroupedRow = ({
     } else {
       return cell.render('Cell');
     }
+  };
+
+  const enableToggleRowExpand = (row, cell) => {
+    if (cell.isGrouped || cell.isAggregated) {
+      return cell.getCellProps(row.getToggleRowExpandedProps());
+    }
+    return cell.getCellProps();
   };
 
   return (
