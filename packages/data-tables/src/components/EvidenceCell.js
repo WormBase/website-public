@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import { makeStyles } from '@material-ui/core/styles';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
 
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
   accordionSummaryContent: {
     margin: 0,
+    alignItems: 'center',
 
     '&.Mui-expanded': {
       margin: 0,
@@ -83,14 +85,16 @@ const EvidenceCell = ({
           expanded: classes.accordionSummaryExpanded,
           expandIcon: classes.accordionSummaryExpandIcon,
         }}
-        expandIcon={<ExpandMoreIcon fontSize="small" />}
       >
-        <div>
-          {renderContent({
-            contentData: data.text,
-            data: data,
-          })}
-        </div>
+        {expanded ? (
+          <ArrowDropDownIcon fontSize="small" />
+        ) : (
+          <ArrowRightIcon fontSize="small" />
+        )}
+        {renderContent({
+          contentData: data.text,
+          data: data,
+        })}
       </AccordionSummary>
       <AccordionDetails>
         <span>
