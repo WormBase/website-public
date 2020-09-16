@@ -6,6 +6,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import { makeStyles } from '@material-ui/core/styles';
+import { hasContent } from '../util/hasContent';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -69,7 +70,9 @@ const EvidenceCell = ({
     []
   );
 
-  return (
+  return Object.keys(data.evidence).filter((key) =>
+    hasContent(data.evidence[key])
+  ).length ? (
     <Accordion
       classes={{
         root: classes.root,
@@ -105,6 +108,11 @@ const EvidenceCell = ({
         </span>
       </AccordionDetails>
     </Accordion>
+  ) : (
+    renderContent({
+      contentData: data.text,
+      data: data,
+    })
   );
 };
 

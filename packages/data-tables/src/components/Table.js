@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
@@ -203,6 +203,10 @@ const Table = ({
     }
   };
 
+  const pageSizeOptions = useMemo(() => {
+    return [10, 25, Math.min(100, rows.length)];
+  }, [rows.length]);
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.toolbarWrapper}>
@@ -219,8 +223,12 @@ const Table = ({
                 setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 25, Math.min(100, rows.length)]
-                .filter((pageSize) => pageSize <= rows.length)
+              {pageSizeOptions
+                .filter(
+                  (pageSize, pageSizeIndex) =>
+                    pageSize <= rows.length &&
+                    pageSizeOptions.indexOf(pageSize) === pageSizeIndex
+                )
                 .map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
                     Show {pageSize === rows.length ? 'All' : pageSize}

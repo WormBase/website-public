@@ -29,7 +29,7 @@ Link.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   class: PropTypes.string.isRequired,
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object,
 };
 
 export default Link;
