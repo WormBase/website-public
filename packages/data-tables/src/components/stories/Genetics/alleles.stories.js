@@ -1,5 +1,4 @@
 import React from 'react';
-import { homology_widget } from '../../../../.storybook/target';
 import Wrapper from '../../Wrapper';
 
 const id = 'table_alleles';
