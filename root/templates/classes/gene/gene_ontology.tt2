@@ -59,10 +59,11 @@
 
                   # Here we assume that the inner data structure as an array of hashes
 
-                  full_view = build_data_table(order = ['term_id', 'term_description', 'term', 'evidence_code', 'with'],
+                  full_view = build_data_table(order = ['term_description', 'term', 'evidence_code', 'with'],
                              columns = {   extensions   => 'Extensions',
                                                  with   => 'With',
-                                                 term   => 'Term',
+                                     term_description   => 'Term',
+                                                 term   => 'Extensions',
                                               term_id   => 'Term ID',
                                         evidence_code   => 'Evidence code' },
                              passed_data = fields.$key.data.$facet,
