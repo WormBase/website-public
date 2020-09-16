@@ -35,7 +35,7 @@ function SmartCell({ data }) {
       } else {
         return (
           <HashCell
-            data={data}
+            data={data.evidence ? data.evidence : data}
             render={({ elementValue }) => <SmartCell data={elementValue} />}
           />
         );

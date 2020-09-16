@@ -3294,26 +3294,29 @@ var Scrolling = (function(){
       })
       return processedData
     }
-    
+
     function preprocessData(data, elementId) {
       if (elementId === 'table_interaction') {
         return preprocessInteractionTableData(data)
       }
       return data
     }
-    
+
     function hasGroupedRow(id) {
       const tablesHaveGroupedRow = [
         'table_phenotype',
         'table_phenotype_not_observed',
         'table_drives_overexpression',
+        'table_table_1_go',
+        'table_table_2_go',
+        'table_table_3_go',
       ]
       if (tablesHaveGroupedRow.includes(id)) {
         return true
       }
       return false
     }
-    
+
     function getPropertyForUnwinding(id) {
       const tablesNeedUnwind4Tsv = [
         'table_expressed_in',
@@ -3325,7 +3328,7 @@ var Scrolling = (function(){
       }
       return null
     }
-    
+
     function buildDataTable(elementId, data, columns, order) {
       ReactDOM.render(
         <Table

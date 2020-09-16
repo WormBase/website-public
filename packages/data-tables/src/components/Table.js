@@ -181,6 +181,8 @@ const Table = ({
 
   const renderCell = (cell, row) => {
     if (cell.isGrouped) {
+      const groupByID = row.groupByID.split('.')[0];
+
       return (
         <>
           {row.isExpanded ? (
@@ -188,7 +190,7 @@ const Table = ({
           ) : (
             <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
           )}
-          <SmartCell data={row.subRows[0].values['phenotype']} />
+          <SmartCell data={row.subRows[0].values[groupByID]} />
           <small>{` ${row.subRows.length} annotation(s)`}</small>
         </>
       );
