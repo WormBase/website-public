@@ -3,8 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import SortIcon from '@material-ui/icons/Sort';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -186,9 +186,9 @@ const Table = ({
       return (
         <>
           {row.isExpanded ? (
-            <ExpandLessIcon fontSize="small" className={classes.rowArrowIcon} />
+            <ArrowDropDownIcon className={classes.rowArrowIcon} />
           ) : (
-            <ExpandMoreIcon fontSize="small" className={classes.rowArrowIcon} />
+            <ArrowRightIcon className={classes.rowArrowIcon} />
           )}
           <SmartCell data={row.subRows[0].values[groupByID]} />
           <small>{` ${row.subRows.length} annotation(s)`}</small>
