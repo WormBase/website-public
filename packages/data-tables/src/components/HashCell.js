@@ -4,9 +4,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import { hasContent } from '../util/hasContent';
 import SimpleCell from './SimpleCell';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     margin: 0,
+
+    '& dd': {
+      marginLeft: theme.spacing(1),
+
+      [theme.breakpoints.up('md')]: {
+        marginLeft: theme.spacing(4),
+      },
+    },
   },
 }));
 
