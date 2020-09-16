@@ -203,13 +203,6 @@ const Table = ({
     }
   };
 
-  const enableToggleRowExpand = (row, cell) => {
-    if (cell.isGrouped || cell.isAggregated) {
-      return cell.getCellProps(row.getToggleRowExpandedProps());
-    }
-    return cell.getCellProps();
-  };
-
   return (
     <div className={classes.wrapper}>
       <div className={classes.toolbarWrapper}>
@@ -300,12 +293,14 @@ const Table = ({
                     className={
                       row.isGrouped ? 'tr ' + classes.rowGrouped : 'tr'
                     }
-                    {...row.getRowProps()}
+                    {...(row.isGrouped
+                      ? row.getRowProps(row.getToggleRowExpandedProps())
+                      : row.getRowProps())}
                   >
                     {row.cells.map((cell) => {
                       return (
                         <div
-                          {...enableToggleRowExpand(row, cell)}
+                          {...cell.getCellProps()}
                           className={decideClassNameOfCell(cell, idx)}
                         >
                           <div>{renderCell(cell, row)}</div>
