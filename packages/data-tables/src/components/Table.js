@@ -112,6 +112,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const isCellExpandable = (value) => {
+  console.log(value);
+  if (Array.isArray(value) && value.length > 1) {
+    return true;
+  } else if (
+    typeof value === 'object' &&
+    value !== null &&
+    value.text &&
+    value.evidence
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 const Table = ({
   columns,
   data,
@@ -152,6 +168,19 @@ const Table = ({
   useEffect(() => {
     toggleAllRowsExpanded(isCellExpanded);
   }, [isCellExpanded, toggleAllRowsExpanded]);
+
+  const showCellExpandToggle = useMemo(() => {
+    return page.reduce((expandablePage, row) => {
+      return (
+        expandablePage ||
+        row.isGrouped ||
+        Object.values(row.values).reduce(
+          (expandableRow, value) => expandableRow || isCellExpandable(value),
+          expandablePage
+        )
+      );
+    }, false);
+  }, [page]);
 
   const renderIcon = (column) => {
     if (column.canSort) {
@@ -240,17 +269,21 @@ const Table = ({
             <span className={classes.subElement}>
               [<Tsv data={dataForTsv || data} id={id} order={order} />]
             </span>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isCellExpanded}
-                  onChange={handleCellExpandedToggle}
-                  name="expand-all"
-                  inputProps={{ 'aria-label': 'secondary checkbox' }}
-                />
-              }
-              label={isCellExpanded ? 'Details expanded' : 'Details collapsed'}
-            />
+            {showCellExpandToggle ? (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isCellExpanded}
+                    onChange={handleCellExpandedToggle}
+                    name="expand-all"
+                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                  />
+                }
+                label={
+                  isCellExpanded ? 'Details expanded' : 'Details collapsed'
+                }
+              />
+            ) : null}
           </Grid>
           <Grid
             item
