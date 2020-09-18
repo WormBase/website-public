@@ -3331,14 +3331,16 @@ var Scrolling = (function(){
 
     function buildDataTable(elementId, data, columns, order) {
       ReactDOM.render(
-        <Table
-          data={preprocessData(data, elementId)}
-          id={elementId}
-          columnsHeader={columns}
-          order={order}
-          hasGroupedRow={hasGroupedRow(elementId)}
-          propertyForUnwinding={getPropertyForUnwinding(elementId)}
-        />,
+        <Root>
+          <Table
+            data={preprocessData(data, elementId)}
+            id={elementId}
+            columnsHeader={columns}
+            order={order}
+            hasGroupedRow={hasGroupedRow(elementId)}
+            propertyForUnwinding={getPropertyForUnwinding(elementId)}
+          />
+        </Root>,
         document.getElementById(elementId)
       )
     }
