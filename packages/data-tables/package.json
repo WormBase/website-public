@@ -52,6 +52,7 @@
     "@storybook/node-logger": "5.3.19",
     "@storybook/preset-create-react-app": "^3.0.0",
     "@storybook/react": "^5.3.19",
+    "http-proxy-middleware": "1.0.5",
     "react-test-renderer": "^16.13.1"
   }
 }
