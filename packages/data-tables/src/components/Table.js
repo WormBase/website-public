@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'block',
     overflow: 'auto',
     backgroundColor: '#e9eef2',
+    clear: 'both',
   },
   table: {
     color: '#444',
