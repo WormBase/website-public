@@ -89,8 +89,8 @@ const WidgetDialog = ({ url, title, open, onClose }) => {
     }
 
     scripts.forEach((script) => {
-      // eslint-disable-next-line
       try {
+        // eslint-disable-next-line
         window.eval(script);
       } catch (error) {
         console.log('Error from eval scripts');
