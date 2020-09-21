@@ -14,20 +14,25 @@ const columnsHeader = {
 };
 
 const tableConfig = ({ columns, ...otherOptions }) => {
-  const [resultColumn] = columns.filter(
-    (column) => column.accessor === 'result'
-  );
-  const resultColumnIndex = columns.indexOf(resultColumn);
   const newColumns = [...columns];
-  newColumns[resultColumnIndex] = {
-    ...resultColumn,
-    Cell: ({ value }) => (
-      <DelimitedCell
-        data={value}
-        render={({ elementData }) => <SmartCell data={elementData} />}
-      />
-    ),
-  };
+  const affectedColumnIds = ['result', 'point_1', 'point_2'];
+
+  affectedColumnIds.forEach((columnId) => {
+    const [resultColumn] = columns.filter(
+      (column) => column.accessor === columnId
+    );
+    const resultColumnIndex = columns.indexOf(resultColumn);
+    newColumns[resultColumnIndex] = {
+      ...resultColumn,
+      Cell: ({ value }) => (
+        <DelimitedCell
+          data={value}
+          render={({ elementData }) => <SmartCell data={elementData} />}
+        />
+      ),
+    };
+  });
+
   return {
     columns: newColumns,
     ...otherOptions,

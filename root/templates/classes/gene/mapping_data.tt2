@@ -13,7 +13,10 @@
             },
             key='two_pt_data',
             separator=' ',
-            #style = 'aaSorting : [[0, "desc"]]'  // uncomment this if you need to sort descending
+            #style = 'aaSorting : [[0, "desc"]]'  // uncomment this if you need to sort descending,
+            args='{
+              tableConfig: WB.mappingDataTableConfig,
+            }'
     );
     END;
 
@@ -27,7 +30,10 @@
                       date       => 'Date',
             },
             separator=' ',
-            key='multi_pt_data');
+            key='multi_pt_data',
+            args='{
+              tableConfig: WB.mappingDataTableConfig,
+            }');
     END;
 
    WRAPPER $field_block title="Positive/Negative Data" key="pos_neg_data";
@@ -39,6 +45,10 @@
                       date       => 'Date',
             },
             key='pos_neg_data',
-            separator=' ');
+            separator=' ',
+            args='{
+              tableConfig: WB.mappingDataTableConfig,
+            }'
+            );
     END;
 %]

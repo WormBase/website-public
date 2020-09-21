@@ -24,6 +24,8 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Table = require('../../packages/data-tables/lib/components/Generic').default;
+var SmartCell = require('../../packages/data-tables/lib/components/SmartCell').default;
+var DelimitedCell = require('../../packages/data-tables/lib/components/DelimitedCell').default;
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;
@@ -3282,6 +3284,8 @@ var Scrolling = (function(){
       });
     }
 
+    // Start of table Specific configurations
+
     function preprocessInteractionTableData(data) {
       const processedData = data.map((dat) => {
         const typeSegments = dat.type.split(':')
@@ -3329,7 +3333,35 @@ var Scrolling = (function(){
       return null
     }
 
-    function buildDataTable(elementId, data, columns, order) {
+    const mappingDataTableConfig = ({ columns, ...otherOptions }) => {
+      const newColumns = [...columns];
+      const affectedColumnIds = ['result', 'point_1', 'point_2'];
+
+      affectedColumnIds.forEach((columnId) => {
+        const [resultColumn] = columns.filter(
+          (column) => column.accessor === columnId
+        );
+        const resultColumnIndex = columns.indexOf(resultColumn);
+        newColumns[resultColumnIndex] = {
+          ...resultColumn,
+          Cell: ({ value }) => (
+            <DelimitedCell
+              data={value}
+              render={({ elementData }) => <SmartCell data={elementData} />}
+            />
+          ),
+        };
+      })
+
+      return {
+        columns: newColumns,
+        ...otherOptions,
+      };
+    };
+
+    // end of table specific configuration
+
+    function buildDataTable(elementId, data, columns, order, tableProps={}) {
       ReactDOM.render(
         <Root>
           <Table
@@ -3339,6 +3371,7 @@ var Scrolling = (function(){
             order={order}
             hasGroupedRow={hasGroupedRow(elementId)}
             propertyForUnwinding={getPropertyForUnwinding(elementId)}
+            {...tableProps}
           />
         </Root>,
         document.getElementById(elementId)
@@ -3615,6 +3648,7 @@ var Scrolling = (function(){
       renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
       renderInteractorVennDiagram: renderInteractorVennDiagram, // render Venn diagram in interaction widgets of various pages
       renderInferredPathways: renderInferredPathways, // render inferred pathways of a particular gene
+      mappingDataTableConfig: mappingDataTableConfig, // table specific configuration for mapping data widget tables
     };
   })();
 
