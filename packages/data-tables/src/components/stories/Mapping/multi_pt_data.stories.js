@@ -34,8 +34,9 @@ const tableConfig = ({ columns, ...otherOptions }) => {
   });
 
   return {
-    columns: newColumns,
     ...otherOptions,
+    columns: newColumns,
+    hideCellExpandToggle: true,
   };
 };
 
