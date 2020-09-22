@@ -49,6 +49,7 @@ const Generic = ({
   order,
   hasGroupedRow,
   propertyForUnwinding,
+  tableConfig,
 }) => {
   const classes = useStyles();
 
@@ -185,8 +186,8 @@ const Generic = ({
         };
   }, [hasGroupedRow, columns]);
 
-  const tableProps = useTable(
-    {
+  const tableOptions = useMemo(() => {
+    const defaultTableConfig = {
       columns,
       data,
       disableSortRemove: true,
@@ -196,7 +197,12 @@ const Generic = ({
       // initialState: { pageIndex: 0 },
       paginateExpandedRows: false,
       initialState: initialState,
-    },
+    };
+    return tableConfig ? tableConfig(defaultTableConfig) : defaultTableConfig;
+  }, [columns, data, filterTypes, defaultColumn, initialState, tableConfig]);
+
+  const tableProps = useTable(
+    tableOptions,
     useFlexLayout,
     useFilters,
     useGlobalFilter,

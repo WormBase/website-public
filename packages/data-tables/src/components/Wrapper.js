@@ -27,14 +27,7 @@ const getPropertyForUnwinding = (tableType) => {
   return null;
 };
 
-const Wrapper = ({
-  WBid,
-  tableType,
-  id,
-  order,
-  columnsHeader,
-  additionalKey = '',
-}) => {
+const Wrapper = ({ WBid, tableType, additionalKey = '', ...tableProps }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -48,11 +41,9 @@ const Wrapper = ({
   return data.length === 0 ? null : (
     <Generic
       data={data}
-      id={id}
-      order={order}
-      columnsHeader={columnsHeader}
       hasGroupedRow={hasGroupedRow(tableType)}
       propertyForUnwinding={getPropertyForUnwinding(tableType)}
+      {...tableProps}
     />
   );
 };

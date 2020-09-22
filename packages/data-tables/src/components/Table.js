@@ -154,6 +154,9 @@ const Table = ({
   // useExpanded
   toggleAllRowsExpanded,
 
+  // custom
+  hideCellExpandToggle = false,
+
   state: { pageIndex, pageSize, globalFilter },
 }) => {
   const classes = useStyles();
@@ -171,16 +174,19 @@ const Table = ({
   }, [isCellExpanded, toggleAllRowsExpanded]);
 
   const showCellExpandToggle = useMemo(() => {
-    return page.reduce((expandablePage, row) => {
-      return (
-        expandablePage ||
-        row.isGrouped ||
-        Object.values(row.values).reduce(
-          (expandableRow, value) => expandableRow || isCellExpandable(value),
-          expandablePage
-        )
-      );
-    }, false);
+    return (
+      !hideCellExpandToggle &&
+      page.reduce((expandablePage, row) => {
+        return (
+          expandablePage ||
+          row.isGrouped ||
+          Object.values(row.values).reduce(
+            (expandableRow, value) => expandableRow || isCellExpandable(value),
+            expandablePage
+          )
+        );
+      }, false)
+    );
   }, [page]);
 
   const renderIcon = (column) => {
