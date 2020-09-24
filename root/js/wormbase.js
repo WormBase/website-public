@@ -3355,6 +3355,7 @@ var Scrolling = (function(){
 
       return {
         columns: newColumns,
+        hideCellExpandToggle: true,
         ...otherOptions,
       };
     };
