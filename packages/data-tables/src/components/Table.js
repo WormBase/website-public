@@ -187,7 +187,7 @@ const Table = ({
         );
       }, false)
     );
-  }, [page]);
+  }, [page, hideCellExpandToggle]);
 
   const renderIcon = (column) => {
     if (column.canSort) {
