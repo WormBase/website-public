@@ -18,14 +18,20 @@ const useStyles = makeStyles((theme) => ({
     display: 'block',
     overflow: 'auto',
     backgroundColor: '#e9eef2',
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: theme.shape.borderRadius,
     clear: 'both',
   },
   table: {
     color: '#444',
     borderSpacing: 0,
-    border: '1px solid #ededed',
+    border: 0,
     '& .thead': {
       backgroundColor: '#e9eef2',
+    },
+    '& .tbody': {
+      borderTop: `1px solid ${theme.palette.divider}`,
+      borderBottom: `1px solid ${theme.palette.divider}`,
     },
     '& $rowGrouped.tr > *': {
       background: theme.palette.background.default,
@@ -48,8 +54,8 @@ const useStyles = makeStyles((theme) => ({
     '& .th, .td': {
       margin: 0,
       padding: '0.5rem 0.3rem',
-      borderBottom: '1px solid #ededed',
-      borderRight: '1px solid #ededed',
+      // borderBottom: '1px solid #ededed',
+      // borderRight: '1px solid #fff',
       position: 'relative',
     },
     '& .td': {
