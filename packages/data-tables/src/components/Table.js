@@ -54,13 +54,13 @@ const useStyles = makeStyles((theme) => ({
     },
     '& .th, .td': {
       margin: 0,
-      padding: '0.5rem 0.3rem',
+      padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
       // borderBottom: '1px solid #ededed',
       // borderRight: '1px solid #fff',
       position: 'relative',
     },
     '& .td': {
-      padding: '0.1rem 0.3rem',
+      // padding: '0.1rem 0.3rem',
     },
     '& .th:last-child, .td:last-child': {
       borderRight: 0,
