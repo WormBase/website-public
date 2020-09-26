@@ -101,6 +101,7 @@ const useStyles = makeStyles((theme) => ({
   subElement: {
     fontSize: '0.8em',
     paddingRight: theme.spacing(2),
+    display: 'inline-block',
   },
   toolbarWrapper: {
     overflow: 'hidden', // work around -4px margin in Grid
