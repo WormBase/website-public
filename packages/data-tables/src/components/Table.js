@@ -8,6 +8,7 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import SortIcon from '@material-ui/icons/Sort';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import Divider from '@material-ui/core/Divider';
 import SmartCell from './SmartCell';
 import Tsv from './Tsv';
 import TableCellExpandAllContext from './TableCellExpandAllContext';
@@ -66,13 +67,15 @@ const useStyles = makeStyles((theme) => ({
     },
     '& .th .resizer': {
       display: 'inline-block',
-      width: 10,
+      width: 0,
       height: '100%',
       position: 'absolute',
       right: 0,
       top: 0,
       zIndex: 1,
       touchAction: 'none',
+      boxSizing: 'border-box',
+      padding: `${theme.spacing(1)}px 0`,
     },
     '& .th .isResizing': {
       background: '#828A95',
@@ -332,7 +335,9 @@ const Table = ({
                       className={`resizer ${
                         column.isResizing ? 'isResizing' : ''
                       }`}
-                    />
+                    >
+                      <Divider orientation="vertical" />
+                    </div>
                   </div>
                 ))}
               </div>
