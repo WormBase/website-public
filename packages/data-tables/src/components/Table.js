@@ -85,6 +85,8 @@ const useStyles = makeStyles((theme) => ({
     },
     '& .th .column_header': {
       textAlign: 'left',
+      display: 'flex',
+      justifyContent: 'space-between',
     },
     '& .th .arrow-icon': {
       fontSize: '1rem',
