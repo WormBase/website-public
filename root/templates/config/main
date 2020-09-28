@@ -506,6 +506,8 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
             var baseURL = 'https://s3.amazonaws.com/wormbase-modencode/protein_schematic/'+ releaseVersion + '/' + species + '_' + bioproject + '/';
             var protein = '[%- cds_wbid -%]';
 	    var location = '[%- location -%]';
+	    var species = '[%- species -%]';
+	    var bioproject = '[%- bioproject -%]'
 	    var tracks = [
 	      'seg',
 	      'signalp',
