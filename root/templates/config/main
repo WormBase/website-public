@@ -486,6 +486,8 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
     view_id = "protein-schematic";
     cds_wbid = data.reference_id;
     location = data.location;
+    species  = data.species;
+    bioproject=data.bioproject;
 %]
 <div id="[%- view_id -%]" class="jbrowse-view-container">
     <div class="jbrowse-view-iframe" style="overflow: hidden;">
@@ -501,7 +503,7 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
 	  }).then(function(data) {
 	    var releaseVersion = data && data.version;
 	    // var releaseVersion = 'WS274';
-            var baseURL = 'https://s3.amazonaws.com/wormbase-modencode/protein_schematic/'+ releaseVersion + '/';
+            var baseURL = 'https://s3.amazonaws.com/wormbase-modencode/protein_schematic/'+ releaseVersion + '/' + species + '_' + bioproject + '/';
             var protein = '[%- cds_wbid -%]';
 	    var location = '[%- location -%]';
 	    var tracks = [
@@ -529,7 +531,7 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
 	      var availableTracks = ['Exon boundaries'].concat(tracks.filter(function(track, index) {
 	        return results[index];
 	      }));
-	      var jbrowseBaseURL = '/tools/protein_schematic/?loc=' + encodeURIComponent(location) + '&tracks=' + encodeURIComponent(availableTracks.join(','));
+	      var jbrowseBaseURL = '/tools/protein_schematic/?data=data%2F'+species+'_'+bioproject+'&loc=' + encodeURIComponent(location) + '&tracks=' + encodeURIComponent(availableTracks.join(','));
 	      var previewJBrowseURL = jbrowseBaseURL + '&tracklabels=0&nav=0&tracklist=0&overview=0';
 	      var linkoutJBrowseURL = jbrowseBaseURL;
 	      buildJbroweView('#[%- view_id -%]', previewJBrowseURL, linkoutJBrowseURL);
