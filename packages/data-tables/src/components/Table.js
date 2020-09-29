@@ -93,7 +93,12 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 5,
     },
   },
-  rowGrouped: {},
+  rowGrouped: {
+    borderTop: `1px solid ${theme.palette.divider}`,
+    '&:first-of-type': {
+      borderTop: 0,
+    },
+  },
   rowArrowIcon: {
     marginRight: 10,
     verticalAlign: 'middle',
