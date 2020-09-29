@@ -16,7 +16,7 @@ function SmartCell({ data }) {
         />
       );
     } else {
-      if (data.evidence && data.text) {
+      if (data.evidence && data.hasOwnProperty('text')) {
         return (
           <EvidenceCell
             data={data}
