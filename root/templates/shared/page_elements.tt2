@@ -363,7 +363,7 @@ END;
         %]
         <div id=[% table_id %]></div>
         <script type="text/javascript">
-          WB.buildDataTable("[% table_id %]", [% json_encode(local_data) %], [% json_encode(columns) %], [% json_encode(order) %] [% args.defined ? ", $args" : '' %]);
+          WB.buildDataTable("[% table_id %]", [% json_encode(local_data) %], [% json_encode(columns) %], [% json_encode(order) %] [% table_v2_args.defined ? ", $table_v2_args" : '' %]);
         </script>
         [%
 #       jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener, column_args);

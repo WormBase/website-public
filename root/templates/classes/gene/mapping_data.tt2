@@ -14,7 +14,7 @@
             key='two_pt_data',
             separator=' ',
             #style = 'aaSorting : [[0, "desc"]]'  // uncomment this if you need to sort descending,
-            args='{
+            table_v2_args='{
               tableConfig: WB.mappingDataTableConfig,
             }'
     );
@@ -31,7 +31,7 @@
             },
             separator=' ',
             key='multi_pt_data',
-            args='{
+            table_v2_args='{
               tableConfig: WB.mappingDataTableConfig,
             }');
     END;
@@ -46,7 +46,7 @@
             },
             key='pos_neg_data',
             separator=' ',
-            args='{
+            table_v2_args='{
               tableConfig: WB.mappingDataTableConfig,
             }'
             );
