@@ -32,6 +32,8 @@ function SmartCell({ data }) {
         return <PatoEntityCell data={data.pato_evidence} />;
       } else if (data.class || data.text) {
         return <SimpleCell data={data} />;
+      } else if (data.genotype) {
+	return <SimpleCell>{data.genotype && data.genotype.str}</SimpleCell>
       } else {
         return (
           <HashCell
