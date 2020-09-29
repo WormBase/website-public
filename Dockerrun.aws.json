@@ -88,7 +88,7 @@
     },
     {
       "name": "jbrowse-protein",
-      "image": "gmod/wormbase-jbrowse-protein:WS277",
+      "image": "gmod/wormbase-jbrowse-protein:WS278",
       "essential": true,
       "portMappings": [
         {
