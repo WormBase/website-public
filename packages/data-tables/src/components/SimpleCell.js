@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from './Link';
 import { makeStyles } from '@material-ui/core/styles';
-import ReactHtmlParser from 'react-html-parser';
+// import ReactHtmlParser from 'react-html-parser';
 
 const useStyles = makeStyles((theme) => ({
   root: {
