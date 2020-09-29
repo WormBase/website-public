@@ -115,6 +115,9 @@ const useStyles = makeStyles((theme) => ({
   toolbarWrapper: {
     overflow: 'hidden', // work around -4px margin in Grid
   },
+  expandToggleLabel: {
+    padding: 0,
+  },
   toolbar: {
     padding: `${theme.spacing(0.5)}px ${theme.spacing(0.5)}px 0`,
 
@@ -314,6 +317,7 @@ const Table = ({
                 label={
                   isCellExpanded ? 'Details expanded' : 'Details collapsed'
                 }
+                className={classes.expandToggleLabel}
               />
             ) : null}
           </Grid>
