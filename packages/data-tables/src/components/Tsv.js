@@ -7,90 +7,59 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
     return x.class !== undefined && x.label !== undefined;
   };
 
+  const update = (result, path, value) => {
+    const key = path.join('.');
+    if (result[key]) {
+      result[key] += ` ${value}`;
+    } else {
+      result[key] = value;
+    }
+  };
+
   const flattenRecursiveForTsv = (data, prefix = [], result = {}) => {
+    // data: scalar
     if (Object(data) !== data) {
       if (data === null) {
-        result[prefix.join('.')] = '';
+        update(result, prefix, '');
       } else {
         // check if it contains HTML elements
         if (/<\/?[a-z][\s\S]*>/i.test(data)) {
           // extract content from HTML string on the right side
-          result[prefix.join('.')] = data.replace(/<[^>]+>/g, '');
+          update(result, prefix, data.replace(/<[^>]+>/g, ''));
         } else {
-          result[prefix.join('.')] = data;
+          update(result, prefix, data);
         }
       }
-      return result;
-    }
-
-    // data: [~]
-    if (Array.isArray(data)) {
-      // data: [[~],[~],...]
-      if (Array.isArray(data[0])) {
-        // data: [[],[],...]
-        if (data.flat().length === 0) {
-          result[prefix.join('.')] = '';
-          return result;
-        }
-        // data: [[{Tag}],[{Tag}],[],[{Tag}],...]
-        if (isTag(data.flat()[0])) {
-          const tagTypeDataArr = data.map((dat) => {
-            if (dat.length === 0) {
-              return '';
-            }
-            return dat.map((da) => {
-              return `${da.label}[${da.id}]`;
-            });
-          });
-          result[prefix.join('.')] = tagTypeDataArr.join(';');
-          return result;
-        }
-
-        console.error(data);
-        throw new Error(
-          'Data is surely array of array. But it is not Tag type one.'
-        );
-      }
-
-      // data: [{~},{~},...]
-      if (typeof data[0] === 'object') {
-        // data: [{Tag},{Tag},...]
-        if (isTag(data[0])) {
-          const tagTypeDataArr = data.map((dat) => `${dat.label}[${dat.id}]`);
-          result[prefix.join('.')] = tagTypeDataArr.join(';');
-          return result;
-        }
-
-        // data: [{Pato},{Pato},...]
-        if (data[0].pato_evidence) {
-          const patoTypeDataArr = data.map(
-            (dat) =>
-              `${dat.pato_evidence.entity_term.label}[${dat.pato_evidence.entity_term.id}] ${dat.pato_evidence.pato_term}`
-          );
-          result['entity'] = patoTypeDataArr.join(';');
-          return result;
-        }
-
-        console.error(data);
-        throw new Error(
-          'Data is surely array of object. But it is neigher Tag type one nor Pato type one.'
-        );
-      }
-
-      // data: [~,~,...]
-      result[prefix.join('.')] = data.join(';');
       return result;
     }
 
     // data: {Tag}
     if (isTag(data)) {
-      result[prefix.join('.')] = `${data.label}[${data.id}]`;
+      update(result, prefix, `${data.label}[${data.id}]`);
       return result;
     }
 
     // data: {Species}
     if (data.species !== undefined && data.genus !== undefined) {
-      result['species'] = `${data.genus}. ${data.species}`;
+      update(result, prefix, `${data.genus}. ${data.species}`);
+      return result;
+    }
+
+    // data: {Pato}
+    if (data.pato_evidence && data.pato_evidence.entity_term) {
+      update(
+        result,
+        prefix,
+        `${data.pato_evidence.entity_term.label}[${data.pato_evidence.entity_term.id}] ${data.pato_evidence.pato_term}`
+      );
+      return result;
+    }
+
+    // data: [Any]
+    if (Array.isArray(data)) {
+      Object.keys(data).forEach((key) => {
+        flattenRecursiveForTsv(data[key], [...prefix], result);
+      });
       return result;
     }
 
