@@ -30,6 +30,9 @@ const SimpleCell = ({ data, children }) => {
     content = data;
   }
 
+  if (typeof content === 'string' && content.match(/<br \/>/)) {
+    console.log(content);
+  }
   return (
     <div className={classes.root}>
       {typeof content === 'string'

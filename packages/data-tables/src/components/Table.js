@@ -138,7 +138,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const isCellExpandable = (value) => {
-  console.log(value);
   if (Array.isArray(value) && value.length > 1) {
     return true;
   } else if (
