@@ -30,7 +30,7 @@ services:
     expose:
       - "80"
   jbrowse-protein:
-    image: gmod/wormbase-jbrowse-protein:WS277
+    image: gmod/wormbase-jbrowse-protein:WS278
     expose:
       - "80"
   upstream-proxy:
