@@ -30,23 +30,13 @@ const SimpleCell = ({ data, children }) => {
     content = data;
   }
 
-  if (typeof content === 'string' && content.match(/<br \/>/)) {
-    console.log(content);
-  }
   return (
     <div className={classes.root}>
-      {typeof content === 'string'
-        ? ReactHtmlParser(content, {
-            transform: (node) => {
-              if (node.attribs?.onclick) {
-                return (
-                  <div dangerouslySetInnerHTML={{ __html: content }}></div>
-                );
-              }
-              return undefined;
-            },
-          })
-        : content}
+      {typeof content === 'string' && content.match(/<[^>]+>/) ? (
+        <div dangerouslySetInnerHTML={{ __html: content }}></div>
+      ) : (
+        content
+      )}
     </div>
   );
 };
