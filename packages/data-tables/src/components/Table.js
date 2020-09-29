@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& .td': {
       // padding: '0.1rem 0.3rem',
+      display: 'flex',
     },
     '& .th:last-child, .td:last-child': {
       borderRight: 0,
@@ -101,7 +102,10 @@ const useStyles = makeStyles((theme) => ({
   },
   rowArrowIcon: {
     marginRight: 10,
-    verticalAlign: 'middle',
+    alignSelf: 'center',
+  },
+  annotationCount: {
+    display: 'inline-block',
   },
   subElement: {
     fontSize: '0.8em',
@@ -243,8 +247,12 @@ const Table = ({
           ) : (
             <ArrowRightIcon className={classes.rowArrowIcon} />
           )}
-          <SmartCell data={row.subRows[0].values[groupByID]} />
-          <small>{` ${row.subRows.length} annotation(s)`}</small>
+          <div>
+            <SmartCell data={row.subRows[0].values[groupByID]} />{' '}
+            <small
+              className={classes.annotationCount}
+            >{`${row.subRows.length} annotation(s)`}</small>
+          </div>
         </>
       );
     } else if (cell.isAggregated) {
@@ -370,7 +378,7 @@ const Table = ({
                           {...cell.getCellProps()}
                           className={decideClassNameOfCell(cell, idx)}
                         >
-                          <div>{renderCell(cell, row)}</div>
+                          {renderCell(cell, row)}
                         </div>
                       );
                     })}
