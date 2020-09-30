@@ -155,7 +155,7 @@ sub _process_assembly {
         wb_release_range  => $wb_range,
         reference         => $self->_pack_obj($ref),
         status            => $status,
-        bioproject        => $bioproject
+        bioproject        => "$bioproject"
     };
     return $data;
 }
