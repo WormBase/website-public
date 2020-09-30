@@ -1,5 +1,16 @@
 // export function buildUrl(id, clas, resourcePages) {
 
+const ACE2WB = {
+  do_term: 'disease',
+};
+
+function ace2wb(aceClass) {
+  if (aceClass) {
+    const aceClassLowercase = aceClass.toLowerCase();
+    return ACE2WB[aceClassLowercase] || aceClassLowercase;
+  }
+}
+
 const resourcePages = new Set([
   'analysis',
   'author',
@@ -17,7 +28,7 @@ const resourcePages = new Set([
 
 export function buildUrl(tag) {
   const { id } = tag;
-  const someClass = tag.class;
+  const someClass = ace2wb(tag.class);
   if (resourcePages.has(someClass)) {
     return `/resources/${someClass}/${id}`;
   } else {
