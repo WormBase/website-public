@@ -1,4 +1,4 @@
-WormBase Website Repository
+WormBase Website Repositories
 ===========================
 
 This repository contains the [WormBase](http://www.wormbase.org) Web application.
