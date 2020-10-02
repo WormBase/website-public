@@ -1,0 +1,23 @@
+<h2>[% fields.name.data.label %]</h2>
+
+[%
+
+WRAPPER highlight_box;
+
+
+END;
+
+'<div class="description">';
+fields.synonyms.data;
+
+WRAPPER $field_block title=pluralize('Genotype component', fields.genotype_components.data.size) key="genotype_components";
+  tags2link(fields.genotype_components.data, '<br />');
+END;
+
+WRAPPER $field_block title=pluralize('Models disease', fields.models_diseases.data.size) key="models_diseases";
+  tags2link(fields.models_diseases.data, '<br />');
+END;
+
+'</div>';
+
+%]
