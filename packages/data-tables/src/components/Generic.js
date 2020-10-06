@@ -134,7 +134,6 @@ const Generic = ({
 
     return columnsTemp;
   }, [classes.columnHeader, columnsHeader, data, hasGroupedRow, order]);
-  console.log(columns);
 
   const filterTypes = useMemo(() => {
     const storeValueOfNestedObj = (obj, keyArr) => {
