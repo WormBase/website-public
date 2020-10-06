@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
     padding: 0,
     listStyleType: 'none',
+    width: '100%',
   },
   listItem: {
     margin: 0,

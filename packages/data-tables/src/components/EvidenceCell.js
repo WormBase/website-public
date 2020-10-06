@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: 'transparent',
     boxShadow: 'none',
+    width: '100%',
   },
   accordionSummaryRoot: {
     minHeight: 0,
