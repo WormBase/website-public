@@ -38,3 +38,11 @@ export const nlg1 = () => (
     {...{ id, order, columnsHeader }}
   />
 );
+
+export const dys1 = () => (
+  <Wrapper
+    WBid="WBGene00001131"
+    tableType="detailed_disease_model"
+    {...{ id, order, columnsHeader }}
+  />
+);
