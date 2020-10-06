@@ -88,6 +88,7 @@ const useStyles = makeStyles((theme) => ({
       textAlign: 'left',
       display: 'flex',
       justifyContent: 'space-between',
+      userSelect: 'none',
     },
     '& .th .arrow-icon': {
       fontSize: '1rem',
