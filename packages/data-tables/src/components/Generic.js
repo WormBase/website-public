@@ -42,6 +42,49 @@ const disableSort = (data, ord) => {
   return false;
 };
 
+const getCellWith = (value) => {
+  if (typeof value === 'object') {
+    if (value === null) {
+      return 0;
+    } else if (Array.isArray(value)) {
+      return getCellWith(value[0]);
+    } else if (value.label) {
+      return getCellWith(value.label);
+    } else if (value.text || value.evidence) {
+      return Math.max(getCellWith(value.text), getCellWith(value.evidence));
+    } else if (value.pato_evidence) {
+      return getCellWith(
+        value.pato_evidence && value.pato_evidence.entity_term
+      );
+    } else if (value.species) {
+      return getCellWith(value.species);
+    } else if (value.genotype) {
+      return getCellWith(value.genotype.str);
+    } else {
+      const attributeKeyWidth = 20;
+      return (
+        attributeKeyWidth +
+        Object.values(value).reduce(
+          (result, item) => Math.max(result, getCellWith(item)),
+          0
+        )
+      );
+    }
+  }
+  return (`${value}` || '').length;
+};
+
+const getColumnWidth = (rows, accessor, headerText) => {
+  const maxWidth = 400;
+  const minWidth = 120;
+  const magicSpacing = 10;
+  const cellLength = Math.max(
+    ...rows.map((row) => getCellWith(row[accessor]))
+    //headerText.length + 2,
+  );
+  return Math.max(minWidth, Math.min(maxWidth, cellLength * magicSpacing));
+};
+
 const Generic = ({
   data,
   id,
@@ -65,6 +108,7 @@ const Generic = ({
         Cell: ({ cell: { value } }) => {
           return <SmartCell data={value} />;
         },
+        width: getColumnWidth(data.slice(0, 100), ord, columnsHeader[`${ord}`]),
         sortType: (rowA, rowB, columnId) => {
           try {
             return decideSortType(rowA, rowB, columnId);
@@ -90,6 +134,7 @@ const Generic = ({
 
     return columnsTemp;
   }, [classes.columnHeader, columnsHeader, data, hasGroupedRow, order]);
+  console.log(columns);
 
   const filterTypes = useMemo(() => {
     const storeValueOfNestedObj = (obj, keyArr) => {
@@ -164,7 +209,6 @@ const Generic = ({
     () => ({
       filter: 'defaultFilter',
       minWidth: 80,
-      width: 120,
       maxWidth: 600,
     }),
     []
