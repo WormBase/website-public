@@ -32,7 +32,7 @@ const SimpleCell = ({ data, children }) => {
 
   return (
     <div className={classes.root}>
-      {typeof content === 'string' && content.match(/<[^>]+>/) ? (
+      {typeof content === 'string' ? (
         <div dangerouslySetInnerHTML={{ __html: content }}></div>
       ) : (
         content

@@ -55,6 +55,12 @@ const Tsv = ({ data, id, order, ...otherProps }) => {
       return result;
     }
 
+    // data: {Genotype}
+    if (data.genotype && data.genotype.str) {
+      update(result, prefix, data.genotype.str.replace(/&nbsp;/g, ' '));
+      return result;
+    }
+
     // data: [Any]
     if (Array.isArray(data)) {
       Object.keys(data).forEach((key) => {
