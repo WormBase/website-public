@@ -7,13 +7,24 @@ import SimpleCell from './SimpleCell';
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: 0,
+    [theme.breakpoints.up('md')]: {
+      display: 'grid',
+      gridTemplateColumns: '100px auto',
+      columnGap: theme.spacing(1),
+    },
+
+    '& dt': {
+      fontWeight: 'bold',
+      marginBottom: -1 * theme.spacing(1),
+      [theme.breakpoints.up('md')]: {
+        justifySelf: 'end',
+        textAlign: 'right',
+        marginBottom: 0,
+      },
+    },
 
     '& dd': {
-      marginLeft: theme.spacing(1),
-
-      [theme.breakpoints.up('md')]: {
-        marginLeft: theme.spacing(4),
-      },
+      margin: 0,
     },
   },
 }));
