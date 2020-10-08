@@ -77,7 +77,7 @@ const getCellWith = (value) => {
 const getColumnWidth = (rows, accessor, headerText) => {
   const maxWidth = 400;
   const minWidth = 120;
-  const magicSpacing = 10;
+  const magicSpacing = 8;
   const cellLength = Math.max(
     ...rows.map((row) => getCellWith(row[accessor]))
     //headerText.length + 2,

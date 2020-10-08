@@ -52,15 +52,15 @@ const useStyles = makeStyles((theme) => ({
     '& .is_not_sorted_odd_cell': {
       backgroundColor: '#fff',
     },
-    '& .th, .td': {
+    '& .th': {
       margin: 0,
       padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-      // borderBottom: '1px solid #ededed',
-      // borderRight: '1px solid #fff',
       position: 'relative',
     },
     '& .td': {
       // padding: '0.1rem 0.3rem',
+      margin: 0,
+      padding: `${theme.spacing(0.25)}px ${theme.spacing(1)}px`,
       display: 'flex',
     },
     '& .th:last-child, .td:last-child': {

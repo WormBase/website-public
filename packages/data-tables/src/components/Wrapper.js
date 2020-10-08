@@ -39,12 +39,16 @@ const Wrapper = ({ WBid, tableType, additionalKey = '', ...tableProps }) => {
   console.log(data);
 
   return data.length === 0 ? null : (
-    <Generic
-      data={data}
-      hasGroupedRow={hasGroupedRow(tableType)}
-      propertyForUnwinding={getPropertyForUnwinding(tableType)}
-      {...tableProps}
-    />
+    <div className="content">
+      {' '}
+      {/* additioanl selector matched by in main.css */}
+      <Generic
+        data={data}
+        hasGroupedRow={hasGroupedRow(tableType)}
+        propertyForUnwinding={getPropertyForUnwinding(tableType)}
+        {...tableProps}
+      />
+    </div>
   );
 };
 
