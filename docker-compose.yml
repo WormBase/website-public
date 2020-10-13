@@ -26,7 +26,7 @@ services:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - JWT_SECRET='${JWT_SECRET}'
   jbrowse:
-    image: gmod/wormbase-jbrowse:WS277
+    image: gmod/wormbase-jbrowse:WS278
     expose:
       - "80"
   jbrowse-protein:
