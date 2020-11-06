@@ -56,6 +56,7 @@ WRAPPER $field_block title="Interactors" key="interactor";
 	    transgene	=> 'Transgene',
 	},
 	key="interactor");
+
 END;
 
 WRAPPER $field_block title="Regulation Results" key="regulation_result";
@@ -73,6 +74,17 @@ remarks;
 
 WRAPPER $field_block title="Historical gene" key="historical_gene";
     cell_content(fields.historical_gene.data);
+END;
+
+WRAPPER $field_block title="Wormicloud" key="interactor" title='';
+    wormicloud_link = "https://wormicloud.textpressolab.com/?keywords=";
+    FOREACH interactor IN fields.interactor.data;
+        wormicloud_link = wormicloud_link _ interactor.interactor.label;
+	UNLESS loop.last;
+	    wormicloud_link = wormicloud_link _ ',' ;
+	END;
+    END;
+    external_link(wormicloud_link, 'View interaction summary with word cloud (Wormicloud)');
 END;
 
 %]
