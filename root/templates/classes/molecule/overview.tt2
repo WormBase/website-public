@@ -156,6 +156,14 @@ WRAPPER $field_block title='' key="biological_role";
         key = 'biological_role');
 END;
 
+WRAPPER $field_block title=pluralize('Induces disease', fields.induces_disease.data.size) key="induces_disease";
+    cell_content(fields.induces_disease.data);
+END;
+
+WRAPPER $field_block title=pluralize('Modifies disease', fields.modifies_disease.data.size) key="modifies_disease";
+    cell_content(fields.modifies_disease.data);
+END;
+
 '<div class="description">';
 remarks(no_toggle=1);
 '</div>';
