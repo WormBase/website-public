@@ -59,6 +59,7 @@ IF fields.chebi_id.data;
             height:210px;
             position:relative;
             display:none;
+	    z-index:1;
          }
         .molecule--chebi-image {
             background-color: white;
