@@ -59,6 +59,7 @@ IF fields.chebi_id.data;
             height:210px;
             position:relative;
             display:none;
+	    z-index:1;
          }
         .molecule--chebi-image {
             background-color: white;
@@ -154,6 +155,14 @@ WRAPPER $field_block title='' key="biological_role";
             paper_evidence => 'Reference'
         },
         key = 'biological_role');
+END;
+
+WRAPPER $field_block title=pluralize('Induces disease', fields.induces_disease.data.size) key="induces_disease";
+    cell_content(fields.induces_disease.data);
+END;
+
+WRAPPER $field_block title=pluralize('Modifies disease', fields.modifies_disease.data.size) key="modifies_disease";
+    cell_content(fields.modifies_disease.data);
 END;
 
 '<div class="description">';
