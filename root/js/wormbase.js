@@ -108,13 +108,14 @@ var name2widget = {
       return;
     }
 
-    function ajaxError(xhr){
+    function ajaxError(xhr, jqueryElement){
           var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '',
               statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
-          return '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+          var html = '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
                   + '<p><a href="/tools/support?url=' + location.pathname
                   + (error ? '&msg=' + encodeURIComponent(error.replace(/^\s+|\s+$|\n/mg, '')) : '')
-                  + '"><button class="ui-state-active"><span>Let us know</span></button></a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
+              + '"><button class="ui-state-active"><span>Let us know</span></button></a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
+      ReactDOM.render(<div dangerouslySetInnerHTML={{__html: html}} />, jqueryElement[0]);
     }
 
     function navBarInit(){
@@ -203,7 +204,7 @@ var name2widget = {
                 location.href=data;
               },
               error: function(xhr,status,error) {
-                print.html(ajaxError(xhr));
+                ajaxError(xhr, print);
               }
             });
       });
@@ -325,8 +326,9 @@ var name2widget = {
                           }
                       },
                     error: function(xhr,status,error) {
-                        $jq(".error").prepend(ajaxError(xhr));
-                      }
+                      var placeholder = $('<div></div>').prependTo($jq(".error"));
+                      ajaxError(xhr, placeholder);
+                    }
                 });
                 $jq(this).parent().parent().addClass("ui-state-highlight");
                 return false;
@@ -668,7 +670,7 @@ var name2widget = {
           }
         },
         error:function(xhr, textStatus, thrownError){
-          ajaxPanel.html(ajaxError(xhr));
+          ajaxError(xhr, ajaxPanel);
         },
         complete:function(XMLHttpRequest, textStatus){
           if(callback){ callback(); }
@@ -1244,12 +1246,12 @@ var Layout = (function(){
     function newLayout(layout){
       updateLayout(layout, undefined, function() {
         $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"), function(response, status, xhr) {
-            if (status === "error") {
-                var msg = "Sorry but there was an error: ";
-                $jq(".list-layouts").html(ajaxError(xhr));
-              }
-            });
-          });
+          if (status === "error") {
+            var msg = "Sorry but there was an error: ";
+            ajaxError(xhr, $jq(".list-layouts"));
+          }
+        });
+      });
       if(timer){
         clearTimeout(timer);
         timer = undefined;
@@ -1694,8 +1696,10 @@ var Scrolling = (function(){
             updateCounts(url);
               },
           error: function(xhr,status,error) {
-                $jq("#comments").prepend(ajaxError(xhr));
-              }
+            var comments = $jq("#comments");
+            var placeholder = $('<div></div>').prependTo(comments);
+            ajaxError(xhr, placeholder);
+          }
         });
         var box = $jq('<div class="comment-box"><a href="/me">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
         var comments = $jq("#comments");
@@ -1714,9 +1718,11 @@ var Scrolling = (function(){
                       updateCounts(url);
           },
         error: function(xhr,status,error) {
-                $jq("#comments").prepend(ajaxError(xhr));
-            cm.innerHTML(error);
-          }
+          var comments = $jq("#comments");
+          var placeholder = $('<div></div>').prependTo(comments);
+          ajaxError(xhr, placeholder);
+          cm.innerHTML(error);
+        }
       });
       cm.parent().remove();
     }
@@ -1783,8 +1789,9 @@ var Scrolling = (function(){
                   message.append(data.message);
               },
           error: function(xhr,status,error) {
-                  message.append(ajaxError(xhr));
-              }
+            var placeholder = $('<div></div>').appendTo(message);
+            ajaxError(xhr, placeholder);
+          }
         });
         feed.children().not('#issue-message').hide();
         addNewLink.show();
@@ -1817,10 +1824,10 @@ var Scrolling = (function(){
               data: {widget_title:widget_title, path:path, widget_content:widget_content, widget_order:widget_order},
               success: function(data){
                     StaticWidgets.reload(widget_id, 0, data.widget_id);
-                },
+              },
               error: function(xhr,status,error) {
-                widget.find(".content").html(ajaxError(xhr));
-                }
+                ajaxError(xhr, widget.find(".content"));
+              }
           });
     },
     edit: function(wname, rev) {
@@ -1858,7 +1865,7 @@ var Scrolling = (function(){
             $jq("#nav-static-widget-" + widget_id).click().hide();
           },
           error: function(xhr,status,error) {
-              $jq("li#static-widget-" + widget_id).find(".content").html(ajaxError(xhr));
+            ajaxError(xhr, $jq("li#static-widget-" + widget_id).find(".content"));
           }
         });
       }
@@ -2061,7 +2068,6 @@ var Scrolling = (function(){
               </InteractionGraphDataProvider>
             );
           };
-          console.log(focusNodeId);
           ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
         }
       );
@@ -3200,7 +3206,6 @@ var Scrolling = (function(){
           const SequenceCard = module.SequenceCard;
           const StrandSelect = module.StrandSelect;
 
-          console.log(data);
           ReactDOM.render(
             <StrandSelect initialStrand={data.reported_on_strand}>
               {
