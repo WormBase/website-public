@@ -1422,7 +1422,7 @@ div#header .release_date {
 
 /* System message, for displaying site-wide warnings and alerts */
 #top-system-message {
-  background: #406F9C;
+  background: #224162;
   color:white;
   margin:0em;
   text-align:center;
@@ -3955,7 +3955,7 @@ table.venn tr.venn-data td {
 
 #issue-box-tab {
   padding:0.7em;
-  background: #6D1B1C;
+  background: #224162;
   font-weight:bold;
   font-size:0.9em;
   color:white;
@@ -3968,7 +3968,7 @@ table.venn tr.venn-data td {
   width:400px;
   clear:right;
   float:right;
-  background:#6D1B1C;
+  background:#224162;
   color:white;
 }
 #issue-box-content #issues-new{
@@ -3980,10 +3980,9 @@ table.venn tr.venn-data td {
 }
 
 #issue-box textarea, #issue-box input, #issue-box select, #issue-box option{
-  background: #222;
   padding: 5px;
-  border:1px solid black;
-  color:white;
+  border:1px solid #999;
+  border-radius: 4px;
   width:370px;
 }
 
