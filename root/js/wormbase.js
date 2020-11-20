@@ -27,6 +27,7 @@ var ReactDOM = require('../../client/node_modules/react-dom');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;
+var ErrorMessage = require('../../client/src/components/ErrorMessage').default;
 
 var SingleWidgetPage = require('../../client/src/components/SingleWidgetPage').default;
 
@@ -111,11 +112,7 @@ var name2widget = {
     function ajaxError(xhr, jqueryElement){
           var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '',
               statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
-          var html = '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname
-                  + (error ? '&msg=' + encodeURIComponent(error.replace(/^\s+|\s+$|\n/mg, '')) : '')
-              + '"><button class="ui-state-active"><span>Let us know</span></button></a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
-      ReactDOM.render(<div dangerouslySetInnerHTML={{__html: html}} />, jqueryElement[0]);
+      ReactDOM.render(<Root><ErrorMessage error={new Error(`${statusText} ${error}`)} /></Root>, jqueryElement[0]);
     }
 
     function navBarInit(){
