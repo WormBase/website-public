@@ -519,6 +519,7 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
 	      'Post transcriptionally modified site',
 	      'Motifs',
 	      'Selected BLASTP Homologies',
+	      'MobiDB-lite',
 	      'Mass spec peptides'
 	    ];
 
