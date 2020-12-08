@@ -28,6 +28,8 @@ require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;
 var ErrorMessage = require('../../client/src/components/ErrorMessage').default;
+var logErrorToMyService = require('../../client/src/utils/logErrorToMyService').default;
+
 
 var SingleWidgetPage = require('../../client/src/components/SingleWidgetPage').default;
 
@@ -112,6 +114,7 @@ var name2widget = {
     function ajaxError(xhr, jqueryElement){
           var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '',
               statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
+      logErrorToMyService(error);
       ReactDOM.render(<Root><ErrorMessage error={new Error(`${statusText} ${error}`)} /></Root>, jqueryElement[0]);
     }
 

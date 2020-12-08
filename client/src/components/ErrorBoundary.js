@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ErrorMessage from './ErrorMessage';
+import logErrorToMyService from '../utils/logErrorToMyService';
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -15,9 +16,9 @@ export default class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, info) {
     // You can also log the error to an error reporting service
-    // logErrorToMyService(error, info);
     // console.log(error)
     // console.log(info);
+    logErrorToMyService(error, info);
   }
 
   render() {
