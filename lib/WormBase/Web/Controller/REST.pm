@@ -1141,6 +1141,7 @@ sub get_rest_endpoints {
 sub is_slow_endpoint {
     my ($endpoint_template) = @_;
     return grep { $endpoint_template eq $_; } (
+        '/rest/widget/home/gene_name_changes',
         '/rest/widget/gene/{id}/interactions',
         '/rest/widget/gene_class/{id}/current_genes',
         '/rest/widget/gene_class/{id}/previous_genes',
