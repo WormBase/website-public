@@ -113,7 +113,8 @@ var name2widget = {
 
     function ajaxError(xhr, jqueryElement){
       var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
-      var statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': `${xhr.status} ${xhr.statusText} ${xhr.requestURL} `;
+      var {responseText, ...xhrOtherProps } = xhr;
+      var statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': `${JSON.stringify(xhrOtherProps, null, 2)}`;
       var errorNew = new Error(`${statusText} ${error}`);
       logErrorToMyService(errorNew);
       ReactDOM.render(<Root><ErrorMessage error={errorNew} /></Root>, jqueryElement[0]);
