@@ -112,6 +112,11 @@ var name2widget = {
     }
 
     function ajaxError(xhr, jqueryElement){
+      if (xhr.readyState === 0) {
+        // Browser cancels request for some reason. Not an API issue.
+        // Intermittent issue, that can sometimes reproduced by quickly refreshing pages.
+        return;
+      }
       var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
       var {responseText, ...xhrOtherProps } = xhr;
       var statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': `${JSON.stringify(xhrOtherProps, null, 2)}`;
