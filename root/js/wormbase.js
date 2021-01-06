@@ -3139,9 +3139,10 @@ var Scrolling = (function(){
                     <div>
                       {
                         ['wildtype', 'mutant'].map((type) => {
-                          const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
                           const flankLength = 500;
-                          return (
+                          const {positive_strand, negative_strand} = data[type] || {};
+                          const {sequence, features} = (strand === '+' ? positive_strand : negative_strand) || {};
+                          return sequence ? (
                             <SequenceCard
                               key={type}
                               title={`${type} ${data['public_name']}, with ${flankLength}bp flanks, shown on (${strand}) strand`}
@@ -3156,7 +3157,7 @@ var Scrolling = (function(){
                               }}
                               strand={strand}
                             />
-                          );
+                          ) : null;
                         })
                       }
                     </div>
