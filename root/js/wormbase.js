@@ -2075,7 +2075,12 @@ var Scrolling = (function(){
               </InteractionGraphDataProvider>
             );
           };
-          ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
+          ReactDOM.render(
+            <Root>
+              <InteractionGraphWithData />
+            </Root>,
+            document.getElementById('interaction-graph-view')
+          );
         }
       );
     }
@@ -3108,14 +3113,14 @@ var Scrolling = (function(){
     function renderWidget(data, elementId, widgetName) {
       const WidgetComponent = name2widget[widgetName];
       const pageInfo =$jq("#header").data("page");
-      ReactDOM.render(<WidgetComponent data={data} pageInfo={pageInfo} />, document.getElementById(elementId));
+      ReactDOM.render(<Root><WidgetComponent data={data} pageInfo={pageInfo} /></Root>, document.getElementById(elementId));
     }
 
     function renderGORibbon(data, elementId) {
       import('../../client/src/components/GORibbon').then(
         (module) => {
           const GORibbon = module.default;
-          ReactDOM.render(<GORibbon data={data} />, document.getElementById(elementId));
+          ReactDOM.render(<Root><GORibbon data={data} /></Root>, document.getElementById(elementId));
         }
       );
     }
@@ -3126,6 +3131,7 @@ var Scrolling = (function(){
           const StrandSelect = module.StrandSelect;
           const SequenceCard = module.SequenceCard;
           ReactDOM.render(
+            <Root>
             <StrandSelect>
               {
                 ({strand}) => {
@@ -3157,7 +3163,8 @@ var Scrolling = (function(){
                   );
                 }
               }
-            </StrandSelect>,
+            </StrandSelect>
+            </Root>,
             document.getElementById(elementId)
           );
         }
@@ -3169,7 +3176,7 @@ var Scrolling = (function(){
         (module) => {
           const SequenceCard = module.SequenceCard;
           ReactDOM.render(
-            <div>
+            <Root>
               {
                 ['wildtype', 'mutant'].map((type) => {
                   const {sequence} = data[`${type}_conceptual_translation`];
@@ -3198,7 +3205,7 @@ var Scrolling = (function(){
                   );
                 })
               }
-            </div>,
+            </Root>,
             document.getElementById(elementId)
           );
         }
@@ -3214,6 +3221,7 @@ var Scrolling = (function(){
           const StrandSelect = module.StrandSelect;
 
           ReactDOM.render(
+            <Root>
             <StrandSelect initialStrand={data.reported_on_strand}>
               {
                 ({strand}) => {
@@ -3228,7 +3236,8 @@ var Scrolling = (function(){
                   );
                 }
               }
-            </StrandSelect>,
+            </StrandSelect>
+            </Root>,
             document.getElementById(elementId)
           );
         }
@@ -3248,6 +3257,7 @@ var Scrolling = (function(){
             protein_sequence = {data: null},
           } = sequenceWidgetData;
           ReactDOM.render(
+            <Root>
             <TranscriptSequencesCard
               wbId={wbId}
               splicedSequenceContext={spliced_sequence_context.data}
@@ -3256,7 +3266,8 @@ var Scrolling = (function(){
               cdsSequence={cds_sequence.data}
               sequenceContext={sequence_context.data}
               proteinSequence={protein_sequence.data}
-            />,
+            />
+            </Root>,
             document.getElementById(elementId)
           );
         }
@@ -3268,7 +3279,7 @@ var Scrolling = (function(){
         (module) => {
           const InteractorVennDiagram = module.default;
           ReactDOM.render(
-            <InteractorVennDiagram data={data} />,
+            <Root><InteractorVennDiagram data={data} /></Root>,
             document.getElementById(elementId)
           );
         }
