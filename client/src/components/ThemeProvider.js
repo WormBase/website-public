@@ -27,6 +27,8 @@ const ThemeProvider = ({ children, ...props }) => (
   </MuiThemeProvider>
 );
 
+ThemeProvider.displayName = 'ThemeProvider';
+
 export default ThemeProvider;
 
 export { withStyles };

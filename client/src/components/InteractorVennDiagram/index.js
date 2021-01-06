@@ -127,6 +127,8 @@ InteractorVennDiagram.propTypes = {
   ),
 };
 
+InteractorVennDiagram.displayName = 'InteractorVennDiagram';
+
 const styles = (theme) => ({
   root: {
     display: 'flex',

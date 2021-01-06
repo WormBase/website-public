@@ -14,3 +14,5 @@ export default function Root({ children }) {
 Root.propTypes = {
   children: PropTypes.any,
 };
+
+Root.displayName = 'Root';

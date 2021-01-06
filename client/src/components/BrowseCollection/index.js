@@ -193,3 +193,5 @@ export default function BrowseCollection({
     </React.Fragment>
   );
 }
+
+BrowseCollection.displayName = 'BrowseCollection';
