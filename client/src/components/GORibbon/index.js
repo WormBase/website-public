@@ -128,3 +128,5 @@ GORibbon.propTypes = {
     })
   ),
 };
+
+GORibbon.displayName = 'GORibbon';

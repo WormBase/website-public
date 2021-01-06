@@ -238,4 +238,6 @@ const styles = (theme) => {
   };
 };
 
+References.displayName = 'References';
+
 export default withStyles(styles, { withTheme: true })(References);

@@ -582,6 +582,8 @@ class InteractionGraph extends Component {
   }
 }
 
+InteractionGraph.displayName = 'InteractionGraph';
+
 const styles = (theme) => {
   return {
     cytoscapeContainer: {

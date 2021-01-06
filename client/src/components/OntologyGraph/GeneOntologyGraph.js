@@ -118,3 +118,5 @@ export default function GeneOntologyGraph({ focusTermId }) {
     />
   );
 }
+
+GeneOntologyGraph.display = 'GeneOntologyGraph';

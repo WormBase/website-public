@@ -114,6 +114,8 @@ Sequence.propTypes = {
   ),
 };
 
+Sequence.displayName = 'Sequence';
+
 const styles = (theme) => ({
   root: {
     '& div': {

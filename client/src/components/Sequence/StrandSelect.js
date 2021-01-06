@@ -92,6 +92,8 @@ StrandSelect.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+StrandSelect.displayName = 'StrandSelect';
+
 const styles = (theme) => ({
   positiveStrand: {
     borderLeft: `solid ${strandTheme.palette.secondary.light} ${1}px`,

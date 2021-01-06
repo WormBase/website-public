@@ -11,3 +11,5 @@ export default function LifeStageOntologyGraph({ focusTermId }) {
     />
   );
 }
+
+LifeStageOntologyGraph.displayName = 'LifeStageOntologyGraph';

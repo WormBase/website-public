@@ -99,6 +99,8 @@ SingleWidgetPage.propTypes = {
   }),
 };
 
+SingleWidgetPage.displayName = 'SingleWidgetPage';
+
 const styles = (theme) => ({
   page: {
     position: 'relative',

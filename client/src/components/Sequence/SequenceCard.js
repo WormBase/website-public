@@ -80,6 +80,8 @@ SequenceCard.propTypes = {
   downloadFileName: PropTypes.string,
 };
 
+SequenceCard.displayName = 'SequenceCard';
+
 const styles = (theme) => ({
   actions: {
     display: 'flex',

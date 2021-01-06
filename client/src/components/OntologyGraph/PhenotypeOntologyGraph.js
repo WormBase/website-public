@@ -54,3 +54,5 @@ export default function PhenotypeOntologyGraph({ focusTermId }) {
     />
   );
 }
+
+PhenotypeOntologyGraph.displayName = 'PhenotypeOntologyGraph';

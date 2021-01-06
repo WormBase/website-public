@@ -64,6 +64,8 @@ function ErrorMessage({
   );
 }
 
+ErrorMessage.displayName = 'ErrorMessage';
+
 const styles = (theme) => ({
   root: {},
   title: {

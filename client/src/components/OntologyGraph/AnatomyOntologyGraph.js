@@ -54,3 +54,5 @@ export default function AnatomyOntologyGraph({ focusTermId }) {
     />
   );
 }
+
+AnatomyOntologyGraph.displayName = 'AnatomyOntologyGraph';

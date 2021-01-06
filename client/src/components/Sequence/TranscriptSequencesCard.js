@@ -156,6 +156,8 @@ TranscriptSequenceCard.propTypes = {
   wbId: PropTypes.string.isRequired,
 };
 
+TranscriptSequenceCard.displayName = 'TranscriptSequenceCard';
+
 const styles = (theme) => ({
   card: {
     borderLeft: `1px solid ${theme.palette.text.hint}`,

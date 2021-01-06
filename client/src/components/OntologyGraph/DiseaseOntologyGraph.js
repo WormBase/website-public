@@ -49,3 +49,5 @@ export default function DiseaseOntologyGraph({ focusTermId }) {
     />
   );
 }
+
+DiseaseOntologyGraph.displayName = 'DiseaseOntologyGraph';

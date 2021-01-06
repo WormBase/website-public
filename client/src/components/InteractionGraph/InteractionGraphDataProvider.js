@@ -35,3 +35,5 @@ export default function InteractionGraphDataProvider({ dataUrl, children }) {
     })
   );
 }
+
+InteractionGraphDataProvider.displayName = 'InteractionGraphDataProvider';
