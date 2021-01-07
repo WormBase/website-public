@@ -94,7 +94,7 @@ class InteractionGraph extends Component {
   }
 
   componentWillUnmount() {
-    this._cy.destroy();
+    this._cy && this._cy.destroy();
   }
 
   edgeId = (interaction) => {
