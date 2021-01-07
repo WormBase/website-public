@@ -36,7 +36,7 @@ if (browserSupportsAllFeatures()) {
 } else {
   // All other browsers loads polyfills and then run `main()`.
   loadScript(
-    'https://polyfill.io/v3/polyfill.min.js?features=default%2Cfetch%2CIntersectionObserver',
+    'https://polyfill.io/v3/polyfill.min.js?features=default%2Ces2015%2Ces2016%2Ces2017%2Cfetch%2CIntersectionObserver',
     main
   );
 }
