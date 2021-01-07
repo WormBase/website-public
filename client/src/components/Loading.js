@@ -17,6 +17,8 @@ function Loading({ classes, classNameProp, center }) {
   );
 }
 
+Loading.displayName = 'Loading';
+
 const styles = (theme) => ({
   root: {
     height: 24,

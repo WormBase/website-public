@@ -5,7 +5,6 @@ import Button from '../Button';
 import { CircularProgress } from '../Progress';
 import Loading from '../Loading';
 import ErrorMessage from '../ErrorMessage';
-import ThemeProvider from '../ThemeProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import MoreIcon from '@material-ui/icons/MoreVert';
@@ -186,16 +185,14 @@ function OntologyGraphBase({
   );
 
   return (
-    <ThemeProvider>
-      <ResponsiveDrawer
-        rootRef={containerWrapperRef}
-        innerRef={drawerRef}
-        anchor="right"
-        drawerContent={graphSidebar}
-        mainContent={graphView}
-        mainHeader={graphToolbar}
-      />
-    </ThemeProvider>
+    <ResponsiveDrawer
+      rootRef={containerWrapperRef}
+      innerRef={drawerRef}
+      anchor="right"
+      drawerContent={graphSidebar}
+      mainContent={graphView}
+      mainHeader={graphToolbar}
+    />
   );
 }
 
@@ -203,6 +200,8 @@ OntologyGraphBase.propTypes = {
   useOntologyGraphParams: PropTypes.object,
   renderCustomSidebar: PropTypes.func,
 };
+
+OntologyGraphBase.displayName = 'OntologyGraphBase';
 
 const styles = (theme) => ({
   /* toolbar and buttons */

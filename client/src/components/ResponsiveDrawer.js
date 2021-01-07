@@ -148,6 +148,8 @@ ResponsiveDrawer.propTypes = {
   mainContent: PropTypes.element,
 };
 
+ResponsiveDrawer.displayName = 'ResponsiveDrawer';
+
 export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
 
 export { styles, ResponsiveDrawer };
