@@ -1368,7 +1368,15 @@ div#header .status-bar .ui-icon {
 /* Title and release date */
 div#header div#title {
   float:left;
-  margin: 24px 15px 0;
+  margin: 20px 0 0;
+  display: flex;
+  font-size: larger;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+div#header div#title > * {
+    padding: 0 0.5em;
 }
 
 div#header div#title img {
@@ -1377,17 +1385,28 @@ div#header div#title img {
 }
 
 div#header div#title > a,
-div#header div#title .release_date {
-    display: inline-block;
-    vertical-align: top;
+div#header div#title .release_date,
+div#header div#title .founding-member {
+    /* display: inline-block; */
+    /* vertical-align: top; */
 }
 
-div#header .release_date {
+div#header .release_date, div#header .founding-member {
     font-size:0.8em;
     line-height: 20.8px;
-    margin-left: 5px;
-    margin-top:16px;
+    /* margin-left: 5px; */
+    /* margin-top:16px; */
 }
+
+div#header .founding-member {
+  display: flex;
+  align-items: center;
+}
+
+div#header .founding-member > * {
+    margin-right: 0.5em;
+}
+
 
 @media screen and (max-width: 823px) {
   div#header .status-bar {
