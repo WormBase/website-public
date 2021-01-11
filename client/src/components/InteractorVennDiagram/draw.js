@@ -12,6 +12,17 @@ export default function draw(
   const div = select(node);
   div.datum(sets).call(chart);
 
+  let isSupportedBrowser = true;
+  selectAll('.venn-area').each((areaData, areaIdx, areas) => {
+    const area = areas[areaIdx];
+    if (!area.dataset) {
+      isSupportedBrowser = false;
+    }
+  });
+  if (!isSupportedBrowser) {
+    return {};
+  }
+
   const getAreaD = (function() {
     const dMap = {};
     selectAll('.venn-area').each((areaData, areaIdx, areas) => {
@@ -36,7 +47,7 @@ export default function draw(
         }
       });
     });
-    console.log(dMap);
+
     return (areaSetsId) => {
       return dMap[areaSetsId] && dMap[areaSetsId].d;
     };
