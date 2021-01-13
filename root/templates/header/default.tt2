@@ -50,13 +50,12 @@
 
   <div id="title">
     <a href="/" title="WormBase Home"><img src="/img/logo/logo_wormbase_gradient.svg" /><!-- <h1>[%# template.title or c.config.site_name %]</h1> --></a>
+    <div class="release_date">
+      Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a>
+    </div>
     |
     <div class="founding-member">
       <span>Founding member of </span> <a href="https://www.alliancegenome.org/" target="_blank" title="Alliance of Genome Resouces"><img width="200px" src="/img/agr_logo_light.png" alt="Alliance of Genome Resources"></a>
-    </div>
-    |
-    <div class="release_date">
-      Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[%- constants.acedb_version -%]</a>
     </div>
   </div>
 

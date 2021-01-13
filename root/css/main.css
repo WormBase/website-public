@@ -913,7 +913,7 @@ a#fade:hover, a.fade:hover {
     float:right;
 }
 
-@media screen and (max-width: 823px)  {
+@media screen and (max-width: 991px)  {
   #header #searchForm {
       float:left;
       clear:left;
@@ -1407,8 +1407,14 @@ div#header .founding-member > * {
     margin-right: 0.5em;
 }
 
+@media screen and (max-width: 1200px) {
+    div#header .founding-member > span {
+        display: none;
+    }
+}
 
-@media screen and (max-width: 823px) {
+
+@media screen and (max-width: 991px) {
   div#header .status-bar {
     float:none;
   }
