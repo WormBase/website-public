@@ -82,7 +82,7 @@ sub print_results_by_sts {
 
   my $command  = join ' ',EPCR,$filename,$EPCR_DB . "/genomic.fa",@options;
   my $opened = open (E,"$command |");
-  $msg .= "Couldn't run e-PCR program: $!" unless $opened;
+  $msg .= "Couldn't run e-PCR program '$command': $!" unless $opened;
 
   my $callback = sub {
     my $line = <E>;
@@ -100,7 +100,7 @@ sub print_results_by_sts {
     $results = print_text($callback,\%names,\@invalid);
   }
   my $closed = close E;
-  $msg .= "Couldn't run e-PCR program: $!" unless $closed;
+  $msg .= "Couldn't run e-PCR program '$command': $!" unless $closed;
 
   return $results, $objects, $msg;
 #  unlink $filename;
