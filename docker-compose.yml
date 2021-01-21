@@ -8,7 +8,7 @@ services:
       - "./proxy/conf.d:/etc/nginx/conf.d"
       - "./logs/nginx:/var/log/nginx"
   website:
-    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS279.12
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS279.13
     init: true
     expose:
       - "5000"
