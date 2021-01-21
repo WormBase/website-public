@@ -4494,6 +4494,16 @@ button::-moz-focus-inner {
         display: block;
     }
 
+    #wrap #content #widgets {
+        overflow: visible;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #wrap #content #widgets > * {
+        flex: 1 0 100%;
+    }
+
     #wrap #content #buttons-nav {
         display: none;
     }
