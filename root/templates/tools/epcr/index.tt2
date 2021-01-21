@@ -1,9 +1,9 @@
 <h1>e-PCR Search</h1>
 
-<p>This search uses Greg Schuler's
-<a target="_blank" href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9149949&amp;dopt=Abstract">e-PCR</a>
-program to search for STSs in the current C. elegans genome. Enter a list of primer pairs to find using the following format:
-</p>
+<p>This search uses Greg Schuler's [% external_link('http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9149949&amp;dopt=Abstract', 'e-PCR') %] program to search for STSs in the current C. elegans genome.</p>
+
+<p>You may also consider alternative tools to e-PCR, such as [% external_link("https://www.genome.ucsc.edu/cgi-bin/hgPcr?wp_target=&db=0&org=C.+elegans", "UCSC In-Silico PCR") %] and [% external_link("https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi", "Primer-BLAST") %].</p>
+<p> Enter a list of primer pairs to find using the following format:</p>
 
 <pre><b>Name     Left Oligo               Right Oligo              Length</b>
 assay_1  CGATAAACAATCAACGGCATAAT  TTTGAAACTGATATAGAGGGGCA  1188
