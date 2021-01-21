@@ -4472,3 +4472,43 @@ button::-moz-focus-inner {
 .static-widget-content h3 {
   margin: 0.5em auto 1em;
 }
+
+@media print {
+
+    #wrap > * {
+        display: none;
+    }
+
+    #wrap #content {
+        display: block;
+    }
+
+    #wrap #content * {
+        border: none;
+    }
+
+    #wrap #content #page-title-wrapper {
+        position: relative;
+        margin: 0;
+        top: 0;
+        display: block;
+    }
+
+    #wrap #content #buttons-nav {
+        display: none;
+    }
+
+    #wrap #content .navigation {
+        display: none;
+    }
+
+    #wrap #content .widget-header h3 {
+        font-size: larger
+    }
+
+    #wrap #content .widget-header .module-min  {
+        display: none;
+    }
+
+
+}
