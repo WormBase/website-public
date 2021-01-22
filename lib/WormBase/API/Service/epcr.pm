@@ -204,8 +204,6 @@ sub print_html {
     my ($ref,$start,$stop,$gb,$canonical,$genes) = resolve_coordinates(@args) or next;
     delete $names->{$assay};
 
-    #build jbrowse addFeature json
-    my $jbrowse_feature_json = uri_escape("[{\"seq_id\":\"$ref\",\"start\":$start,\"end\":$stop,\"name\":\"$assay\"}]");
     my $reflink = $ref =~ /CHROMOSOME_([IVX]*)/ ? $1 : $ref;
     my $genome_link    = sprintf(BROWSER,"$reflink:$start..$stop","$reflink+pcr_assay+$assay+$start..$stop");
 
@@ -227,7 +225,7 @@ sub print_html {
     $objects{$cds0_key} = objURL($first_gene->[0],'CDS');
     push @results, TR(td([
 		 ($entry_type eq 'id') ? a($pcr_key) : $assay,
-		 a({-href=>$genome_link,-target=>'_blank'},"$ref: $start..$stop"),
+		 a({-href=>$jbrowse_link,-target=>'_blank'},"JBrowse: $ref: $start..$stop") (a({-href=>$genome_link,-target=>'_blank'},"GBrowse"),
 		 @$gb ? a({-href=>$gb_link,-target=>'_blank'},"$gb->[0]: $gb->[1]..$gb->[2]")
 		      : '&nbsp;',
 		 @$canonical ? a($can_key)
