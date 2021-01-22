@@ -7,11 +7,13 @@ use strict;
 #use Ace::Browser::AceSubs qw(:DEFAULT AceAddCookie);
 use CGI qw/:standard escapeHTML Sub *table/;
 use File::Temp qw(tempfile);
+use URI::Escape::XS qw(uri_escape);
 #use ElegansSubs;
 #use Bio::DB::GFF;
 
 use constant EPCR       => '/usr/local/wormbase/services/e-PCR';
 use constant BROWSER    => 'http://www.wormbase.org/tools/genome/gbrowse/c_elegans_PRJNA13758?name=%s;add=%s';
+use constant JBROWSE    => '/tools/genome/jbrowse-simple/?data=data%2Fc_elegans_PRJNA13758&tracks=Classical_alleles%2CPolymorphisms%2CCurated_Genes&loc=%s&addFeatures=%s';
 use constant GENBANK    => 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s';
 use vars qw/$GFFDB $ACEDB $REF $EPCR_DB $data $format $entry_type $M $N $file_dir/;
 
@@ -201,8 +203,19 @@ sub print_html {
   while (my($assay,@args) = $callback->()) {
     my ($ref,$start,$stop,$gb,$canonical,$genes) = resolve_coordinates(@args) or next;
     delete $names->{$assay};
+
+    #build jbrowse addFeature json
+    my $jbrowse_feature_json = uri_escape("[{\"seq_id\":\"$ref\",\"start\":$start,\"end\":$stop,\"name\":\"$assay\"}]");
     my $reflink = $ref =~ /CHROMOSOME_([IVX]*)/ ? $1 : $ref;
     my $genome_link    = sprintf(BROWSER,"$reflink:$start..$stop","$reflink+pcr_assay+$assay+$start..$stop");
+
+        #build jbrowse addFeature json
+    my $jbrowse_feature_json = uri_escape("[{\"seq_id\":\"$ref\",\"start\":$start,\"end\":$stop,\"name\":\"$assay\"}]");
+    my $length = $stop - $start +1;
+    my $buf_start = $start-0.05*$length;
+    my $buf_stop  = $stop +0.05*$length;
+    my $jbrowse_link   = sprintf(JBROWSE,"$reflink:$buf_start..$buf_stop",$jbrowse_feature_json);
+
     my $gb_link        = sprintf(GENBANK,$gb->[0]);
     my $can_key = $canonical->[0] . "_link";
     my $pcr_key = "$assay" . "_link";
