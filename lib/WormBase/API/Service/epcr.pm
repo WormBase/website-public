@@ -13,7 +13,7 @@ use URI::Escape::XS qw(uri_escape);
 
 use constant EPCR       => '/usr/local/wormbase/services/e-PCR';
 use constant BROWSER    => 'http://www.wormbase.org/tools/genome/gbrowse/c_elegans_PRJNA13758?name=%s;add=%s';
-use constant JBROWSE    => '/tools/genome/jbrowse-simple/?data=data%2Fc_elegans_PRJNA13758&tracks=Classical_alleles%2CPolymorphisms%2CCurated_Genes&loc=%s&addFeatures=%s';
+use constant JBROWSE    => '/tools/genome/jbrowse-simple/?data=data%2Fc_elegans_PRJNA13758&tracks=Hits%2CClassical_alleles%2CPolymorphisms%2CCurated_Genes&loc=%s&addFeatures=%s&addTracks=%5B%7B%22label%22%3A%22Hits%22%2C%22type%22%3A%22JBrowse%2FView%2FTrack%2FCanvasFeatures%22%2C%22store%22%3A%22url%22%7D%5D';
 use constant GENBANK    => 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s';
 use vars qw/$GFFDB $ACEDB $REF $EPCR_DB $data $format $entry_type $M $N $file_dir/;
 
@@ -208,7 +208,7 @@ sub print_html {
     my $genome_link    = sprintf(BROWSER,"$reflink:$start..$stop","$reflink+pcr_assay+$assay+$start..$stop");
 
         #build jbrowse addFeature json
-    my $jbrowse_feature_json = uri_escape("[{\"seq_id\":\"$ref\",\"start\":$start,\"end\":$stop,\"name\":\"$assay\"}]");
+    my $jbrowse_feature_json = uri_escape("[{\"seq_id\":\"$ref\",\"start\":$start,\"end\":$stop,\"name\":\"$assay\",\"type\":\"match\"}]");
     my $length = $stop - $start +1;
     my $buf_start = $start-0.05*$length;
     my $buf_stop  = $stop +0.05*$length;
