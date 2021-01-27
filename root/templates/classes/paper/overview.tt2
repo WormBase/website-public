@@ -142,7 +142,17 @@
 
 [% IF fields.author_first_pass.data; %]
     [% WRAPPER thankyou; %]
-        We thank [% tag2link(fields.author_first_pass.data); %] for curating this paper through Author First Pass
+        We thank
+        [% FOREACH author IN fields.author_first_pass.data;
+           IF loop.first;
+             tag2link(author);
+           ELSIF loop.last;
+             ' and ' _ tag2link(author);
+           ELSE;
+             ' ' _ tag2link(author) _ ',';
+           END;
+        END %]
+        [% ' for curating this paper through Author First Pass'; %]
     [% END %]
 [% END; %]
 
