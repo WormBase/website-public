@@ -3305,6 +3305,12 @@ table#table_fpkm_controls_by td:nth-child(3) {
   border: 1px solid #aaa;
 }
 
+.community-curated {
+  background-color: lightgreen;
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
 /*********************************
 
    Navigation for sidebar view
