@@ -3309,6 +3309,7 @@ table#table_fpkm_controls_by td:nth-child(3) {
   background-color: lightgreen;
   padding: 4px 8px;
   border-radius: 5px;
+  display: inline-block;
 }
 
 /*********************************
