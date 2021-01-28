@@ -39,12 +39,14 @@
 
 [% END %]
 
-
 <div class="text-width">
+
 [% IF fields.retracted_in.data %]
     <p><strong>This paper has been retracted in</strong> [% tag2link(fields.retracted_in.data) %].</p>
     <hr />
 [% END %]
+
+<br />
 
 [%# BEGIN CITATION %]
 	[% IF authors.size > 0 %]
@@ -137,6 +139,24 @@
 
 
 [% remarks %]
+
+[% IF fields.author_first_pass.data; %]
+    [% WRAPPER thankyou; %]
+        We thank
+        [% FOREACH author IN fields.author_first_pass.data;
+           IF loop.first;
+             tag2link(author);
+           ELSIF loop.last;
+             ' and ' _ tag2link(author);
+           ELSE;
+             ' ' _ tag2link(author) _ ',';
+           END;
+        END %]
+        [% ' for curating this paper through Author First Pass'; %]
+    [% END %]
+[% END; %]
+
+<br />
 
 [% WRAPPER tip; %]
    Seeing your name <span class="author-link">marked red</span>? Please help us <a href="https://wormbase.org/submissions/person.cgi">identify you</a>.

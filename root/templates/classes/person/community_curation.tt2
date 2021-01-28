@@ -1,0 +1,11 @@
+[% IF fields.author_first_pass_curation.data;
+    WRAPPER thankyou;
+        'We thank <strong>' _ fields.name.data.label _ '</strong>\'s Community Curation efforts';
+    END;
+END %]
+
+[%
+    WRAPPER $field_block key="author_first_pass_curation" title="Author First Pass curation";
+        tags2link(fields.author_first_pass_curation.data);
+    END;
+%]

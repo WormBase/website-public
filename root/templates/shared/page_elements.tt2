@@ -766,6 +766,14 @@ END; %]
     </div>
 [% END %]
 
+[% BLOCK thankyou %]
+    <div class="tip">
+        [% content %]
+        <span style="color:tomato;font-size:larger;">&#x1F44D;</span>
+        <br />
+    </div>
+[% END %]
+
 
 
 [%#
