@@ -13,13 +13,6 @@ assay_3  AGATTGGAACGATAACGCAGATA  TTTGCCAATTTGCATTTTATTTT  1603
 
 <p>Alternatively, select <i>List of assay names</i> and enter a list of PCR product names already in WormBase to see what genes they intersect.</p>
 
-<p>You may also select <i>List of positions</i> and enter a list of positions in this format:</p>
-
-<pre><b>Name     Position</b>
-assay_1  II:4332211..4338292
-assay_2  IV:12089228..12091923
-</pre>
-
 <form method="POST" action="[% c.uri_for('/tools','epcr','run').path %]">
     <table class="searchbody" border="0">
 	<tr class="searchtitle"><th colspan="2">e-PCR Search</th></tr>
@@ -31,7 +24,6 @@ assay_2  IV:12089228..12091923
 		<b>This is a</b>
 		<label><input type="radio" name="entry_type" value="sts" checked="checked" />List of primer pairs</label>
 		<label><input type="radio" name="entry_type" value="id" />List of assay names</label>
-		<label><input type="radio" name="entry_type" value="pos" />List of positions</label>
 	    </td>
 	</tr>
 	<tr class="searchtitle">
