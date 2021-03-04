@@ -26,11 +26,11 @@ services:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - JWT_SECRET='${JWT_SECRET}'
   jbrowse:
-    image: gmod/wormbase-jbrowse:WS279
+    image: gmod/wormbase-jbrowse:WS280
     expose:
       - "80"
   jbrowse-protein:
-    image: gmod/wormbase-jbrowse-protein:WS279
+    image: gmod/wormbase-jbrowse-protein:WS280
     expose:
       - "80"
   upstream-proxy:
