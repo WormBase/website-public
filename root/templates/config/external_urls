@@ -47,6 +47,7 @@
 	base        = 'http://www.alliancegenome.org/'
 	gene        = 'http://www.alliancegenome.org/gene/%s'
 	disease     = 'http://www.alliancegenome.org/disease/%s'
+        search      = 'https://www.alliancegenome.org/search?q=%s'
 	}
  APPRIS = {
 	description = 'APPRIS - Annotating principal splice isoforms'
