@@ -359,7 +359,14 @@ END;
         FOREACH o IN order; headers.push(columns.$o); END;
 
         # generate table
-        jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener, column_args);
+        table_id = "table_${key}";
+        %]
+        <div id=[% table_id %]></div>
+        <script type="text/javascript">
+          WB.buildDataTable("[% table_id %]")
+        </script>
+        [%
+#       jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order, separator, listener, column_args);
       END;
     END; # END of MACRO
 %]
