@@ -49,39 +49,30 @@ sub misc :Path('/db') Args  {
     my $species = shift @args;
     $c->stash->{template} = 'shared/legacy.tt2';
 
-    my $class = lc ($cls || $c->req->param('class'));
+    my $class = lc ($c->req->param('class') || $cls);
     my $name            = $c->req->param('name') || $c->req->param('query');
 
     #hack for anatomy term objects
     $class = $class . "_term" if ($class eq 'anatomy');
     my $url;
-
     if($class eq 'gbrowse'){
       $species ||= $c->req->param('source');
       $species = "c_$species" unless $species =~ m/_/;
       $url = $c->uri_for('/tools', 'genome', $class, $species, $name)->path;
     }elsif($name && ($name ne '*')){
-      my $api    = $c->model('WormBaseAPI');
-      my $object = $api->fetch({ class => ucfirst $class, name => $name });
-      if ( !$object || $object == -1 ){
-        my $match = $api->xapian->fetch({query => $self->_prep_query($name), class => $class});
-        if($name && $match && ($name ne '*') && ($name ne 'all')){
-          $url = $self->_get_url($c, $match->{class}, $match->{id}, $match->{taxonomy});
-          unless($name=~m/$match->{id}/){ $url = $url;}
-        }
-        $url ||= $c->uri_for('/search',$class,"$name")->path;
-      }else{
-        my $object_name = $object->name; #to fetch species, correct class name, etc...
-        $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
-      }
+      $url = $c->uri_for('/get', {
+          class => $class,
+          name => $name
+      })->as_string;
     }else{
       $url = $self->_get_url($c, $class, "", 'all');
     }
     my $old_url = $c->req->uri->as_string;
     unless($c->req->param('redirect') || '' eq 'no'){
       $c->res->status(301);
-      $c->res->redirect($url."?from=$old_url");
-    }
+      $url = $url =~ /\?/ ? $url : $url . "?from=$old_url";
+      $c->res->redirect($url);
+  }
     $c->stash->{url} = $url;
     $c->stash->{old_url} = $old_url;
     return;
