@@ -214,7 +214,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
        END;
 
        IF features.Interactor;
-          WRAPPER toggle title=pluralize('Interactor', features.Interactor.size) _ ' (' _ features.Interactor.size _ ')';
+          WRAPPER toggle open=1 title=pluralize('Interactor', features.Interactor.size) _ ' (' _ features.Interactor.size _ ')';
             tags2link(features.Interactor);
           END;
        END;
@@ -226,7 +226,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
             t =  pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) _ ' (' _ fields.features_affected.data.$feature_type.size _ ')';
 
-            WRAPPER toggle title=t;
+            WRAPPER toggle open=1 title=t;
 
              FOREACH feature IN fields.features_affected.data.$feature_type.sort;
                 '<div>';
@@ -256,14 +256,27 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                '</div>';
               END; # of feature loop
 
-              order = (feature_type == 'Clone') ? ['item', 'fstart','fstop','start','stop'] : ['item', 'affects', 'fstart','fstop','start','stop'];
+              order = (feature_type == 'Clone') ? ['item', 'fstart','fstop','start','stop'] : (feature_type == 'Transcript') ? ['item', 'vep_consequence', 'vep_impact', 'polyphen', 'sift', 'cds_position', 'cdna_position', 'protein_position', 'codon_change', 'amino_acid_change', 'exon_number', 'intron_number', 'hgvsc', 'hgvsp'] : ['item', 'affects', 'fstart','fstop','start','stop'];
               build_data_table(order=order,
                              columns={  item    => 'item',
                                         affects => 'Affects',
                                         fstart    => 'feature start',
                                         fstop    => 'feature stop',
                                         start    => 'start relative to feature',
-                                        stop    => 'stop relative to feature'
+                                        stop    => 'stop relative to feature',
+                                        vep_consequence => 'VEP consequence',
+                                        vep_impact => 'VEP impact',
+                                        polyphen => 'PolyPhen prediction',
+                                        sift => 'SIFT prediction',
+                                        cds_position => 'CDS position',
+                                        cdna_position => 'cDNA position',
+                                        protein_position => 'Protein position',
+                                        codon_change => 'Codon (WT/mutant)',
+                                        amino_acid_change => 'Amino acid (WT/mutant)',
+                                        exon_number => 'Location exon',
+                                        intron_number => 'Location intron',
+                                        hgvsc => 'HGVSc',
+                                        hgvsp => 'HGVSp',
                                      },
                              passed_data=fields.features_affected.data.$feature_type,
                              key=feature_type);
