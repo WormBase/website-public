@@ -214,7 +214,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
        END;
 
        IF features.Interactor;
-          WRAPPER toggle title=pluralize('Interactor', features.Interactor.size) _ ' (' _ features.Interactor.size _ ')';
+          WRAPPER toggle open=1 title=pluralize('Interactor', features.Interactor.size) _ ' (' _ features.Interactor.size _ ')';
             tags2link(features.Interactor);
           END;
        END;
@@ -226,7 +226,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
             t =  pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) _ ' (' _ fields.features_affected.data.$feature_type.size _ ')';
 
-            WRAPPER toggle title=t;
+            WRAPPER toggle open=1 title=t;
 
              FOREACH feature IN fields.features_affected.data.$feature_type.sort;
                 '<div>';
