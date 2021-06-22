@@ -187,12 +187,54 @@ sub _setup_species {
             $merged_species = $original_species->{$name};
             $merged_species->{assembly_name} = $species->{assembly_name};
             $new_species->{$name} = $merged_species;
+        } else {
+            $new_species->{$name} = {
+                'title' => $species->{short_name},
+                'ncbi_taxonomy_id' => undef,
+                'species' => $species->{species_name},
+                'genus' => $species->{genus_name},
+                'assembly_name' => $species->{assembly_name},
+                'bioprojects' => {
+                    "$bioproject" => {
+                        'title' => "BioProject $bioproject"
+                    }
+                },
+                'default_widgets' => {
+                    'overview' => undef
+                },
+                'display_in_dropdown' => 'no',
+                'tier' => 'III',
+                'source' => {
+                    'contact' => undef,
+                    'url' => undef,
+                    'email' => undef,
+                    'name' => undef
+                },
+                'gene_models' => 'yes',
+                'widgets' => {
+                    'downloads' => {
+                        'name' => 'downloads',
+                        'title' => 'Downloads'
+                    },
+                    'assemblies' => {
+                        'name' => 'assemblies',
+                        'title' => 'Genome Assemblies',
+                        'fields' => [
+                            'current_assemblies',
+                            'previous_assemblies'
+                        ]
+                    }
+                },
+                'available_classes' => {},
+                'gbrowse' => 'yes'
+            };
         }
     }
 
     $new_species->{all} = $original_species->{all};
 
     $c->config->{sections}->{species_list} = $new_species;
+
     $c->_setup_parasite_species;
 }
 
@@ -414,16 +456,22 @@ sub _parse_wb_species {
     my ($hash) = @_;
     my @species = ();
     foreach my $species (keys %$hash){
-        my $species_name = $hash->{$species}->{full_name};
+        my $full_name = $hash->{$species}->{full_name};
 
         foreach my $assembly (@{$hash->{$species}->{assemblies}}){
             my $strain_name = $assembly->{strain};
+            my ($genus_name, $species_name) = split(/ /, $full_name);
+            my $short_name = substr($genus_name, 0, 1) . '. ' . $species_name;
 
             push @species, {
                 'name' => $species,
                 'bioproject' => $assembly->{bioproject},
-                'label' => "$species_name $strain_name",
+                'label' => "$full_name $strain_name",
                 'assembly_name' => $assembly->{assembly_name},
+                'species_name' => $species_name,
+                'genus_name' => $genus_name,
+                'strain_name' => $strain_name,
+                'short_name' => $short_name
             };
         }
     }
