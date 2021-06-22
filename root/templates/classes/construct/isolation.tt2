@@ -18,4 +18,9 @@ WRAPPER $field_block title="Historical gene" key="historical_gene";
   cell_content(fields.historical_gene.data);
 END;
 
+WRAPPER $field_block title='DNA text' key='dna_text';
+    '<div class="sequence-container" style="word-wrap:break-word;">' _ fields.dna_text.data _ '</div>';
+END;
+
+
 %]
