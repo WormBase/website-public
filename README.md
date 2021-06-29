@@ -147,12 +147,13 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 **About 10 days before the release date:**
 
 - Create a snapshot of the filesystem of the shared development instance
-- Create ACeDB deployment using AWS Launch Template:
-    * Update the snapshot for the non-root volume to use the filesystem snapshot just created
+- Create ACeDB deployment for production
+    * Launch an new instance using AWS Launch Template (In the AWS Console, navigate to EC2 -> Instances -> Launch Templates -> acedb-ec2-launch-template -> Launch Instance from Template), and perform the configuration steps illustrated below
+    * Under the configure for Storage, update the snapshot for the non-root volume to use the filesystem snapshot just created
     * Configure subnet as needed
-    * Configure tags as needed
-- Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
-- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` in the Makefile
+    * Configure tags as needed (ie. Release and CreatedBy)
+- Update the volume snapshot for the WS release in [.ebextensions/01-setup-volumes.config](.ebextensions/01-setup-volumes.config)
+- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` in the [Makefile](Makefile)
 - Create the release branch, such as `release/273`
 
 - At the release branch:
