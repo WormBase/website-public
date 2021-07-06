@@ -505,7 +505,7 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
             var species = '[%- species -%]';
             var bioproject = '[%- bioproject -%]'
 	    // var releaseVersion = 'WS274';
-            var baseURL = 'https://s3.amazonaws.com/wormbase-modencode/protein_schematic/'+ releaseVersion + '/' + species + '_' + bioproject + '/';
+            var baseURL = 'https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/'+ releaseVersion + '/protein/' + species + '_' + bioproject + '/';
 
             var protein = '[%- cds_wbid -%]';
 	    var location = '[%- location -%]';
