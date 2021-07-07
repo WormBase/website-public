@@ -1991,8 +1991,9 @@ sub blog_feed :Path("/rest/blog_feed") Args(0) {
 
 sub forum_feed :Path("/rest/forum_feed") Args(0) {
     my ( $self, $c ) = @_;
-    my $type = $c->req->param('type') || 'rss';
-    my $url = 'http://forums.wormbase.org/index.php?action=.xml;limit=3;type=' . $type;
+    # my $type = $c->req->param('type') || 'rss';
+    # my $url = 'http://forums.wormbase.org/index.php?action=.xml;limit=3;type=' . $type;  # legacy forum feed url
+    my $url = 'https://community.alliancegenome.org/c/model-organism-worms/7.rss';
     $self->_get_feed_from($c, $url);
 
 }
