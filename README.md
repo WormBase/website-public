@@ -197,10 +197,11 @@ Only needed when modifying the container.
 ### Website post-release checklist
 
 After production is stable for a few days, tear down unused resources.
-* Elastic Beanstalk environment from the previous release
+* Elastic Beanstalk environment from the previous release from the EB console:
     * wormbase-website
     * wormbase-search
-* AWS EC2, tear down ACeDB instance from the previous release
+* AWS EC2 console, terminate the ACeDB instance from the previous release
+* Clean up snapshots as appropriate
 * Coordinate with REST API development to tear down resources that the API depends on
 
 
@@ -211,12 +212,14 @@ After production is stable for a few days, tear down unused resources.
 
 - Prior to applying the hotfix, ensure you are at the appropriate git branch for production, such as `release/273`.
 
-- Then run the following commands,
+- Then run the following commands from the `website` repo:
 
 	```console
 	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS273.1
-	make production-deploy
+	make production-deploy // can be used to recover from most failed EB
 	```
+
+	Note: the makefile passes in lots of variables to EB, such as cfg file versions. These config files can be refered to by version, and edited/referenced in the EB web console.
 
 ### Production Deployment without AWS Beanstalk
 
