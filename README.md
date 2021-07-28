@@ -135,31 +135,44 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 ### Website release checklist
 
-**After database has been staged:**
+**After the Datomic database has been staged:**
 
 - Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
-- Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+-- Can be run on the shared development instance (permissions provided by role)
+- Change the WS release number in wormbase.conf in the `website` repository, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+- Commit these changes to the staging branch
 
 **When JBrowse container is available:**
 
 - Update JBrowse container version in [Dockerrun.aws.json](./Dockerrun.aws.json) and [docker-compose.yml](docker-compose.yml)
+- We may be able to get rid of the JBrowse container (it resides in a multi-container environment built with docker-compose, side-by-side with the Catalyst app)
+- Grepping for JBrowse if we want to remove...
+- 
 
 **About 10 days before the release date:**
 
-- Create a snapshot of the filesystem of the shared development instance
+- Create a snapshot of the filesystem of the shared development instance (it's around 500GB)
 - Create ACeDB deployment using AWS Launch Template:
-    * Update the snapshot for the non-root volume to use the filesystem snapshot just created
-    * Configure subnet as needed
-    * Configure tags as needed
+    * EC2 > Instances > Launch Template > "acedb-ec2-launch-template".
+    * Change the following:
+    ** Under "Storage", update the snapshot for the non-root volume to use the filesystem snapshot just created
+    ** Under "Networking", configure subnet as needed; "use auxiliary"
+    ** Configure tags as needed
+
+The Catalyst app and EB deployment also needs to know about the snapshot:
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
+
+AceDB is managed outside of EB because of speed issues.
 - Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` in the Makefile
-- Create the release branch, such as `release/273`
+- Create the release branch, such as `release/273` and commit 
 
 - At the release branch:
 
   ```console
-  make release  # to build the assets (ie containers) required for deployment
+  make release  # to build the assets (ie containers, minified JS, etc) required for deployment
   ```
+
+Only needed when modifying the container.
 
   ```console
   make eb-create  # to create and deploy to the pre-production environment
@@ -170,11 +183,11 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
         - Search and Autocompletion
 	- A example gene page and all the widgets
         - ACeDB TreeView
-	- JBrowse (to be signed of by JBrowse development)
+	- JBrowse (to be signed off by JBrowse development)
 
 
 - Coordinate with REST API development to have the REST API deployed to take preaching traffic
-- Pre-caching slow endpoints as described in [WormBase/wb-cache-warmer](https://github.com/WormBase/wb-cache-warmer). Monitor the progress and terminate the process when done.
+- Pre-caching slow endpoints as described in [WormBase/wb-cache-warmer](https://github.com/WormBase/wb-cache-warmer). Monitor the progress and terminate the process when done.(The cache is still handled by Catalyst and Couchdb)
 
 ### Go live with a release
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
@@ -184,7 +197,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 ### Website post-release checklist
 
 After production is stable for a few days, tear down unused resources.
-* Elastic Beanstalk environment for from the previous release
+* Elastic Beanstalk environment from the previous release
     * wormbase-website
     * wormbase-search
 * AWS EC2, tear down ACeDB instance from the previous release
