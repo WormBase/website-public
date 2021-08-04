@@ -22,6 +22,9 @@
           "sortKeyName": "cell.type",
           "sortKeyType": "S"
         }
+      },
+      "auth": {
+        "cognitoe6f88226": {}
       }
     }
   }

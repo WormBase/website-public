@@ -1,0 +1,41 @@
+{
+  "paths": [
+    {
+      "name": "/expressions",
+      "lambdaFunction": "expressionsLambda",
+      "privacy": {
+        "protected": true,
+        "auth": [
+          "/GET"
+        ],
+        "unauth": [
+          "/GET"
+        ]
+      },
+      "policyResourceName": "/expressions"
+    }
+  ],
+  "resourceName": "cengen",
+  "apiName": "cengen",
+  "functionArns": [
+    {
+      "lambdaFunction": "expressionsLambda"
+    }
+  ],
+  "privacy": {
+    "auth": 1,
+    "unauth": 1,
+    "authRoleName": "amplify-wbauxiliarybackend-dev-165659-authRole",
+    "unAuthRoleName": "amplify-wbauxiliarybackend-dev-165659-unauthRole"
+  },
+  "dependsOn": [
+    {
+      "category": "function",
+      "resourceName": "expressionsLambda",
+      "attributes": [
+        "Name",
+        "Arn"
+      ]
+    }
+  ]
+}
