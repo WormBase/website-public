@@ -1,0 +1,12 @@
+{
+  "storage": {
+    "cengen": {
+      "service": "DynamoDB",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
+  },
+  "function": {},
+  "api": {}
+}

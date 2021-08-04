@@ -1,0 +1,28 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-wbauxiliarybackend-dev-165659-authRole",
+      "UnauthRoleArn": "arn:aws:iam::357210185381:role/amplify-wbauxiliarybackend-dev-165659-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::357210185381:role/amplify-wbauxiliarybackend-dev-165659-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-wbauxiliarybackend-dev-165659-deployment",
+      "UnauthRoleName": "amplify-wbauxiliarybackend-dev-165659-unauthRole",
+      "StackName": "amplify-wbauxiliarybackend-dev-165659",
+      "StackId": "arn:aws:cloudformation:us-east-1:357210185381:stack/amplify-wbauxiliarybackend-dev-165659/859f21c0-f566-11eb-a3f5-0ea1c0ab8f7b",
+      "AmplifyAppId": "dyw1dzy5he5m6"
+    },
+    "categories": {
+      "storage": {
+        "cengen": {
+          "tableName": "cengen",
+          "region": "us-east-1",
+          "arn": "arn:aws:dynamodb:us-east-1:357210185381:table/cengen",
+          "partitionKeyName": "id",
+          "partitionKeyType": "S",
+          "sortKeyName": "cell.type",
+          "sortKeyType": "S"
+        }
+      }
+    }
+  }
+}
