@@ -150,12 +150,6 @@
                     }
                   },
                   
-                    "security": [
-                        {
-                          "sigv4": []
-                        }
-                      ],
-                  
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -254,12 +248,6 @@
                       }
                     }
                   },
-                  
-                    "security": [
-                        {
-                          "sigv4": []
-                        }
-                      ],
                   
                   "x-amazon-apigateway-integration": {
                     "responses": {
@@ -371,7 +359,7 @@
         
         
 
-      "DeploymentAPIGWcengen": {
+      "DeploymentAPIGWcengend4054d6b": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
           "Description": "The Development stage deployment of your API.",
