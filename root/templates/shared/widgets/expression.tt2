@@ -185,6 +185,8 @@ END;
         <div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." />Loading FPKM expression data...</div>
     </div>';
 
+    '<div id="cengen-holder"></div>';
+
 
  %]
 
@@ -213,6 +215,14 @@ END;
     setTimeout(function(){  // sorry, need time to load summary fpkm plot first
         WB.openField($jq("#fpkm_holder"), "[% '/rest/field/' _ class _ '/' _ fields.name.data.id _ '/fpkm_expression_summary_ls' %]", {noLoadImg: true});
     }, 1000);
+</script>
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('cengen-holder')) {
+    WB.renderCenGenChart('cengen-holder', '[% object.name.data.id %]');
+  }
+})();
 </script>
 
 
