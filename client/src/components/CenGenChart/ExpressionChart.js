@@ -14,6 +14,7 @@ function ExpressionChart({ data }) {
             minWidth: categories.length * 20,
             // scrollPositionX: 0,
           },
+          colorCount: 2,
         },
         title: {
           text: '',
@@ -21,21 +22,72 @@ function ExpressionChart({ data }) {
         subtitle: {
           text: 'Some additional information',
         },
+        tooltip: {
+          shared: true,
+          valueDecimals: 2,
+        },
         xAxis: {
           title: {
             text: 'Cell type',
           },
           categories: categories,
+          crosshair: true,
         },
-        yAxis: {
-          title: {
-            text: 'TPM',
+        yAxis: [
+          {
+            title: {
+              text: 'Transcripts Per Kilobase Million (TPM)',
+              style: {
+                color: Highcharts.getOptions().colors[0],
+              },
+            },
+            labels: {
+              style: {
+                color: Highcharts.getOptions().colors[0],
+              },
+            },
           },
-        },
+          {
+            title: {
+              text: 'Proportion (%)',
+              style: {
+                color: Highcharts.getOptions().colors[1],
+              },
+            },
+            labels: {
+              enabled: true,
+              style: {
+                color: Highcharts.getOptions().colors[1],
+              },
+            },
+            tooltip: {
+              valueSuffix: ' %',
+            },
+            min: 0,
+            max: 100,
+            // opposite: true,
+          },
+        ],
+        plotOptions: {},
         series: [
           {
+            name: 'TPM',
             data: data.map(({ tpm }) => tpm),
-            showInLegend: false,
+            yAxis: 0,
+          },
+          {
+            name: 'Proportion (%)',
+            data: data.map(({ proportion }) => proportion),
+            yAxis: 1,
+            /*             dataLabels: {
+              enabled: true,
+              formatter: function() {
+                if (this.y > 0) {
+                  // round to 1 decimal places
+                  return `${Math.round(this.y * 10) / 10}%`;
+                }
+              },
+            }, */
           },
         ],
       };
