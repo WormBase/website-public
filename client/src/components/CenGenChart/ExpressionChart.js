@@ -97,7 +97,9 @@ function ExpressionChart({ data }) {
   return (
     <div>
       <div ref={chartRef} />
-      {data ? null : <span className="fade">No data available.</span>}
+      {data && data.length ? null : (
+        <span className="fade">No data available.</span>
+      )}
     </div>
   );
 }
