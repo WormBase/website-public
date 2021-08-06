@@ -7,7 +7,7 @@ export default function useGeneExpression(geneId) {
 
   useEffect(() => {
     fetch(
-      `https://22rx59z6c7.execute-api.us-east-1.amazonaws.com/dev/items/${geneId}`
+      `https://os2i1gv6y5.execute-api.us-east-1.amazonaws.com/dev/expressions/${geneId}`
     )
       .then((response) => {
         if (!response.ok) {

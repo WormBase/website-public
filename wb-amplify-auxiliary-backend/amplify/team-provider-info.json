@@ -19,6 +19,10 @@
         "wbauxiliarybackend1062fa9f": {
           "deploymentBucketName": "amplify-wbauxiliarybackend-dev-165659-deployment",
           "s3Key": "amplify-builds/wbauxiliarybackend1062fa9f-3153304c6a7376514941-build.zip"
+        },
+        "fetchCengenExpressionsByGeneId": {
+          "deploymentBucketName": "amplify-wbauxiliarybackend-dev-165659-deployment",
+          "s3Key": "amplify-builds/fetchCengenExpressionsByGeneId-38384751447872587078-build.zip"
         }
       }
     }
