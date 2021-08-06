@@ -180,16 +180,15 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
               key = 'anatomy_function');
 END;
 
+WRAPPER $field_block title="Gene expression from CeNGEN";
+    '<div id="cengen-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+END;
 
     '<div id="fpkm_holder" style="min-height:50px;">
         <div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." />Loading FPKM expression data...</div>
     </div>';
 
-    '<div id="cengen-holder"></div>';
-
-
  %]
-
 
 
 [%# PROCESS shared/fields/fpkm_expression_summary_ls.tt2 %]
