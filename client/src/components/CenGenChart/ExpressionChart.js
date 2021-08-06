@@ -20,7 +20,7 @@ function ExpressionChart({ data }) {
           text: '',
         },
         subtitle: {
-          text: 'Some additional information',
+          text: 'Source: <a href="http://www.cengen.org/">CeNGEN</a>',
         },
         tooltip: {
           shared: true,
