@@ -94,7 +94,12 @@ function ExpressionChart({ data }) {
       Highcharts.chart(chartRef.current, chartOptions);
     }
   }, [data, chartRef]);
-  return <div ref={chartRef} />;
+  return (
+    <div>
+      <div ref={chartRef} />
+      {data ? null : <span className="fade">No data available.</span>}
+    </div>
+  );
 }
 
 export default ExpressionChart;
