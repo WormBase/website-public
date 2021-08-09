@@ -1,7 +1,0 @@
-{
-    "tableName": "dynamo543057ef",
-    "partitionKeyName": "gene_id",
-    "partitionKeyType": "S",
-    "sortKeyName": "cell_type",
-    "sortKeyType": "S"
-}

@@ -1,34 +1,11 @@
 {
   "storage": {
-    "dynamo543057ef": {
-      "service": "DynamoDB",
-      "providerPlugin": "awscloudformation"
-    },
     "cengen": {
       "service": "DynamoDB",
       "providerPlugin": "awscloudformation"
     }
   },
   "function": {
-    "wbauxiliarybackend1062fa9f": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "storage",
-          "resourceName": "dynamo543057ef",
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "attributeEnvMap": {
-            "Name": "TABLE_NAME",
-            "Arn": "TABLE_ARN"
-          }
-        }
-      ]
-    },
     "fetchCengenExpressionsByGeneId": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -50,20 +27,6 @@
     }
   },
   "api": {
-    "api3c6d85bb": {
-      "service": "API Gateway",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "function",
-          "resourceName": "wbauxiliarybackend1062fa9f",
-          "attributes": [
-            "Name",
-            "Arn"
-          ]
-        }
-      ]
-    },
     "cengenApi": {
       "service": "API Gateway",
       "providerPlugin": "awscloudformation",

@@ -16,10 +16,6 @@
         "cognitoe6f88226": {}
       },
       "function": {
-        "wbauxiliarybackend1062fa9f": {
-          "deploymentBucketName": "amplify-wbauxiliarybackend-dev-165659-deployment",
-          "s3Key": "amplify-builds/wbauxiliarybackend1062fa9f-4e2b556d774476767042-build.zip"
-        },
         "fetchCengenExpressionsByGeneId": {
           "deploymentBucketName": "amplify-wbauxiliarybackend-dev-165659-deployment",
           "s3Key": "amplify-builds/fetchCengenExpressionsByGeneId-49794c56796a5578734b-build.zip"
