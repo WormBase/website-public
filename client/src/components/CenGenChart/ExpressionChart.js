@@ -7,6 +7,13 @@ function ExpressionChart({ data }) {
   useEffect(() => {
     if (data && data.length && chartRef.current) {
       const categories = data.map(({ cell_type }) => cell_type);
+
+      Highcharts.setOptions({
+        lang: {
+          thousandsSep: ',',
+        },
+      });
+
       const chartOptions = {
         chart: {
           type: 'column',
