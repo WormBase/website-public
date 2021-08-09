@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import Highcharts from 'highcharts';
+import Exporting from 'highcharts/modules/exporting';
+Exporting(Highcharts);
 
 function ExpressionChart({ data }) {
   const chartRef = useRef(null);
@@ -22,6 +24,9 @@ function ExpressionChart({ data }) {
             // scrollPositionX: 0,
           },
           colorCount: 2,
+        },
+        exporting: {
+          sourceWidth: Math.max(600, categories.length * 20),
         },
         title: {
           text: '',
