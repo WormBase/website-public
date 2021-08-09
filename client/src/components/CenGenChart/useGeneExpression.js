@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function useGeneExpression(geneId) {
   const [loading, setLoading] = useState(true);
@@ -27,5 +27,7 @@ export default function useGeneExpression(geneId) {
 
   return {
     data,
+    loading,
+    error,
   };
 }

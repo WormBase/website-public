@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import useGeneExpression from './useGeneExpression';
 import ExpressionChart from './ExpressionChart';
 import { CircularProgress } from '../Progress';
