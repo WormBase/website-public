@@ -22,7 +22,7 @@
         },
         "fetchCengenExpressionsByGeneId": {
           "deploymentBucketName": "amplify-wbauxiliarybackend-dev-165659-deployment",
-          "s3Key": "amplify-builds/fetchCengenExpressionsByGeneId-38384751447872587078-build.zip"
+          "s3Key": "amplify-builds/fetchCengenExpressionsByGeneId-49794c56796a5578734b-build.zip"
         }
       }
     }
