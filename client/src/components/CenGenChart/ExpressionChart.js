@@ -61,7 +61,7 @@ function ExpressionChart({ data }) {
           },
           {
             title: {
-              text: 'Proportion (%)',
+              text: 'Cells (%) expressing',
               style: {
                 color: Highcharts.getOptions().colors[1],
               },
@@ -88,7 +88,7 @@ function ExpressionChart({ data }) {
             yAxis: 0,
           },
           {
-            name: 'Proportion (%)',
+            name: 'Cells (%)',
             data: data.map(({ proportion }) => proportion),
             yAxis: 1,
             /*             dataLabels: {
