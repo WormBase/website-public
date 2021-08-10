@@ -2,16 +2,16 @@ import React, { useRef, useEffect } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 import Exporting from 'highcharts/modules/exporting';
+import ExportData from 'highcharts/modules/export-data';
 HighchartsMore(Highcharts);
 Exporting(Highcharts);
+ExportData(Highcharts);
 
 function ExpressionChart({ data }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
     if (data && data.length && chartRef.current) {
-      const categories = data.map(({ cell_type }) => cell_type);
-
       Highcharts.setOptions({
         lang: {
           thousandsSep: ',',
@@ -23,7 +23,20 @@ function ExpressionChart({ data }) {
           type: 'scatter',
           zoomType: 'xy',
         },
-        exporting: {},
+        exporting: {
+          csv: {
+            columnHeaderFormatter: (item, key) => {
+              if (key === 'x') {
+                return item.xAxis.axisTitle.textStr; // x axis label
+              } else if (key === 'y') {
+                return item.yAxis.axisTitle.textStr; // y axis label
+              } else {
+                return 'Cell type';
+              }
+            },
+          },
+          tableCaption: false,
+        },
         title: {
           text: '',
         },
@@ -50,14 +63,6 @@ function ExpressionChart({ data }) {
           {
             title: {
               text: 'Transcripts Per Kilobase Million (TPM)',
-              style: {
-                color: Highcharts.getOptions().colors[0],
-              },
-            },
-            labels: {
-              style: {
-                color: Highcharts.getOptions().colors[0],
-              },
             },
             crosshair: true,
           },
@@ -65,7 +70,7 @@ function ExpressionChart({ data }) {
         plotOptions: {},
         series: [
           {
-            name: 'TPM',
+            name: 'Expression',
             data: data.map(({ tpm, proportion, cell_type }) => {
               return {
                 x: proportion,
