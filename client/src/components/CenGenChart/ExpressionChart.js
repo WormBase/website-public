@@ -30,6 +30,9 @@ function ExpressionChart({ data }) {
         subtitle: {
           text: 'Source: <a href="http://www.cengen.org/">CeNGEN</a>',
         },
+        legend: {
+          enabled: false,
+        },
         tooltip: {
           shared: true,
           valueDecimals: 2,
