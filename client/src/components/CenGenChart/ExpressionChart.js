@@ -20,16 +20,10 @@ function ExpressionChart({ data }) {
 
       const chartOptions = {
         chart: {
-          type: 'bubble',
-          scrollablePlotArea: {
-            minWidth: categories.length * 30,
-            // scrollPositionX: 0,
-          },
-          colorCount: 2,
+          type: 'scatter',
+          zoomType: 'xy',
         },
-        exporting: {
-          sourceWidth: Math.max(600, categories.length * 30),
-        },
+        exporting: {},
         title: {
           text: '',
         },
@@ -39,13 +33,15 @@ function ExpressionChart({ data }) {
         tooltip: {
           shared: true,
           valueDecimals: 2,
+          headerFormat: '<b>{point.key}</b><br>',
+          pointFormat: '{point.y} TPM<br>{point.x:.1f}% Cells',
         },
         xAxis: {
           title: {
-            text: 'Cell type',
+            text: 'Cells (%) Expressing',
           },
-          categories: categories,
           crosshair: true,
+          max: 100,
         },
         yAxis: [
           {
@@ -60,6 +56,7 @@ function ExpressionChart({ data }) {
                 color: Highcharts.getOptions().colors[0],
               },
             },
+            crosshair: true,
           },
         ],
         plotOptions: {},
@@ -68,17 +65,15 @@ function ExpressionChart({ data }) {
             name: 'TPM',
             data: data.map(({ tpm, proportion, cell_type }) => {
               return {
+                x: proportion,
                 y: tpm,
-                z: proportion,
                 name: cell_type,
               };
             }),
             dataLabels: {
               enabled: true,
               formatter: function() {
-                return this.point.z === 0
-                  ? ''
-                  : `${Highcharts.numberFormat(this.point.z, 0)}%`;
+                return this.point.x === 0 ? '' : this.point.name;
               },
             },
           },
