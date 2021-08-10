@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import Highcharts from 'highcharts';
+import HighchartsMore from 'highcharts/highcharts-more';
 import Exporting from 'highcharts/modules/exporting';
+HighchartsMore(Highcharts);
 Exporting(Highcharts);
 
 function ExpressionChart({ data }) {
@@ -18,15 +20,15 @@ function ExpressionChart({ data }) {
 
       const chartOptions = {
         chart: {
-          type: 'column',
+          type: 'bubble',
           scrollablePlotArea: {
-            minWidth: categories.length * 20,
+            minWidth: categories.length * 30,
             // scrollPositionX: 0,
           },
           colorCount: 2,
         },
         exporting: {
-          sourceWidth: Math.max(600, categories.length * 20),
+          sourceWidth: Math.max(600, categories.length * 30),
         },
         title: {
           text: '',
@@ -59,47 +61,26 @@ function ExpressionChart({ data }) {
               },
             },
           },
-          {
-            title: {
-              text: 'Cells (%) expressing',
-              style: {
-                color: Highcharts.getOptions().colors[1],
-              },
-            },
-            labels: {
-              enabled: true,
-              style: {
-                color: Highcharts.getOptions().colors[1],
-              },
-            },
-            tooltip: {
-              valueSuffix: ' %',
-            },
-            min: 0,
-            max: 100,
-            // opposite: true,
-          },
         ],
         plotOptions: {},
         series: [
           {
             name: 'TPM',
-            data: data.map(({ tpm }) => tpm),
-            yAxis: 0,
-          },
-          {
-            name: 'Cells (%)',
-            data: data.map(({ proportion }) => proportion),
-            yAxis: 1,
-            /*             dataLabels: {
+            data: data.map(({ tpm, proportion, cell_type }) => {
+              return {
+                y: tpm,
+                z: proportion,
+                name: cell_type,
+              };
+            }),
+            dataLabels: {
               enabled: true,
               formatter: function() {
-                if (this.y > 0) {
-                  // round to 1 decimal places
-                  return `${Math.round(this.y * 10) / 10}%`;
-                }
+                return this.point.z === 0
+                  ? ''
+                  : `${Highcharts.numberFormat(this.point.z, 0)}%`;
               },
-            }, */
+            },
           },
         ],
       };
