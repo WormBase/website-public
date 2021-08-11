@@ -22,6 +22,12 @@ function ExpressionChart({ data }) {
         chart: {
           type: 'scatter',
           zoomType: 'xy',
+
+          events: {
+            load: function() {
+              this.chartBackground.htmlCss({ cursor: 'crosshair' });
+            },
+          },
         },
         exporting: {
           csv: {
