@@ -3,9 +3,11 @@ import Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 import Exporting from 'highcharts/modules/exporting';
 import ExportData from 'highcharts/modules/export-data';
+import OfflineExporting from 'highcharts/modules/offline-exporting';
 HighchartsMore(Highcharts);
 Exporting(Highcharts);
 ExportData(Highcharts);
+OfflineExporting(Highcharts);
 
 function ExpressionChart({ data }) {
   const chartRef = useRef(null);
@@ -42,6 +44,7 @@ function ExpressionChart({ data }) {
             },
           },
           tableCaption: false,
+          fallbackToExportServer: false,
         },
         title: {
           text: '',
