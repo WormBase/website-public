@@ -47,7 +47,8 @@ function ExpressionChart({ data }) {
           text: '',
         },
         subtitle: {
-          text: 'Source: <a href="http://www.cengen.org/">CeNGEN</a>',
+          text:
+            'Source: <a href="http://www.cengen.org/">CeNGEN</a><br/><br/>Tip: To zoom in on the chart, click and drag to select a region.',
         },
         legend: {
           enabled: false,
