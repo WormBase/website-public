@@ -123,24 +123,24 @@ Please browse to the `http://localhost:CATALYST_PORT` (instead of the WEBPACK_SE
 Staging A New Release
 ---------------------------------------------
 
-# Mirror / unpack / process a new release:
+### Mirror / unpack / process a new release:
 
-## Mirror a new release from Hinxton to the official WormBase FTP site (on the `proxy` instance):
+#### Mirror a new release from Hinxton to the official WormBase FTP site (on the `proxy` instance):
  cd /usr/local/wormbase/website-admin/update/staging
  ./steps/mirror_new_release.pl --release WSXXX
 
-## On the `rdbms` instance, mirror the GFF and clustal files:
+#### On the `rdbms` instance, mirror the GFF and clustal files:
  cd /usr/local/wormbase/website-admin/update/staging
  ./steps/mirror_gff_and_clustalw --release WSXXX
  // It may be necessary to first remove old releases from `/usr/local/ftp/pub/wormbase/releases` and databases from `/var/lib/mysql`. `df` first.
 
-### Prepare/unpack the mirrored files
+##### Prepare/unpack the mirrored files
 `Bio::DB::SeqFeature::Store` databases on the `rdbms` instance:
  cd /usr/local/wormbase/website-admin/update/staging
  ./steps/load_genome_gff_databases.pl --release WSXXX
  ./steps/unpack_clustalw.pl --release WSXXX
 
-## Mirror to the staging instance (`dev`):
+#### Mirror to the staging instance (`dev`):
  cd /usr/local/wormbase/website-admin/update/staging
  ./steps/mirror_new_release.pl --release WSXXX
  // It may be necessary to first remove old releases from `/usr/local/wormbase/acedb` and `/usr/local/ftp/pub/wormbase`.
