@@ -134,23 +134,26 @@ cd /usr/local/wormbase/website-admin/update/staging
 #### On the `rdbms` instance, mirror the GFF and clustal files:
 ```
 cd /usr/local/wormbase/website-admin/update/staging
-./steps/mirror_gff_and_clustalw --release WSXXX
+./steps/mirror_gff_and_clustal.pl --release WSXXX
 // It may be necessary to first remove old releases from `/usr/local/ftp/pub/wormbase/releases` and databases from `/var/lib/mysql`. `df` first.
-```
 
-##### Prepare/unpack the mirrored files
-`Bio::DB::SeqFeature::Store` databases on the `rdbms` instance:
-```
-cd /usr/local/wormbase/website-admin/update/staging
-./steps/load_genome_gff_databases.pl --release WSXXX
+// Unpack the clustalw database
 ./steps/unpack_clustalw.pl --release WSXXX
+
+// Prepare Bio::DB::SeqFeature::Store databases (requires overnight)
+./steps/load_genomic_gff_databases.pl --release WSXXX
 ```
 
 #### Mirror to the staging instance (`dev`):
 ```
+// It may be necessary to first remove old releases from `/usr/local/wormbase/acedb` and `/usr/local/ftp/pub/wormbase`.
 cd /usr/local/wormbase/website-admin/update/staging
 ./steps/mirror_new_release.pl --release WSXXX
-// It may be necessary to first remove old releases from `/usr/local/wormbase/acedb` and `/usr/local/ftp/pub/wormbase`.
+./steps/unpack_acedb.pl --release WSXXX
+
+// The current version of the acedb database is referenced by a symlink at /usr/local/wormbase/acedb/wormbase.
+// Update this symlink to point to the newly unpacked acedb database.
+./steps/adjust_symlinks.pl --release WSXXX.
 ```
 
   
