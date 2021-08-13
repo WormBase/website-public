@@ -3213,6 +3213,21 @@ var Scrolling = (function(){
       );
     }
 
+    function renderCenGenChart(elementId, wbId) {
+      import('../../client/src/components/CenGenChart').then(
+        modele => {
+          CenGenChart = modele.default;
+          console.log(CenGenChart)
+          ReactDOM.render(
+            <Root>
+              <CenGenChart geneId={wbId} />
+            </Root>,
+            document.getElementById(elementId)
+          )
+        }
+      )
+    }
+
     function renderFeatureSequences(data = {}, elementId, wbId) {
       import('../../client/src/components/Sequence').then(
         (module) => {
@@ -3556,6 +3571,7 @@ var Scrolling = (function(){
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
       renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
       renderInteractorVennDiagram: renderInteractorVennDiagram, // render Venn diagram in interaction widgets of various pages
+      renderCenGenChart: renderCenGenChart // render CenGen expression data as charts on gene page
     };
   })();
 

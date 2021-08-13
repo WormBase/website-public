@@ -1,0 +1,35 @@
+{
+  "paths": [
+    {
+      "name": "/expressions",
+      "lambdaFunction": "fetchCengenExpressionsByGeneId",
+      "privacy": {
+        "open": true
+      },
+      "policyResourceName": "/expressions"
+    }
+  ],
+  "resourceName": "cengenApi",
+  "apiName": "cengenApi",
+  "functionArns": [
+    {
+      "lambdaFunction": "fetchCengenExpressionsByGeneId"
+    }
+  ],
+  "privacy": {
+    "auth": 0,
+    "unauth": 0,
+    "authRoleName": "amplify-wbauxiliarybackend-dev-165659-authRole",
+    "unAuthRoleName": "amplify-wbauxiliarybackend-dev-165659-unauthRole"
+  },
+  "dependsOn": [
+    {
+      "category": "function",
+      "resourceName": "fetchCengenExpressionsByGeneId",
+      "attributes": [
+        "Name",
+        "Arn"
+      ]
+    }
+  ]
+}
