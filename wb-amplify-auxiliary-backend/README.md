@@ -19,11 +19,11 @@ The REST API for the CeNGEN expression chart in the Expression widget of a gene 
 
 The resources managed by Amplify includes an API Gateway, a Lambda function, and a Dynamodb table (storage):
 
-| Category | Resource name                  | Operation | Provider plugin   |
-| -------- | ------------------------------ | --------- | ----------------- |
-| Storage  | cengen                         | No Change | awscloudformation |
-| Function | fetchCengenExpressionsByGeneId | No Change | awscloudformation |
-| Api      | cengenApi                      | No Change | awscloudformation |
+| Category | Resource name                  |
+| -------- | ------------------------------ |
+| Storage  | cengen                         |
+| Function | fetchCengenExpressionsByGeneId |
+| Api      | cengenApi                      |
 
 At the time of writing, these resources above are generate with the Amplify CLI without modification. One exceptinon is that the Lambda function is edited to remove PUT and POST handlers, since the database should not be modified.
 
