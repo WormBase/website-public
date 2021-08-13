@@ -16,6 +16,7 @@ The technical stack of WormBase website consits of:
 - BLAST, and other bioinformatics tools
 - [_A RESTful data API_](https://github.com/WormBase/wormbase_rest)
 - [_A RESTful search API_](https://github.com/WormBase/wb-search)
+- [The auxiliary (Amplify) backends](wb-amplify-auxiliary-backend/)
 
 _Italic indicates services whose deployment are managed separately from what is in this repository._
 
