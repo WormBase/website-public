@@ -190,21 +190,24 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 **About 10 days before the release date:**
 
+## Launch a new ACeDB instance using AWS Launch Template
+
+ACeDB is maintainined outside of EB because of performance concerns.
+
 - Create a snapshot of the primary filesystem (containing ACeDB and blast databases) on the shared development instance (it's around 1024GB)
     - TODO: This step is currently handled manually via the console. Consider automation.
-- Create ACeDB deployment using AWS Launch Template:
+- Find the default version of the acedb launch template:
     - EC2 > Instances > Launch Template > "acedb-ec2-launch-template".
-    - From the default, create a new template (Actions > Modify Templete (create new version)
+    - Select the default and create a new template (Actions > Modify Templete (create new version))
     - Change the following:
     - Under "Storage", update the snapshot ID for the non-root volume to use the filesystem snapshot just created
     - Under "Networking", configure subnet as needed; "use auxiliary"
     - Configure tags as needed (name, eg: ACeDB Filesystem; Description ACeDB Filesystem for WSXXX)
+    - In the integrated Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE`
 
 The Catalyst app and EB deployment also needs to know about the snapshot:
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
 
-AceDB is managed outside of EB because of speed issues.
-- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` in the Makefile
 - Create the release branch, such as `release/273` and commit 
 
 - At the release branch:
