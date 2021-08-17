@@ -190,13 +190,14 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 
 **About 10 days before the release date:**
 
-- Create a snapshot of the filesystem of the shared development instance (it's around 500GB)
+- Create a snapshot of the primary filesystem (containing ACeDB and blast databases) on the shared development instance (it's around 1024GB)
+-- TODO: This step is currently handled manually via the console. Consider automation.
 - Create ACeDB deployment using AWS Launch Template:
-    * EC2 > Instances > Launch Template > "acedb-ec2-launch-template".
-    * Change the following:
-    ** Under "Storage", update the snapshot for the non-root volume to use the filesystem snapshot just created
-    ** Under "Networking", configure subnet as needed; "use auxiliary"
-    ** Configure tags as needed
+-- EC2 > Instances > Launch Template > "acedb-ec2-launch-template".
+-- Change the following:
+--- Under "Storage", update the snapshot for the non-root volume to use the filesystem snapshot just created
+--- Under "Networking", configure subnet as needed; "use auxiliary"
+--- Configure tags as needed
 
 The Catalyst app and EB deployment also needs to know about the snapshot:
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
