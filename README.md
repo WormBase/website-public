@@ -203,10 +203,10 @@ ACeDB is maintainined outside of EB because of performance concerns.
     - Under "Storage", update the snapshot ID for the non-root volume to use the filesystem snapshot just created
     - Under "Networking", configure subnet as needed; "use auxiliary"
     - Configure tags as needed (name, eg: ACeDB Filesystem; Description ACeDB Filesystem for WSXXX)
-    - In the integrated Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE`
 
 The Catalyst app and EB deployment also needs to know about the snapshot:
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
+- In the Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE`
 
 - Create the release branch, such as `release/273` and commit 
 
