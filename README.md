@@ -194,6 +194,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
     - TODO: This step is currently handled manually via the console. Consider automation.
 - Create ACeDB deployment using AWS Launch Template:
     - EC2 > Instances > Launch Template > "acedb-ec2-launch-template".
+    - From the default, create a new template (Actions > Modify Templete (create new version)
     - Change the following:
     - Under "Storage", update the snapshot ID for the non-root volume to use the filesystem snapshot just created
     - Under "Networking", configure subnet as needed; "use auxiliary"
