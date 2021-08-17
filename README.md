@@ -208,11 +208,11 @@ ACeDB is maintainined outside of EB because of performance concerns.
 
 The Catalyst app and EB deployment also needs to know about the snapshot:
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
-- In the Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE`
+- In the Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE` with the new IP address of the instance (get on EC2 dashboard)
 
 - Create the release branch, such as `release/273` and commit 
 
-- At the release branch:
+- At the release branch (be sure to have the credentials ready):
 
   ```console
   make release  # to build the assets (ie containers, minified JS, etc) required for deployment
