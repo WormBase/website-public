@@ -254,8 +254,6 @@ After production is stable for a few days, tear down unused resources.
 
 ### Hotfix production environment
 
-- Grant permission to the instance by attaching the `wb-catalyst-beanstalk-ec2-role`.
-
 - Prior to applying the hotfix, ensure you are at the appropriate git branch for production, such as `release/273`.
 
 - Then run the following commands from the `website` repo:
