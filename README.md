@@ -157,6 +157,13 @@ cd /usr/local/wormbase/website-admin/update/staging
 ./steps/adjust_symlinks.pl --release WSXXX.
 ```
 
+#### Restore the Datomic Database
+
+# h1
+## h2
+### h3
+#### h4
+##### h5
   
 
 Staging Environment
@@ -172,9 +179,7 @@ Production Environment
 
 WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
 
-### Website release checklist
-
-**After the Datomic database has been staged:**
+## After the Datomic database has been staged
 
 - Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
 -- Can be run on the shared development instance (permissions provided by role)
@@ -188,7 +193,7 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 - Grepping for JBrowse if we want to remove...
 - 
 
-**About 10 days before the release date:**
+## About 10 days before the release date
 
 ### Launch a new ACeDB instance using AWS Launch Template
 
