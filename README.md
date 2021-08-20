@@ -222,14 +222,6 @@ The Catalyst app and EB deployment also needs to know about the snapshot:
 
 make release doens't provision any resources... that's handled by eb-create
 
-This is from Sibyl's docs:
-
-These following commands are often used in dealing with the production environment. When and how they are used are described in the checklist. Here is a high-level explanation of what they do:
-`make release` or `VERSION=[GIT_TAG_TO_BE_CREATED] make release`: it creates deployable assets (that includes container images, configuration files that references the images, ie Dockerrun.aws.json and docker-compose.yml), stores them in repositories, and tags them with a software version number (such as WS281 or WS281.1). Container images are stored on AWS ECR. Configuration files are committed to GitHub and tagged by the software version number. By storing and tagging the deployable assets, we can roll back to an earlier version if a deployment goes wrong.
-`make eb-create`: it provisions cloud resources through Elastic Beanstalk (EB) and deploys the containers based on Dockerrun.aws.json.
-`make production-deploy`: redeploys the containers based on Dockerrun.aws.json
-For more information on this, please refer to the `Makefile`.
-
 
 
 - Create the release branch, such as `release/273` and commit:
@@ -256,6 +248,20 @@ Total 0 (delta 0), reused 0 (delta 0)
 To github.com:WormBase/website.git
  * [new tag]             WS282 -> WS282
 ```
+
+
+This is from Sibyl's docs:
+
+These following commands are often used in dealing with the production environment. When and how they are used are described in the checklist. Here is a high-level explanation of what they do:
+`make release` or `VERSION=[GIT_TAG_TO_BE_CREATED] make release`: it creates deployable assets (that includes container images, configuration files that references the images, ie Dockerrun.aws.json and docker-compose.yml), stores them in repositories, and tags them with a software version number (such as WS281 or WS281.1). Container images are stored on AWS ECR. Configuration files are committed to GitHub and tagged by the software version number. By storing and tagging the deployable assets, we can roll back to an earlier version if a deployment goes wrong.
+`make eb-create`: it provisions cloud resources through Elastic Beanstalk (EB) and deploys the containers based on Dockerrun.aws.json.
+`make production-deploy`: redeploys the containers based on Dockerrun.aws.json
+For more information on this, please refer to the `Makefile`.
+
+
+
+You may need to `eb init` first.
+
 
 Only needed when modifying the container.
 
