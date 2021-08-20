@@ -228,14 +228,21 @@ The Catalyst app and EB deployment also needs to know about the snapshot:
 
 - At the release branch (be sure to have the credentials ready):
 
-   
-
   ```console
   // Configure credentials (only needs to be done once)
   git submodule init
   git submodule update
   make release  # to build the assets (ie containers, minified JS, etc) required for deployment
   ```
+
+If `make release` fails to create or push the tag, create the tag manually and push it.
+
+```
+[tharris @ staging] [26992:website]> git push origin tag WS282
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:WormBase/website.git
+ * [new tag]             WS282 -> WS282
+```
 
 Only needed when modifying the container.
 
