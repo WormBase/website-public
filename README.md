@@ -213,11 +213,18 @@ Start a production release 3-10 days before a desired release date.
     - Launch the instance: Actions > Launch instance from template
     - *This can take 20-30 minutes to launch*
 
+# App deploy
+
 The Catalyst app and EB deployment also needs to know about the snapshot:
 - Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
 - In the Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE` with the new IP address of the instance (get on EC2 dashboard)
 
-- Create the release branch, such as `release/273` and commit 
+- Create the release branch, such as `release/273` and commit:
+
+```
+     git checkout -b WSXXX
+     git push
+```
 
 - At the release branch (be sure to have the credentials ready):
 
