@@ -20,7 +20,7 @@ The technical stack of WormBase website consits of:
 
 _Italic indicates services whose deployment are managed separately from what is in this repository._
 
-For devOps, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
+For Devops, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
 
 
 Development environment - EC2 option
@@ -80,7 +80,7 @@ JavaScript dependencies (such as `prettier` and `husky`) need to be installed on
 This problem seems to show up occasionally, when I modify the wormbase_local.conf while the server is running. Try `make dev-down` and then `make dev`, and repeat a few times until the problem resolves itself.
 
 
-(Experimental) Development environment - Local option
+Development environment - Local option (experimental)
 --------------------------------------------------------
 
 If a local development environment is preferred, this option would allow you to
@@ -162,9 +162,9 @@ cd /usr/local/wormbase/website-admin/update/staging
 Staging Environment
 ---------------------------------------------
 
-WormBase staging site is hosted on the shared development instance. Its deployment is automated, triggered by committing to the staging branch on Github.
+The [WormBase staging site](https://staging.wormbase.org/) is hosted on the shared development instance. Its deployment is automated, triggered by committing to the staging branch on Github.
 
-Continuous integration for staging environment is handled by Jenkins. Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script to for deployment and testing. For detailed setup, please visit the Jenkins web console.
+Continuous integration for staging environment is handled by Jenkins. For each commit, Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script for deployment and testing. For detailed setup, please visit the [Jenkins web console](https://jenkins.wormbase.org/).
 
 
 Production Environment
