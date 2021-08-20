@@ -228,7 +228,12 @@ The Catalyst app and EB deployment also needs to know about the snapshot:
 
 - At the release branch (be sure to have the credentials ready):
 
+   
+
   ```console
+  // Configure credentials (only needs to be done once)
+  git submodule init
+  git submodule update
   make release  # to build the assets (ie containers, minified JS, etc) required for deployment
   ```
 
