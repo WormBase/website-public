@@ -1,10 +1,12 @@
-# WormBase Website Repository
+WormBase Website Repository
+===========================
 
 This repository contains the [WormBase](http://www.wormbase.org) Web application.
 
 **The repository for [WormBase Mobile](http://m.wormbase.org) can be found at [WormBase/website-mobile](https://github.com/WormBase/website-mobile)**
 
-## Technical Overview
+Technical Overview
+--------------------------------------------
 
 The technical stack of WormBase website consits of:
 - A web server based on a MVC framework, [Catalyst](http://www.catalystframework.org/) and [Template Toolkit](http://www.template-toolkit.org/)
@@ -20,7 +22,8 @@ _Italic indicates services whose deployment are managed separately from what is 
 
 For Devops, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
 
-## Development Environments
+Development Environments
+--------------------------------------------
 
 *This section describes how to set up a private development environment of the WormBase website.*
 
@@ -52,14 +55,13 @@ search_server =     # to override search API base URL
 
 `make dev-down`
 
-
 #### Development Environment Troubleshooting
 
 **`make dev` appears stuck**
 
 The first time that `make dev` runs, it takes longer due to installation of dependencies. Subsequent startup should take a few seconds.
 
-**The stdout is jumbled**
+**`stdout` is jumbled**
 
 The `stdout` of docker-compose combines the stdouts of the containers. To make it easier to read, stdout of individual containers can be accessed via `SERVICE=[name_of_service] make console`, where the name of service could be website, webpack, etc as found in [docker-compose.yml](docker-compose.yml) and [docker-compose.dev.yml](docker-compose.dev.yml).
 
@@ -78,7 +80,6 @@ JavaScript dependencies (such as `prettier` and `husky`) need to be installed on
 **Compilation failure: You must configure a default store type unless you use exactly one store plugin.**
 
 This problem seems to show up occasionally, when I modify the wormbase_local.conf while the server is running. Try `make dev-down` and then `make dev`, and repeat a few times until the problem resolves itself.
-
 
 ### Local option (experimental)
 
@@ -120,8 +121,10 @@ Please browse to the `http://localhost:CATALYST_PORT` (instead of the WEBPACK_SE
 
 `make local-down`
 
-## Staging A New Release
----------------------------------------------
+Staging A New Release
+--------------------------------------------
+
+*Following the release of a new build by Hinxton, the build needs to be staged to the staging environment.*
 
 ### Mirror / unpack / process a new release:
 
@@ -158,40 +161,44 @@ cd /usr/local/wormbase/website-admin/update/staging
 
 ### Restore the Datomic Database (Todo)
 
+### Create the Search Index
+- Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
+-- Can be run on the shared development instance (permissions provided by role)
+- Change the WS release number in wormbase.conf in the `website` repository, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+- Commit these changes to the staging branch
+
+### Create JBrowse containers
+
+*This might belong below in the Production Release section*
+
+#### After the JBrowse container has been created
+- Update JBrowse container version in [Dockerrun.aws.json](./Dockerrun.aws.json) and [docker-compose.yml](docker-compose.yml)
+- We may be able to get rid of the JBrowse container (it resides in a multi-container environment built with docker-compose, side-by-side with the Catalyst app)
+- Grepping for JBrowse if we want to remove...
   
 
-## Staging Environment
----------------------------------------------
+  
+  
+Staging Environment
+--------------------------------------------
 
 The [WormBase staging site](https://staging.wormbase.org/) is hosted on the shared development instance. Its deployment is automated, triggered by committing to the staging branch on Github.
 
 Continuous integration for staging environment is handled by Jenkins. For each commit, Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script for deployment and testing. For detailed setup, please visit the [Jenkins web console](https://jenkins.wormbase.org/).
 
 
-## Production Environment
----------------------------------------------
+Production Release
+--------------------------------------------
 
-WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
+The WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
 
-## After the Datomic database has been staged
-
-- Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
--- Can be run on the shared development instance (permissions provided by role)
-- Change the WS release number in wormbase.conf in the `website` repository, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
-- Commit these changes to the staging branch
-
-**When JBrowse container is available:**
-
-- Update JBrowse container version in [Dockerrun.aws.json](./Dockerrun.aws.json) and [docker-compose.yml](docker-compose.yml)
-- We may be able to get rid of the JBrowse container (it resides in a multi-container environment built with docker-compose, side-by-side with the Catalyst app)
-- Grepping for JBrowse if we want to remove...
-- 
-
-## About 10 days before the release date
+Start a production release 3-10 days before a desired release date.
 
 ### Launch a new ACeDB instance using AWS Launch Template
 
-ACeDB is maintainined outside of EB because of performance concerns.
+**Documentation: vetted*
+
+*ACeDB is maintainined outside of EB because of performance concerns.*
 
 - Create a snapshot of the primary filesystem (containing ACeDB and blast databases) on the shared development instance (it's around 1024GB)
     - TODO: This step is currently handled manually via the console. Consider automation.
@@ -277,7 +284,7 @@ make production-deploy-no-eb
 ```
 
 Contributing
-------------
+--------------------------------------------
 
 Our development workflow can be found here:
 
@@ -286,7 +293,7 @@ Our development workflow can be found here:
 Todd Harris (todd@wormbase.org)
 
 Acknowledgements
-----------------
+--------------------------------------------
 
 <a href="https://www.browserstack.com/"><img src="https://www.browserstack.com/images/mail/browserstack-logo-footer.png" alt="BrowserStack" width="120px" /></a>
 
