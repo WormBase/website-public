@@ -1,12 +1,10 @@
-WormBase Website Repository
-===========================
+# WormBase Website Repository
 
 This repository contains the [WormBase](http://www.wormbase.org) Web application.
 
 **The repository for [WormBase Mobile](http://m.wormbase.org) can be found at [WormBase/website-mobile](https://github.com/WormBase/website-mobile)**
 
-Technical Overview
-------------------
+## Technical Overview
 
 The technical stack of WormBase website consits of:
 - A web server based on a MVC framework, [Catalyst](http://www.catalystframework.org/) and [Template Toolkit](http://www.template-toolkit.org/)
@@ -22,15 +20,17 @@ _Italic indicates services whose deployment are managed separately from what is 
 
 For Devops, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
 
+## Development Environments
 
-Development environment - EC2 option
---------------------------------------------------------
+*This section describes how to set up a private development environment of the WormBase website.*
+
+### EC2 option (preferred)
 
 Development environment can be setup easily, using a shared development machine and `docker-compose`.
 
 _For Legacy instructions_ that set up without docker or docker-compose, please visit the [Manual Setup Guide](/docs/manual_setup.md).
 
-**Prerequisite:**
+**Prerequisites:**
 
 - Obtain access and login to the shared development instance, where data and legacy software are stored.
 
@@ -53,7 +53,7 @@ search_server =     # to override search API base URL
 `make dev-down`
 
 
-### Development Environment Troubleshooting
+#### Development Environment Troubleshooting
 
 **`make dev` appears stuck**
 
@@ -80,8 +80,7 @@ JavaScript dependencies (such as `prettier` and `husky`) need to be installed on
 This problem seems to show up occasionally, when I modify the wormbase_local.conf while the server is running. Try `make dev-down` and then `make dev`, and repeat a few times until the problem resolves itself.
 
 
-Development environment - Local option (experimental)
---------------------------------------------------------
+### Local option (experimental)
 
 If a local development environment is preferred, this option would allow you to
 setup a barebone development environment, without requiring credentials, such as
@@ -89,7 +88,7 @@ those for accessing cloud resources. As a result, some features of the website
 will not work in this environment. But it should have enough functionalities for UI
 development and testing.
 
-**Prerequisite:**
+**Prerequisites**
 
 - Ensure [Docker](https://docs.docker.com/) (18.06.0+) and [docker-compose](https://docs.docker.com/compose/install/) are installed.
 
@@ -121,7 +120,7 @@ Please browse to the `http://localhost:CATALYST_PORT` (instead of the WEBPACK_SE
 
 `make local-down`
 
-Staging A New Release
+## Staging A New Release
 ---------------------------------------------
 
 ### Mirror / unpack / process a new release:
@@ -157,16 +156,11 @@ cd /usr/local/wormbase/website-admin/update/staging
 ./steps/adjust_symlinks.pl --release WSXXX.
 ```
 
-#### Restore the Datomic Database
+### Restore the Datomic Database (Todo)
 
-# h1
-## h2
-### h3
-#### h4
-##### h5
   
 
-Staging Environment
+## Staging Environment
 ---------------------------------------------
 
 The [WormBase staging site](https://staging.wormbase.org/) is hosted on the shared development instance. Its deployment is automated, triggered by committing to the staging branch on Github.
@@ -174,7 +168,7 @@ The [WormBase staging site](https://staging.wormbase.org/) is hosted on the shar
 Continuous integration for staging environment is handled by Jenkins. For each commit, Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script for deployment and testing. For detailed setup, please visit the [Jenkins web console](https://jenkins.wormbase.org/).
 
 
-Production Environment
+## Production Environment
 ---------------------------------------------
 
 WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
