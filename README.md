@@ -161,11 +161,14 @@ cd /usr/local/wormbase/website-admin/update/staging
 
 ### Restore the Datomic Database (Todo)
 
+### Update wormbase.conf
+
+- Change the WS release number in wormbase.conf in the `website` repository, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+- Commit these changes to the staging branch
+
 ### Create the Search Index
 - Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
 -- Can be run on the shared development instance (permissions provided by role)
-- Change the WS release number in wormbase.conf in the `website` repository, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
-- Commit these changes to the staging branch
 
 ### Create JBrowse containers
 
@@ -175,8 +178,6 @@ cd /usr/local/wormbase/website-admin/update/staging
 - Update JBrowse container version in [Dockerrun.aws.json](./Dockerrun.aws.json) and [docker-compose.yml](docker-compose.yml)
 - We may be able to get rid of the JBrowse container (it resides in a multi-container environment built with docker-compose, side-by-side with the Catalyst app)
 - Grepping for JBrowse if we want to remove...
-  
-
   
   
 Staging Environment
