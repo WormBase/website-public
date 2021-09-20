@@ -21,7 +21,14 @@ WRAPPER $field_block title="Expression pattern images" key="expr_pattern_images"
     '</div>';
 END;
 
-%]
+
+# Here marks the beginning of the CeNGEN chart
+WRAPPER $field_block title="Single cell gene expression graphs - CeNGEN" tooltip="Single cell gene expression graphs";
+    '<div id="cengen-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+END;
+# Here marks the end of the CeNGEN chart
+
+ %]
 
 
 [%
@@ -180,14 +187,10 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
               key = 'anatomy_function');
 END;
 
-
     '<div id="fpkm_holder" style="min-height:50px;">
         <div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." />Loading FPKM expression data...</div>
     </div>';
-
-
  %]
-
 
 
 [%# PROCESS shared/fields/fpkm_expression_summary_ls.tt2 %]
@@ -213,6 +216,14 @@ END;
     setTimeout(function(){  // sorry, need time to load summary fpkm plot first
         WB.openField($jq("#fpkm_holder"), "[% '/rest/field/' _ class _ '/' _ fields.name.data.id _ '/fpkm_expression_summary_ls' %]", {noLoadImg: true});
     }, 1000);
+</script>
+
+<script type="text/javascript">
+(function(){
+  if (document.getElementById('cengen-holder')) {
+    WB.renderCenGenChart('cengen-holder', '[% object.name.data.id %]');
+  }
+})();
 </script>
 
 

@@ -6,7 +6,7 @@ This repository contains the [WormBase](http://www.wormbase.org) Web application
 **The repository for [WormBase Mobile](http://m.wormbase.org) can be found at [WormBase/website-mobile](https://github.com/WormBase/website-mobile)**
 
 Technical Overview
-------------------
+--------------------------------------------
 
 The technical stack of WormBase website consits of:
 - A web server based on a MVC framework, [Catalyst](http://www.catalystframework.org/) and [Template Toolkit](http://www.template-toolkit.org/)
@@ -16,20 +16,24 @@ The technical stack of WormBase website consits of:
 - BLAST, and other bioinformatics tools
 - [_A RESTful data API_](https://github.com/WormBase/wormbase_rest)
 - [_A RESTful search API_](https://github.com/WormBase/wb-search)
+- [The auxiliary (Amplify) backends](wb-amplify-auxiliary-backend/)
 
 _Italic indicates services whose deployment are managed separately from what is in this repository._
 
-For devOps, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
+For Devops, we use Docker, docker-compose, Jenkins, AWS Elastic Beanstalk.
 
+Development Environments
+--------------------------------------------
 
-Development environment - EC2 option
---------------------------------------------------------
+*This section describes how to set up a private development environment of the WormBase website.*
+
+### EC2 option (preferred)
 
 Development environment can be setup easily, using a shared development machine and `docker-compose`.
 
 _For Legacy instructions_ that set up without docker or docker-compose, please visit the [Manual Setup Guide](/docs/manual_setup.md).
 
-**Prerequisite:**
+**Prerequisites:**
 
 - Obtain access and login to the shared development instance, where data and legacy software are stored.
 
@@ -51,14 +55,13 @@ search_server =     # to override search API base URL
 
 `make dev-down`
 
-
-### Development Environment Troubleshooting
+#### Development Environment Troubleshooting
 
 **`make dev` appears stuck**
 
 The first time that `make dev` runs, it takes longer due to installation of dependencies. Subsequent startup should take a few seconds.
 
-**The stdout is jumbled**
+**`stdout` is jumbled**
 
 The `stdout` of docker-compose combines the stdouts of the containers. To make it easier to read, stdout of individual containers can be accessed via `SERVICE=[name_of_service] make console`, where the name of service could be website, webpack, etc as found in [docker-compose.yml](docker-compose.yml) and [docker-compose.dev.yml](docker-compose.dev.yml).
 
@@ -78,9 +81,7 @@ JavaScript dependencies (such as `prettier` and `husky`) need to be installed on
 
 This problem seems to show up occasionally, when I modify the wormbase_local.conf while the server is running. Try `make dev-down` and then `make dev`, and repeat a few times until the problem resolves itself.
 
-
-(Experimental) Development environment - Local option
---------------------------------------------------------
+### Local option (experimental)
 
 If a local development environment is preferred, this option would allow you to
 setup a barebone development environment, without requiring credentials, such as
@@ -88,7 +89,7 @@ those for accessing cloud resources. As a result, some features of the website
 will not work in this environment. But it should have enough functionalities for UI
 development and testing.
 
-**Prerequisite:**
+**Prerequisites**
 
 - Ensure [Docker](https://docs.docker.com/) (18.06.0+) and [docker-compose](https://docs.docker.com/compose/install/) are installed.
 
@@ -120,31 +121,97 @@ Please browse to the `http://localhost:CATALYST_PORT` (instead of the WEBPACK_SE
 
 `make local-down`
 
-Staging Environment
----------------------------------------------
+Staging A New Release
+--------------------------------------------
 
-WormBase staging site is hosted on the shared development instance. Its deployment is automated, triggered by committing to the staging branch on Github.
+*Following the release of a new build by Hinxton, the build needs to be staged to the staging environment.*
 
-Continuous integration for staging environment is handled by Jenkins. Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script to for deployment and testing. For detailed setup, please visit the Jenkins web console.
+### Mirror / unpack / process a new release:
 
+#### Mirror a new release from Hinxton to the official WormBase FTP site (on the `proxy` instance):
+```
+cd /usr/local/wormbase/website-admin/update/staging
+./steps/mirror_new_release.pl --release WSXXX
+```
 
-Production Environment
----------------------------------------------
+#### On the `rdbms` instance, mirror the GFF and clustal files:
+```
+cd /usr/local/wormbase/website-admin/update/staging
+./steps/mirror_gff_and_clustal.pl --release WSXXX
+// It may be necessary to first remove old releases from `/usr/local/ftp/pub/wormbase/releases` and databases from `/var/lib/mysql`. `df` first.
 
-WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
+// Unpack the clustalw database
+./steps/unpack_clustalw.pl --release WSXXX
 
-### Website release checklist
+// Prepare Bio::DB::SeqFeature::Store databases (requires overnight)
+./steps/load_genomic_gff_databases.pl --release WSXXX
+```
 
-**After database has been staged:**
+#### Mirror to the staging instance (`dev`):
+```
+// It may be necessary to first remove old releases from `/usr/local/wormbase/acedb` and `/usr/local/ftp/pub/wormbase`.
+cd /usr/local/wormbase/website-admin/update/staging
+./steps/mirror_new_release.pl --release WSXXX
+./steps/unpack_acedb.pl --release WSXXX
 
+// The current version of the acedb database is referenced by a symlink at /usr/local/wormbase/acedb/wormbase.
+// Update this symlink to point to the newly unpacked acedb database.
+./steps/adjust_symlinks.pl --release WSXXX.
+```
+
+### Restore the Datomic Database (Todo)
+
+### Update wormbase.conf
+
+- Change the WS release number in wormbase.conf in the `website` repository, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+- Commit these changes to the staging branch
+
+### Create the Search Index
 - Index search with the new database release and deploy search API (based on [WormBase/wb-search](https://github.com/WormBase/wb-search))
-- Change the WS release number in wormbase.conf, in particular, `wormbase_release`, `rest_server`, and `search_server` properties
+-- Can be run on the shared development instance (permissions provided by role)
 
-**When JBrowse container is available:**
+### Create JBrowse containers
 
+*This might belong below in the Production Release section*
+
+#### After the JBrowse container has been created
 - Update JBrowse container version in [Dockerrun.aws.json](./Dockerrun.aws.json) and [docker-compose.yml](docker-compose.yml)
+- We may be able to get rid of the JBrowse container (it resides in a multi-container environment built with docker-compose, side-by-side with the Catalyst app)
+- Grepping for JBrowse if we want to remove...
+  
+  
+Staging Environment
+--------------------------------------------
 
-**About 10 days before the release date:**
+The [WormBase staging site](https://staging.wormbase.org/) is hosted on the shared development instance. Its deployment is automated, triggered by committing to the staging branch on Github.
+
+Continuous integration for staging environment is handled by Jenkins. For each commit, Jenkins runs the [jenkins-ci-deploy.sh](jenkins-ci-deploy.sh) script for deployment and testing. For detailed setup, please visit the [Jenkins web console](https://jenkins.wormbase.org/).
+
+
+Production Release
+--------------------------------------------
+
+The WormBase production site is hosted with AWS Elastic Beanstalk. For details about customizing the production deployment, please visit the [WormBase Beanstalk Guide for Website](docs/beanstalk.md).
+
+Start a production release 3-10 days before a desired release date.
+
+### Launch a new ACeDB instance using AWS Launch Template
+
+**Documentation: vetted*
+
+*ACeDB is maintainined outside of EB because of performance concerns.*
+
+- Create a snapshot of the primary filesystem (containing ACeDB and blast databases) on the shared development instance (it's around 1024GB)
+    - TODO: This step is currently handled manually via the console. Consider automation.
+- Find the default version of the acedb launch template:
+    - EC2 > Instances > Launch Template > "acedb-ec2-launch-template".
+    - Select the default and create a new template (Actions > Modify templete (create new version))
+    - Change the following:
+    - Under "Storage", update the snapshot ID for the non-root volume to use the filesystem snapshot just created
+    - Under "Networking", configure subnet as needed; "use auxiliary"
+    - Configure tags as needed (name, eg: ACeDB Filesystem; Description ACeDB Filesystem for WSXXX)
+    - Launch the instance: Actions > Launch instance from template
+    - *This can take 20-30 minutes to launch*
 
 - Create a snapshot of the filesystem of the shared development instance
 - Create ACeDB deployment for production
@@ -152,15 +219,52 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
     * Under the configure for Storage, update the snapshot for the non-root volume to use the filesystem snapshot just created
     * Configure subnet as needed
     * Configure tags as needed (ie. Release and CreatedBy)
+    
+The Catalyst app and EB deployment also needs to know about the snapshot:
 - Update the volume snapshot for the WS release in [.ebextensions/01-setup-volumes.config](.ebextensions/01-setup-volumes.config)
-- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` in the [Makefile](Makefile)
-- Create the release branch, such as `release/273`
+- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` (get on EC2 dashboard)
+ in the [Makefile](Makefile) 
+    * make release doens't provision any resources... that's handled by eb-create
+- Create the release branch, such as `release/273` and commit:
 
-- At the release branch:
+```
+     git checkout -b WSXXX
+     git push
+```
+
+- At the release branch (be sure to have the credentials ready):
 
   ```console
-  make release  # to build the assets (ie containers) required for deployment
+  // Configure credentials (only needs to be done once)
+  git submodule init
+  git submodule update
+  make release  # to build the assets (ie containers, minified JS, etc) required for deployment
   ```
+
+If `make release` fails to create or push the tag, create the tag manually and push it.
+
+```
+[tharris @ staging] [26992:website]> git push origin tag WS282
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:WormBase/website.git
+ * [new tag]             WS282 -> WS282
+```
+
+
+This is from Sibyl's docs:
+
+These following commands are often used in dealing with the production environment. When and how they are used are described in the checklist. Here is a high-level explanation of what they do:
+`make release` or `VERSION=[GIT_TAG_TO_BE_CREATED] make release`: it creates deployable assets (that includes container images, configuration files that references the images, ie Dockerrun.aws.json and docker-compose.yml), stores them in repositories, and tags them with a software version number (such as WS281 or WS281.1). Container images are stored on AWS ECR. Configuration files are committed to GitHub and tagged by the software version number. By storing and tagging the deployable assets, we can roll back to an earlier version if a deployment goes wrong.
+`make eb-create`: it provisions cloud resources through Elastic Beanstalk (EB) and deploys the containers based on Dockerrun.aws.json.
+`make production-deploy`: redeploys the containers based on Dockerrun.aws.json
+For more information on this, please refer to the `Makefile`.
+
+
+
+You may need to `eb init` first.
+
+
+Only needed when modifying the container.
 
   ```console
   make eb-create  # to create and deploy to the pre-production environment
@@ -171,11 +275,11 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
         - Search and Autocompletion
 	- A example gene page and all the widgets
         - ACeDB TreeView
-	- JBrowse (to be signed of by JBrowse development)
+	- JBrowse (to be signed off by JBrowse development)
 
 
 - Coordinate with REST API development to have the REST API deployed to take preaching traffic
-- Pre-caching slow endpoints as described in [WormBase/wb-cache-warmer](https://github.com/WormBase/wb-cache-warmer). Monitor the progress and terminate the process when done.
+- Pre-caching slow endpoints as described in [WormBase/wb-cache-warmer](https://github.com/WormBase/wb-cache-warmer). Monitor the progress and terminate the process when done.(The cache is still handled by Catalyst and Couchdb)
 
 ### Go live with a release
 - Login to the AWS Management Console, and navigate to Elastic Beanstalk, and then to the `website` Application.
@@ -185,26 +289,27 @@ WormBase production site is hosted with AWS Elastic Beanstalk. For details about
 ### Website post-release checklist
 
 After production is stable for a few days, tear down unused resources.
-* Elastic Beanstalk environment for from the previous release
+* Elastic Beanstalk environment from the previous release from the EB console:
     * wormbase-website
     * wormbase-search
-* AWS EC2, tear down ACeDB instance from the previous release
+* AWS EC2 console, terminate the ACeDB instance from the previous release
+* Clean up snapshots as appropriate
 * Coordinate with REST API development to tear down resources that the API depends on
 
 
 
 ### Hotfix production environment
 
-- Grant permission to the instance by attaching the `wb-catalyst-beanstalk-ec2-role`.
-
 - Prior to applying the hotfix, ensure you are at the appropriate git branch for production, such as `release/273`.
 
-- Then run the following commands,
+- Then run the following commands from the `website` repo:
 
 	```console
 	VERSION=[GIT_TAG_TO_BE_CREATED] make release  # the tag should look like WS273.1
-	make production-deploy
+	make production-deploy // can be used to recover from most failed EB
 	```
+
+	Note: the makefile passes in lots of variables to EB, such as cfg file versions. These config files can be refered to by version, and edited/referenced in the EB web console.
 
 ### Production Deployment without AWS Beanstalk
 
@@ -219,7 +324,7 @@ make production-deploy-no-eb
 ```
 
 Contributing
-------------
+--------------------------------------------
 
 Our development workflow can be found here:
 
@@ -228,7 +333,7 @@ Our development workflow can be found here:
 Todd Harris (todd@wormbase.org)
 
 Acknowledgements
-----------------
+--------------------------------------------
 
 <a href="https://www.browserstack.com/"><img src="https://www.browserstack.com/images/mail/browserstack-logo-footer.png" alt="BrowserStack" width="120px" /></a>
 
