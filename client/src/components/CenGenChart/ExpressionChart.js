@@ -43,6 +43,11 @@ function ExpressionChart({ data }) {
               }
             },
           },
+          buttons: {
+            contextButton: {
+              menuItems: ['downloadPNG','downloadJPEG']
+            }
+          },
           tableCaption: false,
           sourceWidth: chartRef.current.clientWidth,
           sourceHeight: chartRef.current.clientHeight,
