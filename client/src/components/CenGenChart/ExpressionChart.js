@@ -72,7 +72,7 @@ function ExpressionChart({ data }) {
         yAxis: [
           {
             title: {
-              text: 'Transcripts Per Kilobase Million (TPM)',
+              text: 'Transcripts Per Million (TPM)',
             },
             crosshair: true,
           },
