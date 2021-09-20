@@ -45,7 +45,7 @@ function ExpressionChart({ data }) {
           },
           buttons: {
             contextButton: {
-              menuItems: ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadSVG", "separatoor", "downloadCSV", "downloadXLS", "viewData"]
+              menuItems: ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData"]
             }
           },
           tableCaption: false,
