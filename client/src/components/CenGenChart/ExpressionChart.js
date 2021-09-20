@@ -44,6 +44,8 @@ function ExpressionChart({ data }) {
             },
           },
           tableCaption: false,
+          sourceWidth: chartRef.current.clientWidth,
+          sourceHeight: chartRef.current.clientHeight,
           fallbackToExportServer: false,
         },
         title: {
