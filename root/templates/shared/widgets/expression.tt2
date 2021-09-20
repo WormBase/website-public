@@ -28,10 +28,6 @@ WRAPPER $field_block title="Single cell gene expression graphs" tooltip="Here is
 END;
 # Here marks the end of the CeNGEN chart
 
-    '<div id="fpkm_holder" style="min-height:50px;">
-        <div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." />Loading FPKM expression data...</div>
-    </div>';
-
  %]
 
 
@@ -191,7 +187,9 @@ WRAPPER $field_block title=pluralize("Site", fields.anatomy_function.data.size) 
               key = 'anatomy_function');
 END;
 
-
+    '<div id="fpkm_holder" style="min-height:50px;">
+        <div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." />Loading FPKM expression data...</div>
+    </div>';
  %]
 
 
