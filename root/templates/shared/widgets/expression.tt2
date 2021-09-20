@@ -182,7 +182,7 @@ END;
 
 
 # Here marks the beginning of the CeNGEN chart
-WRAPPER $field_block title="Gene expression from CeNGEN" tooltip="Here is a placeholder for tooltips";
+WRAPPER $field_block title="Single cell gene expression graphs" tooltip="Here is a placeholder for tooltips";
     '<div id="cengen-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 # Here marks the end of the CeNGEN chart
