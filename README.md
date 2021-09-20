@@ -213,17 +213,18 @@ Start a production release 3-10 days before a desired release date.
     - Launch the instance: Actions > Launch instance from template
     - *This can take 20-30 minutes to launch*
 
-# App deploy
-
+- Create a snapshot of the filesystem of the shared development instance
+- Create ACeDB deployment for production
+    * Launch an new instance using AWS Launch Template (In the AWS Console, navigate to EC2 -> Instances -> Launch Templates -> acedb-ec2-launch-template -> Launch Instance from Template), and perform the configuration steps illustrated below
+    * Under the configure for Storage, update the snapshot for the non-root volume to use the filesystem snapshot just created
+    * Configure subnet as needed
+    * Configure tags as needed (ie. Release and CreatedBy)
+    
 The Catalyst app and EB deployment also needs to know about the snapshot:
-- Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
-- In the Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE` with the new IP address of the instance (get on EC2 dashboard)
-
-
-make release doens't provision any resources... that's handled by eb-create
-
-
-
+- Update the volume snapshot for the WS release in [.ebextensions/01-setup-volumes.config](.ebextensions/01-setup-volumes.config)
+- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` (get on EC2 dashboard)
+ in the [Makefile](Makefile) 
+    * make release doens't provision any resources... that's handled by eb-create
 - Create the release branch, such as `release/273` and commit:
 
 ```
