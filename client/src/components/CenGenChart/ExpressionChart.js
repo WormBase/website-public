@@ -43,7 +43,14 @@ function ExpressionChart({ data }) {
               }
             },
           },
+          buttons: {
+            contextButton: {
+              menuItems: ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData"]
+            }
+          },
           tableCaption: false,
+          sourceWidth: chartRef.current.clientWidth,
+          sourceHeight: chartRef.current.clientHeight,
           fallbackToExportServer: false,
         },
         title: {

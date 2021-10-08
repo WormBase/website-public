@@ -213,17 +213,56 @@ Start a production release 3-10 days before a desired release date.
     - Launch the instance: Actions > Launch instance from template
     - *This can take 20-30 minutes to launch*
 
+- Create a snapshot of the filesystem of the shared development instance
+- Create ACeDB deployment for production
+    * Launch an new instance using AWS Launch Template (In the AWS Console, navigate to EC2 -> Instances -> Launch Templates -> acedb-ec2-launch-template -> Launch Instance from Template), and perform the configuration steps illustrated below
+    * Under the configure for Storage, update the snapshot for the non-root volume to use the filesystem snapshot just created
+    * Configure subnet as needed
+    * Configure tags as needed (ie. Release and CreatedBy)
+    
 The Catalyst app and EB deployment also needs to know about the snapshot:
-- Update the volume snapshot for the WS release [here](.ebextensions/01-setup-volumes.config)
-- In the Makefile, set the environment variable `ACEDB_HOST_STAND_ALONE` with the new IP address of the instance (get on EC2 dashboard)
+- Update the volume snapshot for the WS release in [.ebextensions/01-setup-volumes.config](.ebextensions/01-setup-volumes.config)
+- Deploy ACeDB using the EC2 Launch Template: `acedb-ec2-launch-template` and set the environment variable `ACEDB_HOST_STAND_ALONE` (get on EC2 dashboard)
+ in the [Makefile](Makefile) 
+    * make release doens't provision any resources... that's handled by eb-create
+- Create the release branch, such as `release/273` and commit:
 
-- Create the release branch, such as `release/273` and commit 
+```
+     git checkout -b WSXXX
+     git push
+```
 
 - At the release branch (be sure to have the credentials ready):
 
   ```console
+  // Configure credentials (only needs to be done once)
+  git submodule init
+  git submodule update
   make release  # to build the assets (ie containers, minified JS, etc) required for deployment
   ```
+
+If `make release` fails to create or push the tag, create the tag manually and push it.
+
+```
+[tharris @ staging] [26992:website]> git push origin tag WS282
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:WormBase/website.git
+ * [new tag]             WS282 -> WS282
+```
+
+
+This is from Sibyl's docs:
+
+These following commands are often used in dealing with the production environment. When and how they are used are described in the checklist. Here is a high-level explanation of what they do:
+`make release` or `VERSION=[GIT_TAG_TO_BE_CREATED] make release`: it creates deployable assets (that includes container images, configuration files that references the images, ie Dockerrun.aws.json and docker-compose.yml), stores them in repositories, and tags them with a software version number (such as WS281 or WS281.1). Container images are stored on AWS ECR. Configuration files are committed to GitHub and tagged by the software version number. By storing and tagging the deployable assets, we can roll back to an earlier version if a deployment goes wrong.
+`make eb-create`: it provisions cloud resources through Elastic Beanstalk (EB) and deploys the containers based on Dockerrun.aws.json.
+`make production-deploy`: redeploys the containers based on Dockerrun.aws.json
+For more information on this, please refer to the `Makefile`.
+
+
+
+You may need to `eb init` first.
+
 
 Only needed when modifying the container.
 
