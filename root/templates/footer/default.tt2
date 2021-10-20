@@ -60,6 +60,7 @@
           <li>[% external_link("http://www.ipm.ucdavis.edu/NEMABASE/", 'NEMABASE') %]</li>
           <li>[% external_link("http://nematode.net/", 'Nematode.net') %]</li>
           <li>[% external_link("http://www.smid-db.org/", 'SMID-DB') %]</li>
+          <li>[% external_link("https://www.wormwiring.org/", 'WormWiring') %]</li>
         </ul>
       </div>
 
