@@ -86,7 +86,7 @@ This problem seems to show up occasionally, when I modify the wormbase_local.con
 If a local development environment is preferred, this option would allow you to
 setup a barebone development environment, without requiring credentials, such as
 those for accessing cloud resources. As a result, some features of the website
-will not work in this environment. But it should have enough functionalities for UI
+will not work in this environment. But it should have enough functionality for UI
 development and testing.
 
 **Prerequisites**
