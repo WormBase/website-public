@@ -4,8 +4,8 @@
     '<em>';
     'Below are changes in gene names since the previous release <strong>WS' _ prior_release_number _'</strong>. ';
     be_word = prior_release_number > 252 ? 'are' : 'will be';
-    'Gene name changes for each release since WS252 ' _ be_word _ ' archived <strong>' _
-    external_link('ftp://ftp.wormbase.org/pub/wormbase/species/c_elegans/annotation/changed_CGC_names/', 'here') _ '</strong>.';
+    'Gene name changes for each release since WS252 ' _ be_word _ ' archived on the <strong>' _
+    external_link('https://downloads.wormbase.org/species/c_elegans/annotation/changed_CGC_names/', 'Wormbase Downloads site') _ '</strong>.';
     '</em>';
 %]
 
