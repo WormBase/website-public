@@ -81,6 +81,11 @@
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
                  END;
                  '<br><br>';
+                 WRAPPER toggle title="JBrowse 2 beta";
+                     '<div class="gbrowse-image-container">';
+                     jbrowse2_view((position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
+                     '</div>';
+                 END;
                  WRAPPER toggle title="Legacy GBrowse image";
                     '<div class="gbrowse-image-container">';
                     tag2link(genomic_image, image(img_url));

@@ -451,6 +451,51 @@
 [%
     END;
 
+    MACRO jbrowse2_view(data, label, tracks, url_options) BLOCK;
+%]
+<!-- first insert a static JB2 view -->
+
+<script language='javascript'
+      src="//unpkg.com/react@16/umd/react.development.js"
+      crossorigin></script><script language='javascript'
+      src="//unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin></script><script language='javascript'
+      src="//unpkg.com/@jbrowse/react-linear-genome-view/dist/react-linear-genome-view.umd.development.js"
+      crossorigin></script>
+<div id="jbrowse_linear_genome_view" width="100%">this is where the browser should be</div>
+<script type="module" crossorigin>
+    import assembly from 'https://s3.amazonaws.com/wormbase-modencode/test/jbrowse2/c_elegans_PRJNA13758_assembly.js'
+    import tracks from 'https://s3.amazonaws.com/wormbase-modencode/test/jbrowse2/c_elegans_PRJNA13758_tracks.js'
+      const { createViewState, JBrowseLinearGenomeView } =
+        JBrowseReactLinearGenomeView
+      const { createElement } = React
+      const { render } = ReactDOM
+      const state = new createViewState({
+        assembly,
+        tracks,
+        location: 'X:13194300..13221226',
+        defaultSession: {
+  "name": "this session",
+  "margin": 0,
+  "view": {
+    "id": "linearGenomeView",
+    "type": "LinearGenomeView",
+    "displayedRegions": [
+      {
+        "refName": "I",
+        "start": 0,
+        "end": 15072434,
+        "reversed": false,
+        "assemblyName": "c_elegans_PRJNA13758"
+      }
+    ],
+    "hideHeader": true,
+    "trackLabels": "offset"
+  }
+}
+</script>
+[%
+    END;
 
     MACRO jbrowse_view(data, label, tracks, url_options) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
