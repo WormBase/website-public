@@ -453,14 +453,12 @@
 
     MACRO jbrowse2_view(data, label, tracks, url_options) BLOCK;
 %]
-<!-- first insert a static JB2 view -->
-
 <script language='javascript'
-      src="//unpkg.com/react@16/umd/react.development.js"
+      src="http://unpkg.com/react@16/umd/react.development.js"
       crossorigin></script><script language='javascript'
-      src="//unpkg.com/react-dom@16/umd/react-dom.development.js"
+      src="http://unpkg.com/react-dom@16/umd/react-dom.development.js"
       crossorigin></script><script language='javascript'
-      src="//unpkg.com/@jbrowse/react-linear-genome-view/dist/react-linear-genome-view.umd.development.js"
+      src="http://unpkg.com/@jbrowse/react-linear-genome-view/dist/react-linear-genome-view.umd.development.js"
       crossorigin></script>
 <div id="jbrowse_linear_genome_view" width="100%">this is where the browser should be</div>
 <script type="module" crossorigin>
