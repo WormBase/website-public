@@ -1,0 +1,25 @@
+
+
+
+
+[%
+    WRAPPER $field_block title="Pathway(s)" key='pathways';
+    END;
+
+
+
+    FOREACH obj IN fields.pathways.data;
+        '<div>';
+
+        '<a href="' _ obj.pathway_url _ '">' _ obj.pathway_name _ '</a><br><br>';
+        '<img src="' _ obj.pathway_image _ '">';
+        '<br><br><br><br>';
+        '</div>';
+    END;
+%]
+
+
+
+
+
+
