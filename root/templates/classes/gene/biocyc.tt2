@@ -12,6 +12,7 @@
         '<div>';
 
         '<a href="' _ obj.pathway_url _ '">' _ obj.pathway_name _ '</a><br><br>';
+        obj.pathway_id _ '<br><br>';
         '<img src="' _ obj.pathway_image _ '">';
         '<br><br><br><br>';
         '</div>';
