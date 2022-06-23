@@ -1,19 +1,14 @@
 
-
-
-
 [%
     WRAPPER $field_block title="Pathway(s)" key='pathways';
     END;
 
-
-
     FOREACH obj IN fields.pathways.data;
-        '<div>';
+        '<div align="center">';
 
-        '<a href="' _ obj.pathway_url _ '">' _ obj.pathway_name _ '</a><br><br>';
-        obj.pathway_id _ '<br><br>';
-        '<img src="' _ obj.pathway_image _ '">';
+        '<a href="' _ obj.pathway_url _ '">' _ obj.pathway_name _ ' ' _ obj.pathway_id _ '</a><br><br>';
+
+        '<img src="' _ obj.pathway_image _ '" style="border:1px solid  #555">';
         '<br><br><br><br>';
         '</div>';
     END;
