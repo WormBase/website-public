@@ -57,6 +57,8 @@
                  '</div>';
                  END;
 
+                 jbrowse2_globals(position);
+
                  WRAPPER $field_block title="Genomic position" key="genomic_position";
 
                    jbrowselink(position, undef, undef, fields.jbrowse_tracks.data);
@@ -81,11 +83,6 @@
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
                  END;
                  '<br><br>';
-                 WRAPPER toggle title="JBrowse 2 beta";
-                     '<div>';
-                     jbrowse2_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
-                     '</div>';
-                 END;
                  WRAPPER toggle title="Legacy GBrowse image";
                     '<div class="gbrowse-image-container">';
                     tag2link(genomic_image, image(img_url));
