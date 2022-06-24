@@ -37,6 +37,10 @@ var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
 };
 
+import { createViewState, JBrowseLinearGenomeView } from '@jbrowse/react-linear-genome-view'
+import assembly from './c_elegans_PRJNA13758_assembly';
+import tracks from './c_elegans_PRJNA13758_tracks';
+
 +function(window, document, undefined){
   var location = window.location,
       $jq = jQuery.noConflict();
@@ -3449,6 +3453,24 @@ var Scrolling = (function(){
         return undefined;
       }
 
+      function insertJBrowse2() {
+          const state = createViewState({
+              assembly,
+              tracks,
+              location: window.genomic_location,
+              defaultSession: {
+                 "name": "this session",
+                 "margin": 0,
+                 "view": {
+                   "id": "linearGenomeView",
+                   "type": "LinearGenomeView",
+                   "hideHeader": true,
+                   "trackLabels": "offset"
+                 }
+              }
+          })
+          return <JBrowseLinearGenomeView viewState={state} />
+      }
 
 
       function checkPluginsLoaded(name) {

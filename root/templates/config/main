@@ -456,17 +456,6 @@
       species = c.config.sections.species_list.$taxonomy;
       location = data.pos_string;
 
-      USE Dumper;
-%]
-<pre>
-  data:
-  [% Dumper.dump(data) %]
-
-  c:
-  [% Dumper.dump(c) %]
-</pre>
-[%
-
       IF species;
         bioproject = data.bioproject || species.bioprojects.keys;
         FOREACH bp IN bioproject;
@@ -474,7 +463,7 @@
 <script language='javascript'>
     function globals() {
         window.genomic_location = '[% location %]';
-        window.jbrowse_dataset  = '[% species _ "_" _ bioproject %]';
+        window.jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
         console.log('setting globals');
     }
     globals();

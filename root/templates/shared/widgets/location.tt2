@@ -68,6 +68,16 @@
                    END;
      	         END;
 
+                 WRAPPER toggle title="JBrowse 2 beta";
+                   %]
+                      <div id="jbrowse2_container">jb2 should be here</div>
+                      <script language='javascript'>
+                          ReactDOM.render(<insertJBrowse2 />, document.getElementById('jbrowse2_container'))
+                      </script>
+                   [%
+                   
+                 END 
+
                  '<div style="clear:both;">';
                  IF ref(fields.genomic_image.data) == 'ARRAY';
                    genomic_image = fields.genomic_image.data.$idx;
