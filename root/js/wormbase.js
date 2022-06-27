@@ -37,9 +37,7 @@ var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
 };
 
-import { createViewState, JBrowseLinearGenomeView } from '@jbrowse/react-linear-genome-view'
-import assembly from './c_elegans_PRJNA13758_assembly';
-import tracks from './c_elegans_PRJNA13758_tracks';
+//import { createViewState, JBrowseLinearGenomeView } from '@jbrowse/react-linear-genome-view'
 
 +function(window, document, undefined){
   var location = window.location,
@@ -3453,26 +3451,6 @@ var Scrolling = (function(){
         return undefined;
       }
 
-      function insertJBrowse2() {
-          const state = createViewState({
-              assembly,
-              tracks,
-              location: window.genomic_location,
-              defaultSession: {
-                 "name": "this session",
-                 "margin": 0,
-                 "view": {
-                   "id": "linearGenomeView",
-                   "type": "LinearGenomeView",
-                   "hideHeader": true,
-                   "trackLabels": "offset"
-                 }
-              }
-          })
-          return <JBrowseLinearGenomeView viewState={state} />
-      }
-
-
       function checkPluginsLoaded(name) {
         if (pluginsLoaded[name]) { return true; }
           else { return false; }
@@ -3597,7 +3575,109 @@ var Scrolling = (function(){
     };
   })();
 
+/*
+        function insertJBrowse2() {
+          const assembly = {
+      "name": "c_elegans_PRJNA13758",
+      "sequence": {
+        "type": "ReferenceSequenceTrack",
+        "trackId": "c_elegans_PRJNA13758-1645387701624",
+        "adapter": {
+          "type": "BgzipFastaAdapter",
+          "fastaLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz"
+          },
+          "faiLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz.fai"
+          },
+          "gziLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz.gzi"
+          }
+        },
+        "displays": [
+          {
+            "type": "LinearReferenceSequenceDisplay",
+            "displayId": "c_elegans.PRJNA13758-1645387701624-LinearReferenceSequenceDisplay"
+          }
+        ]
+      },
+      "displayName": "C. elegans N2"
+    };
+          const tracks = [{
+      "displays" : [
+         {
+            "renderer" : {
+               "type" : "SvgFeatureRenderer",
+               "color1" : "green"
+            },
+            "displayId" : "promoter_regions-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay"
+         }
+      ],
+      "name" : "Promoter regions",
+      "description" : "Regions within which there is experimental evidence for a promoter.",
+      "type" : "FeatureTrack",
+      "adapter" : {
+         "type" : "NCListAdapter",
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Promoter regions/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         }
+      },
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ],
+      "trackId" : "c_elegans_PRJNA13758_promoter_regions"
+   },
+   {
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ],
+      "trackId" : "c_elegans_PRJNA13758_protein_motifs",
+      "type" : "FeatureTrack",
+      "description" : "This track shows the extent of predicted protein motifs. Note these spans correspond to amino acid coordinates interpolated onto the physical map.  Included are signal peptide (signalp), coiled coil (ncoils) and transmembrane (tmhmm) domains, regions of low complexity (seg), and Pfam annotated motif homologies.",
+      "displays" : [
+         {
+            "renderer" : {
+               "height" : 7,
+               "color1" : "jexl:parent(feature)=='undefined'?'purple':get(parent(feature),'predictiontype')=='tmhmm'?'magenta':get(parent(feature),'predictiontype')=='seg'?'lightseagreen':get(parent(feature),'predictiontype')=='signalp'?'aquamarine':get(parent(feature),'predictiontype')=='ncoils'?'chartreuse':\nget(parent(feature),'predictiontype')=='pfam'?'lightsalmon':'purple'",
+               "type" : "SvgFeatureRenderer"
+            },
+            "type" : "LinearBasicDisplay",
+            "displayId" : "protein_motifs-c_elegans_PRJNA13758-LinearBasicDisplay"
+         }
+      ],
+      "name" : "Protein motifs",
+      "adapter" : {
+         "type" : "NCListAdapter",
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Protein motifs/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         }
+      }
+   }];
 
+          const state = createViewState({
+              assembly,
+              tracks,
+              location: window.genomic_location,
+              defaultSession: {
+                 "name": "this session",
+                 "margin": 0,
+                 "view": {
+                   "id": "linearGenomeView",
+                   "type": "LinearGenomeView",
+                   "hideHeader": true,
+                   "trackLabels": "offset"
+                 }
+              }
+          })
+          return <JBrowseLinearGenomeView viewState={state} />
+  }
+*/
 
   $jq(document).ready(function() {
       $jq.ajaxSetup( {timeout: 12e4 }); //2 minute timeout on ajax requests

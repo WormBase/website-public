@@ -451,6 +451,268 @@
 [%
     END;
 
+    MACRO jbrowse2_view(data, label, tracks, url_options) BLOCK;
+%]
+<div id="jbrowse2_linear_genome_view" width="100%">This is where it should be</div>
+<script>
+      const { createViewState, JBrowseLinearGenomeView } =
+        JBrowseReactLinearGenomeView
+      const { createElement } = React
+      const { render } = ReactDOM
+      const assembly = {
+      "name": "c_elegans_PRJNA13758",
+      "sequence": {
+        "type": "ReferenceSequenceTrack",
+        "trackId": "c_elegans_PRJNA13758-1645387701624",
+        "adapter": {
+          "type": "BgzipFastaAdapter",
+          "fastaLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz"
+          },
+          "faiLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz.fai"
+          },
+          "gziLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz.gzi"
+          }
+        },
+        "displays": [
+          {
+            "type": "LinearReferenceSequenceDisplay",
+            "displayId": "c_elegans.PRJNA13758-1645387701624-LinearReferenceSequenceDisplay"
+          }
+        ]
+      },
+      "displayName": "C. elegans N2"
+    }
+          const tracks = [{
+      "displays" : [
+         {
+            "renderer" : {
+               "type" : "SvgFeatureRenderer",
+               "color1" : "green"
+            },
+            "displayId" : "promoter_regions-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay"
+         }
+      ],
+      "name" : "Promoter regions",
+      "description" : "Regions within which there is experimental evidence for a promoter.",
+      "type" : "FeatureTrack",
+      "adapter" : {
+         "type" : "NCListAdapter",
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Promoter regions/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         }
+      },
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ],
+      "trackId" : "c_elegans_PRJNA13758_promoter_regions"
+   },
+   {
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "locationType" : "UriLocation",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Curated_Genes/{refseq}/trackData.jsonz"
+         },
+         "type" : "NCListAdapter"
+      },
+      "type" : "FeatureTrack",
+      "description" : "Protein-coding gene structures result from the integration of a variety of prediction methods and data sources followed by manual review and revison by WormBase curators. tRNAs are predicted by tRNAscan, and other non-coding RNA transcripts are taken from a variety of literature sources. The purple and blue colors indicate transcripts on the forward and reverse strands respectively. Dark purple areas represent 5' and 3' UTRs of protein-coding transcripts, assigned automatically using the extents of overlapping ESTs and full-length cDNAs. The UTR predictions have not been reviewed by WormBase curators, and some are known to contain artifacts. Grey transcripts represent either non-coding transcripts of protein coding genes or transcripts of non-coding genes.",
+      "displays" : [
+         {
+            "renderer" : {
+               "color3" : "#965567",
+               "type" : "SvgFeatureRenderer",
+               "color1" : "jexl:get(feature,'type')!='CDS'?'gray':get(feature,'strand')>0?'violet':'turquoise'",
+               "labels" : {
+                  "name" : "jexl:get(feature,'locus') || get(feature,'sequence_name')"
+               }
+            },
+            "displayId" : "curated_genes-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay"
+         }
+      ],
+      "name" : "Curated Genes",
+      "trackId" : "c_elegans_PRJNA13758_curated_genes",
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ]
+   },
+   {
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ],
+      "trackId" : "c_elegans_PRJNA13758_rnaseq",
+      "name" : "RNASeq",
+      "displays" : [
+         {
+            "displayId" : "rnaseq-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay",
+            "mouseover" : "jexl:'Score: '+get(feature,'score')",
+            "renderer" : {
+               "showLabels" : false,
+               "height" : "jexl:get(feature,'score')>100?50:floor(get(feature,'score')/2)>4?floor(get(feature,'score')/2):4",
+               "displayMode" : "collapse",
+               "type" : "SvgFeatureRenderer",
+               "color1" : "black"
+            }
+         }
+      ],
+      "type" : "FeatureTrack",
+      "description" : "These boxes indicate alignments of short read sequences from all available RNASeq projects. The number of reads has been normalised by averaging over the number of libraries. The height of all boxes indicates the relative score of the feature.",
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/RNASeq/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         },
+         "type" : "NCListAdapter"
+      }
+   },
+   {
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ],
+      "trackId" : "c_elegans_PRJNA13758_protein_motifs",
+      "type" : "FeatureTrack",
+      "description" : "This track shows the extent of predicted protein motifs. Note these spans correspond to amino acid coordinates interpolated onto the physical map.  Included are signal peptide (signalp), coiled coil (ncoils) and transmembrane (tmhmm) domains, regions of low complexity (seg), and Pfam annotated motif homologies.",
+      "displays" : [
+         {
+            "renderer" : {
+               "height" : 7,
+               "color1" : "jexl:parent(feature)=='undefined'?'purple':get(parent(feature),'predictiontype')=='tmhmm'?'magenta':get(parent(feature),'predictiontype')=='seg'?'lightseagreen':get(parent(feature),'predictiontype')=='signalp'?'aquamarine':get(parent(feature),'predictiontype')=='ncoils'?'chartreuse':\nget(parent(feature),'predictiontype')=='pfam'?'lightsalmon':'purple'",
+               "type" : "SvgFeatureRenderer"
+            },
+            "type" : "LinearBasicDisplay",
+            "displayId" : "protein_motifs-c_elegans_PRJNA13758-LinearBasicDisplay"
+         }
+      ],
+      "name" : "Protein motifs",
+      "adapter" : {
+         "type" : "NCListAdapter",
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Protein motifs/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         }
+      }
+   },
+   {
+      "trackId" : "c_elegans_PRJNA13758_trans-spliced_acceptor",
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ],
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "locationType" : "UriLocation",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Trans-spliced acceptor/{refseq}/trackData.jsonz"
+         },
+         "type" : "NCListAdapter"
+      },
+      "description" : "This track contains SL1 and SL2 trans-spliced acceptors from a variety of sources: SL1 and SL2 trans-spliced acceptors published by Blumenthal et al, Nature (2002), Trans-Spliced Exon Coupled RNA End Determination (TEC-RED) Hwang et al, PNAS (2004), EST/mRNA sequence data, RNASeq read data from ENA. SL1 acceptors are show in red, SL2 in green. Direction of transcription is indicated by arrow direction.",
+      "type" : "FeatureTrack",
+      "displays" : [
+         {
+            "displayId" : "trans-spliced_acceptor-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay",
+            "renderer" : {
+               "color1" : "jexl:get(feature,'source')=='SL1'?'red':'green'",
+               "type" : "SvgFeatureRenderer"
+            }
+         }
+      ],
+      "name" : "Trans-spliced acceptor"
+   },
+   {
+      "trackId" : "c_elegans_PRJNA13758_links_and_superlinks",
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ],
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Links and Superlinks/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         },
+         "type" : "NCListAdapter"
+      },
+      "name" : "Links and Superlinks",
+      "displays" : [
+         {
+            "renderer" : {
+               "height" : 4,
+               "type" : "SvgFeatureRenderer",
+               "color1" : "black"
+            },
+            "type" : "LinearBasicDisplay",
+            "displayId" : "links_and_superlinks-c_elegans_PRJNA13758-LinearBasicDisplay"
+         }
+      ],
+      "type" : "FeatureTrack",
+      "description" : "This track shows the location and coordinates of contigs created during the assembly of the C. elegans genome."
+   },
+   {
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "locationType" : "UriLocation",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/ESTs (best)/{refseq}/trackData.jsonz"
+         },
+         "type" : "NCListAdapter"
+      },
+      "type" : "FeatureTrack",
+      "description" : "Native (same-species) Expressed Sequence Tags (ESTs), aligned to the genome using <a href='http://genome.cse.ucsc.edu/cgi-bin/hgBlat'>BLAT</a>. This track shows the best unique location for each EST. The paired 5' and 3' ESTs from the same cDNA clone are connected by a dashed line and a colored light green. ESTs with no mate are yellow, and ESTs with a mate that is 'far away' are dark green.",
+      "name" : "ESTs",
+      "displays" : [
+         {
+            "type" : "LinearBasicDisplay",
+            "displayId" : "ests-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "renderer" : {
+               "type" : "SvgFeatureRenderer",
+               "color1" : "jexl:parent(feature)=='undefined'?'red':get(parent(feature),'has_mate')==1?'limegreen':get(parent(feature),'has_mate')==2?'green':get(parent(feature),'has_mate')==0?'gold':'black'"
+            }
+         }
+      ],
+      "trackId" : "c_elegans_PRJNA13758_ests",
+      "assemblyNames" : [
+         "c_elegans_PRJNA13758"
+      ]
+   }
+]
+      const state = new createViewState({
+        assembly,
+        tracks,
+        location: window.genomic_location,
+        defaultSession: {
+  "name": "this session",
+  "margin": 0,
+  "view": {
+    "id": "linearGenomeView",
+    "type": "LinearGenomeView",
+    "displayedRegions": [
+      {
+        "refName": "I",
+        "start": 0,
+        "end": 15072434,
+        "reversed": false,
+        "assemblyName": "c_elegans_PRJNA13758"
+      }
+    ],
+    "hideHeader": true,
+    "trackLabels": "offset"
+  }
+}
+});
+      render(
+        createElement(JBrowseLinearGenomeView, { viewState: state }),
+        document.getElementById('jbrowse2_linear_genome_view'),
+      );
+</script>
+[%
+    END;
+
     MACRO jbrowse2_globals(data) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
       species = c.config.sections.species_list.$taxonomy;

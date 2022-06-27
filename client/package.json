@@ -7,9 +7,6 @@
   },
   "dependencies": {
     "@geneontology/ribbon": "1.4.1",
-    "@jbrowse/react-linear-genome-view": "https://s3.amazonaws.com/wormbase-modencode/test/jbrowse-react-linear-genome-view-v1.7.10-no-canvas-3.tgz",
-    "c_elegans_PRJNA13758_assembly" : "https://s3.amazonaws.com/wormbase-modencode/test/jbrowse2/c_elegans_PRJNA13758_assembly.js",
-    "c_elegans_PRJNA13758_tracks" : "https://s3.amazonaws.com/wormbase-modencode/test/jbrowse2/c_elegans_PRJNA13758_tracks.js",
     "@material-ui/core": "^3.6.2",
     "@material-ui/icons": "^3.0.1",
     "aws-amplify": "4.2.2",
