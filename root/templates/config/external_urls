@@ -655,7 +655,7 @@
 	description = 'National Bioresource Project of Japan. Knockout Alleles'
 	base        = 'http://shigen.lab.nig.ac.jp/c.elegans/index.jsp'
 	email       = 'mitani1@research.twmu.ac.jp'
-	search      = 'http://www.shigen.nig.ac.jp/c.elegans/mutants/DetailsSearch?lang=english&seq=%s'
+	search      = 'https://shigen.nig.ac.jp/c.elegans/mutants/index.xhtml'
 	}
 
  NCBI = {
