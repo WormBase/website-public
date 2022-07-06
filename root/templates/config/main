@@ -310,7 +310,7 @@
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        # 'http://staging.wormbase.org'; # uncomment if you need the hack
+         'http://staging.wormbase.org'; # uncomment if you need the hack
       END;
       IF is_preview_url;
           queries.tracklist=0;
@@ -679,7 +679,35 @@
       "assemblyNames" : [
          "c_elegans_PRJNA13758"
       ]
-   }
+   },
+    {
+      "type": "FeatureTrack",
+      "trackId": "c_elegans_PRJNA13758_change-of-function_alleles",
+      "name": "Change-of-function alleles",
+      "assemblyNames": [
+        "c_elegans_PRJNA13758"
+      ],
+      "adapter": {
+        "type": "NCListAdapter",
+        "rootUrlTemplate": {
+          "locationType": "UriLocation",
+          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Change-of-function alleles/{refseq}/trackData.jsonz"
+        }
+      },
+      "displays": [
+        {
+          "type": "LinearBasicDisplay",
+          "displayId": "change-of-function_alleles-c_elegans_PRJNA13758-LinearBasicDisplay",
+          "mouseover": "jexl:get(feature,'name')+', '+get(feature,'consequence')",
+          "renderer": {
+            "type": "SvgFeatureRenderer",
+            "color1": "jexl:get(feature,'vep_impact')=='HIGH'?'red':get(feature,'vep_impact')=='MODIFIER'?'purple':get(feature,'vep_impact')=='MODERATE'?'gold':get(feature,'vep_impact')=='LOW'?'cyan':'white'",
+            "showLabels": false,
+            "showDescriptions": false
+          }
+        }
+      ]
+     }
 ]
       const state = new createViewState({
         assembly,
@@ -704,7 +732,10 @@
     "trackLabels": "offset"
   }
 }
-});
+})
+      state.session.view.showTrack('c_elegans_PRJNA13758_curated_genes')
+      state.session.view.showTrack('c_elegans_PRJNA13758_protein_motifs')
+      state.session.view.showTrack('c_elegans_PRJNA13758_change-of-function_alleles')
       render(
         createElement(JBrowseLinearGenomeView, { viewState: state }),
         document.getElementById('jbrowse2_linear_genome_view'),
