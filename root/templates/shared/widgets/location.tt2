@@ -80,7 +80,8 @@
                    img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
                  END;
                  WRAPPER $field_block title="JBrowse 2 Beta";
-                    '<span>Fully functional genome browser; try the menu in the upper left corner to explore.</span>';
+                    '<span>Fully functional genome browser; try the menu in the upper left corner to explore. Full page JBrowse2: </span>';
+                    jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
                     jbrowse2_view(position);
                  END;
                  WRAPPER $field_block title="Genome Browser Preview";

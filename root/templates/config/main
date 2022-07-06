@@ -324,6 +324,95 @@
       url;
     END;
 
+    MACRO jbrowse2_url(taxonomy, position_string, bioproject, is_preview_url, tracks, options) BLOCK;
+      IF taxonomy.match('(?i).+_(PRJ\w+)');
+        full_taxonomy = taxonomy;
+      ELSIF bioproject;
+        full_taxonomy = taxonomy _ '_' _ bioproject;
+      ELSIF c.config.sections.species_list.defined(taxonomy);
+        FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
+          NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          full_taxonomy = taxonomy _ '_' _ bp;
+        END;
+      END;
+
+      IF taxonomy.match('(?i).+_(PRJ\w+)');
+        queries = {
+            assembly => taxonomy,
+            loc => position_string
+        };
+      ELSIF full_taxonomy;
+        queries = {
+            assembly => full_taxonomy,
+            loc  => position_string
+        };
+      ELSE;
+        queries = {
+            assembly => taxonomy _ '_' _ bioproject,
+            loc => position_string
+        };
+      END;
+
+      FOREACH key IN options.keys;
+          queries.$key = options.$key;
+      END;
+
+      #queries.tracks = tracks; hard code tracks for now, see below
+      
+
+      # taking out blast support for now, to see how it's done for jb1, see jbrowse_url()
+      # IF position_string.match('add=.*;?');
+        # for BLAST results
+        #...
+      #ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
+      # C. elegans N2 only for the moment
+        queries.tracks = queries.tracks || 'c_elegans_PRJNA13758_curated_genes,c_elegans_PRJNA13758_protein_motifs,c_elegans_PRJNA13758_change-of-function_alleles';
+      #END;
+
+      IF c.config.installation_type.match('^dev');
+        # HACK! to direct dev installation to staging, with GBrowse installed
+        # DOUBLE HACK! no staging instance of jb2 exists yet
+        # 'http://staging.wormbase.org'; # uncomment if you need the hack
+        'http://www.wormbase.org'; # uncomment if you need the double hack
+      END;
+      IF is_preview_url; # I don't think this is going to get called in the current configuration.
+          queries.tracklist=0;
+          queries.nav=0;
+          queries.overview=0;
+          url = c.uri_for('/tools', 'genome', 'jbrowse2', 'index.html', queries).path_query().replace('\+', '%20');
+      ELSE;
+          url = c.uri_for('/tools', 'genome', 'jbrowse2', 'index.html', queries).path_query();
+          #url = c.uri_for('/tools', 'genome', 'jbrowse2', 'index.html', queries).path_query().replace('\+', '%20');
+      END;
+      url;
+    END;
+
+
+    MACRO jbrowse2link(data, label, search, tracks) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+      IF species;
+        linkouts = [];
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
+            IF data.class == 'genomic_location';
+                pos_display_string = pad_jbrowse_coordinates(label);
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);
+                pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
+            END;
+
+            IF pos_display_string;
+                url = jbrowse2_url(taxonomy, pos_display_string, bp, 0, tracks);
+                linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">JBrowse 2 browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+            END;
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+
     MACRO jbrowselink(data, label, search, tracks) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
       species = c.config.sections.species_list.$taxonomy;
@@ -342,6 +431,30 @@
             IF pos_display_string;
                 url = jbrowse_url(taxonomy, pos_display_string, bp, 0, tracks);
                 linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">Browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+            END;
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+    MACRO jbrowse2link(data, label, search, tracks) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+      IF species;
+        linkouts = [];
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
+            IF data.class == 'genomic_location';
+                pos_display_string = pad_jbrowse_coordinates(label);
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);
+                pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
+            END;
+
+            IF pos_display_string;
+                url = jbrowse2_url(taxonomy, pos_display_string, bp, 0, tracks);
+                linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">JBrowse 2 full web app link (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
             END;
         END;
         linkouts.join(' ');
