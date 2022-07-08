@@ -1,6 +1,6 @@
 
 [%
-    WRAPPER $field_block title="Pathway(s)" key='pathways';
+    WRAPPER $field_block title="BioCyc Pathway(s)" key='pathways';
     END;
 
     FOREACH obj IN fields.pathways.data;
