@@ -366,7 +366,7 @@
         #...
       #ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
       # C. elegans N2 only for the moment
-        queries.tracks = queries.tracks || 'c_elegans_PRJNA13758_curated_genes,c_elegans_PRJNA13758_protein_motifs,c_elegans_PRJNA13758_change-of-function_alleles';
+        queries.tracks = queries.tracks || 'c_elegans_PRJNA13758_curated_genes,c_elegans_PRJNA13758_protein_motifs,c_elegans_PRJNA13758_classical_alleles';
       #END;
 
       IF c.config.installation_type.match('^dev');
@@ -601,7 +601,35 @@
       },
       "displayName": "C. elegans N2"
     }
-          const tracks = [{
+          const tracks = [
+    {
+      "type": "FeatureTrack",
+      "trackId": "c_elegans_PRJNA13758_classical_alleles",
+      "name": "Classical Alleles",
+      "assemblyNames": [
+        "c_elegans_PRJNA13758"
+      ],
+      "adapter": {
+        "type": "NCListAdapter",
+        "rootUrlTemplate": {
+          "locationType": "UriLocation",
+          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Classical_alleles/{refseq}/trackData.jsonz"
+        }
+      },
+      "displays": [
+        {
+          "type": "LinearBasicDisplay",
+          "displayId": "classical_alleles-c_elegans_PRJNA13758-LinearBasicDisplay",
+          "renderer": {
+            "type": "SvgFeatureRenderer",
+            "color1": "jexl:get(feature,'vep_impact')=='HIGH'?'red':get(feature,'vep_impact')=='MODIFIER'?'purple':get(feature,'vep_impact')=='MODERATE'?'gold':get(feature,'vep_impact')=='LOW'?'cyan':'white'",
+            "showLabels": false,
+            "showDescriptions": false
+          }
+        }
+      ]
+     },
+     {
       "displays" : [
          {
             "renderer" : {
