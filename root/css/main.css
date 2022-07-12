@@ -913,7 +913,7 @@ a#fade:hover, a.fade:hover {
     float:right;
 }
 
-@media screen and (max-width: 823px)  {
+@media screen and (max-width: 991px)  {
   #header #searchForm {
       float:left;
       clear:left;
@@ -1368,7 +1368,15 @@ div#header .status-bar .ui-icon {
 /* Title and release date */
 div#header div#title {
   float:left;
-  margin: 24px 15px 0;
+  margin: 20px 0 0;
+  display: flex;
+  font-size: larger;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+div#header div#title > * {
+    padding: 0 0.5em;
 }
 
 div#header div#title img {
@@ -1377,19 +1385,36 @@ div#header div#title img {
 }
 
 div#header div#title > a,
-div#header div#title .release_date {
-    display: inline-block;
-    vertical-align: top;
+div#header div#title .release_date,
+div#header div#title .founding-member {
+    /* display: inline-block; */
+    /* vertical-align: top; */
 }
 
-div#header .release_date {
+div#header .release_date, div#header .founding-member {
     font-size:0.8em;
     line-height: 20.8px;
-    margin-left: 5px;
-    margin-top:16px;
+    /* margin-left: 5px; */
+    /* margin-top:16px; */
 }
 
-@media screen and (max-width: 823px) {
+div#header .founding-member {
+  display: flex;
+  align-items: center;
+}
+
+div#header .founding-member > * {
+    margin-right: 0.5em;
+}
+
+@media screen and (max-width: 1200px) {
+    div#header .founding-member > span {
+        display: none;
+    }
+}
+
+
+@media screen and (max-width: 991px) {
   div#header .status-bar {
     float:none;
   }
@@ -1422,7 +1447,7 @@ div#header .release_date {
 
 /* System message, for displaying site-wide warnings and alerts */
 #top-system-message {
-  background: #406F9C;
+  background: #224162;
   color:white;
   margin:0em;
   text-align:center;
@@ -1999,7 +2024,7 @@ ul.nav-bar li .submenu {
 #section-tools .submenu-links > div:nth-child(6) {
     position: absolute;
     left: 44.44%;
-    top: 13.4em;
+    top: 15.5em;
 }
 
 #section-tools .submenu-links > div:nth-child(10) {
@@ -3305,6 +3330,13 @@ table#table_fpkm_controls_by td:nth-child(3) {
   border: 1px solid #aaa;
 }
 
+.community-curated {
+  background-color: lightgreen;
+  padding: 4px 8px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
 /*********************************
 
    Navigation for sidebar view
@@ -3955,7 +3987,7 @@ table.venn tr.venn-data td {
 
 #issue-box-tab {
   padding:0.7em;
-  background: #6D1B1C;
+  background: #224162;
   font-weight:bold;
   font-size:0.9em;
   color:white;
@@ -3968,7 +4000,7 @@ table.venn tr.venn-data td {
   width:400px;
   clear:right;
   float:right;
-  background:#6D1B1C;
+  background:#224162;
   color:white;
 }
 #issue-box-content #issues-new{
@@ -3980,10 +4012,9 @@ table.venn tr.venn-data td {
 }
 
 #issue-box textarea, #issue-box input, #issue-box select, #issue-box option{
-  background: #222;
   padding: 5px;
-  border:1px solid black;
-  color:white;
+  border:1px solid #999;
+  border-radius: 4px;
   width:370px;
 }
 
@@ -4447,4 +4478,54 @@ button::-moz-focus-inner {
 .static-widget-content h2,
 .static-widget-content h3 {
   margin: 0.5em auto 1em;
+}
+
+@media print {
+
+    #wrap > * {
+        display: none;
+    }
+
+    #wrap #content {
+        display: block;
+    }
+
+    #wrap #content * {
+        border: none;
+    }
+
+    #wrap #content #page-title-wrapper {
+        position: relative;
+        margin: 0;
+        top: 0;
+        display: block;
+    }
+
+    #wrap #content #widgets {
+        overflow: visible;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #wrap #content #widgets > * {
+        flex: 1 0 100%;
+    }
+
+    #wrap #content #buttons-nav {
+        display: none;
+    }
+
+    #wrap #content .navigation {
+        display: none;
+    }
+
+    #wrap #content .widget-header h3 {
+        font-size: larger
+    }
+
+    #wrap #content .widget-header .module-min  {
+        display: none;
+    }
+
+
 }

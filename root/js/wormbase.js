@@ -27,6 +27,9 @@ var ReactDOM = require('../../client/node_modules/react-dom');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
 
 var Root = require('../../client/src/components/Root').default;
+var ErrorMessage = require('../../client/src/components/ErrorMessage').default;
+var logErrorToMyService = require('../../client/src/utils/logErrorToMyService').default;
+
 
 var SingleWidgetPage = require('../../client/src/components/SingleWidgetPage').default;
 
@@ -108,13 +111,18 @@ var name2widget = {
       return;
     }
 
-    function ajaxError(xhr){
-          var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '',
-              statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': xhr.statusText;
-          return '<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
-                  + '<p><a href="/tools/support?url=' + location.pathname
-                  + (error ? '&msg=' + encodeURIComponent(error.replace(/^\s+|\s+$|\n/mg, '')) : '')
-                  + '"><button class="ui-state-active"><span>Let us know</span></button></a></p><p>' + error + '</p><p>' + statusText + '</p></div>';
+    function ajaxError(xhr, jqueryElement){
+      if (xhr.readyState === 0) {
+        // Browser cancels request for some reason. Not an API issue.
+        // Intermittent issue, that can sometimes reproduced by quickly refreshing pages.
+        return;
+      }
+      var error = xhr.responseText && $jq(xhr.responseText.trim()).find(".error-message-technical").html() || '';
+      var {responseText, ...xhrOtherProps } = xhr;
+      var statusText = ((xhr.statusText ===  'timeout') && xhr.requestURL) ? 'timeout: <a href="' + xhr.requestURL + '" target="_blank">try going to the widget directly</a>': `${JSON.stringify(xhrOtherProps, null, 2)}`;
+      var errorNew = new Error(`${statusText} ${error}`);
+      logErrorToMyService(errorNew);
+      ReactDOM.render(<Root><ErrorMessage error={errorNew} /></Root>, jqueryElement[0]);
     }
 
     function navBarInit(){
@@ -203,7 +211,7 @@ var name2widget = {
                 location.href=data;
               },
               error: function(xhr,status,error) {
-                print.html(ajaxError(xhr));
+                ajaxError(xhr, print);
               }
             });
       });
@@ -325,8 +333,9 @@ var name2widget = {
                           }
                       },
                     error: function(xhr,status,error) {
-                        $jq(".error").prepend(ajaxError(xhr));
-                      }
+                      var placeholder = $('<div></div>').prependTo($jq(".error"));
+                      ajaxError(xhr, placeholder);
+                    }
                 });
                 $jq(this).parent().parent().addClass("ui-state-highlight");
                 return false;
@@ -668,7 +677,7 @@ var name2widget = {
           }
         },
         error:function(xhr, textStatus, thrownError){
-          ajaxPanel.html(ajaxError(xhr));
+          ajaxError(xhr, ajaxPanel);
         },
         complete:function(XMLHttpRequest, textStatus){
           if(callback){ callback(); }
@@ -1244,12 +1253,12 @@ var Layout = (function(){
     function newLayout(layout){
       updateLayout(layout, undefined, function() {
         $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"), function(response, status, xhr) {
-            if (status === "error") {
-                var msg = "Sorry but there was an error: ";
-                $jq(".list-layouts").html(ajaxError(xhr));
-              }
-            });
-          });
+          if (status === "error") {
+            var msg = "Sorry but there was an error: ";
+            ajaxError(xhr, $jq(".list-layouts"));
+          }
+        });
+      });
       if(timer){
         clearTimeout(timer);
         timer = undefined;
@@ -1694,8 +1703,10 @@ var Scrolling = (function(){
             updateCounts(url);
               },
           error: function(xhr,status,error) {
-                $jq("#comments").prepend(ajaxError(xhr));
-              }
+            var comments = $jq("#comments");
+            var placeholder = $('<div></div>').prependTo(comments);
+            ajaxError(xhr, placeholder);
+          }
         });
         var box = $jq('<div class="comment-box"><a href="/me">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
         var comments = $jq("#comments");
@@ -1714,9 +1725,11 @@ var Scrolling = (function(){
                       updateCounts(url);
           },
         error: function(xhr,status,error) {
-                $jq("#comments").prepend(ajaxError(xhr));
-            cm.innerHTML(error);
-          }
+          var comments = $jq("#comments");
+          var placeholder = $('<div></div>').prependTo(comments);
+          ajaxError(xhr, placeholder);
+          cm.innerHTML(error);
+        }
       });
       cm.parent().remove();
     }
@@ -1783,8 +1796,9 @@ var Scrolling = (function(){
                   message.append(data.message);
               },
           error: function(xhr,status,error) {
-                  message.append(ajaxError(xhr));
-              }
+            var placeholder = $('<div></div>').appendTo(message);
+            ajaxError(xhr, placeholder);
+          }
         });
         feed.children().not('#issue-message').hide();
         addNewLink.show();
@@ -1817,10 +1831,10 @@ var Scrolling = (function(){
               data: {widget_title:widget_title, path:path, widget_content:widget_content, widget_order:widget_order},
               success: function(data){
                     StaticWidgets.reload(widget_id, 0, data.widget_id);
-                },
+              },
               error: function(xhr,status,error) {
-                widget.find(".content").html(ajaxError(xhr));
-                }
+                ajaxError(xhr, widget.find(".content"));
+              }
           });
     },
     edit: function(wname, rev) {
@@ -1858,7 +1872,7 @@ var Scrolling = (function(){
             $jq("#nav-static-widget-" + widget_id).click().hide();
           },
           error: function(xhr,status,error) {
-              $jq("li#static-widget-" + widget_id).find(".content").html(ajaxError(xhr));
+            ajaxError(xhr, $jq("li#static-widget-" + widget_id).find(".content"));
           }
         });
       }
@@ -2061,8 +2075,12 @@ var Scrolling = (function(){
               </InteractionGraphDataProvider>
             );
           };
-          console.log(focusNodeId);
-          ReactDOM.render(<InteractionGraphWithData />, document.getElementById('interaction-graph-view'));
+          ReactDOM.render(
+            <Root>
+              <InteractionGraphWithData />
+            </Root>,
+            document.getElementById('interaction-graph-view')
+          );
         }
       );
     }
@@ -3095,14 +3113,14 @@ var Scrolling = (function(){
     function renderWidget(data, elementId, widgetName) {
       const WidgetComponent = name2widget[widgetName];
       const pageInfo =$jq("#header").data("page");
-      ReactDOM.render(<WidgetComponent data={data} pageInfo={pageInfo} />, document.getElementById(elementId));
+      ReactDOM.render(<Root><WidgetComponent data={data} pageInfo={pageInfo} /></Root>, document.getElementById(elementId));
     }
 
     function renderGORibbon(data, elementId) {
       import('../../client/src/components/GORibbon').then(
         (module) => {
           const GORibbon = module.default;
-          ReactDOM.render(<GORibbon data={data} />, document.getElementById(elementId));
+          ReactDOM.render(<Root><GORibbon data={data} /></Root>, document.getElementById(elementId));
         }
       );
     }
@@ -3113,6 +3131,7 @@ var Scrolling = (function(){
           const StrandSelect = module.StrandSelect;
           const SequenceCard = module.SequenceCard;
           ReactDOM.render(
+            <Root>
             <StrandSelect>
               {
                 ({strand}) => {
@@ -3120,9 +3139,10 @@ var Scrolling = (function(){
                     <div>
                       {
                         ['wildtype', 'mutant'].map((type) => {
-                          const {sequence, features} = (strand === '+' ? data[type]['positive_strand'] : data[type]['negative_strand']);
                           const flankLength = 500;
-                          return (
+                          const {positive_strand, negative_strand} = data[type] || {};
+                          const {sequence, features} = (strand === '+' ? positive_strand : negative_strand) || {};
+                          return sequence ? (
                             <SequenceCard
                               key={type}
                               title={`${type} ${data['public_name']}, with ${flankLength}bp flanks, shown on (${strand}) strand`}
@@ -3137,14 +3157,15 @@ var Scrolling = (function(){
                               }}
                               strand={strand}
                             />
-                          );
+                          ) : null;
                         })
                       }
                     </div>
                   );
                 }
               }
-            </StrandSelect>,
+            </StrandSelect>
+            </Root>,
             document.getElementById(elementId)
           );
         }
@@ -3156,7 +3177,7 @@ var Scrolling = (function(){
         (module) => {
           const SequenceCard = module.SequenceCard;
           ReactDOM.render(
-            <div>
+            <Root>
               {
                 ['wildtype', 'mutant'].map((type) => {
                   const {sequence} = data[`${type}_conceptual_translation`];
@@ -3185,11 +3206,26 @@ var Scrolling = (function(){
                   );
                 })
               }
-            </div>,
+            </Root>,
             document.getElementById(elementId)
           );
         }
       );
+    }
+
+    function renderCenGenChart(elementId, wbId) {
+      import('../../client/src/components/CenGenChart').then(
+        modele => {
+          CenGenChart = modele.default;
+          console.log(CenGenChart)
+          ReactDOM.render(
+            <Root>
+              <CenGenChart geneId={wbId} />
+            </Root>,
+            document.getElementById(elementId)
+          )
+        }
+      )
     }
 
     function renderFeatureSequences(data = {}, elementId, wbId) {
@@ -3200,8 +3236,8 @@ var Scrolling = (function(){
           const SequenceCard = module.SequenceCard;
           const StrandSelect = module.StrandSelect;
 
-          console.log(data);
           ReactDOM.render(
+            <Root>
             <StrandSelect initialStrand={data.reported_on_strand}>
               {
                 ({strand}) => {
@@ -3216,7 +3252,8 @@ var Scrolling = (function(){
                   );
                 }
               }
-            </StrandSelect>,
+            </StrandSelect>
+            </Root>,
             document.getElementById(elementId)
           );
         }
@@ -3236,6 +3273,7 @@ var Scrolling = (function(){
             protein_sequence = {data: null},
           } = sequenceWidgetData;
           ReactDOM.render(
+            <Root>
             <TranscriptSequencesCard
               wbId={wbId}
               splicedSequenceContext={spliced_sequence_context.data}
@@ -3244,7 +3282,8 @@ var Scrolling = (function(){
               cdsSequence={cds_sequence.data}
               sequenceContext={sequence_context.data}
               proteinSequence={protein_sequence.data}
-            />,
+            />
+            </Root>,
             document.getElementById(elementId)
           );
         }
@@ -3256,7 +3295,7 @@ var Scrolling = (function(){
         (module) => {
           const InteractorVennDiagram = module.default;
           ReactDOM.render(
-            <InteractorVennDiagram data={data} />,
+            <Root><InteractorVennDiagram data={data} /></Root>,
             document.getElementById(elementId)
           );
         }
@@ -3532,6 +3571,7 @@ var Scrolling = (function(){
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
       renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
       renderInteractorVennDiagram: renderInteractorVennDiagram, // render Venn diagram in interaction widgets of various pages
+      renderCenGenChart: renderCenGenChart // render CenGen expression data as charts on gene page
     };
   })();
 

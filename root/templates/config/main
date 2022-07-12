@@ -361,6 +361,14 @@
       END;
 
       USE Math;
+      #if the width of the JBrowse window is less that 1000bp, bump it up to 1000
+      IF end_pos - start_pos +1 < 1000;
+        width_buffer = (1000 - (end_pos - start_pos +1)) / 2;
+        start_pos = start_pos - width_buffer;
+        end_pos = end_pos + width_buffer;
+      END;
+
+
       start_pos_display = Math.int(start_pos - 0.5 * (end_pos - start_pos));
       start_pos_display = start_pos_display < 0 ? 0 : start_pos_display;  # make sure no starting coord < 0
       end_pos_display = Math.int(end_pos + 0.3 * (end_pos - start_pos));
@@ -443,6 +451,54 @@
 [%
     END;
 
+    MACRO jbrowse2_view(data, label, tracks, url_options) BLOCK;
+%]
+<script language='javascript'
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin></script><script language='javascript'
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin></script><script language='javascript'
+      src="https://unpkg.com/@jbrowse/react-linear-genome-view/dist/react-linear-genome-view.umd.development.js"
+      crossorigin></script>
+<div id="jbrowse2_linear_genome_view" width="100%">This is where it should be</div>
+<script type="module" crossorigin>
+    //import assembly from 'https://s3.amazonaws.com/wormbase-modencode/test/jbrowse2/c_elegans_PRJNA13758_assembly.js'
+    //import tracks from 'https://s3.amazonaws.com/wormbase-modencode/test/jbrowse2/c_elegans_PRJNA13758_tracks.js'
+      const { createViewState, JBrowseLinearGenomeView } =
+        JBrowseReactLinearGenomeView
+      const { createElement } = React
+      const { render } = ReactDOM
+      const state = new createViewState({
+        assembly,
+        tracks,
+        location: 'X:13194300..13221226',
+        defaultSession: {
+  "name": "this session",
+  "margin": 0,
+  "view": {
+    "id": "linearGenomeView",
+    "type": "LinearGenomeView",
+    "displayedRegions": [
+      {
+        "refName": "I",
+        "start": 0,
+        "end": 15072434,
+        "reversed": false,
+        "assemblyName": "c_elegans_PRJNA13758"
+      }
+    ],
+    "hideHeader": true,
+    "trackLabels": "offset"
+  }
+}
+});
+      render(
+        createElement(JBrowseLinearGenomeView, { viewState: state }),
+        document.getElementById('jbrowse2_linear_genome_view'),
+      );
+</script>
+[%
+    END;
 
     MACRO jbrowse_view(data, label, tracks, url_options) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
@@ -478,6 +534,8 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
     view_id = "protein-schematic";
     cds_wbid = data.reference_id;
     location = data.location;
+    species  = data.species;
+    bioproject=data.bioproject;
 %]
 <div id="[%- view_id -%]" class="jbrowse-view-container">
     <div class="jbrowse-view-iframe" style="overflow: hidden;">
@@ -492,8 +550,11 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
 	    return response.json();
 	  }).then(function(data) {
 	    var releaseVersion = data && data.version;
+            var species = '[%- species -%]';
+            var bioproject = '[%- bioproject -%]'
 	    // var releaseVersion = 'WS274';
-            var baseURL = 'https://s3.amazonaws.com/wormbase-modencode/protein_schematic/'+ releaseVersion + '/';
+            var baseURL = 'https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/'+ releaseVersion + '/protein/' + species + '_' + bioproject + '/';
+
             var protein = '[%- cds_wbid -%]';
 	    var location = '[%- location -%]';
 	    var tracks = [
@@ -506,6 +567,7 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
 	      'Post transcriptionally modified site',
 	      'Motifs',
 	      'Selected BLASTP Homologies',
+	      'MobiDB-lite',
 	      'Mass spec peptides'
 	    ];
 
@@ -521,7 +583,7 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
 	      var availableTracks = ['Exon boundaries'].concat(tracks.filter(function(track, index) {
 	        return results[index];
 	      }));
-	      var jbrowseBaseURL = '/tools/protein_schematic/?loc=' + encodeURIComponent(location) + '&tracks=' + encodeURIComponent(availableTracks.join(','));
+	      var jbrowseBaseURL = '/tools/protein_schematic/?data=data%2F'+species+'_'+bioproject+'&loc=' + encodeURIComponent(location) + '&tracks=' + encodeURIComponent(availableTracks.join(','));
 	      var previewJBrowseURL = jbrowseBaseURL + '&tracklabels=0&nav=0&tracklist=0&overview=0';
 	      var linkoutJBrowseURL = jbrowseBaseURL;
 	      buildJbroweView('#[%- view_id -%]', previewJBrowseURL, linkoutJBrowseURL);
