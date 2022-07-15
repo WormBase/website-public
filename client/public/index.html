@@ -37,8 +37,12 @@
     </noscript>
     [% content %]
     <div id="root"></div>
-    <script src="/js/jquery-1.9.1.min.js"></script>
-    <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
+    <!-- <script src="/js/jquery-1.9.1.min.js"></script>
+    <script src="/js/jquery-ui-1.10.1.custom.min.js"></script> -->
+
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/jquery-ui-1.13.1.custom.min.js"></script>
+
 
     <% for (key in htmlWebpackPlugin.files.chunks) { %>
     <script src="%PUBLIC_URL%<%= htmlWebpackPlugin.files.chunks[key].entry %>" type="text/javascript"></script>
