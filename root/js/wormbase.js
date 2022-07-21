@@ -301,7 +301,7 @@ var name2widget = {
                     dataType: 'json',
                     success: function(data){
                           var linkAccount = $jq("#link-account");
-                          if(linkAccount.size()===0){
+                          if(linkAccount.length===0){
                             $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
                             var email = new String(data.email);
                             if(data.email && data.status_ok){
@@ -866,6 +866,8 @@ var name2widget = {
 
   function formatExpand(div){
       var expands = div.find(".text-min");
+      // change l = expands.length; to a fixed number if errors
+      // for(var i=-1, el, l = 3; ((el = expands.eq(++i)) && i < l);){
       for(var i=-1, el, l = expands.length; ((el = expands.eq(++i)) && i < l);){
         if (el.height() > 35){
           el.html('<div class="text-min-expand">' + el.html() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
@@ -1319,7 +1321,7 @@ var Layout = (function(){
 
     function openAllWidgets(){
       var hash = "",
-          wlen = $jq("#navigation").find("li.module-load:not(.tools,.me,.toggle)").size();
+          wlen = $jq("#navigation").find("li.module-load:not(.tools,.me,.toggle)").lenght;
       if(widgetList.list.length === 0){ return; }
       for(i=0; i<wlen; i++){
         hash = hash + (i.toString(36));
@@ -1354,7 +1356,7 @@ var Layout = (function(){
           minimized = holder.find(".visible .widget-container.minimized").parent()
                                 .map(function() { return this.id;})
                       .get(),
-          sidebar = $jq("#navigation").find(".closed").size() > 0 ? true : false;
+          sidebar = $jq("#navigation").find(".closed").length > 0 ? true : false;
       return updateURLHash(left, right, leftWidth, minimized, sidebar);
     }
 
@@ -1862,7 +1864,7 @@ var Scrolling = (function(){
           widget = w_content.parent(),
           title = widget.find("h3 span.widget-title input"),
           url = "/rest/widget/static/" + (content_id || widget_id);
-      if(title.size()>0){
+      if(title.length>0){
         title.parent().html(title.val());
       }
       widget.find("a.button").removeClass("ui-state-highlight");
@@ -1887,7 +1889,7 @@ var Scrolling = (function(){
     history: function(wname){
       var widget = $jq("#" + wname),
          history = widget.find("div#" + wname + "-history");
-      if(history.size() > 0){
+      if(history.length > 0){
         history.toggle();
         widget.find("a#history-button").toggleClass("ui-state-highlight");
       }else{
@@ -2441,10 +2443,10 @@ var Scrolling = (function(){
                 var edgePhens = legend.find('input[name="phenotype"]:checked')
                     .map(function(){ return this.getAttribute('value'); }).get();
 
-                var nearbyExists = legend.find('input[name=nearby]').size() > 0 ?
+                var nearbyExists = legend.find('input[name=nearby]').length > 0 ?
                     true : false;
                 var nearbyChecked =
-                    legend.find('input[name=nearby]:checked').size() > 0 ?
+                    legend.find('input[name=nearby]:checked').length > 0 ?
                     true : false;
 
                 // restore checked edge types
