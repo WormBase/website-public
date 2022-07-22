@@ -75,30 +75,6 @@
       "memoryReservation": 8000
     },
     {
-      "name": "jbrowse",
-      "image": "gmod/wormbase-jbrowse:WS282",
-      "essential": true,
-      "portMappings": [
-        {
-          "hostPort": 9002,
-          "containerPort": 80
-        }
-      ],
-      "memoryReservation": 512
-    },
-    {
-      "name": "jbrowse-protein",
-      "image": "gmod/wormbase-jbrowse-protein:WS282",
-      "essential": true,
-      "portMappings": [
-        {
-          "hostPort": 9003,
-          "containerPort": 80
-        }
-      ],
-      "memoryReservation": 512
-    },
-    {
       "name": "nginx-proxy",
       "image": "nginx:1.13.7",
       "essential": true,

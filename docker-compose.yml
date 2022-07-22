@@ -25,14 +25,6 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - JWT_SECRET='${JWT_SECRET}'
-  jbrowse:
-    image: gmod/wormbase-jbrowse:WS282
-    expose:
-      - "80"
-  jbrowse-protein:
-    image: gmod/wormbase-jbrowse-protein:WS282
-    expose:
-      - "80"
   upstream-proxy:
     image: nginx:1.13.7
     expose:
