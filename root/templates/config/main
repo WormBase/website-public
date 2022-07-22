@@ -359,14 +359,14 @@
 
       #queries.tracks = tracks; hard code tracks for now, see below
       
-
       # taking out blast support for now, to see how it's done for jb1, see jbrowse_url()
       # IF position_string.match('add=.*;?');
         # for BLAST results
         #...
       #ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
       # C. elegans N2 only for the moment
-        queries.tracks = queries.tracks || 'c_elegans_PRJNA13758_curated_genes,c_elegans_PRJNA13758_protein_motifs,c_elegans_PRJNA13758_classical_alleles';
+      #  queries.tracks = queries.tracks || 'c_elegans_PRJNA13758_curated_genes,c_elegans_PRJNA13758_protein_motifs,c_elegans_PRJNA13758_classical_alleles';
+        queries.tracks = queries.assembly _ '_curated_genes,' _ queries.assembly _ '_protein_motifs,' _ queries.assembly _ '_classical_alleles';
       #END;
 
       IF c.config.installation_type.match('^dev');
@@ -565,61 +565,78 @@
     END;
 
     MACRO jbrowse2_view(data, label, tracks, url_options) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      location = data.pos_string;
+
+      IF species;
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
 %]
 <div id="jbrowse2_linear_genome_view" width="100%">This is where it should be</div>
-<script>
+<script language='javascript'>
+    function create_jbrowse2() {
+          fetch('/rest/version').then(function(response) {
+            return response.json();
+          }).then(function(data) {
+            var releaseVersion = data && data.version;
+            var genomic_location = '[% location %]';
+            var jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
+
+            var pieces = jbrowse_dataset.split("_");
+            var fasta_indentifier = pieces[0]+ '_' + pieces[1] + '.' + pieces[2];
+
       const { createViewState, JBrowseLinearGenomeView } =
         JBrowseReactLinearGenomeView
       const { createElement } = React
       const { render } = ReactDOM
       const assembly = {
-      "name": "c_elegans_PRJNA13758",
+      "name": jbrowse_dataset,
       "sequence": {
         "type": "ReferenceSequenceTrack",
-        "trackId": "c_elegans_PRJNA13758-1645387701624",
+        "trackId": jbrowse_dataset+"-1645387701624",
         "adapter": {
           "type": "BgzipFastaAdapter",
           "fastaLocation": {
             "locationType": "UriLocation",
-            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz"
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/"+fasta_indentifier+".WS284.genomic.fa.gz"
           },
           "faiLocation": {
             "locationType": "UriLocation",
-            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz.fai"
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/"+fasta_indentifier+".WS284.genomic.fa.gz.fai"
           },
           "gziLocation": {
             "locationType": "UriLocation",
-            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/c_elegans.PRJNA13758.WS278.genomic.fa.gz.gzi"
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/"+fasta_indentifier+".WS284.genomic.fa.gz.gzi"
           }
         },
         "displays": [
           {
             "type": "LinearReferenceSequenceDisplay",
-            "displayId": "c_elegans.PRJNA13758-1645387701624-LinearReferenceSequenceDisplay"
+            "displayId": jbrowse_dataset+"-LinearReferenceSequenceDisplay"
           }
         ]
       },
-      "displayName": "C. elegans N2"
     }
           const tracks = [
     {
       "type": "FeatureTrack",
-      "trackId": "c_elegans_PRJNA13758_classical_alleles",
+      "trackId": jbrowse_dataset+"_classical_alleles",
       "name": "Classical Alleles",
       "assemblyNames": [
-        "c_elegans_PRJNA13758"
+        jbrowse_dataset
       ],
       "adapter": {
         "type": "NCListAdapter",
         "rootUrlTemplate": {
           "locationType": "UriLocation",
-          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Classical_alleles/{refseq}/trackData.jsonz"
+          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Classical_alleles/{refseq}/trackData.jsonz"
         }
       },
       "displays": [
         {
           "type": "LinearBasicDisplay",
-          "displayId": "classical_alleles-c_elegans_PRJNA13758-LinearBasicDisplay",
+          "displayId": "classical_alleles-"+jbrowse_dataset+"-LinearBasicDisplay",
           "renderer": {
             "type": "SvgFeatureRenderer",
             "color1": "jexl:get(feature,'vep_impact')=='HIGH'?'red':get(feature,'vep_impact')=='MODIFIER'?'purple':get(feature,'vep_impact')=='MODERATE'?'gold':get(feature,'vep_impact')=='LOW'?'cyan':'white'",
@@ -636,7 +653,7 @@
                "type" : "SvgFeatureRenderer",
                "color1" : "green"
             },
-            "displayId" : "promoter_regions-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "displayId" : "promoter_regions-"+jbrowse_dataset+"-LinearBasicDisplay",
             "type" : "LinearBasicDisplay"
          }
       ],
@@ -646,20 +663,20 @@
       "adapter" : {
          "type" : "NCListAdapter",
          "rootUrlTemplate" : {
-            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Promoter regions/{refseq}/trackData.jsonz",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Promoter regions/{refseq}/trackData.jsonz",
             "locationType" : "UriLocation"
          }
       },
       "assemblyNames" : [
-         "c_elegans_PRJNA13758"
+         jbrowse_dataset
       ],
-      "trackId" : "c_elegans_PRJNA13758_promoter_regions"
+      "trackId" : jbrowse_dataset+"_promoter_regions"
    },
    {
       "adapter" : {
          "rootUrlTemplate" : {
             "locationType" : "UriLocation",
-            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Curated_Genes/{refseq}/trackData.jsonz"
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Curated_Genes/{refseq}/trackData.jsonz"
          },
          "type" : "NCListAdapter"
       },
@@ -675,25 +692,25 @@
                   "name" : "jexl:get(feature,'locus') || get(feature,'sequence_name')"
                }
             },
-            "displayId" : "curated_genes-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "displayId" : "curated_genes-"+jbrowse_dataset+"-LinearBasicDisplay",
             "type" : "LinearBasicDisplay"
          }
       ],
       "name" : "Curated Genes",
-      "trackId" : "c_elegans_PRJNA13758_curated_genes",
+      "trackId" : jbrowse_dataset+"_curated_genes",
       "assemblyNames" : [
-         "c_elegans_PRJNA13758"
+         jbrowse_dataset 
       ]
    },
    {
       "assemblyNames" : [
-         "c_elegans_PRJNA13758"
+         jbrowse_dataset
       ],
-      "trackId" : "c_elegans_PRJNA13758_rnaseq",
+      "trackId" : jbrowse_dataset+"_rnaseq",
       "name" : "RNASeq",
       "displays" : [
          {
-            "displayId" : "rnaseq-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "displayId" : "rnaseq-"+jbrowse_dataset+"-LinearBasicDisplay",
             "type" : "LinearBasicDisplay",
             "mouseover" : "jexl:'Score: '+get(feature,'score')",
             "renderer" : {
@@ -709,7 +726,7 @@
       "description" : "These boxes indicate alignments of short read sequences from all available RNASeq projects. The number of reads has been normalised by averaging over the number of libraries. The height of all boxes indicates the relative score of the feature.",
       "adapter" : {
          "rootUrlTemplate" : {
-            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/RNASeq/{refseq}/trackData.jsonz",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/RNASeq/{refseq}/trackData.jsonz",
             "locationType" : "UriLocation"
          },
          "type" : "NCListAdapter"
@@ -717,9 +734,9 @@
    },
    {
       "assemblyNames" : [
-         "c_elegans_PRJNA13758"
+         jbrowse_dataset
       ],
-      "trackId" : "c_elegans_PRJNA13758_protein_motifs",
+      "trackId" : jbrowse_dataset+"_protein_motifs",
       "type" : "FeatureTrack",
       "description" : "This track shows the extent of predicted protein motifs. Note these spans correspond to amino acid coordinates interpolated onto the physical map.  Included are signal peptide (signalp), coiled coil (ncoils) and transmembrane (tmhmm) domains, regions of low complexity (seg), and Pfam annotated motif homologies.",
       "displays" : [
@@ -730,27 +747,27 @@
                "type" : "SvgFeatureRenderer"
             },
             "type" : "LinearBasicDisplay",
-            "displayId" : "protein_motifs-c_elegans_PRJNA13758-LinearBasicDisplay"
+            "displayId" : "protein_motifs-"+jbrowse_dataset+"-LinearBasicDisplay"
          }
       ],
       "name" : "Protein motifs",
       "adapter" : {
          "type" : "NCListAdapter",
          "rootUrlTemplate" : {
-            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Protein motifs/{refseq}/trackData.jsonz",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Protein motifs/{refseq}/trackData.jsonz",
             "locationType" : "UriLocation"
          }
       }
    },
    {
-      "trackId" : "c_elegans_PRJNA13758_trans-spliced_acceptor",
+      "trackId" : jbrowse_dataset+"_trans-spliced_acceptor",
       "assemblyNames" : [
-         "c_elegans_PRJNA13758"
+         jbrowse_dataset
       ],
       "adapter" : {
          "rootUrlTemplate" : {
             "locationType" : "UriLocation",
-            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Trans-spliced acceptor/{refseq}/trackData.jsonz"
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Trans-spliced acceptor/{refseq}/trackData.jsonz"
          },
          "type" : "NCListAdapter"
       },
@@ -758,7 +775,7 @@
       "type" : "FeatureTrack",
       "displays" : [
          {
-            "displayId" : "trans-spliced_acceptor-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "displayId" : "trans-spliced_acceptor-"+jbrowse_dataset+"-LinearBasicDisplay",
             "type" : "LinearBasicDisplay",
             "renderer" : {
                "color1" : "jexl:get(feature,'source')=='SL1'?'red':'green'",
@@ -769,13 +786,13 @@
       "name" : "Trans-spliced acceptor"
    },
    {
-      "trackId" : "c_elegans_PRJNA13758_links_and_superlinks",
+      "trackId" : jbrowse_dataset+"_links_and_superlinks",
       "assemblyNames" : [
-         "c_elegans_PRJNA13758"
+         jbrowse_dataset
       ],
       "adapter" : {
          "rootUrlTemplate" : {
-            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Links and Superlinks/{refseq}/trackData.jsonz",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Links and Superlinks/{refseq}/trackData.jsonz",
             "locationType" : "UriLocation"
          },
          "type" : "NCListAdapter"
@@ -789,7 +806,7 @@
                "color1" : "black"
             },
             "type" : "LinearBasicDisplay",
-            "displayId" : "links_and_superlinks-c_elegans_PRJNA13758-LinearBasicDisplay"
+            "displayId" : "links_and_superlinks-"+jbrowse_dataset+"-LinearBasicDisplay"
          }
       ],
       "type" : "FeatureTrack",
@@ -799,7 +816,7 @@
       "adapter" : {
          "rootUrlTemplate" : {
             "locationType" : "UriLocation",
-            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/ESTs (best)/{refseq}/trackData.jsonz"
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/ESTs (best)/{refseq}/trackData.jsonz"
          },
          "type" : "NCListAdapter"
       },
@@ -809,36 +826,36 @@
       "displays" : [
          {
             "type" : "LinearBasicDisplay",
-            "displayId" : "ests-c_elegans_PRJNA13758-LinearBasicDisplay",
+            "displayId" : "ests-"+jbrowse_dataset+"-LinearBasicDisplay",
             "renderer" : {
                "type" : "SvgFeatureRenderer",
                "color1" : "jexl:parent(feature)=='undefined'?'red':get(parent(feature),'has_mate')==1?'limegreen':get(parent(feature),'has_mate')==2?'green':get(parent(feature),'has_mate')==0?'gold':'black'"
             }
          }
       ],
-      "trackId" : "c_elegans_PRJNA13758_ests",
+      "trackId" : jbrowse_dataset+"_ests",
       "assemblyNames" : [
-         "c_elegans_PRJNA13758"
+         jbrowse_dataset
       ]
    },
     {
       "type": "FeatureTrack",
-      "trackId": "c_elegans_PRJNA13758_change-of-function_alleles",
+      "trackId": jbrowse_dataset+"_change-of-function_alleles",
       "name": "Change-of-function alleles",
       "assemblyNames": [
-        "c_elegans_PRJNA13758"
+         jbrowse_dataset
       ],
       "adapter": {
         "type": "NCListAdapter",
         "rootUrlTemplate": {
           "locationType": "UriLocation",
-          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS284/c_elegans_PRJNA13758/tracks/Change-of-function alleles/{refseq}/trackData.jsonz"
+          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Change-of-function alleles/{refseq}/trackData.jsonz"
         }
       },
       "displays": [
         {
           "type": "LinearBasicDisplay",
-          "displayId": "change-of-function_alleles-c_elegans_PRJNA13758-LinearBasicDisplay",
+          "displayId": "change-of-function_alleles-"+jbrowse_dataset+"-LinearBasicDisplay",
           "mouseover": "jexl:get(feature,'name')+', '+get(feature,'consequence')",
           "renderer": {
             "type": "SvgFeatureRenderer",
@@ -853,7 +870,7 @@
       const state = new createViewState({
         assembly,
         tracks,
-        location: window.genomic_location,
+        location: genomic_location,
         defaultSession: {
   "name": "this session",
   "margin": 0,
@@ -866,7 +883,7 @@
         "start": 0,
         "end": 15072434,
         "reversed": false,
-        "assemblyName": "c_elegans_PRJNA13758"
+        "assemblyName": jbrowse_dataset
       }
     ],
     "hideHeader": true,
@@ -874,39 +891,24 @@
   }
 }
 })
-      state.session.view.showTrack('c_elegans_PRJNA13758_curated_genes')
-      state.session.view.showTrack('c_elegans_PRJNA13758_protein_motifs')
-      state.session.view.showTrack('c_elegans_PRJNA13758_change-of-function_alleles')
+      state.session.view.showTrack(jbrowse_dataset+"_curated_genes")
+      state.session.view.showTrack(jbrowse_dataset+"_protein_motifs")
+      state.session.view.showTrack(jbrowse_dataset+"_change-of-function_alleles")
       render(
         createElement(JBrowseLinearGenomeView, { viewState: state }),
         document.getElementById('jbrowse2_linear_genome_view'),
       );
-</script>
-[%
-    END;
+          });
 
-    MACRO jbrowse2_globals(data) BLOCK;
-      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
-      species = c.config.sections.species_list.$taxonomy;
-      location = data.pos_string;
-
-      IF species;
-        bioproject = data.bioproject || species.bioprojects.keys;
-        FOREACH bp IN bioproject;
-%]
-<script language='javascript'>
-    function globals() {
-        window.genomic_location = '[% location %]';
-        window.jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
-        console.log('setting globals');
     }
-    globals();
-    console.log(window.genomic_location);
-    console.log(window.jbrowse_dataset);
+    create_jbrowse2();
 </script>
 [%
         END;
       END;
+%]
+</script>
+[%
     END;
 
     MACRO jbrowse_view(data, label, tracks, url_options) BLOCK;
