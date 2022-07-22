@@ -579,7 +579,6 @@
           fetch('/rest/version').then(function(response) {
             return response.json();
           }).then(function(data) {
-            console.log(data);
             var releaseVersion = data && data.version;
             var genomic_location = '[% location %]';
             var jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
@@ -595,7 +594,7 @@
       "name": jbrowse_dataset,
       "sequence": {
         "type": "ReferenceSequenceTrack",
-        "trackId": "jbrowse_dataset-1645387701624",
+        "trackId": jbrowse_dataset+"-1645387701624",
         "adapter": {
           "type": "BgzipFastaAdapter",
           "fastaLocation": {
@@ -614,7 +613,7 @@
         "displays": [
           {
             "type": "LinearReferenceSequenceDisplay",
-            "displayId": "jbrowse_dataset-LinearReferenceSequenceDisplay"
+            "displayId": jbrowse_dataset+"-LinearReferenceSequenceDisplay"
           }
         ]
       },
@@ -622,7 +621,7 @@
           const tracks = [
     {
       "type": "FeatureTrack",
-      "trackId": "jbrowse_dataset_classical_alleles",
+      "trackId": jbrowse_dataset+"_classical_alleles",
       "name": "Classical Alleles",
       "assemblyNames": [
         jbrowse_dataset
@@ -912,39 +911,6 @@
 [%
     END;
 
-    MACRO jbrowse2_globals(data) BLOCK;
-      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
-      species = c.config.sections.species_list.$taxonomy;
-      location = data.pos_string;
-
-      IF species;
-        bioproject = data.bioproject || species.bioprojects.keys;
-        FOREACH bp IN bioproject;
-%]
-<script language='javascript'>
-    function globals() {
-          fetch('/rest/version').then(function(response) {
-            return response.json();
-          }).then(function(data) {
-            console.log(data);
-            var releaseVersion = data && data.version; 
-            window.releaseVersion = releaseVersion;
-            window.genomic_location = '[% location %]';
-            window.jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
-    console.log(window.genomic_location);
-    console.log(window.jbrowse_dataset);
-    console.log(window.releaseVersion);
-          });
-
-        console.log('setting globals');
-    }
-    globals();
-</script>
-[%
-        END;
-      END;
-    END;
-
     MACRO jbrowse_view(data, label, tracks, url_options) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
       species = c.config.sections.species_list.$taxonomy;
@@ -994,7 +960,6 @@ MACRO jbrowse_protein_schematic(data) BLOCK;
           fetch('/rest/version').then(function(response) {
 	    return response.json();
 	  }).then(function(data) {
-            console.log(data);
 	    var releaseVersion = data && data.version;
             var species = '[%- species -%]';
             var bioproject = '[%- bioproject -%]'
