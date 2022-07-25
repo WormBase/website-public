@@ -25,22 +25,6 @@ services:
       resources:
         reservations:
           memory: 8000M
-  jbrowse:
-    image: gmod/wormbase-jbrowse:WS285
-    ports:
-      - "9002:80"
-    deploy:
-      resources:
-        reservations:
-          memory: 512M
-  jbrowse-protein:
-    image: gmod/wormbase-jbrowse-protein:WS281
-    ports:
-      - "9003:80"
-    deploy:
-      resources:
-        reservations:
-          memory: 512M
   nginx-proxy:
     links: 
        - "website"
