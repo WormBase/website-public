@@ -20,7 +20,7 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - JWT_SECRET='${JWT_SECRET}'
+      - JWT_SECRET='this is a test'
     deploy:
       resources:
         reservations:
@@ -28,8 +28,6 @@ services:
   nginx-proxy:
     links: 
        - "website"
-       - "jbrowse"
-       - "jbrowse-protein"
     image: nginx:1.13.7
     ports:
       - "80:80"
@@ -63,8 +61,3 @@ volumes:
   awseb-logs-upstream-proxy:
   awseb-logs-website:
   awseb-logs-nginx-proxy:
-    #  - website-shared-files: "/usr/local/wormbase/website-shared-files"
-    # website-databases-dir: "/usr/local/wormbase/databases"
-    # website-services-dir: "/usr/local/wormbase/services"
-    # nginx-proxy-conf: "/var/app/current/proxy/conf.d"
-    # upstream-proxy-conf: "/var/app/current/proxy/upstream-proxy/conf.d"
