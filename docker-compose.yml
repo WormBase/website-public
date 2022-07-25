@@ -1,34 +1,86 @@
 version: "3.7"
 services:
-  nginx-proxy:
-    image: nginx:1.13.7
-    ports:
-      - "5000:80"
-    volumes:
-      - "./proxy/conf.d:/etc/nginx/conf.d"
-      - "./logs/nginx:/var/log/nginx"
   website:
-    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS285.4
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS285
     init: true
-    expose:
-      - "5000"
+    links:
+      - "upstream-proxy"
+    ports:
+      - "5001:5000"
+      - "9001:9001"
     volumes:
-      - "/usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html"
-      - "/usr/local/wormbase/services:/usr/local/wormbase/services"
-      - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
-      - "./logs:/usr/local/wormbase/website/logs"
+      - "awseb-logs-website:/usr/local/wormbase/website/logs"
+      - "website-shared-files:/usr/local/wormbase/website-shared-files"
+      - "website-databases-dir:/usr/local/wormbase/databases"
+      - "website-services-dir:/usr/local/wormbase/services"
     environment:
+      - ACEDB_PORT=2005
       - APP=${CATALYST_APP}
       - ACEDB_HOST=${ACEDB_HOST}
-      - ACEDB_PORT=2005
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - JWT_SECRET='This is a test'
+      - JWT_SECRET='${JWT_SECRET}'
+    deploy:
+      resources:
+        reservations:
+          memory: 8000M
+  jbrowse:
+    image: gmod/wormbase-jbrowse:WS285
+    ports:
+      - "9002:80"
+    deploy:
+      resources:
+        reservations:
+          memory: 512M
+  jbrowse-protein:
+    image: gmod/wormbase-jbrowse-protein:WS281
+    ports:
+      - "9003:80"
+    deploy:
+      resources:
+        reservations:
+          memory: 512M
+  nginx-proxy:
+    links: 
+       - "website"
+       - "jbrowse"
+       - "jbrowse-protein"
+    image: nginx:1.13.7
+    ports:
+      - "80:80"
+    volumes:
+      - "awseb-logs-nginx-proxy:/var/log/nginx"
+      - type: volume
+        source: "nginx-proxy-conf"
+        target: "/etc/nginx/conf.d"
+        read_only: true
   upstream-proxy:
     image: nginx:1.13.7
-    expose:
-      - "3001"
+    ports:
+      - "3001:3001"
     volumes:
-      - "./proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
-      - "./logs/upstream-proxy:/var/log/nginx"
+      - "awseb-logs-upstream-proxy:/var/log/nginx"
+      - type: volume
+        source: "upstream-proxy-conf"
+        target: "/etc/nginx/conf.d"
+        read_only: true
+    deploy:
+      resources:
+        reservations:
+          memory: 512M
+
+volumes:
+  website-shared-files:
+  website-databases-dir:
+  website-services-dir:
+  nginx-proxy-conf:
+  upstream-proxy-conf:
+  awseb-logs-upstream-proxy:
+  awseb-logs-website:
+  awseb-logs-nginx-proxy:
+    #  - website-shared-files: "/usr/local/wormbase/website-shared-files"
+    # website-databases-dir: "/usr/local/wormbase/databases"
+    # website-services-dir: "/usr/local/wormbase/services"
+    # nginx-proxy-conf: "/var/app/current/proxy/conf.d"
+    # upstream-proxy-conf: "/var/app/current/proxy/upstream-proxy/conf.d"
