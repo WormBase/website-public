@@ -25,6 +25,8 @@ services:
       resources:
         reservations:
           memory: 8000M
+    expose:
+      - "5000"
   nginx-proxy:
     links: 
        - "website"
