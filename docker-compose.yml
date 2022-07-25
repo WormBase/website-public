@@ -20,7 +20,7 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - JWT_SECRET='this is a test'
+      - JWT_SECRET=''
     deploy:
       resources:
         reservations:
