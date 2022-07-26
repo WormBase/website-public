@@ -43,10 +43,7 @@ services:
       - "3001:3001"
     volumes:
       - "awseb-logs-upstream-proxy:/var/log/nginx"
-      - type: volume
-        source: "/var/app/current/proxy/upstream-proxy/conf.d"
-        target: "/etc/nginx/conf.d"
-        read_only: true
+      - "/var/app/current/proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
     deploy:
       resources:
         reservations:
