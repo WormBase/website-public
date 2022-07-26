@@ -33,10 +33,7 @@ services:
       - "80:80"
     volumes:
       - "awseb-logs-nginx-proxy:/var/log/nginx"
-      - type: volume
-        source: "/var/app/current/proxy/conf.d"
-        target: "/etc/nginx/conf.d"
-        read_only: true
+      - "/var/app/current/proxy/conf.d:/etc/nginx/conf.d"
   upstream-proxy:
     image: nginx:1.13.7
     ports:
