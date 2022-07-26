@@ -10,9 +10,9 @@ services:
       - "9001:9001"
     volumes:
       - "awseb-logs-website:/usr/local/wormbase/website/logs"
-      - "website-shared-files:/usr/local/wormbase/website-shared-files"
-      - "website-databases-dir:/usr/local/wormbase/databases"
-      - "website-services-dir:/usr/local/wormbase/services"
+      - "/usr/local/wormbase/website-shared-files:/usr/local/wormbase/website-shared-files"
+      - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
+      - "/usr/local/wormbase/services:/usr/local/wormbase/services"
     environment:
       - ACEDB_PORT=2005
       - APP=${CATALYST_APP}
@@ -25,8 +25,6 @@ services:
       resources:
         reservations:
           memory: 8000M
-    expose:
-      - "5000"
   nginx-proxy:
     links: 
        - "website"
@@ -36,7 +34,7 @@ services:
     volumes:
       - "awseb-logs-nginx-proxy:/var/log/nginx"
       - type: volume
-        source: "nginx-proxy-conf"
+        source: "/var/app/current/proxy/conf.d"
         target: "/etc/nginx/conf.d"
         read_only: true
   upstream-proxy:
@@ -46,20 +44,14 @@ services:
     volumes:
       - "awseb-logs-upstream-proxy:/var/log/nginx"
       - type: volume
-        source: "upstream-proxy-conf"
+        source: "/var/app/current/proxy/upstream-proxy/conf.d"
         target: "/etc/nginx/conf.d"
         read_only: true
     deploy:
       resources:
         reservations:
           memory: 512M
-
 volumes:
-  website-shared-files:
-  website-databases-dir:
-  website-services-dir:
-  nginx-proxy-conf:
-  upstream-proxy-conf:
   awseb-logs-upstream-proxy:
   awseb-logs-website:
   awseb-logs-nginx-proxy:
