@@ -10,7 +10,7 @@ services:
       - "5001:5000"
       - "9001:9001"
     volumes:
-      - "awseb-logs-website:WS285.8"
+      - "awseb-logs-website:/usr/local/wormbase/website/logs"
       - "/usr/local/wormbase/website-shared-files:/usr/local/wormbase/website-shared-files"
       - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
       - "/usr/local/wormbase/services:/usr/local/wormbase/services"
