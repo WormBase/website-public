@@ -2,7 +2,7 @@ version: "3.7"
 services:
   website:
     container_name: "website"
-    image: "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS285.11"
+    image: "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS285.12"
     init: true
     links:
       - "upstream-proxy"
@@ -22,6 +22,7 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - JWT_SECRET='This is a test'
+      - CATALYST_APP=production
     deploy:
       resources:
         reservations:
