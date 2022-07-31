@@ -1,34 +1,52 @@
 version: "3.7"
 services:
-  nginx-proxy:
-    image: nginx:1.13.7
-    ports:
-      - "${CATALYST_PORT}:80"
-    volumes:
-      - "./proxy/conf.d:/etc/nginx/conf.d"
-      - "./logs/nginx:/var/log/nginx"
   website:
-    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS285.4
+    container_name: website
+    image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WS285
     init: true
-    expose:
-      - "5000"
+    links:
+      - "upstream-proxy"
+    ports:
+      - "5001:5000"
+      - "9001:9001"
     volumes:
-      - "/usr/local/wormbase/website-shared-files/html:/usr/local/wormbase/website-shared-files/html"
-      - "/usr/local/wormbase/services:/usr/local/wormbase/services"
+      - "awseb-logs-website:/usr/local/wormbase/website/logs"
+      - "/usr/local/wormbase/website-shared-files:/usr/local/wormbase/website-shared-files"
       - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
-      - "./logs:/usr/local/wormbase/website/logs"
+      - "/usr/local/wormbase/services:/usr/local/wormbase/services"
     environment:
+      - ACEDB_PORT=2005
       - APP=${CATALYST_APP}
       - ACEDB_HOST=${ACEDB_HOST}
-      - ACEDB_PORT=2005
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - JWT_SECRET='${JWT_SECRET}'
+      - JWT_SECRET='This is a test'
+    deploy:
+      resources:
+        reservations:
+          memory: 8000M
+  nginx-proxy:
+    links: 
+       - "website"
+    image: nginx:1.13.7
+    ports:
+      - "80:80"
+    volumes:
+      - "awseb-logs-nginx-proxy:/var/log/nginx"
+      - "/var/app/current/proxy/conf.d:/etc/nginx/conf.d"
   upstream-proxy:
     image: nginx:1.13.7
-    expose:
-      - "3001"
+    ports:
+      - "3001:3001"
     volumes:
-      - "./proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
-      - "./logs/upstream-proxy:/var/log/nginx"
+      - "awseb-logs-upstream-proxy:/var/log/nginx"
+      - "/var/app/current/proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
+    deploy:
+      resources:
+        reservations:
+          memory: 512M
+volumes:
+  awseb-logs-upstream-proxy:
+  awseb-logs-website:
+  awseb-logs-nginx-proxy:
