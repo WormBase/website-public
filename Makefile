@@ -159,7 +159,7 @@ eb-create: CATALYST_APP ?= production
 eb-create: CNAME ?= wormbase-website-preproduction
 eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
 eb-create:
-	@eb create ${EB_ENV_NAME} --cfg v2.0-2022.07.31 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},ACEDB_HOST=${ACEDB_HOST_STAND_ALONE},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET=${JWT_SECRET},CATALYST_APP=production
+	@eb create ${EB_ENV_NAME} --cfg v3.0-2022.07.31-working --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},ACEDB_HOST=${ACEDB_HOST_STAND_ALONE},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET=${JWT_SECRET},CATALYST_APP=production
 
 .PHONY: eb-create-staging
 eb-create-staging:
