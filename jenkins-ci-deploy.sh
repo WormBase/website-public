@@ -38,7 +38,12 @@ $(aws ecr get-login --no-include-email --region us-east-1)
 docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:latest
 
 # deploy container
-make dockerrun-latest
+
+# make dockerrun-latest
+# This just serves to replace the version in docker-compose.yml (formerly: Dockerrun.aws.json" with "latest"
+# Sed is greedy, however, and breaks other config  Disabled in the jenkins environment for now
+#make dockerrun-latest
+
 #cat Dockerrun.aws.json
 #git add Dockerrun.aws.json
 # Let's cat output so we can see file contents in the jenkins log
