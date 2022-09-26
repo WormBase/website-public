@@ -6,6 +6,7 @@ services:
     init: true
     links:
       - "upstream-proxy"
+      - "nginx-proxy"
     ports:
       - "5001:5000"
       - "9001:9001"
