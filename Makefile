@@ -167,7 +167,7 @@ eb-create-staging:
 
 .PHONY: dockerrun-latest
 dockerrun-latest:
-	@sed -i -r 's/wormbase\/website:[^"]+/website:'"latest"'/g' docker-compose.yml
+	@sed -i -r 's/wormbase\/website:[^"]+/wormbase\/website:'"latest"'/g' docker-compose.yml
 #           2 	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
 
 
