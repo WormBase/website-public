@@ -41,6 +41,9 @@ docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:latest
 make dockerrun-latest
 #cat Dockerrun.aws.json
 #git add Dockerrun.aws.json
+# Let's cat output so we can see file contents in the jenkins log
+cat docker-compose.yml
+git add docker-compose.yml
 git commit -m "use latest wormbase/website container"  # only needed locally and subsequent build will discard this commit
 
 
