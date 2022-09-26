@@ -22,12 +22,17 @@ fi
 set -x #echo on
 
 # update Version in Dockerrun.aws.json and docker-compose.yml
-sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' Dockerrun.aws.json
-sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' docker-compose.yml
+echo "Updating app versionin the docker-compose.yml file..."
+#sed -i -r 's/website:[^"]+/website:'"$VERSION"'/g' Dockerrun.aws.json
+#sed -i -r 's/image: website:[^"]+/website:'"$VERSION"'/g' docker-compose.yml
+
+# TODO: This regex is not currently working... updating manually. Also: was colliding with other lines in docker-compose...
+#perl -p -i -e "s/(image: 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:).*/$1${VERSION}" docker-compose.yml
+#perl -p -i -e 's/(image:\s\"357210185381.dkr.ecr.us-east-1.amazonaws.com\/wormbase\/website:).*\"/$1$VERSION\"/' docker-compose.yml
 
 # release commit
 git diff
-git add Dockerrun.aws.json
+#git add Dockerrun.aws.json
 git add docker-compose.yml
 git commit -m "release $VERSION"
 git tag "$VERSION"
