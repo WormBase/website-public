@@ -11,5 +11,5 @@ services:
     volumes:
       - "/usr/local/wormbase/acedb/wormbase:/root/acedb/wormbase"
     restart: always
-  upstream-proxy:
-    restart: always
+#  upstream-proxy:
+#    restart: always

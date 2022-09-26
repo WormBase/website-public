@@ -4,9 +4,11 @@ services:
     container_name: "website"
     image: "357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:WSXXX"
     init: true
-    links:
-      - "upstream-proxy"
-      - "nginx-proxy"
+#    links:
+#      - "upstream-proxy"
+#      - "nginx-proxy"
+    depends_on:
+      - "nginx-proxy"       
     ports:
       - "5001:5000"
       - "9001:9001"
@@ -32,25 +34,25 @@ services:
         reservations:
           memory: 8000M
   nginx-proxy:
-    links: 
-       - "website"
+#    links: 
+#       - "website"
     image: nginx:1.13.7
     ports:
       - "80:80"
     volumes:
       - "awseb-logs-nginx-proxy:/var/log/nginx"
       - "/var/app/current/proxy/conf.d:/etc/nginx/conf.d"
-  upstream-proxy:
-    image: nginx:1.13.7
-    ports:
-      - "3001:3001"
-    volumes:
-      - "awseb-logs-upstream-proxy:/var/log/nginx"
-      - "/var/app/current/proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
-    deploy:
-      resources:
-        reservations:
-          memory: 512M
+#  upstream-proxy:
+#    image: nginx:1.13.7
+#    ports:
+#      - "3001:3001"
+#    volumes:
+#      - "awseb-logs-upstream-proxy:/var/log/nginx"
+#      - "/var/app/current/proxy/upstream-proxy/conf.d:/etc/nginx/conf.d"
+#    deploy:
+#      resources:
+#        reservations:
+#          memory: 512M
 volumes:
   awseb-logs-upstream-proxy:
   awseb-logs-website:
