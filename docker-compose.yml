@@ -41,7 +41,8 @@ services:
       - "80:80"
     volumes:
       - "awseb-logs-nginx-proxy:/var/log/nginx"
-      - "/var/app/current/proxy/conf.d:/etc/nginx/conf.d"
+      - "./proxy/conf.d:/etc/nginx/conf.d"
+#      - "/var/app/current/proxy/conf.d:/etc/nginx/conf.d"
 #  upstream-proxy:
 #    image: nginx:1.13.7
 #    ports:
