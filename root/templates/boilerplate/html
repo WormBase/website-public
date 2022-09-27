@@ -21,8 +21,8 @@
     [%- content -%]
 
     <!-- Grab jQuery from local -->
-    <script src="/js/jquery-1.9.1.min.js"></script>
-    <script src="/js/jquery-ui-1.10.1.custom.min.js"></script>
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/jquery-ui-1.13.1.custom.min.js"></script>
 
     <script src="/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v[%- asset_hash | trim -%]"></script>
     <script>

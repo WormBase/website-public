@@ -37,7 +37,15 @@ var name2widget = {
   'references': require('../../client/src/components/widgets/shared/references').default
 };
 
+// left over from trying to webpack JBrowse 2 in
 //import { createViewState, JBrowseLinearGenomeView } from '@jbrowse/react-linear-genome-view'
+
+// $(function() {
+//     $.fn.size = function() {
+//         return this.length;
+//     }
+// });
+
 
 +function(window, document, undefined){
   var location = window.location,
@@ -61,12 +69,12 @@ var name2widget = {
         $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
       }
 
-      if($jq(".user-history").size()>0){
+      if($jq(".user-history").length>0){
         histUpdate(history_on);
       }
 
       search_change(pageInfo['class']);
-      if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
+      if(sysMessage.length>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
       comment.init(pageInfo);
       issue.init(pageInfo);
@@ -78,11 +86,11 @@ var name2widget = {
       navBarInit();
       pageInit();
 
-      if(searchAll.size()>0) {
+      if(searchAll.length >0) {
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
       } else {
-        if($jq(".star-status-" + pageInfo['wbid']).size()>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
+        if($jq(".star-status-" + pageInfo['wbid']).length>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
         widgetInit();
       }
       effects();
@@ -90,7 +98,7 @@ var name2widget = {
         $jq('input, textarea').placeholder();
       });
 
-      if($jq(".lightbox").size()){
+      if($jq(".lightbox").lentgh){
         WB.getPlugin("colorbox", function(){
           $jq(".lightbox").colorbox();
         });
@@ -105,7 +113,7 @@ var name2widget = {
       var uhc = $jq("#user_history-content");
 
       ajaxGet($jq(".user-history"), "/rest/history?sidebar=1", {cache : false});
-      if(uhc.size()>0 && uhc.text().length > 4) ajaxGet(uhc, "/rest/history", {cache : false});
+      if(uhc.length>0 && uhc.text().length > 4) ajaxGet(uhc, "/rest/history", {cache : false});
       if(history_on){
         setTimeout(histUpdate, 6e5); //update the history every 10min
       }
@@ -173,7 +181,7 @@ var name2widget = {
         ajaxGet($jq(".status-bar"), "/rest/auth", {cache : false}, function(){
           $jq("#bench-status").load("/rest/workbench");
           var login = $jq("#login");
-          if(login.size() > 0){
+          if(login.length > 0){
             login.click(function(){
               $jq(this).toggleClass("open ui-corner-top").siblings().toggle();
             });
@@ -224,7 +232,7 @@ var name2widget = {
           Scrolling.goToAnchor(section);
       });
 
-      if($jq(".sortable").size()>0){
+      if($jq(".sortable").length >0){
         $jq(".sortable").sortable({
           handle: '.widget-header, #widget-footer',
           items:'li.widget',
@@ -284,7 +292,7 @@ var name2widget = {
             body.toggleClass("show-empty");
       });
 
-      if(personSearch.size()>0){
+      if(personSearch.length >0){
           ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
             checkSearch(personSearch);
             personSearch.delegate(".results-person .result li a", 'click', function(){
@@ -296,7 +304,7 @@ var name2widget = {
                     dataType: 'json',
                     success: function(data){
                           var linkAccount = $jq("#link-account");
-                          if(linkAccount.size()===0){
+                          if(linkAccount.length===0){
                             $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
                             var email = new String(data.email);
                             if(data.email && data.status_ok){
@@ -367,7 +375,7 @@ var name2widget = {
           widgets = $jq("#widgets"),
           listLayouts = $jq(".list-layouts"),
           layout;
-      if(widgetHolder.size()===0){
+      if(widgetHolder.length===0){
         $jq("#content").addClass("bare-page");
         return;
       }
@@ -854,14 +862,16 @@ var name2widget = {
 
   function checkSearch(div){
     var results = div.find("#results"),
-        searchData = (results.size() > 0) ? results.data("search") : undefined;
+        searchData = (results.length > 0) ? results.data("search") : undefined;
     if(!searchData){ formatExpand(results); return; }
     SearchResult(searchData['query'], searchData["type"], searchData["species"], searchData["widget"], searchData["nostar"], searchData["count"], div);
   }
 
   function formatExpand(div){
       var expands = div.find(".text-min");
-      for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
+      // change l = expands.length; to a fixed number if errors
+      // for(var i=-1, el, l = 3; ((el = expands.eq(++i)) && i < l);){
+      for(var i=-1, el, l = expands.length; ((el = expands.eq(++i)) && i < l);){
         if (el.height() > 35){
           el.html('<div class="text-min-expand">' + el.html() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
             .click(function(){
@@ -906,7 +916,7 @@ var name2widget = {
     init();
 
     if(total > 10 || !total){
-      if(container.find(".lazyload-widget").size() > 0){ Scrolling.search(); }
+      if(container.find(".lazyload-widget").lentgh > 0){ Scrolling.search(); }
       resultDiv.click(function(){
         var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '') + (nostar ? "&nostar=" + nostar : '');
             div = $jq("<div></div>"),
@@ -1163,7 +1173,7 @@ var Layout = (function(){
         sColumns ? columns(100, 100) : readHash();
         if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
       }
-      if ((body.hasClass('table-columns')) && title.size() > 0 &&
+      if ((body.hasClass('table-columns')) && title.lentgh > 0 &&
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) >
           (Math.ceil(wHolder.children(".left").parent().width()))))
         columns(100, 100, 1);
@@ -1314,7 +1324,7 @@ var Layout = (function(){
 
     function openAllWidgets(){
       var hash = "",
-          wlen = $jq("#navigation").find("li.module-load:not(.tools,.me,.toggle)").size();
+          wlen = $jq("#navigation").find("li.module-load:not(.tools,.me,.toggle)").lenght;
       if(widgetList.list.length === 0){ return; }
       for(i=0; i<wlen; i++){
         hash = hash + (i.toString(36));
@@ -1349,7 +1359,7 @@ var Layout = (function(){
           minimized = holder.find(".visible .widget-container.minimized").parent()
                                 .map(function() { return this.id;})
                       .get(),
-          sidebar = $jq("#navigation").find(".closed").size() > 0 ? true : false;
+          sidebar = $jq("#navigation").find(".closed").length > 0 ? true : false;
       return updateURLHash(left, right, leftWidth, minimized, sidebar);
     }
 
@@ -1532,7 +1542,7 @@ var Scrolling = (function(){
       if(!sidebar)
         return;
       if(sidebar.offset()){
-        var objSmallerThanWindow = (sidebar.outerHeight() < ($window.height() - system_message)) || (sidebar.find(".closed").size() > 0),
+        var objSmallerThanWindow = (sidebar.outerHeight() < ($window.height() - system_message)) || (sidebar.find(".closed").length > 0),
             scrollTop = $window.scrollTop(),
             maxScroll = $jq(document).height() - (sidebar.outerHeight() + $jq("#footer").outerHeight() + system_message + 20); //the 20 is for padding before footer
 
@@ -1647,7 +1657,7 @@ var Scrolling = (function(){
 
   function updateCounts(url){
     var comments = $jq(".comment-count");
-    if(comments.size() > 0)
+    if(comments.length > 0)
       comments.load("/rest/feed/comment?count=1;url=" + url);
   }
 
@@ -1804,7 +1814,7 @@ var Scrolling = (function(){
         });
         feed.children().not('#issue-message').hide();
         addNewLink.show();
-        message.append("<p><h2 style='color:rgb(95, 112, 137);'>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will recieve an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>");
+        message.append("<p><h2 style='color:rgb(95, 112, 137);'>Thank you for helping WormBase!</h2></p><p>The WormBase helpdesk will get back to you shortly. You will receive an email confirmation momentarily. Please email <a href='mailto:help\@wormbase.org'>help\@wormbase.org</a> if you have any concerns.</p>");
         return false;
    },
 
@@ -1857,7 +1867,7 @@ var Scrolling = (function(){
           widget = w_content.parent(),
           title = widget.find("h3 span.widget-title input"),
           url = "/rest/widget/static/" + (content_id || widget_id);
-      if(title.size()>0){
+      if(title.length>0){
         title.parent().html(title.val());
       }
       widget.find("a.button").removeClass("ui-state-highlight");
@@ -1882,7 +1892,7 @@ var Scrolling = (function(){
     history: function(wname){
       var widget = $jq("#" + wname),
          history = widget.find("div#" + wname + "-history");
-      if(history.size() > 0){
+      if(history.length > 0){
         history.toggle();
         widget.find("a#history-button").toggleClass("ui-state-highlight");
       }else{
@@ -2436,10 +2446,10 @@ var Scrolling = (function(){
                 var edgePhens = legend.find('input[name="phenotype"]:checked')
                     .map(function(){ return this.getAttribute('value'); }).get();
 
-                var nearbyExists = legend.find('input[name=nearby]').size() > 0 ?
+                var nearbyExists = legend.find('input[name=nearby]').length > 0 ?
                     true : false;
                 var nearbyChecked =
-                    legend.find('input[name=nearby]:checked').size() > 0 ?
+                    legend.find('input[name=nearby]:checked').length > 0 ?
                     true : false;
 
                 // restore checked edge types

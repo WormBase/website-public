@@ -13,7 +13,7 @@ export JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
 export COMPOSE_PROJECT_NAME = "${USER}_$(shell pwd -P | xargs  basename)"
 
 export ACEDB_HOST ?= acedb
-export ACEDB_HOST_STAND_ALONE ?= 10.0.1.160
+export ACEDB_HOST_STAND_ALONE ?= 10.0.1.84
 
 .PHONY: bare-dev-start
 bare-dev-start:
@@ -159,7 +159,7 @@ eb-create: CATALYST_APP ?= production
 eb-create: CNAME ?= wormbase-website-preproduction
 eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
 eb-create:
-	@eb create ${EB_ENV_NAME} --cfg v2-5 --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},ACEDB_HOST=${ACEDB_HOST_STAND_ALONE},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET='${JWT_SECRET}'
+	@eb create ${EB_ENV_NAME} --cfg v3.0-2022.07.31-working --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST_APP},ACEDB_HOST=${ACEDB_HOST_STAND_ALONE},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GITHUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET=${JWT_SECRET},CATALYST_APP=production
 
 .PHONY: eb-create-staging
 eb-create-staging:
@@ -167,8 +167,9 @@ eb-create-staging:
 
 .PHONY: dockerrun-latest
 dockerrun-latest:
-	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
-	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' docker-compose.yml
+	@sed -i -r 's/wormbase\/website:[^"]+/wormbase\/website:'"latest"'/g' docker-compose.yml
+#           2 	@sed -i -r 's/website:[^"]+/website:'"latest"'/g' Dockerrun.aws.json
+
 
 
 .PHONY: staging-deploy

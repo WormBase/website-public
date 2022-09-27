@@ -37,10 +37,26 @@ docker tag wormbase/website:latest 357210185381.dkr.ecr.us-east-1.amazonaws.com/
 $(aws ecr get-login --no-include-email --region us-east-1)
 docker push 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:latest
 
+# Let's see what repositories exist
+echo "What repositories are available?"
+aws ecr describe-repositories --region us-east-1
+
+echo "Here's what Jenkins ENV looks like..."
+printenv
+
+
 # deploy container
+# This just serves to replace the version in docker-compose.yml (formerly: Dockerrun.aws.json" with "latest"
 make dockerrun-latest
-cat Dockerrun.aws.json
-git add Dockerrun.aws.json
+
+# Let's cat output so we can see file contents in the jenkins log
+cat docker-compose.yml
+
+#cat Dockerrun.aws.json
+#git add Dockerrun.aws.json
+
+# Commit the changes
+git add docker-compose.yml
 git commit -m "use latest wormbase/website container"  # only needed locally and subsequent build will discard this commit
 
 
