@@ -27,6 +27,15 @@
          WormBase : [% c.config.site_byline %]
 
     </title>
+
+<script language='javascript'
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin></script><script language='javascript'
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin></script><script language='javascript'
+      src="https://unpkg.com/@jbrowse/react-linear-genome-view/dist/react-linear-genome-view.umd.development.js"
+      crossorigin></script>
+
     <% for (key in htmlWebpackPlugin.files.css) { %>
     <link href="%PUBLIC_URL%<%= htmlWebpackPlugin.files.css[key] %>" rel="stylesheet">
     <% } %>
