@@ -888,7 +888,16 @@
     "hideHeader": true,
     "trackLabels": "offset"
   }
-}
+},
+    configuration: {
+      theme: {
+        palette: {
+          primary: {
+            main: '#29405F'
+          }
+        }
+      }
+    }
 })
       state.session.view.showTrack(jbrowse_dataset+"_curated_genes")
       state.session.view.showTrack(jbrowse_dataset+"_classical_alleles")
