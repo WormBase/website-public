@@ -892,7 +892,7 @@
 }
 })
       state.session.view.showTrack(jbrowse_dataset+"_curated_genes")
-      state.session.view.showTrack(jbrowse_dataset+"_protein_motifs")
+      state.session.view.showTrack(jbrowse_dataset+"_classical_alleles")
       state.session.view.showTrack(jbrowse_dataset+"_change-of-function_alleles")
       render(
         createElement(JBrowseLinearGenomeView, { viewState: state }),
