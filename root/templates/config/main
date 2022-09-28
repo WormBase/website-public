@@ -875,6 +875,9 @@
             palette: {
               secondary : {
                 main: '#29405F'
+              },
+              tertiary: {
+                main: '#C5D1DE'
               }
             }
           }
