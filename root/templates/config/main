@@ -873,7 +873,7 @@
         configuration: {
           theme: {
             palette: {
-              primary: {
+              secondary : {
                 main: '#29405F'
               }
             }
