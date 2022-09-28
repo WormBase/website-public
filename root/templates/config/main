@@ -310,7 +310,7 @@
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
-        # 'http://staging.wormbase.org'; # uncomment if you need the hack
+         'http://staging.wormbase.org'; # uncomment if you need the hack
       END;
       IF is_preview_url;
           queries.tracklist=0;
@@ -323,6 +323,95 @@
       END;
       url;
     END;
+
+    MACRO jbrowse2_url(taxonomy, position_string, bioproject, is_preview_url, tracks, options) BLOCK;
+      IF taxonomy.match('(?i).+_(PRJ\w+)');
+        full_taxonomy = taxonomy;
+      ELSIF bioproject;
+        full_taxonomy = taxonomy _ '_' _ bioproject;
+      ELSIF c.config.sections.species_list.defined(taxonomy);
+        FOREACH bp IN c.config.sections.species_list.$taxonomy.bioprojects.keys;
+          NEXT UNLESS ((!bioproject) || c.config.sections.species_list.$taxonomy.bioproject.$bp.cannonical);
+          full_taxonomy = taxonomy _ '_' _ bp;
+        END;
+      END;
+
+      IF taxonomy.match('(?i).+_(PRJ\w+)');
+        queries = {
+            assembly => taxonomy,
+            loc => position_string
+        };
+      ELSIF full_taxonomy;
+        queries = {
+            assembly => full_taxonomy,
+            loc  => position_string
+        };
+      ELSE;
+        queries = {
+            assembly => taxonomy _ '_' _ bioproject,
+            loc => position_string
+        };
+      END;
+
+      FOREACH key IN options.keys;
+          queries.$key = options.$key;
+      END;
+
+      #queries.tracks = tracks; hard code tracks for now, see below
+      
+      # taking out blast support for now, to see how it's done for jb1, see jbrowse_url()
+      # IF position_string.match('add=.*;?');
+        # for BLAST results
+        #...
+      #ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
+      # C. elegans N2 only for the moment
+      #  queries.tracks = queries.tracks || 'c_elegans_PRJNA13758_curated_genes,c_elegans_PRJNA13758_protein_motifs,c_elegans_PRJNA13758_classical_alleles';
+        queries.tracks = queries.assembly _ '_curated_genes,' _ queries.assembly _ '_protein_motifs,' _ queries.assembly _ '_classical_alleles';
+      #END;
+
+      IF c.config.installation_type.match('^dev');
+        # HACK! to direct dev installation to staging, with GBrowse installed
+        # DOUBLE HACK! no staging instance of jb2 exists yet
+        # 'http://staging.wormbase.org'; # uncomment if you need the hack
+        'http://www.wormbase.org'; # uncomment if you need the double hack
+      END;
+      IF is_preview_url; # I don't think this is going to get called in the current configuration.
+          queries.tracklist=0;
+          queries.nav=0;
+          queries.overview=0;
+          url = c.uri_for('/tools', 'genome', 'jbrowse2', 'index.html', queries).path_query().replace('\+', '%20');
+      ELSE;
+          url = c.uri_for('/tools', 'genome', 'jbrowse2', 'index.html', queries).path_query();
+          #url = c.uri_for('/tools', 'genome', 'jbrowse2', 'index.html', queries).path_query().replace('\+', '%20');
+      END;
+      url;
+    END;
+
+
+    MACRO jbrowse2link(data, label, search, tracks) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+      IF species;
+        linkouts = [];
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
+            IF data.class == 'genomic_location';
+                pos_display_string = pad_jbrowse_coordinates(label);
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);
+                pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
+            END;
+
+            IF pos_display_string;
+                url = jbrowse2_url(taxonomy, pos_display_string, bp, 0, tracks);
+                linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">JBrowse 2 browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+            END;
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
 
     MACRO jbrowselink(data, label, search, tracks) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
@@ -342,6 +431,30 @@
             IF pos_display_string;
                 url = jbrowse_url(taxonomy, pos_display_string, bp, 0, tracks);
                 linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">Browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+            END;
+        END;
+        linkouts.join(' ');
+      END;
+    END;
+
+    MACRO jbrowse2link(data, label, search, tracks) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      label = label || data.label;
+      IF species;
+        linkouts = [];
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+            valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
+            IF data.class == 'genomic_location';
+                pos_display_string = pad_jbrowse_coordinates(label);
+            ELSIF data.class && (valid_classes.grep(data.class).size > 0);
+                pos_display_string = data.class _ ':' _ (data.id.match('PRJ.+:(\w+)').0 || data.id);
+            END;
+
+            IF pos_display_string;
+                url = jbrowse2_url(taxonomy, pos_display_string, bp, 0, tracks);
+                linkouts.push(search ? "<span id='fade'>[<a href=\"$url\">JBrowse 2 full web app link (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
             END;
         END;
         linkouts.join(' ');
@@ -451,6 +564,352 @@
 [%
     END;
 
+    MACRO jbrowse2_view(data, label, tracks, url_options) BLOCK;
+      taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;
+      species = c.config.sections.species_list.$taxonomy;
+      location = data.pos_string;
+
+      IF species;
+        bioproject = data.bioproject || species.bioprojects.keys;
+        FOREACH bp IN bioproject;
+%]
+<div id="jbrowse2_linear_genome_view" width="100%">This is where it should be</div>
+<script language='javascript'>
+    function create_jbrowse2() {
+          fetch('/rest/version').then(function(response) {
+            return response.json();
+          }).then(function(data) {
+            var releaseVersion = data && data.version;
+            var genomic_location = '[% location %]';
+            var jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
+
+            var pieces = jbrowse_dataset.split("_");
+            var fasta_indentifier = pieces[0]+ '_' + pieces[1] + '.' + pieces[2];
+
+      const { createViewState, JBrowseLinearGenomeView } =
+        JBrowseReactLinearGenomeView
+      const { createElement } = React
+      const { render } = ReactDOM
+      const assembly = {
+      "name": jbrowse_dataset,
+      "sequence": {
+        "type": "ReferenceSequenceTrack",
+        "trackId": jbrowse_dataset+"-1645387701624",
+        "adapter": {
+          "type": "BgzipFastaAdapter",
+          "fastaLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/"+fasta_indentifier+".WS284.genomic.fa.gz"
+          },
+          "faiLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/"+fasta_indentifier+".WS284.genomic.fa.gz.fai"
+          },
+          "gziLocation": {
+            "locationType": "UriLocation",
+            "uri": "https://s3.amazonaws.com/wormbase-modencode/fasta/current/"+fasta_indentifier+".WS284.genomic.fa.gz.gzi"
+          }
+        },
+        "displays": [
+          {
+            "type": "LinearReferenceSequenceDisplay",
+            "displayId": jbrowse_dataset+"-LinearReferenceSequenceDisplay"
+          }
+        ]
+      },
+    }
+          const tracks = [
+    {
+      "type": "FeatureTrack",
+      "trackId": jbrowse_dataset+"_classical_alleles",
+      "name": "Classical Alleles",
+      "assemblyNames": [
+        jbrowse_dataset
+      ],
+      "adapter": {
+        "type": "NCListAdapter",
+        "rootUrlTemplate": {
+          "locationType": "UriLocation",
+          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Classical_alleles/{refseq}/trackData.jsonz"
+        }
+      },
+      "displays": [
+        {
+          "type": "LinearBasicDisplay",
+          "displayId": "classical_alleles-"+jbrowse_dataset+"-LinearBasicDisplay",
+          "renderer": {
+            "type": "SvgFeatureRenderer",
+            "color1": "jexl:get(feature,'vep_impact')=='HIGH'?'red':get(feature,'vep_impact')=='MODIFIER'?'purple':get(feature,'vep_impact')=='MODERATE'?'gold':get(feature,'vep_impact')=='LOW'?'cyan':'white'",
+            "showLabels": false,
+            "showDescriptions": false
+          }
+        }
+      ]
+     },
+     {
+      "displays" : [
+         {
+            "renderer" : {
+               "type" : "SvgFeatureRenderer",
+               "color1" : "green"
+            },
+            "displayId" : "promoter_regions-"+jbrowse_dataset+"-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay"
+         }
+      ],
+      "name" : "Promoter regions",
+      "description" : "Regions within which there is experimental evidence for a promoter.",
+      "type" : "FeatureTrack",
+      "adapter" : {
+         "type" : "NCListAdapter",
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Promoter regions/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         }
+      },
+      "assemblyNames" : [
+         jbrowse_dataset
+      ],
+      "trackId" : jbrowse_dataset+"_promoter_regions"
+   },
+   {
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "locationType" : "UriLocation",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Curated_Genes/{refseq}/trackData.jsonz"
+         },
+         "type" : "NCListAdapter"
+      },
+      "type" : "FeatureTrack",
+      "description" : "Protein-coding gene structures result from the integration of a variety of prediction methods and data sources followed by manual review and revison by WormBase curators. tRNAs are predicted by tRNAscan, and other non-coding RNA transcripts are taken from a variety of literature sources. The purple and blue colors indicate transcripts on the forward and reverse strands respectively. Dark purple areas represent 5' and 3' UTRs of protein-coding transcripts, assigned automatically using the extents of overlapping ESTs and full-length cDNAs. The UTR predictions have not been reviewed by WormBase curators, and some are known to contain artifacts. Grey transcripts represent either non-coding transcripts of protein coding genes or transcripts of non-coding genes.",
+      "displays" : [
+         {
+            "renderer" : {
+               "color3" : "#965567",
+               "type" : "SvgFeatureRenderer",
+               "color1" : "jexl:get(feature,'type')!='CDS'?'gray':get(feature,'strand')>0?'violet':'turquoise'",
+               "labels" : {
+                  "name" : "jexl:get(feature,'locus') || get(feature,'sequence_name')"
+               }
+            },
+            "displayId" : "curated_genes-"+jbrowse_dataset+"-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay"
+         }
+      ],
+      "name" : "Curated Genes",
+      "trackId" : jbrowse_dataset+"_curated_genes",
+      "assemblyNames" : [
+         jbrowse_dataset 
+      ]
+   },
+   {
+      "assemblyNames" : [
+         jbrowse_dataset
+      ],
+      "trackId" : jbrowse_dataset+"_rnaseq",
+      "name" : "RNASeq",
+      "displays" : [
+         {
+            "displayId" : "rnaseq-"+jbrowse_dataset+"-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay",
+            "mouseover" : "jexl:'Score: '+get(feature,'score')",
+            "renderer" : {
+               "showLabels" : false,
+               "height" : "jexl:get(feature,'score')>100?50:floor(get(feature,'score')/2)>4?floor(get(feature,'score')/2):4",
+               "displayMode" : "collapse",
+               "type" : "SvgFeatureRenderer",
+               "color1" : "black"
+            }
+         }
+      ],
+      "type" : "FeatureTrack",
+      "description" : "These boxes indicate alignments of short read sequences from all available RNASeq projects. The number of reads has been normalised by averaging over the number of libraries. The height of all boxes indicates the relative score of the feature.",
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/RNASeq/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         },
+         "type" : "NCListAdapter"
+      }
+   },
+   {
+      "assemblyNames" : [
+         jbrowse_dataset
+      ],
+      "trackId" : jbrowse_dataset+"_protein_motifs",
+      "type" : "FeatureTrack",
+      "description" : "This track shows the extent of predicted protein motifs. Note these spans correspond to amino acid coordinates interpolated onto the physical map.  Included are signal peptide (signalp), coiled coil (ncoils) and transmembrane (tmhmm) domains, regions of low complexity (seg), and Pfam annotated motif homologies.",
+      "displays" : [
+         {
+            "renderer" : {
+               "height" : 7,
+               "color1" : "jexl:parent(feature)=='undefined'?'purple':get(parent(feature),'predictiontype')=='tmhmm'?'magenta':get(parent(feature),'predictiontype')=='seg'?'lightseagreen':get(parent(feature),'predictiontype')=='signalp'?'aquamarine':get(parent(feature),'predictiontype')=='ncoils'?'chartreuse':\nget(parent(feature),'predictiontype')=='pfam'?'lightsalmon':'purple'",
+               "type" : "SvgFeatureRenderer"
+            },
+            "type" : "LinearBasicDisplay",
+            "displayId" : "protein_motifs-"+jbrowse_dataset+"-LinearBasicDisplay"
+         }
+      ],
+      "name" : "Protein motifs",
+      "adapter" : {
+         "type" : "NCListAdapter",
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Protein motifs/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         }
+      }
+   },
+   {
+      "trackId" : jbrowse_dataset+"_trans-spliced_acceptor",
+      "assemblyNames" : [
+         jbrowse_dataset
+      ],
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "locationType" : "UriLocation",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Trans-spliced acceptor/{refseq}/trackData.jsonz"
+         },
+         "type" : "NCListAdapter"
+      },
+      "description" : "This track contains SL1 and SL2 trans-spliced acceptors from a variety of sources: SL1 and SL2 trans-spliced acceptors published by Blumenthal et al, Nature (2002), Trans-Spliced Exon Coupled RNA End Determination (TEC-RED) Hwang et al, PNAS (2004), EST/mRNA sequence data, RNASeq read data from ENA. SL1 acceptors are show in red, SL2 in green. Direction of transcription is indicated by arrow direction.",
+      "type" : "FeatureTrack",
+      "displays" : [
+         {
+            "displayId" : "trans-spliced_acceptor-"+jbrowse_dataset+"-LinearBasicDisplay",
+            "type" : "LinearBasicDisplay",
+            "renderer" : {
+               "color1" : "jexl:get(feature,'source')=='SL1'?'red':'green'",
+               "type" : "SvgFeatureRenderer"
+            }
+         }
+      ],
+      "name" : "Trans-spliced acceptor"
+   },
+   {
+      "trackId" : jbrowse_dataset+"_links_and_superlinks",
+      "assemblyNames" : [
+         jbrowse_dataset
+      ],
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Links and Superlinks/{refseq}/trackData.jsonz",
+            "locationType" : "UriLocation"
+         },
+         "type" : "NCListAdapter"
+      },
+      "name" : "Links and Superlinks",
+      "displays" : [
+         {
+            "renderer" : {
+               "height" : 4,
+               "type" : "SvgFeatureRenderer",
+               "color1" : "black"
+            },
+            "type" : "LinearBasicDisplay",
+            "displayId" : "links_and_superlinks-"+jbrowse_dataset+"-LinearBasicDisplay"
+         }
+      ],
+      "type" : "FeatureTrack",
+      "description" : "This track shows the location and coordinates of contigs created during the assembly of the C. elegans genome."
+   },
+   {
+      "adapter" : {
+         "rootUrlTemplate" : {
+            "locationType" : "UriLocation",
+            "uri" : "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/ESTs (best)/{refseq}/trackData.jsonz"
+         },
+         "type" : "NCListAdapter"
+      },
+      "type" : "FeatureTrack",
+      "description" : "Native (same-species) Expressed Sequence Tags (ESTs), aligned to the genome using <a href='http://genome.cse.ucsc.edu/cgi-bin/hgBlat'>BLAT</a>. This track shows the best unique location for each EST. The paired 5' and 3' ESTs from the same cDNA clone are connected by a dashed line and a colored light green. ESTs with no mate are yellow, and ESTs with a mate that is 'far away' are dark green.",
+      "name" : "ESTs",
+      "displays" : [
+         {
+            "type" : "LinearBasicDisplay",
+            "displayId" : "ests-"+jbrowse_dataset+"-LinearBasicDisplay",
+            "renderer" : {
+               "type" : "SvgFeatureRenderer",
+               "color1" : "jexl:parent(feature)=='undefined'?'red':get(parent(feature),'has_mate')==1?'limegreen':get(parent(feature),'has_mate')==2?'green':get(parent(feature),'has_mate')==0?'gold':'black'"
+            }
+         }
+      ],
+      "trackId" : jbrowse_dataset+"_ests",
+      "assemblyNames" : [
+         jbrowse_dataset
+      ]
+   },
+    {
+      "type": "FeatureTrack",
+      "trackId": jbrowse_dataset+"_change-of-function_alleles",
+      "name": "Change-of-function alleles",
+      "assemblyNames": [
+         jbrowse_dataset
+      ],
+      "adapter": {
+        "type": "NCListAdapter",
+        "rootUrlTemplate": {
+          "locationType": "UriLocation",
+          "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/"+releaseVersion+"/"+jbrowse_dataset+"/tracks/Change-of-function alleles/{refseq}/trackData.jsonz"
+        }
+      },
+      "displays": [
+        {
+          "type": "LinearBasicDisplay",
+          "displayId": "change-of-function_alleles-"+jbrowse_dataset+"-LinearBasicDisplay",
+          "mouseover": "jexl:get(feature,'name')+', '+get(feature,'consequence')",
+          "renderer": {
+            "type": "SvgFeatureRenderer",
+            "color1": "jexl:get(feature,'vep_impact')=='HIGH'?'red':get(feature,'vep_impact')=='MODIFIER'?'purple':get(feature,'vep_impact')=='MODERATE'?'gold':get(feature,'vep_impact')=='LOW'?'cyan':'white'",
+            "showLabels": false,
+            "showDescriptions": false
+          }
+        }
+      ]
+     }
+]
+      const state = new createViewState({
+        assembly,
+        tracks,
+        location: genomic_location,
+        defaultSession: {
+  "name": "this session",
+  "margin": 0,
+  "view": {
+    "id": "linearGenomeView",
+    "type": "LinearGenomeView",
+    "displayedRegions": [
+      {
+        "refName": "I",
+        "start": 0,
+        "end": 15072434,
+        "reversed": false,
+        "assemblyName": jbrowse_dataset
+      }
+    ],
+    "hideHeader": true,
+    "trackLabels": "offset"
+  }
+}
+})
+      state.session.view.showTrack(jbrowse_dataset+"_curated_genes")
+      state.session.view.showTrack(jbrowse_dataset+"_protein_motifs")
+      state.session.view.showTrack(jbrowse_dataset+"_change-of-function_alleles")
+      render(
+        createElement(JBrowseLinearGenomeView, { viewState: state }),
+        document.getElementById('jbrowse2_linear_genome_view'),
+      );
+          });
+
+    }
+    create_jbrowse2();
+</script>
+[%
+        END;
+      END;
+%]
+</script>
+[%
+    END;
 
     MACRO jbrowse_view(data, label, tracks, url_options) BLOCK;
       taxonomy = data.taxonomy == 'all' ? 'c_elegans' : data.taxonomy;

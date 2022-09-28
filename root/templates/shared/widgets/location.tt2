@@ -57,6 +57,7 @@
                  '</div>';
                  END;
 
+
                  WRAPPER $field_block title="Genomic position" key="genomic_position";
 
                    jbrowselink(position, undef, undef, fields.jbrowse_tracks.data);
@@ -77,9 +78,15 @@
                  IF fields.tracks.data;
                    img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
                  END;
+                 WRAPPER $field_block title="JBrowse 2 Beta";
+                    '<span>Fully functional genome browser; try the menu in the upper left corner to explore. Full page JBrowse2: </span>';
+                    jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
+                    jbrowse2_view(position);
+                 END;
                  WRAPPER $field_block title="Genome Browser Preview";
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
                  END;
+
                  '<br><br>';
                  WRAPPER toggle title="Legacy GBrowse image";
                     '<div class="gbrowse-image-container">';
