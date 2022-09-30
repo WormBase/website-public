@@ -583,8 +583,8 @@
             var genomic_location = '[% location %]';
             var jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
 
-            var pieces = jbrowse_dataset.split("_");
-            var fasta_indentifier = pieces[0]+ '_' + pieces[1] + '.' + pieces[2];
+            //var pieces = jbrowse_dataset.split("_");
+            //var fasta_indentifier = pieces[0]+ '_' + pieces[1] + '.' + pieces[2];
 
             const { createViewState, JBrowseLinearGenomeView } =
                JBrowseReactLinearGenomeView
@@ -594,9 +594,11 @@
             fetch('https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS285/embed/'+ jbrowse_dataset + '_embed.json').then(function(response) {
               return response.json();
             }).then(function(results) {
+              var assembl = results["assemblies"][0]
+              var tra = results["tracks"]
               const state = new createViewState({
-               results.assembly,
-               results.tracks,
+               assembly: assembl,
+               tracks: tra,
                location: genomic_location,
                configuration: {
                  theme: {
