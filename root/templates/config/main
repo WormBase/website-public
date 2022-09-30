@@ -583,9 +583,6 @@
             var genomic_location = '[% location %]';
             var jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
 
-            //var pieces = jbrowse_dataset.split("_");
-            //var fasta_indentifier = pieces[0]+ '_' + pieces[1] + '.' + pieces[2];
-
             const { createViewState, JBrowseLinearGenomeView } =
                JBrowseReactLinearGenomeView
             const { createElement } = React
@@ -613,9 +610,12 @@
                  }
                }
               })
-            state.session.view.showTrack(jbrowse_dataset+"_curated_genes")
-            state.session.view.showTrack(jbrowse_dataset+"_classical_alleles")
-            state.session.view.showTrack(jbrowse_dataset+"_change-of-function_alleles")
+
+            function showTrackSilencer(id) { try { state.session.view.showTrack(id) } catch(e) { console.warn(e) } }
+
+            showTrackSilencer(jbrowse_dataset+"_curated_genes")
+            showTrackSilencer(jbrowse_dataset+"_classical_alleles")
+            showTrackSilencer(jbrowse_dataset+"_change-of-function_alleles")
             render(
                createElement(JBrowseLinearGenomeView, { viewState: state }),
                document.getElementById('jbrowse2_linear_genome_view'),
