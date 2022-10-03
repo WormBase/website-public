@@ -603,7 +603,7 @@
     "views": [
       {
         "id": "-Uk3Wy3vR",
-        "type": "LinearGenomeView",
+        "type": "ReactLinearGenomeView",
         "offsetPx": 11094243,
         "bpPerPx": 0.3511112189344993,
         "hideHeader": false,
