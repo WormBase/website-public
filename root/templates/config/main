@@ -597,6 +597,26 @@
                assembly: assembl,
                tracks: tra,
                location: genomic_location,
+  "defaultSession": {
+    "name": "New Session 10/26/2021, 3:07:51 PM",
+    "margin": 0,
+    "views": [
+      {
+        "id": "-Uk3Wy3vR",
+        "type": "LinearGenomeView",
+        "offsetPx": 11094243,
+        "bpPerPx": 0.3511112189344993,
+        "hideHeader": false,
+        "hideHeaderOverview": false,
+        "hideNoTracksActive": false,
+        "trackSelectorType": "hierarchical",
+        "trackLabels": "offset",
+        "showCenterLine": false,
+        "showCytobandsSetting": true,
+        "showGridlines": true
+      }
+    ]
+  },
                configuration: {
                  theme: {
                    palette: {
