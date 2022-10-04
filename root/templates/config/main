@@ -588,7 +588,7 @@
             const { createElement } = React
             const { render } = ReactDOM
 
-            fetch('https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/WS285/embed/'+ jbrowse_dataset + '_embed.json').then(function(response) {
+            fetch('https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/' + releaseVersion + '/embed/'+ jbrowse_dataset + '_embed.json').then(function(response) {
               return response.json();
             }).then(function(results) {
               var assembl = results["assemblies"][0]
