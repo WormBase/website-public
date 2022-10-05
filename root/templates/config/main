@@ -588,15 +588,27 @@
             const { createElement } = React
             const { render } = ReactDOM
 
-            fetch('https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/' + releaseVersion + '/embed/'+ jbrowse_dataset + '_embed.json').then(function(response) {
-              return response.json();
-            }).then(function(results) {
+            fetch('https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/' + releaseVersion + '/embed/'+ jbrowse_dataset + '_embed.json')  
+            .then((response) =>
+                Promise.all([response.json(), loadPlugins([])])
+            ).then(([results]) => {
+                const Plugin = JBrowseExports['@jbrowse/core/Plugin']
+                class HexJexlPlugin extends Plugin {
+                    name = 'HexJexlPlugin'
+
+                    install(pluginManager) {
+                        pluginManager.jexl.addFunction('hex', (num1) => {
+                        return num1.toString(16);
+                        })
+                    }
+              }
               var assembl = results["assemblies"][0]
               var tra = results["tracks"]
               const state = new createViewState({
                assembly: assembl,
                tracks: tra,
                location: genomic_location,
+               plugins: [HexJexlPlugin],
                session:  {
                  "id": "5nxOhj9gA",
                  "view": [
