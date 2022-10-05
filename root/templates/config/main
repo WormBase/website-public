@@ -583,7 +583,7 @@
             var genomic_location = '[% location %]';
             var jbrowse_dataset  = '[% taxonomy _ "_" _ bp %]';
 
-            const { createViewState, JBrowseLinearGenomeView } =
+            const { createViewState, JBrowseLinearGenomeView, loadPlugins } =
                JBrowseReactLinearGenomeView
             const { createElement } = React
             const { render } = ReactDOM
