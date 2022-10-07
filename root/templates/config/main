@@ -633,7 +633,15 @@
                }
               })
 
-            function showTrackSilencer(id) { try { state.session.view.showTrack(id) } catch(e) { console.warn(e) } }
+            function showTrackSilencer(id) { 
+                try { state.session.view.showTrack(id) }
+                catch(e) {
+                    console.warn(e)
+                    if (id == jbrowse_dataset+"_curated_genes") {
+                        showTrackSilencer(jbrowse_dataset+"_genblastg_cds_predictions")
+                    }
+                }
+            }
 
             showTrackSilencer(jbrowse_dataset+"_curated_genes")
             showTrackSilencer(jbrowse_dataset+"_classical_alleles")
