@@ -592,15 +592,25 @@
             .then((response) =>
                 Promise.all([response.json(), loadPlugins([])])
             ).then(([results]) => {
-                const Plugin = JBrowseExports['@jbrowse/core/Plugin']
-                class HexJexlPlugin extends Plugin {
-                    name = 'HexJexlPlugin'
+              const Plugin = JBrowseExports['@jbrowse/core/Plugin']
+              class HexJexlPlugin extends Plugin {
+                  name = 'HexJexlPlugin'
 
-                    install(pluginManager) {
-                        pluginManager.jexl.addFunction('hex', (num1) => {
-                        return num1.toString(16);
-                        })
-                    }
+                  install(pluginManager) {
+                      pluginManager.jexl.addFunction('hex', (num1) => {
+                      return num1.toString(16);
+                      })
+                  }
+              }
+              class VariantColor extends Plugin {
+                  name = 'VariantColorPlugin'
+ 
+                  install(pluginManager) {
+                      pluginManager.jexl.addFunction('variantColor', (type) => {
+                          console.log(type);
+                          return 'red';
+                      })
+                  }
               }
               var assembl = results["assemblies"][0]
               var tra = results["tracks"]
