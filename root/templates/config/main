@@ -653,7 +653,7 @@
                assembly: assembl,
                tracks: tra,
                location: genomic_location,
-               plugins: [HexJexlPlugin],
+               plugins: [HexJexlPlugin,VariantColor],
                session:  {
                  "id": "5nxOhj9gA",
                  "view": [
