@@ -83,12 +83,13 @@
                     jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
                     jbrowse2_view(position);
                  END;
-                 WRAPPER $field_block title="Genome Browser Preview";
+                 '<br><br>';
+                 WRAPPER $field_block title="JBrowse 1 Preview";
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
                  END;
 
                  '<br><br>';
-                 WRAPPER toggle title="Legacy GBrowse image";
+                 WRAPPER toggle title="Legacy GBrowse image<br>(removed in next release)";
                     '<div class="gbrowse-image-container">';
                     tag2link(genomic_image, image(img_url));
                     '</div>';
