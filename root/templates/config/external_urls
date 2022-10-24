@@ -49,6 +49,15 @@
 	disease     = 'http://www.alliancegenome.org/disease/%s'
         search      = 'https://www.alliancegenome.org/search?q=%s'
 	}
+
+
+ AlphaFold = {
+	description = 'AlphaFold'
+	base        = 'https://alphafold.ebi.ac.uk/'
+	search      = 'https://alphafold.ebi.ac.uk/entry/%s'
+        }
+
+
  APPRIS = {
 	description = 'APPRIS - Annotating principal splice isoforms'
 	base        = 'http://appris.bioinfo.cnio.es/'
@@ -603,6 +612,14 @@
 	base        = 'http://www.mirbase.org/'
 	search      = 'http://www.mirbase.org/cgi-bin/mirna_entry.pl?acc=%s'
 	}
+
+ MirGeneDB = {
+	description = 'mirGeneDB'
+	base        = 'https://new.mirgenedb.org/'
+	search      = 'https://new.mirgenedb.org/show/cel/%s'
+	}
+
+
 
  modENCODE = {
 	description = 'The National Human Genome Research Institute (NHGRI) model organism ENCyclopedia Of DNA Elements (modENCODE) Project will try to identify all of the sequence-based functional elements in the Caenorhabditis elegans and Drosophila melanogaster genomes.'
