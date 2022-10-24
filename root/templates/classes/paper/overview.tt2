@@ -152,7 +152,7 @@
              ' ' _ tag2link(author) _ ',';
            END;
         END %]
-        [% ' for curating this paper through Author First Pass'; %]
+        [% ' for curating this paper through ACKnowledge (Author Curation to Knowledgebase)'; %]
     [% END %]
 [% END; %]
 

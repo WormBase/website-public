@@ -5,7 +5,7 @@
 END %]
 
 [%
-    WRAPPER $field_block key="author_first_pass_curation" title="Author First Pass curation";
+    WRAPPER $field_block key="author_first_pass_curation" title="ACKnowledge (Author Curation to Knowledgebase)";
         tags2link(fields.author_first_pass_curation.data);
     END;
 %]
