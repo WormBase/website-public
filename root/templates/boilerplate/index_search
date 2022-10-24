@@ -111,7 +111,7 @@ function c(p){location.href=p;return false;}
             <td style="vertical-align:bottom">
                <a class="nakedlinks"
 	           onmouseover="showTooltip(event,'Literature')"
-href="http://www.textpresso.org/cgi-bin/wb/textpressoforwormbase.cgi?allabstracts=on&searchmode=sentence&searchtargets=Paper&searchtargets=Abstract&searchtargets=Title">Literature Search</a>
+href="https://celegans.textpresso.org/">Literature Search</a>
 
 	    </td>
               <span id="autoCompleteCheckbox" style="display:none">
