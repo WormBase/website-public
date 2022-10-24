@@ -146,6 +146,12 @@
 	base        = 'http://www.biomedcentral.com/'
 	}
 
+ BioProject = {
+    description = 'A BioProject is a collection of biological data related to a single initiative, originating from a single organization or from a consortium. A BioProject record provides users a single place to find links to the diverse data types generated for that project'
+    base        = 'http://www.ncbi.nlm.nih.gov/bioproject/'
+    search      = 'http://www.ncbi.nlm.nih.gov/bioproject/?term=%s'
+    }
+
  BMCBiology = {
 	description = 'BMC Biology'
 	base        = 'http://www.biomedcentral.com/bmcbiol'
@@ -803,6 +809,12 @@
 	search      = 'http://pfam.xfam.org/family/%s'
 	}
 
+   pfscan = {
+	description = 'Pfscan/Prosite is a database of protein domains, families and functional sites'
+	base        = 'https://prosite.expasy.org/'
+	search      = 'https://prosite.expasy.org/%s'
+
+
  Phenobank2 = {
 	base        = 'http://worm.mpi-cbg.de/phenobank2/cgi-bin/MenuPage.py'
 	maintainer  = ''
@@ -977,11 +989,15 @@
     search      = 'http://www.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?study=%s'
     }
 
- BioProject ={
-    description = 'A BioProject is a collection of biological data related to a single initiative, originating from a single organization or from a consortium. A BioProject record provides users a single place to find links to the diverse data types generated for that project'
-    base        = 'http://www.ncbi.nlm.nih.gov/bioproject/'
-    search      = 'http://www.ncbi.nlm.nih.gov/bioproject/?term=%s'
+
+ superfamily = {
+    description = 'SUPERFAMILY is a database of structural and functional annotation for all proteins and genomes'
+    base        = 'https://www.supfam.org/SUPERFAMILY/'
+    search      = 'https://www.supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?sunid=%s'
     }
+
+
+
 
  SwissProt = {
 	description = 'SwissProt is a curated protein sequence database which strives to provide a high level of annotation (such as the description of the function of a protein, its domains structure, post-translational modifications, variants, etc.), a minimal level of redundancy and high level of integration with other databases'
