@@ -60,8 +60,8 @@
 
                  WRAPPER $field_block title="Genomic position" key="genomic_position";
 
-                   jbrowselink(position, undef, undef, fields.jbrowse_tracks.data);
-                   '<span class="jbrowse_link">(<span class="deprecated">Legacy Genome Browser:</span> ' _ tag2link(position) _ ')</span>';
+                   #jbrowselink(position, undef, undef, fields.jbrowse_tracks.data);
+                   jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
                    UNLESS loop.last;
      	                 ',&nbsp;';
                    END;
@@ -78,18 +78,19 @@
                  IF fields.tracks.data;
                    img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
                  END;
-                 WRAPPER $field_block title="JBrowse 2 Beta";
-                    '<span>Fully functional genome browser; try the menu in the upper left corner to explore. Full page JBrowse2: </span>';
+                 WRAPPER $field_block title="Genome Browser";
+                    '<span>:Launch full Genome Browser window </span>';
                     jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
+                    '<span><i>JBrowse 2-driven fully functional genome browser. Explore via the menu in the upper left corner</i></span>';
                     jbrowse2_view(position);
                  END;
-                 '<br><br>';
-                 WRAPPER $field_block title="JBrowse 1 Preview";
-                    jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
-                 END;
+                 '<br /><br />';
 
-                 '<br><br>';
-                 WRAPPER toggle title="Legacy GBrowse image<br>(removed in next release)";
+                 WRAPPER toggle title="Legacy Genome Browser images";
+                    '<span>JBrowse 1</span>';
+                    jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
+                    '<br />';
+                    '<span>GBrowse (to be retired January 2023) </span>';
                     '<div class="gbrowse-image-container">';
                     tag2link(genomic_image, image(img_url));
                     '</div>';
