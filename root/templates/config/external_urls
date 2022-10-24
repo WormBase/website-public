@@ -975,8 +975,8 @@
 
  Textpresso = {
 	description = 'Knowledge discovery through full text mining, classification and searching'
-	base        = 'https://textpressocentral.org/'
-	search      = 'https://www.textpressocentral.org/tpc/search?keyword=%s&scope=document&literature=C. elegans'
+	base        = 'https://celegans.textpressocentral.org/'
+	search      = 'https://celegans.textpressocentral.org/tpc/search?keyword=%s&scope=document&literature=C. elegans'
 	}
 
 
