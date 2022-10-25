@@ -6,7 +6,7 @@ services:
     init: true
     links:
       - "upstream-proxy"
-      - "nginx-proxy"
+#      - "nginx-proxy"
 #    depends_on:
 #      - "nginx-proxy"       
     ports:
