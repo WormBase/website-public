@@ -79,9 +79,9 @@
                    img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
                  END;
                  WRAPPER $field_block title="Genome Browser";
-                    '<span>:Launch full Genome Browser window </span>';
+                    '<span>Launch full Genome Browser window </span>';
                     jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
-                    '<span><i>JBrowse 2-driven fully functional genome browser. Explore via the menu in the upper left corner</i></span>';
+                    '<span><i><br />JBrowse 2-driven fully functional genome browser. Explore via the menu in the upper left corner</i></span>';
                     jbrowse2_view(position);
                  END;
                  '<br /><br />';
