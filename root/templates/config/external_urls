@@ -813,7 +813,7 @@
 	description = 'Pfscan/Prosite is a database of protein domains, families and functional sites'
 	base        = 'https://prosite.expasy.org/'
 	search      = 'https://prosite.expasy.org/%s'
-
+    }
 
  Phenobank2 = {
 	base        = 'http://worm.mpi-cbg.de/phenobank2/cgi-bin/MenuPage.py'
