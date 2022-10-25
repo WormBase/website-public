@@ -58,7 +58,7 @@ WRAPPER highlight_box;
            tag2link(fields.parent_sequence.data);
    END;
 
-   WRAPPER $field_block title="Gene name evidence" key="named_by";
+   WRAPPER $field_block title="Gene name originator" key="named_by";
            tags2link(fields.named_by.data, ";<br/>");
    END;
 
