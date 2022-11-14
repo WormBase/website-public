@@ -14,6 +14,8 @@
     <link type="text/css" href="/css/jquery-ui.min.css" rel="stylesheet" />
     <link type="text/css" href="/css/main[% c.config.installation_type == 'development' ? '' : '.min' %].css?v[%- asset_hash | trim -%]" rel="stylesheet" />
   </head>
+      [% INCLUDE google_analytics %]
+
 
   <body>
    <!--[if lt IE 7]><p>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
@@ -27,7 +29,7 @@
     <script src="/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js?v[%- asset_hash | trim -%]"></script>
     <script>
       window.WB || document.write('<script src="/js/wormbase.js"><\/script>');
-      [% INCLUDE google_analytics %]
+
     </script>
       [%# INCLUDE olark %]
       [%# INCLUDE chatlio %]
