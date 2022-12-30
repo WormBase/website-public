@@ -28,7 +28,16 @@ WRAPPER $field_block title="Single cell gene expression graphs - CeNGEN" tooltip
 END;
 # Here marks the end of the CeNGEN chart
 
+# Here marks the beginning of the CeNGEN chart
+WRAPPER $field_block title="Single cell gene expression graphs - Packer2019" tooltip="Single cell gene expression graphs";
+    '<div id="singlecell-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+END;
+    # Here marks the end of the CeNGEN chart
+
+
  %]
+
+
 
 
 [%
@@ -225,6 +234,16 @@ END;
   }
 })();
 </script>
+
+
+<script type="text/javascript">
+    (function(){
+        if (document.getElementById('singlecell-holder')) {
+            WB.renderSingleCellChart('singlecell-holder', '[% object.name.data.id %]');
+        }
+    })();
+</script>
+
 
 
 <script type="text/javascript">

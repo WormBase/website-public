@@ -258,7 +258,7 @@ var name2widget = {
             clearTimeout(timer);
             timer = undefined;
           }
-          if(colDropdown.find("#layout-input:focus").size() === 0){
+          if(colDropdown.find("#layout-input:focus").length() === 0){
             timer = setTimeout(function() {
                   colDropdown.children("ul").hide();
                 }, 300)
@@ -3240,6 +3240,24 @@ var Scrolling = (function(){
       )
     }
 
+    function renderSingleCellChart(elementId, wbId) {
+      import('../../client/src/components/SingleCellChart').then(
+          modele => {
+            SingleCellChart = modele.default;
+            console.log(SingleCellChart)
+            ReactDOM.render(
+                <Root>
+                  <SingleCellChart geneId={wbId} />
+                </Root>,
+                document.getElementById(elementId)
+            )
+          }
+      )
+    }
+
+
+
+
     function renderFeatureSequences(data = {}, elementId, wbId) {
       import('../../client/src/components/Sequence').then(
         (module) => {
@@ -3581,7 +3599,8 @@ var Scrolling = (function(){
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
       renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
       renderInteractorVennDiagram: renderInteractorVennDiagram, // render Venn diagram in interaction widgets of various pages
-      renderCenGenChart: renderCenGenChart // render CenGen expression data as charts on gene page
+      renderCenGenChart: renderCenGenChart, // render CenGen expression data as charts on gene page
+      renderSingleCellChart: renderSingleCellChart, // render single cell expression data as charts on gene page
     };
   })();
 
