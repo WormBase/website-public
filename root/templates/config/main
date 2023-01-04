@@ -358,7 +358,13 @@
       END;
 
       #queries.tracks = tracks; hard code tracks for now, see below
-      
+     
+
+#
+# see https://jbrowse.org/jb2/docs/urlparams/#sessiontracks
+#
+# Will need to write some json to inject into the url; shouldn't be too bad
+# 
       # taking out blast support for now, to see how it's done for jb1, see jbrowse_url()
       # IF position_string.match('add=.*;?');
         # for BLAST results
