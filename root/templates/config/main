@@ -23,7 +23,7 @@
       IF data.defined;
         UNLESS text; text = data.label; END;
         IF data.class.defined && data.class != 'text';
-          ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy, data.dbt);
+          ln = data.coord.start ? jbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy, data.dbt);
           IF data.style;
             '<span style="'_ data.style _ "\">$ln</span>";
           ELSE;
@@ -357,17 +357,48 @@
           queries.$key = options.$key;
       END;
 
-      #queries.tracks = tracks; hard code tracks for now, see below
-      
+      queries.tracks = queries.assembly _ '_curated_genes,' _ queries.assembly _ '_protein_motifs,' _ queries.assembly _ '_classical_alleles';
+#
+# see https://jbrowse.org/jb2/docs/urlparams/#sessiontracks
+#
+# Will need to write some json to inject into the url; shouldn't be too bad
+# 
       # taking out blast support for now, to see how it's done for jb1, see jbrowse_url()
-      # IF position_string.match('add=.*;?');
+      IF position_string.match('add=.*;?');
         # for BLAST results
-        #...
-      #ELSIF position_string.match('([IVX]+|gene):.*');  # for location widgets and gene
-      # C. elegans N2 only for the moment
-      #  queries.tracks = queries.tracks || 'c_elegans_PRJNA13758_curated_genes,c_elegans_PRJNA13758_protein_motifs,c_elegans_PRJNA13758_classical_alleles';
-        queries.tracks = queries.assembly _ '_curated_genes,' _ queries.assembly _ '_protein_motifs,' _ queries.assembly _ '_classical_alleles';
-      #END;
+        coord_parts = position_string.match('add=(\S+?)\+(\S+?)\+(\S+?)\+(\S+)$');
+        refseq = coord_parts.0;
+        label  = coord_parts.1;
+        coords = coord_parts.3;
+
+        pairs  = coords.split(',');
+
+        minstart = 2000000000;
+        maxend   = 0;
+        subfeatures = [];
+       
+           #"features":[{"uniqueId":"one","refName":"ctgA","start":100,"end":200,"name":"Boris"}]}}] 
+           #
+           # sessionTracks=[{"type":"FeatureTrack","trackId":"url_track","name":"URL track","assemblyNames":["volvox"],"adapter":{"type":"FromConfigAdapter","features":[{"uniqueId":"one","refName":"ctgA","start":100,"end":200,"name":"Boris"}]}}]
+           #
+        FOREACH pair IN pairs;
+          coord = pair.match('(\d+)\-(\d+)');
+          start = coord.0;
+          end   = coord.1;
+          minstart = start < minstart ? start : minstart;
+          maxend   = end   > maxend   ? end   : maxend;
+          subfeatures.push('{"uniqueId":"'_ coord _'","refName":"'_ refseq _'","start":'_ start _',"end":'_ end _'}');
+        END;
+
+        loc_part     = position_string.match('^([^;]+);?');
+        position_string = loc_part.0;
+        queries.loc = position_string;
+
+        feature_part = '[{"uniqueId":"'_ coords _'","refName":"'_ refseq _'","start":'_ minstart _',"end":'_ maxend _',"name":"'_ label _'","subfeatures":['_ subfeatures.join(',')  _']}]';
+
+        queries.sessionTracks = '[{"type":"FeatureTrack","trackId":"blasthits","name":"BLAST Hits","assemblyNames":["'_ queries.assembly _'"],"adapter":{"type":"FromConfigAdapter","features":'_ feature_part _'}}]';
+        queries.tracks = queries.tracks _ ',blasthits';
+      END;
 
       IF c.config.installation_type.match('^dev');
         # HACK! to direct dev installation to staging, with GBrowse installed
