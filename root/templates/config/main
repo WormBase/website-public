@@ -389,10 +389,13 @@
           end   = coord.1;
           minstart = start < minstart ? start : minstart;
           maxend   = end   > maxend   ? end   : maxend;
-          subfeatures.push('{"uniqueId":"'_ coord _'","refName":"'_ refseq _'","start":'_ start _',"end":'_ end _'}');
+          subfeatures.push('{"uniqueId":"'_ coords _'","refName":"'_ refseq _'","start":'_ start _',"end":'_ end _'}');
         END;
 
-        feature_part = '[{"uniqueId":"'coords'","refName":"'_ refseq _'","start":'_ minstart _',"end":'_ maxend _',"name":"'_ label _'","subfeatures":['_ subfeatures.join(',')  _']}]';
+        loc_part     = position_string.match('^([^;]+);?');
+        position_string = loc_part.0;
+
+        feature_part = '[{"uniqueId":"'_ coords _'","refName":"'_ refseq _'","start":'_ minstart _',"end":'_ maxend _',"name":"'_ label _'","subfeatures":['_ subfeatures.join(',')  _']}]';
 
       queries.sessionTracks = '[{"type":"FeatureTrack","trackId":"blasthits","name":"BLAST Hits","assemblyNames":["'_ queries.assembly _'"],"adapter":{"type":"FromConfigAdapter","features":'_ feature_part _'}}]'
 
