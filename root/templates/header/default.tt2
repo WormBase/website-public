@@ -69,7 +69,6 @@
         <a href="/species/[% species %]"><i>[% c.config.sections.species_list.$species.title %]</i></a>
         <br/>
         [<span class="wb-detail"><a href="[% jbrowse_url(species)  %]">JBrowse</a></span>]
-        [<span class="wb-detail">[% text2link('genomic_location', '' , 'Legacy&nbsp;GBrowse', '', species) %]</span>]
     [% ELSIF item.resource %]
         [% resource = item.resource %]
         <a href="/resources/[% resource %]">[% c.config.sections.resources.$resource.title %]</a>
