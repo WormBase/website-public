@@ -89,11 +89,6 @@
                  WRAPPER toggle title="Legacy Genome Browser images";
                     '<span>JBrowse 1</span>';
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
-                    '<br />';
-                    '<span>GBrowse (to be retired January 2023) </span>';
-                    '<div class="gbrowse-image-container">';
-                    tag2link(genomic_image, image(img_url));
-                    '</div>';
                  END;
                  '</div>';
                END;
