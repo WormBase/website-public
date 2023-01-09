@@ -44,7 +44,7 @@
        <span id="fade">[% item.footer %]</span>
   [% CATCH file %]
      [% !item.name.coord.start ? tag2link(item.name,item.label) : item.name.id %]
-     [% gbrowselink(item.name,"",1); %]
+     [% jbrowselink(item.name,"",1); %]
      </li>
 
      [%# Always include the taxonomy if it exists %]

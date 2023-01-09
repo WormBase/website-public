@@ -1,6 +1,5 @@
       [% tag2link(item.name) %]
       [% jbrowselink(item.name, '', 1); %]
-      [% gbrowselink(item.name) %]
     </li>
 
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />

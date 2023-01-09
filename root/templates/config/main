@@ -23,7 +23,7 @@
       IF data.defined;
         UNLESS text; text = data.label; END;
         IF data.class.defined && data.class != 'text';
-          ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy, data.dbt);
+          ln = data.coord.start ? jbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy, data.dbt);
           IF data.style;
             '<span style="'_ data.style _ "\">$ln</span>";
           ELSE;
