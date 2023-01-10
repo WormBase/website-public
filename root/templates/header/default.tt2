@@ -7,7 +7,7 @@
 </div>
 
 <div id="wrap">
-
+<!--
       [% message_id = c.config.system_message.id %]
       [% IF message_id AND !c.user_session.close_system_message.$message_id %]
         <div id="top-system-message" class="system-message">
@@ -18,7 +18,7 @@
         </div>
         <div class="system-message" ></div>
       [% END %]
-
+-->
   [% PROCESS "boilerplate/issue_box.tt2" %]
 [% PROCESS page_info %]
 
