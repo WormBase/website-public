@@ -86,7 +86,7 @@
                  END;
                  '<br /><br />';
 
-                 WRAPPER toggle title="Legacy Genome Browser images";
+                 WRAPPER toggle title="Legacy Genome Browser image";
                     '<span>JBrowse 1</span>';
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
                  END;
