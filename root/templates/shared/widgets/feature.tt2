@@ -8,11 +8,11 @@
 	   jbrowse_view(feature_image, undef, "Curated_Genes,RNASeq Asymmetries,RNASeq,RNASeq Splice Junctions (common),RNASeq Splice Junctions (rare),Polysomes,DNAseI hypersensitive site,Regulatory regions,Promoter regions,Histone binding sites,Transcription factor binding regions,Transcription factor binding sites,Binding sites (predicted),Binding sites (curated),Binding regions");
 	END;
 
-	WRAPPER toggle title="Legacy JBrowse image";
-	   '<div style="clear:both;">';
-               jbrowse_view(feature_image, undef, "Curated_Genes,RNASeq Asymmetries,RNASeq,RNASeq Splice Junctions (common),RNASeq Splice Junctions (rare),Polysomes,DNAseI hypersensitive site,Regulatory regions,Promoter regions,Histone binding sites,Transcription factor binding regions,Transcription factor binding sites,Binding sites (predicted),Binding sites (curated),Binding regions");
-	   '</div>';
-	END;
+#	WRAPPER toggle title="Legacy JBrowse image";
+#	   '<div style="clear:both;">';
+#               jbrowse_view(feature_image, undef, "Curated_Genes,RNASeq Asymmetries,RNASeq,RNASeq Splice Junctions (common),RNASeq Splice Junctions (rare),Polysomes,DNAseI hypersensitive site,Regulatory regions,Promoter regions,Histone binding sites,Transcription factor binding regions,Transcription factor binding sites,Binding sites (predicted),Binding sites (curated),Binding regions");
+#	   '</div>';
+#	END;
 	'<br />';
     END;
 

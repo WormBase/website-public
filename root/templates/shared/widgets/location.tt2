@@ -98,16 +98,19 @@
         END;
     END;
 
-    '<div style="clear:both;">';
-    IF fields.genomic_image.data && !fields.genomic_position.data;
-             # setting vars up
-             # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
-             img_url = gbrowse_url(fields.genomic_image.data.taxonomy, fields.genomic_image.data.id, '', 1);
-             IF fields.tracks.data;
-                 img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
-             END;
-             '<br><br>';
-             tag2link(fields.genomic_image.data, image(img_url));
-     END;
-     '</div>';
+## I'm not sure what this does but it appears to not get called anymore?
+## It doesn't have a current jbrowse alternative
+
+#    '<div style="clear:both;">';
+#    IF fields.genomic_image.data && !fields.genomic_position.data;
+#             # setting vars up
+#             # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
+#             img_url = gbrowse_url(fields.genomic_image.data.taxonomy, fields.genomic_image.data.id, '', 1);
+#             IF fields.tracks.data;
+#                 img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
+#             END;
+#             '<br><br>';
+#             tag2link(fields.genomic_image.data, image(img_url));
+#     END;
+#     '</div>';
 %]
