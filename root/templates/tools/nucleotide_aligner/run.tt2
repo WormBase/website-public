@@ -1,5 +1,9 @@
 [% UNLESS noboiler %]<h1>Nucleotide Aligner for [% c.stash.sequence %]</h1>[% END %]
 
+<p>This functionality currently is not available; we hope to restore it soon.</p>
+
+
+<!-- commenting this out until the functionality is restored
 [% msg %]
 
 [% UNLESS noboiler %]
@@ -43,3 +47,6 @@
   <p>
   <div style="min-width:73em;">[% content %]</div>
 [% END %]
+
+-->
+
