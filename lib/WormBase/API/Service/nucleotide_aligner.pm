@@ -56,6 +56,15 @@ sub index {
 
 sub run {
     my ($self,$c,$param) = @_;
+
+##
+#     This is just until functionality can be replaced with JBrowse 2
+##
+
+    return {msg=>"This functionality currently is not available; we hope to restore it soon."};
+##
+#  When it ready, remove this ^^^ line
+##
     my $sequence_id = $param->{"sequence"};
 
     my @array;
