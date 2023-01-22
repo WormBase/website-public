@@ -141,7 +141,8 @@
         </span><br />
         <span>at the [% external_link("http://www.nih.gov/", "US National Institutes of Health") %],
           the [% external_link("http://www.mrc.ac.uk/", "UK Medical Research Council") %] and the
-          [% external_link("http://www.bbsrc.ac.uk/home/home.aspx", "UK Biotechnology and Biological Sciences Research Council") %].
+          [% external_link("http://www.bbsrc.ac.uk/home/home.aspx", "UK Biotechnology and Biological Sciences Research Council") %].<br />
+          In 2022, WormBase was named a [% external_link("https://globalbiodata.org/scientific-activities/global-core-biodata-resources/", "Core Member") %] of the [% external_link("https://globalbiodata.org/", "Global Biodata Coalition") %].
         </span>
         </div>
     </div>
