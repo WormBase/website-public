@@ -77,7 +77,7 @@
 				  [% tag2link(line.link.corr_gene_link) %]
 
 				  [% IF line.link.expand_link %]
-                                    <b>Please let the WormBase admins know this happened.</b>
+                                    <!-- <b>Please let the WormBase admins know this happened.</b> -->
 				    <br/><!-- Definitely don't know what this is doing. :-/ <div class="expand_area"  expand_area_count="[% expand_area_counter _ count %]" expand_link="[% gbrowse_url(line.link.genome_link.taxonomy, line.link.genome_link.id, obj.bioproject, 1) %]"></div> -->
 				    [% expand_area_counter = expand_area_counter+1 %]
 				   [% END %]
