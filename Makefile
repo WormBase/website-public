@@ -2,8 +2,13 @@
 
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
-# Would be something like WS287-4 if set as ENVVAR, otherwise just ws287
-EB_VERSION ?= ${LOWER_WS_VERSION}
+
+# EB_VERSION is:
+#    in internal variable used to set a dynamic CNAME and EB environment name
+#    We grab the value of VERSION (a tag version set in the environment)
+#    and replace . (not allowed in CNAME and EB env names) and replace with - 
+EB_VERSION="${VERSION/./-}"
+
 CATALYST_PORT ?= 5000
 WEBPACK_SERVER_PORT ?= 3000
 
@@ -161,7 +166,13 @@ eb-create: CATALYST_APP ?= production
 #eb-create: CNAME ?= wormbase-website-preproduction
 #eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
 
-# Paremeterized environments and CNAMES
+# Create a new environment with 
+# environment name: wormbase-website-ws280-7
+# CNAME : wormbase-website-preproduction-ws280-7.wormbase.org
+
+# Later, we can SWAP this environment with the existing 
+# wormbase-website-production.us-east-1.elasticbeanstalk.com
+# which is ALWAYS running
 eb-create: EB_ENV_NAME ?= wormbase-website-${EB_VERSION}
 eb-create: CNAME ?= wormbase-website-preproduction-${EB_VERSION}
 
