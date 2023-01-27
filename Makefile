@@ -2,6 +2,7 @@
 
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
+TAGGED_VERSION = ${VERSION}
 CATALYST_PORT ?= 5000
 WEBPACK_SERVER_PORT ?= 3000
 
@@ -156,7 +157,7 @@ eb-setenv:
 
 .PHONY: eb-create
 eb-create: CATALYST_APP ?= production
-eb-create: CNAME ?= wormbase-website-preproduction
+eb-create: CNAME ?= wormbase-website-preproduction-${TAGGED_VERSION}
 #eb-create: CNAME ?= wormbase-website-production
 eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
 #eb-create:
