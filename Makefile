@@ -2,6 +2,8 @@
 
 WS_VERSION ?= $(shell cat wormbase.conf | sed -rn 's|wormbase_release.*(WS[0-9]+).*|\1|p')
 LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
+# Would be something like WS287-4 if set as ENVVAR, otherwise just ws287
+EB_VERSION ?= ${LOWER_WS_VERSION}
 CATALYST_PORT ?= 5000
 WEBPACK_SERVER_PORT ?= 3000
 
@@ -156,9 +158,13 @@ eb-setenv:
 
 .PHONY: eb-create
 eb-create: CATALYST_APP ?= production
-eb-create: CNAME ?= wormbase-website-preproduction
-#eb-create: CNAME ?= wormbase-website-production
-eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
+#eb-create: CNAME ?= wormbase-website-preproduction
+#eb-create: EB_ENV_NAME ?= wormbase-website-${LOWER_WS_VERSION}
+
+# Paremeterized environments and CNAMES
+eb-create: EB_ENV_NAME ?= wormbase-website-${EB_VERSION}
+eb-create: CNAME ?= wormbase-website-preproduction-${EB_VERSION}
+
 #eb-create:
 #	@eb create ${EB_ENV_NAME} --cfg v3.0-2022.07.31-working --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST#_APP},ACEDB_HOST=${ACEDB_HOST_STAND_ALONE},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GI#THUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET=${JWT_SECRET},CATALYST_APP=production
 
