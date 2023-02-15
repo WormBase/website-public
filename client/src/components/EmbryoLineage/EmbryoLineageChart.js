@@ -82,7 +82,7 @@ function SingleCellChart({ data }) {
         },
         xAxis: {
           title: {
-            text: 'Cells (%) Expressing',
+            text: 'Fraction Cells Expressing"',
           },
           crosshair: true,
           max: 1,
