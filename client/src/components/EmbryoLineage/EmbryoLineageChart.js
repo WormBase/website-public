@@ -85,7 +85,7 @@ function SingleCellChart({ data }) {
             text: 'Cells (%) Expressing',
           },
           crosshair: true,
-          max: 100,
+          max: 10,
         },
         yAxis: [
           {
@@ -99,9 +99,9 @@ function SingleCellChart({ data }) {
         series: [
           {
             name: 'Expression',
-            data: data.map(({ tpm, proportion, cell_type }) => {
+            data: data.map(({ tpm, fraction, cell_type }) => {
               return {
-                x: proportion,
+                x: 100 * fraction,
                 y: tpm,
                 name: cell_type,
               };
