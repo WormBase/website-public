@@ -29,16 +29,19 @@ END;
 # Here marks the end of the CeNGEN chart
 
 # Here marks the beginning of the Single Cell Embryonic Lineage chart
+WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Cell - Packer et al 2019" tooltip="Single cell gene expression graphs";
+    '<div id="embryocell-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+END;
+# Here marks the end of the Single Cell Embryonic Lineage chart
+
+
+# Here marks the beginning of the Single Cell Embryonic Lineage chart
 WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Lineage - Packer et al 2019" tooltip="Single cell gene expression graphs";
     '<div id="embryolineage-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
     # Here marks the end of the Single Cell Embryonic Lineage chart
 
-# Here marks the beginning of the Single Cell Embryonic Lineage chart
-WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Cell - Packer et al 2019" tooltip="Single cell gene expression graphs";
-    '<div id="embryocell-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
-END;
-    # Here marks the end of the Single Cell Embryonic Lineage chart
+
 
  %]
 
