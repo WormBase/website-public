@@ -24,7 +24,6 @@ function SingleCellChart({ data }) {
                 chart: {
                     type: 'scatter',
                     zoomType: 'xy',
-
                     events: {
                         load: function() {
                             this.chartBackground.htmlCss({ cursor: 'crosshair' });
@@ -82,10 +81,10 @@ function SingleCellChart({ data }) {
                 },
                 xAxis: {
                     title: {
-                        text: 'Fraction Cells Expressing',
+                        text: 'Cells (%) Expressing',
                     },
                     crosshair: true,
-                    max: 1,
+                    max: 100,
                 },
                 yAxis: [
                     {
@@ -101,7 +100,7 @@ function SingleCellChart({ data }) {
                         name: 'Expression',
                         data: data.map(({ tpm, fraction, cell_type }) => {
                             return {
-                                x: fraction,
+                                x: fraction * 100,
                                 y: tpm,
                                 name: cell_type,
                             };
