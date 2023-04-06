@@ -619,7 +619,7 @@
             const { createElement } = React
             const { render } = ReactDOM
 
-            fetch('https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/WormBase/' + releaseVersion + '/embed/'+ jbrowse_dataset + '_embed.json')  
+            fetch('/tools/genome/jbrowse2/embed/'+ jbrowse_dataset + '_embed.json')  
             .then((response) =>
                 Promise.all([response.json(), loadPlugins([])])
             ).then(([results]) => {
