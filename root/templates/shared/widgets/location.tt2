@@ -81,7 +81,7 @@
                  WRAPPER $field_block title="Genome Browser";
                     '<span>Launch full Genome Browser window </span>';
                     jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
-                      '&nbsp;<span class="deprecated">Legacy JBrowse 1 link: (';
+                      '&nbsp;<span class="deprecated">(Legacy JBrowse 1 link: ';
                       jbrowselink(position, undef, undef, fields.jbrowse_tracks.data); 
                     ')</span>';
                     '<span><i><br />JBrowse 2-driven fully functional genome browser. Explore via the menu in the upper left corner</i></span>';
