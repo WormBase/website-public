@@ -3,7 +3,7 @@
     [% IF query; val = query FILTER html; END; %]
 
     <div id="searchBody">
-      <input class="text" id="Search" name="query" type="text" placeholder="Search directory...">
+      <input class="text" id="Search" name="query" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search directory...">
       <ul id="searchSelect">
         <li>
           <span class="ui-icon ui-icon-triangle-1-s" style="float:right"></span>
