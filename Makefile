@@ -7,7 +7,10 @@ LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
 #    in internal variable used to set a dynamic CNAME and EB environment name
 #    We grab the value of VERSION (a tag version set in the environment)
 #    and replace . (not allowed in CNAME and EB env names) and replace with - 
-EB_VERSION="${VERSION/./-}"
+$(info  VERSION specified as an envar is: ${VERSION})
+
+#EB_VERSION=${VERSION/./-}
+$(info  SANITIZED VERSION IS ${EB_VERSION})
 
 CATALYST_PORT ?= 5000
 WEBPACK_SERVER_PORT ?= 3000
