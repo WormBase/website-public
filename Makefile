@@ -7,6 +7,7 @@ LOWER_WS_VERSION ?= $(shell echo ${WS_VERSION} | tr A-Z a-z)
 #    in internal variable used to set a dynamic CNAME and EB environment name
 #    We grab the value of VERSION (a tag version set in the environment)
 #    and replace . (not allowed in CNAME and EB env names) and replace with - 
+# This is no longer in use as of WS289
 EB_VERSION="${VERSION/./-}"
 
 CATALYST_PORT ?= 5000
@@ -173,8 +174,8 @@ eb-create: CATALYST_APP ?= production
 # Later, we can SWAP this environment with the existing 
 # wormbase-website-production.us-east-1.elasticbeanstalk.com
 # which is ALWAYS running
-eb-create: EB_ENV_NAME ?= wormbase-website-${EB_VERSION}
-eb-create: CNAME ?= wormbase-website-preproduction-${EB_VERSION}
+eb-create: EB_ENV_NAME ?= wormbase-website-${EB_ENVIRONMENT}
+eb-create: CNAME ?= wormbase-website-preproduction-${EB_CNAME}
 
 #eb-create:
 #	@eb create ${EB_ENV_NAME} --cfg v3.0-2022.07.31-working --cname ${CNAME} --keyname search-admin --envvars APP=${CATALYST#_APP},ACEDB_HOST=${ACEDB_HOST_STAND_ALONE},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET},GI#THUB_TOKEN=${GITHUB_TOKEN},JWT_SECRET=${JWT_SECRET},CATALYST_APP=production
