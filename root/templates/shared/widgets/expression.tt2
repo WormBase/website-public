@@ -28,7 +28,23 @@ WRAPPER $field_block title="Single cell gene expression graphs - CeNGEN" tooltip
 END;
 # Here marks the end of the CeNGEN chart
 
+# Here marks the beginning of the Single Cell Embryonic Lineage chart
+WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Cell - Packer et al 2019" tooltip="Single cell gene expression graphs";
+    '<div id="embryocell-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+END;
+# Here marks the end of the Single Cell Embryonic Lineage chart
+
+
+# Here marks the beginning of the Single Cell Embryonic Lineage chart
+WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Lineage - Packer et al 2019" tooltip="Single cell gene expression graphs";
+    '<div id="embryolineage-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+END;
+    # Here marks the end of the Single Cell Embryonic Lineage chart
+
+
+
  %]
+
 
 
 [%
@@ -224,6 +240,24 @@ END;
     WB.renderCenGenChart('cengen-holder', '[% object.name.data.id %]');
   }
 })();
+</script>
+
+
+<script type="text/javascript">
+    (function(){
+        if (document.getElementById('embryolineage-holder')) {
+            WB.renderEmbryoLineageChart('embryolineage-holder', '[% object.name.data.id %]');
+        }
+    })();
+</script>
+
+
+<script type="text/javascript">
+    (function(){
+        if (document.getElementById('embryocell-holder')) {
+            WB.renderEmbryoCellChart('embryocell-holder', '[% object.name.data.id %]');
+        }
+    })();
 </script>
 
 

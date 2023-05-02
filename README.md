@@ -1,7 +1,7 @@
 WormBase Website Repository
 ===========================
 
-This repository contains the [WormBase](http://www.wormbase.org) Web application.
+This repository contains the [WormBase](http://www.wormbase.org) Web application. 
 
 **The repository for [WormBase Mobile](http://m.wormbase.org) can be found at [WormBase/website-mobile](https://github.com/WormBase/website-mobile)**
 

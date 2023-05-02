@@ -25,6 +25,7 @@ var testVar = 'testVar5';
 var React = require('../../client/node_modules/react');
 var ReactDOM = require('../../client/node_modules/react-dom');
 require("./jquery/plugins/dataTables/media/css/demo_table.css");
+const SingleCellChart = require("../../client/src/components/EmbryoCell/EmbryoCellChart");
 
 var Root = require('../../client/src/components/Root').default;
 var ErrorMessage = require('../../client/src/components/ErrorMessage').default;
@@ -258,7 +259,7 @@ var name2widget = {
             clearTimeout(timer);
             timer = undefined;
           }
-          if(colDropdown.find("#layout-input:focus").size() === 0){
+          if(colDropdown.find("#layout-input:focus").length() === 0){
             timer = setTimeout(function() {
                   colDropdown.children("ul").hide();
                 }, 300)
@@ -3240,6 +3241,40 @@ var Scrolling = (function(){
       )
     }
 
+    function renderEmbryoLineageChart(elementId, wbId) {
+      import('../../client/src/components/EmbryoLineage').then(
+          modele => {
+            EmbryoLineageChart = modele.default;
+            console.log(SingleCellChart)
+            ReactDOM.render(
+                <Root>
+                  <EmbryoLineageChart geneId={wbId} />
+                </Root>,
+                document.getElementById(elementId)
+            )
+          }
+      )
+    }
+
+      function renderEmbryoCellChart(elementId, wbId) {
+          import('../../client/src/components/EmbryoCell').then(
+              modele => {
+                  EmbryoCellChart = modele.default;
+                  console.log(SingleCellChart)
+                  ReactDOM.render(
+                      <Root>
+                          <EmbryoCellChart geneId={wbId} />
+                      </Root>,
+                      document.getElementById(elementId)
+                  )
+              }
+          )
+      }
+
+
+
+
+
     function renderFeatureSequences(data = {}, elementId, wbId) {
       import('../../client/src/components/Sequence').then(
         (module) => {
@@ -3581,7 +3616,9 @@ var Scrolling = (function(){
       renderFeatureSequences: renderFeatureSequences, // render sequences for feature (molecular details)
       renderTranscriptSequences: renderTranscriptSequences, // render sequences for transcript and CDS
       renderInteractorVennDiagram: renderInteractorVennDiagram, // render Venn diagram in interaction widgets of various pages
-      renderCenGenChart: renderCenGenChart // render CenGen expression data as charts on gene page
+      renderCenGenChart: renderCenGenChart, // render CenGen expression data as charts on gene page
+      renderEmbryoLineageChart: renderEmbryoLineageChart, // render single cell expression lineage data as charts on gene page
+      renderEmbryoCellChart: renderEmbryoCellChart, // render single cell expression lineage data as charts on gene page
     };
   })();
 

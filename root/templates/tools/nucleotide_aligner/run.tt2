@@ -1,7 +1,9 @@
 [% UNLESS noboiler %]<h1>Nucleotide Aligner for [% c.stash.sequence %]</h1>[% END %]
 
+
 [% msg %]
 
+<!-- commenting this out until the functionality is restored
 [% UNLESS noboiler %]
   <p>
   <form method="post" action="[% c.uri_for('/tools','nucleotide_aligner','run').path %]" name="f">
@@ -43,3 +45,6 @@
   <p>
   <div style="min-width:73em;">[% content %]</div>
 [% END %]
+
+-->
+

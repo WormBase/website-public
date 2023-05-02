@@ -4,17 +4,15 @@
     IF fields.feature_image.data;
 	feature_image = fields.feature_image.data;
 
-	WRAPPER $field_block title="Genome Browser Preview";
+	WRAPPER $field_block title="Genome Browser";
 	   jbrowse_view(feature_image, undef, "Curated_Genes,RNASeq Asymmetries,RNASeq,RNASeq Splice Junctions (common),RNASeq Splice Junctions (rare),Polysomes,DNAseI hypersensitive site,Regulatory regions,Promoter regions,Histone binding sites,Transcription factor binding regions,Transcription factor binding sites,Binding sites (predicted),Binding sites (curated),Binding regions");
 	END;
 
-	WRAPPER toggle title="Legacy GBrowse image";
-	   '<div style="clear:both;">';
-	   img_url = gbrowse_url(feature_image.taxonomy, feature_image.id, '', 1);
-	   img_url = img_url _ ';t=' _ feature_image.tracks.join(';t=');
-	      tag2link(feature_image, image(img_url));
-	   '</div>';
-	END;
+#	WRAPPER toggle title="Legacy JBrowse image";
+#	   '<div style="clear:both;">';
+#               jbrowse_view(feature_image, undef, "Curated_Genes,RNASeq Asymmetries,RNASeq,RNASeq Splice Junctions (common),RNASeq Splice Junctions (rare),Polysomes,DNAseI hypersensitive site,Regulatory regions,Promoter regions,Histone binding sites,Transcription factor binding regions,Transcription factor binding sites,Binding sites (predicted),Binding sites (curated),Binding regions");
+#	   '</div>';
+#	END;
 	'<br />';
     END;
 

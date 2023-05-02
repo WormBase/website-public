@@ -81,19 +81,17 @@
                  WRAPPER $field_block title="Genome Browser";
                     '<span>Launch full Genome Browser window </span>';
                     jbrowse2link(position, undef, undef, fields.jbrowse_tracks.data);
+                      '&nbsp;<span class="deprecated">(Legacy JBrowse 1 link: ';
+                      jbrowselink(position, undef, undef, fields.jbrowse_tracks.data); 
+                    ')</span>';
                     '<span><i><br />JBrowse 2-driven fully functional genome browser. Explore via the menu in the upper left corner</i></span>';
                     jbrowse2_view(position);
                  END;
                  '<br /><br />';
 
-                 WRAPPER toggle title="Legacy Genome Browser images";
+                 WRAPPER toggle title="Legacy Genome Browser image";
                     '<span>JBrowse 1</span>';
                     jbrowse_view(position, undef, fields.jbrowse_tracks.data, fields.name.data.class == 'pcr_oligo' ? {tracklabels => 0} : {});
-                    '<br />';
-                    '<span>GBrowse (to be retired January 2023) </span>';
-                    '<div class="gbrowse-image-container">';
-                    tag2link(genomic_image, image(img_url));
-                    '</div>';
                  END;
                  '</div>';
                END;
@@ -103,16 +101,19 @@
         END;
     END;
 
-    '<div style="clear:both;">';
-    IF fields.genomic_image.data && !fields.genomic_position.data;
-             # setting vars up
-             # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
-             img_url = gbrowse_url(fields.genomic_image.data.taxonomy, fields.genomic_image.data.id, '', 1);
-             IF fields.tracks.data;
-                 img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
-             END;
-             '<br><br>';
-             tag2link(fields.genomic_image.data, image(img_url));
-     END;
-     '</div>';
+## I'm not sure what this does but it appears to not get called anymore?
+## It doesn't have a current jbrowse alternative
+
+#    '<div style="clear:both;">';
+#    IF fields.genomic_image.data && !fields.genomic_position.data;
+#             # setting vars up
+#             # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
+#             img_url = gbrowse_url(fields.genomic_image.data.taxonomy, fields.genomic_image.data.id, '', 1);
+#             IF fields.tracks.data;
+#                 img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
+#             END;
+#             '<br><br>';
+#             tag2link(fields.genomic_image.data, image(img_url));
+#     END;
+#     '</div>';
 %]
