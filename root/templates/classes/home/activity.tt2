@@ -2,10 +2,23 @@
     <p>Here are our <strong>top 10 community curators</strong> for phenotype data in the last 3 months!<p>
 
     <div style="height:245px;width:349px;z-index:100;margin:20px 0;overflow:hidden;border:1px solid #999;">
-        <iframe class="ui-autocomplete-loading" width="369px" height="500px" style="margin:-30px -2px -30px -1px;border:0;" src="https://docs.google.com/spreadsheets/d/1u2EuEEeeo5pa7hLZ_mw08qhS1yJQKyRZxCNTYm90ULQ/pubhtml?gid=873251968&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+        <iframe class="ui-autocomplete-loading" width="369px" height="500px" style="margin:-30px -2px -30px -1px;border:0;"
+                src="https://docs.google.com/spreadsheets/d/1u2EuEEeeo5pa7hLZ_mw08qhS1yJQKyRZxCNTYm90ULQ/pubhtml?gid=873251968&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
     </div>
 
-    <p>Want to be a community curator? <span class="submit-data-menu"><a href="/about/userguide/submit_data#01--10">Submit data</a></span></p>
+
+    <p>Here are our <strong>top 10 community curators</strong> for ACKnowledge data in the last 3 months!<p>
+
+    <div style="height:245px;width:349px;z-index:100;margin:20px 0;overflow:hidden;border:1px solid #999;">
+        <iframe class="ui-autocomplete-loading" width="369px" height="500px" style="margin:-30px -2px -30px -1px;border:0;"
+
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS_0LGRlRn86fCyGkXegl3Ef1AaHDo6fTDYri1ylK8t76M2ozUhBu630YiEqE-L9sJq0B4gvWg7dcXW/pubhtml?gid=873251968&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+        </iframe>
+
+    </div>
+
+
+        <p>Want to be a community curator? <span class="submit-data-menu"><a href="/about/userguide/submit_data#01--10">Submit data</a></span></p>
 </div>
 
 
