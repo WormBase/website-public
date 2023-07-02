@@ -25,7 +25,7 @@ export JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
 export COMPOSE_PROJECT_NAME = "${USER}_$(shell pwd -P | xargs  basename)"
 
 export ACEDB_HOST ?= acedb
-export ACEDB_HOST_STAND_ALONE ?= 10.0.1.236
+export ACEDB_HOST_STAND_ALONE ?= 10.0.1.115
 
 .PHONY: bare-dev-start
 bare-dev-start:
