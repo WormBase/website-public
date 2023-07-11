@@ -436,7 +436,7 @@
 
             IF pos_display_string;
                 url = jbrowse2_url(taxonomy, pos_display_string, bp, 0, tracks);
-                linkouts.push(search ? "<span id='fade'>[<a target=\"_blank\" href=\"$url\">JBrowse 2 browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+                linkouts.push(search ? "<span id='fade'>[<a target=\"_blank\" href=\"$url\">JBrowse 2 browse genome (BioProject $bp)</a>]</span>" : "<a target=\"_blank\" href=\"$url\">$label</a>");
             END;
         END;
         linkouts.join(' ');
@@ -461,7 +461,7 @@
 
             IF pos_display_string;
                 url = jbrowse_url(taxonomy, pos_display_string, bp, 0, tracks);
-                linkouts.push(search ? "<span id='fade'>[<a target=\"_blank\" href=\"$url\">Browse genome (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+                linkouts.push(search ? "<span id='fade'>[<a target=\"_blank\" href=\"$url\">Browse genome (BioProject $bp)</a>]</span>" : "<a target=\"_blank\" href=\"$url\">$label</a>");
             END;
         END;
         linkouts.join(' ');
@@ -485,7 +485,7 @@
 
             IF pos_display_string;
                 url = jbrowse2_url(taxonomy, pos_display_string, bp, 0, tracks);
-                linkouts.push(search ? "<span id='fade'>[<a  target=\"_blank\" href=\"$url\">JBrowse 2 full web app link (BioProject $bp)</a>]</span>" : "<a href=\"$url\">$label</a>");
+                linkouts.push(search ? "<span id='fade'>[<a target=\"_blank\" href=\"$url\">JBrowse 2 full web app link (BioProject $bp)</a>]</span>" : "<a target=\"_blank\" href=\"$url\">$label</a>");
             END;
         END;
         linkouts.join(' ');
