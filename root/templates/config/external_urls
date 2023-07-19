@@ -479,11 +479,7 @@
 
  GSA = {
 	description = 'Genetics Society of America'
-	base        = 'http://www.genetics-gsa.org/Database : "ZhenLab3D"
-Name "Zhen Laboratory 3D Neuron Viewer"
-Description "Mei Zhen Laboratory 3D neuron viewer exploring the C. elegans Connectome"
-URL "http:\/\/zhen-tools.com"
-URL_constructor "http:\/\/zhen-tools.com\/#\/3d-viewer?neurons=%s"'
+	base        = 'http://www.genetics-gsa.org/'
 	}
 
  'H-INV' = {
