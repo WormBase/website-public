@@ -479,7 +479,11 @@
 
  GSA = {
 	description = 'Genetics Society of America'
-	base        = 'http://www.genetics-gsa.org/'
+	base        = 'http://www.genetics-gsa.org/Database : "ZhenLab3D"
+Name "Zhen Laboratory 3D Neuron Viewer"
+Description "Mei Zhen Laboratory 3D neuron viewer exploring the C. elegans Connectome"
+URL "http:\/\/zhen-tools.com"
+URL_constructor "http:\/\/zhen-tools.com\/#\/3d-viewer?neurons=%s"'
 	}
 
  'H-INV' = {
@@ -724,6 +728,12 @@
 	description = 'NemaGENETAG Consortium. Transposon insertion project.'
 	base        = 'http://elegans.imbb.forth.gr/nemagenetag/'
 	search      = 'http://pbil.univ-lyon1.fr/segalat/data/mos.php?mode_aff=0&allele_name=%s'
+	}
+
+ NemaNode = {
+	description = 'Interactive map of nervous system wiring in the nematode C. elegans.'
+	base        = 'https://nemanode.org'
+	search      = 'https://nemanode.org/?in=%s'
 	}
 
  NemaPath = {
@@ -1144,6 +1154,12 @@
 	search      = 'http://www.wormbase.org/db/seq/protein?name=%s'
 	}
 
+ WormWiring = {
+	description = 'A website hosting nematode connectomics data and tools for its visualization and analysis'
+	base        = 'https://wormwiring.org'
+	search      = 'https://wormwiring.org/apps/neuronMaps/?%s'
+	}
+
  WikiPathways = {
 	description = 'WikiPathways: A public platform dedicated to the curation of biological pathways by and for the scientific community.'
 	maintainer  = 'wikipathways-discuss@googlegroups.com'
@@ -1179,6 +1195,12 @@
         maintainer  = 'zfinadmn@zfin.org'
         search      = 'http://zfin.org/search?q=%s'
         }
+
+ ZhenLab3D = {
+	description = 'Mei Zhen Laboratory 3D neuron viewer exploring the C. elegans Connectom'
+	base        = 'http://zhen-tools.com'
+	search      = 'http://zhen-tools.com/#/3d-viewer?neurons=%s'
+	}
 
  MODEncodeTissueL2_A_class_neuron = {
 	description = 'MODEncode Genome Browser Wiggle Track for Tissue L2_A_class_neuron'
