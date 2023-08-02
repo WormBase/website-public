@@ -1,11 +1,8 @@
 [%
 
 
-
-
-
     WRAPPER $field_block;
-        agr_explore_link('WB:' _ fields.name.data.id, 'gene', '#orthology');
+        agr_explore_link('WB:' _ fields.name.data.id _ '#orthology', 'gene');
     END;
 
    # Best BLASTP matches
@@ -39,7 +36,6 @@
 		              },
 	             key='paralogs');
     END;
-
 
    WRAPPER $field_block title="Protein domains" key="protein_domains";
          FOREACH i IN fields.protein_domains.data.keys.sort;

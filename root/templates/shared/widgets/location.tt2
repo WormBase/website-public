@@ -1,7 +1,7 @@
 [%
 
     WRAPPER $field_block;
-        agr_explore_link('WB:' _ fields.name.data.id, 'gene','#sequence-feature-viewer');
+        agr_explore_link('WB:' _ fields.name.data.id _ '#sequence-feature-viewer', 'gene');
     END;
 
     class = object.name.data.class FILTER lower;

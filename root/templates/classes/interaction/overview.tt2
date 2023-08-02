@@ -2,7 +2,7 @@
 
 [%
     WRAPPER $field_block;
-    agr_explore_link('WB:' _ fields.name.data.id, 'gene','#molecular-interactions');
+    agr_explore_link('WB:' _ fields.name.data.id _ '#molecular-interactions', 'gene');
 END;
 
 

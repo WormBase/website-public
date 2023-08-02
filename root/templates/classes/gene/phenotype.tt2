@@ -1,5 +1,5 @@
 [%    WRAPPER $field_block;
-    agr_explore_link('WB:' _ fields.name.data.id, 'gene','#phenotypes');
+    agr_explore_link('WB:' _ fields.name.data.id _ '#phenotypes', 'gene');
 END; %]
 
 

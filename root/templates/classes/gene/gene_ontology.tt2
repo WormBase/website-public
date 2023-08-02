@@ -3,8 +3,8 @@
 [% END; %]
 
 
-[% WRAPPER $field_block title="External source";
-agr_explore_link('WB:' _ fields.name.data.id, 'gene');
+[% WRAPPER $field_block title="Comparative info";
+agr_explore_link('WB:' _ fields.name.data.id _ '#function---go-annotations', 'gene');
 END; %]
 
 [% WRAPPER $field_block title="Gene Ontology graph" key="gene_ontology"; %]
