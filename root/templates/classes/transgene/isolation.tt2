@@ -26,6 +26,11 @@
 #       END;
 # END;
 
+
+WRAPPER $field_block;
+    agr_explore_link( fields.name.data.id, 'transgene');
+END;
+
 WRAPPER $field_block title="Construct" key="construct";
     cell_content(fields.construct.data);
 END;

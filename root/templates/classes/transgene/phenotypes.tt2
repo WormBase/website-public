@@ -1,4 +1,11 @@
+[%     WRAPPER $field_block;
+    agr_explore_link( fields.name.data.id, 'transgene');
+END; %]
+
 [% phenotypes %]
+
+
+
 
 [% phenotypes_not_observed %]
 
