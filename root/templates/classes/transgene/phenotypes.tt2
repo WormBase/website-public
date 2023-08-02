@@ -5,8 +5,6 @@ END; %]
 [% phenotypes %]
 
 
-
-
 [% phenotypes_not_observed %]
 
 [% phenotype_submission_link; %]
