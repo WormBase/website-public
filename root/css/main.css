@@ -3003,6 +3003,12 @@ div#google-map {
   margin-top: 5px;
 }
 
+.agr-explorer-link {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+
 /* author link */
 .author-link, .author-link:link, author-link:visited {
   color: #500000;
