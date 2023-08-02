@@ -7,7 +7,9 @@
 # IF fields.expressed_in.data || fields.expressed_during.data || fields.subcellular_localization.data;
 #     '<h4>Spatio-Temporal Expression Patterns</h4>';
 # END;
-
+    WRAPPER $field_block;
+    agr_explore_link('WB:' _ fields.name.data.id _ '#expression', 'gene');
+END;
 
 
 WRAPPER $field_block title="Anatomic expression pattern";

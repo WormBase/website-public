@@ -10,6 +10,11 @@ WRAPPER highlight_box;
   END;
 
   other_names;
+
+  WRAPPER $field_block title="Comparative info";
+    agr_logo_link(fields.name.data.id, 'allele');
+  END;
+
 END;
 
 '<div class="description">';

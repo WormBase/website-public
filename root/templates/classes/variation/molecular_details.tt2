@@ -1,4 +1,14 @@
+
+
+
+
 [%
+     WRAPPER $field_block title="Comparative info";
+    agr_explore_link( fields.name.data.id, 'allele');
+END;
+
+
+
       wildtype_length = 0;
       mutant_length = 0;
 

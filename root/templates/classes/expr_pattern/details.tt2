@@ -1,5 +1,6 @@
 [%
 
+
 WRAPPER $field_block title="Experiment" key="experimental_details";
 	 details = fields.experimental_details.data; # alias
 	 FOREACH technique IN details.types;

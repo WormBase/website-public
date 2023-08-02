@@ -1,3 +1,7 @@
+[%    WRAPPER $field_block;
+    agr_explore_link('WB:' _ fields.name.data.id _ '#phenotypes', 'gene');
+END; %]
+
 
 
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]

@@ -1,3 +1,7 @@
+[%     WRAPPER $field_block;
+    agr_explore_link( fields.name.data.id, 'allele');
+END; %]
+
 [% phenotypes %]
 
 [% phenotypes_not_observed %]
