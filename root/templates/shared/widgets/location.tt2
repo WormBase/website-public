@@ -1,11 +1,17 @@
 [%
 
-    WRAPPER $field_block;
-        agr_explore_link('WB:' _ fields.name.data.id _ '#sequence-feature-viewer', 'gene');
-    END;
+
 
     class = object.name.data.class FILTER lower;
     # Transcripts lone class not placed on genetic map
+
+    IF class.match('gene');
+        WRAPPER $field_block title="Comparative info";
+            agr_explore_link('WB:' _ fields.name.data.id _ '#sequence-feature-viewer', 'gene');
+        END;
+    END;
+
+
     UNLESS class.match('transcript') || fields.genomic_position.data;
      '<div style="white-space:nowrap;"';
     WRAPPER $field_block title="Genetic position" key="genetic_position";

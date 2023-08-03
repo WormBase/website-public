@@ -1,10 +1,7 @@
 
-
-
-
 [%
      WRAPPER $field_block title="Comparative info";
-    agr_explore_link( fields.name.data.id, 'allele');
+    agr_explore_link('WB:' _ fields.name.data.id _ "#variant-molecular-consequences", 'allele');
 END;
 
 
