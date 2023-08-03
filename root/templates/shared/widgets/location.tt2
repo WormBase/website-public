@@ -11,6 +11,13 @@
         END;
     END;
 
+    IF class.match('variation');
+        WRAPPER $field_block title="Comparative info";
+            agr_explore_link('WB:' _ fields.name.data.id _ '##genomic-variant-information', 'allele');
+        END;
+    END;
+
+
 
     UNLESS class.match('transcript') || fields.genomic_position.data;
      '<div style="white-space:nowrap;"';
