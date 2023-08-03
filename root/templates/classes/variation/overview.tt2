@@ -12,7 +12,7 @@ WRAPPER highlight_box;
   other_names;
 
   WRAPPER $field_block title="Comparative info";
-    agr_logo_link(fields.name.data.id, 'allele');
+    agr_logo_link('WB:' _ fields.name.data.id, 'allele');
   END;
 
 END;
