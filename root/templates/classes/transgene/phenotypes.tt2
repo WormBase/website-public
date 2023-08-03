@@ -1,5 +1,5 @@
-[%     WRAPPER $field_block;
-    agr_explore_link( fields.name.data.id, 'transgene');
+[%     WRAPPER $field_block title="Comparative info";
+    agr_explore_link('WB:' _ fields.name.data.id, 'transgene');
 END; %]
 
 [% phenotypes %]

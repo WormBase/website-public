@@ -46,8 +46,10 @@
 	description = 'The Alliance of Genome Resources'
 	base        = 'http://www.alliancegenome.org/'
 	gene        = 'http://www.alliancegenome.org/gene/%s'
+	allele      = 'http://www.alliancegenome.org/allele/%s'
+	transgene   = 'http://www.alliancegenome.org/allele/%s'
 	disease     = 'http://www.alliancegenome.org/disease/%s'
-        search      = 'https://www.alliancegenome.org/search?q=%s'
+    search      = 'https://www.alliancegenome.org/search?q=%s'
 	}
 
 
@@ -56,7 +58,6 @@
 	base        = 'https://alphafold.ebi.ac.uk/'
 	search      = 'https://alphafold.ebi.ac.uk/entry/%s'
         }
-
 
  APPRIS = {
 	description = 'APPRIS - Annotating principal splice isoforms'
