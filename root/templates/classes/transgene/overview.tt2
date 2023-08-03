@@ -4,7 +4,7 @@
 
 WRAPPER highlight_box;
     WRAPPER $field_block title="Comparative info";
-        agr_logo_link( fields.name.data.id, 'transgene');
+        agr_logo_link('WB:' _ fields.name.data.id, 'transgene');
     END;
 
 END;
