@@ -27,6 +27,9 @@ END; %]
   [% END %]
 [% END %]
 
+[%     WRAPPER $field_block title="Comparative info";
+    agr_explore_link('WB:' _ fields.name.data.id _ '#disease-associations', 'gene');
+END; %]
 
 [%
 # Ranjana will clean up at data level before we want to show this again.
