@@ -1,5 +1,7 @@
 [%
 
+
+
 WRAPPER $field_block title="Gene" key="corresponding_gene";
     IF ref(fields.corresponding_gene.data);
        # pre-process individual cell to override default cell_content
@@ -17,7 +19,6 @@ END;
 WRAPPER $field_block title="Reference allele" key="reference_allele";
          cell_content(fields.reference_allele.data);
 END;
-
 
 WRAPPER $field_block  title="Other alleles" key="other_alleles";
 	build_data_table (

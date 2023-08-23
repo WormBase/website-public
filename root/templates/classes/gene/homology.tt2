@@ -1,5 +1,10 @@
 [%
 
+
+    WRAPPER $field_block;
+        agr_explore_link('WB:' _ fields.name.data.id _ '#orthology', 'gene');
+    END;
+
    # Best BLASTP matches
    best_blastp_matches;
 
@@ -23,7 +28,6 @@
  		              },
 	             key='other_orthologs');
     END;
-
     # Paralogs
     WRAPPER $field_block title="Paralogs" key="paralogs";
     build_data_table(order=['ortholog','method'],
@@ -32,7 +36,6 @@
 		              },
 	             key='paralogs');
     END;
-
 
    WRAPPER $field_block title="Protein domains" key="protein_domains";
          FOREACH i IN fields.protein_domains.data.keys.sort;

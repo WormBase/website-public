@@ -1,3 +1,7 @@
+[%     WRAPPER $field_block title="Comparative info";
+    agr_explore_link("WB:" _ fields.name.data.id _ '#phenotypes', 'allele');
+END; %]
+
 [% phenotypes %]
 
 [% phenotypes_not_observed %]
