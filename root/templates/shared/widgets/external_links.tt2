@@ -1,5 +1,13 @@
 [%
 
+
+  '<div>' _ fields.name.data.class _ '</div>';
+
+    IF fields.name.data.class == 'variation';
+        '<div class="small">This is a Variation</div>';
+        END;
+
+
   IF fields.xrefs.data;
 
     rows = [];
@@ -24,8 +32,6 @@
                    full_description = site.external_urls.$dbname.description,     # full description from the DB
                 } );
     END;
-
-
 
 	build_data_table(
 		order=['name','link','full_description','maintainer'],

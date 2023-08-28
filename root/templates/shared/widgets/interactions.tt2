@@ -1,4 +1,4 @@
-[%  WRAPPER $field_block;
+[%  WRAPPER $field_block title="Comparative info";
 agr_explore_link('WB:' _ fields.name.data.id, 'gene','#molecular-interactions');
 END; %]
 
