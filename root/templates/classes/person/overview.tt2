@@ -53,9 +53,9 @@ WRAPPER $field_block title="Web Page" key="web_page";
 END;
 
 WRAPPER $field_block title="Updates";
-    '<a target="_blank" href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person_lineage.cgi?action=Display&number=' _ object.name.data.id _ '">';
+    '<a target="_blank" href="https://caltech-curation.textpressolab.com/pub/cgi-bin/forms//person_lineage.cgi?action=Display&number=' _ object.name.data.id _ '">';
     'Add or update</a> your information in the lineage of <i>C. elegans</i> biologists and other nematologists.<br />';
-    '<a target="_blank" href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person.cgi?action=Display&number='
+    '<a target="_blank" href="https://caltech-curation.textpressolab.com/pub/cgi-bin/forms//person.cgi?action=Display&number='
      _  object.name.data.id _ '">';
      'Add or update</a> your contact information.';
 END;

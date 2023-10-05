@@ -508,7 +508,8 @@ sub worked_with {
 sub ancestors_data {
     my $self    = shift;
     my $json        = JSON->new->allow_nonref;
-    my $jsonUrl     = 'http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/wbpersonLineageScaling.json';
+    # my $jsonUrl     = 'http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/wbpersonLineageScaling.json';
+    my $jsonUrl   = 'https://caltech-curation.textpressolab.com/pub/cgi-bin/forms/wbpersonLineageScaling.json'
     my $page        = get $jsonUrl;
     my $perl_scalar = $json->decode( $page );         # get the solr data
     my %scaling     = %$perl_scalar;                     # decode the solr page into a hash
