@@ -848,6 +848,17 @@ MACRO agr_logo_link(id, dbt) BLOCK;
     '</div>';
 END;
 
+MACRO agr_explore_link(id, dbt) BLOCK;
+    '<div class="agr-explore-link">';
+    external_link(
+        'AGR',
+        '<img width="150px" src="/img/agr_explore_logo.png" alt="Alliance of Genome Resources" />',
+        id,
+        dbt
+    );
+    '</div>';
+END;
+
 
 # use this to pluraize a word
 # there exists a TT plugin which does this, but better.

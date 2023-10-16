@@ -1,5 +1,9 @@
 [%
 
+    WRAPPER $field_block;
+        agr_explore_link('WB:' _ fields.name.data.id _ '#alleles-and-variants', 'gene',);
+    END;
+
    # Reference allele
    WRAPPER $field_block title=pluralize("Reference allele", fields.reference_allele.data.size) key="reference_allele";
 	   tags2link(fields.reference_allele.data);
@@ -48,6 +52,9 @@
    WRAPPER $field_block title="Strains" key="strains";
   strains;
    END;
+
+
+
 
 
 %]

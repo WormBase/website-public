@@ -1,6 +1,10 @@
 <h2>[% fields.name.data.label %]</h2>
 
 [%
+    WRAPPER $field_block;
+    agr_explore_link('WB:' _ fields.name.data.id _ '#molecular-interactions', 'gene');
+END;
+
 
 WRAPPER highlight_box;
     WRAPPER $field_block title="Type" key="interaction_type";

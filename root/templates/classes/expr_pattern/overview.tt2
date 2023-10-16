@@ -4,6 +4,7 @@
 
 [%
 
+
 WRAPPER highlight_box;
   status;
 END;

@@ -3,6 +3,10 @@
 [% END; %]
 
 
+[% WRAPPER $field_block title="Comparative info";
+agr_explore_link('WB:' _ fields.name.data.id _ '#function---go-annotations', 'gene');
+END; %]
+
 [% WRAPPER $field_block title="Gene Ontology graph" key="gene_ontology"; %]
     <div id="gene-ontology-graph-container" class="ontology-graph-container"></div>
 [% END; %]
@@ -47,6 +51,8 @@
 //     } );
 " %]
 [%
+
+
        key="gene_ontology";
        # One table for each key (here, a GO facet)
        facets = fields.$key.data.keys.sort;
