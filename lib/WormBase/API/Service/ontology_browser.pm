@@ -622,7 +622,7 @@ Children terms are not included here.
 
     my $exclusivelyAnnotatedGenesSection;				# section for displaying genes that may be exclusively annotated to the term
     if ( ($class eq 'anatomy_term') && ($focusTermId ne 'WBbt:0000100') ) {	# for anatomy terms only, and not the root term
-#       my $genes_exclusively_url = 'http://tazendra.caltech.edu/~azurebrd/var/work/raymond/table_anatomy_to_genes';	# source of mappings
+#       my $genes_exclusively_url = 'https://caltech-curation.textpressolab.com/pub/var/work/raymond/table_anatomy_to_genes';	# source of mappings
       my ($solr_url) = &getSolrUrl($focusTermId);				# get the solr URL to determine if live or dev solr server
       my $base_table_url = 'http://wobr.caltech.edu:81/'; 			# live server by default
       if ($solr_url =~ m/82/) { $base_table_url = 'http://wobr.caltech.edu:82/'; }		# if port :8082 use port :82
