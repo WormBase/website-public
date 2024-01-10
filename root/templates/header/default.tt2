@@ -124,7 +124,7 @@
             <div class="submenu-main">
                 <div class="submenu-title">
                     <p><strong><a href="">[% nav_option.title %]</a></strong></p>
-                    <p>[% nav_option.description %]… <a href="[% nav_option.url %]" class="read-more">Find out more</a></p>
+                    <p>[% nav_option.description %] [<a href="[% nav_option.url %]" class="read-more">Read more</a>]</p>
                 </div>
                 <div class="submenu-links">
                     [% build_submenus(nav_option.nav_item, 0, 'submenu-menu') %]
