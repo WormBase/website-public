@@ -299,6 +299,11 @@
     search      = 'http://www.disease-ontology.org/?id=%s'
     }
 
+ DOI = {
+    description = 'Digital Object identifier'
+    base = http:/doi.org/%s
+ }
+
  DNAandCellBiol = {
 	description = 'DNA and Cell Biol'
 	base        = 'http://www.liebertpub.com/DNA'
