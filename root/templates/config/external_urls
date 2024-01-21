@@ -301,7 +301,7 @@
 
  DOI = {
     description = 'Digital Object identifier'
-    base = http:/doi.org/%s
+    base = http://doi.org/%s
  }
 
  DNAandCellBiol = {
