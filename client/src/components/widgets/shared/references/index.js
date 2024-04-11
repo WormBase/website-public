@@ -178,7 +178,7 @@ class References extends Component {
               Find references identified using{' '}
               <a
                 className="wb-ext"
-                href={`https://www.textpressocentral.org/tpc/search?keyword=${[
+                href={`https://www.alliancegenome.org/textpresso/wb/tpc/search?keyword=${[
                   pageInfo.name,
                   ...pageInfo.other_names,
                 ]
