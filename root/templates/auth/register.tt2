@@ -45,8 +45,9 @@ $jq("#redirect").attr("value", window.location);
           <span>Google</span>
       </button>
     </div>
-  </div>
 
+    <br />
+<br />
 <form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 
@@ -54,9 +55,12 @@ $jq("#redirect").attr("value", window.location);
   <div id="default-login" style="overflow:none">
       <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login') %]">login</a></b></span>
   </div>
-  <br />
+
+</div>
 
 
+
+<!--
   <div style="font-weight:normal;font-size:10pt;clear:both;padding:2em;">
       <span>WormBase only supports registration via Google or Facebook.</span>
       <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
@@ -66,7 +70,7 @@ $jq("#redirect").attr("value", window.location);
           <span>Facebook</span>
       </button>
   </div>
-
+-->
 
 </form>
 
