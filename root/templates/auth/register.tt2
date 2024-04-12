@@ -46,8 +46,8 @@ $jq("#redirect").attr("value", window.location);
       </button>
     </div>
 
-    <br />
-<br />
+  <br style="clear:both" />
+
 <form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 
