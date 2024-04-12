@@ -36,17 +36,18 @@ $jq("#redirect").attr("value", window.location);
 [% ELSE %]
 
 <h1>Join the online worm community!</h1>
-<form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
-
+<div id="login-form">
   <div class="social">
-    <div><br />WormBase only supports registrationg using sign in with Google.</div>
+    <div><br />WormBase only supports registration using sign in with Google.</div>
     <div>
       <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
           <span>Google</span>
       </button>
     </div>
   </div>
+
+<form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 
 
@@ -55,7 +56,7 @@ $jq("#redirect").attr("value", window.location);
   </div>
   <br />
 
-<!--
+
   <div style="font-weight:normal;font-size:10pt;clear:both;padding:2em;">
       <span>WormBase only supports registration via Google or Facebook.</span>
       <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
@@ -65,7 +66,7 @@ $jq("#redirect").attr("value", window.location);
           <span>Facebook</span>
       </button>
   </div>
--->
+
 
 </form>
 
