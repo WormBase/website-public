@@ -37,6 +37,8 @@ $jq("#redirect").attr("value", window.location);
 
 <h1>Join the online worm community!</h1>
 <form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
+
+[%# DISABLING REGISTRATION VIA EMAIL
   <div style="font-size:1.3em">
     <div class="login-holder">
         <span id="fade">full name</span> <br />
@@ -67,10 +69,16 @@ $jq("#redirect").attr("value", window.location);
     <input id="redirect" type="text" name="redirect" size="0" value="[% redirect %]" style="display:none;" />
   </div>
 
+%]
 
 
   <div id="default-login" style="overflow:none">
-      <input id="create-account" type="submit" style="font-weight:bold;font-size:1.3em;width:7em;" onClick="register($jq(this));return false;" class="register-button ui-corner-large-all" value="sign up ›"/>
+
+[%# Registrations via email are permanently disabled
+      <input id="create-account" type="submit" 
+             style="font-weight:bold;font-size:1.3em;width:7em;" onClick="register($jq(this));return false;" class="register-button ui-corner-large-all" value="sign up ›"/>
+%]
+
       <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login') %]">login</a></b></span>
   </div>
   <br />
