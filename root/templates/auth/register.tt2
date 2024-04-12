@@ -39,18 +39,16 @@ $jq("#redirect").attr("value", window.location);
 <form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 
-<div>
- <div style="margin:1em;">
   <div class="social">
-      <center>
-    <span>WormBase only supports registration via Google.</span>
-
-      <button class="social_buttons sb_google" onClick="WB.openid.signin('google');return false;">
+    <div><br />WormBase only supports registrationg using sign in with Google.</div>
+    <div>
+      <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
           <span>Google</span>
       </button>
-      </center>
+    </div>
   </div>
-</div>
+
+
 
   <div id="default-login" style="overflow:none">
       <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login') %]">login</a></b></span>
