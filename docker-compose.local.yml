@@ -58,3 +58,5 @@ services:
       - MYSQL_DATABASE=wormbase_user
     volumes:
       - "./util/sql/user_database.sql:/docker-entrypoint-initdb.d/user_database.sql"
+    ports:
+      - "3306:3306"

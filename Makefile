@@ -26,6 +26,7 @@ export COMPOSE_PROJECT_NAME = "${USER}_$(shell pwd -P | xargs  basename)"
 
 export ACEDB_HOST ?= acedb
 export ACEDB_HOST_STAND_ALONE ?= 10.0.1.20
+export COMPOSE_PROJECT_NAME = $(shell echo "${USER}_$$(basename $$(pwd))" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9_-]/_/g')
 
 .PHONY: bare-dev-start
 bare-dev-start:
