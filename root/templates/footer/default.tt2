@@ -79,7 +79,7 @@
       <div class="footer-column">
         <div class="footer-title">Downloads</div>
         <ul>
-          <li><a href="ftp://ftp.wormbase.org/pub/wormbase/">FTP site</a></li>
+          <li><a href="https://downloads.wormbase.org">HTTPS site</a></li>
         </ul>
       </div>
 
