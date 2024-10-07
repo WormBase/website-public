@@ -379,8 +379,8 @@
 
  ftp = {
     description = 'WormBase FTP site'
-    search = 'ftp://ftp.wormbase.org/pub/wormbase/%s'
-    release = 'ftp://ftp.wormbase.org/pub/wormbase/release/%s'
+    search = 'https://downloads.wormbase.org/%s'
+    release = 'https://downloads.wormbase.org/release/%s'
     }
 
  'FoliaBiologica(Praha)' = {

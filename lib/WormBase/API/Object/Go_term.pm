@@ -111,7 +111,7 @@ sub _build_annotated_genes {
     my $counts = $self->_get_count($object, 'GO_annotation');
     my @annotations = $counts <= 500 ? $object->GO_annotation : ();
 
-    my $comment_too_many = "$counts GO annotations found. Too many to display. Please use our <a href=\"ftp://ftp.wormbase.org/pub/wormbase/releases/current-production-release\">FTP site</a> to download.";
+    my $comment_too_many = "$counts GO annotations found. Too many to display. Please use our <a href=\"https://downloads.wormbase.org/releases/current-production-release\">FTP site</a> to download.";
 
     my @data;
     foreach my $anno (@annotations) {
@@ -211,7 +211,7 @@ sub _summarize_gene {
 
 #     my $counts = $self->_get_count($object, 'GO_annotation');
 #     my @annotations = $counts <= 500 ? $object->GO_annotation : ();
-#     my $comment_too_many = "$counts GO annotations found. Too many to display. Please use our <a href=\"ftp://ftp.wormbase.org/pub/wormbase/releases/current-production-release\">FTP site</a> to download.";
+#     my $comment_too_many = "$counts GO annotations found. Too many to display. Please use our <a href=\"https://downloads.wormbase.org/releases/current-production-release\">FTP site</a> to download.";
 
 #     foreach my $anno (@annotations) {
 #         my $gene = $anno->$objTag;

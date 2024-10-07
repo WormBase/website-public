@@ -147,7 +147,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
     IF fields.context.data.placeholder;
         fields.context.data.placeholder.seqLength _ ' bp';"<br/>";
         'Too large to display. Download full sequence from ';
-        '<a href="ftp://ftp.wormbase.org/pub/wormbase/species/">FTP</a>';
+        '<a href="https://downloads.wormbase.org/species/">FTP</a>';
         ' site.';
     ELSE;
 

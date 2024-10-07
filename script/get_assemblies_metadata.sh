@@ -23,7 +23,7 @@ else
   exit 2
 fi
 
-wget ftp://ftp.wormbase.org/pub/wormbase/releases/$version/species/ASSEMBLIES.$version.json
+wget https://downloads.wormbase.org/$version/species/ASSEMBLIES.$version.json
 
 cd "$cwd"
 

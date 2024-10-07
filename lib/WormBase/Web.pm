@@ -164,7 +164,7 @@ sub _setup_species {
     my $new_species = {};
 
     my $release = $c->config->{wormbase_release};
-    my $species_file_remote_path = "ftp://ftp.wormbase.org/pub/wormbase/releases/$release/species/ASSEMBLIES.$release.json";
+    my $species_file_remote_path = "https://downloads.wormbase.org//pub/wormbase/releases/$release/species/ASSEMBLIES.$release.json";
     my $species_file_local_path = $c->path_to('/conf/species/', 'species_ASSEMBLIES.json');
     my @available_species = _parse_wb_species(_get_json($c, $species_file_remote_path, $species_file_local_path));
 
@@ -350,7 +350,7 @@ sub _get_json {
 
 sub _get_latest_release {
     my ($c) = @_;
-    my $release_dir_path = 'ftp://ftp.wormbase.org/pub/wormbase/parasite/releases/';
+    my $release_dir_path = 'https://downloads.wormbase.org//pub/wormbase/parasite/releases/';
     my $latest_release_number_path = $c->path_to('/conf/species/parasite_release_number.txt');
     my $latest_release_number;
 
@@ -423,7 +423,7 @@ sub _with_ftp {
             $on_success->($content);
             $ftp->quit();
         } else {
-            die "Cannot connect to ftp.wormbase.org: $@";
+            die "Cannot connect to downloads.wormbase.org/: $@";
         }
         1;  # expression returns a truety value at the end
     } or do {

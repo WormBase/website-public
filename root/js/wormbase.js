@@ -1021,7 +1021,7 @@ var name2widget = {
               $jq(this).attr('href',dl_url);
             });
           }else{
-            searchSummary.find('.dl-format-list').html('<li  style="height:auto">Too many results to download. Please use our <a href="ftp://ftp.wormbase.org/pub/wormbase/" target="_blank">FTP</a> site.</li>');
+            searchSummary.find('.dl-format-list').html('<li  style="height:auto">Too many results to download. Please use our <a href="https://downloads.wormbase.org/" target="_blank">FTP</a> site.</li>');
             dl_button.addClass('fade');
             dl_button.find('.ui-icon').addClass('ui-state-disabled');
           }
