@@ -3260,7 +3260,7 @@ var Scrolling = (function(){
           import('../../client/src/components/EmbryoCell').then(
               modele => {
                   EmbryoCellChart = modele.default;
-                  console.log(SingleCellChart)
+                  console.warn(wbId)
                   ReactDOM.render(
                       <Root>
                           <EmbryoCellChart geneId={wbId} />
@@ -3271,6 +3271,114 @@ var Scrolling = (function(){
           )
       }
 
+      function renderExpressionL2Chart(elementId, wbId) {
+          if (!wbId) {
+              console.error('Invalid wbId:', wbId);
+              return;
+          }
+
+          console.warn('Rendering ExpressionL2Chart for wbId:', wbId);
+
+          import('../../client/src/components/ExpressionL2').then(
+              module => {
+                  const ExpressionL2Chart = module.default;
+                  console.warn('ExpressionL2Chart loaded for wbId:', wbId);
+
+                  ReactDOM.render(
+                      <Root>
+                          <ExpressionL2Chart geneId={wbId} />
+                      </Root>,
+                      document.getElementById(elementId)
+                  );
+
+                  console.log('ExpressionL2Chart rendered for wbId:', wbId);
+              }
+          ).catch(error => {
+              console.error('Error loading ExpressionL2Chart for wbId:', wbId, error);
+          });
+      }
+
+      function renderExpressionSmithChart(elementId, wbId) {
+          if (!wbId) {
+              console.error('Invalid wbId:', wbId);
+              return;
+          }
+
+          console.warn('Rendering ExpressionSmithChart for wbId:', wbId);
+
+          import('../../client/src/components/ExpressionSmith').then(
+              module => {
+                  const ExpressionSmithChart = module.default;
+                  console.warn('ExpressionL2Chart loaded for wbId:', wbId);
+
+                  ReactDOM.render(
+                      <Root>
+                          <ExpressionSmithChart geneId={wbId} />
+                      </Root>,
+                      document.getElementById(elementId)
+                  );
+
+                  console.log('ExpressionSmithChart rendered for wbId:', wbId);
+              }
+          ).catch(error => {
+              console.error('Error loading ExpressionSmithChart for wbId:', wbId, error);
+          });
+      }
+
+
+      function renderExpressionYAChart(elementId, wbId) {
+          if (!wbId) {
+              console.error('Invalid wbId:', wbId);
+              return;
+          }
+
+          console.warn('Rendering ExpressionYAChart for wbId:', wbId);
+
+          import('../../client/src/components/ExpressionYA').then(
+              module => {
+                  const ExpressionYAChart = module.default;  // Change this line
+                  console.warn('ExpressionYAChart loaded for wbId:', wbId);
+
+                  ReactDOM.render(
+                      <Root>
+                          <ExpressionYAChart geneId={wbId} />
+                      </Root>,
+                      document.getElementById(elementId)
+                  );
+
+                  console.log('ExpressionYAChart rendered for wbId:', wbId);
+              }
+          ).catch(error => {
+              console.error('Error loading ExpressionYAChart for wbId:', wbId, error);
+          });
+      }
+
+      function renderExpressionRouxChart(elementId, wbId) {
+          if (!wbId) {
+              console.error('Invalid wbId:', wbId);
+              return;
+          }
+
+          console.warn('Rendering ExpressionRouxChart for wbId:', wbId);
+
+          import('../../client/src/components/ExpressionRoux').then(
+              module => {
+                  const ExpressionRouxChart = module.default;  // Change this line
+                  console.warn('ExpressionRouxChart loaded for wbId:', wbId);
+
+                  ReactDOM.render(
+                      <Root>
+                          <ExpressionRouxChart geneId={wbId} />
+                      </Root>,
+                      document.getElementById(elementId)
+                  );
+
+                  console.log('ExpressionRouxChart rendered for wbId:', wbId);
+              }
+          ).catch(error => {
+              console.error('Error loading ExpressionRouxChart for wbId:', wbId, error);
+          });
+      }
 
 
 
@@ -3619,6 +3727,10 @@ var Scrolling = (function(){
       renderCenGenChart: renderCenGenChart, // render CenGen expression data as charts on gene page
       renderEmbryoLineageChart: renderEmbryoLineageChart, // render single cell expression lineage data as charts on gene page
       renderEmbryoCellChart: renderEmbryoCellChart, // render single cell expression lineage data as charts on gene page
+      renderExpressionL2Chart: renderExpressionL2Chart,
+        renderExpressionSmithChart: renderExpressionSmithChart,
+        renderExpressionYAChart: renderExpressionYAChart,
+        renderExpressionRouxChart: renderExpressionRouxChart,
     };
   })();
 
