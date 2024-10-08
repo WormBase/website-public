@@ -13,9 +13,7 @@ function SingleCellChart({ data }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
-    console.log('SingleCellChart received data:', data);
     if (data && data.length && chartRef.current) {
-      console.log('Rendering chart with data:', data);
       Highcharts.setOptions({
         lang: {
           thousandsSep: ',',
@@ -26,45 +24,116 @@ function SingleCellChart({ data }) {
         chart: {
           type: 'scatter',
           zoomType: 'xy',
+          events: {
+            load: function() {
+              this.chartBackground.htmlCss({ cursor: 'crosshair' });
+            },
+          },
+        },
+        exporting: {
+          csv: {
+            columnHeaderFormatter: (item, key) => {
+              if (key === 'x') {
+                return item.xAxis.axisTitle.textStr;
+              } else if (key === 'y') {
+                return item.yAxis.axisTitle.textStr;
+              } else {
+                return 'Cell type';
+              }
+            },
+          },
+          buttons: {
+            contextButton: {
+              menuItems: [
+                'viewFullscreen',
+                'printChart',
+                'separator',
+                'downloadPNG',
+                'downloadJPEG',
+                'downloadSVG',
+                'separator',
+                'downloadCSV',
+                'downloadXLS',
+                'viewData',
+              ],
+            },
+          },
+          tableCaption: false,
+          sourceWidth: chartRef.current.clientWidth,
+          sourceHeight: chartRef.current.clientHeight,
+          fallbackToExportServer: false,
         },
         title: {
           text: `Expression of ${data[0].gene_name}`,
         },
         subtitle: {
-          text: 'Source: Single-cell RNA-seq data',
+          text: 'Source: Single-cell RNA-seq data<br/><br/>Tip: To zoom in on the chart, click and drag to select a region.',
+        },
+        legend: {
+          enabled: false,
         },
         xAxis: {
           title: {
             text: 'Cells (%) Expressing',
           },
+          crosshair: true,
           max: 100,
         },
         yAxis: {
           title: {
             text: 'Transcripts Per Million (TPM)',
           },
+          crosshair: true,
         },
         tooltip: {
-          formatter: function() {
-            return `<b>${this.point.cell_type}</b><br/>` +
-                `Cells Expressing: ${this.x.toFixed(2)}%<br/>` +
-                `TPM: ${this.y.toFixed(2)}`;
+          shared: true,
+          valueDecimals: 2,
+          headerFormat: '<b>{point.key}</b><br>',
+          pointFormat: '{point.y} TPM<br>{point.x:.1f}% Cells',
+        },
+        plotOptions: {
+          scatter: {
+            marker: {
+              radius: 5,
+              states: {
+                hover: {
+                  enabled: true,
+                  lineColor: 'rgb(100,100,100)'
+                }
+              }
+            },
+            states: {
+              hover: {
+                marker: {
+                  enabled: false
+                }
+              }
+            }
           }
         },
         series: [{
           name: 'Cell Types',
+          color: 'rgba(0, 120, 200, 0.7)',  // Blue color with some transparency
           data: data.map(item => ({
-            x: item.fraction * 100, // Convert to percentage
+            x: item.fraction * 100,
             y: item.tpm,
-            cell_type: item.cell_type,
+            name: item.cell_type,
           })),
+          dataLabels: {
+            enabled: true,
+            formatter: function() {
+              return this.point.x === 0 ? '' : this.point.name;
+            },
+            color: 'black',
+            style: {
+              textOutline: 'none',
+              fontWeight: 'normal'
+            }
+          },
         }],
       };
 
-      console.log('Chart options:', chartOptions);
       Highcharts.chart(chartRef.current, chartOptions);
-    } else {
-      console.log('Not rendering chart. Data:', data, 'ChartRef:', chartRef.current);
     }
   }, [data]);
 
