@@ -2,7 +2,6 @@ import React from 'react';
 import useSingleCell from './useExpressionYA';
 import ExpressionYAChart from "./ExpressionYAChart";
 import { CircularProgress } from '../Progress';
-import ExpressionYA from "./index";
 
 
 export default function({ geneId }) {
