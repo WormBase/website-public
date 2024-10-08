@@ -2,7 +2,6 @@ import React from 'react';
 import useSingleCell from './useExpressionL2';
 import ExpressionL2Chart from "./ExpressionL2Chart";
 import { CircularProgress } from '../Progress';
-import ExpressionL2 from "./index";
 
 
 export default function({ geneId }) {
