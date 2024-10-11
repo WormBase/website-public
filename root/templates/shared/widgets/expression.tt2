@@ -42,22 +42,24 @@ WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Linea
 END;
 
 
-WRAPPER $field_block title="Single cell gene expression graphs - Expression L2" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title="Single cell gene expression graphs - Ghaddar et al 2023 - L2" tooltip="Single cell gene expression graphs";
     '<div id="expressionl2-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
+WRAPPER $field_block title="Single cell gene expression graphs - Ghaddar et al 2023 - Young Adult" tooltip="Single cell gene expression graphs";
+    '<div id="expressionya-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+END;
 
-WRAPPER $field_block title="Single cell gene expression graphs - Expression Smith" tooltip="Single cell gene expression graphs";
+
+WRAPPER $field_block title="Single cell gene expression graphs - Smith et al 2024 - Motor Neuron" tooltip="Single cell gene expression graphs";
     '<div id="expressionsmith-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-WRAPPER $field_block title="Single cell gene expression graphs - Expression Roux" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title="Single cell gene expression graphs - Roux et al 2023 - Aging" tooltip="Single cell gene expression graphs";
     '<div id="expressionroux-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-WRAPPER $field_block title="Single cell gene expression graphs - Expression YA" tooltip="Single cell gene expression graphs";
-    '<div id="expressionya-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
-END;
+
 
  %]
 
