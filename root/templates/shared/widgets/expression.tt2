@@ -25,37 +25,34 @@ END;
 
 
 # Here marks the beginning of the CeNGEN chart
-WRAPPER $field_block title="Single cell gene expression graphs - CeNGEN" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00061651">Taylor et al 2021 - CeNGEN</a>' tooltip="Single cell gene expression graphs";
     '<div id="cengen-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 # Here marks the end of the CeNGEN chart
 
-# Here marks the beginning of the Single Cell Embryonic Lineage chart
-WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Cell - Packer et al 2019" tooltip="Single cell gene expression graphs";
+# Here marks the beginning of the Single Cell Embryonic Cell chart
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00057286">Packer et al 2019 - Embryonic Cell</a>' tooltip="Single cell gene expression graphs";
     '<div id="embryocell-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
-# Here marks the end of the Single Cell Embryonic Lineage chart
+# Here marks the end of the Single Cell Embryonic Cell chart
 
-
-WRAPPER $field_block title="Single cell gene expression graphs - Embryonic Lineage - Packer et al 2019" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00057286">Packer et al 2019 - Embryonic Lineage</a>' tooltip="Single cell gene expression graphs";
     '<div id="embryolineage-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-
-WRAPPER $field_block title="Single cell gene expression graphs - Ghaddar et al 2023 - L2" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00065623">Ghaddar et al 2023 - L2</a>' tooltip="Single cell gene expression graphs";
     '<div id="expressionl2-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-WRAPPER $field_block title="Single cell gene expression graphs - Ghaddar et al 2023 - Young Adult" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00065623">Ghaddar et al 2023 - Young Adult</a>' tooltip="Single cell gene expression graphs";
     '<div id="expressionya-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-
-WRAPPER $field_block title="Single cell gene expression graphs - Smith et al 2024 - Motor Neuron" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00066550">Smith et al 2024 - Motor Neuron</a>' tooltip="Single cell gene expression graphs";
     '<div id="expressionsmith-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-WRAPPER $field_block title="Single cell gene expression graphs - Roux et al 2023 - Aging" tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00065841">Roux et al 2023 - Aging</a>' tooltip="Single cell gene expression graphs";
     '<div id="expressionroux-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
