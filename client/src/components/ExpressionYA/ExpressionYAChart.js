@@ -64,10 +64,10 @@ function SingleCellChart({ data }) {
           fallbackToExportServer: false,
         },
         title: {
-          text: `Expression of ${data[0].gene_name}`,
+          text: '',
         },
         subtitle: {
-          text: 'Source: Single-cell RNA-seq data<br/><br/>Tip: To zoom in on the chart, click and drag to select a region.',
+          text: 'Source: Ghaddar el at 2023 <br/><br/>Tip: To zoom in on the chart, click and drag to select a region.',
         },
         legend: {
           enabled: false,

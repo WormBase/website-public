@@ -68,9 +68,7 @@ function SingleCellChart({ data }) {
           text: '',
         },
         subtitle: {
-          text:
-              'Source: <a href="https://cello.shinyapps.io/celegans/">' +
-              'Test/a><br/><br/>Tip: To zoom in on the chart, click and drag to select a region.',
+          text: 'Source: Smith et al 2024<br/><br/>Tip: To zoom in on the chart, click and drag to select a region.',
         },
         legend: {
           enabled: false,
