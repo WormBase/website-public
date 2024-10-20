@@ -161,7 +161,7 @@ sub _process_assembly {
 }
 
 
-# link to files with base url ftp://ftp.wormbase.org/pub/wormbase/releases/
+# link to files with base url https://downloads.wormbase.org/pub/wormbase/releases/
 sub _genomic_seq_ftp {
     my ($self,$species,$bioproject,$release) = @_;
     my ($release_number) = $release =~ /WS(\d+)/;

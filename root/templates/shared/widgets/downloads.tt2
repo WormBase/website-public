@@ -41,7 +41,7 @@
             ftp_url = "releases/$release/species/$species/$filename";
         END;
 
-        "<a href=\"ftp://ftp.wormbase.org/pub/wormbase/${ftp_url}\" target=\"_blank\">" _ "${species}.${extension}" _ '</a>';
+        "<a href=\"https://downloads.wormbase.org/${ftp_url}\" target=\"_blank\">" _ "${species}.${extension}" _ '</a>';
     END;
 %]
 
@@ -50,7 +50,7 @@
     # specific file or species home directory
     filename = format ? filename_parts.join('.') : '';
     path_parts = [c.config.parasite_release, 'species', species_name, bioproject, filename];
-    url = 'ftp://ftp.wormbase.org/pub/wormbase/parasite/releases/'
+    url = 'https://downloads.wormbase.org//parasite/releases/'
           _ path_parts.join('/');
     '<a href="' _ url _ '">' _ (format || 'FTP home') _ '</a>';
 END; %]
@@ -71,7 +71,7 @@ END; %]
        [% END %]
        <td><a href="http://www.ncbi.nlm.nih.gov/bioproject/[% bioproject %]" target="_blank">[% bioproject %]</a>
        </td>
-       <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% parse_species_prefix(option) %]">[% (species == 'all') ? 'FTP home' : species_conf.$option.genus _ ' ' _ species_conf.$option.species %]</a></td>
+       <td><a href="https://downloads.wormbase.org/species/[% parse_species_prefix(option) %]">[% (species == 'all') ? 'FTP home' : species_conf.$option.genus _ ' ' _ species_conf.$option.species %]</a></td>
        <td>[% ftp_link(option, bioproject, constants.acedb_version, 'genomic.fa.gz'); %]</td>
        <!-- <td>[% ftp_link(option, bioproject, constants.acedb_version, 'annotations.gff2.gz'); %]</td> -->
        <td>[% ftp_link(option, bioproject, constants.acedb_version, 'annotations.gff3.gz'); %]</td>
