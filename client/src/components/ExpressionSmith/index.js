@@ -7,9 +7,17 @@ import { CircularProgress } from '../Progress';
 export default function({ geneId }) {
   const { loading, error, data } = useSingleCell(geneId);
 
-  if (error) {
-    throw error;
+  if (loading) {
+    return <CircularProgress />;
   }
 
-  return loading ? <CircularProgress /> : <ExpressionSmith data={data} />;
+  if (error) {
+    return <div className="error">Error loading expression data: {error.message}</div>;
+  }
+
+  if (!data || data.length === 0) {
+    return <div className="fade">No expression data available for this gene.</div>;
+  }
+
+  return <ExpressionSmith data={data} />;
 }
