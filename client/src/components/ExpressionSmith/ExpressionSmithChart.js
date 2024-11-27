@@ -24,6 +24,7 @@ function SingleCellChart({ data }) {
         chart: {
           type: 'scatter',
           zoomType: 'xy',
+          height: 600,
 
           events: {
             load: function() {
@@ -94,23 +95,39 @@ function SingleCellChart({ data }) {
             crosshair: true,
           },
         ],
-        plotOptions: {},
+        plotOptions: {
+          scatter: {
+            marker: {
+              radius: 5,
+              states: {
+                hover: {
+                  enabled: true,
+                  lineColor: 'rgb(100,100,100)'
+                }
+              }
+            }
+          }
+        },
         series: [
           {
             name: 'Expression',
-            data: data.map(({ tpm, fraction, cell_type }) => {
-              return {
-                x: fraction * 100,
-                y: tpm,
-                name: cell_type,
-              };
-            }),
+            color: 'rgba(70, 130, 180, 0.7)',
+            data: data.map(({ tpm, fraction, cell_type }) => ({
+              x: parseFloat(fraction),
+              y: parseFloat(tpm),
+              name: cell_type
+            })),
             dataLabels: {
               enabled: true,
               formatter: function() {
                 return this.point.x === 0 ? '' : this.point.name;
               },
-            },
+              style: {
+                textOutline: 'none',
+                color: 'black',
+                fontSize: '11px'
+              }
+            }
           },
         ],
       };

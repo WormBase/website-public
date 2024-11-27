@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 
 const transformData = (data) => {
-    return data.map(item => ({
-        ...item,
-        fraction: parseFloat(item.fraction),
-        tpm: parseFloat(item.tpm)
-    }));
+    return data
+        .map(item => ({
+            ...item,
+            fraction: parseFloat(item.fraction),
+            tpm: parseFloat(item.tpm),
+            cell_type: item.cell_type.replace(/_/g, ' ')
+        }))
+        .sort((a, b) => b.tpm - a.tpm);
 };
 
 export default function useSingleCell(geneId) {
