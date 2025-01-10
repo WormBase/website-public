@@ -14,6 +14,7 @@ $(info  VERSION specified as an envar is: ${VERSION})
 $(info  SANITIZED VERSION IS ${EB_VERSION})
 
 
+
 CATALYST_PORT ?= 5000
 WEBPACK_SERVER_PORT ?= 3000
 
@@ -22,10 +23,10 @@ export GOOGLE_CLIENT_SECRET=$(shell cat credentials/google/client_secret.txt)
 export GITHUB_TOKEN=$(shell cat credentials/github_token.txt)
 export JWT_SECRET="$(shell cat credentials/jwt_secret.txt)"
 
-export COMPOSE_PROJECT_NAME = "${USER}_$(shell pwd -P | xargs  basename)"
+export COMPOSE_PROJECT_NAME = ${USER}_$(shell pwd -P | xargs  basename)
 
 export ACEDB_HOST ?= acedb
-export ACEDB_HOST_STAND_ALONE ?= 10.0.1.113
+export ACEDB_HOST_STAND_ALONE ?= 10.0.1.20
 
 .PHONY: bare-dev-start
 bare-dev-start:
