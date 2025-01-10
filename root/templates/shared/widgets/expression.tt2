@@ -40,15 +40,11 @@ WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPape
     '<div id="embryolineage-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00065623">Ghaddar et al 2023 - L2</a>' tooltip="Single cell gene expression graphs";
-    '<div id="expressionl2-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
-END;
-
 WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00065623">Ghaddar et al 2023 - Young Adult</a>' tooltip="Single cell gene expression graphs";
     '<div id="expressionya-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00066550">Smith, Taylor et al 2024 - Nerve Cord Motor Neurons (adult day 1)</a>' tooltip="Single cell gene expression graphs";
+WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00066550">Smith et al 2024 - Motor Neuron</a>' tooltip="Single cell gene expression graphs";
     '<div id="expressionsmith-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
@@ -275,15 +271,6 @@ END;
     })();
 </script>
 
-
-
-<script type="text/javascript">
-    (function(){
-        if (document.getElementById('expressionl2-holder')) {
-            WB.renderExpressionL2Chart('expressionl2-holder', '[% object.name.data.id %]');
-        }
-    })();
-</script>
 
 
 
