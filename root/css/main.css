@@ -4529,3 +4529,10 @@ button::-moz-focus-inner {
 
 
 }
+
+/* Add this to your existing CSS */
+.support-bg {
+    background-color: #B7CBDB; /* Match the About page blue color */
+    color: white;
+}
+

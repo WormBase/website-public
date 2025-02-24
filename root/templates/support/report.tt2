@@ -1,0 +1,15 @@
+[%- # This is the generic report page for Support WormBase -%]
+
+[%
+      breadcrumbs = [];
+
+      breadcrumbs.push(path_parts ? '<a href="' _ c.uri_for('/support') _ '">Support</a>' : 'Support');
+      IF path_parts;
+         FOREACH path IN path_parts;
+            title = path.replace('_', ' ') FILTER ucfirst;
+            breadcrumbs.push(loop.last ? '<span>' _ title _ '</span>' : '<a href="' _ c.uri_for('/support', path_parts.slice(0, loop.count - 1).join('/')) _ '">' _ title _ '</a>');
+         END;
+      END;
+
+      report_page(breadcrumbs);
+%]
