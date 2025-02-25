@@ -503,8 +503,8 @@
 
  HGNC = {
         description = 'HUGO Gene Nomenclature Committee'
-        base        = 'http://www.genenames.org'
-        search      = 'http://www.genenames.org/cgi-bin/gene_symbol_report?match=%s'
+        base        = 'https://www.genenames.org'
+		search      = 'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:%s'
         }
 
  hi = {
