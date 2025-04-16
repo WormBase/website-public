@@ -115,7 +115,12 @@
     [% FOREACH nav_option IN c.config.nav_bar.option %]
       [% title = nav_option.title; %]
       [% url = nav_option.url %]
-      <li id="section-[% nav_option.id %]"><a href="[% url %]" class="trigger [% IF(c.stash.section == nav_option.id); 'selected'; END;%]">
+      [% IF nav_option.dropdown.defined && nav_option.dropdown == 0 %]
+        <li id="section-[% nav_option.id %]"><a href="[% url %]" class="trigger [% IF(c.stash.section == nav_option.id); 'selected'; END;%]">
+          [% title %]</a>
+        </li>
+      [% ELSE %]
+        <li id="section-[% nav_option.id %]"><a href="[% url %]" class="trigger [% IF(c.stash.section == nav_option.id); 'selected'; END;%]">
           <span class="ui-icon ui-icon-triangle-1-s"></span>
           [% title %]</a>
 
@@ -136,7 +141,8 @@
 
           </div>
           <!-- END: New dropdown menu -->
-      </li>
+        </li>
+      [% END %]
     [% END %]
     </ul>
     <!-- END: Revised main menu -->
