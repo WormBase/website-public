@@ -48,8 +48,19 @@ WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPape
     '<div id="expressionsmith-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
 END;
 
-WRAPPER $field_block title='<a href="https://wormbase.org/resources/paper/WBPaper00065841">Roux et al 2023 - Aging</a>' tooltip="Single cell gene expression graphs";
-    '<div id="expressionroux-holder"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>';
+WRAPPER $field_block title="Aging Expression Data Access" tooltip="Request access to aging expression datasets";
+    '<div class="data-access-request">
+        <p><strong>Aging expression data is available from external resources:</strong></p>
+        <ul>
+            <li><a href="https://doi.org/10.1016/j.celrep.2023.112902" target="_blank" rel="noopener noreferrer">
+                Roux et al. 2023 - Cell Reports Publication
+            </a></li>
+            <li><a href="https://c.elegans.aging.atlas.research.calicolabs.com/" target="_blank" rel="noopener noreferrer">
+                C. elegans Aging Atlas (Calico Labs)
+            </a></li>
+        </ul>
+        <p><em>Please visit the links above to access the aging expression datasets and analysis tools.</em></p>
+    </div>';
 END;
 
 
@@ -283,13 +294,6 @@ END;
 </script>
 
 
-<script type="text/javascript">
-    (function(){
-        if (document.getElementById('expressionroux-holder')) {
-            WB.renderExpressionRouxChart('expressionroux-holder', '[% object.name.data.id %]');
-        }
-    })();
-</script>
 
 
 <script type="text/javascript">
