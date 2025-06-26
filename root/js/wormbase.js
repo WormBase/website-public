@@ -3353,32 +3353,33 @@ var Scrolling = (function(){
           });
       }
 
-      function renderExpressionRouxChart(elementId, wbId) {
-          if (!wbId) {
-              console.error('Invalid wbId:', wbId);
-              return;
-          }
+      // Temporarily commented out - will be restored later
+      // function renderExpressionRouxChart(elementId, wbId) {
+      //     if (!wbId) {
+      //         console.error('Invalid wbId:', wbId);
+      //         return;
+      //     }
 
-          console.warn('Rendering ExpressionRouxChart for wbId:', wbId);
+      //     console.warn('Rendering ExpressionRouxChart for wbId:', wbId);
 
-          import('../../client/src/components/ExpressionRoux').then(
-              module => {
-                  const ExpressionRouxChart = module.default;  // Change this line
-                  console.warn('ExpressionRouxChart loaded for wbId:', wbId);
+      //     import('../../client/src/components/ExpressionRoux').then(
+      //         module => {
+      //             const ExpressionRouxChart = module.default;  // Change this line
+      //             console.warn('ExpressionRouxChart loaded for wbId:', wbId);
 
-                  ReactDOM.render(
-                      <Root>
-                          <ExpressionRouxChart geneId={wbId} />
-                      </Root>,
-                      document.getElementById(elementId)
-                  );
+      //             ReactDOM.render(
+      //                 <Root>
+      //                     <ExpressionRouxChart geneId={wbId} />
+      //                 </Root>,
+      //                 document.getElementById(elementId)
+      //             );
 
-                  console.log('ExpressionRouxChart rendered for wbId:', wbId);
-              }
-          ).catch(error => {
-              console.error('Error loading ExpressionRouxChart for wbId:', wbId, error);
-          });
-      }
+      //             console.log('ExpressionRouxChart rendered for wbId:', wbId);
+      //         }
+      //     ).catch(error => {
+      //         console.error('Error loading ExpressionRouxChart for wbId:', wbId, error);
+      //     });
+      // }
 
 
 
@@ -3730,7 +3731,7 @@ var Scrolling = (function(){
       renderExpressionL2Chart: renderExpressionL2Chart,
         renderExpressionSmithChart: renderExpressionSmithChart,
         renderExpressionYAChart: renderExpressionYAChart,
-        renderExpressionRouxChart: renderExpressionRouxChart,
+        // renderExpressionRouxChart: renderExpressionRouxChart, // Temporarily commented out
     };
   })();
 
