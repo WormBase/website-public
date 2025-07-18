@@ -2,6 +2,7 @@
 [% IF tool == 'gmap' %]
 <h1>WormBase Genetic Map Viewer</h1>
 
+
 <p>
 To browse, select a chromosome or enter a Gene/Rearrangement ID.
 </p>
@@ -49,6 +50,8 @@ Examples:<br />
 This is the WormBase ACeDB Graphic Display, useful for navigating the database through a graphical display.
 </p>
 
+[% IF c.user_exists %]
+
 <p>
 To browse, enter an object ID (eg C12H4) and a class (eg Clone).
 </p>
@@ -73,5 +76,14 @@ Examples:<br />
 [% END %]
 
 
+
+
+[% ELSE %]
+
+You need to be a registered user of WormBase to use this tool. If you aren't a registered user, please log in now.  
+
+If you're just scraping the website, there's much easier, faster, and cheaper ways to get the data.
+
+[% END %]
 
 
