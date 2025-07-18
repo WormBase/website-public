@@ -41,6 +41,19 @@ git push origin "$VERSION"
 # build container
 make build
 
+# So pointlessly circular
+# This does:
+#.PHONY: build
+#build: aws-ecr-login
+#	(cd client/ && yarn install --frozen-lockfile && yarn run build)  # build JS and #CSS
+#	docker build -t wormbase/website -f docker/Dockerfile .
+
+# Recapitulating here
+
+
+
+
+
 # tag container
 docker tag wormbase/website:latest 357210185381.dkr.ecr.us-east-1.amazonaws.com/wormbase/website:$VERSION
 
