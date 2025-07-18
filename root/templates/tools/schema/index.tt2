@@ -4,6 +4,8 @@
 This is the WormBase Schema Display, useful for exploring the underlying data model of an object.
 </p>
 
+[% IF c.user_exists %]
+
 <p>
 To browse, enter a class (eg Gene_class).
 </p>
@@ -24,3 +26,15 @@ Examples:<br />
   </table>
 </form>
 </p>
+
+
+
+
+
+[% ELSE %]
+
+You need to be a registered user of WormBase to use this tool. If you aren't a registered user, please log in now.  
+
+If you're just scraping the website, there's much easier, faster, and cheaper ways to get the data.
+
+[% END %]

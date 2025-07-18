@@ -4,6 +4,8 @@
 This is the WormBase Tree Display, useful for browsing the raw data of an object or exploring the underlying data model.
 </p>
 
+[% IF c.user_exists %]
+
 <p>
 To browse, enter an object ID (eg unc) and a class (eg Gene_class). Alternatively, to
 view the underlying data model, enter a class (eg Gene_class) and for class enter "Model".
@@ -28,3 +30,12 @@ Examples:<br />
   </table>
 </form>
 </p>
+
+
+[% ELSE %]
+
+You need to be a registered user of WormBase to use this tool. If you aren't a registered user, please log in now.  
+
+If you're just scraping the website, there's much easier, faster, and cheaper ways to get the data.
+
+[% END %]
