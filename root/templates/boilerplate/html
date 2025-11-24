@@ -18,9 +18,6 @@
 
 
   <body>
-  <div class="wb-global-banner"> 
-   You are browsing the WS298 release of WormBase.  This is the final release of the WormBase database and website. We encourage users to explore the successor to WormBase, the Alliance of Genome Resources.
-  </div>
 
    <!--[if lt IE 7]><p>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
 

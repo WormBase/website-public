@@ -1,5 +1,13 @@
 <!-- BEGIN boilerplate/banner -->
 
+  <div class="wb-global-banner"> 
+   This is WS298, final release of the WormBase database and website.
+   Release date:
+   
+   Please explore the successor to WormBase, the <a href="https://alliancegenome.org" target="_blank">Alliance of Genome Resources</a> for the most current data.
+  </div>
+
+
 
 <div id="notifications" class="ui-corner-bottom">
       <span id="notification-text"></span>
