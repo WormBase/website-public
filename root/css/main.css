@@ -4559,3 +4559,10 @@ button::-moz-focus-inner {
   color: #004a8f;
   text-decoration: underline;
 }
+
+.banner-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+}
