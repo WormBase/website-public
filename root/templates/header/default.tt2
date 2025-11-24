@@ -1,18 +1,16 @@
 <!-- BEGIN boilerplate/banner -->
 
   <div class="wb-global-banner"> 
+ <div class="wb-global-banner-inner">
    <p class="banner-title">WormBase Final Release -- WS298 (November 27, 2025)</p>
-   <p>This website hosts the <a href="https://blog.wormbase.org/2025/07/23/announcing-the-final-release-of-wormbase/" target="_blank">archived WS298 release</a> of the WormBase database and its associated resources.
+<p>This website provides long-term access to the <a href="https://blog.wormbase.org/2025/07/23/announcing-the-final-release-of-wormbase/" target="_blank">archived WS298 release</a> of WormBase. The content hosted here is no longer being updated except for essential maintenance to ensure continued availability.
 </p>
 
 <p>
-All genomic and annotation data presented here represent the final curated release produced under the WormBase project. These data are now static in this archive and will no longer be updated on this site. Website functionality will be maintained only to ensure long-term accessibility of these archival materials.
-<p>
-
-<p>
-Ongoing curation, dataset updates, and new feature development for <i>Caenorhabditis elegans</i> and related species have transitioned to the <a href="https://alliancegenome.org" target="_blank">Alliance of Genome Resources</a>. Users are encouraged to visit the Alliance for current and future versions of these datasets and for continued support of the nematode research community.
+Ongoing annotation, data updates, and new releases for <em>Caenorhabditis elegans</em> and related nematode species are now managed through the <a href="https://alliancegenome.org" target="_blank">Alliance of Genome Resources</a>.  Users should refer to the Alliance for the most current datasets and continued resource development.
 </p>
 
+</div>
   </div>
 
 
