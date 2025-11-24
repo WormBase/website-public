@@ -4536,3 +4536,25 @@ button::-moz-focus-inner {
     color: white;
 }
 
+
+
+
+
+.wb-global-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #f9f3d1;
+  color: #333;
+  border-bottom: 1px solid #e0d7a8;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Optional: make links inside the banner visible */
+.wb-global-banner a {
+  color: #004a8f;
+  text-decoration: underline;
+}
