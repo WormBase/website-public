@@ -4564,6 +4564,15 @@ button::-moz-focus-inner {
 .wb-global-banner-inner {
   max-width: 700px;
   margin: 0 auto;
+  text-align:justify;
+}
+
+.wb-global-banner-inner p {
+  text-align: justify;
+}
+
+.wb-global-banner-inner .banner-title {
+  text-align: center;  /* titles should not be justified */
 }
 
 .banner-title {
