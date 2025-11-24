@@ -4544,10 +4544,11 @@ button::-moz-focus-inner {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: #f9f3d1;
+  background-color: #e7f8e8;
   color: #333;
-  border-bottom: 1px solid #e0d7a8;
+  border-bottom: 1px solid #3c7f5a;
   padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
   font-size: 0.95rem;
   text-align: center;
   font-weight: 500;
