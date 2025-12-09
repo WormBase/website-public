@@ -4541,7 +4541,7 @@ button::-moz-focus-inner {
 
 
 .wb-global-banner {
-  position: sticky;
+/*  position: sticky; */
   top: 0;
   z-index: 1000;
   background-color: #e7f8e8;

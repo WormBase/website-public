@@ -1984,9 +1984,9 @@ sub _get_page {
 
 sub blog_feed :Path("/rest/blog_feed") Args(0) {
     my ( $self, $c ) = @_;
-    my $url = 'https://blog.wormbase.org/categories/news/feed/';
+#    my $url = 'https://blog.wormbase.org/categories/news/feed/';
+    my $url = 'https://feeds.feedburner.com/wormbase';
     $self->_get_feed_from($c, $url);
-
 }
 
 sub forum_feed :Path("/rest/forum_feed") Args(0) {
