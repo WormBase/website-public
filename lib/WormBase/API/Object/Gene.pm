@@ -107,19 +107,19 @@ sub _build__alleles_count {
 
 sub _is_allele {
     my ($self, $allele) = @_;
-    return $self->_get_count($_, 'Phenotype');
+    return $self->_get_count($allele, 'Phenotype');
 }
 
 sub _is_polymorphism_other {
     my ($self, $allele) = @_;
-    my ($match) = grep {/Natural_variant|RFLP/} $_->Variation_type;
-    return $match && !$self->_get_count($_, 'Phenotype');
+    my ($match) = grep {/Natural_variant|RFLP/} $allele->Variation_type;
+    return $match && !$self->_get_count($allele, 'Phenotype');
 }
 
 sub _is_allele_other {
     my ($self, $allele) = @_;
-    my ($match) = grep {/Natural_variant|RFLP/} $_->Variation_type;
-    return !$match && !$self->_get_count($_, 'Phenotype');
+    my ($match) = grep {/Natural_variant|RFLP/} $allele->Variation_type;
+    return !$match && !$self->_get_count($allele, 'Phenotype');
 }
 
 
