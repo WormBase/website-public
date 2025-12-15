@@ -1,5 +1,6 @@
 [%
 
+   # WS298 - FIX THIS - This should ONLY be for C. elegans genes but I'm not sure if data has species set
     WRAPPER $field_block;
         agr_explore_link('WB:' _ fields.name.data.id _ '#alleles-and-variants', 'gene',);
     END;
@@ -20,7 +21,7 @@
                     order_by='phen_count',
                     key='alleles');
                 ELSE;
-                '<p class="fade"><em>No data available for alleles with phenotype.</em></p>';
+                '<p class="fade"><em>No alleles with a phenotype have been annotated to this gene.</em></p>';
                 END;
             END;
 
@@ -31,7 +32,7 @@
                 END;
             ELSE;
                 WRAPPER toggle open=1 title=alleles_other_title id=alleles_other_id;
-                '<p class="fade"><em>No data available for alleles without phenotype.</em></p>';
+                '<p class="fade"><em>No alleles without a phenotype known for this gene.</em></p>';
                 END;
             END;
 
@@ -42,7 +43,7 @@
                 END;
             ELSE;
                 WRAPPER toggle open=1 title=polymorphism_title id=polymorphism_id;
-                '<p class="fade"><em>No data available for polymorphisms & natural variants without phenotype.</em></p>';
+                '<p class="fade"><em>No polymorphisms or natural variants without a phenotype known for this gene.</em></p>';
                 END;
             END;
        END;
