@@ -947,10 +947,15 @@ sub widget_GET {
             return;
         }
 
+
+	# I specifically asked people not to implement this. Thx.
         my $is_cache_recent;
         if ($cached_data && (ref $cached_data eq 'HASH') && (my $time_cached = $cached_data->{time_cached})) {
             my $since_cached = DateTime->now()->delta_ms(DateTime->from_epoch( epoch => $time_cached));
-            $is_cache_recent = $since_cached->in_units('hours') < 24;
+
+	    # NOOOOOOOOOOOOOO! 
+#            $is_cache_recent = $since_cached->in_units('hours') < 24;
+            $is_cache_recent = $since_cached->in_units('hours') < 876000;
         }
 
         if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
