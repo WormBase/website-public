@@ -1433,7 +1433,7 @@ END; %]
        FOREACH species IN species_list;
             IF fields.$key.data.$species > 0;
                 WRAPPER $field_block title="" key="$key";
-		  WRAPPER toggle title=species _ '(' _ fields.$key.data.$species.size _ ' members)';
+		  WRAPPER toggle title=species _ ' (' _ fields.$key.data.$species.size _ ' members)';
 		    IF key == 'current_genes';
 		      build_data_table(
 			  order=['locus', 'sequence'],
