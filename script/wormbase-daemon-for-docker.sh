@@ -92,6 +92,7 @@ PIDFILE="$APP_HOME/logs/wormbase.pid"
 ERROR_LOG="$APP_HOME/logs/wormbase-error.log"
 ACCESS_LOG="$APP_HOME/logs/wormbase-access.log"
 STATUS="$APP_HOME/logs/wormbase.status"
+STDERR_LOG="$APP_HOME/logs/wormbase-perl-warnings.log"
 
 if [ ! -d "$APP_HOME" ]; then
     echo "\$APP_HOME does not exist"
@@ -124,4 +125,6 @@ STARMAN_OPTS="-I$APP_HOME/lib --access-log $ACCESS_LOG --error-log $ERROR_LOG --
 START_SERVER_DAEMON=`which start_server`
 START_SERVER_DAEMON_OPTS="--pid-file=$PIDFILE --status-file=$STATUS --port $PORT -- $STARMAN $STARMAN_OPTS"
 
-start_server $START_SERVER_DAEMON_OPTS
+# Redirect stderr (Perl warnings) to separate log file to reduce noise
+# For WS298 final archival release - these warnings are non-critical
+start_server $START_SERVER_DAEMON_OPTS 2>> "$STDERR_LOG"
