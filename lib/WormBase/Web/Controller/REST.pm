@@ -932,13 +932,16 @@ sub widget_GET {
     my $key = join( '_', 'widget', $class, $widget, $name );  # Cache key - "widget_$class_$widget_$name"
 
     # First, try to load from JSON on disk (WS298 static archive)
+    $c->log->info("Attempting to load widget from JSON disk cache: $class/$name/$widget");
     my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'widget', $class, $name, $widget);
     if ($json_data) {
-        $c->log->info("Using JSON from disk for widget $widget");
+        $c->log->info("SUCCESS: Using JSON from disk for widget $widget (source: $json_source)");
         $c->stash->{fields} = $json_data;
         $c->stash->{served_from_cache} = $json_source;
         # Skip to rendering section
         goto RENDER_WIDGET;
+    } else {
+        $c->log->info("JSON disk cache miss for widget $class/$name/$widget - falling back to CouchDB/Datomic/ACeDB");
     }
 
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
@@ -1885,14 +1888,19 @@ sub field_GET {
 
     # First, try to load from JSON on disk (WS298 static archive)
     # Skip for fields that must be generated from ACeDB
-    unless ($force_acedb) {
+    if ($force_acedb) {
+        $c->log->info("Skipping JSON disk cache for field $field (force_acedb=1)");
+    } else {
+        $c->log->info("Attempting to load field from JSON disk cache: $class/$name/$field");
         my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'field', $class, $name, $field);
         if ($json_data) {
-            $c->log->info("Using JSON from disk for field $field");
+            $c->log->info("SUCCESS: Using JSON from disk for field $field (source: $json_source)");
             $c->stash->{$field} = $json_data;
             $c->stash->{served_from_cache} = $json_source;
             # Skip to rendering section
             goto RENDER_FIELD;
+        } else {
+            $c->log->info("JSON disk cache miss for field $class/$name/$field - falling back to CouchDB/Datomic/ACeDB");
         }
     }
 
@@ -2027,12 +2035,25 @@ sub _get_page {
 sub _get_json_from_disk {
     my ($self, $c, $type, $class, $name, $target) = @_;
 
+    $c->log->info("_get_json_from_disk called: type=$type, class=$class, name=$name, target=$target");
+
     # Check if JSON cache root is configured
     my $json_root = $c->config->{json_cache_root};
-    return unless $json_root && -d $json_root;
+    unless ($json_root) {
+        $c->log->warn("JSON cache root not configured (json_cache_root)");
+        return;
+    }
+    $c->log->info("JSON cache root configured: $json_root");
+
+    unless (-d $json_root) {
+        $c->log->warn("JSON cache root directory does not exist: $json_root");
+        return;
+    }
+    $c->log->info("JSON cache root directory exists");
 
     # Compute shard path using ShardPath module
     my @rel_path = object_rel_dir(name_u => $name);
+    $c->log->debug("Computed shard path: " . join('/', @rel_path));
 
     # Build full path: <root>/<type>/<class>/<shard1>/<shard2>/<percent_encoded_name>/<target>.json
     my $file_path = File::Spec->catfile(
@@ -2043,11 +2064,15 @@ sub _get_json_from_disk {
         "$target.json"
     );
 
+    $c->log->info("Looking for JSON file: $file_path");
+
     # Check if file exists
     unless (-f $file_path) {
-        $c->log->debug("JSON file not found: $file_path");
+        $c->log->info("JSON file not found: $file_path");
         return;
     }
+
+    $c->log->info("JSON file found: $file_path");
 
     # Read and decode JSON file
     eval {
