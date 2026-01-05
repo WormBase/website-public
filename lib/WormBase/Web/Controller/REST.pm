@@ -900,7 +900,7 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ( $self, $c, $class, $name, $widget ) = @_;
-    $c->log->debug("        ------> we're requesting the widget $widget");
+    $c->log->info("------> we're requesting the widget $class/$name/$widget");
 
     # set header and content-type
     my $headers = $c->req->headers;
@@ -942,7 +942,7 @@ sub widget_GET {
         # Skip to rendering section
         goto RENDER_WIDGET;
     } else {
-        $c->log->warn("[FALLBACK] JSON cache miss for widget $class/$name/$widget - using CouchDB/Datomic/ACeDB");
+        $c->log->info("\t[FALLBACK] JSON cache miss for widget $class/$name/$widget - using CouchDB/Datomic/ACeDB");
     }
 
     my ( $cached_data, $cache_source ) = $c->check_cache($key);
@@ -976,18 +976,18 @@ sub widget_GET {
         }
 
         if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
-            $c->log->info("Valid cache found for D2C-backed widget " . $c->req->path);
-            $c->log->warn("[FALLBACK] --> $class/$name/$widget served by CouchDB (cached Datomic data)");
+#            $c->log->info("\tValid cache found for D2C-backed widget " . $c->req->path);
+            $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by CouchDB (cached Datomic data)");
             $c->stash->{fields} = $cached_data;
             # Served from cache? Let's include a link to it in the cache.
             # Primarily a debugging element.
             $c->stash->{served_from_cache} = $key;
         } else {
-            $c->log->info("No valid cache found for D2C-backed widget " . $c->req->path);
+            $c->log->info("\tNo valid cache found for D2C-backed widget " . $c->req->path);
             my $url = "$rest_server$path";
             my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
-                $c->log->warn("[FALLBACK] --> $class/$name/$widget served by Datomic");
+                $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by Datomic");
                 $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
                 $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
 
@@ -1006,8 +1006,8 @@ sub widget_GET {
         # ACeDB workflow
 
         if($cached_data && (ref $cached_data eq 'HASH')){
-            $c->log->info("Valid cache found for ACeDB-backed widget" . $c->req->path);
-            $c->log->warn("[FALLBACK] --> $class/$name/$widget served by CouchDB (cached ACeDB data)");
+#            $c->log->info("\tValid cache found for ACeDB-backed widget" . $c->req->path);
+            $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by CouchDB (cached ACeDB data)");
             $c->stash->{fields} = $cached_data;
 
             # Served from cache? Let's include a link to it in the cache.
@@ -1019,8 +1019,8 @@ sub widget_GET {
             $c->detach();
             return;
         } else {
-            $c->log->info("No valid cache found for ACeDB-backed widget " . $c->req->path);
-            $c->log->warn("[FALLBACK] --> $class/$name/$widget served by ACeDB");
+#            $c->log->info("No valid cache found for ACeDB-backed widget " . $c->req->path);
+            $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by ACeDB");
             my $api = $c->model('WormBaseAPI');
             my $object = ($name eq '*' || $name eq 'all'
                        ? $api->instantiate_empty(ucfirst $class)
@@ -1864,8 +1864,10 @@ sub field_GET {
     my ( $self, $c, $class, $name, $field ) = @_;
 
     my $headers = $c->req->headers;
-    $c->log->debug( $headers->header('Content-Type') );
-    $c->log->debug($headers);
+    $c->log->info("------> we're requesting the field $class/$name/$field");
+
+#    $c->log->debug( $headers->header('Content-Type') );
+#    $c->log->debug($headers);
     my $content_type
         = $headers->content_type
         || $c->req->params->{'content-type'};
@@ -1909,7 +1911,7 @@ sub field_GET {
             # Skip to rendering section
             goto RENDER_FIELD;
         } else {
-            $c->log->warn("[FALLBACK] JSON cache miss for field $class/$name/$field - using CouchDB/Datomic/ACeDB");
+            $c->log->info("\t[FALLBACK] JSON cache miss for field $class/$name/$field - using CouchDB/Datomic/ACeDB");
         }
     }
 
@@ -1941,16 +1943,16 @@ sub field_GET {
         }
 
         if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
-            $c->log->info("Valid cache found for D2C-backed field " . $c->req->path);
-            $c->log->warn("[FALLBACK] --> $class/$name/$field served by CouchDB (cached Datomic data)");
+#            $c->log->info("Valid cache found for D2C-backed field " . $c->req->path);
+            $c->log->info("\t[FALLBACK]      --> $class/$name/$field served by CouchDB (cached Datomic data)");
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
-            $c->log->info("No valid cache found for D2C-backed field " . $c->req->path);
+            $c->log->info("\tNo valid cache found for D2C-backed field " . $c->req->path);
             my $url = "$rest_server$path";
             my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
-                $c->log->warn("[FALLBACK] --> $class/$name/$field served by Datomic");
+                $c->log->info("\t[FALLBACK]      --> $class/$name/$field served by Datomic");
                 $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
                 $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
 
@@ -1967,13 +1969,13 @@ sub field_GET {
     } else {
         # ACeDB workflow
         if ($cached_data && (ref $cached_data eq 'HASH')){
-            $c->log->info("Valid cache found for ACeDB-backed field " . $c->req->path);
-            $c->log->warn("[FALLBACK] --> $class/$name/$field served by CouchDB (cached ACeDB data)");
+#            $c->log->info("Valid cache found for ACeDB-backed field " . $c->req->path);
+            $c->log->warn("\t[FALLBACK]     --> $class/$name/$field served by CouchDB (cached ACeDB data)");
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
-            $c->log->info("No valid cache found for ACeDB-backed field " . $c->req->path);
-            $c->log->warn("[FALLBACK] --> $class/$name/$field served by ACeDB");
+#            $c->log->info("No valid cache found for ACeDB-backed field " . $c->req->path);
+            $c->log->warn("\t[FALLBACK]     --> $class/$name/$field served by ACeDB");
             my $api = $c->model('WormBaseAPI');
             my $object = $name eq '*' || $name eq 'all'
                 ? $api->instantiate_empty(ucfirst $class)
@@ -2048,25 +2050,25 @@ sub _get_page {
 sub _get_json_from_disk {
     my ($self, $c, $type, $class, $name, $target) = @_;
 
-    $c->log->info("_get_json_from_disk called: type=$type, class=$class, name=$name, target=$target");
+    $c->log->info("\t\t_get_json_from_disk called: type=$type, class=$class, name=$name, target=$target");
 
     # Check if JSON cache root is configured
     my $json_root = $c->config->{json_cache_root};
     unless ($json_root) {
-        $c->log->warn("JSON cache root not configured (json_cache_root)");
+        $c->log->info("\t\tJSON cache root not configured (json_cache_root)");
         return;
     }
-    $c->log->info("JSON cache root configured: $json_root");
+    $c->log->info("\t\tJSON cache root configured: $json_root");
 
     unless (-d $json_root) {
-        $c->log->warn("JSON cache root directory does not exist: $json_root");
+        $c->log->info("\t\tJSON cache root directory does not exist: $json_root");
         return;
     }
-    $c->log->info("JSON cache root directory exists");
+    $c->log->info("\t\tJSON cache root directory exists");
 
     # Compute shard path using ShardPath module
     my @rel_path = object_rel_dir(name_u => $name);
-    $c->log->debug("Computed shard path: " . join('/', @rel_path));
+    $c->log->info("\t\tComputed shard path: " . join('/', @rel_path));
 
     # Build full path: <root>/<type>/<class>/<shard1>/<shard2>/<percent_encoded_name>/<target>.json
     my $file_path = File::Spec->catfile(
@@ -2077,15 +2079,15 @@ sub _get_json_from_disk {
         "$target.json"
     );
 
-    $c->log->info("Looking for JSON file: $file_path");
+#    $c->log->info("Looking for JSON file: $file_path");
 
     # Check if file exists
     unless (-f $file_path) {
-        $c->log->info("JSON file not found: $file_path");
+        $c->log->info("\t\tJSON file not found: $file_path");
         return;
     }
 
-    $c->log->info("JSON file found: $file_path");
+    $c->log->info("\t\tJSON file found: $file_path");
 
     # Read and decode JSON file
     my $data;
@@ -2097,7 +2099,7 @@ sub _get_json_from_disk {
         close($fh);
 
         $data = decode_json($json_text);
-        $c->log->info("Loaded JSON from disk: $file_path");
+        $c->log->info("\t\tLoaded JSON from disk: $file_path");
     };
 
     if ($@) {

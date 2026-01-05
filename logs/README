@@ -6,13 +6,13 @@ when you launch your app via:
 
   ./script/wormbase_server.pl -p PORT -d -r
 
-  wormbase-catalyst-access.log
+  wormbase-webapp-info.log
       Catalyst access and debugging log.
   
-  wormbase-catalyst-cache.log
-      Catalyst CHI cache log.
+  wormbase-webapp-cache.log
+      Catalyst CHI cache log. Records cache hits and misses.
 
-  wormbase-catalyst-queries.log
+  wormbase-webapp-queries.log
       Catalyst log that records queries from the AQL/WQL page.
 
 
@@ -21,10 +21,10 @@ starman via:
 
   ./script/wormbase-init.sh
 
-  wormbase-starman-access.log
+  wormbase-access.log
        Starman's apache style access log. Should be rotated.
 
-  wormbase-starman-error.log
+  wormbase-error.log
        Starman's error log. If STARMAN_DEBUG=1 is set in your
        environment this log will also capture additional debug
        messages.
