@@ -936,7 +936,8 @@ sub widget_GET {
     my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'widget', $class, $name, $widget);
     if ($json_data) {
         $c->log->info("SUCCESS: Using JSON from disk for widget $widget (source: $json_source)");
-        $c->stash->{fields} = $json_data;
+        # Extract fields from JSON structure (JSON has {class, name, fields, uri})
+        $c->stash->{fields} = $json_data->{fields} || $json_data;
         $c->stash->{served_from_cache} = $json_source;
         # Skip to rendering section
         goto RENDER_WIDGET;
@@ -1895,7 +1896,11 @@ sub field_GET {
         my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'field', $class, $name, $field);
         if ($json_data) {
             $c->log->info("SUCCESS: Using JSON from disk for field $field (source: $json_source)");
-            $c->stash->{$field} = $json_data;
+            # Field JSON might be just the data, or wrapped with metadata
+            # If it has a $field key, use that; otherwise use the whole thing
+            $c->stash->{$field} = (ref $json_data eq 'HASH' && exists $json_data->{$field})
+                                  ? $json_data->{$field}
+                                  : $json_data;
             $c->stash->{served_from_cache} = $json_source;
             # Skip to rendering section
             goto RENDER_FIELD;
