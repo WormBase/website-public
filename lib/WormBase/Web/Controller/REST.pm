@@ -932,10 +932,10 @@ sub widget_GET {
     my $key = join( '_', 'widget', $class, $widget, $name );  # Cache key - "widget_$class_$widget_$name"
 
     # First, try to load from JSON on disk (WS298 static archive)
-    $c->log->info("Attempting to load widget from JSON disk cache: $class/$name/$widget");
+    $c->log->info("\tAttempting to load widget from JSON disk cache: $class/$name/$widget");
     my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'widget', $class, $name, $widget);
     if ($json_data) {
-        $c->log->info("SUCCESS: Using JSON from disk for widget $widget (source: $json_source)");
+        $c->log->info("\t[SUCCESS] Using JSON from disk for widget $widget (source: $json_source)");
         # Extract fields from JSON structure (JSON has {class, name, fields, uri})
         $c->stash->{fields} = $json_data->{fields} || $json_data;
         $c->stash->{served_from_cache} = $json_source;
@@ -1898,10 +1898,10 @@ sub field_GET {
     if ($force_acedb) {
         $c->log->info("Skipping JSON disk cache for field $field (force_acedb=1)");
     } else {
-        $c->log->info("Attempting to load field from JSON disk cache: $class/$name/$field");
+        $c->log->info("\tAttempting to load field from JSON disk cache: $class/$name/$field");
         my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'field', $class, $name, $field);
         if ($json_data) {
-            $c->log->info("SUCCESS: Using JSON from disk for field $field (source: $json_source)");
+            $c->log->info("\t[SUCCESS] Using JSON from disk for field $field (source: $json_source)");
             # Field JSON might be just the data, or wrapped with metadata
             # If it has a $field key, use that; otherwise use the whole thing
             $c->stash->{$field} = (ref $json_data eq 'HASH' && exists $json_data->{$field})
@@ -1948,7 +1948,7 @@ sub field_GET {
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
-            $c->log->info("\tNo valid cache found for D2C-backed field " . $c->req->path);
+#            $c->log->info("\tNo valid cache found for D2C-backed field " . $c->req->path);
             my $url = "$rest_server$path";
             my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
@@ -1970,12 +1970,12 @@ sub field_GET {
         # ACeDB workflow
         if ($cached_data && (ref $cached_data eq 'HASH')){
 #            $c->log->info("Valid cache found for ACeDB-backed field " . $c->req->path);
-            $c->log->warn("\t[FALLBACK]     --> $class/$name/$field served by CouchDB (cached ACeDB data)");
+            $c->log->info("\t[FALLBACK]     --> $class/$name/$field served by CouchDB (cached ACeDB data)");
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
 #            $c->log->info("No valid cache found for ACeDB-backed field " . $c->req->path);
-            $c->log->warn("\t[FALLBACK]     --> $class/$name/$field served by ACeDB");
+            $c->log->info("\t[FALLBACK]     --> $class/$name/$field served by ACeDB");
             my $api = $c->model('WormBaseAPI');
             my $object = $name eq '*' || $name eq 'all'
                 ? $api->instantiate_empty(ucfirst $class)
@@ -2050,7 +2050,7 @@ sub _get_page {
 sub _get_json_from_disk {
     my ($self, $c, $type, $class, $name, $target) = @_;
 
-    $c->log->info("\t\t_get_json_from_disk called: type=$type, class=$class, name=$name, target=$target");
+    $c->log->info("\t_get_json_from_disk called: type=$type, class=$class, name=$name, target=$target");
 
     # Check if JSON cache root is configured
     my $json_root = $c->config->{json_cache_root};
