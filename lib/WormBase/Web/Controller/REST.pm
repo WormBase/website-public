@@ -2075,6 +2075,7 @@ sub _get_json_from_disk {
     $c->log->info("JSON file found: $file_path");
 
     # Read and decode JSON file
+    my $data;
     eval {
         open(my $fh, '<:encoding(UTF-8)', $file_path)
             or die "Cannot open $file_path: $!";
@@ -2082,9 +2083,8 @@ sub _get_json_from_disk {
         my $json_text = <$fh>;
         close($fh);
 
-        my $data = decode_json($json_text);
+        $data = decode_json($json_text);
         $c->log->info("Loaded JSON from disk: $file_path");
-        return ($data, "json_disk:$file_path");
     };
 
     if ($@) {
@@ -2092,7 +2092,8 @@ sub _get_json_from_disk {
         return;
     }
 
-    return;
+    # Successfully loaded JSON data
+    return ($data, "json_disk:$file_path");
 }
 
 sub blog_feed :Path("/rest/blog_feed") Args(0) {
