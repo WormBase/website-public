@@ -234,11 +234,16 @@ END;
              title="This widget contains data from ACeDB.">ACeDB</span>
         [% END %]
         [%- IF c.stash.served_from_cache -%]
-        <span class="data-source-label">Couch
-            <a target="_blank" href="https://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a>
-             |
-            <a target="_blank" href="https://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a>
-        </span>
+            [%- IF c.stash.served_from_cache.match('^json_disk:') -%]
+            <span class="data-source-label json-cache"
+                title="This widget was loaded from static JSON cache on disk (WS298 archive).">JSON cache</span>
+            [%- ELSE -%]
+            <span class="data-source-label">Couch
+                <a target="_blank" href="https://couchdb.wormbase.org/[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">raw</a>
+                 |
+                <a target="_blank" href="https://couchdb.wormbase.org/_utils/document.html?[%- constants.acedb_version | lower -%]/[%- c.stash.served_from_cache -%]">futon</a>
+            </span>
+            [%- END -%]
         [% END %]
     [% END %]
 [% END %]
