@@ -80,32 +80,47 @@ echo -e "Parallel jobs:   ${BLUE}$PARALLEL_JOBS${NC}"
 echo -e "Dry run:         ${BLUE}$( [ $DRY_RUN -eq 1 ] && echo 'YES' || echo 'NO' )${NC}"
 echo ""
 
-# Determine search path
+# Determine search paths (array to handle both widgets and fields)
+SEARCH_PATHS=()
+
 if [ "$CLASS" = "all" ]; then
-    SEARCH_PATH="$JSON_CACHE_ROOT"
-    echo -e "${YELLOW}Compressing all classes...${NC}"
+    SEARCH_PATHS+=("$JSON_CACHE_ROOT")
+    echo -e "${YELLOW}Compressing all classes (widgets and fields)...${NC}"
 else
-    SEARCH_PATH="$JSON_CACHE_ROOT/widget/$CLASS"
-    if [ ! -d "$SEARCH_PATH" ]; then
-        SEARCH_PATH="$JSON_CACHE_ROOT/field/$CLASS"
+    # Check for both widget and field directories
+    WIDGET_PATH="$JSON_CACHE_ROOT/widget/$CLASS"
+    FIELD_PATH="$JSON_CACHE_ROOT/field/$CLASS"
+
+    if [ -d "$WIDGET_PATH" ]; then
+        SEARCH_PATHS+=("$WIDGET_PATH")
+        echo -e "${YELLOW}Found widget directory: ${NC}${BLUE}$WIDGET_PATH${NC}"
     fi
 
-    if [ ! -d "$SEARCH_PATH" ]; then
-        echo -e "${RED}Error: Class directory not found${NC}"
+    if [ -d "$FIELD_PATH" ]; then
+        SEARCH_PATHS+=("$FIELD_PATH")
+        echo -e "${YELLOW}Found field directory: ${NC}${BLUE}$FIELD_PATH${NC}"
+    fi
+
+    if [ ${#SEARCH_PATHS[@]} -eq 0 ]; then
+        echo -e "${RED}Error: No directories found for class '$CLASS'${NC}"
         echo "Tried:"
-        echo "  $JSON_CACHE_ROOT/widget/$CLASS"
-        echo "  $JSON_CACHE_ROOT/field/$CLASS"
+        echo "  $WIDGET_PATH"
+        echo "  $FIELD_PATH"
         exit 1
     fi
 
     echo -e "${YELLOW}Compressing class: $CLASS${NC}"
-    echo -e "Search path: ${BLUE}$SEARCH_PATH${NC}"
+    echo -e "Search paths: ${BLUE}${#SEARCH_PATHS[@]}${NC} directories"
 fi
 echo ""
 
-# Count total uncompressed JSON files
+# Count total uncompressed JSON files across all search paths
 echo -e "${YELLOW}Scanning for uncompressed JSON files...${NC}"
-TOTAL_FILES=$(find "$SEARCH_PATH" -type f -name "*.json" ! -name "*.json.gz" 2>/dev/null | wc -l | tr -d ' ')
+TOTAL_FILES=0
+for path in "${SEARCH_PATHS[@]}"; do
+    count=$(find "$path" -type f -name "*.json" ! -name "*.json.gz" 2>/dev/null | wc -l | tr -d ' ')
+    TOTAL_FILES=$((TOTAL_FILES + count))
+done
 echo -e "Found ${BLUE}$TOTAL_FILES${NC} uncompressed JSON files"
 echo ""
 
@@ -116,14 +131,26 @@ fi
 
 # Calculate current size
 echo -e "${YELLOW}Calculating current size...${NC}"
-CURRENT_SIZE=$(find "$SEARCH_PATH" -type f -name "*.json" ! -name "*.json.gz" -exec du -b {} + 2>/dev/null | awk '{sum+=$1} END {print sum}')
+CURRENT_SIZE=0
+for path in "${SEARCH_PATHS[@]}"; do
+    size=$(find "$path" -type f -name "*.json" ! -name "*.json.gz" -exec du -b {} + 2>/dev/null | awk '{sum+=$1} END {print sum}')
+    CURRENT_SIZE=$((CURRENT_SIZE + size))
+done
 CURRENT_SIZE_MB=$(echo "scale=2; $CURRENT_SIZE / 1048576" | bc)
 echo -e "Current size: ${BLUE}${CURRENT_SIZE_MB} MB${NC}"
 echo ""
 
 if [ $DRY_RUN -eq 1 ]; then
     echo -e "${YELLOW}DRY RUN - Would compress:${NC}"
-    find "$SEARCH_PATH" -type f -name "*.json" ! -name "*.json.gz" 2>/dev/null | head -20
+    count=0
+    for path in "${SEARCH_PATHS[@]}"; do
+        find "$path" -type f -name "*.json" ! -name "*.json.gz" 2>/dev/null | while read file; do
+            if [ $count -lt 20 ]; then
+                echo "$file"
+                count=$((count + 1))
+            fi
+        done
+    done
     if [ "$TOTAL_FILES" -gt 20 ]; then
         echo "... and $((TOTAL_FILES - 20)) more files"
     fi
@@ -140,19 +167,25 @@ echo -e "${BLUE}Progress:${NC}"
 # Check if GNU parallel is available
 if command -v parallel >/dev/null 2>&1; then
     # Use GNU parallel for better progress reporting
-    find "$SEARCH_PATH" -type f -name "*.json" ! -name "*.json.gz" -print0 2>/dev/null | \
-        parallel -0 -j "$PARALLEL_JOBS" --bar gzip -9 {}
+    for path in "${SEARCH_PATHS[@]}"; do
+        find "$path" -type f -name "*.json" ! -name "*.json.gz" -print0 2>/dev/null
+    done | parallel -0 -j "$PARALLEL_JOBS" --bar gzip -9 {}
 else
     # Fallback to xargs
     echo "(Using xargs - install 'parallel' for progress bar)"
-    find "$SEARCH_PATH" -type f -name "*.json" ! -name "*.json.gz" -print0 2>/dev/null | \
-        xargs -0 -P "$PARALLEL_JOBS" -n 1 gzip -9
+    for path in "${SEARCH_PATHS[@]}"; do
+        find "$path" -type f -name "*.json" ! -name "*.json.gz" -print0 2>/dev/null
+    done | xargs -0 -P "$PARALLEL_JOBS" -n 1 gzip -9
 fi
 
 # Calculate compressed size
 echo ""
 echo -e "${YELLOW}Calculating compressed size...${NC}"
-COMPRESSED_SIZE=$(find "$SEARCH_PATH" -type f -name "*.json.gz" -exec du -b {} + 2>/dev/null | awk '{sum+=$1} END {print sum}')
+COMPRESSED_SIZE=0
+for path in "${SEARCH_PATHS[@]}"; do
+    size=$(find "$path" -type f -name "*.json.gz" -exec du -b {} + 2>/dev/null | awk '{sum+=$1} END {print sum}')
+    COMPRESSED_SIZE=$((COMPRESSED_SIZE + size))
+done
 COMPRESSED_SIZE_MB=$(echo "scale=2; $COMPRESSED_SIZE / 1048576" | bc)
 COMPRESSION_RATIO=$(echo "scale=2; ($CURRENT_SIZE - $COMPRESSED_SIZE) / $CURRENT_SIZE * 100" | bc)
 SAVINGS_MB=$(echo "scale=2; $CURRENT_SIZE_MB - $COMPRESSED_SIZE_MB" | bc)
