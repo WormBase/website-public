@@ -19,6 +19,7 @@ use Encode;
 use HTTP::Tiny;
 use WormBase::Cache::ShardPath qw(object_rel_dir);
 use File::Spec;
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 
 
 
@@ -2071,7 +2072,7 @@ sub _get_json_from_disk {
     $c->log->info("\t\tComputed shard path: " . join('/', @rel_path));
 
     # Build full path: <root>/<type>/<class>/<shard1>/<shard2>/<percent_encoded_name>/<target>.json
-    my $file_path = File::Spec->catfile(
+    my $file_path_base = File::Spec->catfile(
         $json_root,
         $type,      # 'widget' or 'field'
         $class,
@@ -2079,24 +2080,40 @@ sub _get_json_from_disk {
         "$target.json"
     );
 
-#    $c->log->info("Looking for JSON file: $file_path");
+    # Check for compressed file first (.json.gz), then uncompressed (.json)
+    my $file_path;
+    my $is_compressed = 0;
 
-    # Check if file exists
-    unless (-f $file_path) {
-        $c->log->info("\t\tJSON file not found: $file_path");
+    if (-f "$file_path_base.gz") {
+        $file_path = "$file_path_base.gz";
+        $is_compressed = 1;
+        $c->log->info("\t\tFound compressed JSON file: $file_path");
+    } elsif (-f $file_path_base) {
+        $file_path = $file_path_base;
+        $c->log->info("\t\tFound uncompressed JSON file: $file_path");
+    } else {
+        $c->log->info("\t\tJSON file not found (tried .gz and uncompressed): $file_path_base");
         return;
     }
 
-    $c->log->info("\t\tJSON file found: $file_path");
-
-    # Read and decode JSON file
+    # Read and decode JSON file (decompress if needed)
     my $data;
     eval {
-        open(my $fh, '<:encoding(UTF-8)', $file_path)
-            or die "Cannot open $file_path: $!";
-        local $/;
-        my $json_text = <$fh>;
-        close($fh);
+        my $json_text;
+
+        if ($is_compressed) {
+            # Decompress gzipped file
+            gunzip $file_path => \$json_text
+                or die "gunzip failed: $GunzipError";
+            $c->log->debug("\t\tDecompressed JSON file");
+        } else {
+            # Read uncompressed file
+            open(my $fh, '<:encoding(UTF-8)', $file_path)
+                or die "Cannot open $file_path: $!";
+            local $/;
+            $json_text = <$fh>;
+            close($fh);
+        }
 
         $data = decode_json($json_text);
         $c->log->info("\t\tLoaded JSON from disk: $file_path");
