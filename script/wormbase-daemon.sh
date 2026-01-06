@@ -97,8 +97,8 @@ export PATH="/usr/local/wormbase/extlib/bin:$PATH"
 PIDFILE="$APP_HOME/logs/wormbase.pid"
 # Starman access/error logs. Log4perl sets up the app-
 # specific logs.
-ERROR_LOG="$APP_HOME/logs/wormbase-starman-error.log"
-ACCESS_LOG="$APP_HOME/logs/wormbase-starman-access.log"
+ERROR_LOG="$APP_HOME/logs/wormbase-error.log"
+ACCESS_LOG="$APP_HOME/logs/wormbase-access.log"
 STATUS="$APP_HOME/logs/wormbase.status"
 
 if [ ! -d "$APP_HOME" ]; then

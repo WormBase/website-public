@@ -18,6 +18,7 @@ services:
       - "/usr/local/wormbase/website-shared-files:/usr/local/wormbase/website-shared-files"
       - "/usr/local/wormbase/databases:/usr/local/wormbase/databases"
       - "/usr/local/wormbase/services:/usr/local/wormbase/services"
+      - "/mnt/json-cache-WS298/json:/usr/local/wormbase/json-cache:ro"
     environment:
       - ACEDB_PORT=2005
       - APP=${CATALYST_APP}
