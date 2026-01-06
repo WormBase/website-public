@@ -18,6 +18,9 @@ use Unicode::Normalize qw(NFC);
 use Time::HiRes qw(time);
 use Digest::SHA qw(sha256_hex);
 
+# Payload files: either *.json or *.json.gz (case-insensitive)
+my $PAYLOAD_RE = qr/\.(?:json|json\.gz)\z/i;
+
 
 sub escape_for_tsv {
     my ($s) = @_;
@@ -45,7 +48,7 @@ sub object_payload_stats_flat {
         next if $ent eq '.' || $ent eq '..';
 
         # Treat only payload JSON as payloads; exclude manifests
-        next unless $ent =~ /\.json\z/i;
+        next unless $ent =~ $PAYLOAD_RE;
         next if $ent eq 'MANIFEST.json';
 
         my $path = File::Spec->catfile($obj_dir, $ent);
@@ -83,7 +86,7 @@ sub collect_payload_checksums_flat {
     while (defined(my $ent = readdir($dh))) {
         next if $ent eq '.' || $ent eq '..';
         next if $ent eq 'MANIFEST.json';           # do not checksum the manifest
-        next unless $ent =~ /\.json\z/i;           # payloads only (adjust if needed)
+        next unless $ent =~ $PAYLOAD_RE;           # payloads only (adjust if needed)
 
         my $path = File::Spec->catfile($obj_dir, $ent);
         next unless -f $path;
@@ -229,7 +232,7 @@ sub close_class_manifest {
 # -----------------------------
 # Cached json found at /usr/local/wormbase/databases/RELEASE/BUILD_DATE/json
 my %opt = (
-    root       => '/mnt/json-cache-WS298',
+    root       => '/usr/local/wormbase/databases',
     build_date     => '2025-11-27',
     shard_chars => 2,
     dry_run    => 1,
@@ -256,7 +259,7 @@ Usage:
   write_manifests_from_shards.pl [options]
 
     Options:
-  --root PATH          Root cache dir (default: /mnt/json-cache-WS298)
+  --root PATH          Root cache dir (default: /usr/local/wormbase/databases)
   --build_date         YYYY-MM-DD the build started (default: 2025-11-27)
   --class NAME         Process only this class (otherwise process all class dirs under --root)
   --kinds LIST        Comma-separated kinds under json/ (e.g. widget,field). Default: autodiscover under json/
@@ -290,8 +293,7 @@ USAGE
 die "Root is not a directory: $opt{root}\n" unless -d $opt{root};
 die "Please specify a WSXXX release\n" unless $opt{release};
 
-#$opt{json_root} = join("/",$opt{root},$opt{release},"cache",$opt{build_date},"json");
-$opt{json_root} = join("/",$opt{root},"json");
+$opt{json_root} = join("/",$opt{root},$opt{release},"cache",$opt{build_date},"json");
 # Should I CREATE this dir?
 
 #die $opt{cache_path};
@@ -359,7 +361,7 @@ for my $kind (@kinds) {
         my $class_payload_min;
         my $class_payload_max;
 
-        my $class_objects_missing_overview = 0;  # missing overview.json
+        my $class_objects_missing_overview = 0;  # missing overview.json or overview.json.gz
         my %class_payload_name_counts      = (); # filename -> count
         my %class_payload_name_bytes_total = (); # filename -> total bytes
 
@@ -452,7 +454,7 @@ for my $kind (@kinds) {
                     $class_created_epoch_max = int($created)
                         if !defined($class_created_epoch_max) || int($created) > $class_created_epoch_max;
 
-                    $class_objects_missing_overview++ unless exists $payloads->{'overview.json'};
+                    $class_objects_missing_overview++ unless (exists $payloads->{'overview.json'} || exists $payloads->{'overview.json.gz'});
 
                     my ($pf, $pb, $pmin, $pmax) = (0, 0, undef, undef);
                     for my $fname (keys %{$payloads}) {
