@@ -26,8 +26,11 @@ use Sys::Hostname qw(hostname);
 #   - Widgets: /rest/widget/<lc(class)>/<object>/<widget_name>
 #   - Fields:  /rest/field/<lc(class)>/<object>/<field_name>
 #
-# Output (uncompressed JSON on disk):
-#   <cache-root>/json/<kind>/<class>/<shard1>/<shard2>/<leaf>/<name>.json
+# Output (JSON on disk):
+#   When --compress (default), writes:
+#     <cache-root>/json/<kind>/<class>/<shard1>/<shard2>/<leaf>/<name>.json.gz
+#   When --no-compress, writes legacy:
+#     <cache-root>/json/<kind>/<class>/<shard1>/<shard2>/<leaf>/<name>.json
 #
 # Misplaced field migration (Option 1A):
 #   If a FIELD payload is missing in its canonical location, but exists under:
@@ -50,6 +53,8 @@ use HTTP::Tiny;
 use Time::HiRes qw(time);
 use Digest::SHA qw(sha256_hex);
 use URI::Escape qw(uri_escape_utf8);
+use IO::Compress::Gzip qw(gzip $GzipError);
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 
 use WormBase::Cache::ShardPath qw(leaf_from_name shards_from_name);
 
@@ -96,6 +101,12 @@ my %opt = (
   max_requests           => undef,
   verbose                => 0,
 
+  # On-disk compression
+  # When enabled, payloads are written as .json.gz (atomic), and reads/existence checks
+  # transparently accept either .json.gz or legacy .json.
+  compress               => 1,
+  compress_level         => 1,
+
   # Heartbeat (progress) reporting.
   # Emits periodic progress lines into a single per-class file, suitable for tail -f.
   heartbeat_every_objects => 5000,
@@ -133,6 +144,8 @@ Widget/field names:
 
 Behavior:
   --skip-if-exists/--no-skip-if-exists        Default: on
+  --compress/--no-compress                    Default: on (write .json.gz)
+  --compress-level N                          Gzip level 1-9 (default: 1)
   --verify-json/--no-verify-json              Default: on
   --compare-existing                         If destination exists, fetch and compare (SHA-256 of bytes) instead of skipping
   --overwrite-on-diff                        With --compare-existing, overwrite destination when content differs
@@ -210,6 +223,8 @@ GetOptions(
   'audit-list-limit=i'       => \$opt{audit_list_limit},
   'log-errors=s'             => \$opt{log_errors},
   'log-progress=s'           => \$opt{log_progress},
+  'compress!'                => \$opt{compress},
+  'compress-level=i'         => \$opt{compress_level},
   'heartbeat-every-objects=i' => \$opt{heartbeat_every_objects},
   'heartbeat-every-urls=i'    => \$opt{heartbeat_every_urls},
   'heartbeat-file=s'          => \$opt{heartbeat_file},
@@ -644,26 +659,45 @@ sub json_root {
   return File::Spec->catdir($opt{cache_root}, $opt{json_subdir});
 }
 
-sub canonical_dest_for {
+sub payload_paths_for {
   my (%a) = @_;
   my ($kind,$class,$object,$name) = @a{qw(kind class object name)};
   my ($shards) = shards_from_name(name_u => $object, shard_levels => 2, shard_chars => 2);
   my $leaf = leaf_from_name($object);
   my $dir  = File::Spec->catdir(json_root(), $kind, $class, $shards->[0], $shards->[1], $leaf);
-  my $file = File::Spec->catfile($dir, "$name.json");
-  return ($file, $dir, $shards, $leaf);
+  my $json_path = File::Spec->catfile($dir, "$name.json");
+  my $gz_path   = File::Spec->catfile($dir, "$name.json.gz");
+  my $write_path = $opt{compress} ? $gz_path : $json_path;
+  return ($write_path, $dir, $shards, $leaf, $gz_path, $json_path);
+}
+
+sub existing_payload_path_for {
+  my (%a) = @_;
+  my (undef, undef, undef, undef, $gz_path, $json_path) = payload_paths_for(%a);
+  return $gz_path   if -e $gz_path;
+  return $json_path if -e $json_path;
+  return undef;
+}
+
+sub canonical_dest_for {  # backward-compat alias
+  return payload_paths_for(@_);
 }
 
 # Compatibility helpers for the streaming object loop (v10.x)
 sub dest_path_for {
   my (%a) = @_;
-  my ($file, $dir) = canonical_dest_for(%a);
+  my ($file, $dir) = payload_paths_for(%a);
   make_path($dir) unless -d $dir;
   return $file;
 }
 
 sub slurp_file {
   my ($path) = @_;
+  if ($path =~ /\.gz\z/) {
+    my $out = '';
+    gunzip $path => \$out or die "gunzip failed for $path: $GunzipError\n";
+    return $out;
+  }
   open my $fh, '<:raw', $path or die "Cannot read $path: $!\n";
   local $/;
   my $bytes = <$fh>;
@@ -685,7 +719,16 @@ sub http_get {
 
 sub write_file_atomic {
   my ($path, $bytes) = @_;
-  atomic_write_bytes($path, $bytes);
+  if ($path =~ /\.gz\z/) {
+    my $dir = dirname($path);
+    make_path($dir) unless -d $dir;
+    my $tmp = "$path.$$." . int(rand(1_000_000)) . ".tmp";
+    gzip(\$bytes => $tmp, Level => ($opt{compress_level}||1))
+      or die "gzip failed for $tmp: $GzipError\n";
+    rename($tmp, $path) or die "Rename $tmp -> $path failed: $!\n";
+  } else {
+    atomic_write_bytes($path, $bytes);
+  }
   return 1;
 }
 
@@ -693,7 +736,9 @@ sub write_file_atomic {
 sub misplaced_field_candidate_for {
   my (%a) = @_;
   my ($class,$sh1,$sh2,$leaf,$field_name) = @a{qw(class sh1 sh2 leaf field_name)};
-  return File::Spec->catfile(json_root(), 'widget', $class, $sh1, $sh2, $leaf, "$field_name.json");
+  my $json_path = File::Spec->catfile(json_root(), 'widget', $class, $sh1, $sh2, $leaf, "$field_name.json");
+  my $gz_path   = File::Spec->catfile(json_root(), 'widget', $class, $sh1, $sh2, $leaf, "$field_name.json.gz");
+  return ($gz_path, $json_path);
 }
 
 
@@ -931,12 +976,14 @@ sub run_audit_misplaced_fields {
         my ($dest_path, undef, $shards, $leaf) = canonical_dest_for(
           kind => 'field', class => $class, object => $object, name => $fname
         );
-        my $src_path = misplaced_field_candidate_for(
+        my ($src_gz, $src_json) = misplaced_field_candidate_for(
           class => $class, sh1 => $shards->[0], sh2 => $shards->[1], leaf => $leaf, field_name => $fname
         );
 
-        my $has_field  = -e $dest_path;
-        my $has_widget = -e $src_path;
+        my $field_existing = existing_payload_path_for(kind => 'field', class => $class, object => $object, name => $fname);
+        my $src_path = -e $src_gz ? $src_gz : (-e $src_json ? $src_json : undef);
+        my $has_field  = $field_existing ? 1 : 0;
+        my $has_widget = $src_path ? 1 : 0;
 
         if ($has_field) {
           $rep{totals}{already_correct}++;
@@ -1207,6 +1254,7 @@ for my $class (@classes) {
       my @names = names_for($kind, $class);
       NAME: for my $name (@names) {
         my $dest_path = dest_path_for(class => $class, kind => $kind, object => $object, name => $name);
+        my $existing_path = existing_payload_path_for(class => $class, kind => $kind, object => $object, name => $name);
 
         $urls_evaluated++;
         if (defined $next_hb_urls && $urls_evaluated >= $next_hb_urls) {
@@ -1222,13 +1270,14 @@ for my $class (@classes) {
           $next_hb_urls += $hb_every_urls;
         }
 
-        my $exists = (-e $dest_path) ? 1 : 0;
+        my $exists = defined($existing_path) ? 1 : 0;
         if ($opt{exists_debug} && $opt{verbose}) {
-          my $sz = $exists ? (-s $dest_path) : 0;
+          my $sz = $exists ? (-s $existing_path) : 0;
           print $opt{vp} . "EXISTS_CHECK	$dest_path	exists=$exists	size=$sz\n";
         }
         if ($opt{skip_if_exists} && $exists && !$opt{compare_existing}) {
-	  print $opt{vp} . "SKIP	$dest_path\n" if $opt{verbose};
+	  my $p = $existing_path || $dest_path;
+	  print $opt{vp} . "SKIP\t$p\n" if $opt{verbose};
 	  $widgets_skipped++;
           next NAME;
         }
@@ -1253,10 +1302,10 @@ for my $class (@classes) {
         # Count as fetched once it has passed JSON verification (or verification disabled).
         $widgets_fetched++;
 
-        if ($opt{compare_existing} && -e $dest_path) {
-          my $existing = slurp_file($dest_path);
+        if ($opt{compare_existing} && $existing_path) {
+          my $existing = slurp_file($existing_path);
           my $canon_existing = eval { canonicalize_json_for_compare($existing, { class => $class, kind => $kind, object => $object, name => $name, source => 'existing' }) };
-          if ($@) { log_error("CANON_EXISTING_FAIL\t$dest_path\t$@"); next NAME; }
+          if ($@) { log_error("CANON_EXISTING_FAIL\t$existing_path\t$@"); next NAME; }
           my $canon_fetched  = eval { canonicalize_json_for_compare($bytes,   { class => $class, kind => $kind, object => $object, name => $name, source => 'fetched' }) };
           if ($@) { log_error("CANON_FETCH_FAIL\t$dest_path\t$@"); next NAME; }
 
@@ -1282,13 +1331,14 @@ for my $class (@classes) {
           # else fall through to write fetched bytes
         }
 
-        if ($opt{skip_if_exists} && -e $dest_path && !$opt{compare_existing}) {
-          my $msg = "RACE_OR_PATH_MISMATCH\t$dest_path\trefusing_overwrite";
+        my $late_existing = existing_payload_path_for(class => $class, kind => $kind, object => $object, name => $name);
+        if ($opt{skip_if_exists} && $late_existing && !$opt{compare_existing}) {
+          my $msg = "RACE_OR_PATH_MISMATCH\t$late_existing\trefusing_overwrite";
           if ($opt{strict_missing_only}) {
             die "$msg\n";
           }
           log_error($msg);
-          print $opt{vp} . "SKIP_EXISTING_LATE\t$dest_path\n" if $opt{verbose};
+          print $opt{vp} . "SKIP_EXISTING_LATE\t$late_existing\n" if $opt{verbose};
           $widgets_skipped++;
           next NAME;
         }
