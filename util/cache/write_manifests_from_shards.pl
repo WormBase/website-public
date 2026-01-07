@@ -17,6 +17,7 @@ use POSIX qw(strftime);
 use Unicode::Normalize qw(NFC);
 use Time::HiRes qw(time);
 use Digest::SHA qw(sha256_hex);
+use IO::Compress::Gzip qw(gzip $GzipError);
 
 # Payload files: either *.json or *.json.gz (case-insensitive)
 my $PAYLOAD_RE = qr/\.(?:json|json\.gz)\z/i;
@@ -49,7 +50,7 @@ sub object_payload_stats_flat {
 
         # Treat only payload JSON as payloads; exclude manifests
         next unless $ent =~ $PAYLOAD_RE;
-        next if $ent eq 'MANIFEST.json';
+        next if $ent eq 'MANIFEST.json' || $ent eq 'MANIFEST.json.gz';
 
         my $path = File::Spec->catfile($obj_dir, $ent);
         next unless -f $path;
@@ -85,7 +86,7 @@ sub collect_payload_checksums_flat {
 
     while (defined(my $ent = readdir($dh))) {
         next if $ent eq '.' || $ent eq '..';
-        next if $ent eq 'MANIFEST.json';           # do not checksum the manifest
+        next if $ent eq 'MANIFEST.json' || $ent eq 'MANIFEST.json.gz';  # do not checksum the manifest
         next unless $ent =~ $PAYLOAD_RE;           # payloads only (adjust if needed)
 
         my $path = File::Spec->catfile($obj_dir, $ent);
@@ -143,19 +144,20 @@ sub write_manifest {
     my $payload   = $args{payload}   // die "write_manifest: payload required\n";
     my $overwrite = $args{overwrite} // 0;
 
-    my $path = File::Spec->catfile($obj_dir, 'MANIFEST.json');
+    my $path = File::Spec->catfile($obj_dir, 'MANIFEST.json.gz');
 
     if (-e $path && !$overwrite) {
         return (0, "exists");
     }
 
-
     my $json = JSON::PP->new->canonical(1)->pretty(1)->encode($payload);
+    my $utf8_json = encode('UTF-8', $json);
 
-    my ($fh, $tmp) = tempfile('MANIFEST.json.tmpXXXX', DIR => $obj_dir, UNLINK => 0);
-    binmode($fh, ':raw');  # be explicit
-    print {$fh} encode('UTF-8', $json);
-    close $fh or die "close failed for $tmp: $!\n";
+    my ($fh, $tmp) = tempfile('MANIFEST.json.gz.tmpXXXX', DIR => $obj_dir, UNLINK => 0);
+    close $fh;  # Close the handle, we'll use gzip to write
+
+    gzip \$utf8_json => $tmp
+        or die "gzip failed for $tmp: $GzipError\n";
 
     rename($tmp, $path) or die "rename $tmp -> $path failed: $!\n";
 
@@ -170,15 +172,20 @@ sub write_class_manifest_json {
     my $payload    = $args{payload}    // die "payload required";
     my $overwrite  = $args{overwrite}  // 0;
 
-    my $final = File::Spec->catfile($class_path, 'MANIFEST.json');
-    return (0, "exists") if -e $final && !$overwrite;
+    my $final = File::Spec->catfile($class_path, 'MANIFEST.json.gz');
+
+    if (-e $final && !$overwrite) {
+        return (0, "exists");
+    }
 
     my $json = JSON::PP->new->canonical(1)->pretty(1)->encode($payload);
+    my $utf8_json = encode('UTF-8', $json);
 
-    my ($fh, $tmp) = tempfile('MANIFEST.json.tmpXXXX', DIR => $class_path, UNLINK => 0);
-    binmode($fh, ':raw');
-    print {$fh} encode('UTF-8', $json);
-    close $fh or die "close failed for $tmp: $!";
+    my ($fh, $tmp) = tempfile('MANIFEST.json.gz.tmpXXXX', DIR => $class_path, UNLINK => 0);
+    close $fh;  # Close the handle, we'll use gzip to write
+
+    gzip \$utf8_json => $tmp
+        or die "gzip failed for $tmp: $GzipError\n";
 
     rename($tmp, $final) or die "rename $tmp -> $final failed: $!";
     return (1, "written");
@@ -596,7 +603,7 @@ for my $kind (@kinds) {
 
         if ($opt{dry_run}) {
             print "[DRY] would write ", File::Spec->catfile($class_path, 'MANIFEST.txt'), "\n";
-            print "[DRY] would write ", File::Spec->catfile($class_path, 'MANIFEST.json'), "\n";
+            print "[DRY] would write ", File::Spec->catfile($class_path, 'MANIFEST.json.gz'), "\n";
         } else {
             close_class_manifest(
                 fh        => $mfh,
