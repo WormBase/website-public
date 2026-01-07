@@ -684,7 +684,7 @@ END %]
   END; %]
   [% UNLESS (not_empty || (widget == 'overview') || (widget == 'expression') || (widget == 'ontology_browser')) || (widget == 'human_diseases') %]
 
-    <span class="caveat-emptor">No [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] data for [% object.name.data.label %]</span>
+    <span class="caveat-emptor">There are no known or curated [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] annotations for [% object.name.data.label %]</span>
   [% END %]
 [% END %]
 

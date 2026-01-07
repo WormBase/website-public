@@ -1,13 +1,5 @@
 [%
 
-
-  '<div>' _ fields.name.data.class _ '</div>';
-
-    IF fields.name.data.class == 'variation';
-        '<div class="small">This is a Variation</div>';
-        END;
-
-
   IF fields.xrefs.data;
 
     rows = [];
