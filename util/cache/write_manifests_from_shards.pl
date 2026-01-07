@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use FindBin qw($Bin);
-use lib "$Bin/../../../lib";
+use lib "$Bin/../../lib";
 use WormBase::Cache::ShardPath qw(object_name_from_leaf);
 
 use Getopt::Long qw(GetOptions);
@@ -230,10 +230,9 @@ sub close_class_manifest {
 # -----------------------------
 # CLI
 # -----------------------------
-# Cached json found at /usr/local/wormbase/databases/RELEASE/BUILD_DATE/json
+# Cached json found at /mbnt/json-cache-WS298
 my %opt = (
-    root       => '/usr/local/wormbase/databases',
-    build_date     => '2025-11-27',
+    root       => '/mnt/json-cache-WS298',
     shard_chars => 2,
     dry_run    => 1,
     overwrite  => 0,
@@ -244,7 +243,6 @@ my %opt = (
     );
 
 GetOptions(
-    'build_date=s'    => \$opt{build_date},
     'class=s'       => \$opt{class},      # optional: restrict to one class
     'kinds=s'       => \$opt{kinds},      # optional: comma-separated list (widget,field)
     'release=s'     => \$opt{release},
@@ -259,8 +257,7 @@ Usage:
   write_manifests_from_shards.pl [options]
 
     Options:
-  --root PATH          Root cache dir (default: /usr/local/wormbase/databases)
-  --build_date         YYYY-MM-DD the build started (default: 2025-11-27)
+  --root PATH          Root cache dir (default: /mnt/json-cache-WS298)
   --class NAME         Process only this class (otherwise process all class dirs under --root)
   --kinds LIST        Comma-separated kinds under json/ (e.g. widget,field). Default: autodiscover under json/
   --release WS###      Release to write
@@ -293,8 +290,7 @@ USAGE
 die "Root is not a directory: $opt{root}\n" unless -d $opt{root};
 die "Please specify a WSXXX release\n" unless $opt{release};
 
-$opt{json_root} = join("/",$opt{root},$opt{release},"cache",$opt{build_date},"json");
-# Should I CREATE this dir?
+$opt{json_root} = join("/",$opt{root},"json");
 
 #die $opt{cache_path};
 
@@ -502,8 +498,6 @@ for my $kind (@kinds) {
 
                         release        => $opt{release},
 
-                        build_date     => $opt{build_date},
-
                         kind           => $kind,
 
                         class          => $class,
@@ -571,7 +565,6 @@ for my $kind (@kinds) {
             generated_at   => strftime("%Y-%m-%dT%H:%M:%SZ", gmtime(time())),
             generator      => $opt{generator},
             release        => $opt{release},
-            build_date     => $opt{build_date},
             kind           => $kind,
             class          => $class,
 
