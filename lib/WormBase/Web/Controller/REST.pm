@@ -978,7 +978,7 @@ sub widget_GET {
 
         if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
 #            $c->log->info("\tValid cache found for D2C-backed widget " . $c->req->path);
-            $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by CouchDB (cached Datomic data)");
+            $c->log->info("\t[FALLBACK] --> widget/$class/$name/$widget served by CouchDB (cached Datomic data)");
             $c->stash->{fields} = $cached_data;
             # Served from cache? Let's include a link to it in the cache.
             # Primarily a debugging element.
@@ -988,7 +988,7 @@ sub widget_GET {
             my $url = "$rest_server$path";
             my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
-                $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by Datomic");
+                $c->log->info("\t[FALLBACK] --> widget/$class/$name/$widget served by Datomic");
                 $c->stash->{fields} = decode_json($resp->{'content'})->{fields};
                 $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
 
@@ -1008,7 +1008,7 @@ sub widget_GET {
 
         if($cached_data && (ref $cached_data eq 'HASH')){
 #            $c->log->info("\tValid cache found for ACeDB-backed widget" . $c->req->path);
-            $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by CouchDB (cached ACeDB data)");
+            $c->log->info("\t[FALLBACK] --> widget/$class/$name/$widget served by CouchDB (cached ACeDB data)");
             $c->stash->{fields} = $cached_data;
 
             # Served from cache? Let's include a link to it in the cache.
@@ -1021,7 +1021,7 @@ sub widget_GET {
             return;
         } else {
 #            $c->log->info("No valid cache found for ACeDB-backed widget " . $c->req->path);
-            $c->log->info("\t[FALLBACK] --> $class/$name/$widget served by ACeDB");
+            $c->log->info("\t[FALLBACK] --> widget/$class/$name/$widget served by ACeDB");
             my $api = $c->model('WormBaseAPI');
             my $object = ($name eq '*' || $name eq 'all'
                        ? $api->instantiate_empty(ucfirst $class)
@@ -1945,7 +1945,7 @@ sub field_GET {
 
         if($is_cache_recent || ($cached_data && is_slow_endpoint($path_template))){
 #            $c->log->info("Valid cache found for D2C-backed field " . $c->req->path);
-            $c->log->info("\t[FALLBACK]      --> $class/$name/$field served by CouchDB (cached Datomic data)");
+            $c->log->info("\t[FALLBACK]      --> field/$class/$name/$field served by CouchDB (cached Datomic data)");
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
@@ -1953,7 +1953,7 @@ sub field_GET {
             my $url = "$rest_server$path";
             my $resp = HTTP::Tiny->new(timeout => 300)->get($url);  # timeout unit is in seconds
             if ($resp->{'status'} == 200 && $resp->{'content'}) {
-                $c->log->info("\t[FALLBACK]      --> $class/$name/$field served by Datomic");
+                $c->log->info("\t[FALLBACK]      --> field/$class/$name/$field served by Datomic");
                 $c->stash->{$field} = decode_json($resp->{'content'})->{$field};
                 $c->stash->{data_from_datomic} = 1; # widget contains data from datomic
 
@@ -1971,12 +1971,12 @@ sub field_GET {
         # ACeDB workflow
         if ($cached_data && (ref $cached_data eq 'HASH')){
 #            $c->log->info("Valid cache found for ACeDB-backed field " . $c->req->path);
-            $c->log->info("\t[FALLBACK]     --> $class/$name/$field served by CouchDB (cached ACeDB data)");
+            $c->log->info("\t[FALLBACK]     --> field/$class/$name/$field served by CouchDB (cached ACeDB data)");
             $c->stash->{$field} = $cached_data;
             $c->stash->{served_from_cache} = $key;
         } else {
 #            $c->log->info("No valid cache found for ACeDB-backed field " . $c->req->path);
-            $c->log->info("\t[FALLBACK]     --> $class/$name/$field served by ACeDB");
+            $c->log->info("\t[FALLBACK]     --> field/$class/$name/$field served by ACeDB");
             my $api = $c->model('WormBaseAPI');
             my $object = $name eq '*' || $name eq 'all'
                 ? $api->instantiate_empty(ucfirst $class)
