@@ -440,15 +440,16 @@ sub log_heartbeat {
   open my $fh, '>>:utf8', $p or die "Cannot open $p: $!\n";
   print $fh join("\t",
     'HEARTBEAT',
-    'ts=' . time,
-    'run_id=' . ($opt{run_id} // ''),
-    'host=' . ($opt{host} // ''),
-    'pid=' . $$,
-    'worker=' . (defined($opt{worker_id}) ? $opt{worker_id} : 'NA'),
-    'class=' . ($opt{current_class} // ($opt{class} // 'GLOBAL')),
-    (defined($last_object) && length($last_object) ? 'last_object=' . $last_object : ()),
-    (defined($elapsed) ? 'elapsed=' . format_elapsed($elapsed) : ()),
-    (map { $_ . '=' . (defined $kv{$_} ? $kv{$_} : 0) } sort keys %kv),
+    'W' . (defined($opt{worker_id}) ? $opt{worker_id} : 'NA'),
+    ($opt{current_class} // ($opt{class} // 'GLOBAL')),
+    'obj=' . ($kv{objects_done} // 0),
+    'err=' . ($kv{errors_seen} // 0),
+    'urls=' . ($kv{urls_evaluated} // 0),
+    'req=' . ($kv{requests_done} // 0),
+    'fetch=' . ($kv{widgets_fetched} // 0),
+    'skip=' . ($kv{widgets_skipped} // 0),
+    (defined($last_object) && length($last_object) ? 'last=' . $last_object : ()),
+    (defined($elapsed) ? 't=' . format_elapsed($elapsed) : ()),
   ), "\n";
   close $fh;
 }
@@ -1271,7 +1272,7 @@ for my $class (@classes) {
         elapsed          => $elapsed,
         last_object      => $last_object_seen,
       );
-      warn $opt{vp} . "HEARTBEAT objects_done=$objects_done last_object=$last_object_seen urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
+      warn $opt{vp} . "HEARTBEAT obj=$objects_done err=$errors_seen urls=$urls_evaluated req=$requests_done fetch=$widgets_fetched skip=$widgets_skipped last=$last_object_seen t=" . format_elapsed($elapsed) . "\n";
       $next_hb_objects += $hb_every_objects;
       $last_hb_time = $now;
     }
@@ -1298,7 +1299,7 @@ for my $class (@classes) {
             elapsed          => $elapsed,
             last_object      => $last_object_seen,
           );
-          warn $opt{vp} . "HEARTBEAT objects_done=$objects_done last_object=$last_object_seen urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
+          warn $opt{vp} . "HEARTBEAT obj=$objects_done err=$errors_seen urls=$urls_evaluated req=$requests_done fetch=$widgets_fetched skip=$widgets_skipped last=$last_object_seen t=" . format_elapsed($elapsed) . "\n";
           $next_hb_urls += $hb_every_urls;
           $last_hb_time = $now;
         }
