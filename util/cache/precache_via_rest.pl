@@ -42,7 +42,7 @@ use Sys::Hostname qw(hostname);
 #   It reports counts and writes a JSON report (default: misplaced_fields_audit.json).
 
 use FindBin qw/$Bin/;
-use lib "$Bin/../../../lib";
+use lib "$Bin/../../lib";
 
 use Getopt::Long qw(GetOptions);
 use File::Spec;
