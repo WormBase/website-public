@@ -1044,9 +1044,6 @@ sub widget_GET {
             unless (grep /^name$/, @fields) {
                 push @fields, 'name';
             }
-
-	    # Debug
-            $c->log->info(join("-",@fields));
 	    
 	    my $skip_cache;
 
@@ -1056,9 +1053,14 @@ sub widget_GET {
                 my $data;
 
                 if ($object->can($field)) {
-                    # try Perl API
-                    $data = $object->$field;
+		    # Debug
+		    $c->log->info("We're here");
+		    
 
+		    # try Perl API
+                    $data = $object->$field;
+		    $c->log->info($data);
+		    
                     if ($c->config->{fatal_non_compliance}) {
                         # checking for data compliance can be an overhead, only use
                         # in testing env where its explicitly enabled
