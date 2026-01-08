@@ -416,8 +416,25 @@ sub heartbeat_path {
   return File::Spec->catfile($dir, $file);
 }
 
+sub format_elapsed {
+  my ($seconds) = @_;
+  return '0s' if $seconds < 1;
+
+  my $h = int($seconds / 3600);
+  my $m = int(($seconds % 3600) / 60);
+  my $s = $seconds % 60;
+
+  my @parts;
+  push @parts, "${h}h" if $h > 0;
+  push @parts, "${m}m" if $m > 0 || $h > 0;
+  push @parts, "${s}s";
+
+  return join(' ', @parts);
+}
+
 sub log_heartbeat {
   my (%kv) = @_;
+  my $elapsed = delete $kv{elapsed};
   my $p = heartbeat_path();
   open my $fh, '>>:utf8', $p or die "Cannot open $p: $!\n";
   print $fh join("\t",
@@ -428,6 +445,7 @@ sub log_heartbeat {
     'pid=' . $$,
     'worker=' . (defined($opt{worker_id}) ? $opt{worker_id} : 'NA'),
     'class=' . ($opt{current_class} // ($opt{class} // 'GLOBAL')),
+    (defined($elapsed) ? 'elapsed=' . format_elapsed($elapsed) : ()),
     (map { $_ . '=' . (defined $kv{$_} ? $kv{$_} : 0) } sort keys %kv),
   ), "\n";
   close $fh;
@@ -1144,6 +1162,7 @@ die "--heartbeat-every-objects must be >= 0\n" if $hb_every_objects < 0;
 die "--heartbeat-every-urls must be >= 0\n" if $hb_every_urls < 0;
 my $next_hb_objects = ($hb_every_objects > 0) ? $hb_every_objects : undef;
 my $next_hb_urls    = ($hb_every_urls > 0)    ? $hb_every_urls    : undef;
+my $last_hb_time = $t0;  # Track last heartbeat time for elapsed calculation
 
 # Should refactor this into something simpler.
 #my %stats = ();
@@ -1236,6 +1255,8 @@ for my $class (@classes) {
     $objects_done++;
 
     if (defined $next_hb_objects && $objects_done >= $next_hb_objects) {
+      my $now = time();
+      my $elapsed = $now - $last_hb_time;
       log_heartbeat(
         objects_done     => $objects_done,
         urls_evaluated   => $urls_evaluated,
@@ -1243,9 +1264,11 @@ for my $class (@classes) {
         widgets_fetched  => $widgets_fetched,
         widgets_skipped  => $widgets_skipped,
         errors_seen      => $errors_seen,
+        elapsed          => $elapsed,
       );
-      warn $opt{vp} . "HEARTBEAT objects_done=$objects_done urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen\n";
+      warn $opt{vp} . "HEARTBEAT objects_done=$objects_done urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
       $next_hb_objects += $hb_every_objects;
+      $last_hb_time = $now;
     }
 
     for my $kind (qw(widget field)) {
@@ -1258,6 +1281,8 @@ for my $class (@classes) {
 
         $urls_evaluated++;
         if (defined $next_hb_urls && $urls_evaluated >= $next_hb_urls) {
+          my $now = time();
+          my $elapsed = $now - $last_hb_time;
           log_heartbeat(
             objects_done     => $objects_done,
             urls_evaluated   => $urls_evaluated,
@@ -1265,9 +1290,11 @@ for my $class (@classes) {
             widgets_fetched  => $widgets_fetched,
             widgets_skipped  => $widgets_skipped,
             errors_seen      => $errors_seen,
+            elapsed          => $elapsed,
           );
-          warn $opt{vp} . "HEARTBEAT objects_done=$objects_done urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen\n";
+          warn $opt{vp} . "HEARTBEAT objects_done=$objects_done urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
           $next_hb_urls += $hb_every_urls;
+          $last_hb_time = $now;
         }
 
         my $exists = defined($existing_path) ? 1 : 0;
