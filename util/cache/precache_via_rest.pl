@@ -444,9 +444,9 @@ sub log_heartbeat {
     ($opt{current_class} // ($opt{class} // 'GLOBAL')),
     'obj=' . ($kv{objects_done} // 0),
     'urls=' . ($kv{urls_evaluated} // 0),
+    'skip=' . ($kv{widgets_skipped} // 0),
     'req=' . ($kv{requests_done} // 0),
     'fetch=' . ($kv{widgets_fetched} // 0),
-    'skip=' . ($kv{widgets_skipped} // 0),
     'err=' . ($kv{errors_seen} // 0),
     (defined($last_object) && length($last_object) ? 'last=' . $last_object : ()),
     (defined($elapsed) ? 't=' . format_elapsed($elapsed) : ()),
@@ -1272,7 +1272,7 @@ for my $class (@classes) {
         elapsed          => $elapsed,
         last_object      => $last_object_seen,
       );
-      warn $opt{vp} . "HEARTBEAT obj=$objects_done urls=$urls_evaluated req=$requests_done fetch=$widgets_fetched skip=$widgets_skipped err=$errors_seen last=$last_object_seen t=" . format_elapsed($elapsed) . "\n";
+      warn $opt{vp} . "HEARTBEAT obj=$objects_done urls=$urls_evaluated skip=$widgets_skipped req=$requests_done fetch=$widgets_fetched err=$errors_seen last=$last_object_seen t=" . format_elapsed($elapsed) . "\n";
       $next_hb_objects += $hb_every_objects;
       $last_hb_time = $now;
     }
@@ -1299,7 +1299,7 @@ for my $class (@classes) {
             elapsed          => $elapsed,
             last_object      => $last_object_seen,
           );
-          warn $opt{vp} . "HEARTBEAT obj=$objects_done urls=$urls_evaluated req=$requests_done fetch=$widgets_fetched skip=$widgets_skipped err=$errors_seen last=$last_object_seen t=" . format_elapsed($elapsed) . "\n";
+          warn $opt{vp} . "HEARTBEAT obj=$objects_done urls=$urls_evaluated skip=$widgets_skipped req=$requests_done fetch=$widgets_fetched err=$errors_seen last=$last_object_seen t=" . format_elapsed($elapsed) . "\n";
           $next_hb_urls += $hb_every_urls;
           $last_hb_time = $now;
         }
