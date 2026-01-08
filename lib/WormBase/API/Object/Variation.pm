@@ -237,6 +237,8 @@ sub reference_allele {
 # variation.
 # eg: curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/other_alleles
 
+# Never properly replicated in Datomic
+
 sub other_alleles {
     my ($self) = @_;
 
