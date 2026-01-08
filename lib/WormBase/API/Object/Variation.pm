@@ -256,9 +256,9 @@ sub other_alleles {
             push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
         }
         else {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
+            push @{$data->{data}->{unsequenced_alleles}}, $packed_allele;
         }
-	$c->log->info($allele);
+	print $allele;
     }
 
     return {
