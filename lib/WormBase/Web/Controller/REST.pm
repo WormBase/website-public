@@ -1053,14 +1053,9 @@ sub widget_GET {
                 my $data;
 
                 if ($object->can($field)) {
-		    # Debug
-		    $c->log->info("We're here");
-		    
 
 		    # try Perl API
                     $data = $object->$field;
-		    $c->log->info($data);
-		    $c->log->info(keys %{$data});
 		    
                     if ($c->config->{fatal_non_compliance}) {
                         # checking for data compliance can be an overhead, only use
