@@ -1256,7 +1256,7 @@ for my $class (@classes) {
     $processed_after_filters++;
 
     $objects_done++;
-    $last_object_seen = $object;  # Track for heartbeat debugging
+    $last_object_seen = "$obj_sh1/$obj_sh2/$object";  # Track with shard path for heartbeat debugging
 
     if (defined $next_hb_objects && $objects_done >= $next_hb_objects) {
       my $now = time();
