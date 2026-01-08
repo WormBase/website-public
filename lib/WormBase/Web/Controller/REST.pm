@@ -1045,7 +1045,10 @@ sub widget_GET {
                 push @fields, 'name';
             }
 
-            my $skip_cache;
+	    # Debug
+            $c->log->info(join("-",@fields));
+	    
+	    my $skip_cache;
 
             foreach my $field (@fields) {
                 unless ($field) { next; }
@@ -1069,7 +1072,7 @@ sub widget_GET {
                         }
                     }
 
-                    # a field can force an entire widget to not caching
+                    # a field can force an entire widget to not cache
                     if ($data->{'error'}){
                         $skip_cache = 1;
                     }
