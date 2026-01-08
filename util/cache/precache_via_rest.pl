@@ -435,6 +435,7 @@ sub format_elapsed {
 sub log_heartbeat {
   my (%kv) = @_;
   my $elapsed = delete $kv{elapsed};
+  my $last_object = delete $kv{last_object};
   my $p = heartbeat_path();
   open my $fh, '>>:utf8', $p or die "Cannot open $p: $!\n";
   print $fh join("\t",
@@ -445,6 +446,7 @@ sub log_heartbeat {
     'pid=' . $$,
     'worker=' . (defined($opt{worker_id}) ? $opt{worker_id} : 'NA'),
     'class=' . ($opt{current_class} // ($opt{class} // 'GLOBAL')),
+    (defined($last_object) && length($last_object) ? 'last_object=' . $last_object : ()),
     (defined($elapsed) ? 'elapsed=' . format_elapsed($elapsed) : ()),
     (map { $_ . '=' . (defined $kv{$_} ? $kv{$_} : 0) } sort keys %kv),
   ), "\n";
@@ -1163,6 +1165,7 @@ die "--heartbeat-every-urls must be >= 0\n" if $hb_every_urls < 0;
 my $next_hb_objects = ($hb_every_objects > 0) ? $hb_every_objects : undef;
 my $next_hb_urls    = ($hb_every_urls > 0)    ? $hb_every_urls    : undef;
 my $last_hb_time = $t0;  # Track last heartbeat time for elapsed calculation
+my $last_object_seen = '';  # Track last object for debugging
 
 # Should refactor this into something simpler.
 #my %stats = ();
@@ -1253,6 +1256,7 @@ for my $class (@classes) {
     $processed_after_filters++;
 
     $objects_done++;
+    $last_object_seen = $object;  # Track for heartbeat debugging
 
     if (defined $next_hb_objects && $objects_done >= $next_hb_objects) {
       my $now = time();
@@ -1265,8 +1269,9 @@ for my $class (@classes) {
         widgets_skipped  => $widgets_skipped,
         errors_seen      => $errors_seen,
         elapsed          => $elapsed,
+        last_object      => $last_object_seen,
       );
-      warn $opt{vp} . "HEARTBEAT objects_done=$objects_done urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
+      warn $opt{vp} . "HEARTBEAT objects_done=$objects_done last_object=$last_object_seen urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
       $next_hb_objects += $hb_every_objects;
       $last_hb_time = $now;
     }
@@ -1291,8 +1296,9 @@ for my $class (@classes) {
             widgets_skipped  => $widgets_skipped,
             errors_seen      => $errors_seen,
             elapsed          => $elapsed,
+            last_object      => $last_object_seen,
           );
-          warn $opt{vp} . "HEARTBEAT objects_done=$objects_done urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
+          warn $opt{vp} . "HEARTBEAT objects_done=$objects_done last_object=$last_object_seen urls_evaluated=$urls_evaluated requests_done=$requests_done widgets_fetched=$widgets_fetched widgets_skipped=$widgets_skipped errors_seen=$errors_seen elapsed=" . format_elapsed($elapsed) . "\n";
           $next_hb_urls += $hb_every_urls;
           $last_hb_time = $now;
         }
