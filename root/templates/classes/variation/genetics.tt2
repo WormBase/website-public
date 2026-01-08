@@ -1,5 +1,4 @@
-[% USE Dumper; Dumper.dump(fields) %]
-
+[%# USE Dumper; Dumper.dump(fields) %]
 
 [%
 
