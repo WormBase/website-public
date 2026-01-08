@@ -1,3 +1,6 @@
+[% USE Dumper; Dumper.dump(fields) %]
+
+
 [%
 
 
@@ -20,7 +23,7 @@ WRAPPER $field_block title="Reference allele" key="reference_allele";
          cell_content(fields.reference_allele.data);
 END;
 
-[% USE Dumper; Dumper.dump(fields) %]
+
 
 
 WRAPPER $field_block  title="Other alleles" key="other_alleles";
