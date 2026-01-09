@@ -285,13 +285,13 @@ sub other_alleles {
                 $sequence_status = 'Unsequenced';
             }
 	    
-            # Get status if available
-            my $status_obj = $allele->Status;
-            my $status = $status_obj ? "$status_obj" : undef;
+            # Get status if available (convert to string or undef)
+            my $status = eval { $allele->Status };
+            $status = ($status && "$status") || undef;
 
 	    # Type of mutation -- you know, like the ACTUAL type
-	    my $molecular_change_obj = $allele->Type_of_mutation;
-	    my $molecular_change = $molecular_change_obj ? "$molecular_change_obj" : undef;
+	    my $molecular_change = eval { $allele->Type_of_mutation };
+	    $molecular_change = ($molecular_change && "$molecular_change") || undef;
 	    
             push @data, {
                 allele          => $packed_allele,
