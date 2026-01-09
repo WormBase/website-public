@@ -247,7 +247,8 @@ sub other_alleles {
     my $name = $self ~~ 'name';
     print STDERR "Variation name: $name\n";
 
-    my $gene = eval { $self->Gene };
+    my $ace = $self->object;
+    my $gene = eval { $ace->Gene };
     my $gene_err = $@;
     print STDERR "Gene object: " . ($gene ? $gene : "NONE") . "\n";
     print STDERR "Gene lookup error: $gene_err\n" if $gene_err;
