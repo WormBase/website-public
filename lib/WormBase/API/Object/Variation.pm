@@ -180,11 +180,16 @@ sub source_database {
 sub gene_class {
     my ($self) = @_;
     my $object = $self->object;
-    my $gene   = $object->Gene;
+    my $gene   = eval { $object->Gene };
+    return {
+        description => 'the class of the gene the variation falls in, if any',
+        data        => undef,
+    } unless $gene && "$gene";
+
     my $gene_class = eval { $gene->Gene_class };
     return {
         description => 'the class of the gene the variation falls in, if any',
-        data        => $gene_class ? $self->_pack_obj($gene_class) : undef,
+        data        => ($gene_class && "$gene_class") ? $self->_pack_obj($gene_class) : undef,
     };
 }
 
@@ -198,10 +203,15 @@ sub corresponding_gene {
     my ($self) = @_;
     my $object = $self->object;
     my $count = $self->_get_count($object, 'Gene');
-    my @genes = map {
-        my $suffix = $_->Reference_allele("$object") ? ' (reference allele)' : '';
-        [$self->_pack_obj($_), $suffix];
-    } $self->object->Gene if $count < 500;
+    my @genes;
+    if ($count && $count < 500) {
+        foreach my $gene ($self->object->Gene) {
+            next unless $gene && "$gene";  # Skip empty objects
+            my $ref_allele = eval { $gene->Reference_allele("$object") };
+            my $suffix = ($ref_allele && "$ref_allele") ? ' (reference allele)' : '';
+            push @genes, [$self->_pack_obj($gene), $suffix];
+        }
+    }
 
     my $comment = sprintf("%d (Too many features to display. Download from <a href='/tools/wormmine/'>WormMine</a>.)", $count);
 
@@ -220,12 +230,21 @@ sub corresponding_gene {
 sub reference_allele {
     my ($self) = @_;
     my $object = $self->object;
-    my $gene = $object->Gene;
-    my $allele = eval {$gene->Reference_allele};
-    my $data = {
+    my $gene = eval { $object->Gene };
+    return {
+        description => 'the reference allele for the containing gene (if any)',
+        data        => undef
+    } unless $gene && "$gene";
+
+    my $allele = eval { $gene->Reference_allele };
+    # set field to undef if reference allele of containing gene is same as $self->object, github #3201
+    my $data;
+    if ($allele && "$allele" && "$allele" ne "$object") {
+        $data = {
             text => $self->_pack_obj($allele),
-            evidence => { Reference_allele_for => $self->_pack_obj($gene)}
-        } if $allele && $allele ne $object;  # set field to undef if reference allele of containing gene is same as $self->object, github #3201
+            evidence => { Reference_allele_for => $self->_pack_obj($gene) }
+        };
+    }
 
     return {
         description => 'the reference allele for the containing gene (if any)',
@@ -326,7 +345,10 @@ sub other_alleles {
 sub linked_to {
     my $self   = shift;
     my $object = $self->object;
-    my @data = $self->_pack_list([$object->Linked_to]);
+    my @linked = eval { $object->Linked_to };
+    # Filter out any empty objects
+    @linked = grep { $_ && "$_" } @linked;
+    my @data = $self->_pack_list(\@linked);
 
     return {
         description => 'paired substitutions as part of the same allele',
@@ -344,15 +366,22 @@ sub strains {
     my $object = $self->object;
     my @data;
     my %count;
-    foreach ($object->Strain) {
-        my @genes = $_->Gene;
-        my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+    my @strains = eval { $object->Strain };
+    foreach my $strain (@strains) {
+        next unless $strain && "$strain";  # Skip empty objects
 
-        my $packed = $self->_pack_obj($_);
-        my $genotype = $_->Genotype;
-        $packed->{genotype} = $genotype && "$genotype";
+        my @genes = eval { $strain->Gene };
+        @genes = grep { $_ && "$_" } @genes;  # Filter empty genes
 
-        if (@genes == 1 && !$_->Transgene) {
+        my $location = eval { $strain->Location };
+        my $cgc = ($location && "$location" eq 'CGC') ? 1 : 0;
+
+        my $packed = $self->_pack_obj($strain);
+        my $genotype = eval { $strain->Genotype };
+        $packed->{genotype} = ($genotype && "$genotype") ? "$genotype" : undef;
+
+        my $transgene = eval { $strain->Transgene };
+        if (@genes == 1 && !$transgene) {
           $cgc ? push @{$count{carrying_gene_alone_and_cgc}},$packed : push @{$count{carrying_gene_alone}},$packed;
         } else {
           $cgc ? push @{$count{available_from_cgc}},$packed : push @{$count{others}},$packed;
@@ -376,10 +405,10 @@ sub rescued_by_transgene {
     my ($self) = @_;
 
     my $object = $self->object;
-    my $gene_class = $object->Rescued_by_Transgene;
+    my $transgene = eval { $object->Rescued_by_Transgene };
     return {
-	description => 'the class of the gene the variation falls in, if any',
-	data        => $gene_class ? $self->_pack_obj($gene_class) : undef,
+	description => 'transgene that rescues the mutant phenotype, if any',
+	data        => ($transgene && "$transgene") ? $self->_pack_obj($transgene) : undef,
     };
 }
 
