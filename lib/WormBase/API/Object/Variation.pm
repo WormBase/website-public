@@ -286,10 +286,12 @@ sub other_alleles {
             }
 	    
             # Get status if available
-            my $status = $allele->Status ? $allele->Status : undef;
-	    
+            my $status_obj = $allele->Status;
+            my $status = $status_obj ? "$status_obj" : undef;
+
 	    # Type of mutation -- you know, like the ACTUAL type
-	    my $molecular_change = $allele->Type_of_mutation ? $allele->Type_of_mutation : undef;
+	    my $molecular_change_obj = $allele->Type_of_mutation;
+	    my $molecular_change = $molecular_change_obj ? "$molecular_change_obj" : undef;
 	    
             push @data, {
                 allele          => $packed_allele,
