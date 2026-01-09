@@ -179,10 +179,11 @@ sub source_database {
 
 sub gene_class {
     my ($self) = @_;
-
+    my $object = $self->object;
+    my $gene_class = $object->Gene_class;
     return {
         description => 'the class of the gene the variation falls in, if any',
-        data        => $self->_pack_obj($self ~~ 'Gene_class'),
+        data        => $gene_class ? $self->_pack_obj($gene_class) : undef,
     };
 }
 
@@ -242,29 +243,29 @@ sub reference_allele {
 sub other_alleles {
     my ($self) = @_;
 
-    print STDERR "=== other_alleles() CALLED for variation: " . $self->object . " ===\n";
+    # print STDERR "=== other_alleles() CALLED for variation: " . $self->object . " ===\n";
 
     my $name = $self ~~ 'name';
-    print STDERR "Variation name: $name\n";
+    # print STDERR "Variation name: $name\n";
 
     my $ace = $self->object;
     my $gene = eval { $ace->Gene };
     my $gene_err = $@;
-    print STDERR "Gene object: " . ($gene ? $gene : "NONE") . "\n";
-    print STDERR "Gene lookup error: $gene_err\n" if $gene_err;
+    # print STDERR "Gene object: " . ($gene ? $gene : "NONE") . "\n";
+    # print STDERR "Gene lookup error: $gene_err\n" if $gene_err;
 
     my @data;
 
     if ($gene) {
         my @alleles = eval { $gene->Allele(-fill => 1) };
         my $allele_err = $@;
-        print STDERR "Found " . scalar(@alleles) . " alleles for gene $gene\n";
-        print STDERR "Allele lookup error: $allele_err\n" if $allele_err;
+        # print STDERR "Found " . scalar(@alleles) . " alleles for gene $gene\n";
+        # print STDERR "Allele lookup error: $allele_err\n" if $allele_err;
 
         foreach my $allele (@alleles) {
-            print STDERR "  Processing allele: $allele\n";
+            # print STDERR "  Processing allele: $allele\n";
             next if $allele eq $name;
-            print STDERR "    -> Including in results (not current variation)\n";
+            # print STDERR "    -> Including in results (not current variation)\n";
 
             my $packed_allele = $self->_pack_obj($allele);
 
@@ -294,18 +295,18 @@ sub other_alleles {
             };
         }
     } else {
-        print STDERR "No gene found for variation $name\n";
+        # print STDERR "No gene found for variation $name\n";
     }
 
-    print STDERR "Returning " . scalar(@data) . " alleles in other_alleles\n";
+    # print STDERR "Returning " . scalar(@data) . " alleles in other_alleles\n";
 
     my $result = {
         description => 'other alleles of the containing gene (if known)',
         data        => @data ? \@data : undef,
     };
 
-    use Data::Dumper;
-    print STDERR "Final result structure: " . Dumper($result) . "\n";
+    # use Data::Dumper;
+    # print STDERR "Final result structure: " . Dumper($result) . "\n";
 
     return $result;
 }
@@ -362,9 +363,11 @@ sub strains {
 sub rescued_by_transgene {
     my ($self) = @_;
 
+    my $object = $self->object;
+    my $gene_class = $object->Rescued_by_Transgene;
     return {
-        description => 'transgenes that rescue phenotype(s) caused by this variation',
-        data        => $self->_pack_obj($self ~~ 'Rescued_by_Transgene'),
+	description => 'the class of the gene the variation falls in, if any',
+	data        => $gene_class ? $self->_pack_obj($gene_class) : undef,
     };
 }
 

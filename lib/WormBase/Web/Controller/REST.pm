@@ -1045,28 +1045,28 @@ sub widget_GET {
                 push @fields, 'name';
             }
 
-            $c->log->info("Fields for $class/$widget: " . join(", ", @fields));
+            # $c->log->info("Fields for $class/$widget: " . join(", ", @fields));
 	    
 	    my $skip_cache;
 
             foreach my $field (@fields) {
                 unless ($field) { next; }
-                $c->log->info("Processing field: $field for $class/$name");
+                # $c->log->info("Processing field: $field for $class/$name");
                 my $data;
 
                 if ($object->can($field)) {
-                    $c->log->info("  -> Object can($field), calling method...");
+                    # $c->log->info("  -> Object can($field), calling method...");
 
 		    # try Perl API
                     $data = $object->$field;
-                    $c->log->info("  -> Method $field returned: " . (ref($data) ? ref($data) : defined($data) ? "scalar" : "undef"));
+                    # $c->log->info("  -> Method $field returned: " . (ref($data) ? ref($data) : defined($data) ? "scalar" : "undef"));
 
                     # Debug data structure for other_alleles
-                    if ($field eq 'other_alleles' && $data) {
-                        use Data::Dumper;
-                        $Data::Dumper::Maxdepth = 4;
-                        $c->log->info("  -> other_alleles data structure: " . Dumper($data));
-                    }
+                    # if ($field eq 'other_alleles' && $data) {
+                    #     use Data::Dumper;
+                    #     $Data::Dumper::Maxdepth = 4;
+                    #     $c->log->info("  -> other_alleles data structure: " . Dumper($data));
+                    # }
 
                     if ($c->config->{fatal_non_compliance}) {
                         # checking for data compliance can be an overhead, only use
@@ -1086,7 +1086,7 @@ sub widget_GET {
                         $skip_cache = 1;
                     }
                 } else {
-                    $c->log->info("  -> Object CANNOT call method $field - method does not exist");
+                    # $c->log->info("  -> Object CANNOT call method $field - method does not exist");
                 }
 
                 # Conditionally load up the stash (for now) for HTML requests.
