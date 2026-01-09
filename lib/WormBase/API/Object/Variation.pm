@@ -180,7 +180,8 @@ sub source_database {
 sub gene_class {
     my ($self) = @_;
     my $object = $self->object;
-    my $gene_class = $object->Gene_class;
+    my $gene   = $object->Gene;
+    my $gene_class = eval { $gene->Gene_class };
     return {
         description => 'the class of the gene the variation falls in, if any',
         data        => $gene_class ? $self->_pack_obj($gene_class) : undef,
