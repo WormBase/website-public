@@ -243,57 +243,27 @@ sub other_alleles {
     my ($self) = @_;
 
     my $name = $self ~~ 'name';
-    my @data;
+    my $data;
 
-    # Get the gene associated with this variation
-    my $gene = eval { $self->Gene };
-
-    # If no gene, return empty data
- #   unless ($gene) {
- #       return {
- #           description => 'other alleles of the containing gene (if known)',
- #           data        => undef,
- #       };
- #   }
-
-    # Get all alleles of the gene
-    foreach my $allele (eval { $gene->Allele(-fill => 1) }) {
-        next unless $allele;
-        next if $allele eq $name;  # Skip this variation itself
+    foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
+        next if $allele eq $name;
 
         my $packed_allele = $self->_pack_obj($allele);
 
-        # Determine type and physical_type
-        my $type;
-        my $physical_type;
-
         if ($allele->SNP) {
-            $type = 'Polymorphism';
-            $physical_type = 'SNP';
+            push @{$data->{data}->{polymorphisms}}, $packed_allele;
         }
         elsif ($allele->Sequence || $allele->Flanking_sequences) {
-            $type = 'Sequenced allele';
-            $physical_type = $allele->Type || 'Unknown';
+            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
         }
         else {
-            $type = 'Unsequenced allele';
-            $physical_type = $allele->Type || 'Unknown';
+            push @{$data->{data}->{unsequenced_alleles}}, $packed_allele;
         }
-
-        # Get status
-        my $status = $allele->Status || 'Unknown';
-
-        push @data, {
-            allele        => $packed_allele,
-            type          => $type,
-            physical_type => $physical_type,
-            status        => $status,
-        };
     }
 
     return {
         description => 'other alleles of the containing gene (if known)',
-        data        => @data ? \@data : undef,
+        data        => $data,
     };
 }
 
