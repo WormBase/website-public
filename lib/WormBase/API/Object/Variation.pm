@@ -242,41 +242,57 @@ sub reference_allele {
 sub other_alleles {
     my ($self) = @_;
 
+    warn "=== other_alleles() CALLED for variation: " . $self->object . " ===";
+
     my $name = $self ~~ 'name';
+    warn "Variation name: $name";
+
+    my $gene = eval { $self->Gene };
+    warn "Gene object: " . ($gene ? $gene : "NONE");
+
     my @data;
 
-    foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
-        next if $allele eq $name;
+    if ($gene) {
+        my @alleles = eval { $gene->Allele(-fill => 1) };
+        warn "Found " . scalar(@alleles) . " alleles for gene $gene";
 
-        my $packed_allele = $self->_pack_obj($allele);
+        foreach my $allele (@alleles) {
+            warn "  Processing allele: $allele";
+            next if $allele eq $name;
+            warn "    -> Including in results (not current variation)";
 
-	warn $allele;
-	
-        # Determine type and classification
-        my ($type, $physical_type);
-        if ($allele->SNP) {
-            $type = 'Polymorphism';
-            $physical_type = 'SNP';
+            my $packed_allele = $self->_pack_obj($allele);
+
+            # Determine type and classification
+            my ($type, $physical_type);
+            if ($allele->SNP) {
+                $type = 'Polymorphism';
+                $physical_type = 'SNP';
+            }
+            elsif ($allele->Sequence || $allele->Flanking_sequences) {
+                $type = 'Allele';
+                $physical_type = 'Sequenced';
+            }
+            else {
+                $type = 'Allele';
+                $physical_type = 'Unsequenced';
+            }
+
+            # Get status if available
+            my $status = $allele->Status ? "$allele->Status" : undef;
+
+            push @data, {
+                allele        => $packed_allele,
+                type          => $type,
+                physical_type => $physical_type,
+                status        => $status,
+            };
         }
-        elsif ($allele->Sequence || $allele->Flanking_sequences) {
-            $type = 'Allele';
-            $physical_type = 'Sequenced';
-        }
-        else {
-            $type = 'Allele';
-            $physical_type = 'Unsequenced';
-        }
-
-        # Get status if available
-        my $status = $allele->Status ? "$allele->Status" : undef;
-
-        push @data, {
-            allele        => $packed_allele,
-            type          => $type,
-            physical_type => $physical_type,
-            status        => $status,
-        };
+    } else {
+        warn "No gene found for variation $name";
     }
+
+    warn "Returning " . scalar(@data) . " alleles in other_alleles";
 
     return {
         description => 'other alleles of the containing gene (if known)',

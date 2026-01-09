@@ -1044,19 +1044,23 @@ sub widget_GET {
             unless (grep /^name$/, @fields) {
                 push @fields, 'name';
             }
+
+            $c->log->info("Fields for $class/$widget: " . join(", ", @fields));
 	    
 	    my $skip_cache;
 
             foreach my $field (@fields) {
                 unless ($field) { next; }
-                $c->log->debug("Processing field: $field");
+                $c->log->info("Processing field: $field for $class/$name");
                 my $data;
 
                 if ($object->can($field)) {
+                    $c->log->info("  -> Object can($field), calling method...");
 
 		    # try Perl API
                     $data = $object->$field;
-		    
+                    $c->log->info("  -> Method $field returned: " . (ref($data) ? ref($data) : defined($data) ? "scalar" : "undef"));
+
                     if ($c->config->{fatal_non_compliance}) {
                         # checking for data compliance can be an overhead, only use
                         # in testing env where its explicitly enabled
@@ -1074,6 +1078,8 @@ sub widget_GET {
                     if ($data->{'error'}){
                         $skip_cache = 1;
                     }
+                } else {
+                    $c->log->info("  -> Object CANNOT call method $field - method does not exist");
                 }
 
                 # Conditionally load up the stash (for now) for HTML requests.
