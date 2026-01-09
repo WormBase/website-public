@@ -249,12 +249,12 @@ sub other_alleles {
     my $gene = eval { $self->Gene };
 
     # If no gene, return empty data
-    unless ($gene) {
-        return {
-            description => 'other alleles of the containing gene (if known)',
-            data        => undef,
-        };
-    }
+ #   unless ($gene) {
+ #       return {
+ #           description => 'other alleles of the containing gene (if known)',
+ #           data        => undef,
+ #       };
+ #   }
 
     # Get all alleles of the gene
     foreach my $allele (eval { $gene->Allele(-fill => 1) }) {
