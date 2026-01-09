@@ -31,14 +31,16 @@ WRAPPER $field_block  title="Other alleles" key="other_alleles";
 		order = [
 			'allele',
 			'type',
-			'physical_type',
-			'status',
+			'sequence_status',
+			'molecular_change',
+                        'status',
 			],
 		columns = {
-			allele        => 'Allele',
-			type          => 'Type',
-			physical_type => 'Classification',
-			status        => 'Status',
+			allele          => 'Allele',
+			type            => 'Type',
+			sequence_status => 'Sequence Status',
+			molecular_change=> 'Molecular Change',
+                        status          => 'Status',
 			},
 		key = 'other_alleles');
    END;

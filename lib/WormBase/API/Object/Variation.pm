@@ -271,28 +271,32 @@ sub other_alleles {
             my $packed_allele = $self->_pack_obj($allele);
 
             # Determine type and classification
-            my ($type, $physical_type);
+            my ($type, $sequence_status);
             if ($allele->SNP) {
                 $type = 'Polymorphism';
-                $physical_type = 'SNP';
+                $sequence_status = 'SNP';
             }
             elsif ($allele->Sequence || $allele->Flanking_sequences) {
                 $type = 'Allele';
-                $physical_type = 'Sequenced';
+                $sequence_status = 'Sequenced';
             }
             else {
                 $type = 'Allele';
-                $physical_type = 'Unsequenced';
+                $sequence_status = 'Unsequenced';
             }
-
+	    
             # Get status if available
-            my $status = $allele->Status ? "$allele->Status" : undef;
-
+            my $status = $allele->Status ? $allele->Status : undef;
+	    
+	    # Type of mutation -- you know, like the ACTUAL type
+	    my $molecular_change = $allele->Type_of_mutation ? $allele->Type_of_mutation : undef;
+	    
             push @data, {
-                allele        => $packed_allele,
-                type          => $type,
-                physical_type => $physical_type,
-                status        => $status,
+                allele          => $packed_allele,
+                type            => $type,
+                sequence_status => $sequence_status,
+                status          => $status,
+		molecular_change => $molecular_change,
             };
         }
     } else {
