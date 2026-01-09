@@ -16,12 +16,15 @@ WRAPPER $field_block title="Gene" key="corresponding_gene";
     END;
 END;
 
-WRAPPER $field_block title="Reference allele" key="reference_allele";
-         cell_content(fields.reference_allele.data);
+
+WRAPPER $field_block title="Gene Class" key="gene_class";
+         tag2link(fields.gene_class.data);
 END;
 
 
-
+WRAPPER $field_block title="Reference allele" key="reference_allele";
+         cell_content(fields.reference_allele.data);
+END;
 
 WRAPPER $field_block  title="Other alleles" key="other_alleles";
 	build_data_table (
