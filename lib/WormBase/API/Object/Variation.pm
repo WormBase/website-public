@@ -285,21 +285,26 @@ sub other_alleles {
                 $sequence_status = 'Unsequenced';
             }
 	    
-            # Get status if available (convert to string or undef)
-            my $status = eval { $allele->Status };
-            $status = ($status && "$status") || undef;
-
-	    # Type of mutation -- you know, like the ACTUAL type
-	    my $molecular_change = eval { $allele->Type_of_mutation };
-	    $molecular_change = ($molecular_change && "$molecular_change") || undef;
-	    
-            push @data, {
+            # Build the data hash
+            my %allele_data = (
                 allele          => $packed_allele,
                 type            => $type,
                 sequence_status => $sequence_status,
-                status          => $status,
-		molecular_change => $molecular_change,
-            };
+            );
+
+            # Get status if available (convert to string or undef)
+            my $status = eval { $allele->Status };
+            if ($status && "$status" ne '') {
+                $allele_data{status} = "$status";
+            }
+
+	    # Type of mutation -- you know, like the ACTUAL type
+	    my $molecular_change = eval { $allele->Type_of_mutation };
+	    if ($molecular_change && "$molecular_change" ne '') {
+                $allele_data{molecular_change} = "$molecular_change";
+            }
+
+            push @data, \%allele_data;
         }
     } else {
         # print STDERR "No gene found for variation $name\n";
