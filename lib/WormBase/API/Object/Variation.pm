@@ -250,6 +250,8 @@ sub other_alleles {
 
         my $packed_allele = $self->_pack_obj($allele);
 
+	warn $allele;
+	
         # Determine type and classification
         my ($type, $physical_type);
         if ($allele->SNP) {
