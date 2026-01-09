@@ -254,10 +254,10 @@ $opt{kinds} ||= 'widget';
 # Default widgets/fields mapping files based on kinds
 my %kinds_enabled_opt = map { $_ => 1 } grep { length } split /,/, $opt{kinds};
 
-if ($kinds_enabled_opt{widget} && !defined $opt{widgets_file}) {
+if ($kinds_enabled_opt{widget} && !defined $opt{widgets_file} && !defined $opt{widgets}) {
   $opt{widgets_file} = File::Spec->catfile($opt{cache_root}, 'available_widgets_and_fields', 'swagger.widgets.tsv');
 }
-if ($kinds_enabled_opt{field} && !defined $opt{fields_file}) {
+if ($kinds_enabled_opt{field} && !defined $opt{fields_file} && !defined $opt{fields}) {
   $opt{fields_file} = File::Spec->catfile($opt{cache_root}, 'available_widgets_and_fields', 'swagger.fields.tsv');
 }
 
