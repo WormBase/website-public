@@ -1061,6 +1061,13 @@ sub widget_GET {
                     $data = $object->$field;
                     $c->log->info("  -> Method $field returned: " . (ref($data) ? ref($data) : defined($data) ? "scalar" : "undef"));
 
+                    # Debug data structure for other_alleles
+                    if ($field eq 'other_alleles' && $data) {
+                        use Data::Dumper;
+                        $Data::Dumper::Maxdepth = 4;
+                        $c->log->info("  -> other_alleles data structure: " . Dumper($data));
+                    }
+
                     if ($c->config->{fatal_non_compliance}) {
                         # checking for data compliance can be an overhead, only use
                         # in testing env where its explicitly enabled

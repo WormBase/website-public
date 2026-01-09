@@ -242,24 +242,28 @@ sub reference_allele {
 sub other_alleles {
     my ($self) = @_;
 
-    warn "=== other_alleles() CALLED for variation: " . $self->object . " ===";
+    print STDERR "=== other_alleles() CALLED for variation: " . $self->object . " ===\n";
 
     my $name = $self ~~ 'name';
-    warn "Variation name: $name";
+    print STDERR "Variation name: $name\n";
 
     my $gene = eval { $self->Gene };
-    warn "Gene object: " . ($gene ? $gene : "NONE");
+    my $gene_err = $@;
+    print STDERR "Gene object: " . ($gene ? $gene : "NONE") . "\n";
+    print STDERR "Gene lookup error: $gene_err\n" if $gene_err;
 
     my @data;
 
     if ($gene) {
         my @alleles = eval { $gene->Allele(-fill => 1) };
-        warn "Found " . scalar(@alleles) . " alleles for gene $gene";
+        my $allele_err = $@;
+        print STDERR "Found " . scalar(@alleles) . " alleles for gene $gene\n";
+        print STDERR "Allele lookup error: $allele_err\n" if $allele_err;
 
         foreach my $allele (@alleles) {
-            warn "  Processing allele: $allele";
+            print STDERR "  Processing allele: $allele\n";
             next if $allele eq $name;
-            warn "    -> Including in results (not current variation)";
+            print STDERR "    -> Including in results (not current variation)\n";
 
             my $packed_allele = $self->_pack_obj($allele);
 
@@ -289,15 +293,20 @@ sub other_alleles {
             };
         }
     } else {
-        warn "No gene found for variation $name";
+        print STDERR "No gene found for variation $name\n";
     }
 
-    warn "Returning " . scalar(@data) . " alleles in other_alleles";
+    print STDERR "Returning " . scalar(@data) . " alleles in other_alleles\n";
 
-    return {
+    my $result = {
         description => 'other alleles of the containing gene (if known)',
         data        => @data ? \@data : undef,
     };
+
+    use Data::Dumper;
+    print STDERR "Final result structure: " . Dumper($result) . "\n";
+
+    return $result;
 }
 
 sub linked_to {
