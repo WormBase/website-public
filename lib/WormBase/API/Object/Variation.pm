@@ -243,27 +243,42 @@ sub other_alleles {
     my ($self) = @_;
 
     my $name = $self ~~ 'name';
-    my $data;
+    my @data;
 
     foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
         next if $allele eq $name;
 
         my $packed_allele = $self->_pack_obj($allele);
 
+        # Determine type and classification
+        my ($type, $physical_type);
         if ($allele->SNP) {
-            push @{$data->{data}->{polymorphisms}}, $packed_allele;
+            $type = 'Polymorphism';
+            $physical_type = 'SNP';
         }
         elsif ($allele->Sequence || $allele->Flanking_sequences) {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
+            $type = 'Allele';
+            $physical_type = 'Sequenced';
         }
         else {
-            push @{$data->{data}->{unsequenced_alleles}}, $packed_allele;
+            $type = 'Allele';
+            $physical_type = 'Unsequenced';
         }
+
+        # Get status if available
+        my $status = $allele->Status ? "$allele->Status" : undef;
+
+        push @data, {
+            allele        => $packed_allele,
+            type          => $type,
+            physical_type => $physical_type,
+            status        => $status,
+        };
     }
 
     return {
         description => 'other alleles of the containing gene (if known)',
-        data        => $data,
+        data        => @data ? \@data : undef,
     };
 }
 
