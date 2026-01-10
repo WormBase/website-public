@@ -290,7 +290,7 @@ sub other_alleles {
             my $packed_allele = $self->_pack_obj($allele);
 	    
             # Determine type and classification
-	    my @types = map { $_ =~ s/_/ /g; "$_" } $object->Variation_type;
+	    my @types = map { $_ =~ s/_/ /g; "$_" } $allele->Variation_type;
 	    my $type = join(", ",@types);
 			    
 	    my $sequence_status = $allele->SeqStatus;
