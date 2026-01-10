@@ -941,7 +941,12 @@ sub widget_GET {
 
     # First, try to load from JSON on disk (WS298 static archive)
     $c->log->info("\tAttempting to load widget from JSON disk cache: $class/$name/$widget");
-    my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'widget', $class, $name, $widget);
+
+    # Temp disabled to overwrite genetics widgets
+    my ($json_data,$json_source);
+    #    my ($json_data, $json_source) = $self->_get_json_from_disk($c, 'widget', $class, $name, $widget);
+
+
     if ($json_data) {
         $c->log->info("\t[SUCCESS] Using JSON from disk for widget $widget (source: $json_source)");
         # Extract fields from JSON structure (JSON has {class, name, fields, uri})
