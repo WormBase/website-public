@@ -288,13 +288,29 @@ sub other_alleles {
             # print STDERR "    -> Including in results (not current variation)\n";
 
             my $packed_allele = $self->_pack_obj($allele);
+
+	    	    # Build the data hash
+            my %allele_data = (
+                allele          => $packed_allele,
+            );
+
 	    
             # Determine type and classification
-	    my @types = map { $_ =~ s/_/ /g; "$_" } $allele->Variation_type;
+	    my @types = map { $_ =~ s/_/ /g; "$_" } eval { $allele->Variation_type };
 	    my $type = join(", ",@types);
-			    
-	    my $sequence_status = $allele->SeqStatus;
-#	    my ($sequence_status);
+
+
+	    if ($type && "$type" ne '') {
+                $allele_data{type} = "$type";
+            }
+	    
+	    
+	    my $sequence_status = eval { $allele->SeqStatus };
+            if ($sequence_status && "$sequence_status" ne '') {
+                $allele_data{sequence_status} = "$sequence_status";
+            }
+
+	    #	    my ($sequence_status);
 #            if ($allele->SNP) {
 #                $type = 'Polymorphism';
 #                $sequence_status = 'SNP';
@@ -308,12 +324,6 @@ sub other_alleles {
 #                $sequence_status = 'Unsequenced';
 #            }
 	    
-            # Build the data hash
-            my %allele_data = (
-                allele          => $packed_allele,
-                type            => $type,
-                sequence_status => $sequence_status,
-            );
 
             # Get status if available (convert to string or undef)
             my $status = eval { $allele->Status };
