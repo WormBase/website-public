@@ -288,21 +288,25 @@ sub other_alleles {
             # print STDERR "    -> Including in results (not current variation)\n";
 
             my $packed_allele = $self->_pack_obj($allele);
-
+	    
             # Determine type and classification
-            my ($type, $sequence_status);
-            if ($allele->SNP) {
-                $type = 'Polymorphism';
-                $sequence_status = 'SNP';
-            }
-            elsif ($allele->Sequence || $allele->Flanking_sequences) {
-                $type = 'Allele';
-                $sequence_status = 'Sequenced';
-            }
-            else {
-                $type = 'Allele';
-                $sequence_status = 'Unsequenced';
-            }
+	    my @types = map { $_ =~ s/_/ /g; "$_" } $object->Variation_type;
+	    my $type = join(", ",@types);
+			    
+	    my $sequence_status = $allele->SeqStatus;
+#	    my ($sequence_status);
+#            if ($allele->SNP) {
+#                $type = 'Polymorphism';
+#                $sequence_status = 'SNP';
+#            }
+#            elsif ($allele->Sequence || $allele->Flanking_sequences) {
+#                $type = 'Allele';
+#                $sequence_status = 'Sequenced';
+#            }
+#            else {
+#                $type = 'Allele';
+#                $sequence_status = 'Unsequenced';
+#            }
 	    
             # Build the data hash
             my %allele_data = (
